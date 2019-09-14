@@ -1,0 +1,74 @@
+package kernbeisser;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.time.LocalDate;
+
+@Table
+@Entity
+public class Action {
+    public Action(){}
+    public Action(User user, Date date, String location, String action){
+        this.user=user;
+        this.date=date;
+        this.location=location;
+        this.action=action;
+    }
+
+    Action(User user,String location, String action){
+        this(user,Date.valueOf(LocalDate.now()),location,action);
+    }
+
+    Action(User user, String action){
+        this(user,null,action);
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int aid;
+
+    @ManyToOne
+    @JoinColumn
+    private User user;
+
+    @Column
+    private Date date;
+
+    @Column
+    private String location;
+
+    @Column
+    private String action;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public int getAid() {
+        return aid;
+    }
+
+    public User getUser() {
+        return user;
+    }
+}

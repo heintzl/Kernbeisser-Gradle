@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="back" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="commingSoon" pref="200" max="32767" attributes="0"/>
+                          <Component id="startCash" max="32767" attributes="0"/>
+                          <Component id="addUser" max="32767" attributes="0"/>
+                          <Component id="addItem" max="32767" attributes="0"/>
+                          <Component id="addPriceLists" alignment="0" pref="200" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="editUser" max="32767" attributes="0"/>
+                          <Component id="editItem" max="32767" attributes="0"/>
+                          <Component id="editPriceLists" pref="193" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+              </Group>
+              <EmptySpace pref="653" max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="back" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="120" max="32767" attributes="0"/>
+              <Component id="startCash" min="-2" pref="47" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+              <Component id="commingSoon" min="-2" pref="46" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="editUser" max="32767" attributes="0"/>
+                  <Component id="addUser" pref="50" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="editItem" max="32767" attributes="0"/>
+                  <Component id="addItem" pref="50" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="editPriceLists" max="32767" attributes="0"/>
+                  <Component id="addPriceLists" pref="50" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JButton" name="addItem">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Artikel Hinzuf&#xfc;gen"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addItemActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="addUser">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Nutzer Hinzuf&#xfc;gen"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addUserActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="addPriceLists">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Preislisten Hinzuf&#xfc;gen"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addPriceListsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="startCash">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Kassieren"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startCashActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="commingSoon">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="//Coming soon//"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="back">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&lt;-Zur&#xfc;ck"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="editUser">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Nutzer Bearbeiten"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editUserActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="editItem">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Artikel Bearbeiten"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editItemActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="editPriceLists">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Preislisten Bearbeiten"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPriceListsActionPerformed"/>
+      </Events>
+    </Component>
+  </SubComponents>
+</Form>
