@@ -25,6 +25,7 @@ import java.util.List;
  */
 public abstract class ManageUser extends JFrame implements Finishable {
     private List<Boolean> jobs = new ArrayList<>(20);
+    private UserGroup userGroup = new UserGroup();
     private JTable userSelector;
     private Translator t = new Translator();
     /**

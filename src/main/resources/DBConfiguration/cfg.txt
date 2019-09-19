@@ -1,0 +1,3 @@
+javax.persistence.jdbc.user;Application
+javax.persistence.jdbc.url;jdbc:mysql://localhost/kernbeisser
+javax.persistence.jdbc.password;KB29.06.2019CreateDate

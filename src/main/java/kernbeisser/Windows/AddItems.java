@@ -27,6 +27,8 @@ public abstract class AddItems extends JFrame implements Finishable {
     private Translator t = new Translator();
     private Supplier itemFilterSupplier;
     private PriceList itemFilterPriceList;
+    private DBTable kbItems;
+    private DBTable kkItems;
     /**
      * Creates new form AddItems
      */
@@ -44,8 +46,47 @@ public abstract class AddItems extends JFrame implements Finishable {
         setFilters();
         itemVAThigh.addActionListener(e -> itemVATlow.setSelected(!itemVAThigh.isSelected()));
         itemVATlow.addActionListener(e -> itemVAThigh.setSelected(!itemVATlow.isSelected()));
-        loadSearchSolutions();
-        searchSolutionPane.setSelectedIndex(0);
+        try {
+            kbItems= new DBTable("select i from Item i",500,
+                    Item.class.getDeclaredField("name"),
+                    Item.class.getDeclaredField("netPrice"),
+                    Item.class.getDeclaredField("amount"),
+                    Item.class.getDeclaredField("kbNumber"),
+                    Item.class.getDeclaredField("weighAble"),
+                    Item.class.getDeclaredField("deleted"));
+            kbItems.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    EntityManager em = DBConnection.getEntityManager();
+                    pasteData(em.createQuery("select i from Item i where i.kbNumber = "+
+                            kbItems.getValueAt(kbItems.getSelectedRow(),3), Item.class).getSingleResult()
+                    );
+                    em.close();
+                }
+            });
+            searchSolutionPane.addTab("Ergebnisse",new JScrollPane(kbItems));
+            kkItems = new DBTable("select i from ItemKK i",500,
+                    ItemKK.class.getDeclaredField("kkNumber"),
+                    ItemKK.class.getDeclaredField("name"),
+                    ItemKK.class.getDeclaredField("barcode"),
+                    ItemKK.class.getDeclaredField("netPrice"),
+                    ItemKK.class.getDeclaredField("amount"),
+                    ItemKK.class.getDeclaredField("unit")
+            );
+            kkItems.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    EntityManager em = DBConnection.getEntityManager();
+                    pasteData(
+                            em.createQuery("select i from ItemKK i where i.kkNumber = "+
+                                    kkItems.getValueAt(kkItems.getSelectedRow(),0),ItemKK.class)
+                                    .getSingleResult()
+                    );
+                }
+            });
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -597,7 +638,11 @@ public abstract class AddItems extends JFrame implements Finishable {
     }//GEN-LAST:event_itemSearchPriceListActionPerformed
 
     private void searchInCatalogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInCatalogActionPerformed
-        loadSearchSolutions();
+        if(searchInCatalog.isSelected()){
+            searchSolutionPane.addTab("Katalog",new JScrollPane(kkItems));
+        }else {
+            searchSolutionPane.remove(1);
+        }
     }//GEN-LAST:event_searchInCatalogActionPerformed
 
     private void searchBarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchBarKeyReleased
@@ -622,69 +667,23 @@ public abstract class AddItems extends JFrame implements Finishable {
     private void loadSearchSolutions(){
         String search = searchBar.getText();
         int selected = searchSolutionPane.getSelectedIndex();
-        searchSolutionPane.removeAll();
-        try {
-            Field[] fields = new Field[]{
-                    Item.class.getDeclaredField("name"),
-                    Item.class.getDeclaredField("netPrice"),
-                    Item.class.getDeclaredField("amount"),
-                    Item.class.getDeclaredField("kbNumber"),
-                    Item.class.getDeclaredField("weighAble"),
-                    Item.class.getDeclaredField("deleted"),
-            };
-            JTable jtable = Tools.createDBTable("select i from Item i where "+
-                    (itemFilterPriceList==null? "" : "i.priceList = "+itemFilterPriceList.getId()+" and ")+
-                    (itemFilterSupplier==null?"":"i.supplier = "+itemFilterSupplier.getName()+ " and ")+
-                    "(i.barcode like '%"+search+
+        kbItems.setQuery(
+                "select i from Item i where "+
+                (itemFilterPriceList==null? "" : "i.priceList = "+itemFilterPriceList.getId()+" and ")+
+                (itemFilterSupplier==null?"":"i.supplier = "+itemFilterSupplier.getName()+ " and ")+
+                "(i.barcode like '%"+search+
+                "%' or UPPER(i.name) like '%"+search.toUpperCase()+
+                "%' or i.kbNumber like '%"+search+"%') order by i.name asc"
+        );
+        if(searchInCatalog.isSelected()){
+            kkItems.setQuery("select i from ItemKK i where i.barcode like '%"+search+
                     "%' or UPPER(i.name) like '%"+search.toUpperCase()+
-                    "%' or i.kbNumber like '%"+search+"%') order by i.name asc",500,fields);
-            jtable.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    EntityManager em = DBConnection.getEntityManager();
-                    pasteData(em.createQuery("select i from Item i where i.kbNumber = "+
-                            jtable.getValueAt(jtable.getSelectedRow(),3), Item.class).getSingleResult()
-                    );
-                    em.close();
-                }
-            });
-            searchSolutionPane.addTab("Ergebnisse",new JScrollPane(jtable));
-            if(searchInCatalog.isSelected()){
-                searchSolutionPane.addTab("Katalog Ergebnisse",new JScrollPane(searchInCatalog(search)));
-            }
-            searchSolutionPane.setSelectedIndex(Math.min(selected,searchSolutionPane.getTabCount()-1));
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this,e.getMessage()+"\nBitte wenden sie sich an einer der Adminestratoren");
+                    "%' or i.kkNumber like '%"+ search+
+                    "%' order by i.name asc");
+            kkItems.refresh();
         }
-    }
-    private JTable searchInCatalog(String search){
-        try {
-            Field[] fields = new Field[]{
-                    ItemKK.class.getDeclaredField("kkNumber"),
-                    ItemKK.class.getDeclaredField("name"),
-                    ItemKK.class.getDeclaredField("barcode"),
-                    ItemKK.class.getDeclaredField("netPrice"),
-                    ItemKK.class.getDeclaredField("amount"),
-                    ItemKK.class.getDeclaredField("unit")
-            };
-            JTable jtable = Tools.createDBTable("select i from ItemKK i where i.barcode like '%"+search+"%' or UPPER(i.name) like '%"+search.toUpperCase()+"%' or i.kkNumber like '%"+ search+"%' order by i.name asc",500,fields);
-            jtable.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    EntityManager em = DBConnection.getEntityManager();
-                    pasteData(
-                            em.createQuery("select i from ItemKK i where i.kkNumber = "+
-                                    jtable.getValueAt(jtable.getSelectedRow(),0),ItemKK.class)
-                                    .getSingleResult()
-                    );
-                }
-            });
-            return jtable;
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        return null;
+        kbItems.refresh();
+        searchSolutionPane.setSelectedIndex(Math.min(selected,searchSolutionPane.getTabCount()-1));
     }
     private Item collect(){
         Checker c = new Checker();

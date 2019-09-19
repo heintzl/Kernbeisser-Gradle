@@ -3,6 +3,10 @@ package kernbeisser;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -143,15 +147,29 @@ public class DataImporter {
         for (String l : lines) {
             String[] columns = l.split(";");
             Supplier supplier = new Supplier();
+            supplier.setShortName(columns[0]);
             supplier.setName(columns[1]);
+            supplier.setPhoneNumber(columns[2]);
+            supplier.setEmail(columns[3]);
+            supplier.setAddress(columns[4]+";"+columns[5]);
+            supplier.setKeeper(columns[6]);
             suppliers.add(supplier);
         }
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
         suppliers.forEach(em::persist);
-        et.commit();
         em.flush();
+        et.commit();
         em.close();
+    }
+    public static void OpenDialog(Component c){
+        JFileChooser fc = new JFileChooser();
+        fc.addActionListener(e -> {
+            File f = fc.getSelectedFile();
+            if(f==null)return;
+            new DataImporter(f);
+        });
+        fc.showOpenDialog(c);
     }
 }

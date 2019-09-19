@@ -23,16 +23,16 @@ public class Main {
         User user;
         try {
             user = em.createQuery("select u from User u", User.class).getSingleResult();
-        }catch (NoResultException e){
+        }catch (NoResultException e) {
             user = new User();
         }
         User finalUser = user;
-        SwingUtilities.invokeLater(() -> new UserMenu(finalUser) {
+        SwingUtilities.invokeLater(() -> DataImporter.OpenDialog(new UserMenu(finalUser) {
             @Override
             public void finish(JFrame userMenu) {
                 new LogIn();
                 userMenu.dispose();
             }
-        });
+        }));
     }
 }
