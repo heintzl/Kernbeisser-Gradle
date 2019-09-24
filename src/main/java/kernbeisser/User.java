@@ -5,7 +5,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table
@@ -34,8 +36,9 @@ public class User implements Serializable {
     @Column
     private String extraJobs;
 
-    @ElementCollection
-    private List<Boolean> jobs = new ArrayList<>(20);
+    @JoinColumn
+    @OneToMany
+    private Set<Job> jobs = new HashSet<>(20);
 
     @Column
     private Date lastBuy;
@@ -136,12 +139,8 @@ public class User implements Serializable {
         this.extraJobs = extraJobs;
     }
 
-    public List<Boolean> getJobs() {
+    public Set<Job> getJobs() {
         return jobs;
-    }
-
-    public void setJobs(List<Boolean> jobs) {
-        this.jobs = jobs;
     }
 
     public Date getLastBuy() {

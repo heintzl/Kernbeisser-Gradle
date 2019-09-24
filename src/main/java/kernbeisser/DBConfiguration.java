@@ -25,13 +25,14 @@ public class DBConfiguration{
             }
         }else {
             try {
-                f.createNewFile();
-                DataSourceSelector ds = new DataSourceSelector();
                 ArrayList<String> outProperties = new ArrayList<>();
+                DataSourceSelector ds = new DataSourceSelector();
                 Map<String,String> conf = ds.getConfiguration();
+                ds.dispose();
                 conf.forEach((e1,e2)->outProperties.add(e1+";"+e2));
-                Files.write(f.toPath(),outProperties);
                 properties=conf;
+                f.createNewFile();
+                Files.write(f.toPath(),outProperties);
             } catch (IOException e) {
                 e.printStackTrace();
             }

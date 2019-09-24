@@ -17,15 +17,17 @@ import java.awt.event.MouseEvent;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
  * @author julik
  */
 public abstract class ManageUser extends JFrame implements Finishable {
-    private List<Boolean> jobs = new ArrayList<>(20);
     private UserGroup userGroup = new UserGroup();
+    private Set<Job> jobs = new HashSet<>();
     private JTable userSelector;
     private Translator t = new Translator();
     /**
@@ -361,14 +363,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jobsSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jobsSelectorActionPerformed
-        new JobSelector(jobs) {
-            @Override
-            void finish(List<Boolean> x) {
-                jobsSelector.setEnabled(true);
-                jobs=x;
-            }
-        };
-        jobsSelector.setEnabled(false);
+        new JobSelector(this,jobs);
     }//GEN-LAST:event_jobsSelectorActionPerformed
 
     private void addUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserActionPerformed

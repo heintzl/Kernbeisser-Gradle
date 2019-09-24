@@ -14,32 +14,29 @@ import java.nio.file.Files;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class DataImporter {
-    DataImporter(File f){
+    public DataImporter(File f){
+        if(!f.isDirectory())return;
+        HashMap<String,String> contents = new HashMap<>();
+        for (File file : f.listFiles()) {
+            contents.put(file.getName().toUpperCase(),getFileContent(file));
+        }
+        extractSuppliers(contents.get("SUPPLIERS.TXT"));
+        extractPriceLists(contents.get("PRICELISTS.TXT"));
+        extractItems(contents.get("ITEMS.TXT"));
+        //extractUser(contents.get("USER.TXT"));
+    }
+    private String getFileContent(File f){
         StringBuilder fileData = new StringBuilder();
         try {
-            Files.readAllLines(f.toPath(),StandardCharsets.ISO_8859_1).forEach(e -> fileData.append(e).append("\n"));
+            Files.readAllLines(f.toPath(),StandardCharsets.UTF_8).forEach(e -> fileData.append(e).append("\n"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        switch (f.getName().toUpperCase()){
-            case "USER.TXT":
-                extractUser(fileData.toString());
-                break;
-            case "ITEMS.TXT":
-                extractItems(fileData.toString());
-                break;
-            case "PRICELISTS.TXT":
-                extractPriceLists(fileData.toString());
-                break;
-            case "SUPPLIERS.TXT":
-                extractSuppliers(fileData.toString());
-                break;
-            default: System.err.println("Unknown format: "+f.getName());
-        }
-
+        return fileData.toString();
     }
     private void extractUser(String s){
         EntityManager em = DBConnection.getEntityManager();
@@ -68,7 +65,7 @@ public class DataImporter {
             item.setKbNumber(Integer.parseInt(columns[2]));
             item.setAmount(Integer.parseInt(columns[3]));
             item.setNetPrice(Integer.parseInt(columns[4]));
-            item.setSupplier(Supplier.getKKSupplier());
+            item.setSupplier(em.createQuery("select s from Supplier s where shortName like '"+columns[5].replace("GRE","GR")+"'",Supplier.class).getSingleResult());
             try {
                 Long ib = Long.parseLong(columns[6]);
                 if(!barcode.contains(ib)) {

@@ -13,6 +13,7 @@
         <class>kernbeisser.Shelf</class>
         <class>kernbeisser.ItemKK</class>
         <class>kernbeisser.UserGroup</class>
+        <class>kernbeisser.Job</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>

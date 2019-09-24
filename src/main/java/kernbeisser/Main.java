@@ -5,9 +5,11 @@ import kernbeisser.Windows.LogIn;
 import kernbeisser.Windows.UserMenu;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import java.io.File;
+import java.util.Random;
 
 public class Main {
     /**
@@ -27,12 +29,12 @@ public class Main {
             user = new User();
         }
         User finalUser = user;
-        SwingUtilities.invokeLater(() -> DataImporter.OpenDialog(new UserMenu(finalUser) {
+        SwingUtilities.invokeLater(() -> new UserMenu(finalUser) {
             @Override
             public void finish(JFrame userMenu) {
                 new LogIn();
                 userMenu.dispose();
             }
-        }));
+        });
     }
 }
