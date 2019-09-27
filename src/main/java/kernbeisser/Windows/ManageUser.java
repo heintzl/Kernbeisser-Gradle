@@ -10,6 +10,7 @@ import kernbeisser.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -26,18 +27,19 @@ import java.util.Set;
  * @author julik
  */
 public abstract class ManageUser extends JFrame implements Finishable {
-    private UserGroup userGroup = new UserGroup();
+    private UserGroup userGroup;
     private Set<Job> jobs = new HashSet<>();
-    private JTable userSelector;
+    private DBTable userSelector;
     private Translator t = new Translator();
     /**
      * Creates new form ManageUser
      */
     public ManageUser(Permission permission) {
         initComponents();
+        editUser.setEnabled(true);
         addWindowListener(new Finisher(this,this));
         try {
-            userSelector = Tools.createDBTable(
+            userSelector = new DBTable(
                     "select u from User u",
                     User.class.getDeclaredField("username"),
                     User.class.getDeclaredField("firstName"),
@@ -70,10 +72,14 @@ public abstract class ManageUser extends JFrame implements Finishable {
                 this.permission.addItem(t.translate(Permission.MONEY_MANAGER));
             case MANAGER:
                 this.permission.addItem(t.translate(Permission.MANAGER));
-                editUser.setEnabled(true);
-            case STANDARD:
                 this.permission.addItem(t.translate(Permission.STANDARD));
                 this.permission.addItem(t.translate(Permission.BEGINNER));
+                break;
+            case BEGINNER:
+            case STANDARD:
+                finish(this);
+                JOptionPane.showMessageDialog(this,"Sie haben leider kein zugriff auf dieses fenster");
+                return;
         }
         setVisible(true);
         addWindowListener(new Finisher(this,this));
@@ -88,44 +94,44 @@ public abstract class ManageUser extends JFrame implements Finishable {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new JLabel();
-        fistName = new JTextField();
-        jLabel2 = new JLabel();
-        surname = new JTextField();
-        jLabel3 = new JLabel();
-        phoneNumber1 = new JTextField();
-        phoneNumber2 = new JTextField();
-        jLabel4 = new JLabel();
-        jobsSelector = new JButton();
-        extraJobs = new JTextField();
-        jLabel7 = new JLabel();
-        address = new JTextField();
-        email = new JTextField();
-        jLabel8 = new JLabel();
-        jLabel9 = new JLabel();
-        back = new JButton();
-        jLabel10 = new JLabel();
-        street = new JTextField();
-        shares = new JSpinner();
-        solidaritySurcharge = new JSpinner();
-        jLabel11 = new JLabel();
-        jLabel12 = new JLabel();
-        permission = new JComboBox<>();
-        kernbeisserKey = new JCheckBox();
-        jLabel13 = new JLabel();
-        employee = new JCheckBox();
-        addUser = new JButton();
-        editUser = new JButton();
-        password = new JPasswordField();
-        username = new JTextField();
-        jLabel14 = new JLabel();
-        jLabel15 = new JLabel();
-        tableContainer = new JTabbedPane();
-        jCheckBox1 = new JCheckBox();
-        jLabel5 = new JLabel();
-        enterUserGroup = new JButton();
+        jLabel1 = new javax.swing.JLabel();
+        fistName = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        surname = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        phoneNumber1 = new javax.swing.JTextField();
+        phoneNumber2 = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jobsSelector = new javax.swing.JButton();
+        extraJobs = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        address = new javax.swing.JTextField();
+        email = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        back = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        street = new javax.swing.JTextField();
+        shares = new javax.swing.JSpinner();
+        solidaritySurcharge = new javax.swing.JSpinner();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        permission = new javax.swing.JComboBox<>();
+        kernbeisserKey = new javax.swing.JCheckBox();
+        jLabel13 = new javax.swing.JLabel();
+        employee = new javax.swing.JCheckBox();
+        addUser = new javax.swing.JButton();
+        editUser = new javax.swing.JButton();
+        password = new javax.swing.JPasswordField();
+        username = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        tableContainer = new javax.swing.JTabbedPane();
+        alone = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
+        enterUserGroup = new javax.swing.JButton();
 
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Vorname");
 
@@ -185,7 +191,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
 
         jLabel15.setText("Password");
 
-        jCheckBox1.setText("Alleine");
+        alone.setText("Alleine");
 
         jLabel5.setText("Gemeinschaft");
 
@@ -196,167 +202,167 @@ public abstract class ManageUser extends JFrame implements Finishable {
             }
         });
 
-        GroupLayout layout = new GroupLayout(getContentPane());
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(back)
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(username)
-                                    .addGap(32, 32, 32))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(jobsSelector, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(permission, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel13)
-                                        .addComponent(addUser, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel14))
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel15)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(password)
-                                    .addComponent(extraJobs)
-                                    .addComponent(jLabel7)
-                                    .addComponent(editUser, GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(fistName)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(phoneNumber1, GroupLayout.Alignment.LEADING)
-                                        .addComponent(email, GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 116, GroupLayout.PREFERRED_SIZE)
-                                            .addGap(8, 8, 8))
-                                        .addComponent(shares, GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel9, GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel11, GroupLayout.Alignment.LEADING)
-                                        .addComponent(street, GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel10)
-                                            .addGap(92, 92, 92)))))
-                            .addGap(32, 32, 32)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addGroup(GroupLayout.Alignment.TRAILING, layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addGroup(GroupLayout.Alignment.TRAILING, layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                            .addGroup(GroupLayout.Alignment.TRAILING, layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(address, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(back)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                                 .addGroup(layout.createSequentialGroup()
-                                                    .addGap(35, 35, 35)
-                                                    .addComponent(jLabel8)))
-                                            .addComponent(phoneNumber2, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel4)
-                                            .addComponent(enterUserGroup))
-                                        .addGroup(GroupLayout.Alignment.TRAILING, layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(solidaritySurcharge, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel12)
-                                            .addComponent(kernbeisserKey)
-                                            .addComponent(employee)))
-                                    .addComponent(jLabel2))
-                                .addComponent(surname, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(101, 101, 101)
-                        .addComponent(jLabel5))
-                    .addComponent(jCheckBox1))
-                .addGap(18, 18, 18)
-                .addComponent(tableContainer, GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
-                .addContainerGap())
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addGroup(layout.createSequentialGroup()
+                                                                        .addComponent(username)
+                                                                        .addGap(32, 32, 32))
+                                                                .addGroup(layout.createSequentialGroup()
+                                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(jobsSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addComponent(permission, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addComponent(jLabel13)
+                                                                                .addComponent(addUser, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addComponent(jLabel14))
+                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addComponent(jLabel15)
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                                        .addComponent(password)
+                                                                        .addComponent(extraJobs)
+                                                                        .addComponent(jLabel7)
+                                                                        .addComponent(editUser, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))))
+                                                .addGroup(layout.createSequentialGroup()
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                                .addComponent(fistName)
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel3)
+                                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                                                .addComponent(phoneNumber1, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(email, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addGroup(layout.createSequentialGroup()
+                                                                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addGap(8, 8, 8))
+                                                                                .addComponent(shares, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(street, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addGroup(layout.createSequentialGroup()
+                                                                                        .addComponent(jLabel10)
+                                                                                        .addGap(92, 92, 92)))))
+                                                        .addGap(32, 32, 32)
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                                                                .addComponent(address, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                .addGroup(layout.createSequentialGroup()
+                                                                                                        .addGap(35, 35, 35)
+                                                                                                        .addComponent(jLabel8)))
+                                                                                        .addComponent(phoneNumber2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addComponent(jLabel4)
+                                                                                        .addComponent(enterUserGroup))
+                                                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                                                        .addComponent(solidaritySurcharge, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addComponent(jLabel12)
+                                                                                        .addComponent(kernbeisserKey)
+                                                                                        .addComponent(employee)))
+                                                                        .addComponent(jLabel2))
+                                                                .addComponent(surname, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(101, 101, 101)
+                                                .addComponent(jLabel5))
+                                        .addComponent(alone))
+                                .addGap(18, 18, 18)
+                                .addComponent(tableContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(back)
-                        .addGap(15, 15, 15)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(fistName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(surname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(32, 32, 32)
-                                .addComponent(jCheckBox1)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(phoneNumber1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addGap(11, 11, 11)
-                                .addComponent(jLabel10)
-                                .addGap(3, 3, 3)
-                                .addComponent(street, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel5)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(enterUserGroup)
-                                .addGap(11, 11, 11)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(phoneNumber2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel8)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(address, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                        .addGap(1, 1, 1)
-                        .addComponent(jLabel9)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(email, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel11)
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(shares, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel12)
-                                        .addGap(7, 7, 7)
-                                        .addComponent(solidaritySurcharge, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                                .addGap(14, 14, 14)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel13)
-                                    .addComponent(kernbeisserKey))
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(permission, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(employee))
-                                .addGap(18, 18, 18)
-                                .addComponent(jobsSelector, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(extraJobs, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel14)
-                            .addComponent(jLabel15))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(password, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(username, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(addUser, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(editUser, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(tableContainer)))
-                .addGap(23, 23, 23))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addGap(6, 6, 6)
+                                                .addComponent(back)
+                                                .addGap(15, 15, 15)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel1)
+                                                        .addComponent(jLabel2))
+                                                .addGap(10, 10, 10)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(fistName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(surname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addGap(32, 32, 32)
+                                                                .addComponent(alone)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(jLabel3)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(phoneNumber1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(11, 11, 11)
+                                                                .addComponent(jLabel10)
+                                                                .addGap(3, 3, 3)
+                                                                .addComponent(street, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(jLabel5)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(enterUserGroup)
+                                                                .addGap(11, 11, 11)
+                                                                .addComponent(jLabel4)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(phoneNumber2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(jLabel8)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(address, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addGap(1, 1, 1)
+                                                .addComponent(jLabel9)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(10, 10, 10)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                        .addGroup(layout.createSequentialGroup()
+                                                                                .addComponent(jLabel11)
+                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(shares, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                        .addGroup(layout.createSequentialGroup()
+                                                                                .addComponent(jLabel12)
+                                                                                .addGap(7, 7, 7)
+                                                                                .addComponent(solidaritySurcharge, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                .addGap(14, 14, 14)
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                        .addComponent(jLabel13)
+                                                                        .addComponent(kernbeisserKey))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                        .addComponent(permission, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(employee))
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(jobsSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(jLabel7)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(extraJobs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel14)
+                                                        .addComponent(jLabel15))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, Short.MAX_VALUE)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(addUser, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(editUser, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(20, 20, 20)
+                                                .addComponent(tableContainer)))
+                                .addGap(23, 23, 23))
         );
 
         pack();
@@ -371,6 +377,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
         EntityTransaction et = em.getTransaction();
         et.begin();
         User user = collectData();
+        if(user==null)return;
         if(user.getUsername().length()<3){
             JOptionPane.showMessageDialog(this,"Der gewählte Benutzername ist zu kurz!");
             Tools.ping(username);
@@ -378,18 +385,25 @@ public abstract class ManageUser extends JFrame implements Finishable {
         }else
         if(JOptionPane.showConfirmDialog(this,"Wollen sie diesen Benutzer wirklich erstellen?")==0){
             try {
+                if(alone.isSelected()){
+                    userGroup=new UserGroup();
+                    em.persist(userGroup);
+                    user.setUserGroup(userGroup);
+                }
                 em.persist(user);
             }catch (PersistenceException e){
                 JOptionPane.showMessageDialog(this,"Der Benutzername ist bereits vergeben!");
+                et.rollback();
+                em.close();
+                return;
             }
             em.flush();
             et.commit();
             JOptionPane.showMessageDialog(this,"Nutzer erfolgreich erstellt!","Erfolg",JOptionPane.INFORMATION_MESSAGE);
             em.close();
-            refreshTable();
+            userSelector.refresh();
         }else {
             em.close();
-            return;
         }
     }//GEN-LAST:event_addUserActionPerformed
     private void editUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editUserActionPerformed
@@ -407,7 +421,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
         em.flush();
         et.commit();
         em.close();
-        refreshTable();
+        userSelector.refresh();
     }//GEN-LAST:event_editUserActionPerformed
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
@@ -416,14 +430,16 @@ public abstract class ManageUser extends JFrame implements Finishable {
     }//GEN-LAST:event_backActionPerformed
 
     private void enterUserGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enterUserGroupActionPerformed
-
+        new UserGroupSelector(e -> {
+            userGroup=e;
+            alone.setSelected(false);
+        });
     }//GEN-LAST:event_enterUserGroupActionPerformed
 
     private User collectData(){
         return collectData(new User());
     }
     private User collectData(User user){
-        user.setCreateDate(Date.valueOf(LocalDate.now()));
         user.setFirstName(fistName.getText());
         user.setSurname(surname.getText());
         user.setPhoneNumber1(phoneNumber1.getText());
@@ -439,20 +455,14 @@ public abstract class ManageUser extends JFrame implements Finishable {
         user.getJobs().addAll(jobs);
         user.setExtraJobs(extraJobs.getText());
         user.setUsername(username.getText());
+        if(!alone.isSelected()&&userGroup==null){
+            Tools.ping(enterUserGroup);
+            Tools.ping(alone);
+            return null;
+        }
+        user.setUserGroup(userGroup);
         user.setPassword(BCrypt.withDefaults().hashToString(12,password.getPassword()));
         return user;
-    }
-    private void refreshTable(){
-        try {
-            userSelector.setModel(Tools.createDBTable(
-                    "select u from User u",
-                    User.class.getDeclaredField("username"),
-                    User.class.getDeclaredField("firstName"),
-                    User.class.getDeclaredField("surname")
-            ).getModel());
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
     }
     private void paste(User user){
         fistName.setText(user.getFirstName());
@@ -471,44 +481,45 @@ public abstract class ManageUser extends JFrame implements Finishable {
         jobs=user.getJobs();
         extraJobs.setText(user.getExtraJobs());
         username.setText(user.getUsername());
+        userGroup=user.getUserGroup();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton addUser;
-    private JTextField address;
-    private JButton back;
-    private JButton editUser;
-    private JTextField email;
-    private JCheckBox employee;
-    private JButton enterUserGroup;
-    private JTextField extraJobs;
-    private JTextField fistName;
-    private JCheckBox jCheckBox1;
-    private JLabel jLabel1;
-    private JLabel jLabel10;
-    private JLabel jLabel11;
-    private JLabel jLabel12;
-    private JLabel jLabel13;
-    private JLabel jLabel14;
-    private JLabel jLabel15;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
-    private JLabel jLabel4;
-    private JLabel jLabel5;
-    private JLabel jLabel7;
-    private JLabel jLabel8;
-    private JLabel jLabel9;
-    private JButton jobsSelector;
-    private JCheckBox kernbeisserKey;
-    private JPasswordField password;
-    private JComboBox<String> permission;
-    private JTextField phoneNumber1;
-    private JTextField phoneNumber2;
-    private JSpinner shares;
-    private JSpinner solidaritySurcharge;
-    private JTextField street;
-    private JTextField surname;
-    private JTabbedPane tableContainer;
-    private JTextField username;
+    private javax.swing.JButton addUser;
+    private javax.swing.JTextField address;
+    private javax.swing.JCheckBox alone;
+    private javax.swing.JButton back;
+    private javax.swing.JButton editUser;
+    private javax.swing.JTextField email;
+    private javax.swing.JCheckBox employee;
+    private javax.swing.JButton enterUserGroup;
+    private javax.swing.JTextField extraJobs;
+    private javax.swing.JTextField fistName;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JButton jobsSelector;
+    private javax.swing.JCheckBox kernbeisserKey;
+    private javax.swing.JPasswordField password;
+    private javax.swing.JComboBox<String> permission;
+    private javax.swing.JTextField phoneNumber1;
+    private javax.swing.JTextField phoneNumber2;
+    private javax.swing.JSpinner shares;
+    private javax.swing.JSpinner solidaritySurcharge;
+    private javax.swing.JTextField street;
+    private javax.swing.JTextField surname;
+    private javax.swing.JTabbedPane tableContainer;
+    private javax.swing.JTextField username;
     // End of variables declaration//GEN-END:variables
 }

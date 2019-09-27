@@ -1,6 +1,9 @@
 package kernbeisser;
 
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
@@ -12,7 +15,6 @@ import java.util.Set;
 @Entity
 @Table
 public class User implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(updatable = false,insertable = false,nullable = false)
@@ -76,8 +78,11 @@ public class User implements Serializable {
     @Column
     private String email;
 
-    @Column
+    @CreationTimestamp
     private Date createDate;
+
+    @UpdateTimestamp
+    private Date updateDate;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -246,11 +251,6 @@ public class User implements Serializable {
     public Date getCreateDate() {
         return createDate;
     }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
     public List<String> getTransferDate() {
         return transferDate;
     }
@@ -320,4 +320,9 @@ public class User implements Serializable {
     public void setUserGroup(UserGroup userGroup) {
         this.userGroup = userGroup;
     }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+    
 }

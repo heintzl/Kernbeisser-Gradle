@@ -171,6 +171,7 @@ public abstract class CashierMenu extends JFrame implements Finishable {
     }//GEN-LAST:event_addItemActionPerformed
 
     private void addUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserActionPerformed
+        setVisible(false);
         new ManageUser(user.getPermission())   {
             @Override
             public void finish(JFrame thisWindow) {
@@ -178,7 +179,6 @@ public abstract class CashierMenu extends JFrame implements Finishable {
                 CashierMenu.this.setVisible(true);
             }
         };
-        setVisible(false);
     }//GEN-LAST:event_addUserActionPerformed
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed

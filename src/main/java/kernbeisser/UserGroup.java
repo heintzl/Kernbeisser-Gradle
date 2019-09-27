@@ -20,7 +20,7 @@ public class UserGroup {
         this.value = value;
     }
 
-    public int getGid() {
+    public int getId() {
         return gid;
     }
 }

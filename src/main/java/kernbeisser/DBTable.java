@@ -3,6 +3,7 @@ package kernbeisser;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -17,12 +18,18 @@ public class DBTable extends JTable {
         this.fields=fields;
         refresh();
     }
+    public DBTable(String query, Field... fields){
+        this.query=query;
+        this.fields=fields;
+        refresh();
+    }
     DBTable(String query,int max){
         this.query=query;
         this.max=max;
         refresh();
     }
     public void refresh(){
+        if(query.equals(""))return;
         EntityManager em = DBConnection.getEntityManager();
         Query dbQuery = em.createQuery(query);
         if(max>0)
@@ -40,7 +47,12 @@ public class DBTable extends JTable {
             }
         }
         em.close();
-        setModel(new DefaultTableModel(values, Tools.transform(fields,String.class, Field::getName)));
+        setModel(new DefaultTableModel(values, Tools.transform(fields,String.class, Field::getName)){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
     }
     public void setQuery(String query) {
         this.query = query;
@@ -49,7 +61,7 @@ public class DBTable extends JTable {
         this.max = max;
     }
 
-    public void setFields(Field[] fields) {
+    public void setFields(Field ... fields) {
         this.fields = fields;
     }
 }

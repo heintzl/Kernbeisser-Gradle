@@ -44,12 +44,12 @@ public class LogIn extends JFrame implements Finishable {
                     User.class.getDeclaredField("surname"),
             };
             for (int i = 97; i < 123; i++) {
-                JTable jTable = Tools.createDBTable("select u from User u where u.username like '" + ((char) i) + "%' Order by username asc",fields);
-                jTable.getTableHeader().setFont(new Font("arial",1,12));
-                jTable.getSelectionModel().addListSelectionListener(e -> username.setText((String) jTable.getValueAt(jTable.getSelectedRow(), 0)));
-                jTabbedPane1.addTab(String.valueOf(Character.toUpperCase((char) i)), new JScrollPane(jTable));
+                DBTable dbTable = new DBTable("select u from User u where u.username like '" + ((char) i) + "%' Order by username asc",fields);
+                dbTable.getTableHeader().setFont(new Font("arial",1,12));
+                dbTable.getSelectionModel().addListSelectionListener(e -> username.setText((String) dbTable.getValueAt(dbTable.getSelectedRow(), 0)));
+                jTabbedPane1.addTab(String.valueOf(Character.toUpperCase((char) i)), new JScrollPane(dbTable));
             }
-            JTable allUser = Tools.createDBTable("select u from User u",fields);
+            DBTable allUser = new DBTable("select u from User u",fields);
             allUser.getTableHeader().setFont(new Font("arial",1,12));
             allUser.getSelectionModel().addListSelectionListener(e -> username.setText((String) allUser.getValueAt(allUser.getSelectedRow(), 0)));
             jTabbedPane1.addTab("Alle",new JScrollPane(allUser));

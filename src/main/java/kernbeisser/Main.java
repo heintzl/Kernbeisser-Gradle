@@ -5,11 +5,9 @@ import kernbeisser.Windows.LogIn;
 import kernbeisser.Windows.UserMenu;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import java.io.File;
-import java.util.Random;
 
 public class Main {
     /**
@@ -24,9 +22,10 @@ public class Main {
         EntityManager em = DBConnection.getEntityManager();
         User user;
         try {
-            user = em.createQuery("select u from User u", User.class).getSingleResult();
+            user = em.createQuery("select u from User u", User.class).setMaxResults(1).getSingleResult();
         }catch (NoResultException e) {
             user = new User();
+            user.setPermission(Permission.ADMIN);
         }
         User finalUser = user;
         SwingUtilities.invokeLater(() -> new UserMenu(finalUser) {
@@ -35,6 +34,6 @@ public class Main {
                 new LogIn();
                 userMenu.dispose();
             }
-        });
+        }.setIconImage(Images.getImage("Icon.png")));
     }
 }

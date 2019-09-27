@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class Job implements Nodeable {
+public class Job implements Nodeable{
     @Id
     @GeneratedValue
     private int jid;
