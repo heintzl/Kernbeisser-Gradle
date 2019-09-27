@@ -8,6 +8,7 @@ import kernbeisser.Finishable;
 import kernbeisser.User;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  *
@@ -283,13 +284,16 @@ public abstract class UserMenu extends JFrame implements Finishable {
     }//GEN-LAST:event_startStatsActionPerformed
 
     private void startShoppingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
-        new Purchase(){
-            @Override
-            public void finish(JFrame cashierMenu) {
-                cashierMenu.dispose();
-                UserMenu.this.setVisible(true);
-            }
-        };
+        JFrame jFrame = new JFrame();
+        jFrame.setLayout(new GridLayout(1,1));
+        jFrame.add(new ShoppingMask());
+        jFrame.addWindowListener(new Finisher(thisWindow -> {
+            thisWindow.dispose();
+            UserMenu.this.setVisible(true);
+        },this));
+        jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_startShoppingActionPerformed
 

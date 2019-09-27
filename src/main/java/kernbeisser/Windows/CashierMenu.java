@@ -10,6 +10,7 @@ import kernbeisser.Images;
 import kernbeisser.User;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  *
@@ -231,13 +232,16 @@ public abstract class CashierMenu extends JFrame implements Finishable {
     }//GEN-LAST:event_editPriceListsActionPerformed
 
     private void startCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashActionPerformed
-        new Purchase()  {
-            @Override
-            public void finish(JFrame thisWindow) {
-                thisWindow.dispose();
-                CashierMenu.this.setVisible(true);
-            }
-        };
+        JFrame jFrame = new JFrame();
+        jFrame.setLayout(new GridLayout(1,1));
+        jFrame.add(new ShoppingMask());
+        jFrame.addWindowListener(new Finisher(thisWindow -> {
+            thisWindow.dispose();
+            CashierMenu.this.setVisible(true);
+        },this));
+        jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_startCashActionPerformed
 
