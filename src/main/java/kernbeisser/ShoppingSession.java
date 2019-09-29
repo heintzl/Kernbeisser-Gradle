@@ -1,17 +1,19 @@
 package kernbeisser;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Table
 @Entity
 public class ShoppingSession {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int sid;
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private User customer;
+
     @ManyToOne
     @JoinColumn
     private User seller;

@@ -2,7 +2,6 @@ package kernbeisser;
 
 import kernbeisser.StartUp.DataSourceSelector;
 
-import javax.security.auth.login.Configuration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

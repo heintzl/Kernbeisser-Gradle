@@ -1,7 +1,11 @@
 package kernbeisser;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Date;
 
 @Entity
 @Table(name = "Suppliers")
@@ -35,6 +39,12 @@ public class Supplier implements Serializable {
 
     @Column
     private String keeper;
+
+    @CreationTimestamp
+    private Date createDate;
+
+    @UpdateTimestamp
+    private Date updateDate;
 
     @Override
     public String toString() {

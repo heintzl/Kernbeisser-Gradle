@@ -35,5 +35,5 @@ public class Main {
                 dispose();
             }
         }.setIconImage(Images.getImage("Icon.png")));
-    }
+}
 }
