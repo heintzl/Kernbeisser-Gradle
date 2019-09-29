@@ -37,7 +37,7 @@ public class LogIn extends JFrame implements Finishable {
             add(b);
             setLocationRelativeTo(null);
             setVisible(true);
-            addWindowListener(new Finisher(this,this));
+            addWindowListener(new Finisher(this));
             Field[] fields = new Field[]{
                     User.class.getDeclaredField("username"),
                     User.class.getDeclaredField("firstName"),
@@ -161,9 +161,9 @@ public class LogIn extends JFrame implements Finishable {
             }
             new UserMenu(user) {
                 @Override
-                public void finish(JFrame userMenu) {
+                public void finish() {
                     new LogIn();
-                    userMenu.dispose();
+                    dispose();
                 }
             };
             loggedIn=user;
@@ -184,7 +184,7 @@ public class LogIn extends JFrame implements Finishable {
     private JTextField username;
 
     @Override
-    public void finish(JFrame thisWindow) {
+    public void finish() {
         System.exit(0);
     }
     // End of variables declaration//GEN-END:variables

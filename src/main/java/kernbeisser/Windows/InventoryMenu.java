@@ -19,7 +19,7 @@ public abstract class InventoryMenu extends javax.swing.JFrame implements Finish
     public InventoryMenu() {
         initComponents();
         setVisible(true);
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
 
     }
 

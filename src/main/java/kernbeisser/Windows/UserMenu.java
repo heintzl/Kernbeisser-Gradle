@@ -22,14 +22,12 @@ public abstract class UserMenu extends JFrame implements Finishable {
     public UserMenu(User user) {
         this.user=user;
         initComponents();
-        //username.setText(user.getUsername()+"!");
+        username.setText(user.getUsername()+"!");
         setSize(1070,678);
         setLocationRelativeTo(null);
         setVisible(true);
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
     }
-
-    public abstract void finish(JFrame userMenu);
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -238,8 +236,8 @@ public abstract class UserMenu extends JFrame implements Finishable {
     private void startCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashierActionPerformed
         new CashierMenu(user) {
             @Override
-            public void finish(JFrame cashierMenu) {
-                cashierMenu.dispose();
+            public void finish() {
+                dispose();
                 UserMenu.this.setVisible(true);
             }
         };
@@ -254,8 +252,8 @@ public abstract class UserMenu extends JFrame implements Finishable {
     private void startInventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startInventoryActionPerformed
         new InventoryMenu(){
             @Override
-            public void finish(JFrame cashierMenu) {
-                cashierMenu.dispose();
+            public void finish() {
+                dispose();
                 UserMenu.this.setVisible(true);
             }
         };
@@ -265,8 +263,8 @@ public abstract class UserMenu extends JFrame implements Finishable {
     private void startOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startOptionsActionPerformed
         new Options(){
             @Override
-            public void finish(JFrame cashierMenu) {
-                cashierMenu.dispose();
+            public void finish() {
+                dispose();
                 UserMenu.this.setVisible(true);
             }
         };
@@ -275,8 +273,8 @@ public abstract class UserMenu extends JFrame implements Finishable {
     private void startStatsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStatsActionPerformed
         new Stats(){
             @Override
-            public void finish(JFrame cashierMenu) {
-                cashierMenu.dispose();
+            public void finish() {
+                dispose();
                 UserMenu.this.setVisible(true);
             }
         };
@@ -286,11 +284,11 @@ public abstract class UserMenu extends JFrame implements Finishable {
     private void startShoppingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
         JFrame jFrame = new JFrame();
         jFrame.setLayout(new GridLayout(1,1));
-        jFrame.add(new ShoppingMask());
-        jFrame.addWindowListener(new Finisher(thisWindow -> {
-            thisWindow.dispose();
+        jFrame.add(new ShoppingMask(user,null));
+        jFrame.addWindowListener(new Finisher(() -> {
+            dispose();
             UserMenu.this.setVisible(true);
-        },this));
+        }));
         jFrame.pack();
         jFrame.setLocationRelativeTo(null);
         jFrame.setVisible(true);

@@ -20,18 +20,17 @@ import java.util.HashMap;
  *
  * @author julik
  */
-public class CatalogInput extends JFrame {
+public abstract class CatalogInput extends JFrame implements Finishable{
 
     /**
      * Creates new form ItemDataInput
      */
     public CatalogInput() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
         initComponents();
+        addWindowListener(new Finisher(this));
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     /**
@@ -161,10 +160,6 @@ public class CatalogInput extends JFrame {
         }).start();
     }//GEN-LAST:event_kkItemDataActionPerformed
 
-    public static void main(String[] args){
-        CatalogInput dataInput = new CatalogInput();
-        dataInput.setVisible(true);
-    }
     private ItemKK extractItemKK(String line){
         ItemKK item = new ItemKK();
         String[] values = line.split(";");

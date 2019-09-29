@@ -27,23 +27,15 @@
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="back" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="commingSoon" pref="200" max="32767" attributes="0"/>
-                          <Component id="startCash" max="32767" attributes="0"/>
-                          <Component id="addUser" max="32767" attributes="0"/>
-                          <Component id="addItem" max="32767" attributes="0"/>
-                          <Component id="addPriceLists" alignment="0" pref="200" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="editUser" max="32767" attributes="0"/>
-                          <Component id="editItem" max="32767" attributes="0"/>
-                          <Component id="editPriceLists" pref="193" max="32767" attributes="0"/>
-                      </Group>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="catalogRefresh" pref="200" max="32767" attributes="0"/>
+                      <Component id="startCash" max="32767" attributes="0"/>
+                      <Component id="addUser" max="32767" attributes="0"/>
+                      <Component id="addItem" max="32767" attributes="0"/>
+                      <Component id="addPriceLists" alignment="0" pref="200" max="32767" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="653" max="32767" attributes="0"/>
+              <EmptySpace pref="887" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -55,22 +47,13 @@
               <EmptySpace pref="120" max="32767" attributes="0"/>
               <Component id="startCash" min="-2" pref="47" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-              <Component id="commingSoon" min="-2" pref="46" max="-2" attributes="0"/>
+              <Component id="catalogRefresh" min="-2" pref="46" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="editUser" max="32767" attributes="0"/>
-                  <Component id="addUser" pref="50" max="32767" attributes="0"/>
-              </Group>
+              <Component id="addUser" min="-2" pref="50" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="editItem" max="32767" attributes="0"/>
-                  <Component id="addItem" pref="50" max="32767" attributes="0"/>
-              </Group>
+              <Component id="addItem" min="-2" pref="50" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="editPriceLists" max="32767" attributes="0"/>
-                  <Component id="addPriceLists" pref="50" max="32767" attributes="0"/>
-              </Group>
+              <Component id="addPriceLists" min="-2" pref="50" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -79,7 +62,7 @@
   <SubComponents>
     <Component class="javax.swing.JButton" name="addItem">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Artikel Hinzuf&#xfc;gen"/>
+        <Property name="text" type="java.lang.String" value="Artikel Bearbeiten"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addItemActionPerformed"/>
@@ -87,7 +70,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="addUser">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Nutzer Hinzuf&#xfc;gen"/>
+        <Property name="text" type="java.lang.String" value="Nutzer Bearbeiten"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addUserActionPerformed"/>
@@ -95,7 +78,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="addPriceLists">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Preislisten Hinzuf&#xfc;gen"/>
+        <Property name="text" type="java.lang.String" value="Preislisten Bearbeiten"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addPriceListsActionPerformed"/>
@@ -109,10 +92,13 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startCashActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="commingSoon">
+    <Component class="javax.swing.JButton" name="catalogRefresh">
       <Properties>
-        <Property name="text" type="java.lang.String" value="//Coming soon//"/>
+        <Property name="text" type="java.lang.String" value="Katalog Aktualiesieren"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="catalogRefreshActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="back">
       <Properties>
@@ -120,30 +106,6 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="editUser">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Nutzer Bearbeiten"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editUserActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="editItem">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Artikel Bearbeiten"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editItemActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="editPriceLists">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Preislisten Bearbeiten"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPriceListsActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

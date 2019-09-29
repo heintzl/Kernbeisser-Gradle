@@ -35,4 +35,10 @@ public class ShoppingSession {
     public void setSeller(User seller) {
         this.seller = seller;
     }
+
+    public ShoppingSession(){}
+    public ShoppingSession(User customer,User seller){
+        setCustomer(customer);
+        setSeller(seller);
+    }
 }

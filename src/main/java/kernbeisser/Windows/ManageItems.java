@@ -23,7 +23,7 @@ import java.util.ArrayList;
  *
  * @author julik
  */
-public abstract class AddItems extends JFrame implements Finishable {
+public abstract class ManageItems extends JFrame implements Finishable {
     private Translator t = new Translator();
     private Supplier itemFilterSupplier;
     private PriceList itemFilterPriceList;
@@ -32,10 +32,10 @@ public abstract class AddItems extends JFrame implements Finishable {
     /**
      * Creates new form AddItems
      */
-    public AddItems() {
+    public ManageItems() {
         initComponents();
         setVisible(true);
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
         EntityManager em = DBConnection.getEntityManager();
         em.createQuery("select p from PriceList p",PriceList.class).getResultStream().forEach(e -> itemPriceList.addItem(e.getName()));
         em.createQuery("select s from Supplier s",Supplier.class).getResultStream().forEach(e -> itemSupplier.addItem(e.getName()));
@@ -651,8 +651,8 @@ public abstract class AddItems extends JFrame implements Finishable {
     private void requestFilter(){
         new ItemFilter() {
             @Override
-            public void finish(JFrame thisWindow) {
-                thisWindow.dispose();
+            public void finish() {
+                dispose();
                 filter.setEnabled(true);
                 loadSearchSolutions();
             }

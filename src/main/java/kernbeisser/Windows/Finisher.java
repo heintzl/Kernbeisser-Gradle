@@ -11,10 +11,8 @@ import java.awt.event.WindowEvent;
  */
 public class Finisher extends WindowAdapter {
     private Finishable window;
-    private JFrame jFrame;
-    Finisher(Finishable window, JFrame jFrame){
+    Finisher(Finishable window){
         this.window=window;
-        this.jFrame = jFrame;
     }
 
     /**
@@ -24,6 +22,6 @@ public class Finisher extends WindowAdapter {
      */
     @Override
     public void windowClosing(WindowEvent e) {
-        window.finish(jFrame);
+        window.finish();
     }
 }

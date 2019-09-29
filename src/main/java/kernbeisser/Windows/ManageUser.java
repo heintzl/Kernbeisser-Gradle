@@ -37,7 +37,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
     public ManageUser(Permission permission) {
         initComponents();
         editUser.setEnabled(true);
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
         try {
             userSelector = new DBTable(
                     "select u from User u",
@@ -77,12 +77,12 @@ public abstract class ManageUser extends JFrame implements Finishable {
                 break;
             case BEGINNER:
             case STANDARD:
-                finish(this);
+                finish();
                 JOptionPane.showMessageDialog(this,"Sie haben leider kein zugriff auf dieses fenster");
                 return;
         }
         setVisible(true);
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
 
     }
     /**
@@ -425,7 +425,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
     }//GEN-LAST:event_editUserActionPerformed
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
-        finish(this);
+        finish();
         dispose();
     }//GEN-LAST:event_backActionPerformed
 

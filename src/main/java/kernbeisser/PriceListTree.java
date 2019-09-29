@@ -33,8 +33,8 @@ public class PriceListTree extends JTree {
                 Object o = getLastSelectedPathComponent();
                 if (o != null && o.toString().equals("Neu Hinzufügen/Bearbeiten")) new ManagePriceLists() {
                     @Override
-                    public void finish(JFrame thisWindow) {
-                        thisWindow.dispose();
+                    public void finish() {
+                        dispose();
                         PriceListTree.this.setModel(new PriceListTree().getModel());
                     }
                 };

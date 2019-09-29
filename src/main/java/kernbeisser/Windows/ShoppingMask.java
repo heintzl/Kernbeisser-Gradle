@@ -5,19 +5,27 @@
  */
 package kernbeisser.Windows;
 
+import kernbeisser.ShoppingSession;
+import kernbeisser.User;
+
+import javax.persistence.EntityManager;
+
 /**
  *
  * @author julik
  */
 public class ShoppingMask extends javax.swing.JPanel {
-
+    private ShoppingSession shoppingSession;
     /**
      * Creates new form ShoppingMask
      */
-    public ShoppingMask() {
+    public ShoppingMask(User customer,User seller) {
+        shoppingSession = new ShoppingSession(customer,seller);
         initComponents();
     }
+    public void getSum(){
 
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,7 +52,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         depositOut = new javax.swing.JRadioButton();
         rawPrice = new javax.swing.JTextField();
         organics = new javax.swing.JRadioButton();
-        backware = new javax.swing.JRadioButton();
+        bakeryProduct = new javax.swing.JRadioButton();
         jLabel11 = new javax.swing.JLabel();
         jPanel15 = new javax.swing.JPanel();
         itemNumber = new javax.swing.JTextField();
@@ -210,11 +218,11 @@ public class ShoppingMask extends javax.swing.JPanel {
             }
         });
 
-        kindOfSelection.add(backware);
-        backware.setText("Backwaren");
-        backware.addActionListener(new java.awt.event.ActionListener() {
+        kindOfSelection.add(bakeryProduct);
+        bakeryProduct.setText("Backwaren");
+        bakeryProduct.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backwareActionPerformed(evt);
+                bakeryProductActionPerformed(evt);
             }
         });
 
@@ -227,7 +235,7 @@ public class ShoppingMask extends javax.swing.JPanel {
             .addGroup(jPanel14Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(backware)
+                    .addComponent(bakeryProduct)
                     .addComponent(rawPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(organics)
                     .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -244,7 +252,7 @@ public class ShoppingMask extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(organics)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(backware)
+                .addComponent(bakeryProduct)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -889,9 +897,9 @@ public class ShoppingMask extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_organicsActionPerformed
 
-    private void backwareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backwareActionPerformed
+    private void bakeryProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bakeryProductActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_backwareActionPerformed
+    }//GEN-LAST:event_bakeryProductActionPerformed
 
     private void depositActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depositActionPerformed
         // TODO add your handling code here:
@@ -976,7 +984,7 @@ public class ShoppingMask extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addHiddenItem;
-    private javax.swing.JRadioButton backware;
+    private javax.swing.JRadioButton bakeryProduct;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton clearShoppingSession;
     private javax.swing.JSpinner customDiscount;
@@ -1053,5 +1061,9 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JLabel userName;
     private javax.swing.JLabel userValueLater;
     private javax.swing.JLabel userValueNow;
+
+    public ShoppingSession getShoppingSession() {
+        return shoppingSession;
+    }
     // End of variables declaration//GEN-END:variables
 }

@@ -19,7 +19,7 @@ public abstract class Options extends javax.swing.JFrame implements Finishable {
     public Options() {
         initComponents();
         setVisible(true);
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
     }
 
     /**

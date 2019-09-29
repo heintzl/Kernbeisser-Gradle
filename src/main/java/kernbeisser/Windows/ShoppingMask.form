@@ -212,7 +212,7 @@
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="backware" min="-2" max="-2" attributes="0"/>
+                              <Component id="bakeryProduct" min="-2" max="-2" attributes="0"/>
                               <Component id="rawPrice" alignment="0" min="-2" pref="133" max="-2" attributes="0"/>
                               <Component id="organics" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jPanel13" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -232,7 +232,7 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="organics" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="backware" min="-2" max="-2" attributes="0"/>
+                          <Component id="bakeryProduct" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jPanel13" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -333,7 +333,7 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="organicsActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JRadioButton" name="backware">
+                <Component class="javax.swing.JRadioButton" name="bakeryProduct">
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="kindOfSelection"/>
@@ -341,7 +341,7 @@
                     <Property name="text" type="java.lang.String" value="Backwaren"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backwareActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bakeryProductActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel11">

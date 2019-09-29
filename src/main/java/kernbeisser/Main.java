@@ -30,9 +30,9 @@ public class Main {
         User finalUser = user;
         SwingUtilities.invokeLater(() -> new UserMenu(finalUser) {
             @Override
-            public void finish(JFrame userMenu) {
+            public void finish() {
                 new LogIn();
-                userMenu.dispose();
+                dispose();
             }
         }.setIconImage(Images.getImage("Icon.png")));
     }

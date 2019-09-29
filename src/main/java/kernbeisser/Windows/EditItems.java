@@ -19,7 +19,7 @@ public abstract class EditItems extends javax.swing.JFrame implements Finishable
     public EditItems() {
         initComponents();
         setVisible(true);
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
     }
 
     /**

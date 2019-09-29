@@ -19,7 +19,7 @@ public abstract class Stats extends javax.swing.JFrame implements Finishable {
     public Stats() {
         initComponents();
         setVisible(true);
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
     }
 
     /**

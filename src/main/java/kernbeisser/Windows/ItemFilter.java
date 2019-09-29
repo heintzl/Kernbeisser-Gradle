@@ -26,11 +26,11 @@ public abstract class ItemFilter extends JFrame implements Finishable {
     abstract void filterSelected(PriceList p,Supplier s);
     public ItemFilter() {
         EntityManager em = DBConnection.getEntityManager();
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
         initComponents();
         priceListPane.setLayout(new BorderLayout());
         priceListPane.add(new JScrollPane(priceListTree));
-        priceListTree.addTreeSelectionListener(e -> finish());
+        priceListTree.addTreeSelectionListener(e -> filterSelect());
         DefaultListModel<Supplier> suppliersModel = new DefaultListModel<>();
         em.createQuery("select s from Supplier s",Supplier.class).getResultStream().forEach(suppliersModel::addElement);
         em.close();
@@ -40,7 +40,7 @@ public abstract class ItemFilter extends JFrame implements Finishable {
         }
         setVisible(true);
     }
-    private void finish(){
+    private void filterSelect(){
         EntityManager em = DBConnection.getEntityManager();
         Object o = priceListTree.getLastSelectedPathComponent();
         try {
@@ -132,8 +132,8 @@ public abstract class ItemFilter extends JFrame implements Finishable {
     }// </editor-fold>//GEN-END:initComponents
 
     private void finishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishActionPerformed
+        filterSelect();
         finish();
-        finish(this);
 
     }//GEN-LAST:event_finishActionPerformed
 

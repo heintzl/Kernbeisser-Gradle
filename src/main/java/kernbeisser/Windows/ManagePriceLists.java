@@ -26,7 +26,7 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
     public ManagePriceLists() {
         initComponents();
         setVisible(true);
-        addWindowListener(new Finisher(this,this));
+        addWindowListener(new Finisher(this));
         priceListChooser.setModel(new PriceListTree(false).getModel());
         priceListChooser.addTreeSelectionListener(e -> {
             if(priceListChooser.getSelectionPath()!=null) {
@@ -188,7 +188,7 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
      * @param evt
      */
     private void escActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_escActionPerformed
-        finish(this);
+        finish();
         dispose();
     }//GEN-LAST:event_escActionPerformed
 
