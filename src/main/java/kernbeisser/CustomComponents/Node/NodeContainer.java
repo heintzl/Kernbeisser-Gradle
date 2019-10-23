@@ -1,4 +1,4 @@
-package kernbeisser.Windows.Nodes;
+package kernbeisser.CustomComponents.Node;
 
 import java.util.ArrayList;
 import java.util.Collection;

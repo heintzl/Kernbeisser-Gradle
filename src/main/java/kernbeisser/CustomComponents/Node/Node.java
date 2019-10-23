@@ -1,9 +1,8 @@
-package kernbeisser.Windows.Nodes;
+package kernbeisser.CustomComponents.Node;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public interface Node<T>{
     T get();

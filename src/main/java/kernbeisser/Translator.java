@@ -1,11 +1,12 @@
 package kernbeisser;
 
 public class Translator {
+
     public String translate(Unit unit){
         switch (unit){
             case GRAM:return "Gramm";
             case LITER:return "Liter";
-            case STACK:return "Stück";
+            case STACK:return "St\u00fcck";
             case KILOGRAM:return "Kilogramm";
             case MILLILITER:return "Milliter";
             default:return "No Translation";
@@ -13,8 +14,8 @@ public class Translator {
     }
     public String translate(Cooling c){
         switch (c){
-            case COLD:return "Kalt(Kühlschrank)";
-            case NONE:return "Keine Kühlung bei Raumtemperatur";
+            case COLD:return "Kalt(K\u00fchlschrank)";
+            case NONE:return "Keine K\u00fchlung bei Raumtemperatur";
             case EXTRA_COLD: return "Gefroren(Gefrierer)";
             default: return "no Translation";
         }
@@ -52,7 +53,7 @@ public class Translator {
             switch (s){
                 case "Gramm": return (T) Unit.GRAM;
                 case "Liter": return (T) Unit.LITER;
-                case "Stück": return (T) Unit.STACK;
+                case "St\u00fcck": return (T) Unit.STACK;
                 case "Kilogramm": return (T) Unit.KILOGRAM;
                 case "Milliter": return (T) Unit.MILLILITER;
                 case "No Translation": return null;
@@ -68,8 +69,8 @@ public class Translator {
         }else
         if(e.equals(Cooling.class)){
             switch (s){
-                case "Kalt(Kühlschrank)": return (T) Cooling.COLD;
-                case "Keine Kühlung bei Raumtemperatur": return (T) Cooling.NONE;
+                case "Kalt(K\u00fchlschrank)": return (T) Cooling.COLD;
+                case "Keine K\u00fchlung bei Raumtemperatur": return (T) Cooling.NONE;
                 case "Gefroren(Gefrierer)": return (T) Cooling.EXTRA_COLD;
                 default: return null;
             }

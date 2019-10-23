@@ -6,6 +6,7 @@
 package kernbeisser.Windows;
 
 import kernbeisser.*;
+import kernbeisser.CustomComponents.DBTable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -14,7 +15,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Field;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -238,13 +238,13 @@ public abstract class ManageItems extends JFrame implements Finishable {
 
         jLabel5.setText("Lieferant");
 
-        jLabel6.setText("Nettopreis[€]");
+        jLabel6.setText("Nettopreis[\u20AC]");
 
-        jLabel7.setText("Einzelpfand[€]");
+        jLabel7.setText("Einzelpfand[\u20AC]");
 
-        jLabel8.setText("Verkaufspreis[€]");
+        jLabel8.setText("Verkaufspreis[\u20AC]");
 
-        jLabel9.setText("Kistenpfand[€]");
+        jLabel9.setText("Kistenpfand[\u20AC]");
 
         jLabel10.setText("Preisliste");
 
@@ -604,9 +604,9 @@ public abstract class ManageItems extends JFrame implements Finishable {
         }catch (PersistenceException e){
             et.rollback();
             Item item = em.createQuery("select i from Item i where i.barcode = "+itemBarcode.getText()+" or i.kbNumber = "+itemKbNumber.getText(),Item.class).getSingleResult();
-            JOptionPane.showMessageDialog(this,"Der Artikel überschneidet sich mit folgendem Artikel:\nArtikelname: "+item.getName()+
+            JOptionPane.showMessageDialog(this,"Der Artikel \u00fcberschneidet sich mit folgendem Artikel:\nArtikelname: "+item.getName()+
                     "\nBarcode:       "+item.getBarcode()+
-                    "\nKBNummer: "+item.getKbNumber(),"Artikelüberschneidungen",JOptionPane.ERROR_MESSAGE);
+                    "\nKBNummer: "+item.getKbNumber(),"Artikel\u00fcberschneidungen",JOptionPane.ERROR_MESSAGE);
             em.close();
             return;
         }
@@ -617,7 +617,7 @@ public abstract class ManageItems extends JFrame implements Finishable {
     private void itemSearchPriceListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSearchPriceListActionPerformed
         EntityManager em = DBConnection.getEntityManager();
         JFrame jFrame = new JFrame();
-        jFrame.setTitle("Wählen sie eine Preisliste");
+        jFrame.setTitle("W\u00e4hlen sie eine Preisliste");
         jFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         jFrame.setSize(400,600);
         jFrame.setLocationRelativeTo(null);
@@ -774,7 +774,7 @@ public abstract class ManageItems extends JFrame implements Finishable {
         itemInvStock.setText(Tools.build(item.getInvStock(),0, Integer::sum).toString());
         itemInvPrice.setText(String.valueOf(item.getInvPrice()));
         itemWeighAble.setSelected(item.isWeighAble());
-        itemListed.setText(item.isListed()?"Verfügbar":"Ausgelisted");
+        itemListed.setText(item.isListed()?"Verf\u00fcgbar":"Ausgelisted");
         itemListed.setForeground(new Color(item.isListed()? 0x00EE00 : 0xEE0000));
     }
     private void pasteData(ItemKK item){

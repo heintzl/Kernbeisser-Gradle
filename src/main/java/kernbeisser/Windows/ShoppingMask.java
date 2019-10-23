@@ -5,27 +5,115 @@
  */
 package kernbeisser.Windows;
 
-import kernbeisser.ShoppingSession;
-import kernbeisser.User;
+import kernbeisser.*;
+import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.CustomComponents.ObjectTable;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  *
  * @author julik
  */
 public class ShoppingMask extends javax.swing.JPanel {
-    private ShoppingSession shoppingSession;
+    private EntityManager em = DBConnection.getEntityManager();
+    private EntityTransaction et = em.getTransaction();
+    private Purchase purchase;
+    private SaleSession saleSession;
+    private ObjectTable<ShoppingItem> shoppingCartTable;
+    private DBTable withoutBarcodeTable;
     /**
      * Creates new form ShoppingMask
      */
-    public ShoppingMask(User customer,User seller) {
-        shoppingSession = new ShoppingSession(customer,seller);
+    public ShoppingMask(SaleSession saleSession) {
         initComponents();
+        setFilters();
+        this.saleSession=saleSession;
+        itemNumber.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                Item i = searchItem();
+                if(i!=null){
+                    selectedItem.setText(i.getName());
+                    unit.setText(new Translator().translate(i.getUnit()));
+                    price.setText(i.getNetPrice()/100f+"\u20AC");
+                }else {
+                    selectedItem.setText("Kein Ergebniss");
+                    price.setText("0.00\u20AC");
+                    unit.setText("");
+                }
+            }
+        });
+        try {
+            withoutBarcodeTable = new DBTable("select i from Item i where barcode is not null",
+                    Item.class.getDeclaredField("name"),
+                    Item.class.getDeclaredField("kbNumber"),
+                    Item.class.getDeclaredField("netPrice")
+            );
+            itemsWithoutBarcodePanel.add(new JScrollPane(withoutBarcodeTable));
+            withoutBarcodeTable.addSelectionListener((e)->{
+                itemNumber.setText(((Item)e).getKbNumber()+"");
+                itemAmount.requestFocus();
+            });
+            withoutBarcodeTable.setColumnName("Name",0);
+            withoutBarcodeTable.setColumnName("Artikelnummer",1);
+            withoutBarcodeTable.setColumnName("Preis",2);
+            shoppingCartTable = new ObjectTable<>(
+                    ShoppingItem.class.getDeclaredField("name"),
+                    ShoppingItem.class.getDeclaredField("amount"),
+                    ShoppingItem.class.getDeclaredField("price")
+            );
+            shoppingCartTable.setColumnName("Name",0);
+            shoppingCartTable.setColumnName("Menge",1);
+            shoppingCartTable.setColumnName("Preis",2);
+            shoppingCartTable.addColumnTransformer(Tools.priceTransformer(),2);
+            shoppingCartTable.repaintUI();
+            shoppingCartPanel.add(new JScrollPane(shoppingCartTable));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
-    public void getSum(){
+    private void addToShoppingCart(ShoppingItem i){
+        if(i.getPrice() > 2000)JOptionPane.showConfirmDialog(
+                this,
+                "Ist der eingegebene Preis von "+i.getPrice()/100f+"\u20AC korrekt?",
+                "Sehr hoher Preis!",JOptionPane.INFORMATION_MESSAGE);
+        ShoppingItem inside = shoppingCartTable.get(i);
+        if(inside!=null){
+            inside.setPrice(i.getPrice()+inside.getPrice());
+            inside.setAmount(i.getAmount()+inside.getAmount());
+            shoppingCartTable.repaintUI();
+        }else {
+            shoppingCartTable.add(i);
+        }
+    }
+    private void setFilters(){
+        Tools.setDoubleFilter(rawPrice);
+        Tools.setDoubleFilter(hiddenItemDeposit);
+        Tools.setDoubleFilter(hiddenItemPrice);
+        Tools.setRealNumberFilter(itemAmount);
+        Tools.setRealNumberFilter(hiddenItemAmount);
+    }
 
+    private Item searchItem(){
+        if(itemNumber.getText().length()<1)return null;
+        EntityManager em = DBConnection.getEntityManager();
+        try{
+            return em.createQuery("select i from Item i where kbNumber like '"+itemNumber.getText()+"'",Item.class).getSingleResult();
+        }catch (NoResultException e) {
+            try{
+                return em.createQuery("select i from Item i where barcode like '%"+itemNumber.getText()+"'",Item.class).setMaxResults(1).getSingleResult();
+            }catch (NoResultException e1){
+                return null;
+            }
+        }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,7 +126,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         discountSelection = new javax.swing.ButtonGroup();
         kindOfSelection = new javax.swing.ButtonGroup();
         depositActionSelection = new javax.swing.ButtonGroup();
-        buttonGroup1 = new javax.swing.ButtonGroup();
+        hiddenItemDepositBG = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         userName = new javax.swing.JLabel();
         userGroupValue = new javax.swing.JLabel();
@@ -157,27 +245,13 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         kindOfSelection.add(deposit);
         deposit.setText("Pfand");
-        deposit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                depositActionPerformed(evt);
-            }
-        });
 
         depositActionSelection.add(depositIn);
+        depositIn.setSelected(true);
         depositIn.setText("Zurückgeben");
-        depositIn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                depositInActionPerformed(evt);
-            }
-        });
 
         depositActionSelection.add(depositOut);
         depositOut.setText("Ausleihen");
-        depositOut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                depositOutActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
         jPanel13.setLayout(jPanel13Layout);
@@ -204,27 +278,19 @@ public class ShoppingMask extends javax.swing.JPanel {
                 .addGap(0, 10, Short.MAX_VALUE))
         );
 
+        rawPrice.setText("0.00");
         rawPrice.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rawPriceActionPerformed(evt);
+                addRawPrice(evt);
             }
         });
 
         kindOfSelection.add(organics);
+        organics.setSelected(true);
         organics.setText("Obst & Gemüse");
-        organics.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                organicsActionPerformed(evt);
-            }
-        });
 
         kindOfSelection.add(bakeryProduct);
         bakeryProduct.setText("Backwaren");
-        bakeryProduct.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bakeryProductActionPerformed(evt);
-            }
-        });
 
         jLabel11.setText("Preis[€]");
 
@@ -268,6 +334,7 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         jLabel12.setText("Artikelnummer oder Barcode");
 
+        itemAmount.setText("1");
         itemAmount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 itemAmountActionPerformed(evt);
@@ -276,7 +343,7 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         jLabel14.setText("Menge");
 
-        unit.setText("unit");
+        unit.setText("Einheit");
 
         jPanel16.setBorder(javax.swing.BorderFactory.createTitledBorder("Nicht ausgezeichnete Artikel"));
 
@@ -290,6 +357,7 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         jLabel20.setText("Preis[€]");
 
+        hiddenItemPrice.setText("0.00");
         hiddenItemPrice.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hiddenItemPriceActionPerformed(evt);
@@ -298,20 +366,14 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         jLabel21.setText("MWSt");
 
+        hiddenItemDepositBG.add(hiddenItemVATlow);
+        hiddenItemVATlow.setSelected(true);
         hiddenItemVATlow.setText("7%");
-        hiddenItemVATlow.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hiddenItemVATlowActionPerformed(evt);
-            }
-        });
 
+        hiddenItemDepositBG.add(hiddenItemVAThigh);
         hiddenItemVAThigh.setText("19%");
-        hiddenItemVAThigh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hiddenItemVAThighActionPerformed(evt);
-            }
-        });
 
+        hiddenItemDeposit.setText("0.00");
         hiddenItemDeposit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hiddenItemDepositActionPerformed(evt);
@@ -320,6 +382,7 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         jLabel22.setText("Pfand[€]");
 
+        hiddenItemAmount.setText("1");
         hiddenItemAmount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hiddenItemAmountActionPerformed(evt);
@@ -393,9 +456,9 @@ public class ShoppingMask extends javax.swing.JPanel {
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
-        selectedItem.setText("selectedItem");
+        selectedItem.setText("Ausgewählter Artikel");
 
-        price.setText("price");
+        price.setText("Preis");
 
         javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
         jPanel15.setLayout(jPanel15Layout);
@@ -407,24 +470,21 @@ public class ShoppingMask extends javax.swing.JPanel {
                     .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel15Layout.createSequentialGroup()
                         .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addComponent(itemNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(selectedItem, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel15Layout.createSequentialGroup()
+                                .addGap(28, 28, 28)
+                                .addComponent(jLabel14))
+                            .addGroup(jPanel15Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
                                 .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12)
-                                    .addComponent(itemNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(price, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(jPanel15Layout.createSequentialGroup()
-                                        .addGap(30, 30, 30)
                                         .addComponent(itemAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(unit))
-                                    .addGroup(jPanel15Layout.createSequentialGroup()
-                                        .addGap(48, 48, 48)
-                                        .addComponent(jLabel14))))
-                            .addGroup(jPanel15Layout.createSequentialGroup()
-                                .addComponent(selectedItem)
-                                .addGap(129, 129, 129)
-                                .addComponent(price)))
-                        .addGap(0, 58, Short.MAX_VALUE)))
+                                        .addComponent(unit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                 .addContainerGap())
         );
         jPanel15Layout.setVerticalGroup(
@@ -488,12 +548,16 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         jLabel16.setText("Suchen nach:");
 
+        jCheckBox2.setSelected(true);
         jCheckBox2.setText("Barcode");
 
+        jCheckBox3.setSelected(true);
         jCheckBox3.setText("Artikelnummer");
 
+        jCheckBox4.setSelected(true);
         jCheckBox4.setText("Artikelname");
 
+        jCheckBox5.setSelected(true);
         jCheckBox5.setText("Preisliste");
 
         jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder("Ergebnisse der Suche"));
@@ -633,17 +697,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         );
 
         shoppingCartPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Artikel im Warenkorb"));
-
-        javax.swing.GroupLayout shoppingCartPanelLayout = new javax.swing.GroupLayout(shoppingCartPanel);
-        shoppingCartPanel.setLayout(shoppingCartPanelLayout);
-        shoppingCartPanelLayout.setHorizontalGroup(
-            shoppingCartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        shoppingCartPanelLayout.setVerticalGroup(
-            shoppingCartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+        shoppingCartPanel.setLayout(new java.awt.GridLayout(1, 1));
 
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Warenkorb bearbeiten"));
 
@@ -732,17 +786,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         jLabel4.setText("Einkauf für name + surname(username)");
 
         itemsWithoutBarcodePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Artikel ohne Barcode"));
-
-        javax.swing.GroupLayout itemsWithoutBarcodePanelLayout = new javax.swing.GroupLayout(itemsWithoutBarcodePanel);
-        itemsWithoutBarcodePanel.setLayout(itemsWithoutBarcodePanelLayout);
-        itemsWithoutBarcodePanelLayout.setHorizontalGroup(
-            itemsWithoutBarcodePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        itemsWithoutBarcodePanelLayout.setVerticalGroup(
-            itemsWithoutBarcodePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+        itemsWithoutBarcodePanel.setLayout(new java.awt.GridLayout(1, 1));
 
         jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder("Artikel Barcode bearbeiten"));
 
@@ -889,49 +933,44 @@ public class ShoppingMask extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_hiddenItemAmountActionPerformed
 
-    private void rawPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawPriceActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rawPriceActionPerformed
+    private void addRawPrice(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRawPrice
+        Checker c = new Checker();
+        int price = 0;
+        try {
+            price = c.checkPrice(rawPrice);
+        }catch (IncorrectInput e){
+            Tools.ping(e.getComponent());
+            return;
+        }
+        if (organics.isSelected()) addToShoppingCart(ShoppingItem.getOrganic(price));
+        else if (bakeryProduct.isSelected()) addToShoppingCart(ShoppingItem.getBakeryProduct(price));
+        else if (deposit.isSelected())addToShoppingCart(ShoppingItem.getDeposit(depositIn.isSelected()?-price:price));
+        rawPrice.setText("0.00");
+    }//GEN-LAST:event_addRawPrice
 
-    private void organicsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_organicsActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_organicsActionPerformed
-
-    private void bakeryProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bakeryProductActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_bakeryProductActionPerformed
-
-    private void depositActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depositActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_depositActionPerformed
-
-    private void depositInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depositInActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_depositInActionPerformed
-
-    private void depositOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depositOutActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_depositOutActionPerformed
 
     private void itemNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemNumberActionPerformed
-        // TODO add your handling code here:
+        Item search = searchItem();
+        if(search==null){
+            Tools.ping(itemNumber);
+            return;
+        }
+        ShoppingItem item = ShoppingItem.fromItem(search);
+        item.setItemAmount(Integer.parseInt(itemAmount.getText()));
+        item.setPrice(search.getNetPrice()*item.getItemAmount());
+        addToShoppingCart(item);
+        itemNumber.requestFocus();
+        itemAmount.setText("1");
+        itemNumber.setText("");
     }//GEN-LAST:event_itemNumberActionPerformed
 
     private void itemAmountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemAmountActionPerformed
-        // TODO add your handling code here:
+        itemNumberActionPerformed(evt);
     }//GEN-LAST:event_itemAmountActionPerformed
 
     private void hiddenItemPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hiddenItemPriceActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_hiddenItemPriceActionPerformed
-
-    private void hiddenItemVATlowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hiddenItemVATlowActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_hiddenItemVATlowActionPerformed
-
-    private void hiddenItemVAThighActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hiddenItemVAThighActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_hiddenItemVAThighActionPerformed
 
     private void hiddenItemDepositActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hiddenItemDepositActionPerformed
         // TODO add your handling code here:
@@ -985,7 +1024,6 @@ public class ShoppingMask extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addHiddenItem;
     private javax.swing.JRadioButton bakeryProduct;
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton clearShoppingSession;
     private javax.swing.JSpinner customDiscount;
     private javax.swing.JToggleButton deleteSelectedItem;
@@ -1002,6 +1040,7 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JTextField editBarcodeField;
     private javax.swing.JTextField hiddenItemAmount;
     private javax.swing.JTextField hiddenItemDeposit;
+    private javax.swing.ButtonGroup hiddenItemDepositBG;
     private javax.swing.JTextField hiddenItemName;
     private javax.swing.JTextField hiddenItemPrice;
     private javax.swing.JRadioButton hiddenItemVAThigh;
@@ -1061,9 +1100,5 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JLabel userName;
     private javax.swing.JLabel userValueLater;
     private javax.swing.JLabel userValueNow;
-
-    public ShoppingSession getShoppingSession() {
-        return shoppingSession;
-    }
     // End of variables declaration//GEN-END:variables
 }

@@ -7,6 +7,7 @@ package kernbeisser.Windows;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.*;
+import kernbeisser.CustomComponents.DBTable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;

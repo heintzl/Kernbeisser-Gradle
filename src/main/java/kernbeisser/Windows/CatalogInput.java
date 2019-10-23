@@ -66,7 +66,7 @@ public abstract class CatalogInput extends JFrame implements Finishable{
             }
         });
 
-        importData.setText("Datei Auswählen");
+        importData.setText("Datei Ausw\u00e4hlen");
         importData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 importDataActionPerformed(evt);

@@ -1,10 +1,13 @@
 package kernbeisser;
 
 import kernbeisser.Windows.Nodes.JobNode;
-import kernbeisser.Windows.Nodes.Node;
-import kernbeisser.Windows.Nodes.Nodeable;
+import kernbeisser.CustomComponents.Node.Node;
+import kernbeisser.CustomComponents.Node.Nodeable;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table
@@ -18,6 +21,20 @@ public class Job implements Nodeable{
 
     @Column
     private String description;
+
+    @CreationTimestamp
+    private Date createDate;
+
+    @UpdateTimestamp
+    private Date updateDate;
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
 
     public int getId() {
         return jid;

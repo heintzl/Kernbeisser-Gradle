@@ -80,7 +80,7 @@ public class DataSourceSelector extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        finish.setText("Bestätigen");
+        finish.setText("Best\u00e4tigen");
         finish.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 finishActionPerformed(evt);

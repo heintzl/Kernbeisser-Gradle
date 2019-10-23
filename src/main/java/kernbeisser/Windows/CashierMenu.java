@@ -7,6 +7,7 @@ package kernbeisser.Windows;
 
 import kernbeisser.Finishable;
 import kernbeisser.Images;
+import kernbeisser.SaleSession;
 import kernbeisser.User;
 
 import javax.swing.*;
@@ -85,7 +86,7 @@ public abstract class CashierMenu extends JFrame implements Finishable {
             }
         });
 
-        back.setText("<-Zurück");
+        back.setText("<-Zur\u00fcck");
         back.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backActionPerformed(evt);
@@ -170,7 +171,7 @@ public abstract class CashierMenu extends JFrame implements Finishable {
     private void startCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashActionPerformed
         JFrame jFrame = new JFrame();
         jFrame.setLayout(new GridLayout(1,1));
-        jFrame.add(new ShoppingMask(user,null));
+        jFrame.add(new ShoppingMask(new SaleSession()));
         jFrame.addWindowListener(new Finisher(() -> {
             dispose();
             CashierMenu.this.setVisible(true);

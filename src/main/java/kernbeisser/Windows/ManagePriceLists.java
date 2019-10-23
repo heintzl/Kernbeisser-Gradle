@@ -73,7 +73,7 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel4.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabel4.setText("Preislisten Hinzufügen");
+        jLabel4.setText("Preislisten Hinzuf\u00fcgen");
 
         esc.setText("Abbrechen");
         esc.addActionListener(new java.awt.event.ActionListener() {
@@ -160,7 +160,7 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
         String pln = priceListName.getText();
         if(pln.equals("")){
-            JOptionPane.showMessageDialog(this,"Bitte wählen sie einen korrekten Namen");
+            JOptionPane.showMessageDialog(this,"Bitte w\u00e4hlen sie einen korrekten Namen");
             return;
         }
         EntityManager em = DBConnection.getEntityManager();

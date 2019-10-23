@@ -1,5 +1,7 @@
 package kernbeisser;
 
+import kernbeisser.CustomComponents.ColumnTransformer;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.swing.*;
@@ -142,5 +144,20 @@ public class Tools {
             out.add(s.get());
         }
         return out;
+    }
+    public static <I,O> O overwrite(O out,I in){
+        Class oc = out.getClass();
+        for (Field declaredField : in.getClass().getDeclaredFields()) {
+            try {
+                Field target = oc.getDeclaredField(declaredField.getName());
+                target.setAccessible(true);
+                declaredField.setAccessible(true);
+                target.set(out,declaredField.get(in));
+            } catch (NoSuchFieldException | IllegalAccessException e) { }
+        }
+        return out;
+    }
+    public static ColumnTransformer priceTransformer(){
+        return s -> Integer.parseInt(s)/100f+"\u20AC";
     }
 }

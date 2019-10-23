@@ -8,7 +8,7 @@
     </Component>
     <Component class="javax.swing.ButtonGroup" name="depositActionSelection">
     </Component>
-    <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
+    <Component class="javax.swing.ButtonGroup" name="hiddenItemDepositBG">
     </Component>
   </NonVisualComponents>
   <AuxValues>
@@ -289,20 +289,15 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Pfand"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="depositActionPerformed"/>
-                      </Events>
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="depositIn">
                       <Properties>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="depositActionSelection"/>
                         </Property>
+                        <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="Zur&#xfc;ckgeben"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="depositInActionPerformed"/>
-                      </Events>
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="depositOut">
                       <Properties>
@@ -311,15 +306,15 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Ausleihen"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="depositOutActionPerformed"/>
-                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
                 <Component class="javax.swing.JTextField" name="rawPrice">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="0.00"/>
+                  </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawPriceActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addRawPrice"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="organics">
@@ -327,11 +322,9 @@
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="kindOfSelection"/>
                     </Property>
+                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Obst &amp; Gem&#xfc;se"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="organicsActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="bakeryProduct">
                   <Properties>
@@ -340,9 +333,6 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="Backwaren"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bakeryProductActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel11">
                   <Properties>
@@ -369,31 +359,27 @@
                               <Component id="jPanel16" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
-                                              <Component id="itemNumber" min="-2" pref="145" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" attributes="0">
-                                                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                                                  <Component id="itemAmount" min="-2" pref="102" max="-2" attributes="0"/>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="unit" min="-2" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
-                                                  <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
-                                              </Group>
-                                          </Group>
+                                      <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
+                                      <Component id="itemNumber" min="-2" pref="145" max="-2" attributes="0"/>
+                                      <Component id="selectedItem" alignment="0" min="-2" pref="165" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                                          <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="selectedItem" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="129" max="-2" attributes="0"/>
-                                          <Component id="price" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="price" min="-2" pref="93" max="-2" attributes="0"/>
+                                              <Group type="102" attributes="0">
+                                                  <Component id="itemAmount" min="-2" pref="102" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="unit" min="-2" pref="67" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
                                       </Group>
                                   </Group>
-                                  <EmptySpace min="0" pref="58" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -438,6 +424,9 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="itemAmount">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="1"/>
+                  </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="itemAmountActionPerformed"/>
                   </Events>
@@ -449,7 +438,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="unit">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="unit"/>
+                    <Property name="text" type="java.lang.String" value="Einheit"/>
                   </Properties>
                 </Component>
                 <Container class="javax.swing.JPanel" name="jPanel16">
@@ -545,6 +534,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="hiddenItemPrice">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="0.00"/>
+                      </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hiddenItemPriceActionPerformed"/>
                       </Events>
@@ -556,21 +548,25 @@
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="hiddenItemVATlow">
                       <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="hiddenItemDepositBG"/>
+                        </Property>
+                        <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="7%"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hiddenItemVATlowActionPerformed"/>
-                      </Events>
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="hiddenItemVAThigh">
                       <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="hiddenItemDepositBG"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="19%"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hiddenItemVAThighActionPerformed"/>
-                      </Events>
                     </Component>
                     <Component class="javax.swing.JTextField" name="hiddenItemDeposit">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="0.00"/>
+                      </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hiddenItemDepositActionPerformed"/>
                       </Events>
@@ -581,6 +577,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="hiddenItemAmount">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="1"/>
+                      </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hiddenItemAmountActionPerformed"/>
                       </Events>
@@ -605,12 +604,12 @@
                 </Container>
                 <Component class="javax.swing.JLabel" name="selectedItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="selectedItem"/>
+                    <Property name="text" type="java.lang.String" value="Ausgew&#xe4;hlter Artikel"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="price">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="price"/>
+                    <Property name="text" type="java.lang.String" value="Preis"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -720,21 +719,25 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBox2">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Barcode"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBox3">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Artikelnummer"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBox4">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Artikelname"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBox5">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Preisliste"/>
               </Properties>
             </Component>
@@ -886,17 +889,9 @@
         </Property>
       </Properties>
 
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+        <Property name="columns" type="int" value="1"/>
+        <Property name="rows" type="int" value="1"/>
       </Layout>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel7">
@@ -1045,17 +1040,9 @@
         </Property>
       </Properties>
 
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+        <Property name="columns" type="int" value="1"/>
+        <Property name="rows" type="int" value="1"/>
       </Layout>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel10">

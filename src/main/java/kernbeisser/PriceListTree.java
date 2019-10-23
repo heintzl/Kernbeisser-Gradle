@@ -28,10 +28,10 @@ public class PriceListTree extends JTree {
         em.createQuery("select p from PriceList p where p.superPriceList is null", PriceList.class).getResultStream().
                 forEach(e-> priceList.add(createTreeNode(e)));
         if(optionToEdit) {
-            priceList.add(new DefaultMutableTreeNode("Neu Hinzufügen/Bearbeiten"));
+            priceList.add(new DefaultMutableTreeNode("Neu Hinzuf\u00fcgen/Bearbeiten"));
             addTreeSelectionListener(e -> {
                 Object o = getLastSelectedPathComponent();
-                if (o != null && o.toString().equals("Neu Hinzufügen/Bearbeiten")) new ManagePriceLists() {
+                if (o != null && o.toString().equals("Neu Hinzuf\u00fcgen/Bearbeiten")) new ManagePriceLists() {
                     @Override
                     public void finish() {
                         dispose();

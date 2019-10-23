@@ -2,17 +2,12 @@ package kernbeisser.Windows;
 
 import kernbeisser.DBConnection;
 import kernbeisser.Job;
-import kernbeisser.Tools;
-import kernbeisser.User;
-import kernbeisser.Windows.Nodes.Node;
-import kernbeisser.Windows.Nodes.NodeList;
-import kernbeisser.Windows.Nodes.Nodeable;
+import kernbeisser.CustomComponents.Node.Node;
+import kernbeisser.CustomComponents.Node.NodeList;
 
 import javax.persistence.EntityManager;
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class JobSelector extends JFrame {

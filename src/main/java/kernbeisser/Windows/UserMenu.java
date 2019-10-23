@@ -5,6 +5,7 @@ package kernbeisser.Windows;/*
  */
 
 import kernbeisser.Finishable;
+import kernbeisser.SaleSession;
 import kernbeisser.User;
 
 import javax.swing.*;
@@ -111,7 +112,7 @@ public abstract class UserMenu extends JFrame implements Finishable {
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(204, 255, 255));
         jLabel2.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabel2.setText("Willkommen zurück");
+        jLabel2.setText("Willkommen zur\u00fcck");
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -284,7 +285,7 @@ public abstract class UserMenu extends JFrame implements Finishable {
     private void startShoppingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
         JFrame jFrame = new JFrame();
         jFrame.setLayout(new GridLayout(1,1));
-        jFrame.add(new ShoppingMask(user,null));
+        jFrame.add(new ShoppingMask(new SaleSession()));
         jFrame.addWindowListener(new Finisher(() -> {
             dispose();
             UserMenu.this.setVisible(true);

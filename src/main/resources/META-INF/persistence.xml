@@ -13,6 +13,9 @@
         <class>kernbeisser.Shelf</class>
         <class>kernbeisser.ItemKK</class>
         <class>kernbeisser.UserGroup</class>
+        <class>kernbeisser.ShoppingItem</class>
+        <class>kernbeisser.SaleSession</class>
+        <class>kernbeisser.Purchase</class>
         <class>kernbeisser.Job</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>

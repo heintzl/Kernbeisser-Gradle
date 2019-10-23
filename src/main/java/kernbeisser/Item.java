@@ -420,4 +420,14 @@ public class Item {
     public void setSold(int sold) {
         this.sold = sold;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public int hashCode() {
+        return iid+name.hashCode();
+    }
 }

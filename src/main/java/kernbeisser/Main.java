@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import java.io.File;
+import java.lang.reflect.Field;
 
 public class Main {
     /**
@@ -36,4 +37,7 @@ public class Main {
             }
         }.setIconImage(Images.getImage("Icon.png")));
 }
+private static String big(String s) {
+        return s.replaceFirst(s.charAt(0)+"",(s.charAt(0)+"").toUpperCase());
+    }
 }

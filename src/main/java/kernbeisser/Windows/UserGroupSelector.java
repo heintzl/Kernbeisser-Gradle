@@ -6,7 +6,7 @@
 package kernbeisser.Windows;
 
 import kernbeisser.DBConnection;
-import kernbeisser.DBTable;
+import kernbeisser.CustomComponents.DBTable;
 import kernbeisser.User;
 import kernbeisser.UserGroup;
 
@@ -104,7 +104,7 @@ public class UserGroupSelector extends javax.swing.JFrame {
         });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel2.setText("Mitgliedergruppe auswählen");
+        jLabel2.setText("Mitgliedergruppe ausw\u00e4hlen");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

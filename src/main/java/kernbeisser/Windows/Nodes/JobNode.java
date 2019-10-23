@@ -5,11 +5,10 @@
  */
 package kernbeisser.Windows.Nodes;
 
+import kernbeisser.CustomComponents.Node.Node;
 import kernbeisser.Job;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.util.Collection;
 
 /**
  *

@@ -13,13 +13,7 @@ public class DBConfiguration{
     private static Map<String,String> properties = new HashMap<>();
     static {
         File dir = new File("src/main/resources/DBConfiguration");
-        if(!dir.exists()) {
-            try {
-                dir.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        if(!dir.exists()) dir.mkdir();
         File f = new File("src/main/resources/DBConfiguration/cfg.txt");
         if(f.exists()){
             try {

@@ -7,19 +7,15 @@ package kernbeisser.Windows;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.*;
+import kernbeisser.CustomComponents.DBTable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -154,7 +150,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
 
         jLabel9.setText("Email");
 
-        back.setText("<-Zurück");
+        back.setText("<-Zur\u00fcck");
         back.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backActionPerformed(evt);
@@ -167,7 +163,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
 
         jLabel12.setText("Solidarzuschlag");
 
-        kernbeisserKey.setText("Schlüssel");
+        kernbeisserKey.setText("Schl\u00fcssel");
 
         jLabel13.setText("Berechtigung");
 
@@ -379,7 +375,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
         User user = collectData();
         if(user==null)return;
         if(user.getUsername().length()<3){
-            JOptionPane.showMessageDialog(this,"Der gewählte Benutzername ist zu kurz!");
+            JOptionPane.showMessageDialog(this,"Der gew\u00e4hlte Benutzername ist zu kurz!");
             Tools.ping(username);
             return;
         }else

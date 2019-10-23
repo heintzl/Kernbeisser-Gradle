@@ -49,7 +49,9 @@ public class Checker {
             int euros = Integer.parseInt(parts[0]);
             int price = 0;
             if (parts.length == 2) {
-                int cents = Integer.parseInt(parts[1].substring(0, Math.max(parts[1].length(), 2)));
+                int cents = Integer.parseInt(parts[1].substring(0, Math.min(parts[1].length(), 2)));
+                if(parts[1].length()<2)
+                    cents*=10;
                 price = euros * 100 + cents;
             } else price = euros * 100;
             if(price < min|| price > max)throw new IncorrectInput(component,Double.class);

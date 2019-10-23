@@ -2,45 +2,38 @@ package kernbeisser;
 
 import javax.persistence.*;
 
-@Table
 @Entity
-public class ShoppingSession {
-
+@Table
+public class SaleSession {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int sid;
+    private int sSid;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private User customer;
 
     @ManyToOne
     @JoinColumn
     private User seller;
 
-    public int getSid() {
-        return sid;
-    }
-
     public User getCustomer() {
         return customer;
-    }
-
-    public User getSeller() {
-        return seller;
     }
 
     public void setCustomer(User customer) {
         this.customer = customer;
     }
 
+    public User getSeller() {
+        return seller;
+    }
+
     public void setSeller(User seller) {
         this.seller = seller;
     }
 
-    public ShoppingSession(){}
-    public ShoppingSession(User customer,User seller){
-        setCustomer(customer);
-        setSeller(seller);
+    public int getId() {
+        return sSid;
     }
 }
