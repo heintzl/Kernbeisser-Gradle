@@ -107,7 +107,7 @@ public class ShoppingMask extends javax.swing.JPanel {
             return em.createQuery("select i from Item i where kbNumber like '"+itemNumber.getText()+"'",Item.class).getSingleResult();
         }catch (NoResultException e) {
             try{
-                return em.createQuery("select i from Item i where barcode like '%"+itemNumber.getText()+"'",Item.class).setMaxResults(1).getSingleResult();
+                return em.createQuery("select i from Item i where barcode like '%"+itemNumber.getText()+ "'",Item.class).setMaxResults(1).getSingleResult();
             }catch (NoResultException e1){
                 return null;
             }
