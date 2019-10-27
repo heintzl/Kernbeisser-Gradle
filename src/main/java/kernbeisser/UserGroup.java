@@ -1,6 +1,7 @@
 package kernbeisser;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Table
 @Entity
@@ -22,5 +23,13 @@ public class UserGroup {
 
     public int getId() {
         return gid;
+    }
+
+    public Collection<User> getMembers(){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<User> out = em.createQuery("select u from User u where userGroup.id = "+gid,User.class).getResultList();
+        em.close();
+        return out;
+
     }
 }

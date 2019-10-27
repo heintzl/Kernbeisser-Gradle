@@ -17,7 +17,7 @@ import java.util.Set;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(updatable = false,insertable = false,nullable = false)
+    @Column(updatable = false, insertable = false, nullable = false)
     private int id;
 
     @Column
@@ -51,7 +51,7 @@ public class User implements Serializable {
     @Column
     private boolean employee;
 
-    @Column(unique = true,nullable = false)
+    @Column(unique = true, nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -94,6 +94,52 @@ public class User implements Serializable {
     @ElementCollection
     private List<Integer> transferAmount = new ArrayList<>(5);
 
+    public static String getJobName(int index) {
+        switch (index) {
+            case 0:
+                return "Job1";
+            case 1:
+                return "Job2";
+            case 2:
+                return "Job3";
+            case 3:
+                return "Job4";
+            case 4:
+                return "Job5";
+            case 5:
+                return "Job6";
+            case 6:
+                return "Job7";
+            case 7:
+                return "Job8";
+            case 8:
+                return "Job9";
+            case 9:
+                return "Job10";
+            case 10:
+                return "Job11";
+            case 11:
+                return "Job12";
+            case 12:
+                return "Job13";
+            case 13:
+                return "Job14";
+            case 14:
+                return "Job15";
+            case 15:
+                return "Job16";
+            case 16:
+                return "Job17";
+            case 17:
+                return "Job18";
+            case 18:
+                return "Job19";
+            case 19:
+                return "Job20";
+            default:
+                return "NoName";
+        }
+    }
 
     public int getSalesThisYear() {
         return salesThisYear;
@@ -134,7 +180,6 @@ public class User implements Serializable {
     public void setSolidaritySurcharge(int solidaritySurcharge) {
         this.solidaritySurcharge = solidaritySurcharge;
     }
-
 
     public String getExtraJobs() {
         return extraJobs;
@@ -251,6 +296,7 @@ public class User implements Serializable {
     public Date getCreateDate() {
         return createDate;
     }
+
     public List<String> getTransferDate() {
         return transferDate;
     }
@@ -267,52 +313,6 @@ public class User implements Serializable {
         this.transferAmount = transferAmount;
     }
 
-    public static String getJobName(int index){
-        switch (index){
-            case 0:
-                return "Job1";
-            case 1:
-                return "Job2";
-            case 2:
-                return "Job3";
-            case 3:
-                return "Job4";
-            case 4:
-                return "Job5";
-            case 5:
-                return "Job6";
-            case 6:
-                return "Job7";
-            case 7:
-                return "Job8";
-            case 8:
-                return "Job9";
-            case 9:
-                return "Job10";
-            case 10:
-                return "Job11";
-            case 11:
-                return "Job12";
-            case 12:
-                return "Job13";
-            case 13:
-                return "Job14";
-            case 14:
-                return "Job15";
-            case 15:
-                return "Job16";
-            case 16:
-                return "Job17";
-            case 17:
-                return "Job18";
-            case 18:
-                return "Job19";
-            case 19:
-                return "Job20";
-            default: return "NoName";
-        }
-    }
-
     public UserGroup getUserGroup() {
         return userGroup;
     }
@@ -324,5 +324,5 @@ public class User implements Serializable {
     public Date getUpdateDate() {
         return updateDate;
     }
-    
+
 }

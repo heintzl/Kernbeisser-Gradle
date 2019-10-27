@@ -6,11 +6,13 @@ import javax.persistence.Persistence;
 
 public class DBConnection {
 
-    private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Kernbeisser",DBConfiguration.getConfig());
+    private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Kernbeisser", DBConfiguration.getConfig());
+
     public static EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
     }
-    public static EntityManager getEntityManager(){
+
+    public static EntityManager getEntityManager() {
         return entityManagerFactory.createEntityManager();
     }
 }

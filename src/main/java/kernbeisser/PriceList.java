@@ -13,11 +13,11 @@ public class PriceList implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(updatable = false,insertable = false,nullable = false)
+    @Column(updatable = false, insertable = false, nullable = false)
     private int pid;
 
     @PrimaryKeyJoinColumn
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ManyToOne
@@ -30,17 +30,48 @@ public class PriceList implements Serializable {
     @CreationTimestamp
     private Date createDate;
 
+    public static PriceList getSingleItemPriceList() {
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            return em.createQuery("select p from PriceList p where name like 'Einzelartikel'", PriceList.class).getSingleResult();
+        } catch (NoResultException e) {
+            EntityTransaction et = em.getTransaction();
+            et.begin();
+            PriceList p = new PriceList();
+            p.setName("Einzelartikel");
+            em.persist(p);
+            em.flush();
+            et.commit();
+            return em.createQuery("select p from PriceList p where name like 'Einzelartikel'", PriceList.class).getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public static PriceList getCoveredIntakePriceList() {
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            return em.createQuery("select p from PriceList p where name like 'Verdeckte Aufnahme'", PriceList.class).getSingleResult();
+        } catch (NoResultException e) {
+            EntityTransaction et = em.getTransaction();
+            et.begin();
+            PriceList p = new PriceList();
+            p.setName("Verdeckte Aufnahme");
+            em.persist(p);
+            em.flush();
+            et.commit();
+            return em.createQuery("select p from PriceList p where name like 'Verdeckte Aufnahme'", PriceList.class).getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
     public Date getUpdateDate() {
         return updateDate;
     }
 
     public Date getCreateDate() {
         return createDate;
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 
     public int getId() {
@@ -68,40 +99,8 @@ public class PriceList implements Serializable {
         return name.hashCode();
     }
 
-    public static PriceList getSingleItemPriceList(){
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery("select p from PriceList p where name like 'Einzelartikel'", PriceList.class).getSingleResult();
-        }catch (NoResultException e){
-            EntityTransaction et = em.getTransaction();
-            et.begin();
-            PriceList p = new PriceList();
-            p.setName("Einzelartikel");
-            em.persist(p);
-            em.flush();
-            et.commit();
-            return em.createQuery("select p from PriceList p where name like 'Einzelartikel'", PriceList.class).getSingleResult();
-        }
-        finally {
-            em.close();
-        }
-    }
-    public static PriceList getCoveredIntakePriceList(){
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery("select p from PriceList p where name like 'Verdeckte Aufnahme'", PriceList.class).getSingleResult();
-        }catch (NoResultException e){
-            EntityTransaction et = em.getTransaction();
-            et.begin();
-            PriceList p = new PriceList();
-            p.setName("Verdeckte Aufnahme");
-            em.persist(p);
-            em.flush();
-            et.commit();
-            return em.createQuery("select p from PriceList p where name like 'Verdeckte Aufnahme'", PriceList.class).getSingleResult();
-        }
-        finally {
-            em.close();
-        }
+    @Override
+    public String toString() {
+        return name;
     }
 }

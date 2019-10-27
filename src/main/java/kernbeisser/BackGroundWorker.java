@@ -2,30 +2,33 @@ package kernbeisser;
 
 import java.util.PriorityQueue;
 
-public class BackGroundWorker{
+public class BackGroundWorker {
     private static BackGroundWorker DEFAULT = new BackGroundWorker();
-    public static void addTask(Runnable r){
-        DEFAULT.add(r);
-    }
-    private Thread core = new Thread(this::run);
     private PriorityQueue<Runnable> tasks = new PriorityQueue<>();
-    BackGroundWorker(){
+    private Thread core = new Thread(this::run);
+    BackGroundWorker() {
         core.start();
     }
+
+    public static void addTask(Runnable r) {
+        DEFAULT.add(r);
+    }
+
     synchronized public void run() {
-        while (true){
-         if(tasks.size()>0){
-             tasks.poll().run();
-         }else {
-             try {
-                 wait();
-             } catch (InterruptedException e) {
-                 e.printStackTrace();
-             }
-         }
+        while (true) {
+            if (tasks.size() > 0) {
+                tasks.poll().run();
+            } else {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
-    public synchronized void add(Runnable r){
+
+    public synchronized void add(Runnable r) {
         tasks.add(r);
         notify();
     }

@@ -171,7 +171,10 @@ public abstract class CashierMenu extends JFrame implements Finishable {
     private void startCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashActionPerformed
         JFrame jFrame = new JFrame();
         jFrame.setLayout(new GridLayout(1,1));
-        jFrame.add(new ShoppingMask(new SaleSession()));
+        SaleSession saleSession = new SaleSession();
+        saleSession.setCustomer(user);
+        saleSession.setSeller(user);
+        jFrame.add(new ShoppingMask(saleSession));
         jFrame.addWindowListener(new Finisher(() -> {
             dispose();
             CashierMenu.this.setVisible(true);

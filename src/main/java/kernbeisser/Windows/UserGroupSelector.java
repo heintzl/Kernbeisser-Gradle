@@ -5,6 +5,7 @@
  */
 package kernbeisser.Windows;
 
+import kernbeisser.CustomComponents.Column;
 import kernbeisser.DBConnection;
 import kernbeisser.CustomComponents.DBTable;
 import kernbeisser.User;
@@ -32,19 +33,14 @@ public class UserGroupSelector extends javax.swing.JFrame {
         initComponents();
         finchAction=f;
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        try {
-            userTable= new DBTable("select u from User u",
-                    500,
-                    User.class.getDeclaredField("username"),
-                    User.class.getDeclaredField("firstName"),
-                    User.class.getDeclaredField("surname"));
-            groupMembersTable=new DBTable("",500,
-                    User.class.getDeclaredField("username"),
-                    User.class.getDeclaredField("firstName"),
-                    User.class.getDeclaredField("surname"));
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        userTable= new DBTable<>("select u from User u",
+                Column.create("Username", User::getUsername),
+                Column.create("Vorname", User::getFirstName),
+                Column.create("Nachname", User::getSurname));
+        groupMembersTable= new DBTable<>("",
+                Column.create("Username", User::getUsername),
+                Column.create("Vorname", User::getFirstName),
+                Column.create("Nachname", User::getSurname));
         userTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {

@@ -18,27 +18,39 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class DataImporter {
-    public DataImporter(File f){
-        if(!f.isDirectory())return;
-        HashMap<String,String> contents = new HashMap<>();
+    public DataImporter(File f) {
+        if (!f.isDirectory()) return;
+        HashMap<String, String> contents = new HashMap<>();
         for (File file : f.listFiles()) {
-            contents.put(file.getName().toUpperCase(),getFileContent(file));
+            contents.put(file.getName().toUpperCase(), getFileContent(file));
         }
         extractSuppliers(contents.get("SUPPLIERS.TXT"));
         extractPriceLists(contents.get("PRICELISTS.TXT"));
         extractItems(contents.get("ITEMS.TXT"));
         //extractUser(contents.get("USER.TXT"));
     }
-    private String getFileContent(File f){
+
+    public static void OpenDialog(Component c) {
+        JFileChooser fc = new JFileChooser();
+        fc.addActionListener(e -> {
+            File f = fc.getSelectedFile();
+            if (f == null) return;
+            new DataImporter(f);
+        });
+        fc.showOpenDialog(c);
+    }
+
+    private String getFileContent(File f) {
         StringBuilder fileData = new StringBuilder();
         try {
-            Files.readAllLines(f.toPath(),StandardCharsets.UTF_8).forEach(e -> fileData.append(e).append("\n"));
+            Files.readAllLines(f.toPath(), StandardCharsets.UTF_8).forEach(e -> fileData.append(e).append("\n"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         return fileData.toString();
     }
-    private void extractUser(String s){
+
+    private void extractUser(String s) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -52,7 +64,8 @@ public class DataImporter {
         }
         et.commit();
     }
-    private void extractItems(String s){
+
+    private void extractItems(String s) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         String[] lines = s.split("\n");
@@ -65,16 +78,16 @@ public class DataImporter {
             item.setKbNumber(Integer.parseInt(columns[2]));
             item.setAmount(Integer.parseInt(columns[3]));
             item.setNetPrice(Integer.parseInt(columns[4]));
-            item.setSupplier(em.createQuery("select s from Supplier s where shortName like '"+columns[5].replace("GRE","GR")+"'",Supplier.class).getSingleResult());
+            item.setSupplier(em.createQuery("select s from Supplier s where shortName like '" + columns[5].replace("GRE", "GR") + "'", Supplier.class).getSingleResult());
             try {
                 Long ib = Long.parseLong(columns[6]);
-                if(!barcode.contains(ib)) {
+                if (!barcode.contains(ib)) {
                     item.setBarcode(ib);
                     barcode.add(ib);
-                }else {
+                } else {
                     item.setBarcode(null);
                 }
-            }catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 item.setBarcode(null);
             }
             item.setSpecialPriceNet(Integer.parseInt(columns[7]));
@@ -83,7 +96,7 @@ public class DataImporter {
             item.setSingleDeposit(Integer.parseInt(columns[10]));
             item.setCrateDeposit(Integer.parseInt(columns[11]));
             item.setUnit(Unit.valueOf(columns[12].replace("WEIGHT", "GRAM")));
-            item.setPriceList(em.createQuery("select p from PriceList p where name like '"+columns[13]+"'",PriceList.class).getSingleResult());
+            item.setPriceList(em.createQuery("select p from PriceList p where name like '" + columns[13] + "'", PriceList.class).getSingleResult());
             item.setContainerDef(ContainerDefinition.valueOf(columns[14]));
             item.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
             item.setSuppliersItemNumber(Integer.parseInt(columns[16]));
@@ -110,13 +123,14 @@ public class DataImporter {
             items.add(item);
         }
         et.begin();
-        items.subList(0,items.size()/2).forEach(em::persist);
-        items.subList(items.size()/2,items.size()-1).forEach(em::persist);
+        items.subList(0, items.size() / 2).forEach(em::persist);
+        items.subList(items.size() / 2, items.size() - 1).forEach(em::persist);
         em.flush();
         et.commit();
         em.close();
     }
-    private void extractPriceLists(String s){
+
+    private void extractPriceLists(String s) {
         String[] lines = s.split("\n");
         for (String l : lines) {
             EntityManager em = DBConnection.getEntityManager();
@@ -125,7 +139,7 @@ public class DataImporter {
             String[] columns = l.split(";");
             PriceList pl = new PriceList();
             pl.setName(columns[0]);
-            if(!columns[1].equals("NULL")) {
+            if (!columns[1].equals("NULL")) {
                 try {
                     pl.setSuperPriceList(em.createQuery("select p from PriceList p where name like  '" + columns[1] + "'", PriceList.class).getSingleResult());
                 } catch (NoResultException e) {
@@ -138,7 +152,8 @@ public class DataImporter {
             em.close();
         }
     }
-    private void extractSuppliers(String s){
+
+    private void extractSuppliers(String s) {
         String[] lines = s.split("\n");
         ArrayList<Supplier> suppliers = new ArrayList<>();
         for (String l : lines) {
@@ -148,7 +163,7 @@ public class DataImporter {
             supplier.setName(columns[1]);
             supplier.setPhoneNumber(columns[2]);
             supplier.setEmail(columns[3]);
-            supplier.setAddress(columns[4]+";"+columns[5]);
+            supplier.setAddress(columns[4] + ";" + columns[5]);
             supplier.setKeeper(columns[6]);
             suppliers.add(supplier);
         }
@@ -159,14 +174,5 @@ public class DataImporter {
         em.flush();
         et.commit();
         em.close();
-    }
-    public static void OpenDialog(Component c){
-        JFileChooser fc = new JFileChooser();
-        fc.addActionListener(e -> {
-            File f = fc.getSelectedFile();
-            if(f==null)return;
-            new DataImporter(f);
-        });
-        fc.showOpenDialog(c);
     }
 }

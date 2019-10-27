@@ -7,6 +7,7 @@ package kernbeisser.Windows;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.*;
+import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
 
 import javax.persistence.EntityManager;
@@ -34,29 +35,25 @@ public abstract class ManageUser extends JFrame implements Finishable {
         initComponents();
         editUser.setEnabled(true);
         addWindowListener(new Finisher(this));
-        try {
-            userSelector = new DBTable(
-                    "select u from User u",
-                    User.class.getDeclaredField("username"),
-                    User.class.getDeclaredField("firstName"),
-                    User.class.getDeclaredField("surname")
-            );
-            userSelector.addMouseListener(
-                    new MouseAdapter() {
-                        @Override
-                        public void mouseReleased(MouseEvent e) {
-                            EntityManager em = DBConnection.getEntityManager();
-                            paste(em.createQuery(
-                                    "select u from User u where u.username like '"
-                                            +userSelector.getValueAt(userSelector.getSelectedRow(),0)+
-                                            "'",User.class)
-                                    .getSingleResult());
-                        }
+        userSelector = new DBTable<>(
+                "select u from User u",
+                Column.create("Username", User::getUsername),
+                Column.create("Vorname", User::getFirstName),
+                Column.create("Nachname", User::getSurname)
+        );
+        userSelector.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        EntityManager em = DBConnection.getEntityManager();
+                        paste(em.createQuery(
+                                "select u from User u where u.username like '"
+                                        +userSelector.getValueAt(userSelector.getSelectedRow(),0)+
+                                        "'",User.class)
+                                .getSingleResult());
                     }
-            );
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+                }
+        );
         JScrollPane jScrollPane = new JScrollPane(userSelector);
         jScrollPane.setBounds(0,0,getWidth(),getHeight());
         tableContainer.addTab("All",jScrollPane);

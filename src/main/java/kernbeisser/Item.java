@@ -13,7 +13,7 @@ public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(updatable = false,insertable = false,nullable = false)
+    @Column(updatable = false, insertable = false, nullable = false)
     private int iid;
 
     @Column
@@ -128,6 +128,10 @@ public class Item {
 
     @Column
     private boolean coveredIntake;
+
+    public int calculatePrice(){
+        return (int) (netPrice*((surcharge/100f)+1)*(((vatLow ? VAT.LOW.get() : VAT.HIGH.get())/100f)+1));
+    }
 
     public int getIid() {
         return iid;
@@ -422,12 +426,12 @@ public class Item {
     }
 
     @Override
-    public String toString() {
-        return name;
+    public int hashCode() {
+        return iid + name.hashCode();
     }
 
     @Override
-    public int hashCode() {
-        return iid+name.hashCode();
+    public String toString() {
+        return name;
     }
 }

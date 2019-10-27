@@ -43,6 +43,7 @@ public class ItemKK implements Serializable {
 
     @Column
     private int crateDeposit;
+
     public int getId() {
         return id;
     }

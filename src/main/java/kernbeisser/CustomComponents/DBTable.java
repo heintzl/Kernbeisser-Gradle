@@ -3,25 +3,25 @@ package kernbeisser.CustomComponents;
 import kernbeisser.DBConnection;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
-import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class DBTable<T> extends ObjectTable<T> {
     private String query;
     private int max = -1;
-    Field[] fields;
-    public DBTable(String query, int max, Field... fields){
-        super(fields);
+    public DBTable(String query, int max, Collection<Column<T>> columns){
+        super(columns);
         this.query=query;
         this.max=max;
-        this.fields=fields;
         this.refresh();
     }
-    public DBTable(String query, Field... fields){
-        super(fields);
+    public DBTable(String query,Column<T> ... columns){
+        this(query, Arrays.asList(columns));
+    }
+    public DBTable(String query, Collection<Column<T>> columns){
+        super(columns);
         this.query=query;
-        this.fields=fields;
         this.refresh();
     }
     public void refresh(){
@@ -38,8 +38,5 @@ public class DBTable<T> extends ObjectTable<T> {
     }
     public void setMax(int max) {
         this.max = max;
-    }
-    public void setFields(Field ... fields) {
-        this.fields = fields;
     }
 }

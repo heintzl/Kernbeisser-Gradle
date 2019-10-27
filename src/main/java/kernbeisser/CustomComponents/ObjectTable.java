@@ -8,22 +8,24 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
 public class ObjectTable <T> extends JTable {
     private ArrayList<ObjectSelectionListener<T>> selectionListeners = new ArrayList<>();
     private ArrayList<T> objects = new ArrayList<>();
-    private Field[] fields;
-    private HashMap<Integer,ColumnTransformer> transformers = new HashMap<>();
-    private HashMap<Integer,String> columnNames = new HashMap<>();
-    public ObjectTable(Field... fields){
-        this(null,fields);
+    private ArrayList<Column<T>> columns = new ArrayList<>();
+    public ObjectTable(Collection<Column<T>> columns){
+        this.columns.addAll(columns);
     }
-    ObjectTable(Collection<T> fill, Field... fields){
-        this.fields=fields;
+    public ObjectTable(Column<T> ... columns){
+        this.columns.addAll(Arrays.asList(columns));
+    }
+    ObjectTable(Collection<T> fill, Collection<Column<T>> columns){
+        this.columns.addAll(columns);
         if(fill!=null)
-        objects.addAll(fill);
+            objects.addAll(fill);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -36,12 +38,8 @@ public class ObjectTable <T> extends JTable {
         });
         repaintUI();
     }
-    public void setColumnName(String name,int columnId){
-        columnNames.put(columnId,name);
-    }
-    public void addColumnTransformer(ColumnTransformer transformer,int columnId){
-        if(!(columnId>fields.length))
-            transformers.put(columnId,transformer);
+    public void addColumn(Column<T> column){
+        columns.add(column);
     }
     public int indexOf(T t){
         return objects.lastIndexOf(t);
@@ -73,33 +71,15 @@ public class ObjectTable <T> extends JTable {
         objects.remove(id);
     }
     public void repaintUI(){
-        Object[][] values = new Object[objects.size()][fields.length];
-        for (int c = 0; c < fields.length; c++) {
-            try {
-                fields[c].setAccessible(true);
-                ColumnTransformer transformer = transformers.get(c);
-                if(transformer!=null) {
-                    for (int i = 0; i < objects.size(); i++) {
-                        values[i][c] = transformer.transform(fields[c].get(objects.get(i)).toString());
-                    }
-                }else {
-                    for (int i = 0; i < objects.size(); i++) {
-                        values[i][c] = fields[c].get(objects.get(i));
-                    }
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+        Object[][] values = new Object[objects.size()][columns.size()];
+        for (int c = 0; c < columns.size(); c++) {
+            for (int i = 0; i < objects.size(); i++) {
+                values[i][c] = columns.get(c).getValue(objects.get(i));
             }
         }
-
-        String[] names = new String[fields.length];
-        for (int i = 0; i < fields.length; i++) {
-            String customName = columnNames.get(i);
-            if(customName==null){
-                names[i]=fields[i].getName();
-            }else {
-                names[i]=customName;
-            }
+        String[] names = new String[columns.size()];
+        for (int i = 0; i < columns.size(); i++) {
+            names[i]=columns.get(i).getName();
         }
         setModel(new DefaultTableModel(values,names){
             @Override

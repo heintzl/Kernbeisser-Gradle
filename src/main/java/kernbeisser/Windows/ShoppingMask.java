@@ -6,6 +6,7 @@
 package kernbeisser.Windows;
 
 import kernbeisser.*;
+import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
 import kernbeisser.CustomComponents.ObjectTable;
 
@@ -13,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -24,6 +26,7 @@ public class ShoppingMask extends javax.swing.JPanel {
     private EntityManager em = DBConnection.getEntityManager();
     private EntityTransaction et = em.getTransaction();
     private Purchase purchase;
+    private int temporaryValue;
     private SaleSession saleSession;
     private ObjectTable<ShoppingItem> shoppingCartTable;
     private DBTable withoutBarcodeTable;
@@ -34,6 +37,8 @@ public class ShoppingMask extends javax.swing.JPanel {
         initComponents();
         setFilters();
         this.saleSession=saleSession;
+        temporaryValue =saleSession.getCustomer().getUserGroup().getValue();
+        refreshUser(saleSession.getCustomer());
         itemNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -41,7 +46,7 @@ public class ShoppingMask extends javax.swing.JPanel {
                 if(i!=null){
                     selectedItem.setText(i.getName());
                     unit.setText(new Translator().translate(i.getUnit()));
-                    price.setText(i.getNetPrice()/100f+"\u20AC");
+                    price.setText(i.calculatePrice()/100f+"\u20AC");
                 }else {
                     selectedItem.setText("Kein Ergebniss");
                     price.setText("0.00\u20AC");
@@ -49,48 +54,52 @@ public class ShoppingMask extends javax.swing.JPanel {
                 }
             }
         });
-        try {
-            withoutBarcodeTable = new DBTable("select i from Item i where barcode is not null",
-                    Item.class.getDeclaredField("name"),
-                    Item.class.getDeclaredField("kbNumber"),
-                    Item.class.getDeclaredField("netPrice")
-            );
-            itemsWithoutBarcodePanel.add(new JScrollPane(withoutBarcodeTable));
-            withoutBarcodeTable.addSelectionListener((e)->{
-                itemNumber.setText(((Item)e).getKbNumber()+"");
-                itemAmount.requestFocus();
-            });
-            withoutBarcodeTable.setColumnName("Name",0);
-            withoutBarcodeTable.setColumnName("Artikelnummer",1);
-            withoutBarcodeTable.setColumnName("Preis",2);
-            shoppingCartTable = new ObjectTable<>(
-                    ShoppingItem.class.getDeclaredField("name"),
-                    ShoppingItem.class.getDeclaredField("amount"),
-                    ShoppingItem.class.getDeclaredField("price")
-            );
-            shoppingCartTable.setColumnName("Name",0);
-            shoppingCartTable.setColumnName("Menge",1);
-            shoppingCartTable.setColumnName("Preis",2);
-            shoppingCartTable.addColumnTransformer(Tools.priceTransformer(),2);
-            shoppingCartTable.repaintUI();
-            shoppingCartPanel.add(new JScrollPane(shoppingCartTable));
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        withoutBarcodeTable = new DBTable<>("select i from Item i where barcode is not null",
+                Column.create("Name",Item::getName),
+                Column.create("Artikel-Nummmer",Item::getKbNumber),
+                Column.create("Preis",Item::calculatePrice)
+        );
+        itemsWithoutBarcodePanel.add(new JScrollPane(withoutBarcodeTable));
+        withoutBarcodeTable.addSelectionListener((e)->{
+            itemNumber.setText(((Item)e).getKbNumber()+"");
+            itemAmount.requestFocus();
+        });
+        withoutBarcodeTable.repaintUI();
+        shoppingCartTable = new ObjectTable<>(
+                Column.create("Name", ShoppingItem::getName),
+                Column.create("Anzahl", ShoppingItem::getItemAmount),
+                Column.create("Preis", e-> e.getRawPrice()/100f+"\u20AC")
+        );
+        shoppingCartTable.repaintUI();
+        shoppingCartPanel.add(new JScrollPane(shoppingCartTable));
+    }
+    private void refreshUser(User user){
+        userName.setText("Benutzer: "+user.getFirstName()+" "+user.getSurname()+" ("+user.getUsername()+")");
+        userGroupValue.setText("Guthaben: "+user.getUserGroup().getValue()/100f+"\u20AC");
+        userValueNow.setText("Jetziges Guthaben: "+user.getUserGroup().getValue()/100f+"\u20AC");
+        userGroupMembers.setText("Benutzer-Gruppe: "+Tools.toSting(user.getUserGroup().getMembers(),e -> user.getFirstName()+","));
     }
     private void addToShoppingCart(ShoppingItem i){
-        if(i.getPrice() > 2000)JOptionPane.showConfirmDialog(
-                this,
-                "Ist der eingegebene Preis von "+i.getPrice()/100f+"\u20AC korrekt?",
-                "Sehr hoher Preis!",JOptionPane.INFORMATION_MESSAGE);
+        if(i.getRawPrice() > 2000) {
+            if(JOptionPane.showConfirmDialog(
+                    this,
+                    "Ist der eingegebene Preis von " + i.getRawPrice() / 100f + "\u20AC korrekt?",
+                    "Sehr hoher Preis!", JOptionPane.INFORMATION_MESSAGE)!=0)return;
+        }
         ShoppingItem inside = shoppingCartTable.get(i);
         if(inside!=null){
-            inside.setPrice(i.getPrice()+inside.getPrice());
+            inside.setRawPrice(i.getRawPrice()+inside.getRawPrice());
             inside.setAmount(i.getAmount()+inside.getAmount());
             shoppingCartTable.repaintUI();
         }else {
             shoppingCartTable.add(i);
         }
+        temporaryValue-=i.getRawPrice();
+        if(temporaryValue<0)
+            userValueLater.setForeground(Color.RED);
+        else
+            userValueLater.setForeground(Color.GREEN);
+        userValueLater.setText("Guthaben nach dem Einkauf: "+temporaryValue/100f+"\u20AC");
     }
     private void setFilters(){
         Tools.setDoubleFilter(rawPrice);
@@ -955,9 +964,9 @@ public class ShoppingMask extends javax.swing.JPanel {
             Tools.ping(itemNumber);
             return;
         }
-        ShoppingItem item = ShoppingItem.fromItem(search);
+        ShoppingItem item = new ShoppingItem(search);
         item.setItemAmount(Integer.parseInt(itemAmount.getText()));
-        item.setPrice(search.getNetPrice()*item.getItemAmount());
+        item.setRawPrice(search.calculatePrice()*item.getItemAmount());
         addToShoppingCart(item);
         itemNumber.requestFocus();
         itemAmount.setText("1");
@@ -977,7 +986,19 @@ public class ShoppingMask extends javax.swing.JPanel {
     }//GEN-LAST:event_hiddenItemDepositActionPerformed
 
     private void addHiddenItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenItemActionPerformed
-        // TODO add your handling code here:
+        ShoppingItem shoppingItem = new ShoppingItem();
+        shoppingItem.setItemAmount(Integer.parseInt(hiddenItemAmount.getText()));
+        shoppingItem.setName(hiddenItemName.getText());
+        shoppingItem.setVatLow(hiddenItemVATlow.isSelected());
+        Checker c = new Checker();
+        try {
+            shoppingItem.setRawPrice((int)((c.checkPrice(hiddenItemPrice)+c.checkPrice(hiddenItemDeposit))*(1+(hiddenItemVATlow.isSelected()?VAT.LOW.get()/100f:VAT.HIGH.get()/100f))));
+        } catch (IncorrectInput incorrectInput) {
+            Tools.ping(hiddenItemPrice);
+            Tools.ping(hiddenItemDeposit);
+        }
+        shoppingItem.setItemAmount(Integer.parseInt(hiddenItemAmount.getText()));
+        addToShoppingCart(shoppingItem);
     }//GEN-LAST:event_addHiddenItemActionPerformed
 
     private void discountNormalPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountNormalPriceActionPerformed

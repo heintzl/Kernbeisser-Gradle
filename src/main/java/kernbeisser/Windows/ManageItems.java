@@ -6,6 +6,7 @@
 package kernbeisser.Windows;
 
 import kernbeisser.*;
+import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
 
 import javax.persistence.EntityManager;
@@ -46,47 +47,44 @@ public abstract class ManageItems extends JFrame implements Finishable {
         setFilters();
         itemVAThigh.addActionListener(e -> itemVATlow.setSelected(!itemVAThigh.isSelected()));
         itemVATlow.addActionListener(e -> itemVAThigh.setSelected(!itemVATlow.isSelected()));
-        try {
-            kbItems= new DBTable("select i from Item i",500,
-                    Item.class.getDeclaredField("name"),
-                    Item.class.getDeclaredField("netPrice"),
-                    Item.class.getDeclaredField("amount"),
-                    Item.class.getDeclaredField("kbNumber"),
-                    Item.class.getDeclaredField("weighAble"),
-                    Item.class.getDeclaredField("deleted"));
-            kbItems.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    EntityManager em = DBConnection.getEntityManager();
-                    pasteData(em.createQuery("select i from Item i where i.kbNumber = "+
-                            kbItems.getValueAt(kbItems.getSelectedRow(),3), Item.class).getSingleResult()
-                    );
-                    em.close();
-                }
-            });
-            searchSolutionPane.addTab("Ergebnisse",new JScrollPane(kbItems));
-            kkItems = new DBTable("select i from ItemKK i",500,
-                    ItemKK.class.getDeclaredField("kkNumber"),
-                    ItemKK.class.getDeclaredField("name"),
-                    ItemKK.class.getDeclaredField("barcode"),
-                    ItemKK.class.getDeclaredField("netPrice"),
-                    ItemKK.class.getDeclaredField("amount"),
-                    ItemKK.class.getDeclaredField("unit")
-            );
-            kkItems.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    EntityManager em = DBConnection.getEntityManager();
-                    pasteData(
-                            em.createQuery("select i from ItemKK i where i.kkNumber = "+
-                                    kkItems.getValueAt(kkItems.getSelectedRow(),0),ItemKK.class)
-                                    .getSingleResult()
-                    );
-                }
-            });
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        kbItems= new DBTable<>("select i from Item i",
+                Column.create("Name", Item::getName),
+                Column.create("Preis", Item::calculatePrice),
+                Column.create("Menge", Item::getAmount),
+                Column.create("Artikel-Nummer", Item::getKbNumber),
+                Column.create("Wiegbar",Item::isWeighAble),
+                Column.create("Gelöscht",Item::isDeleted)
+        );
+        kbItems.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                EntityManager em = DBConnection.getEntityManager();
+                pasteData(em.createQuery("select i from Item i where i.kbNumber = "+
+                        kbItems.getValueAt(kbItems.getSelectedRow(),3), Item.class).getSingleResult()
+                );
+                em.close();
+            }
+        });
+        searchSolutionPane.addTab("Ergebnisse",new JScrollPane(kbItems));
+        kkItems = new DBTable<>("select i from ItemKK i",
+                Column.create("Kornkraft-Nummer",ItemKK::getKkNumber),
+                Column.create("Name",ItemKK::getName),
+                Column.create("Barcode",ItemKK::getBarcode),
+                Column.create("Preis",ItemKK::getNetPrice),
+                Column.create("Menge",ItemKK::getAmount),
+                Column.create("Einheit",ItemKK::getUnit)
+        );
+        kkItems.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                EntityManager em = DBConnection.getEntityManager();
+                pasteData(
+                        em.createQuery("select i from ItemKK i where i.kkNumber = "+
+                                kkItems.getValueAt(kkItems.getSelectedRow(),0),ItemKK.class)
+                                .getSingleResult()
+                );
+            }
+        });
     }
 
     /**

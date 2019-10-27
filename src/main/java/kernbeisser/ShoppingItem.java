@@ -5,147 +5,139 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table
 public class ShoppingItem implements Serializable {
 
-    public ShoppingItem(){}
-
-    public static ShoppingItem fromItem(Item item){
-        return Tools.overwrite(new ShoppingItem(),item);
-    }
-
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int siid;
-
     @Column
     private int amount;
-
     @Column
-    private int price;
-
+    private int discount;
+    @Column
+    private int rawPrice;
+    @Column
+    private int netPrice;
     @JoinColumn
     @ManyToOne
     private Purchase purchase;
-
-    @CreationTimestamp
-    private Date createDate;
-
     @Column
     private String name;
-
-    @Column(unique = true)
+    @Column
     private int kbNumber;
-
     @Column
     private int itemAmount;
-
     @Column
-    private int netPrice;
-
-    @ManyToOne
-    @JoinColumn(name = "supplierId")
-    private Supplier supplier;
-
-    @Column(unique = true)
-    private Long barcode;
-
-    @Column
-    private int specialPriceNet;
-
+    private int itemNetPrice;
     @Column
     private boolean vatLow;
-
     @Column
-    private int surcharge;
-
-    @Column
-    private int singleDeposit;
-
-    @Column
-    private int crateDeposit;
-
+    private int itemRawPrice;
     @Column
     private Unit unit;
-
-    @ManyToOne
-    @JoinColumn(name = "priceListId")
-    private PriceList priceList;
-
-    @Column
-    private ContainerDefinition containerDef;
-
-    @Column
-    private double containerSize;
-
-    @Column
-    private int suppliersItemNumber;
-
     @Column
     private boolean weighAble;
-
     @Column
-    private boolean listed;
+    private int suppliersItemNumber;
+    @Column(length = 5)
+    private String shortName;
 
-    @Column
-    private boolean showInShop;
 
-    @Column
-    private boolean deleted;
+    public ShoppingItem() {
+    }
 
-    @Column
-    private boolean printAgain;
+    public ShoppingItem(Item item) {
+        this.name = item.getName();
+        this.kbNumber = item.getKbNumber();
+        this.amount = item.getAmount();
+        this.itemNetPrice = item.getNetPrice();
+        this.rawPrice = item.getSurcharge();
+        this.unit = item.getUnit();
+        this.vatLow = item.isVatLow();
+        this.weighAble=item.isWeighAble();
+        this.itemRawPrice=item.calculatePrice();
+        if(item.getSupplier()!=null)
+        this.shortName=item.getSupplier().getShortName();
+        this.suppliersItemNumber=item.getSuppliersItemNumber();
+    }
 
-    @Column
-    private boolean deleteAllowed;
+    public ShoppingItem(Item item, int discount, int price) {
+        this(item);
+        this.discount = discount;
+        this.netPrice = price;
+    }
 
-    @Column
-    private int loss;
+    public static ShoppingItem getOrganic(int price) {
+        ShoppingItem out;
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        try {
+            out = new ShoppingItem(em.createQuery("select i from Item i where name like 'Obst und Gem\u00fcse'", Item.class).getSingleResult());
+        } catch (NoResultException e) {
+            et.begin();
+            Item organic = new Item();
+            organic.setName("Obst und Gem\u00fcse");
+            organic.setDeleteAllowed(false);
+            organic.setKbNumber(-1);
+            em.persist(organic);
+            em.flush();
+            et.commit();
+            out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Obst und Gem\u00fcse'", Item.class).getSingleResult());
+        }
+        out.setRawPrice(price);
+        out.setAmount(1);
+        em.close();
+        return out;
+    }
 
-    @Column
-    private String info;
+    public static ShoppingItem getBakeryProduct(int price) {
+        ShoppingItem out;
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        try {
+            out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Backware'", Item.class).getSingleResult());
+        } catch (NoResultException e) {
+            et.begin();
+            Item bakeryProduct = new Item();
+            bakeryProduct.setName("Backware");
+            bakeryProduct.setDeleteAllowed(false);
+            bakeryProduct.setKbNumber(-2);
+            em.persist(bakeryProduct);
+            em.flush();
+            et.commit();
+            out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Backware'", Item.class).getSingleResult());
+        }
+        out.setRawPrice(price);
+        out.setAmount(1);
+        em.close();
+        return out;
+    }
 
-    @Column
-    private int sold;
-
-    @Column
-    @ElementCollection
-    private List<Boolean> specialPriceMonth = new ArrayList<>(12);
-
-    @Column
-    private int delivered;
-
-    @Column
-    @ElementCollection
-    private List<Integer> invShelf = new ArrayList<>(5);
-
-    @Column
-    @ElementCollection
-    private List<Integer> invStock = new ArrayList<>(5);
-
-    @Column
-    private int invPrice;
-
-    @Column
-    private Date intake;
-
-    @Column
-    private Date lastBuy;
-
-    @Column
-    private Date lastDelivery;
-
-    @Column
-    private Date deletedDate;
-
-    @Column
-    private Cooling cooling;
-
-    @Column
-    private boolean coveredIntake;
+    public static ShoppingItem getDeposit(int price) {
+        ShoppingItem out;
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        try {
+            out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Pfand'", Item.class).getSingleResult());
+        } catch (NoResultException e) {
+            et.begin();
+            Item deposit = new Item();
+            deposit.setName("Pfand");
+            deposit.setKbNumber(-3);
+            deposit.setDeleteAllowed(false);
+            em.persist(deposit);
+            em.flush();
+            et.commit();
+            out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Pfand'", Item.class).getSingleResult());
+        }
+        out.setRawPrice(price);
+        out.setAmount(1);
+        em.close();
+        return out;
+    }
 
     public String getName() {
         return name;
@@ -171,36 +163,12 @@ public class ShoppingItem implements Serializable {
         this.amount = amount;
     }
 
-    public int getNetPrice() {
-        return netPrice;
+    public int getItemNetPrice() {
+        return itemNetPrice;
     }
 
-    public void setNetPrice(int netPrice) {
-        this.netPrice = netPrice;
-    }
-
-    public Supplier getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
-
-    public Long getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(Long barcode) {
-        this.barcode = barcode;
-    }
-
-    public int getSpecialPriceNet() {
-        return specialPriceNet;
-    }
-
-    public void setSpecialPriceNet(int specialPriceNet) {
-        this.specialPriceNet = specialPriceNet;
+    public void setItemNetPrice(int netPrice) {
+        this.itemNetPrice = netPrice;
     }
 
     public boolean isVatLow() {
@@ -211,68 +179,12 @@ public class ShoppingItem implements Serializable {
         this.vatLow = vatLow;
     }
 
-    public int getSurcharge() {
-        return surcharge;
+    public int getRawPrice() {
+        return rawPrice;
     }
 
-    public void setSurcharge(int surcharge) {
-        this.surcharge = surcharge;
-    }
-
-    public int getSingleDeposit() {
-        return singleDeposit;
-    }
-
-    public void setSingleDeposit(int singleDeposit) {
-        this.singleDeposit = singleDeposit;
-    }
-
-    public int getCrateDeposit() {
-        return crateDeposit;
-    }
-
-    public void setCrateDeposit(int crateDeposit) {
-        this.crateDeposit = crateDeposit;
-    }
-
-    public Unit getUnit() {
-        return unit;
-    }
-
-    public void setUnit(Unit unit) {
-        this.unit = unit;
-    }
-
-    public PriceList getPriceList() {
-        return priceList;
-    }
-
-    public void setPriceList(PriceList priceList) {
-        this.priceList = priceList;
-    }
-
-    public ContainerDefinition getContainerDef() {
-        return containerDef;
-    }
-
-    public void setContainerDef(ContainerDefinition containerDef) {
-        this.containerDef = containerDef;
-    }
-
-    public double getContainerSize() {
-        return containerSize;
-    }
-
-    public void setContainerSize(double containerSize) {
-        this.containerSize = containerSize;
-    }
-
-    public int getSuppliersItemNumber() {
-        return suppliersItemNumber;
-    }
-
-    public void setSuppliersItemNumber(int suppliersItemNumber) {
-        this.suppliersItemNumber = suppliersItemNumber;
+    public void setRawPrice(int rawPrice) {
+        this.rawPrice = rawPrice;
     }
 
     public boolean isWeighAble() {
@@ -283,161 +195,12 @@ public class ShoppingItem implements Serializable {
         this.weighAble = weighAble;
     }
 
-    public boolean isListed() {
-        return listed;
+    public Unit getUnit() {
+        return unit;
     }
 
-    public void setListed(boolean listed) {
-        this.listed = listed;
-    }
-
-    public boolean isShowInShop() {
-        return showInShop;
-    }
-
-    public void setShowInShop(boolean showInShop) {
-        this.showInShop = showInShop;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public boolean isPrintAgain() {
-        return printAgain;
-    }
-
-    public void setPrintAgain(boolean printAgain) {
-        this.printAgain = printAgain;
-    }
-
-    public boolean isDeleteAllowed() {
-        return deleteAllowed;
-    }
-
-    public void setDeleteAllowed(boolean deleteAllowed) {
-        this.deleteAllowed = deleteAllowed;
-    }
-
-    public List<Boolean> getSpecialPriceMonth() {
-        return specialPriceMonth;
-    }
-
-    public void setSpecialPriceMonth(List<Boolean> specialPriceMonth) {
-        this.specialPriceMonth = specialPriceMonth;
-    }
-
-    public int getDelivered() {
-        return delivered;
-    }
-
-    public void setDelivered(int delivered) {
-        this.delivered = delivered;
-    }
-
-    public List<Integer> getInvShelf() {
-        return invShelf;
-    }
-
-    public void setInvShelf(List<Integer> invShelf) {
-        this.invShelf = invShelf;
-    }
-
-    public List<Integer> getInvStock() {
-        return invStock;
-    }
-
-    public void setInvStock(List<Integer> invStock) {
-        this.invStock = invStock;
-    }
-
-    public int getInvPrice() {
-        return invPrice;
-    }
-
-    public void setInvPrice(int invPrice) {
-        this.invPrice = invPrice;
-    }
-
-    public Date getIntake() {
-        return intake;
-    }
-
-    public void setIntake(Date intake) {
-        this.intake = intake;
-    }
-
-    public Date getLastBuy() {
-        return lastBuy;
-    }
-
-    public void setLastBuy(Date lastBuy) {
-        this.lastBuy = lastBuy;
-    }
-
-    public Date getLastDelivery() {
-        return lastDelivery;
-    }
-
-    public void setLastDelivery(Date lastDelivery) {
-        this.lastDelivery = lastDelivery;
-    }
-
-    public Date getDeletedDate() {
-        return deletedDate;
-    }
-
-    public void setDeletedDate(Date deletedDate) {
-        this.deletedDate = deletedDate;
-    }
-
-    public Cooling getCooling() {
-        return cooling;
-    }
-
-    public void setCooling(Cooling cooling) {
-        this.cooling = cooling;
-    }
-
-    public boolean isCoveredIntake() {
-        return coveredIntake;
-    }
-
-    public void setCoveredIntake(boolean coveredIntake) {
-        this.coveredIntake = coveredIntake;
-    }
-
-    public int getLoss() {
-        return loss;
-    }
-
-    public void setLoss(int loss) {
-        this.loss = loss;
-    }
-
-    public String getInfo() {
-        return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    public int getSold() {
-        return sold;
-    }
-
-    public void setSold(int sold) {
-        this.sold = sold;
-    }
-
-    @Override
-    public String toString() {
-        return name;
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
 
     public int getSiid() {
@@ -452,13 +215,6 @@ public class ShoppingItem implements Serializable {
         this.itemAmount = amount;
     }
 
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
 
     public Purchase getPurchase() {
         return purchase;
@@ -468,76 +224,53 @@ public class ShoppingItem implements Serializable {
         this.purchase = purchase;
     }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-
-    public static ShoppingItem getOrganic(int price){
-        ShoppingItem out;
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        try {
-            out =  ShoppingItem.fromItem(em.createQuery("select i from Item i where name like 'Obst und Gem\u00fcse'",Item.class).getSingleResult());
-        }catch (NoResultException e){
-            et.begin();
-            Item organic = new Item();
-            organic.setName("Obst und Gem\u00fcse");
-            organic.setDeleteAllowed(false);
-            organic.setKbNumber(-1);
-            em.persist(organic);
-            em.flush();
-            et.commit();
-            out = ShoppingItem.fromItem(em.createQuery("select  i from Item i where name like 'Obst und Gem\u00fcse'",Item.class).getSingleResult());
-        }
-        out.setPrice(price);
-        em.close();
-        return out;
-    }
-    public static ShoppingItem getBakeryProduct(int price){
-        ShoppingItem out;
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        try {
-            out =ShoppingItem.fromItem(em.createQuery("select  i from Item i where name like 'Backware'",Item.class).getSingleResult());
-        }catch (NoResultException e){
-            et.begin();
-            Item bakeryProduct = new Item();
-            bakeryProduct.setName("Backware");
-            bakeryProduct.setDeleteAllowed(false);
-            bakeryProduct.setKbNumber(-2);
-            em.persist(bakeryProduct);
-            em.flush();
-            et.commit();
-            out = ShoppingItem.fromItem(em.createQuery("select  i from Item i where name like 'Backware'",Item.class).getSingleResult());
-        }
-        out.setPrice(price);
-        em.close();
-        return out;
-    }
-    public static ShoppingItem getDeposit(int price){
-        ShoppingItem out;
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        try {
-            out = ShoppingItem.fromItem(em.createQuery("select  i from Item i where name like 'Pfand'",Item.class).getSingleResult());
-        }catch (NoResultException e){
-            et.begin();
-            Item deposit = new Item();
-            deposit.setName("Pfand");
-            deposit.setKbNumber(-3);
-            deposit.setDeleteAllowed(false);
-            em.persist(deposit);
-            em.flush();
-            et.commit();
-            out = ShoppingItem.fromItem(em.createQuery("select  i from Item i where name like 'Pfand'",Item.class).getSingleResult());
-        }
-        out.setPrice(price);
-        em.close();
-        return out;
-    }
     @Override
     public int hashCode() {
-        return kbNumber;
+        return kbNumber*getName().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    public int getSuppliersItemNumber() {
+        return suppliersItemNumber;
+    }
+
+    public void setSuppliersItemNumber(int suppliersItemNumber) {
+        this.suppliersItemNumber = suppliersItemNumber;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    public int getNetPrice() {
+        return netPrice;
+    }
+
+    public void setNetPrice(int netPrice) {
+        this.netPrice = netPrice;
+    }
+
+    public int getItemRawPrice() {
+        return itemRawPrice;
+    }
+
+    public void setItemRawPrice(int itemRawPrice) {
+        this.itemRawPrice = itemRawPrice;
     }
 }

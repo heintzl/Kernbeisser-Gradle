@@ -1,6 +1,6 @@
 package kernbeisser;
 
-public enum  Cooling {
+public enum Cooling {
     COLD,
     EXTRA_COLD,
     NONE

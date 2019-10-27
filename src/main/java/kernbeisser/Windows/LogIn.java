@@ -7,6 +7,7 @@ package kernbeisser.Windows;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.*;
+import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
 
 import javax.persistence.EntityManager;
@@ -29,34 +30,31 @@ public class LogIn extends JFrame implements Finishable {
      */
     public LogIn() {
         initComponents();
-        try {
-            loggedIn=null;
-            setSize(Tools.getScreenWidth()/2, Tools.getScreenHeight()/2);
-            Background b = new Background(Images.getImage("basil.png"));
-            b.autoSize(this);
-            b.setBounds(0,0,500,300);
-            add(b);
-            setLocationRelativeTo(null);
-            setVisible(true);
-            addWindowListener(new Finisher(this));
-            Field[] fields = new Field[]{
-                    User.class.getDeclaredField("username"),
-                    User.class.getDeclaredField("firstName"),
-                    User.class.getDeclaredField("surname"),
-            };
-            for (int i = 97; i < 123; i++) {
-                DBTable dbTable = new DBTable("select u from User u where u.username like '" + ((char) i) + "%' Order by username asc",fields);
-                dbTable.getTableHeader().setFont(new Font("arial",1,12));
-                dbTable.getSelectionModel().addListSelectionListener(e -> username.setText((String) dbTable.getValueAt(dbTable.getSelectedRow(), 0)));
-                jTabbedPane1.addTab(String.valueOf(Character.toUpperCase((char) i)), new JScrollPane(dbTable));
-            }
-            DBTable allUser = new DBTable("select u from User u",fields);
-            allUser.getTableHeader().setFont(new Font("arial",1,12));
-            allUser.getSelectionModel().addListSelectionListener(e -> username.setText((String) allUser.getValueAt(allUser.getSelectedRow(), 0)));
-            jTabbedPane1.addTab("Alle",new JScrollPane(allUser));
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+        loggedIn=null;
+        setSize(Tools.getScreenWidth()/2, Tools.getScreenHeight()/2);
+        Background b = new Background(Images.getImage("basil.png"));
+        b.autoSize(this);
+        b.setBounds(0,0,500,300);
+        add(b);
+        setLocationRelativeTo(null);
+        setVisible(true);
+        addWindowListener(new Finisher(this));
+        for (int i = 97; i < 123; i++) {
+            DBTable dbTable = new DBTable<>("select u from User u where u.username like '" + ((char) i) + "%' Order by username asc",
+                    Column.create("Username", User::getUsername),
+                    Column.create("Vorname", User::getFirstName),
+                    Column.create("Nachname", User::getSurname));
+            dbTable.getTableHeader().setFont(new Font("arial",1,12));
+            dbTable.getSelectionModel().addListSelectionListener(e -> username.setText((String) dbTable.getValueAt(dbTable.getSelectedRow(), 0)));
+            jTabbedPane1.addTab(String.valueOf(Character.toUpperCase((char) i)), new JScrollPane(dbTable));
         }
+        DBTable allUser = new DBTable<>("select u from User u",
+                Column.create("Username", User::getUsername),
+                Column.create("Vorname", User::getFirstName),
+                Column.create("Nachname", User::getSurname));
+        allUser.getTableHeader().setFont(new Font("arial",1,12));
+        allUser.getSelectionModel().addListSelectionListener(e -> username.setText((String) allUser.getValueAt(allUser.getSelectedRow(), 0)));
+        jTabbedPane1.addTab("Alle",new JScrollPane(allUser));
     }
 
     public static User getLoggedIn() {
