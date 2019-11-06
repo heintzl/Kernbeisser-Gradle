@@ -130,7 +130,7 @@ public class Item {
     private boolean coveredIntake;
 
     public int calculatePrice(){
-        return (int) (netPrice*((surcharge/100f)+1)*(((vatLow ? VAT.LOW.get() : VAT.HIGH.get())/100f)+1));
+        return (int) (netPrice*((surcharge/100f)+1)*(((vatLow ? VAT.LOW.getValue() : VAT.HIGH.getValue())/100f)+1));
     }
 
     public int getIid() {

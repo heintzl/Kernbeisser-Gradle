@@ -25,6 +25,7 @@ public class DBTable<T> extends ObjectTable<T> {
         this.refresh();
     }
     public void refresh(){
+        clear();
         if(query.equals(""))return;
         EntityManager em = DBConnection.getEntityManager();
         Query dbQuery = em.createQuery(query);

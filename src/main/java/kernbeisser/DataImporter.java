@@ -132,9 +132,9 @@ public class DataImporter {
 
     private void extractPriceLists(String s) {
         String[] lines = s.split("\n");
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
         for (String l : lines) {
-            EntityManager em = DBConnection.getEntityManager();
-            EntityTransaction et = em.getTransaction();
             et.begin();
             String[] columns = l.split(";");
             PriceList pl = new PriceList();
@@ -147,10 +147,10 @@ public class DataImporter {
                 }
             }
             em.persist(pl);
-            em.flush();
-            et.commit();
-            em.close();
         }
+        em.flush();
+        et.commit();
+        em.close();
     }
 
     private void extractSuppliers(String s) {

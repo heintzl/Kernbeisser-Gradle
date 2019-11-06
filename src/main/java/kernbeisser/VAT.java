@@ -1,18 +1,13 @@
 package kernbeisser;
 
-import java.util.function.Supplier;
-
-public enum VAT implements Supplier<Integer> {
-    LOW{
-        @Override
-        public Integer get() {
-            return 7;
-        }
-    },
-    HIGH{
-        @Override
-        public Integer get() {
-            return 19;
-        }
+public enum VAT {
+    LOW(7),
+    HIGH(19);
+    private int value;
+    VAT(int value){
+        this.value=value;
+    }
+    public int getValue(){
+        return value;
     }
 }

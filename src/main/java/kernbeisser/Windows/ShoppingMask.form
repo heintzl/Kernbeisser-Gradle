@@ -653,21 +653,21 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jPanel12" max="32767" attributes="0"/>
+                          <Component id="searchSolution" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jTextField6" alignment="0" min="-2" pref="346" max="-2" attributes="0"/>
+                                  <Component id="searchField" alignment="0" min="-2" pref="346" max="-2" attributes="0"/>
                                   <Component id="jLabel15" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel16" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jCheckBox3" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jCheckBox2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="searchKBNumber" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="searchBarcode" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jCheckBox5" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jCheckBox4" min="-2" max="-2" attributes="0"/>
+                                          <Component id="searchPriceList" min="-2" max="-2" attributes="0"/>
+                                          <Component id="searchName" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -684,28 +684,31 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jTextField6" min="-2" max="-2" attributes="0"/>
+                      <Component id="searchField" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jCheckBox2" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox5" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="searchBarcode" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="searchPriceList" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jCheckBox3" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="searchKBNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="searchName" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jPanel12" max="32767" attributes="0"/>
+                      <Component id="searchSolution" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JTextField" name="jTextField6">
+            <Component class="javax.swing.JTextField" name="searchField">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchFieldActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel15">
               <Properties>
@@ -717,31 +720,31 @@
                 <Property name="text" type="java.lang.String" value="Suchen nach:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox2">
+            <Component class="javax.swing.JCheckBox" name="searchBarcode">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Barcode"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox3">
+            <Component class="javax.swing.JCheckBox" name="searchKBNumber">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Artikelnummer"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox4">
+            <Component class="javax.swing.JCheckBox" name="searchName">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Artikelname"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox5">
+            <Component class="javax.swing.JCheckBox" name="searchPriceList">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Preisliste"/>
               </Properties>
             </Component>
-            <Container class="javax.swing.JPanel" name="jPanel12">
+            <Container class="javax.swing.JPanel" name="searchSolution">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -826,9 +829,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Normalpreis"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="discountNormalPriceActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="discountContainerPrice">
           <Properties>
@@ -837,9 +837,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Preis f&#xfc;r vorbestellte Gebinde"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="discountContainerPriceActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="discountHalfPrice">
           <Properties>
@@ -848,9 +845,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Halber Preis"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="discountHalfPriceActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="discountCustom">
           <Properties>
@@ -859,9 +853,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Reduziert um"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="discountCustomActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JSpinner" name="customDiscount">
         </Component>
@@ -874,9 +865,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Reduktion f&#xfc;r Folgeartikel beibehalten"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lockCustomDiscountActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -960,20 +948,13 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="userValueLater" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Component id="pay" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="shoppingSessionSum" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="userValueNow" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      </Group>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="userValueLater" pref="424" max="32767" attributes="0"/>
+                      <Component id="totalPrice" max="32767" attributes="0"/>
+                      <Component id="userValueNow" pref="424" max="32767" attributes="0"/>
                   </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="pay" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -981,7 +962,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="shoppingSessionSum" min="-2" max="-2" attributes="0"/>
+                  <Component id="totalPrice" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="userValueNow" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
@@ -1006,7 +987,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="payActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="shoppingSessionSum">
+        <Component class="javax.swing.JLabel" name="totalPrice">
           <Properties>
             <Property name="text" type="java.lang.String" value="Preis:"/>
           </Properties>
@@ -1112,15 +1093,15 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="itemNameInfo" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="itemPriceInfo" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="itemNumberInfo" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="itemAmountInfo" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="itemNameInfo" max="32767" attributes="0"/>
+                          <Component id="itemNumberInfo" alignment="0" pref="175" max="32767" attributes="0"/>
+                          <Component id="itemPriceInfo" max="32767" attributes="0"/>
+                          <Component id="itemAmountInfo" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="101" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

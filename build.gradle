@@ -1,3 +1,4 @@
+
 plugins {
     id 'java'
 }
@@ -15,4 +16,13 @@ dependencies {
     compile 'org.hibernate:hibernate-agroal:5.3.12.Final'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
     compile 'at.favre.lib:bcrypt:0.8.0'
+}
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Kernbeisser',
+                'Main-Class': 'java.kernbeisser.Main'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }

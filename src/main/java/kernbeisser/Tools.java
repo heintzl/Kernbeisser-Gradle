@@ -1,9 +1,5 @@
 package kernbeisser;
 
-import kernbeisser.CustomComponents.ColumnTransformer;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -176,9 +172,5 @@ public class Tools {
             }
         }
         return out;
-    }
-
-    public static ColumnTransformer priceTransformer() {
-        return s -> Integer.parseInt(s) / 100f + "\u20AC";
     }
 }

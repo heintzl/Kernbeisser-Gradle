@@ -17,6 +17,8 @@
         <class>kernbeisser.SaleSession</class>
         <class>kernbeisser.Purchase</class>
         <class>kernbeisser.Job</class>
+        <class>kernbeisser.Config</class>
+        <class>kernbeisser.Transaction</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>

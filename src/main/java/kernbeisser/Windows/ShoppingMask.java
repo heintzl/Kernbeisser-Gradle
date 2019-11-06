@@ -23,13 +23,13 @@ import java.awt.event.KeyEvent;
  * @author julik
  */
 public class ShoppingMask extends javax.swing.JPanel {
-    private EntityManager em = DBConnection.getEntityManager();
-    private EntityTransaction et = em.getTransaction();
-    private Purchase purchase;
-    private int temporaryValue;
+    private Item selected = null;
+    private int value;
+    private int sum = 0;
     private SaleSession saleSession;
     private ObjectTable<ShoppingItem> shoppingCartTable;
-    private DBTable withoutBarcodeTable;
+    private DBTable<Item> withoutBarcodeTable;
+    private DBTable<Item> searchTable;
     /**
      * Creates new form ShoppingMask
      */
@@ -37,41 +37,69 @@ public class ShoppingMask extends javax.swing.JPanel {
         initComponents();
         setFilters();
         this.saleSession=saleSession;
-        temporaryValue =saleSession.getCustomer().getUserGroup().getValue();
+        value =saleSession.getCustomer().getUserGroup().getValue();
         refreshUser(saleSession.getCustomer());
         itemNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                Item i = searchItem();
-                if(i!=null){
-                    selectedItem.setText(i.getName());
-                    unit.setText(new Translator().translate(i.getUnit()));
-                    price.setText(i.calculatePrice()/100f+"\u20AC");
-                }else {
-                    selectedItem.setText("Kein Ergebniss");
-                    price.setText("0.00\u20AC");
-                    unit.setText("");
-                }
+                loadItemStats();
             }
         });
-        withoutBarcodeTable = new DBTable<>("select i from Item i where barcode is not null",
+        withoutBarcodeTable = new DBTable<>("select i from Item i where barcode is null order by name asc",
                 Column.create("Name",Item::getName),
                 Column.create("Artikel-Nummmer",Item::getKbNumber),
                 Column.create("Preis",Item::calculatePrice)
         );
-        itemsWithoutBarcodePanel.add(new JScrollPane(withoutBarcodeTable));
-        withoutBarcodeTable.addSelectionListener((e)->{
-            itemNumber.setText(((Item)e).getKbNumber()+"");
-            itemAmount.requestFocus();
-        });
-        withoutBarcodeTable.repaintUI();
         shoppingCartTable = new ObjectTable<>(
                 Column.create("Name", ShoppingItem::getName),
                 Column.create("Anzahl", ShoppingItem::getItemAmount),
-                Column.create("Preis", e-> e.getRawPrice()/100f+"\u20AC")
+                Column.create("Preis", e-> e.getRawPrice()/100f+"\u20AC"+(e.getDiscount()==0?"":(" ("+e.getDiscount()+"% Rabatt)")))
         );
-        shoppingCartTable.repaintUI();
+        searchTable = new DBTable<>("",
+                Column.create("Name", Item::getName),
+                Column.create("Artikel-Nummer", Item::getKbNumber),
+                Column.create("Preis", e -> e.calculatePrice() / 100f + "\u20AC")
+        );
+        withoutBarcodeTable.addSelectionListener((e)->{
+            itemNumber.setText(e.getKbNumber()+"");
+            itemAmount.requestFocus();
+            loadItemStats();
+        });
+        searchTable.addSelectionListener((e) -> {
+            jTabbedPane1.setSelectedIndex(0);
+            itemNumber.setText(e.getKbNumber()+"");
+            itemAmount.requestFocus();
+            loadItemStats();
+        });
+        itemsWithoutBarcodePanel.add(new JScrollPane(withoutBarcodeTable));
         shoppingCartPanel.add(new JScrollPane(shoppingCartTable));
+        searchSolution.add(new JScrollPane(searchTable));
+        withoutBarcodeTable.repaintUI();
+        shoppingCartTable.repaintUI();
+        customDiscount.setModel(new SpinnerNumberModel(0,0,100,5));
+    }
+    private void loadItemStats(){
+        Item i = searchItem();
+        selected = i;
+        if(i!=null){
+            selectedItem.setText(i.getName());
+            unit.setText(new Translator().translate(i.getUnit()));
+            price.setText(i.calculatePrice()/100f+"\u20AC");
+            itemAmountInfo.setText("Menge: "+i.getAmount());
+            itemNameInfo.setText("Artikelname: "+i.getName());
+            itemNumberInfo.setText("Artikelnummer: "+i.getKbNumber());
+            itemPriceInfo.setText("Preis: "+i.calculatePrice()/100f+"\u20AC");
+            editBarcodeField.setText(i.getBarcode()+"");
+        }else {
+            selectedItem.setText("Kein Ergebniss");
+            price.setText("0.00\u20AC");
+            unit.setText("");
+            itemAmountInfo.setText("Menge: ");
+            itemNameInfo.setText("Artikelname: ");
+            itemNumberInfo.setText("Artikelnummer: ");
+            itemPriceInfo.setText("Preis: ");
+            editBarcodeField.setText("");
+        }
     }
     private void refreshUser(User user){
         userName.setText("Benutzer: "+user.getFirstName()+" "+user.getSurname()+" ("+user.getUsername()+")");
@@ -80,26 +108,32 @@ public class ShoppingMask extends javax.swing.JPanel {
         userGroupMembers.setText("Benutzer-Gruppe: "+Tools.toSting(user.getUserGroup().getMembers(),e -> user.getFirstName()+","));
     }
     private void addToShoppingCart(ShoppingItem i){
+        i.setDiscount(useDiscount());
+        i.setRawPrice((int) (i.getRawPrice()*(1-(i.getDiscount()/100f))));
         if(i.getRawPrice() > 2000) {
             if(JOptionPane.showConfirmDialog(
                     this,
                     "Ist der eingegebene Preis von " + i.getRawPrice() / 100f + "\u20AC korrekt?",
                     "Sehr hoher Preis!", JOptionPane.INFORMATION_MESSAGE)!=0)return;
         }
-        ShoppingItem inside = shoppingCartTable.get(i);
+        ShoppingItem inside = shoppingCartTable.get(e -> e.equals(i));
         if(inside!=null){
             inside.setRawPrice(i.getRawPrice()+inside.getRawPrice());
-            inside.setAmount(i.getAmount()+inside.getAmount());
+            inside.setItemAmount(i.getItemAmount()+inside.getItemAmount());
             shoppingCartTable.repaintUI();
         }else {
             shoppingCartTable.add(i);
         }
-        temporaryValue-=i.getRawPrice();
-        if(temporaryValue<0)
+        sum+=i.getRawPrice();
+        repaintValues();
+    }
+    private void repaintValues(){
+        if(value-sum<0)
             userValueLater.setForeground(Color.RED);
         else
             userValueLater.setForeground(Color.GREEN);
-        userValueLater.setText("Guthaben nach dem Einkauf: "+temporaryValue/100f+"\u20AC");
+        totalPrice.setText("Preis: "+ (sum) /100f+"\u20AC");
+        userValueLater.setText("Guthaben nach dem Einkauf: "+ (value-sum) /100f+"\u20AC");
     }
     private void setFilters(){
         Tools.setDoubleFilter(rawPrice);
@@ -108,7 +142,6 @@ public class ShoppingMask extends javax.swing.JPanel {
         Tools.setRealNumberFilter(itemAmount);
         Tools.setRealNumberFilter(hiddenItemAmount);
     }
-
     private Item searchItem(){
         if(itemNumber.getText().length()<1)return null;
         EntityManager em = DBConnection.getEntityManager();
@@ -121,6 +154,17 @@ public class ShoppingMask extends javax.swing.JPanel {
                 return null;
             }
         }
+    }
+
+    private int useDiscount(){
+        int discount = 0;
+        if(discountHalfPrice.isSelected())discount = 50;
+        else if(discountCustom.isSelected()){
+            discount = (Integer)customDiscount.getValue();
+            if(lockCustomDiscount.isSelected())return discount;
+        }
+        discountNormalPrice.setSelected(true);
+        return discount;
     }
 
     /**
@@ -174,14 +218,14 @@ public class ShoppingMask extends javax.swing.JPanel {
         price = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
-        jTextField6 = new javax.swing.JTextField();
+        searchField = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jPanel12 = new javax.swing.JPanel();
+        searchBarcode = new javax.swing.JCheckBox();
+        searchKBNumber = new javax.swing.JCheckBox();
+        searchName = new javax.swing.JCheckBox();
+        searchPriceList = new javax.swing.JCheckBox();
+        searchSolution = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         discountNormalPrice = new javax.swing.JRadioButton();
         discountContainerPrice = new javax.swing.JRadioButton();
@@ -196,7 +240,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         clearShoppingSession = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         pay = new javax.swing.JButton();
-        shoppingSessionSum = new javax.swing.JLabel();
+        totalPrice = new javax.swing.JLabel();
         userValueNow = new javax.swing.JLabel();
         userValueLater = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -553,24 +597,30 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Gebinde", jPanel3);
 
+        searchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchFieldActionPerformed(evt);
+            }
+        });
+
         jLabel15.setText("Artikelsuchen");
 
         jLabel16.setText("Suchen nach:");
 
-        jCheckBox2.setSelected(true);
-        jCheckBox2.setText("Barcode");
+        searchBarcode.setSelected(true);
+        searchBarcode.setText("Barcode");
 
-        jCheckBox3.setSelected(true);
-        jCheckBox3.setText("Artikelnummer");
+        searchKBNumber.setSelected(true);
+        searchKBNumber.setText("Artikelnummer");
 
-        jCheckBox4.setSelected(true);
-        jCheckBox4.setText("Artikelname");
+        searchName.setSelected(true);
+        searchName.setText("Artikelname");
 
-        jCheckBox5.setSelected(true);
-        jCheckBox5.setText("Preisliste");
+        searchPriceList.setSelected(true);
+        searchPriceList.setText("Preisliste");
 
-        jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder("Ergebnisse der Suche"));
-        jPanel12.setLayout(new java.awt.GridLayout(1, 1));
+        searchSolution.setBorder(javax.swing.BorderFactory.createTitledBorder("Ergebnisse der Suche"));
+        searchSolution.setLayout(new java.awt.GridLayout(1, 1));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -579,20 +629,20 @@ public class ShoppingMask extends javax.swing.JPanel {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchSolution, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel15)
                             .addComponent(jLabel16)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jCheckBox3)
-                                    .addComponent(jCheckBox2))
+                                    .addComponent(searchKBNumber)
+                                    .addComponent(searchBarcode))
                                 .addGap(52, 52, 52)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jCheckBox5)
-                                    .addComponent(jCheckBox4))))
+                                    .addComponent(searchPriceList)
+                                    .addComponent(searchName))))
                         .addGap(0, 44, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -602,19 +652,19 @@ public class ShoppingMask extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel15)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel16)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox2)
-                    .addComponent(jCheckBox5))
+                    .addComponent(searchBarcode)
+                    .addComponent(searchPriceList))
                 .addGap(9, 9, 9)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox3)
-                    .addComponent(jCheckBox4))
+                    .addComponent(searchKBNumber)
+                    .addComponent(searchName))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(searchSolution, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -624,44 +674,19 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         discountSelection.add(discountNormalPrice);
         discountNormalPrice.setText("Normalpreis");
-        discountNormalPrice.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                discountNormalPriceActionPerformed(evt);
-            }
-        });
 
         discountSelection.add(discountContainerPrice);
         discountContainerPrice.setText("Preis für vorbestellte Gebinde");
-        discountContainerPrice.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                discountContainerPriceActionPerformed(evt);
-            }
-        });
 
         discountSelection.add(discountHalfPrice);
         discountHalfPrice.setText("Halber Preis");
-        discountHalfPrice.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                discountHalfPriceActionPerformed(evt);
-            }
-        });
 
         discountSelection.add(discountCustom);
         discountCustom.setText("Reduziert um");
-        discountCustom.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                discountCustomActionPerformed(evt);
-            }
-        });
 
         jLabel10.setText("%");
 
         lockCustomDiscount.setText("Reduktion für Folgeartikel beibehalten");
-        lockCustomDiscount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lockCustomDiscountActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -754,7 +779,7 @@ public class ShoppingMask extends javax.swing.JPanel {
             }
         });
 
-        shoppingSessionSum.setText("Preis:");
+        totalPrice.setText("Preis:");
 
         userValueNow.setText("Jetziges Guthaben:");
 
@@ -766,22 +791,18 @@ public class ShoppingMask extends javax.swing.JPanel {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                        .addComponent(userValueLater)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(pay))
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(shoppingSessionSum)
-                            .addComponent(userValueNow))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(userValueLater, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+                    .addComponent(totalPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(userValueNow, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pay)
                 .addContainerGap())
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addComponent(shoppingSessionSum)
+                .addComponent(totalPrice)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(userValueNow)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -824,11 +845,11 @@ public class ShoppingMask extends javax.swing.JPanel {
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(itemNameInfo)
-                    .addComponent(itemPriceInfo)
-                    .addComponent(itemNumberInfo)
-                    .addComponent(itemAmountInfo))
-                .addContainerGap(101, Short.MAX_VALUE))
+                    .addComponent(itemNameInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(itemNumberInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                    .addComponent(itemPriceInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(itemAmountInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -935,18 +956,18 @@ public class ShoppingMask extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void hiddenItemNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hiddenItemNameActionPerformed
-        // TODO add your handling code here:
+        hiddenItemAmount.requestFocus();
     }//GEN-LAST:event_hiddenItemNameActionPerformed
 
     private void hiddenItemAmountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hiddenItemAmountActionPerformed
-        // TODO add your handling code here:
+        hiddenItemDeposit.requestFocus();
     }//GEN-LAST:event_hiddenItemAmountActionPerformed
 
     private void addRawPrice(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRawPrice
         Checker c = new Checker();
         int price = 0;
         try {
-            price = c.checkPrice(rawPrice);
+            price = c.checkPrice(rawPrice,1,500000);
         }catch (IncorrectInput e){
             Tools.ping(e.getComponent());
             return;
@@ -964,6 +985,7 @@ public class ShoppingMask extends javax.swing.JPanel {
             Tools.ping(itemNumber);
             return;
         }
+        if(discountContainerPrice.isSelected())search.setSurcharge(search.getSurcharge()/2);
         ShoppingItem item = new ShoppingItem(search);
         item.setItemAmount(Integer.parseInt(itemAmount.getText()));
         item.setRawPrice(search.calculatePrice()*item.getItemAmount());
@@ -992,7 +1014,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         shoppingItem.setVatLow(hiddenItemVATlow.isSelected());
         Checker c = new Checker();
         try {
-            shoppingItem.setRawPrice((int)((c.checkPrice(hiddenItemPrice)+c.checkPrice(hiddenItemDeposit))*(1+(hiddenItemVATlow.isSelected()?VAT.LOW.get()/100f:VAT.HIGH.get()/100f))));
+            shoppingItem.setRawPrice((int)((c.checkPrice(hiddenItemPrice)+c.checkPrice(hiddenItemDeposit))*(1+(hiddenItemVATlow.isSelected()?VAT.LOW.getValue()/100f:VAT.HIGH.getValue()/100f))));
         } catch (IncorrectInput incorrectInput) {
             Tools.ping(hiddenItemPrice);
             Tools.ping(hiddenItemDeposit);
@@ -1001,45 +1023,60 @@ public class ShoppingMask extends javax.swing.JPanel {
         addToShoppingCart(shoppingItem);
     }//GEN-LAST:event_addHiddenItemActionPerformed
 
-    private void discountNormalPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountNormalPriceActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_discountNormalPriceActionPerformed
-
-    private void discountContainerPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountContainerPriceActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_discountContainerPriceActionPerformed
-
-    private void discountHalfPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountHalfPriceActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_discountHalfPriceActionPerformed
-
-    private void discountCustomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountCustomActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_discountCustomActionPerformed
-
-    private void lockCustomDiscountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockCustomDiscountActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lockCustomDiscountActionPerformed
-
     private void clearShoppingSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearShoppingSessionActionPerformed
-        // TODO add your handling code here:
+        shoppingCartTable.clear();
+        sum=0;
+        repaintValues();
     }//GEN-LAST:event_clearShoppingSessionActionPerformed
 
     private void deleteSelectedItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteSelectedItemActionPerformed
-        // TODO add your handling code here:
+        ShoppingItem i = shoppingCartTable.getSelectedObject();
+        sum-=i.getRawPrice();
+        shoppingCartTable.remove(i);
+        repaintValues();
     }//GEN-LAST:event_deleteSelectedItemActionPerformed
 
+
     private void payActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_payActionPerformed
-        // TODO add your handling code here:
+        new Pay(saleSession,shoppingCartTable.getItems(),()->{});
     }//GEN-LAST:event_payActionPerformed
 
     private void editBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarcodeActionPerformed
-        // TODO add your handling code here:
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        Item update = em.createQuery("select i from Item i where id ="+selected.getIid(),Item.class).getSingleResult();
+        try {
+            update.setBarcode(new Checker().checkLong(editBarcodeField));
+        } catch (IncorrectInput incorrectInput) {
+            Tools.ping(editBarcodeField);
+            return;
+        }
+        em.persist(update);
+        em.flush();
+        et.commit();
+        em.close();
+        JOptionPane.showMessageDialog(this,"Der barcode von \""+selected.getName()+"\"\n wurde zu "+update.getBarcode()+" geändert!");
     }//GEN-LAST:event_editBarcodeActionPerformed
 
     private void editBarcodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarcodeFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_editBarcodeFieldActionPerformed
+
+    private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
+        String s = searchField.getText();
+        if(searchName.isSelected()||searchPriceList.isSelected()||searchKBNumber.isSelected()||searchBarcode.isSelected()){
+            String quarry = "select i from Item i where "+
+                    (searchBarcode.isSelected() ? "barcode like '%sh' OR " : "")+
+                    (searchKBNumber.isSelected() ? "kbNumber like 'sh' OR ":"")+
+                    (searchName.isSelected() ? "name like 'sh%' OR ":"")+
+                    (searchPriceList.isSelected()?"priceList.name like 'sh%' OR ":"");
+            quarry=quarry.substring(0,quarry.length()-3).replaceAll("sh",s);
+            searchTable.setQuery(quarry);
+            searchTable.refresh();
+        }
+        else return;
+    }//GEN-LAST:event_searchFieldActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1073,10 +1110,6 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JLabel itemNumberInfo;
     private javax.swing.JLabel itemPriceInfo;
     private javax.swing.JPanel itemsWithoutBarcodePanel;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -1093,7 +1126,6 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
@@ -1105,16 +1137,21 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField6;
     private javax.swing.ButtonGroup kindOfSelection;
     private javax.swing.JCheckBox lockCustomDiscount;
     private javax.swing.JRadioButton organics;
     private javax.swing.JButton pay;
     private javax.swing.JLabel price;
     private javax.swing.JTextField rawPrice;
+    private javax.swing.JCheckBox searchBarcode;
+    private javax.swing.JTextField searchField;
+    private javax.swing.JCheckBox searchKBNumber;
+    private javax.swing.JCheckBox searchName;
+    private javax.swing.JCheckBox searchPriceList;
+    private javax.swing.JPanel searchSolution;
     private javax.swing.JLabel selectedItem;
     private javax.swing.JPanel shoppingCartPanel;
-    private javax.swing.JLabel shoppingSessionSum;
+    private javax.swing.JLabel totalPrice;
     private javax.swing.JLabel unit;
     private javax.swing.JLabel userGroupMembers;
     private javax.swing.JLabel userGroupValue;

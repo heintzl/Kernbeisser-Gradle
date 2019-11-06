@@ -45,7 +45,6 @@ public class ShoppingItem implements Serializable {
     @Column(length = 5)
     private String shortName;
 
-
     public ShoppingItem() {
     }
 
@@ -88,7 +87,7 @@ public class ShoppingItem implements Serializable {
             out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Obst und Gem\u00fcse'", Item.class).getSingleResult());
         }
         out.setRawPrice(price);
-        out.setAmount(1);
+        out.setItemAmount(1);
         em.close();
         return out;
     }
@@ -111,7 +110,7 @@ public class ShoppingItem implements Serializable {
             out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Backware'", Item.class).getSingleResult());
         }
         out.setRawPrice(price);
-        out.setAmount(1);
+        out.setItemAmount(1);
         em.close();
         return out;
     }
@@ -134,7 +133,7 @@ public class ShoppingItem implements Serializable {
             out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Pfand'", Item.class).getSingleResult());
         }
         out.setRawPrice(price);
-        out.setAmount(1);
+        out.setItemAmount(1);
         em.close();
         return out;
     }
@@ -226,7 +225,15 @@ public class ShoppingItem implements Serializable {
 
     @Override
     public int hashCode() {
-        return kbNumber*getName().hashCode();
+        return kbNumber*(discount+1)*getName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ShoppingItem) {
+            ShoppingItem item = (ShoppingItem) obj;
+            return item.discount == discount && item.name.equals(name) && item.kbNumber == kbNumber;
+        }else return false;
     }
 
     @Override

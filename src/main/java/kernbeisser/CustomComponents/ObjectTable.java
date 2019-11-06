@@ -1,16 +1,13 @@
 package kernbeisser.CustomComponents;
 
-import kernbeisser.Tools;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.function.Function;
 
 public class ObjectTable <T> extends JTable {
     private ArrayList<ObjectSelectionListener<T>> selectionListeners = new ArrayList<>();
@@ -18,9 +15,29 @@ public class ObjectTable <T> extends JTable {
     private ArrayList<Column<T>> columns = new ArrayList<>();
     public ObjectTable(Collection<Column<T>> columns){
         this.columns.addAll(columns);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(getSelectedRow()==-1)return;
+                T selected = objects.get(getSelectedRow());
+                for (ObjectSelectionListener<T> listener : selectionListeners) {
+                    listener.selected(selected);
+                }
+            }
+        });
     }
     public ObjectTable(Column<T> ... columns){
         this.columns.addAll(Arrays.asList(columns));
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(getSelectedRow()==-1)return;
+                T selected = objects.get(getSelectedRow());
+                for (ObjectSelectionListener<T> listener : selectionListeners) {
+                    listener.selected(selected);
+                }
+            }
+        });
     }
     ObjectTable(Collection<T> fill, Collection<Column<T>> columns){
         this.columns.addAll(columns);
@@ -47,9 +64,10 @@ public class ObjectTable <T> extends JTable {
     public boolean contains(T t){
         return objects.contains(t);
     }
-    public T get(T t){
+    public T getSelectedObject(){return objects.get(getSelectedRow());}
+    public T get(Function<T,Boolean> function){
         for (T object : objects) {
-            if(object.hashCode()==t.hashCode())return object;
+            if(function.apply(object))return object;
         }
         return null;
     }
@@ -66,9 +84,18 @@ public class ObjectTable <T> extends JTable {
     }
     public void remove(T t){
         objects.remove(t);
+        repaintUI();
     }
     public void remove(int id){
         objects.remove(id);
+        repaintUI();
+    }
+    public Collection<T> getItems(){
+        return objects;
+    }
+    public void clear(){
+        objects.clear();
+        repaintUI();
     }
     public void repaintUI(){
         Object[][] values = new Object[objects.size()][columns.size()];

@@ -20,6 +20,7 @@ public class Main {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         Images.setPath(new File("src/main/resources/Images"));
         EntityManager em = DBConnection.getEntityManager();
+        Config.loadConfigs();
         User user;
         try {
             user = em.createQuery("select u from User u", User.class).setMaxResults(1).getSingleResult();
