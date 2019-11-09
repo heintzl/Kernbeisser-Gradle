@@ -7,7 +7,6 @@ package kernbeisser.Windows.CashierShoppingMask;
 
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.SaleSession;
 import kernbeisser.User;
 import kernbeisser.Windows.ShoppingMask.ShoppingMask;
 
@@ -19,7 +18,7 @@ import java.awt.*;
  * @author julik
  */
 public class CashierShoppingMask extends javax.swing.JFrame {
-    private User seller;
+    CashierShoppingMaskController controller;
     private DBTable<User> userTable = new DBTable<>("select u from User u order by surname asc",
             Column.create("Nachname",User::getSurname),
             Column.create("Vorname",User::getFirstName),
@@ -29,8 +28,8 @@ public class CashierShoppingMask extends javax.swing.JFrame {
      * Creates new form CashierShoppingMask
      */
     public CashierShoppingMask(User seller) {
+        controller=new CashierShoppingMaskController(seller);
         initComponents();
-        this.seller=seller;
         startShopping.setEnabled(false);
         userTable.addSelectionListener((e)->{
             startShopping.setEnabled(true);
@@ -40,7 +39,6 @@ public class CashierShoppingMask extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         tabbedPane.setFont( new Font( "Dialog", Font.BOLD | Font.ITALIC, 13 ) );
         setVisible(true);
-
     }
 
     /**
@@ -135,11 +133,11 @@ public class CashierShoppingMask extends javax.swing.JFrame {
 
     private void startShoppingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
         User user = userTable.getSelectedObject();
-        if(user==null)return;
-        SaleSession saleSession = new SaleSession();
-        saleSession.setSeller(seller);
-        saleSession.setCustomer(user);
-        tabbedPane.addTab("Einkauf f\u00fcr "+user.getFirstName()+" "+user.getSurname(),new ShoppingMask(saleSession));
+        try{
+            tabbedPane.addTab("Einkauf f\u00fcr "+user.getFirstName()+" "+user.getSurname(),controller.startShoppingFor(user));
+        }catch (NullPointerException e){
+            startShopping.setEnabled(false);
+        }
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
     }//GEN-LAST:event_startShoppingActionPerformed
 
