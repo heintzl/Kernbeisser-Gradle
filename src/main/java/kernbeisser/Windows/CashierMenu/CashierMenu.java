@@ -5,12 +5,12 @@
  */
 package kernbeisser.Windows.CashierMenu;
 
+import kernbeisser.Windows.CatalogInput.CatalogInput;
 import kernbeisser.Windows.Finishable;
 import kernbeisser.Useful.Images;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMask;
-import kernbeisser.Windows.CatalogInput.CatalogInput;
 import kernbeisser.Windows.ManageItems.ManageItems;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceLists;
 import kernbeisser.Windows.ManageUser.ManageUser;

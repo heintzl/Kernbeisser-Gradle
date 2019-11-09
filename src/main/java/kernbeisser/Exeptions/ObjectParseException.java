@@ -3,7 +3,7 @@ package kernbeisser.Exeptions;
 public class ObjectParseException extends Exception{
     private String source;
     private Class to;
-    ObjectParseException(String source,Class to){
+    public ObjectParseException(String source, Class to){
         this.source=source;
         this.to=to;
     }

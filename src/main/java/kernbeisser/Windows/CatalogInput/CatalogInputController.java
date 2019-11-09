@@ -3,6 +3,8 @@ package kernbeisser.Windows.CatalogInput;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.ItemKK;
 import kernbeisser.Enums.Unit;
+import kernbeisser.Exeptions.FileReadException;
+import kernbeisser.Exeptions.ObjectParseException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -14,17 +16,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 class CatalogInputController {
-    private boolean importData(File f){
+    boolean importData(File f) throws ObjectParseException, FileReadException {
         StringBuilder sb = new StringBuilder();
         try {
             Files.readAllLines(f.toPath(), StandardCharsets.ISO_8859_1).forEach(e-> sb.append(e).append("\n"));
             return importData(sb.toString());
         } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            throw new FileReadException(f,StandardCharsets.ISO_8859_1);
         }
     }
-    private boolean importData(String s){
+    boolean importData(String s) throws ObjectParseException {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         ArrayList<ItemKK> catalog = new ArrayList<>();
@@ -51,7 +52,7 @@ class CatalogInputController {
         em.close();
         return true;
     }
-    private ItemKK extractItemKK(String line){
+    ItemKK extractItemKK(String line) throws ObjectParseException {
         ItemKK item = new ItemKK();
         String[] values = line.split(";");
         try {
@@ -67,18 +68,12 @@ class CatalogInputController {
             item.setNetPrice((int) Math.round(Double.parseDouble(values[37].replace(",","."))*100));
             if(!values[26].equals(""))item.setSingleDeposit(Integer.parseInt(values[26]));
             if(!values[27].equals(""))item.setCrateDeposit(Integer.parseInt(values[27]));
-
         }catch (Exception e){
-            e.printStackTrace();
-            int i = 0;
-            for (String value : values) {
-                if(value!=null)System.out.print("r:"+i+"["+value+"]");
-            }
-            System.out.println();
+            throw new ObjectParseException(line,ItemKK.class);
         }
         return item;
     }
-    private Unit findUnit(String s){
+    Unit findUnit(String s){
         if(s.toUpperCase().contains("L"))return Unit.LITER;
         else
         if(s.toUpperCase().contains("ML"))return Unit.MILLILITER;
@@ -89,7 +84,7 @@ class CatalogInputController {
         else
             return Unit.STACK;
     }
-    private int extractAmount(String s,Unit u){
+    int extractAmount(String s,Unit u){
         try {
             double d = Double.parseDouble(s.replaceAll(",", "."));
             switch (u) {
