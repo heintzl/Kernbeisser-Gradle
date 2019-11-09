@@ -6,10 +6,10 @@
 package kernbeisser.Windows.UserGroupSelector;
 
 import kernbeisser.CustomComponents.Column;
-import kernbeisser.DBConnection;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.User;
-import kernbeisser.UserGroup;
+import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntitys.UserGroup;
 
 import javax.persistence.EntityManager;
 import javax.swing.*;

@@ -5,11 +5,8 @@
  */
 package kernbeisser.StartUp;
 
-import kernbeisser.BackGroundWorker;
-
 import javax.persistence.Persistence;
 import javax.swing.*;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 

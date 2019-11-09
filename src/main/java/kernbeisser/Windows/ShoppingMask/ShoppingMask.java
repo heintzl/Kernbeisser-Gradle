@@ -5,10 +5,19 @@
  */
 package kernbeisser.Windows.ShoppingMask;
 
-import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
 import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntitys.Item;
+import kernbeisser.DBEntitys.SaleSession;
+import kernbeisser.DBEntitys.ShoppingItem;
+import kernbeisser.DBEntitys.User;
+import kernbeisser.Enums.VAT;
+import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Useful.Checker;
+import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.Translator;
 import kernbeisser.Windows.Pay.Pay;
 
 import javax.persistence.EntityManager;
@@ -108,7 +117,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         userName.setText("Benutzer: "+user.getFirstName()+" "+user.getSurname()+" ("+user.getUsername()+")");
         userGroupValue.setText("Guthaben: "+user.getUserGroup().getValue()/100f+"\u20AC");
         userValueNow.setText("Jetziges Guthaben: "+user.getUserGroup().getValue()/100f+"\u20AC");
-        userGroupMembers.setText("Benutzer-Gruppe: "+Tools.toSting(user.getUserGroup().getMembers(),e -> user.getFirstName()+","));
+        userGroupMembers.setText("Benutzer-Gruppe: "+ Tools.toSting(user.getUserGroup().getMembers(), e -> user.getFirstName()+","));
     }
     private void addToShoppingCart(ShoppingItem i){
         i.setDiscount(useDiscount());
@@ -1017,7 +1026,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         shoppingItem.setVatLow(hiddenItemVATlow.isSelected());
         Checker c = new Checker();
         try {
-            shoppingItem.setRawPrice((int)((c.checkPrice(hiddenItemPrice)+c.checkPrice(hiddenItemDeposit))*(1+(hiddenItemVATlow.isSelected()?VAT.LOW.getValue()/100f:VAT.HIGH.getValue()/100f))));
+            shoppingItem.setRawPrice((int)((c.checkPrice(hiddenItemPrice)+c.checkPrice(hiddenItemDeposit))*(1+(hiddenItemVATlow.isSelected()? VAT.LOW.getValue()/100f:VAT.HIGH.getValue()/100f))));
         } catch (IncorrectInput incorrectInput) {
             Tools.ping(hiddenItemPrice);
             Tools.ping(hiddenItemDeposit);

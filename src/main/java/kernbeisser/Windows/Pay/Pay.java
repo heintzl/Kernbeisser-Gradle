@@ -5,9 +5,14 @@
  */
 package kernbeisser.Windows.Pay;
 
-import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntitys.Purchase;
+import kernbeisser.DBEntitys.SaleSession;
+import kernbeisser.DBEntitys.ShoppingItem;
+import kernbeisser.DBEntitys.UserGroup;
+import kernbeisser.Useful.Tools;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -29,7 +34,7 @@ public class Pay extends javax.swing.JFrame {
         session = s;
         this.items=items;
         UserGroup cug = s.getCustomer().getUserGroup();
-        userGroup.setText("Konto: "+Tools.toSting(cug.getMembers(),(e)->e.getFirstName()+","));
+        userGroup.setText("Konto: "+ Tools.toSting(cug.getMembers(),(e)->e.getFirstName()+","));
         userGroupValue.setText("Guthaben: "+cug.getValue()/100f+"\u20AC");
         ObjectTable<ShoppingItem> itemTable = new ObjectTable<>(
                 Column.create("Name", ShoppingItem::getName),

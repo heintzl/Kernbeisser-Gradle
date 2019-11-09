@@ -4,9 +4,9 @@ package kernbeisser.Windows.UserMenu;/*
  * and open the template in the editor.
  */
 
-import kernbeisser.Finishable;
-import kernbeisser.SaleSession;
-import kernbeisser.User;
+import kernbeisser.Windows.Finishable;
+import kernbeisser.DBEntitys.SaleSession;
+import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.CashierMenu.CashierMenu;
 import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.InventoryMenu.InventoryMenu;

@@ -1,7 +1,7 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import kernbeisser.SaleSession;
-import kernbeisser.User;
+import kernbeisser.DBEntitys.SaleSession;
+import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.ShoppingMask.ShoppingMask;
 
 class CashierShoppingMaskController {

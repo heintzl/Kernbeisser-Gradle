@@ -1,6 +1,6 @@
 package kernbeisser.Windows.CashierMenu;
 
-import kernbeisser.User;
+import kernbeisser.DBEntitys.User;
 
 class CashierMenuController {
     private User user;

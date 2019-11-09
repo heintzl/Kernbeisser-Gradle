@@ -1,7 +1,7 @@
 package kernbeisser.Windows;
 
-import kernbeisser.DBConnection;
-import kernbeisser.Job;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntitys.Job;
 import kernbeisser.CustomComponents.Node.Node;
 import kernbeisser.CustomComponents.Node.NodeList;
 

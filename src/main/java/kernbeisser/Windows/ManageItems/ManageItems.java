@@ -5,9 +5,22 @@
  */
 package kernbeisser.Windows.ManageItems;
 
-import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.CustomComponents.PriceListTree;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntitys.Item;
+import kernbeisser.DBEntitys.ItemKK;
+import kernbeisser.DBEntitys.PriceList;
+import kernbeisser.DBEntitys.Supplier;
+import kernbeisser.Enums.ContainerDefinition;
+import kernbeisser.Enums.Cooling;
+import kernbeisser.Enums.Unit;
+import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Useful.Checker;
+import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.Translator;
+import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.ItemFilter.ItemFilter;
 
@@ -44,8 +57,8 @@ public abstract class ManageItems extends JFrame implements Finishable {
         em.createQuery("select s from Supplier s",Supplier.class).getResultStream().forEach(e -> itemSupplier.addItem(e.getName()));
         em.close();
         itemPriceList.setSelectedItem(PriceList.getSingleItemPriceList());
-        Tools.forEach(Unit.values(),e -> itemUnit.addItem(t.translate(e)));
-        Tools.forEach(ContainerDefinition.values(),e -> itemContainerDef.addItem(t.translate(e)));
+        Tools.forEach(Unit.values(), e -> itemUnit.addItem(t.translate(e)));
+        Tools.forEach(ContainerDefinition.values(), e -> itemContainerDef.addItem(t.translate(e)));
         setFilters();
         itemVAThigh.addActionListener(e -> itemVATlow.setSelected(!itemVAThigh.isSelected()));
         itemVATlow.addActionListener(e -> itemVAThigh.setSelected(!itemVATlow.isSelected()));
@@ -69,7 +82,7 @@ public abstract class ManageItems extends JFrame implements Finishable {
         });
         searchSolutionPane.addTab("Ergebnisse",new JScrollPane(kbItems));
         kkItems = new DBTable<>("select i from ItemKK i",
-                Column.create("Kornkraft-Nummer",ItemKK::getKkNumber),
+                Column.create("Kornkraft-Nummer", ItemKK::getKkNumber),
                 Column.create("Name",ItemKK::getName),
                 Column.create("Barcode",ItemKK::getBarcode),
                 Column.create("Preis",ItemKK::getNetPrice),

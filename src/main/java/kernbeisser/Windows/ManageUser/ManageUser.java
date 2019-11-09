@@ -6,9 +6,16 @@
 package kernbeisser.Windows.ManageUser;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntitys.Job;
+import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntitys.UserGroup;
+import kernbeisser.Enums.Permission;
+import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.Translator;
+import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.JobSelector;
 import kernbeisser.Windows.UserGroupSelector.UserGroupSelector;

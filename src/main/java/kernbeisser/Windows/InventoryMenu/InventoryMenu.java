@@ -5,7 +5,7 @@
  */
 package kernbeisser.Windows.InventoryMenu;
 
-import kernbeisser.Finishable;
+import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
 
 /**

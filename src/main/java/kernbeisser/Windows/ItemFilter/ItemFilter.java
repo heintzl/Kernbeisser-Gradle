@@ -5,7 +5,11 @@
  */
 package kernbeisser.Windows.ItemFilter;
 
-import kernbeisser.*;
+import kernbeisser.CustomComponents.PriceListTree;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntitys.PriceList;
+import kernbeisser.DBEntitys.Supplier;
+import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
 
 import javax.persistence.EntityManager;
@@ -24,7 +28,7 @@ public abstract class ItemFilter extends JFrame implements Finishable {
      * Creates new form ItemFilter
      * which is a Window to Select PriceList & Supplier for the Item
      */
-    public abstract void filterSelected(PriceList p,Supplier s);
+    public abstract void filterSelected(PriceList p, Supplier s);
     public ItemFilter() {
         EntityManager em = DBConnection.getEntityManager();
         addWindowListener(new Finisher(this));

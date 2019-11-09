@@ -1,6 +1,6 @@
 package kernbeisser.CustomComponents;
 
-import kernbeisser.DBConnection;
+import kernbeisser.DBConnection.DBConnection;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;

@@ -5,23 +5,19 @@
  */
 package kernbeisser.Windows.CatalogInput;
 
-import kernbeisser.*;
+import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
  * @author julik
  */
-public abstract class CatalogInput extends JFrame implements Finishable{
+public abstract class CatalogInput extends JFrame implements Finishable {
 
     /**
      * Creates new form ItemDataInput
@@ -128,94 +124,11 @@ public abstract class CatalogInput extends JFrame implements Finishable{
 
     private void kkItemDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kkItemDataActionPerformed
         new Thread(() -> {
-            EntityManager em = DBConnection.getEntityManager();
-            EntityTransaction et = em.getTransaction();
-            ArrayList<ItemKK> catalog = new ArrayList<>();
-            progressBar.setMaximum(data.getLineCount());
-            et.begin();
-            em.createNativeQuery("TRUNCATE catalog").executeUpdate();
-            int p = 0;
-            for(String line : data.getText().split("\n")) {
-                ItemKK item = extractItemKK(line.replace("'", ""));
-                if (item != null)
-                catalog.add(item);
-            }
-            HashMap<Integer,Integer> deposit = new HashMap<>();
-            catalog.forEach(e -> deposit.put(e.getKkNumber(),e.getNetPrice()));
-            for (ItemKK item : catalog) {
-                if (item.getSingleDeposit() != 0)
-                item.setSingleDeposit(deposit.get(item.getSingleDeposit()));
-                if (item.getCrateDeposit() != 0)
-                item.setCrateDeposit(deposit.get(item.getCrateDeposit()));
-            }
-            for (ItemKK kk : catalog) {
-                em.persist(kk);
-                progressBar.setValue(p++);
-            }
-            em.flush();
-            et.commit();
-            em.close();
-            progressBar.setValue(data.getLineCount());
-            JOptionPane.showMessageDialog(this,"Der KK-Katalog wurde Erfolgreich aktualisiert");
-            progressBar.setValue(0);
+
         }).start();
     }//GEN-LAST:event_kkItemDataActionPerformed
 
-    private ItemKK extractItemKK(String line){
-        ItemKK item = new ItemKK();
-        String[] values = line.split(";");
-        try {
-            if(values.length<42||values[23].equals("Display")||values[23].equals("Sets"))return null;
-            item.setKkNumber(Integer.parseInt(values[0]));
-            item.setBarcode(values[4]);
-            item.setName(values[6]);
-            item.setProducer(values[10]);
-            item.setContainerSize(Double.parseDouble(values[22].replaceAll(",", ".")));
-            item.setUnit(findUnit(values[23]));
-            item.setAmount(extractAmount(values[23].replaceAll("\\D",""),item.getUnit()));
-            item.setVatLow(values[33].equals("1"));
-            item.setNetPrice((int) Math.round(Double.parseDouble(values[37].replace(",","."))*100));
-            if(!values[26].equals(""))item.setSingleDeposit(Integer.parseInt(values[26]));
-            if(!values[27].equals(""))item.setCrateDeposit(Integer.parseInt(values[27]));
 
-        }catch (Exception e){
-            e.printStackTrace();
-            int i = 0;
-            for (String value : values) {
-                if(value!=null)System.out.print("r:"+i+"["+value+"]");
-            }
-            System.out.println();
-        }
-        return item;
-    }
-    private int extractAmount(String s,Unit u){
-        try {
-            double d = Double.parseDouble(s.replaceAll(",", "."));
-            switch (u) {
-                case LITER:
-                case KILOGRAM:
-                    return (int) (d * 1000);
-                case STACK:
-                case GRAM:
-                case MILLILITER:
-                default:
-                    return (int) d;
-            }
-        }catch (NumberFormatException n){
-            return extractAmount("1",u);
-        }
-    }
-    private Unit findUnit(String s){
-        if(s.toUpperCase().contains("L"))return Unit.LITER;
-        else
-        if(s.toUpperCase().contains("ML"))return Unit.MILLILITER;
-        else
-        if(s.toUpperCase().contains("KG"))return Unit.KILOGRAM;
-        else
-        if(s.toUpperCase().contains("G"))return Unit.GRAM;
-        else
-            return Unit.STACK;
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JTextArea data;

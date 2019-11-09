@@ -7,8 +7,7 @@ package kernbeisser.Windows.CashierShoppingMask;
 
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.User;
-import kernbeisser.Windows.ShoppingMask.ShoppingMask;
+import kernbeisser.DBEntitys.User;
 
 import javax.swing.*;
 import java.awt.*;

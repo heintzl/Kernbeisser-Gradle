@@ -6,10 +6,14 @@
 package kernbeisser.Windows.LogIn;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntitys.User;
+import kernbeisser.Useful.Images;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Background;
+import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.UserMenu.UserMenu;
 

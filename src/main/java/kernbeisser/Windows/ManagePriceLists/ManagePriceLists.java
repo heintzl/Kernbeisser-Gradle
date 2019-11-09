@@ -5,7 +5,10 @@
  */
 package kernbeisser.Windows.ManagePriceLists;
 
-import kernbeisser.*;
+import kernbeisser.CustomComponents.PriceListTree;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntitys.PriceList;
+import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
 import org.hibernate.Session;
 
