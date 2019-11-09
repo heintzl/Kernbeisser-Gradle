@@ -35,7 +35,7 @@
               </Group>
               <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="jLabel4" max="32767" attributes="0"/>
+                  <Component id="topic" max="32767" attributes="0"/>
                   <Component id="shoppingCartPanel" max="32767" attributes="0"/>
                   <Component id="jPanel7" alignment="0" max="32767" attributes="0"/>
                   <Component id="jPanel8" max="32767" attributes="0"/>
@@ -57,7 +57,7 @@
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                      <Component id="topic" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -1004,7 +1004,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JLabel" name="jLabel4">
+    <Component class="javax.swing.JLabel" name="topic">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="24" style="0"/>

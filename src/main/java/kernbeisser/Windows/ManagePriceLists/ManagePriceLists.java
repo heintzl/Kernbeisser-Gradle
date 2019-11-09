@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.ManagePriceLists;
 
 import kernbeisser.*;
+import kernbeisser.Windows.Finisher;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
@@ -89,7 +90,7 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
             }
         });
 
-        delete.setText("Löschen");
+        delete.setText("L\u00f6schen");
         delete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteActionPerformed(evt);
@@ -212,7 +213,7 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
         Object o = priceListChooser.getLastSelectedPathComponent();
         if(o==null)return;
         EntityManager em = DBConnection.getEntityManager();
-        if(JOptionPane.showConfirmDialog(this,"Soll die Preisliste "+priceListName.getText()+" wirklich gelöscht werden")==0)
+        if(JOptionPane.showConfirmDialog(this,"Soll die Preisliste "+priceListName.getText()+" wirklich gel\u00f6scht werden")==0)
             em.createQuery("delete from PriceList p where name like "+priceListName.getText()).executeUpdate();
         else return;
         priceListChooser.setModel(new PriceListTree(false).getModel());

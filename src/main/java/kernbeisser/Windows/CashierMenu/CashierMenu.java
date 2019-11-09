@@ -3,15 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.CashierMenu;
 
 import kernbeisser.Finishable;
 import kernbeisser.Images;
-import kernbeisser.SaleSession;
 import kernbeisser.User;
+import kernbeisser.Windows.*;
+import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMask;
+import kernbeisser.Windows.CatalogInput.CatalogInput;
+import kernbeisser.Windows.ManageItems.ManageItems;
+import kernbeisser.Windows.ManagePriceLists.ManagePriceLists;
+import kernbeisser.Windows.ManageUser.ManageUser;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  *
@@ -169,20 +173,7 @@ public abstract class CashierMenu extends JFrame implements Finishable {
     }//GEN-LAST:event_addPriceListsActionPerformed
 
     private void startCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashActionPerformed
-        JFrame jFrame = new JFrame();
-        jFrame.setLayout(new GridLayout(1,1));
-        SaleSession saleSession = new SaleSession();
-        saleSession.setCustomer(user);
-        saleSession.setSeller(user);
-        jFrame.add(new ShoppingMask(saleSession));
-        jFrame.addWindowListener(new Finisher(() -> {
-            dispose();
-            CashierMenu.this.setVisible(true);
-        }));
-        jFrame.pack();
-        jFrame.setLocationRelativeTo(null);
-        jFrame.setVisible(true);
-        setVisible(false);
+        new CashierShoppingMask(user);
     }//GEN-LAST:event_startCashActionPerformed
 
     private void catalogRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_catalogRefreshActionPerformed

@@ -3,20 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.EditItems;
 
 import kernbeisser.Finishable;
+import kernbeisser.Windows.Finisher;
 
 /**
  *
  * @author julik
  */
-public abstract class Stats extends javax.swing.JFrame implements Finishable {
+public abstract class EditItems extends javax.swing.JFrame implements Finishable {
 
     /**
-     * Creates new form stats
+     * Creates new form EditItems
      */
-    public Stats() {
+    public EditItems() {
         initComponents();
         setVisible(true);
         addWindowListener(new Finisher(this));
@@ -46,7 +47,6 @@ public abstract class Stats extends javax.swing.JFrame implements Finishable {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

@@ -1,6 +1,6 @@
 package kernbeisser;
 
-import kernbeisser.Windows.ManagePriceLists;
+import kernbeisser.Windows.ManagePriceLists.ManagePriceLists;
 
 import javax.persistence.EntityManager;
 import javax.swing.*;

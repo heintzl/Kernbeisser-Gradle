@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.ManageItems;
 
 import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.ItemFilter.ItemFilter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -53,7 +55,7 @@ public abstract class ManageItems extends JFrame implements Finishable {
                 Column.create("Menge", Item::getAmount),
                 Column.create("Artikel-Nummer", Item::getKbNumber),
                 Column.create("Wiegbar",Item::isWeighAble),
-                Column.create("Gelöscht",Item::isDeleted)
+                Column.create("Gel\u00f6scht",Item::isDeleted)
         );
         kbItems.addMouseListener(new MouseAdapter() {
             @Override
@@ -250,7 +252,7 @@ public abstract class ManageItems extends JFrame implements Finishable {
 
         jLabel11.setText("Einheit");
 
-        jLabel13.setText("Gebindegröße");
+        jLabel13.setText("Gebindegr\u00f6ße");
 
         jLabel14.setText("Gebindedefinition");
 
@@ -655,7 +657,7 @@ public abstract class ManageItems extends JFrame implements Finishable {
                 loadSearchSolutions();
             }
             @Override
-            void filterSelected(PriceList p,Supplier supplier) {
+            public void filterSelected(PriceList p, Supplier supplier) {
                 itemFilterSupplier=supplier;
                 itemFilterPriceList=p;
             }

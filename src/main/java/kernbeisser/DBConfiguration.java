@@ -1,6 +1,6 @@
 package kernbeisser;
 
-import kernbeisser.StartUp.DataSourceSelector;
+import kernbeisser.StartUp.DBLogIn;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,9 +27,9 @@ public class DBConfiguration {
             }
         } else {
             try {
-                ArrayList<String> outProperties = new ArrayList<>();
-                DataSourceSelector ds = new DataSourceSelector();
+                DBLogIn ds = new DBLogIn();
                 Map<String, String> conf = ds.getConfiguration();
+                ArrayList<String> outProperties = new ArrayList<>(conf.size());
                 ds.dispose();
                 conf.forEach((e1, e2) -> outProperties.add(e1 + ";" + e2));
                 properties = conf;

@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.ShoppingMask;
 
 import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
 import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.Windows.Pay.Pay;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -37,8 +38,10 @@ public class ShoppingMask extends javax.swing.JPanel {
         initComponents();
         setFilters();
         this.saleSession=saleSession;
-        value =saleSession.getCustomer().getUserGroup().getValue();
-        refreshUser(saleSession.getCustomer());
+        User customer = saleSession.getCustomer();
+        value = customer.getUserGroup().getValue();
+        refreshUser(customer);
+        topic.setText("Einkauf f\u00fcr "+customer.getFirstName()+" "+customer.getSurname() +" ("+customer.getUsername()+")");
         itemNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -48,7 +51,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         withoutBarcodeTable = new DBTable<>("select i from Item i where barcode is null order by name asc",
                 Column.create("Name",Item::getName),
                 Column.create("Artikel-Nummmer",Item::getKbNumber),
-                Column.create("Preis",Item::calculatePrice)
+                Column.create("Preis",(e)->e.calculatePrice()/100f+"\u20AC")
         );
         shoppingCartTable = new ObjectTable<>(
                 Column.create("Name", ShoppingItem::getName),
@@ -243,7 +246,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         totalPrice = new javax.swing.JLabel();
         userValueNow = new javax.swing.JLabel();
         userValueLater = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        topic = new javax.swing.JLabel();
         itemsWithoutBarcodePanel = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         editBarcodeField = new javax.swing.JTextField();
@@ -292,7 +295,7 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         jTabbedPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Artikel"));
 
-        jPanel14.setBorder(javax.swing.BorderFactory.createTitledBorder("Obst, Gemüse und Pfand"));
+        jPanel14.setBorder(javax.swing.BorderFactory.createTitledBorder("Obst, Gem\u00fcse und Pfand"));
 
         jPanel13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -301,7 +304,7 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         depositActionSelection.add(depositIn);
         depositIn.setSelected(true);
-        depositIn.setText("Zurückgeben");
+        depositIn.setText("Zur\u00fcckgeben");
 
         depositActionSelection.add(depositOut);
         depositOut.setText("Ausleihen");
@@ -340,7 +343,7 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         kindOfSelection.add(organics);
         organics.setSelected(true);
-        organics.setText("Obst & Gemüse");
+        organics.setText("Obst & Gem\u00fcse");
 
         kindOfSelection.add(bakeryProduct);
         bakeryProduct.setText("Backwaren");
@@ -445,7 +448,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         jLabel23.setText("Menge");
 
         addHiddenItem.setForeground(new java.awt.Color(0, 153, 0));
-        addHiddenItem.setText("Dem Warenkorp Hinzufügen");
+        addHiddenItem.setText("Dem Warenkorp Hinzuf\u00fcgen");
         addHiddenItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addHiddenItemActionPerformed(evt);
@@ -509,7 +512,7 @@ public class ShoppingMask extends javax.swing.JPanel {
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
-        selectedItem.setText("Ausgewählter Artikel");
+        selectedItem.setText("Ausgew\u00e4hlter Artikel");
 
         price.setText("Preis");
 
@@ -676,7 +679,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         discountNormalPrice.setText("Normalpreis");
 
         discountSelection.add(discountContainerPrice);
-        discountContainerPrice.setText("Preis für vorbestellte Gebinde");
+        discountContainerPrice.setText("Preis f\u00fcr vorbestellte Gebinde");
 
         discountSelection.add(discountHalfPrice);
         discountHalfPrice.setText("Halber Preis");
@@ -686,7 +689,7 @@ public class ShoppingMask extends javax.swing.JPanel {
 
         jLabel10.setText("%");
 
-        lockCustomDiscount.setText("Reduktion für Folgeartikel beibehalten");
+        lockCustomDiscount.setText("Reduktion f\u00fcr Folgeartikel beibehalten");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -812,8 +815,8 @@ public class ShoppingMask extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel4.setText("Einkauf für name + surname(username)");
+        topic.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        topic.setText("Einkauf f\u00fcr name + surname(username)");
 
         itemsWithoutBarcodePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Artikel ohne Barcode"));
         itemsWithoutBarcodePanel.setLayout(new java.awt.GridLayout(1, 1));
@@ -914,7 +917,7 @@ public class ShoppingMask extends javax.swing.JPanel {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(topic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(shoppingCartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -932,7 +935,7 @@ public class ShoppingMask extends javax.swing.JPanel {
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(25, 25, 25)
-                        .addComponent(jLabel4)))
+                        .addComponent(topic)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(itemsWithoutBarcodePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1056,7 +1059,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         em.flush();
         et.commit();
         em.close();
-        JOptionPane.showMessageDialog(this,"Der barcode von \""+selected.getName()+"\"\n wurde zu "+update.getBarcode()+" geändert!");
+        JOptionPane.showMessageDialog(this,"Der barcode von \""+selected.getName()+"\"\n wurde zu "+update.getBarcode()+" ge\u00e4ndert!");
     }//GEN-LAST:event_editBarcodeActionPerformed
 
     private void editBarcodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarcodeFieldActionPerformed
@@ -1066,13 +1069,13 @@ public class ShoppingMask extends javax.swing.JPanel {
     private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
         String s = searchField.getText();
         if(searchName.isSelected()||searchPriceList.isSelected()||searchKBNumber.isSelected()||searchBarcode.isSelected()){
-            String quarry = "select i from Item i where "+
+            String query = "select i from Item i where "+
                     (searchBarcode.isSelected() ? "barcode like '%sh' OR " : "")+
                     (searchKBNumber.isSelected() ? "kbNumber like 'sh' OR ":"")+
                     (searchName.isSelected() ? "name like 'sh%' OR ":"")+
                     (searchPriceList.isSelected()?"priceList.name like 'sh%' OR ":"");
-            quarry=quarry.substring(0,quarry.length()-3).replaceAll("sh",s);
-            searchTable.setQuery(quarry);
+            query=query.substring(0,query.length()-3).replaceAll("sh",s);
+            searchTable.setQuery(query);
             searchTable.refresh();
         }
         else return;
@@ -1121,7 +1124,6 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
@@ -1151,6 +1153,7 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JPanel searchSolution;
     private javax.swing.JLabel selectedItem;
     private javax.swing.JPanel shoppingCartPanel;
+    private javax.swing.JLabel topic;
     private javax.swing.JLabel totalPrice;
     private javax.swing.JLabel unit;
     private javax.swing.JLabel userGroupMembers;

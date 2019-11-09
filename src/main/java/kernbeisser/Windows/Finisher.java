@@ -11,7 +11,7 @@ import java.awt.event.WindowEvent;
  */
 public class Finisher extends WindowAdapter {
     private Finishable window;
-    Finisher(Finishable window){
+    public Finisher(Finishable window){
         this.window=window;
     }
 

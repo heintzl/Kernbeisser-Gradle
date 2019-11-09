@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.ManageUser;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.JobSelector;
+import kernbeisser.Windows.UserGroupSelector.UserGroupSelector;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -26,7 +29,7 @@ import java.util.Set;
 public abstract class ManageUser extends JFrame implements Finishable {
     private UserGroup userGroup;
     private Set<Job> jobs = new HashSet<>();
-    private DBTable userSelector;
+    private DBTable<User> userSelector;
     private Translator t = new Translator();
     /**
      * Creates new form ManageUser
@@ -35,7 +38,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
         initComponents();
         editUser.setEnabled(true);
         addWindowListener(new Finisher(this));
-        userSelector = new DBTable<>(
+        userSelector = new DBTable<User>(
                 "select u from User u",
                 Column.create("Username", User::getUsername),
                 Column.create("Vorname", User::getFirstName),

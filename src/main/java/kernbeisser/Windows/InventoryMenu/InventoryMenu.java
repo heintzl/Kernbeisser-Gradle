@@ -3,23 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.InventoryMenu;
 
 import kernbeisser.Finishable;
+import kernbeisser.Windows.Finisher;
 
 /**
  *
  * @author julik
  */
-public abstract class Options extends javax.swing.JFrame implements Finishable {
+public abstract class InventoryMenu extends javax.swing.JFrame implements Finishable {
 
     /**
-     * Creates new form options
+     * Creates new form InventoryMenu
      */
-    public Options() {
+    public InventoryMenu() {
         initComponents();
         setVisible(true);
         addWindowListener(new Finisher(this));
+
     }
 
     /**

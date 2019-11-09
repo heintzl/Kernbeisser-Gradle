@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.UserGroupSelector;
 
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.DBConnection;

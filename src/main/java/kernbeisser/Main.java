@@ -1,13 +1,15 @@
 package kernbeisser;
 
 
-import kernbeisser.Windows.LogIn;
-import kernbeisser.Windows.UserMenu;
+import kernbeisser.StartUp.StartUp;
+import kernbeisser.Windows.LogIn.LogIn;
+import kernbeisser.Windows.UserMenu.UserMenu;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import java.io.File;
+import java.time.LocalDate;
 
 public class Main {
     /**
@@ -21,6 +23,11 @@ public class Main {
         Images.setPath(new File("src/main/resources/Images"));
         EntityManager em = DBConnection.getEntityManager();
         Config.loadConfigs();
+        if(Config.getConfig("firstStart")==null){
+            new StartUp().waitFor();
+            Config.setConfig("firstStart", LocalDate.now().toString());
+        }
+        BackGroundWorker.start();
         User user;
         try {
             user = em.createQuery("select u from User u", User.class).setMaxResults(1).getSingleResult();

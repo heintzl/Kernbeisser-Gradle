@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.CatalogInput;
 
 import kernbeisser.*;
+import kernbeisser.Windows.Finisher;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;

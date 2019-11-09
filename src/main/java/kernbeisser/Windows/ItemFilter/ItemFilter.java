@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.ItemFilter;
 
 import kernbeisser.*;
+import kernbeisser.Windows.Finisher;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -23,7 +24,7 @@ public abstract class ItemFilter extends JFrame implements Finishable {
      * Creates new form ItemFilter
      * which is a Window to Select PriceList & Supplier for the Item
      */
-    abstract void filterSelected(PriceList p,Supplier s);
+    public abstract void filterSelected(PriceList p,Supplier s);
     public ItemFilter() {
         EntityManager em = DBConnection.getEntityManager();
         addWindowListener(new Finisher(this));

@@ -3,18 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.LogIn;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.Windows.Background;
+import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.UserMenu.UserMenu;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Field;
 
 
 public class LogIn extends JFrame implements Finishable {

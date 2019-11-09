@@ -42,7 +42,7 @@
     <Container class="javax.swing.JPanel" name="jPanel1">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="72" green="4f" red="1b" type="rgb"/>
+          <Color blue="7d" green="e4" red="9b" type="rgb"/>
         </Property>
       </Properties>
 
@@ -193,7 +193,7 @@
               <Font name="Tahoma" size="14" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="cc" type="rgb"/>
+              <Color blue="e4" green="7d" red="c6" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="text" type="java.lang.String" value="Username"/>
@@ -205,7 +205,7 @@
               <Font name="Tahoma" size="14" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="cc" type="rgb"/>
+              <Color blue="e4" green="7d" red="c6" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="text" type="java.lang.String" value="Willkommen zurueck"/>
@@ -216,7 +216,7 @@
     <Container class="javax.swing.JPanel" name="jPanel2">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="89" green="a5" red="17" type="rgb"/>
+          <Color blue="e4" green="ce" red="7d" type="rgb"/>
         </Property>
       </Properties>
 
@@ -254,7 +254,7 @@
               <Font name="Tahoma" size="18" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="b9" green="80" red="29" type="rgb"/>
+              <Color blue="7d" green="93" red="e4" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="text" type="java.lang.String" value="Neuigkeiten"/>

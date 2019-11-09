@@ -30,40 +30,43 @@ public class PriceList implements Serializable {
     @CreationTimestamp
     private Date createDate;
 
-    public static PriceList getSingleItemPriceList() {
+    private static void savePriceList(String name){
+        PriceList p = new PriceList();
+        p.setName(name);
         EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery("select p from PriceList p where name like 'Einzelartikel'", PriceList.class).getSingleResult();
-        } catch (NoResultException e) {
-            EntityTransaction et = em.getTransaction();
-            et.begin();
-            PriceList p = new PriceList();
-            p.setName("Einzelartikel");
-            em.persist(p);
-            em.flush();
-            et.commit();
-            return em.createQuery("select p from PriceList p where name like 'Einzelartikel'", PriceList.class).getSingleResult();
-        } finally {
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.persist(p);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+    private static PriceList getPriceList(String name) throws NoResultException{
+        EntityManager em = DBConnection.getEntityManager();
+        try{
+            PriceList out = em.createQuery("select p from PriceList p where name like '"+name+"'",PriceList.class).getSingleResult();
             em.close();
+            return out;
+        }catch (NoResultException e){
+            em.close();
+            throw e;
+        }
+    }
+    private static PriceList getOrCreate(String name){
+        try{
+            return getPriceList(name);
+        }catch (NoResultException e){
+            savePriceList(name);
+            return getPriceList(name);
         }
     }
 
+    public static PriceList getSingleItemPriceList() {
+        return getOrCreate("Einzelartikel");
+    }
+
     public static PriceList getCoveredIntakePriceList() {
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery("select p from PriceList p where name like 'Verdeckte Aufnahme'", PriceList.class).getSingleResult();
-        } catch (NoResultException e) {
-            EntityTransaction et = em.getTransaction();
-            et.begin();
-            PriceList p = new PriceList();
-            p.setName("Verdeckte Aufnahme");
-            em.persist(p);
-            em.flush();
-            et.commit();
-            return em.createQuery("select p from PriceList p where name like 'Verdeckte Aufnahme'", PriceList.class).getSingleResult();
-        } finally {
-            em.close();
-        }
+        return getOrCreate("Verdeckte Aufnahme");
     }
 
     public Date getUpdateDate() {

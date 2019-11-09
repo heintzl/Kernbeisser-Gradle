@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows;
+package kernbeisser.Windows.Pay;
 
 import kernbeisser.*;
 import kernbeisser.CustomComponents.Column;
@@ -89,7 +89,7 @@ public class Pay extends javax.swing.JFrame {
 
         printBonNo.setText("Nein");
 
-        jLabel5.setText("Schriftgröße");
+        jLabel5.setText("Schriftgr\u00f6ße");
 
         paperFomat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 

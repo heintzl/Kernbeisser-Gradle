@@ -13,7 +13,7 @@ import java.util.Set;
 public class JobSelector extends JFrame {
     private NodeList<Job> selectedJobs;
     private NodeList<Job> jobs;
-    JobSelector(JFrame parent,Set<Job> x){
+    public JobSelector(JFrame parent, Set<Job> x){
         EntityManager em = DBConnection.getEntityManager();
         if(parent!=null)
         setComponentOrientation(parent.getComponentOrientation());

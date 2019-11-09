@@ -25,6 +25,7 @@ public class Transaction {
 
     @CreationTimestamp
     private Date date;
+
     private static void transfer(User from,User to,int value){
         Transaction transaction = new Transaction();
         transaction.value=value;
