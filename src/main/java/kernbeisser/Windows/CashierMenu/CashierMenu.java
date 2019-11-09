@@ -23,13 +23,13 @@ import javax.swing.*;
  */
 public abstract class CashierMenu extends JFrame implements Finishable {
 
-    private User user;
+    private CashierMenuController controller;
 
     /**
      * Creates new form CashierMenu
      */
     public CashierMenu(User user) {
-        this.user=user;
+        controller=new CashierMenuController(user);
         initComponents();
         add(new Background(Images.getImage("carrots.png"),this));
         setSize(1070,678);
@@ -147,7 +147,7 @@ public abstract class CashierMenu extends JFrame implements Finishable {
 
     private void addUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserActionPerformed
         setVisible(false);
-        new ManageUser(user.getPermission())   {
+        new ManageUser(controller.getUser().getPermission())   {
             @Override
             public void finish() {
                 dispose();
@@ -173,7 +173,7 @@ public abstract class CashierMenu extends JFrame implements Finishable {
     }//GEN-LAST:event_addPriceListsActionPerformed
 
     private void startCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashActionPerformed
-        new CashierShoppingMask(user);
+        new CashierShoppingMask(controller.getUser());
     }//GEN-LAST:event_startCashActionPerformed
 
     private void catalogRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_catalogRefreshActionPerformed
