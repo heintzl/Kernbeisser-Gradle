@@ -1,8 +1,10 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.DBEntitys.User;
+import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table
@@ -37,5 +39,9 @@ public class SaleSession {
 
     public int getId() {
         return sSid;
+    }
+
+    public static List<SaleSession> getAll(String condition){
+        return Tools.getAll(SaleSession.class,condition);
     }
 }

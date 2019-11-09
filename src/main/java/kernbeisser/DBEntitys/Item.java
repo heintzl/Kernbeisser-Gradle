@@ -5,6 +5,7 @@ import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -438,5 +439,9 @@ public class Item {
     @Override
     public String toString() {
         return name;
+    }
+
+    public static List<Item> getAll(String condition){
+        return Tools.getAll(Item.class,condition);
     }
 }

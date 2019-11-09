@@ -1,8 +1,10 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.DBEntitys.SaleSession;
+import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table
 @Entity
@@ -25,5 +27,9 @@ public class Purchase {
 
     public void setSession(SaleSession session) {
         this.session = session;
+    }
+
+    public static List<Purchase> getAll(String condition){
+        return Tools.getAll(Purchase.class,condition);
     }
 }

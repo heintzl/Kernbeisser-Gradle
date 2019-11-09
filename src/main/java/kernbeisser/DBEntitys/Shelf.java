@@ -1,5 +1,9 @@
 package kernbeisser.DBEntitys;
 
+import kernbeisser.Useful.Tools;
+
+import java.util.List;
+
 public class Shelf {
 
     private int id;
@@ -30,5 +34,9 @@ public class Shelf {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public static List<Shelf> getAll(String condition){
+        return Tools.getAll(Shelf.class,condition);
     }
 }

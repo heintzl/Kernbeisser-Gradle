@@ -1,12 +1,14 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "PriceLists")
@@ -106,5 +108,9 @@ public class PriceList implements Serializable {
     @Override
     public String toString() {
         return name;
+    }
+
+    public static List<PriceList> getAll(String condition){
+        return Tools.getAll(PriceList.class,condition);
     }
 }

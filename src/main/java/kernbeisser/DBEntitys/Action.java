@@ -1,10 +1,12 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.DBEntitys.User;
+import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 
 @Table
 @Entity
@@ -70,5 +72,9 @@ public class Action {
 
     public User getUser() {
         return user;
+    }
+
+    public static List<Action> getAll(String condition){
+        return Tools.getAll(Action.class,condition);
     }
 }

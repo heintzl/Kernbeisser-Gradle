@@ -1,9 +1,11 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.Enums.Unit;
+import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "catalog")
@@ -138,4 +140,7 @@ public class ItemKK implements Serializable {
         this.producer = producer;
     }
 
+    public static List<ItemKK> getAll(String condition){
+        return Tools.getAll(ItemKK.class,condition);
+    }
 }

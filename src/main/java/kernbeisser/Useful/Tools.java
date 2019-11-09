@@ -1,5 +1,8 @@
 package kernbeisser.Useful;
 
+import kernbeisser.DBConnection.DBConnection;
+
+import javax.persistence.EntityManager;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -171,6 +174,12 @@ public class Tools {
             } catch (NoSuchFieldException | IllegalAccessException e) {
             }
         }
+        return out;
+    }
+    public static <T> List<T> getAll(Class<T> c,String condition){
+        EntityManager em = DBConnection.getEntityManager();
+        List<T> out = em.createQuery("select c from "+c.getName()+" c "+(condition!=null?condition:""),c).getResultList();
+        em.close();
         return out;
     }
 }

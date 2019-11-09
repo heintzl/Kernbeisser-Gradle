@@ -8,7 +8,6 @@ import kernbeisser.Enums.Permission;
 import kernbeisser.StartUp.StartUp;
 import kernbeisser.Useful.BackGroundWorker;
 import kernbeisser.Useful.Images;
-import kernbeisser.Windows.CatalogInput.CatalogInput;
 import kernbeisser.Windows.LogIn.LogIn;
 import kernbeisser.Windows.UserMenu.UserMenu;
 

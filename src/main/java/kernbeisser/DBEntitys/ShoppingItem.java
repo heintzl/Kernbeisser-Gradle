@@ -2,9 +2,11 @@ package kernbeisser.DBEntitys;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Unit;
+import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table
@@ -279,5 +281,9 @@ public class ShoppingItem implements Serializable {
 
     public void setItemRawPrice(int itemRawPrice) {
         this.itemRawPrice = itemRawPrice;
+    }
+
+    public static List<ShoppingItem> getAll(String condition){
+        return Tools.getAll(ShoppingItem.class,condition);
     }
 }

@@ -1,10 +1,12 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
 @Table
 @Entity
@@ -67,5 +69,8 @@ public class Config implements Serializable {
             et.rollback();
             em.close();
         }
+    }
+    public static List<Config> getAll(String condition){
+        return Tools.getAll(Config.class,condition);
     }
 }

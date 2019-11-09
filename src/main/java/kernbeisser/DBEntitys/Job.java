@@ -1,5 +1,6 @@
 package kernbeisser.DBEntitys;
 
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Nodes.JobNode;
 import kernbeisser.CustomComponents.Node.Node;
 import kernbeisser.CustomComponents.Node.Nodeable;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @Table
@@ -59,5 +61,9 @@ public class Job implements Nodeable {
     @Override
     public Node toNode() {
         return new JobNode(this);
+    }
+
+    public static List<Job> getAll(String condition){
+        return Tools.getAll(Job.class,condition);
     }
 }

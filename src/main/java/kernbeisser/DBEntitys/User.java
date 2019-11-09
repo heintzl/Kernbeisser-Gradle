@@ -2,6 +2,7 @@ package kernbeisser.DBEntitys;
 
 
 import kernbeisser.Enums.Permission;
+import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -326,4 +327,7 @@ public class User implements Serializable {
         return updateDate;
     }
 
+    public static List<User> getAll(String condition){
+        return Tools.getAll(User.class,condition);
+    }
 }

@@ -1,10 +1,12 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 
 @Table
 @Entity
@@ -43,5 +45,9 @@ public class Transaction {
 
     public Date getDate() {
         return date;
+    }
+
+    public static List<Transaction> getAll(String condition){
+        return Tools.getAll(Transaction.class,condition);
     }
 }

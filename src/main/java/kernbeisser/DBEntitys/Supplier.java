@@ -1,12 +1,14 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "Suppliers")
@@ -136,5 +138,9 @@ public class Supplier implements Serializable {
 
     public void setKeeper(String keeper) {
         this.keeper = keeper;
+    }
+
+    public static List<Supplier> getAll(String condition){
+        return Tools.getAll(Supplier.class,condition);
     }
 }
