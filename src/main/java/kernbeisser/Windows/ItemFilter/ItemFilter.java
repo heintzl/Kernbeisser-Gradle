@@ -24,21 +24,22 @@ import java.awt.*;
 public abstract class ItemFilter extends JFrame implements Finishable {
     private static int lastSelectionSupplier = -1;
     private static PriceListTree priceListTree = new PriceListTree();
+    private static ItemFilterController controller = new ItemFilterController();
     /**
      * Creates new form ItemFilter
      * which is a Window to Select PriceList & Supplier for the Item
      */
+
     public abstract void filterSelected(PriceList p, Supplier s);
+
     public ItemFilter() {
-        EntityManager em = DBConnection.getEntityManager();
         addWindowListener(new Finisher(this));
         initComponents();
         priceListPane.setLayout(new BorderLayout());
         priceListPane.add(new JScrollPane(priceListTree));
         priceListTree.addTreeSelectionListener(e -> filterSelect());
         DefaultListModel<Supplier> suppliersModel = new DefaultListModel<>();
-        em.createQuery("select s from Supplier s",Supplier.class).getResultStream().forEach(suppliersModel::addElement);
-        em.close();
+        controller.getAllSuppliers().forEach(suppliersModel::addElement);
         suppliers.setModel(suppliersModel);
         if(lastSelectionSupplier!=-1){
             suppliers.setSelectedIndex(lastSelectionSupplier);
@@ -139,7 +140,6 @@ public abstract class ItemFilter extends JFrame implements Finishable {
     private void finishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishActionPerformed
         filterSelect();
         finish();
-
     }//GEN-LAST:event_finishActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

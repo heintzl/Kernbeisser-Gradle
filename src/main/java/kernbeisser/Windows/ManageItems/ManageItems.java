@@ -41,8 +41,6 @@ import java.util.ArrayList;
 public abstract class ManageItems extends JFrame implements Finishable {
     private ManageItemsController controller = new ManageItemsController();
     private Translator t = new Translator();
-    private Supplier itemFilterSupplier;
-    private PriceList itemFilterPriceList;
     private ObjectTable<Item> kbItems;
     private ObjectTable<ItemKK> kkItems;
     /**
@@ -608,7 +606,7 @@ public abstract class ManageItems extends JFrame implements Finishable {
         if(controller.save(collected))
         JOptionPane.showMessageDialog(this,"Der Artikel wurde erfolgreich gespeichert!");
         else {
-            Item item = controller.search(itemBarcode.getText(),itemKbNumber.getText());
+            Item item = controller.searchItem(itemBarcode.getText(),itemKbNumber.getText());
             JOptionPane.showMessageDialog(this,"Der Artikel \u00fcberschneidet sich mit folgendem Artikel:\nArtikelname: "+item.getName()+
                     "\nBarcode:       "+item.getBarcode()+
                     "\nKBNummer: "+item.getKbNumber(),"Artikel\u00fcberschneidungen",JOptionPane.ERROR_MESSAGE);
@@ -657,8 +655,8 @@ public abstract class ManageItems extends JFrame implements Finishable {
             }
             @Override
             public void filterSelected(PriceList p, Supplier supplier) {
-                itemFilterSupplier=supplier;
-                itemFilterPriceList=p;
+                controller.setFilter(p);
+                controller.setFilter(supplier);
             }
         };
         filter.setEnabled(false);
@@ -666,9 +664,9 @@ public abstract class ManageItems extends JFrame implements Finishable {
     private void loadSearchSolutions(){
         String search = searchBar.getText();
         int selected = searchSolutionPane.getSelectedIndex();
-        kbItems.setObjects(controller.search(itemFilterPriceList,itemFilterSupplier,search,search,search));
+        kbItems.setObjects(controller.searchItems(search,search,search));
         if(searchInCatalog.isSelected()){
-            kkItems.setObjects(controller.search(search,search,search));
+            kkItems.setObjects(controller.searchItemKKs(search,search,search));
         }
         searchSolutionPane.setSelectedIndex(Math.min(selected,searchSolutionPane.getTabCount()-1));
     }

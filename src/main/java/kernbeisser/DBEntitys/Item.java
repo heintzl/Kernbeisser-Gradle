@@ -111,7 +111,7 @@ public class Item {
     private List<Integer> invShelf = new ArrayList<>(5);
 
     @Column
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<Integer> invStock = new ArrayList<>(5);
 
     @Column
