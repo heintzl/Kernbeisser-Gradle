@@ -243,7 +243,7 @@ public abstract class UserMenu extends JFrame implements Finishable {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashierActionPerformed
-        new CashierMenuView(user, null);
+        new CashierMenuView(user, null).open();
         setVisible(false);
     }//GEN-LAST:event_startCashierActionPerformed
 

@@ -16,12 +16,12 @@ import javax.swing.*;
  *
  * @author julik
  */
-public abstract class CatalogInput extends javax.swing.JFrame implements Finishable {
+public abstract class CatalogInputView extends javax.swing.JFrame implements Finishable {
     CatalogInputController controller = new CatalogInputController();
     /**
      * Creates new form CatalogInput
      */
-    public CatalogInput() {
+    public CatalogInputView() {
         initComponents();
         addWindowListener(new Finisher(this));
         pack();

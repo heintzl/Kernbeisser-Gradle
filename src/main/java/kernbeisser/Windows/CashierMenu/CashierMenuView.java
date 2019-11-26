@@ -20,7 +20,6 @@ public class CashierMenuView extends Window implements View {
         add(new Background(Images.getImage("carrots.png"),this));
         setSize(1070,678);
         setLocationRelativeTo(null);
-        setVisible(true);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -150,12 +149,12 @@ public class CashierMenuView extends Window implements View {
     }
 
     @Override
-    protected void open() {
+    public void open() {
         setVisible(true);
     }
 
     @Override
-    protected void close() {
+    public void close() {
         setVisible(false);
     }
 

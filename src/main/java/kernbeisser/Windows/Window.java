@@ -10,7 +10,7 @@ public abstract class Window extends JFrame {
         });
         close();
     }
-    protected abstract void open();
-    protected abstract void close();
+    public abstract void open();
+    public abstract void close();
 
 }
