@@ -9,32 +9,35 @@ import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.PriceList;
 import kernbeisser.DBEntitys.Supplier;
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.*;
+import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  *
  * @author julik
  */
-public abstract class ItemFilter extends JFrame implements Finishable {
+public class ItemFilterView extends Window implements View {
     private static int lastSelectionSupplier = -1;
     private static PriceListTree priceListTree = new PriceListTree();
-    private static ItemFilterController controller = new ItemFilterController();
+    private static ItemFilterController controller;
     /**
      * Creates new form ItemFilter
      * which is a Window to Select PriceList & Supplier for the Item
      */
 
-    public abstract void filterSelected(PriceList p, Supplier s);
+    //public abstract void filterSelected(PriceList p, Supplier s);
 
-    public ItemFilter() {
-        addWindowListener(new Finisher(this));
+    public ItemFilterView(Window current, BiConsumer<PriceList,Supplier> consumer) {
+        super(current);
         initComponents();
+        controller = new ItemFilterController(this,consumer);
         priceListPane.setLayout(new BorderLayout());
         priceListPane.add(new JScrollPane(priceListTree));
         priceListTree.addTreeSelectionListener(e -> filterSelect());
@@ -44,17 +47,24 @@ public abstract class ItemFilter extends JFrame implements Finishable {
         if(lastSelectionSupplier!=-1){
             suppliers.setSelectedIndex(lastSelectionSupplier);
         }
+    }
+    @Override
+    public Controller getController() {
+        return controller;
+    }
+
+    @Override
+    public void open() {
         setVisible(true);
     }
+
+    @Override
+    public void close() {
+        setVisible(false);
+    }
     private void filterSelect(){
-        EntityManager em = DBConnection.getEntityManager();
         Object o = priceListTree.getLastSelectedPathComponent();
-        try {
-            filterSelected(em.createQuery(
-                    "select p from PriceList p where name like '" + o.toString() + "'", PriceList.class).getSingleResult(),
-                    suppliers.getSelectedValue()
-            );
-        }catch (NoResultException ignored){}
+        controller.selectFilter(controller.getByName(o.toString()),suppliers.getSelectedValue());
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -139,7 +149,7 @@ public abstract class ItemFilter extends JFrame implements Finishable {
 
     private void finishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishActionPerformed
         filterSelect();
-        finish();
+        close();
     }//GEN-LAST:event_finishActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -149,5 +159,7 @@ public abstract class ItemFilter extends JFrame implements Finishable {
     private JScrollPane jScrollPane1;
     private JPanel priceListPane;
     private JList<Supplier> suppliers;
+
+
     // End of variables declaration//GEN-END:variables
 }

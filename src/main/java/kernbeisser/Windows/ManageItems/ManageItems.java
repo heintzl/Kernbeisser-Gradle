@@ -23,7 +23,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Translator;
 import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
-import kernbeisser.Windows.ItemFilter.ItemFilter;
+import kernbeisser.Windows.ItemFilter.ItemFilterView;
 
 import javax.persistence.EntityManager;
 import javax.swing.*;
@@ -646,7 +646,7 @@ public abstract class ManageItems extends JFrame implements Finishable {
         loadSearchSolutions();
     }//GEN-LAST:event_searchBarKeyReleased
     private void requestFilter(){
-        new ItemFilter() {
+        new ItemFilterView() {
             @Override
             public void finish() {
                 dispose();
