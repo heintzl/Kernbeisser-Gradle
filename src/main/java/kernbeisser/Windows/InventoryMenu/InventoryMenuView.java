@@ -5,25 +5,38 @@
  */
 package kernbeisser.Windows.InventoryMenu;
 
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.*;
 
 /**
  *
  * @author julik
  */
-public abstract class InventoryMenu extends javax.swing.JFrame implements Finishable {
-
+public class InventoryMenuView extends Window implements View {
+    private InventoryMenuController controller;
     /**
      * Creates new form InventoryMenu
      */
-    public InventoryMenu() {
+    public InventoryMenuView(Window current) {
+        super(current);
+        controller=new InventoryMenuController(this);
         initComponents();
-        setVisible(true);
-        addWindowListener(new Finisher(this));
-
     }
 
+    @Override
+    public void open() {
+        setVisible(true);
+    }
+
+    @Override
+    public void close() {
+        setVisible(false);
+    }
+
+
+    @Override
+    public InventoryMenuController getController() {
+        return controller;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -48,6 +61,7 @@ public abstract class InventoryMenu extends javax.swing.JFrame implements Finish
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

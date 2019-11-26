@@ -9,12 +9,11 @@ import kernbeisser.DBEntitys.SaleSession;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.CashierMenu.CashierMenuView;
 import kernbeisser.Windows.Finisher;
-import kernbeisser.Windows.InventoryMenu.InventoryMenu;
+import kernbeisser.Windows.InventoryMenu.InventoryMenuView;
 import kernbeisser.Windows.LogIn.LogIn;
 import kernbeisser.Windows.Options.Options;
 import kernbeisser.Windows.ShoppingMask.ShoppingMask;
 import kernbeisser.Windows.Stats.Stats;
-import kernbeisser.Windows.Window;
 
 import javax.swing.*;
 import java.awt.*;
@@ -253,7 +252,7 @@ public abstract class UserMenu extends JFrame implements Finishable {
     }//GEN-LAST:event_logOutActionPerformed
 
     private void startInventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startInventoryActionPerformed
-        new InventoryMenu(){
+        new InventoryMenuView(){
             @Override
             public void finish() {
                 dispose();
