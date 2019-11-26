@@ -7,8 +7,7 @@ package kernbeisser.Windows.CatalogInput;
 
 import kernbeisser.Exeptions.FileReadException;
 import kernbeisser.Exeptions.ObjectParseException;
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.*;
 
 import javax.swing.*;
 
@@ -16,17 +15,33 @@ import javax.swing.*;
  *
  * @author julik
  */
-public abstract class CatalogInputView extends javax.swing.JFrame implements Finishable {
-    CatalogInputController controller = new CatalogInputController();
+public class CatalogInputView extends Window implements View {
+    CatalogInputController controller;
     /**
      * Creates new form CatalogInput
      */
-    public CatalogInputView() {
+    public CatalogInputView(Window current) {
+        super(current);
+        controller=new CatalogInputController(this);
         initComponents();
-        addWindowListener(new Finisher(this));
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    @Override
+    public CatalogInputController getController() {
+        return controller;
+    }
+
+    @Override
+    public void open() {
+
+    }
+
+    @Override
+    public void close() {
+
     }
 
     /**
@@ -138,5 +153,6 @@ public abstract class CatalogInputView extends javax.swing.JFrame implements Fin
     private javax.swing.JButton importText;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+
     // End of variables declaration//GEN-END:variables
 }

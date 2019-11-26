@@ -5,6 +5,9 @@ import kernbeisser.DBEntitys.ItemKK;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Exeptions.FileReadException;
 import kernbeisser.Exeptions.ObjectParseException;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.Model;
+import kernbeisser.Windows.View;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -15,7 +18,14 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class CatalogInputController {
+class CatalogInputController implements Controller {
+    private CatalogInputModel model;
+    private CatalogInputView view;
+
+    CatalogInputController(CatalogInputView view){
+        this.view=view;
+    }
+
     boolean importData(File f) throws ObjectParseException, FileReadException {
         StringBuilder sb = new StringBuilder();
         try {
@@ -25,6 +35,7 @@ class CatalogInputController {
             throw new FileReadException(f,StandardCharsets.ISO_8859_1);
         }
     }
+
     boolean importData(String s) throws ObjectParseException {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -73,7 +84,7 @@ class CatalogInputController {
         }
         return item;
     }
-    Unit findUnit(String s){
+    private Unit findUnit(String s){
         if(s.toUpperCase().contains("L"))return Unit.LITER;
         else
         if(s.toUpperCase().contains("ML"))return Unit.MILLILITER;
@@ -84,7 +95,7 @@ class CatalogInputController {
         else
             return Unit.STACK;
     }
-    int extractAmount(String s,Unit u){
+    private int extractAmount(String s,Unit u){
         try {
             double d = Double.parseDouble(s.replaceAll(",", "."));
             switch (u) {
@@ -100,5 +111,20 @@ class CatalogInputController {
         }catch (NumberFormatException n){
             return extractAmount("1",u);
         }
+    }
+
+    @Override
+    public void refresh() {
+
+    }
+
+    @Override
+    public CatalogInputView getView() {
+        return view;
+    }
+
+    @Override
+    public CatalogInputModel getModel() {
+        return model;
     }
 }
