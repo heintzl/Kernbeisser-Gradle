@@ -8,6 +8,8 @@ package kernbeisser.Windows.CashierShoppingMask;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
 import kernbeisser.DBEntitys.User;
+import kernbeisser.Windows.Finishable;
+import kernbeisser.Windows.Finisher;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +18,7 @@ import java.awt.*;
  *
  * @author julik
  */
-public class CashierShoppingMask extends javax.swing.JFrame {
+public abstract class CashierShoppingMask extends javax.swing.JFrame implements Finishable {
     CashierShoppingMaskController controller;
     private DBTable<User> userTable = new DBTable<>("select u from User u order by surname asc",
             Column.create("Nachname",User::getSurname),
@@ -27,6 +29,7 @@ public class CashierShoppingMask extends javax.swing.JFrame {
      * Creates new form CashierShoppingMask
      */
     public CashierShoppingMask(User seller) {
+        addWindowListener(new Finisher(this));
         controller=new CashierShoppingMaskController(seller);
         initComponents();
         startShopping.setEnabled(false);
@@ -148,5 +151,6 @@ public class CashierShoppingMask extends javax.swing.JFrame {
     private javax.swing.JToggleButton startShopping;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JPanel userTablePane;
+
     // End of variables declaration//GEN-END:variables
 }

@@ -7,13 +7,14 @@ package kernbeisser.Windows.UserMenu;/*
 import kernbeisser.Windows.Finishable;
 import kernbeisser.DBEntitys.SaleSession;
 import kernbeisser.DBEntitys.User;
-import kernbeisser.Windows.CashierMenu.CashierMenu;
+import kernbeisser.Windows.CashierMenu.CashierMenuView;
 import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.InventoryMenu.InventoryMenu;
 import kernbeisser.Windows.LogIn.LogIn;
 import kernbeisser.Windows.Options.Options;
 import kernbeisser.Windows.ShoppingMask.ShoppingMask;
 import kernbeisser.Windows.Stats.Stats;
+import kernbeisser.Windows.Window;
 
 import javax.swing.*;
 import java.awt.*;
@@ -242,13 +243,7 @@ public abstract class UserMenu extends JFrame implements Finishable {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashierActionPerformed
-        new CashierMenu(user) {
-            @Override
-            public void finish() {
-                dispose();
-                UserMenu.this.setVisible(true);
-            }
-        };
+        new CashierMenuView(user, null);
         setVisible(false);
     }//GEN-LAST:event_startCashierActionPerformed
 

@@ -187,7 +187,7 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
   }//GEN-LAST:event_saveActionPerformed
 
     /**
-     * if the user pressed the ESC Button the Window get closed and the finish action get triggered
+     * if the user pressed the ESC Button the Window get closed and the finish action gets triggered
      * @see Finishable
      * @param evt
      */

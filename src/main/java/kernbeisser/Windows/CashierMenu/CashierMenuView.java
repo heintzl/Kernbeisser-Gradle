@@ -1,41 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package kernbeisser.Windows.CashierMenu;
 
-import kernbeisser.Windows.CatalogInput.CatalogInput;
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Useful.Images;
 import kernbeisser.DBEntitys.User;
-import kernbeisser.Windows.*;
-import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMask;
-import kernbeisser.Windows.ManageItems.ManageItems;
-import kernbeisser.Windows.ManagePriceLists.ManagePriceLists;
-import kernbeisser.Windows.ManageUser.ManageUser;
+import kernbeisser.Useful.Images;
+import kernbeisser.Windows.Background;
+import kernbeisser.Windows.View;
+import kernbeisser.Windows.Window;
 
-import javax.swing.*;
-
-/**
- *
- * @author julik
- */
-public abstract class CashierMenu extends JFrame implements Finishable {
+public class CashierMenuView extends Window implements View {
 
     private CashierMenuController controller;
 
     /**
      * Creates new form CashierMenu
      */
-    public CashierMenu(User user) {
-        controller=new CashierMenuController(user);
+    public CashierMenuView(User user,Window current){
+        super(current);
+        controller=new CashierMenuController(user,this);
         initComponents();
         add(new Background(Images.getImage("carrots.png"),this));
         setSize(1070,678);
         setLocationRelativeTo(null);
         setVisible(true);
-        addWindowListener(new Finisher(this));
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -100,92 +85,80 @@ public abstract class CashierMenu extends JFrame implements Finishable {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(back)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(catalogRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                        .addComponent(startCash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(addUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(addItem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(addPriceLists, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)))
-                .addContainerGap(887, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(29, 29, 29)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(back)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(catalogRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                                                .addComponent(startCash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(addUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(addItem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(addPriceLists, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)))
+                                .addContainerGap(887, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(back)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
-                .addComponent(startCash, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addComponent(catalogRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
-                .addComponent(addUser, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
-                .addComponent(addItem, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addComponent(addPriceLists, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(back)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
+                                .addComponent(startCash, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(37, 37, 37)
+                                .addComponent(catalogRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(33, 33, 33)
+                                .addComponent(addUser, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(36, 36, 36)
+                                .addComponent(addItem, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(37, 37, 37)
+                                .addComponent(addPriceLists, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(44, 44, 44))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void addItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemActionPerformed
-        new ManageItems() {
-            @Override
-            public void finish() {
-                dispose();
-                CashierMenu.this.setVisible(true);
-            }
-        };
-        setVisible(false);
+        controller.openManageItems();
     }//GEN-LAST:event_addItemActionPerformed
 
     private void addUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserActionPerformed
-        setVisible(false);
-        new ManageUser(controller.getUser().getPermission())   {
-            @Override
-            public void finish() {
-                dispose();
-                CashierMenu.this.setVisible(true);
-            }
-        };
+        controller.openManageUsers();
     }//GEN-LAST:event_addUserActionPerformed
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
-        finish();
-        dispose();
+        close();
     }//GEN-LAST:event_backActionPerformed
 
     private void addPriceListsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPriceListsActionPerformed
-        new ManagePriceLists()  {
-            @Override
-            public void finish() {
-                dispose();
-                CashierMenu.this.setVisible(true);
-            }
-        };
-        setVisible(false);
+        controller.openManagePriceLists();
     }//GEN-LAST:event_addPriceListsActionPerformed
 
     private void startCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashActionPerformed
-        new CashierShoppingMask(controller.getUser());
+        controller.openCashierMask();
     }//GEN-LAST:event_startCashActionPerformed
 
     private void catalogRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_catalogRefreshActionPerformed
-        new CatalogInput() {
-            @Override
-            public void finish() {
-                dispose();
-                CashierMenu.this.setVisible(true);
-            }
-        };
-        setVisible(false);
+        controller.openCatalogInput();
     }//GEN-LAST:event_catalogRefreshActionPerformed
+
+    @Override
+    public CashierMenuController getController(){
+        return controller;
+    }
+
+    @Override
+    protected void open() {
+        setVisible(true);
+    }
+
+    @Override
+    protected void close() {
+        setVisible(false);
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addItem;
@@ -194,5 +167,7 @@ public abstract class CashierMenu extends JFrame implements Finishable {
     private javax.swing.JButton back;
     private javax.swing.JButton catalogRefresh;
     private javax.swing.JButton startCash;
+
+
     // End of variables declaration//GEN-END:variables
 }
