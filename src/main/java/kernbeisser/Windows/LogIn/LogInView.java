@@ -10,12 +10,12 @@ import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.User;
+import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Images;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Background;
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.*;
 import kernbeisser.Windows.UserMenu.UserMenu;
+import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -23,34 +23,31 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class LogIn extends JFrame implements Finishable {
+public class LogInView extends Window implements View {
 
+
+    private LogInController controller;
     /**
-     * the User who is logged In
-     */
-    private static User loggedIn;
-    /**
-     * Creates new form LogIn from LogIn.form
+     * Creates new form LogIn from LogInView.form
      * with all Tables from A-Z
      * and a Table with all Users
      */
-    public LogIn() {
+    public LogInView(kernbeisser.Windows.Window current) {
+        super(current);
+        controller=new LogInController(this);
         initComponents();
-        loggedIn=null;
         setSize(Tools.getScreenWidth()/2, Tools.getScreenHeight()/2);
         Background b = new Background(Images.getImage("basil.png"));
         b.autoSize(this);
         b.setBounds(0,0,500,300);
         add(b);
         setLocationRelativeTo(null);
-        setVisible(true);
-        addWindowListener(new Finisher(this));
         for (int i = 97; i < 123; i++) {
             DBTable dbTable = new DBTable<>("select u from User u where u.username like '" + ((char) i) + "%' Order by username asc",
                     Column.create("Username", User::getUsername),
                     Column.create("Vorname", User::getFirstName),
                     Column.create("Nachname", User::getSurname));
-            dbTable.getTableHeader().setFont(new Font("arial",1,12));
+            dbTable.getTableHeader().setFont(new Font("arial",Font.BOLD,12));
             dbTable.getSelectionModel().addListSelectionListener(e -> username.setText((String) dbTable.getValueAt(dbTable.getSelectedRow(), 0)));
             jTabbedPane1.addTab(String.valueOf(Character.toUpperCase((char) i)), new JScrollPane(dbTable));
         }
@@ -63,8 +60,15 @@ public class LogIn extends JFrame implements Finishable {
         jTabbedPane1.addTab("Alle",new JScrollPane(allUser));
     }
 
-    public static User getLoggedIn() {
-        return loggedIn;
+    @Override
+    public void open() {
+        controller=new LogInController(this);
+        setVisible(true);
+    }
+
+    @Override
+    public void close() {
+        setVisible(false);
     }
 
     /**
@@ -102,41 +106,41 @@ public class LogIn extends JFrame implements Finishable {
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(username, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
-                                .addGap(55, 55, 55)
-                                .addComponent(password, GroupLayout.PREFERRED_SIZE, 167, GroupLayout.PREFERRED_SIZE)
-                                .addGap(35, 35, 35)
-                                .addComponent(logInB))
-                            .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 727, Short.MAX_VALUE))
-                        .addGap(26, 26, 26))
-                    .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(162, 162, 162)
-                        .addComponent(jLabel1)
-                        .addGap(187, 187, 187))))
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(24, 24, 24)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(username, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(55, 55, 55)
+                                                                .addComponent(password, GroupLayout.PREFERRED_SIZE, 167, GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(35, 35, 35)
+                                                                .addComponent(logInB))
+                                                        .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 727, Short.MAX_VALUE))
+                                                .addGap(26, 26, 26))
+                                        .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(jLabel2)
+                                                .addGap(162, 162, 162)
+                                                .addComponent(jLabel1)
+                                                .addGap(187, 187, 187))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jTabbedPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(password, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logInB)
-                    .addComponent(username, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14))
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(jTabbedPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel1))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(password, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(logInB)
+                                        .addComponent(username, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addGap(14, 14, 14))
         );
 
         pack();
@@ -152,32 +156,26 @@ public class LogIn extends JFrame implements Finishable {
      * @see UserMenu
      */
     private void logIn(){
-        EntityManager em = DBConnection.getEntityManager();
-        try{
-            User user;
-            user = em.createQuery(
-                    "select u from User u where u.username like :username", User.class)
-                    .setParameter("username", username.getText()).
-                            getSingleResult();
-            if(!(BCrypt.verifyer().verify(password.getPassword(),user.getPassword().toCharArray()).verified)){
+        switch (controller.logIn(username.getName(),password.getPassword())) {
+            case LogInController.SUCCESS:
+                controller.openUserMenu();
+                break;
+            case LogInController.INCORRECT_USERNAME:
+                Tools.ping(username);
+                JOptionPane.showMessageDialog(this,"Benutzername Falsch!");
+                break;
+            case LogInController.INCORRECT_PASSWORD:
                 Tools.ping(password);
                 JOptionPane.showMessageDialog(this,"Das von ihnen Angegebene Passwort ist nicht Korrekt");
-                return;
-            }
-            new UserMenu(user) {
-                @Override
-                public void finish() {
-                    new LogIn();
-                    dispose();
-                }
-            };
-            loggedIn=user;
-        }catch (NoResultException e){
-            Tools.ping(username);
-            JOptionPane.showMessageDialog(this,"Benutzername Falsch!");
-            return;
+                break;
+
         }
-        dispose();
+        close();
+    }
+
+    @Override
+    public Controller getController() {
+        return controller;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -188,9 +186,5 @@ public class LogIn extends JFrame implements Finishable {
     private JPasswordField password;
     private JTextField username;
 
-    @Override
-    public void finish() {
-        System.exit(0);
-    }
     // End of variables declaration//GEN-END:variables
 }

@@ -8,7 +8,7 @@ import kernbeisser.Enums.Permission;
 import kernbeisser.StartUp.StartUp;
 import kernbeisser.Useful.BackGroundWorker;
 import kernbeisser.Useful.Images;
-import kernbeisser.Windows.LogIn.LogIn;
+import kernbeisser.Windows.LogIn.LogInView;
 import kernbeisser.Windows.UserMenu.UserMenu;
 
 import javax.persistence.EntityManager;
@@ -45,7 +45,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> new UserMenu(finalUser) {
             @Override
             public void finish() {
-                new LogIn();
+                new LogInView();
                 dispose();
             }
         }.setIconImage(Images.getImage("Icon.png")));
