@@ -21,9 +21,9 @@ import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Checker;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Translator;
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.*;
 import kernbeisser.Windows.ItemFilter.ItemFilterView;
+import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.swing.*;
@@ -38,20 +38,21 @@ import java.util.ArrayList;
  *
  * @author julik
  */
-public abstract class ManageItems extends JFrame implements Finishable {
-    private ManageItemsController controller = new ManageItemsController();
+public class ManageItemsView extends Window implements View {
+    private ManageItemsController controller;
     private Translator t = new Translator();
     private ObjectTable<Item> kbItems;
     private ObjectTable<ItemKK> kkItems;
     /**
      * Creates new form AddItems
      */
-    public ManageItems() {
+    public ManageItemsView(Window current) {
+        super(current);
+        controller = new ManageItemsController(this);
         initComponents();
         setVisible(true);
-        addWindowListener(new Finisher(this));
         EntityManager em = DBConnection.getEntityManager();
-        em.createQuery("select p from PriceList p",PriceList.class).getResultStream().forEach(e -> itemPriceList.addItem(e.getName()));
+        controller.getAllPriceListNames().forEach(itemPriceList::addItem);
         em.createQuery("select s from Supplier s",Supplier.class).getResultStream().forEach(e -> itemSupplier.addItem(e.getName()));
         em.close();
         itemPriceList.setSelectedItem(PriceList.getSingleItemPriceList());
@@ -97,6 +98,16 @@ public abstract class ManageItems extends JFrame implements Finishable {
                 );
             }
         });
+    }
+
+    @Override
+    public void open() {
+
+    }
+
+    @Override
+    public void close() {
+
     }
 
     /**
@@ -615,7 +626,6 @@ public abstract class ManageItems extends JFrame implements Finishable {
     }//GEN-LAST:event_saveActionPerformed
 
     private void itemSearchPriceListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSearchPriceListActionPerformed
-        EntityManager em = DBConnection.getEntityManager();
         JFrame jFrame = new JFrame();
         jFrame.setTitle("W\u00e4hlen sie eine Preisliste");
         jFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -646,19 +656,7 @@ public abstract class ManageItems extends JFrame implements Finishable {
         loadSearchSolutions();
     }//GEN-LAST:event_searchBarKeyReleased
     private void requestFilter(){
-        new ItemFilterView() {
-            @Override
-            public void finish() {
-                dispose();
-                filter.setEnabled(true);
-                loadSearchSolutions();
-            }
-            @Override
-            public void filterSelected(PriceList p, Supplier supplier) {
-                controller.setFilter(p);
-                controller.setFilter(supplier);
-            }
-        };
+        new ItemFilterView(this,controller::setFilter).open();
         filter.setEnabled(false);
     }
     private void loadSearchSolutions(){
@@ -800,6 +798,10 @@ public abstract class ManageItems extends JFrame implements Finishable {
         Tools.setRealNumberFilter(itemBarcode);
     }
 
+    @Override
+    public ManageItemsController getController() {
+        return controller;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton filter;
     private JTextField itemAmount;
@@ -861,5 +863,6 @@ public abstract class ManageItems extends JFrame implements Finishable {
     private JTextField searchBar;
     private JCheckBox searchInCatalog;
     private JTabbedPane searchSolutionPane;
+
     // End of variables declaration//GEN-END:variables
 }

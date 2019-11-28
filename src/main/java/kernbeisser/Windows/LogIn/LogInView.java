@@ -5,20 +5,18 @@
  */
 package kernbeisser.Windows.LogIn;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.CustomComponents.Column;
 import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.CustomComponents.ObjectTable;
 import kernbeisser.DBEntitys.User;
-import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Images;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.*;
+import kernbeisser.Windows.Background;
+import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.UserMenu.UserMenu;
+import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import java.awt.*;
 
@@ -43,7 +41,8 @@ public class LogInView extends Window implements View {
         add(b);
         setLocationRelativeTo(null);
         for (int i = 97; i < 123; i++) {
-            DBTable dbTable = new DBTable<>("select u from User u where u.username like '" + ((char) i) + "%' Order by username asc",
+            ObjectTable<User> dbTable = new ObjectTable<>(
+                    controller.getAllWhichBeginsWith((char) i),
                     Column.create("Username", User::getUsername),
                     Column.create("Vorname", User::getFirstName),
                     Column.create("Nachname", User::getSurname));

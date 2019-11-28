@@ -137,6 +137,14 @@ public class Tools {
         return output;
     }
 
+    public static <I, O> List<O> transform(Collection<I> in, Function<I, O> transformer) {
+        List<O> output = new ArrayList<>(in.size());
+        for (I i : in) {
+            output.add(transformer.apply(i));
+        }
+        return output;
+    }
+
     public static <T> Function<String, T> findParser(Class<T> c) {
         if (c.equals(Boolean.class) || c.equals(boolean.class))
             return e -> e.equals("null") ? null : c.cast(Boolean.parseBoolean(e));

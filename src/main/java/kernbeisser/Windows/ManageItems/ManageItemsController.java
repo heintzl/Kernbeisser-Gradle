@@ -5,6 +5,10 @@ import kernbeisser.DBEntitys.Item;
 import kernbeisser.DBEntitys.ItemKK;
 import kernbeisser.DBEntitys.PriceList;
 import kernbeisser.DBEntitys.Supplier;
+import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.Model;
+import kernbeisser.Windows.View;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -12,9 +16,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.RollbackException;
 import java.util.List;
 
-public class ManageItemsController {
-    private Supplier itemFilterSupplier;
-    private PriceList itemFilterPriceList;
+public class ManageItemsController implements Controller {
+
+    private ManageItemsView view;
+    private ManageItemsModel model;
+    ManageItemsController(ManageItemsView view){
+        this.view=view;
+        this.model=new ManageItemsModel();
+    }
     boolean save(Item i){
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -53,8 +62,8 @@ public class ManageItemsController {
     List<Item> searchItems(String barcode, String name, String kbNumber){
         EntityManager em = DBConnection.getEntityManager();
         List<Item> out = em.createQuery( "select i from Item i where "+
-                (itemFilterPriceList==null? "" : "i.priceList = "+itemFilterPriceList.getId()+" and ")+
-                (itemFilterSupplier==null?"":"i.supplier = "+itemFilterSupplier.getName()+ " and ")+
+                (model.getItemFilterPriceList()==null? "" : "i.priceList = "+model.getItemFilterPriceList().getId()+" and ")+
+                (model.getItemFilterSupplier()==null?"":"i.supplier = "+model.getItemFilterSupplier().getName()+ " and ")+
                 "(i.barcode like '%"+barcode+
                 "%' or UPPER(i.name) like '%"+name.toUpperCase()+
                 "%' or i.kbNumber like '%"+kbNumber+"%') order by i.name asc",Item.class).getResultList();
@@ -70,9 +79,37 @@ public class ManageItemsController {
         return out;
     }
     void setFilter(Supplier supplier){
-        itemFilterSupplier=supplier;
+        model.setItemFilterSupplier(supplier);
     }
     void setFilter(PriceList priceList){
-        itemFilterPriceList=priceList;
+        model.setItemFilterPriceList(priceList);
+    }
+    void setFilter(PriceList p,Supplier s){
+        model.setItemFilterPriceList(p);
+        model.setItemFilterSupplier(s);
+    }
+    List<PriceList> getAllPriceLists(){
+        return PriceList.getAll(null);
+    }
+    List<Supplier> getAllSupplier(){
+        return Supplier.getAll(null);
+    }
+    List<String> getAllPriceListNames(){
+        return Tools.transform(getPriceLists(null),PriceList::getName);
+    }
+
+    @Override
+    public void refresh() {
+
+    }
+
+    @Override
+    public ManageItemsView getView() {
+        return view;
+    }
+
+    @Override
+    public ManageItemsModel getModel() {
+        return model;
     }
 }
