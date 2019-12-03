@@ -37,7 +37,7 @@ public class CashierMenuView extends Window implements View {
         catalogRefresh = new javax.swing.JButton();
         back = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         addItem.setText("Artikel Bearbeiten");
         addItem.addActionListener(new java.awt.event.ActionListener() {

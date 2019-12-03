@@ -133,7 +133,7 @@ public class ManageUser extends Window {
         jLabel5 = new javax.swing.JLabel();
         enterUserGroup = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jLabel1.setText("Vorname");
 

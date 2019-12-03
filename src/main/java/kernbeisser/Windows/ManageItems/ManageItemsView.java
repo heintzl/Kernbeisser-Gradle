@@ -180,7 +180,7 @@ public class ManageItemsView extends Window implements View {
         itemSupplier = new JComboBox<>();
         jLabel2 = new JLabel();
 
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jPanel1.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
 

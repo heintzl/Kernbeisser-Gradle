@@ -73,7 +73,7 @@ public class ManagePriceListsView extends Window implements View {
         jLabel2 = new JLabel();
         priceListName = new JTextField();
 
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jScrollPane1.setViewportView(priceListChooser);
 

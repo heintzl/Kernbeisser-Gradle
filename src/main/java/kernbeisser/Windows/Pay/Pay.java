@@ -75,7 +75,7 @@ public class Pay extends javax.swing.JFrame {
         totalPrice = new javax.swing.JLabel();
         itemPane = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("Abrechnung");
@@ -94,7 +94,7 @@ public class Pay extends javax.swing.JFrame {
 
         printBonNo.setText("Nein");
 
-        jLabel5.setText("Schriftgr\u00f6ße");
+        jLabel5.setText("Schriftgröße");
 
         paperFomat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 

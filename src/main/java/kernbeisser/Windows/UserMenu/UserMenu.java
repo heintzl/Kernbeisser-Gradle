@@ -60,7 +60,7 @@ public class UserMenu extends Window {
         jLabel3 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Menu - Home");
 
         jPanel1.setBackground(new java.awt.Color(155, 228, 125));

@@ -76,7 +76,7 @@ public class LogInView extends Window implements View {
         username = new JTextField();
         jLabel2 = new JLabel();
 
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setPreferredSize(new Dimension(100, 100));
 
         jTabbedPane1.setPreferredSize(new Dimension(32767, 32767));
