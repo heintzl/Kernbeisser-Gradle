@@ -1,7 +1,7 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Nodes.JobNode;
+import kernbeisser.Nodes.JobNode.JobNode;
 import kernbeisser.CustomComponents.Node.Node;
 import kernbeisser.CustomComponents.Node.Nodeable;
 import org.hibernate.annotations.CreationTimestamp;

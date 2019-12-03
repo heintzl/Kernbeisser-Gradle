@@ -90,6 +90,11 @@ public class ShoppingMask extends javax.swing.JPanel {
         shoppingCartTable.repaintUI();
         customDiscount.setModel(new SpinnerNumberModel(0,0,100,5));
     }
+
+    public SaleSession getSaleSession() {
+        return saleSession;
+    }
+
     private void loadItemStats(){
         Item i = searchItem();
         selected = i;

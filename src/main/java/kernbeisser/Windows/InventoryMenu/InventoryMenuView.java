@@ -22,16 +22,6 @@ public class InventoryMenuView extends Window implements View {
         initComponents();
     }
 
-    @Override
-    public void open() {
-        setVisible(true);
-    }
-
-    @Override
-    public void close() {
-        setVisible(false);
-    }
-
 
     @Override
     public InventoryMenuController getController() {

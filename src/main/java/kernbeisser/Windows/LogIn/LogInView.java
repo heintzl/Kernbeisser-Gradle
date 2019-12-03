@@ -59,16 +59,6 @@ public class LogInView extends Window implements View {
         jTabbedPane1.addTab("Alle",new JScrollPane(allUser));
     }
 
-    @Override
-    public void open() {
-        controller=new LogInController(this);
-        setVisible(true);
-    }
-
-    @Override
-    public void close() {
-        setVisible(false);
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -169,7 +159,7 @@ public class LogInView extends Window implements View {
                 break;
 
         }
-        close();
+        back();
     }
 
     @Override

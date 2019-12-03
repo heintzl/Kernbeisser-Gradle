@@ -62,14 +62,7 @@ public class LogInController implements Controller {
         return User.getAll(null);
     }
     void openUserMenu(){
-        new UserMenu(model.getLoggedIn()) {
-            @Override
-            public void finish() {
-                dispose();
-                view.open();
-            }
-        };
-        view.close();
+        new UserMenu(view,model.getLoggedIn());
     }
 
     @Override

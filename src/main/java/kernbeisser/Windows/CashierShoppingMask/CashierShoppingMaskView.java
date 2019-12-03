@@ -33,13 +33,8 @@ public class CashierShoppingMaskView extends Window implements View {
      */
     public CashierShoppingMaskView(User seller, Window current) {
         super(current);
-        controller=new CashierShoppingMaskController(seller,this);
-    }
-
-    @Override
-    public void open() {
         initComponents();
-        userTable.setObjects(controller.getAllUser());
+        controller=new CashierShoppingMaskController(seller,this);
         startShopping.setEnabled(false);
         userTable.addSelectionListener((e)->{
             startShopping.setEnabled(true);
@@ -51,9 +46,26 @@ public class CashierShoppingMaskView extends Window implements View {
         setVisible(true);
     }
 
+
+
+    @Override
+    public void open() {
+        setVisible(true);
+    }
+
+
     @Override
     public void close() {
-        dispose();
+        setVisible(false);
+    }
+
+
+    void openShoppingMask(ShoppingMask mask){
+        tabbedPane.addTab("Einkauf f"+'\u00fc'+"r "+mask.getSaleSession().getCustomer().getFirstName(),mask);
+    }
+
+    void setUsers(Collection<User> users){
+        userTable.setObjects(users);
     }
 
     /**
@@ -149,7 +161,7 @@ public class CashierShoppingMaskView extends Window implements View {
     private void startShoppingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
         User user = userTable.getSelectedObject();
         try{
-            tabbedPane.addTab("Einkauf f"+'\u00fc'+"r "+user.getFirstName(),controller.startShoppingFor(user));
+            controller.startShoppingFor(user);
         }catch (NullPointerException e){
             startShopping.setEnabled(false);
         }

@@ -203,7 +203,7 @@ public class ManagePriceListsView extends Window implements View {
      * @param evt
      */
     private void escActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_escActionPerformed
-        close();
+        back();
         dispose();
     }//GEN-LAST:event_escActionPerformed
 

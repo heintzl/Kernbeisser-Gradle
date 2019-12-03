@@ -42,12 +42,6 @@ public class Main {
             user.setPermission(Permission.ADMIN);
         }
         User finalUser = user;
-        SwingUtilities.invokeLater(() -> new UserMenu(finalUser) {
-            @Override
-            public void finish() {
-                new LogInView();
-                dispose();
-            }
-        }.setIconImage(Images.getImage("Icon.png")));
+        SwingUtilities.invokeLater(() -> new UserMenu(new LogInView(null),finalUser));
     }
 }

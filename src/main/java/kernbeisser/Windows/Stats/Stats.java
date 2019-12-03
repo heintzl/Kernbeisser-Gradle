@@ -5,22 +5,20 @@
  */
 package kernbeisser.Windows.Stats;
 
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.*;
 
 /**
  *
  * @author julik
  */
-public abstract class Stats extends javax.swing.JFrame implements Finishable {
+public class Stats extends Window {
 
     /**
      * Creates new form stats
      */
-    public Stats() {
+    public Stats(Window current) {
+        super(current);
         initComponents();
-        setVisible(true);
-        addWindowListener(new Finisher(this));
     }
 
     /**
@@ -47,7 +45,8 @@ public abstract class Stats extends javax.swing.JFrame implements Finishable {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

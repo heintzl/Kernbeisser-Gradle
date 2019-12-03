@@ -7,20 +7,20 @@ package kernbeisser.Windows.Options;
 
 import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.Window;
 
 /**
  *
  * @author julik
  */
-public abstract class Options extends javax.swing.JFrame implements Finishable {
+public class Options extends Window {
 
     /**
      * Creates new form options
      */
-    public Options() {
+    public Options(Window current) {
+        super(current);
         initComponents();
-        setVisible(true);
-        addWindowListener(new Finisher(this));
     }
 
     /**

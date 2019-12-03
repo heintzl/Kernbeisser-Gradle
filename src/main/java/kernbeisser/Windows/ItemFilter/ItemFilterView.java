@@ -53,15 +53,7 @@ public class ItemFilterView extends Window implements View {
         return controller;
     }
 
-    @Override
-    public void open() {
-        setVisible(true);
-    }
 
-    @Override
-    public void close() {
-        setVisible(false);
-    }
     private void filterSelect(){
         Object o = priceListTree.getLastSelectedPathComponent();
         controller.selectFilter(controller.getByName(o.toString()),suppliers.getSelectedValue());
@@ -149,7 +141,7 @@ public class ItemFilterView extends Window implements View {
 
     private void finishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishActionPerformed
         filterSelect();
-        close();
+        back();
     }//GEN-LAST:event_finishActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

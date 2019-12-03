@@ -10,9 +10,11 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.CustomComponents.DBTable;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.DBEntitys.UserGroup;
+import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
@@ -21,7 +23,7 @@ import java.util.function.Consumer;
  *
  * @author julik
  */
-public class UserGroupSelector extends javax.swing.JFrame {
+public class UserGroupSelector extends Window {
     private DBTable userTable;
     private DBTable groupMembersTable;
     private UserGroup newUserGroup;
@@ -29,10 +31,10 @@ public class UserGroupSelector extends javax.swing.JFrame {
     /**
      * Creates new form UserGroupSelector
      */
-    public UserGroupSelector(Consumer<UserGroup> f) {
+    public UserGroupSelector(Window current,Consumer<UserGroup> f) {
+        super(current);
         initComponents();
         finchAction=f;
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         userTable= new DBTable<>("select u from User u",
                 Column.create("Username", User::getUsername),
                 Column.create("Vorname", User::getFirstName),

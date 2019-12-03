@@ -19,6 +19,7 @@ import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.JobSelector;
 import kernbeisser.Windows.UserGroupSelector.UserGroupSelector;
+import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -33,7 +34,7 @@ import java.util.Set;
  *
  * @author julik
  */
-public abstract class ManageUser extends JFrame implements Finishable {
+public class ManageUser extends Window {
     private UserGroup userGroup;
     private Set<Job> jobs = new HashSet<>();
     private DBTable<User> userSelector;
@@ -41,10 +42,10 @@ public abstract class ManageUser extends JFrame implements Finishable {
     /**
      * Creates new form ManageUser
      */
-    public ManageUser(Permission permission) {
+    public ManageUser(Window current,Permission permission) {
+        super(current);
         initComponents();
         editUser.setEnabled(true);
-        addWindowListener(new Finisher(this));
         userSelector = new DBTable<User>(
                 "select u from User u",
                 Column.create("Username", User::getUsername),
@@ -80,13 +81,11 @@ public abstract class ManageUser extends JFrame implements Finishable {
                 break;
             case BEGINNER:
             case STANDARD:
-                finish();
+                kill();
                 JOptionPane.showMessageDialog(this,"Sie haben leider kein zugriff auf dieses fenster");
                 return;
         }
         setVisible(true);
-        addWindowListener(new Finisher(this));
-
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -428,12 +427,11 @@ public abstract class ManageUser extends JFrame implements Finishable {
     }//GEN-LAST:event_editUserActionPerformed
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
-        finish();
-        dispose();
+        back();
     }//GEN-LAST:event_backActionPerformed
 
     private void enterUserGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enterUserGroupActionPerformed
-        new UserGroupSelector(e -> {
+        new UserGroupSelector(this,e -> {
             userGroup=e;
             alone.setSelected(false);
         });
@@ -524,5 +522,6 @@ public abstract class ManageUser extends JFrame implements Finishable {
     private javax.swing.JTextField surname;
     private javax.swing.JTabbedPane tableContainer;
     private javax.swing.JTextField username;
+
     // End of variables declaration//GEN-END:variables
 }

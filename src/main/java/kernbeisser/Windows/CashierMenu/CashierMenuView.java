@@ -128,7 +128,7 @@ public class CashierMenuView extends Window implements View {
     }//GEN-LAST:event_addUserActionPerformed
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
-        close();
+        back();
     }//GEN-LAST:event_backActionPerformed
 
     private void addPriceListsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPriceListsActionPerformed

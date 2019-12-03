@@ -656,7 +656,7 @@ public class ManageItemsView extends Window implements View {
         loadSearchSolutions();
     }//GEN-LAST:event_searchBarKeyReleased
     private void requestFilter(){
-        new ItemFilterView(this,controller::setFilter).open();
+        new ItemFilterView(this,controller::setFilter);
         filter.setEnabled(false);
     }
     private void loadSearchSolutions(){
