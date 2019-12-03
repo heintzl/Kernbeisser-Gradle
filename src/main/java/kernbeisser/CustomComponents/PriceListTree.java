@@ -2,7 +2,7 @@ package kernbeisser.CustomComponents;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.PriceList;
-import kernbeisser.Windows.ManagePriceLists.ManagePriceLists;
+import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
 
 import javax.persistence.EntityManager;
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class PriceListTree extends JTree {
             priceList.add(new DefaultMutableTreeNode("Neu Hinzuf\u00fcgen/Bearbeiten"));
             addTreeSelectionListener(e -> {
                 Object o = getLastSelectedPathComponent();
-                if (o != null && o.toString().equals("Neu Hinzuf\u00fcgen/Bearbeiten")) new ManagePriceLists() {
+                if (o != null && o.toString().equals("Neu Hinzuf\u00fcgen/Bearbeiten")) new ManagePriceListsView() {
                     @Override
                     public void finish() {
                         dispose();

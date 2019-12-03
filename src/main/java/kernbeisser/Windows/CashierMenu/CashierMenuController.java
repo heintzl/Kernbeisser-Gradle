@@ -4,7 +4,7 @@ import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskView;
 import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.ManagePriceLists.ManagePriceLists;
+import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
 import kernbeisser.Windows.ManageUser.ManageUser;
 
 class CashierMenuController implements Controller {
@@ -52,7 +52,7 @@ class CashierMenuController implements Controller {
         view.close();
     }
     public void openManagePriceLists(){
-        new ManagePriceLists()  {
+        new ManagePriceListsView()  {
             @Override
             public void finish() {
                 dispose();

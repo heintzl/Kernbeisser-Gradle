@@ -8,8 +8,7 @@ package kernbeisser.Windows.ManagePriceLists;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.PriceList;
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.*;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
@@ -21,16 +20,18 @@ import javax.swing.*;
  *
  * @author julik
  */
-public abstract class ManagePriceLists extends JFrame implements Finishable {
+public class ManagePriceListsView extends Window implements View {
     /**
      * Creates new form AddPriceLists and
      * fills the priceListChooser with the data from the PriceListTree and add the Listeners
      * @see PriceListTree
      */
-    public ManagePriceLists() {
+
+    ManagePriceListsController controller;
+    public ManagePriceListsView(Window current) {
+        super(current);
         initComponents();
-        setVisible(true);
-        addWindowListener(new Finisher(this));
+        controller=new ManagePriceListsController(this);
         priceListChooser.setModel(new PriceListTree(false).getModel());
         priceListChooser.addTreeSelectionListener(e -> {
             if(priceListChooser.getSelectionPath()!=null) {
@@ -38,6 +39,16 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
                 superPriceList.setText(priceListChooser.getLastSelectedPathComponent().toString());
             }
         });
+
+    }
+
+    @Override
+    public void open() {
+        setVisible(true);
+    }
+
+    @Override
+    public void close() {
 
     }
 
@@ -192,7 +203,7 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
      * @param evt
      */
     private void escActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_escActionPerformed
-        finish();
+        close();
         dispose();
     }//GEN-LAST:event_escActionPerformed
 
@@ -234,5 +245,10 @@ public abstract class ManagePriceLists extends JFrame implements Finishable {
     private JButton rename;
     private JButton save;
     private JTextField superPriceList;
+
+    @Override
+    public Controller getController() {
+        return controller;
+    }
     // End of variables declaration//GEN-END:variables
 }
