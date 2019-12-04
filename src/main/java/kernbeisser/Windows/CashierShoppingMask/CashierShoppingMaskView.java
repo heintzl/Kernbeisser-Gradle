@@ -46,20 +46,6 @@ public class CashierShoppingMaskView extends Window implements View {
         setVisible(true);
     }
 
-
-
-    @Override
-    public void open() {
-        setVisible(true);
-    }
-
-
-    @Override
-    public void close() {
-        setVisible(false);
-    }
-
-
     void openShoppingMask(ShoppingMask mask){
         tabbedPane.addTab("Einkauf f"+'\u00fc'+"r "+mask.getSaleSession().getCustomer().getFirstName(),mask);
     }
@@ -67,6 +53,12 @@ public class CashierShoppingMaskView extends Window implements View {
     void setUsers(Collection<User> users){
         userTable.setObjects(users);
     }
+
+    @Override
+    public Controller getController() {
+        return controller;
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -176,11 +168,6 @@ public class CashierShoppingMaskView extends Window implements View {
     private javax.swing.JToggleButton startShopping;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JPanel userTablePane;
-
-    @Override
-    public Controller getController() {
-        return null;
-    }
 
     // End of variables declaration//GEN-END:variables
 }

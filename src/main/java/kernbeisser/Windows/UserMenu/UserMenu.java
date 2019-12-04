@@ -4,7 +4,6 @@ package kernbeisser.Windows.UserMenu;/*
  * and open the template in the editor.
  */
 
-import kernbeisser.Windows.Finishable;
 import kernbeisser.DBEntitys.SaleSession;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.CashierMenu.CashierMenuView;
@@ -35,7 +34,22 @@ public class UserMenu extends Window {
         username.setText(user.getUsername()+"!");
         setSize(1070,678);
         setLocationRelativeTo(null);
+    }
+
+
+    @Override
+    protected void close() {
+        for (Component component : getComponents()) {
+            component.setEnabled(false);
+        }
+    }
+
+    @Override
+    protected void open() {
         setVisible(true);
+        for (Component component : getComponents()) {
+            component.setEnabled(true);
+        }
     }
 
     /**
@@ -243,7 +257,7 @@ public class UserMenu extends Window {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashierActionPerformed
-        new CashierMenuView(user, null);
+        new CashierMenuView(user, this);
     }//GEN-LAST:event_startCashierActionPerformed
 
     private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed

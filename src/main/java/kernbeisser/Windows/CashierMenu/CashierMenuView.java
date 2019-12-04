@@ -148,15 +148,6 @@ public class CashierMenuView extends Window implements View {
         return controller;
     }
 
-    @Override
-    public void open() {
-        setVisible(true);
-    }
-
-    @Override
-    public void close() {
-        setVisible(false);
-    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -42,7 +42,7 @@ class CashierMenuController implements Controller {
         new ManagePriceListsView(view);
     }
     public void openCashierMask(){
-        new CashierShoppingMaskView(model.getUser(),view).open();
+        new CashierShoppingMaskView(model.getUser(),view);
     }
     public void openCatalogInput(){
         new CatalogInputView(view);

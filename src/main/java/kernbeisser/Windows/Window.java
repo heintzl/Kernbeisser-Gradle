@@ -27,6 +27,7 @@ public abstract class Window extends JFrame {
         if(current==null){
             finish(this);
             kill();
+            System.exit(0);
         } else {
             current.open();
             finish(this);

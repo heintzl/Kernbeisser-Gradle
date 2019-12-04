@@ -34,15 +34,7 @@ public class CatalogInputView extends Window implements View {
         return controller;
     }
 
-    @Override
-    public void open() {
 
-    }
-
-    @Override
-    public void close() {
-
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.

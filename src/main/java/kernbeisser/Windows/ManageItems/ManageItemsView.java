@@ -100,16 +100,6 @@ public class ManageItemsView extends Window implements View {
         });
     }
 
-    @Override
-    public void open() {
-
-    }
-
-    @Override
-    public void close() {
-
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
