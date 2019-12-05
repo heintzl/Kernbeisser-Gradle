@@ -5,9 +5,9 @@
  */
 package kernbeisser.Windows.LogIn;
 
-import kernbeisser.CustomComponents.Column;
-import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.DBTable.DBTable;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Useful.Images;
 import kernbeisser.Useful.Tools;

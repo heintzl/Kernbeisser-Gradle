@@ -5,8 +5,8 @@
  */
 package kernbeisser.Windows.Pay;
 
-import kernbeisser.CustomComponents.Column;
-import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Purchase;
 import kernbeisser.DBEntitys.SaleSession;

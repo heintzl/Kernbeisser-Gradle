@@ -15,22 +15,20 @@ public class ItemFilterController implements Controller {
     ItemFilterController(ItemFilterView view, BiConsumer<PriceList,Supplier> consumer){
         this.view=view;
         this.model=new ItemFilterModel(consumer);
-    }
-    Collection<Supplier> getAllSuppliers(){
-        return Supplier.getAll(null);
+        view.setSuppliers(model.getAllSuppliers());
     }
 
     void selectFilter(PriceList p,Supplier s){
         model.getConsumer().accept(p,s);
     }
 
-    PriceList getByName(String name){
-        return PriceList.getAll("where name like '"+name+"'").get(0);
-    }
-
     @Override
     public void refresh() {
 
+    }
+
+    void setFilter(){
+        selectFilter(model.searchPriceListByName(view.getSelectedPriceListName()),view.getSelectedSupplier());
     }
 
     @Override

@@ -9,7 +9,6 @@ class CashierMenuModel implements Model {
     CashierMenuModel(User user){
         this.user=user;
     }
-
     User getUser() {
         return user;
     }

@@ -1,6 +1,5 @@
-package kernbeisser.CustomComponents;
+package kernbeisser.CustomComponents.ObjectTable;
 
-import java.lang.reflect.Field;
 import java.util.function.Function;
 
 public interface Column <T> {

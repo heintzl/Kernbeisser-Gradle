@@ -5,9 +5,9 @@
  */
 package kernbeisser.Windows.ManageItems;
 
-import kernbeisser.CustomComponents.Column;
-import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.DBTable.DBTable;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Item;

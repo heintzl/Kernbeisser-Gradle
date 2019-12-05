@@ -5,9 +5,9 @@
  */
 package kernbeisser.Windows.ShoppingMask;
 
-import kernbeisser.CustomComponents.Column;
-import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.DBTable.DBTable;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Item;
 import kernbeisser.DBEntitys.SaleSession;

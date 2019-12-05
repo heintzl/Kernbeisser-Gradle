@@ -1,4 +1,4 @@
-package kernbeisser.CustomComponents;
+package kernbeisser.CustomComponents.ObjectTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

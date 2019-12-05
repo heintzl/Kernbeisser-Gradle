@@ -5,16 +5,15 @@
  */
 package kernbeisser.Windows.UserGroupSelector;
 
-import kernbeisser.CustomComponents.Column;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.CustomComponents.DBTable.DBTable;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.DBEntitys.UserGroup;
 import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;

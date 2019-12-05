@@ -5,9 +5,8 @@
  */
 package kernbeisser.Windows.CashierShoppingMask;
 
-import kernbeisser.CustomComponents.Column;
-import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.ShoppingMask.ShoppingMask;

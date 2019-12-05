@@ -1,5 +1,7 @@
-package kernbeisser.CustomComponents;
+package kernbeisser.CustomComponents.DBTable;
 
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 
 import javax.persistence.EntityManager;
