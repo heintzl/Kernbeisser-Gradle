@@ -121,4 +121,10 @@ public class PriceList implements Serializable {
         em.close();
         return out;
     }
+    public static Collection<PriceList> getAllHeadPriceLists(){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = null", PriceList.class).getResultList();
+        em.close();
+        return out;
+    }
 }

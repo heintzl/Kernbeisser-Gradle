@@ -25,12 +25,12 @@ public abstract class Window extends JFrame {
 
     public final void back(){
         if(current==null){
-            finish(this);
+            finish();
             kill();
             System.exit(0);
         } else {
             current.open();
-            finish(this);
+            finish();
             kill();
         }
     }
@@ -41,7 +41,7 @@ public abstract class Window extends JFrame {
         setVisible(false);
     }
     /** Custom action after the window become cosed**/
-    public void finish(Window window){}
+    public void finish(){}
     /**the function to dispose the window can be overridden if another close option is necessary**/
     protected void kill(){
         close();

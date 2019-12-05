@@ -9,6 +9,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,8 +26,11 @@ public class ObjectTree <T> extends JTree {
         this.childFactory=factory;
         this.name=name;
         refresh();
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         addTreeSelectionListener(e -> {
-            ObjectNode<T> node = ((ObjectNode<T>)getLastSelectedPathComponent());
+            Object o = getLastSelectedPathComponent();
+            if(!(o instanceof ObjectNode))return;
+            ObjectNode<T> node = (ObjectNode<T>) o;
             if(node.getValue()==null)return;
             for (NodeSelectionListener<T> listener : selectionListeners) {
                 listener.select(node.getValue());
@@ -57,5 +61,13 @@ public class ObjectTree <T> extends JTree {
             out.add(extract(t));
         }
         return out;
+    }
+
+    public Collection<T> getStartValues(){
+        return startValues;
+    }
+
+    public void setChildFactory(ChildFactory<T> childFactory) {
+        this.childFactory = childFactory;
     }
 }
