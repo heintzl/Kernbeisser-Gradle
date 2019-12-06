@@ -26,14 +26,14 @@ public class UserGroupSelector extends Window {
     private DBTable userTable;
     private DBTable groupMembersTable;
     private UserGroup newUserGroup;
-    private Consumer<UserGroup> finchAction;
+    private Consumer<UserGroup> finishAction;
     /**
      * Creates new form UserGroupSelector
      */
     public UserGroupSelector(Window current,Consumer<UserGroup> f) {
         super(current);
         initComponents();
-        finchAction=f;
+        finishAction=f;
         userTable= new DBTable<>("select u from User u",
                 Column.create("Username", User::getUsername),
                 Column.create("Vorname", User::getFirstName),
@@ -164,8 +164,8 @@ public class UserGroupSelector extends Window {
         userTable.refresh();
     }//GEN-LAST:event_searchBarActionPerformed
     private void enterGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enterGroupActionPerformed
-        finchAction.accept(newUserGroup);
-        dispose();
+        finishAction.accept(newUserGroup);
+        back();
     }//GEN-LAST:event_enterGroupActionPerformed
 
 
