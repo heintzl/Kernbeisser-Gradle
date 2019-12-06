@@ -49,6 +49,7 @@ public class PriceListTree extends ObjectTree<PriceList> {
             };
             p.setName("Neu Hinzuf\u00fcgen/Bearbeiten");
             getStartValues().add(p);
+            refresh();
             addSelectionListener(e -> {
                 if (e.getId() == Integer.MIN_VALUE)
                     new ManagePriceListsView(null) {
