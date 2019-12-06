@@ -6,7 +6,7 @@ import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.ManageItems.ManageItemsView;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
-import kernbeisser.Windows.ManageUser.ManageUser;
+import kernbeisser.Windows.ManageUser.ManageUserView;
 
 class CashierMenuController implements Controller {
     private CashierMenuModel model;
@@ -36,7 +36,7 @@ class CashierMenuController implements Controller {
         new ManageItemsView(view);
     }
     public void openManageUsers(){
-        new ManageUser(view,model.getUser().getPermission());
+        new ManageUserView(view,model.getUser().getPermission());
     }
     public void openManagePriceLists(){
         new ManagePriceListsView(view);

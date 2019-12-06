@@ -18,7 +18,7 @@ public class JobSelector extends JFrame {
         if(parent!=null)
         setComponentOrientation(parent.getComponentOrientation());
         setLocationRelativeTo(parent);
-        jobs = new NodeList<>(Node.toNodes(em.createQuery("select j from Job j", Job.class).getResultList()));
+        jobs = new NodeList<>(Node.toNodes(Job.getAll(null)));
         selectedJobs = new NodeList<>(Node.toNodes(x));
         jobs.addNodeSelectionListener(selectedJobs::addNode);
         selectedJobs.addNodeSelectionListener(selectedJobs::removeNode);
