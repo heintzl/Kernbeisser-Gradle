@@ -8,10 +8,8 @@ package kernbeisser.Windows.ManageUser;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Job;
 import kernbeisser.DBEntitys.User;
-import kernbeisser.DBEntitys.UserGroup;
 import kernbeisser.Enums.Permission;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Translator;
@@ -20,9 +18,6 @@ import kernbeisser.Windows.UserGroupSelector.UserGroupSelector;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
 import javax.swing.*;
 import java.util.Collection;
 import java.util.Set;
@@ -427,7 +422,7 @@ public class ManageUserView extends Window implements View {
         user.setSurname(surname.getText());
         user.setPhoneNumber1(phoneNumber1.getText());
         user.setPhoneNumber2(phoneNumber2.getText());
-        user.setAddress(address.getText()+" ; "+street.getText());
+        user.setStreet(address.getText()+" ; "+street.getText());
         user.setEmail(email.getText());
         user.setShares((Integer) shares.getValue());
         user.setSolidaritySurcharge((Integer) solidaritySurcharge.getValue());
@@ -448,7 +443,7 @@ public class ManageUserView extends Window implements View {
         surname.setText(user.getSurname());
         phoneNumber1.setText(user.getPhoneNumber1());
         phoneNumber2.setText(user.getPhoneNumber2());
-        String[] a = user.getAddress().split(";");
+        String[] a = user.getStreet().split(";");
         address.setText(a[0]);
         street.setText(a[1]);
         email.setText(user.getEmail());

@@ -73,7 +73,13 @@ public class User implements Serializable {
     private String phoneNumber2;
 
     @Column
-    private String address;
+    private String street;
+
+    @Column
+    private String town;
+
+    @Column
+    private long townCode;
 
     @Column
     private Permission permission = Permission.STANDARD;
@@ -96,53 +102,6 @@ public class User implements Serializable {
 
     @ElementCollection
     private List<Integer> transferAmount = new ArrayList<>(5);
-
-    public static String getJobName(int index) {
-        switch (index) {
-            case 0:
-                return "Job1";
-            case 1:
-                return "Job2";
-            case 2:
-                return "Job3";
-            case 3:
-                return "Job4";
-            case 4:
-                return "Job5";
-            case 5:
-                return "Job6";
-            case 6:
-                return "Job7";
-            case 7:
-                return "Job8";
-            case 8:
-                return "Job9";
-            case 9:
-                return "Job10";
-            case 10:
-                return "Job11";
-            case 11:
-                return "Job12";
-            case 12:
-                return "Job13";
-            case 13:
-                return "Job14";
-            case 14:
-                return "Job15";
-            case 15:
-                return "Job16";
-            case 16:
-                return "Job17";
-            case 17:
-                return "Job18";
-            case 18:
-                return "Job19";
-            case 19:
-                return "Job20";
-            default:
-                return "NoName";
-        }
-    }
 
     public int getSalesThisYear() {
         return salesThisYear;
@@ -272,12 +231,12 @@ public class User implements Serializable {
         this.phoneNumber2 = phoneNumber2;
     }
 
-    public String getAddress() {
-        return address;
+    public String getStreet() {
+        return street;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setStreet(String address) {
+        this.street = address;
     }
 
     public Permission getPermission() {
@@ -337,5 +296,21 @@ public class User implements Serializable {
         User out = em.createQuery("select u from User u where id = "+id,User.class).getSingleResult();
         em.close();
         return out;
+    }
+
+    public String getTown() {
+        return town;
+    }
+
+    public void setTown(String town) {
+        this.town = town;
+    }
+
+    public long getTownCode() {
+        return townCode;
+    }
+
+    public void setTownCode(long townCode) {
+        this.townCode = townCode;
     }
 }
