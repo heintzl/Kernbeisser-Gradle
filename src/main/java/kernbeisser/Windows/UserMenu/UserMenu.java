@@ -4,16 +4,16 @@ package kernbeisser.Windows.UserMenu;/*
  * and open the template in the editor.
  */
 
-import kernbeisser.Windows.Finishable;
 import kernbeisser.DBEntitys.SaleSession;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.CashierMenu.CashierMenuView;
 import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.InventoryMenu.InventoryMenuView;
-import kernbeisser.Windows.LogIn.LogIn;
+import kernbeisser.Windows.LogIn.LogInView;
 import kernbeisser.Windows.Options.Options;
 import kernbeisser.Windows.ShoppingMask.ShoppingMask;
 import kernbeisser.Windows.Stats.Stats;
+import kernbeisser.Windows.Window;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,19 +22,34 @@ import java.awt.*;
  *
  * @author julik
  */
-public abstract class UserMenu extends JFrame implements Finishable {
+public class UserMenu extends Window {
     private User user;
     /**
      * Creates new form UserMenu
      */
-    public UserMenu(User user) {
+    public UserMenu(Window current,User user) {
+        super(current);
         this.user=user;
         initComponents();
         username.setText(user.getUsername()+"!");
         setSize(1070,678);
         setLocationRelativeTo(null);
+    }
+
+
+    @Override
+    protected void close() {
+        for (Component component : getComponents()) {
+            component.setEnabled(false);
+        }
+    }
+
+    @Override
+    protected void open() {
         setVisible(true);
-        addWindowListener(new Finisher(this));
+        for (Component component : getComponents()) {
+            component.setEnabled(true);
+        }
     }
 
     /**
@@ -59,7 +74,7 @@ public abstract class UserMenu extends JFrame implements Finishable {
         jLabel3 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Menu - Home");
 
         jPanel1.setBackground(new java.awt.Color(155, 228, 125));
@@ -242,45 +257,23 @@ public abstract class UserMenu extends JFrame implements Finishable {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashierActionPerformed
-        new CashierMenuView(user, null).open();
-        setVisible(false);
+        new CashierMenuView(user, this);
     }//GEN-LAST:event_startCashierActionPerformed
 
     private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed
-        new LogIn();
+        new LogInView(this);
         dispose();
     }//GEN-LAST:event_logOutActionPerformed
 
     private void startInventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startInventoryActionPerformed
-        new InventoryMenuView(){
-            @Override
-            public void finish() {
-                dispose();
-                UserMenu.this.setVisible(true);
-            }
-        };
-        setVisible(false);
+        new InventoryMenuView(this);
     }//GEN-LAST:event_startInventoryActionPerformed
 
     private void startOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startOptionsActionPerformed
-        new Options(){
-            @Override
-            public void finish() {
-                dispose();
-                UserMenu.this.setVisible(true);
-            }
-        };
-        setVisible(false);
+        new Options(this);
     }//GEN-LAST:event_startOptionsActionPerformed
     private void startStatsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStatsActionPerformed
-        new Stats(){
-            @Override
-            public void finish() {
-                dispose();
-                UserMenu.this.setVisible(true);
-            }
-        };
-        setVisible(false);
+        new Stats(this);
     }//GEN-LAST:event_startStatsActionPerformed
 
     private void startShoppingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
@@ -291,8 +284,8 @@ public abstract class UserMenu extends JFrame implements Finishable {
         saleSession.setSeller(user);
         jFrame.add(new ShoppingMask(saleSession));
         jFrame.addWindowListener(new Finisher(() -> {
-            dispose();
-            UserMenu.this.setVisible(true);
+            jFrame.dispose();
+            this.open();
         }));
         jFrame.pack();
         jFrame.setLocationRelativeTo(null);

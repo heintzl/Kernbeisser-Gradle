@@ -5,6 +5,7 @@
  */
 package kernbeisser.Windows.ItemFilter;
 
+import kernbeisser.CustomComponents.ObjectTree.ObjectNode;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.PriceList;
@@ -16,6 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -41,30 +43,32 @@ public class ItemFilterView extends Window implements View {
         priceListPane.setLayout(new BorderLayout());
         priceListPane.add(new JScrollPane(priceListTree));
         priceListTree.addTreeSelectionListener(e -> filterSelect());
-        DefaultListModel<Supplier> suppliersModel = new DefaultListModel<>();
-        controller.getAllSuppliers().forEach(suppliersModel::addElement);
-        suppliers.setModel(suppliersModel);
         if(lastSelectionSupplier!=-1){
             suppliers.setSelectedIndex(lastSelectionSupplier);
         }
     }
+
+    public void setSuppliers(Collection<Supplier> suppliers) {
+        DefaultListModel<Supplier> model = new DefaultListModel<>();
+        suppliers.forEach(model::addElement);
+        this.suppliers.setModel(model);
+    }
+
     @Override
     public Controller getController() {
         return controller;
     }
 
-    @Override
-    public void open() {
-        setVisible(true);
+    public String getSelectedPriceListName(){
+        return String.valueOf(priceListTree.getLastSelectedPathComponent());
     }
 
-    @Override
-    public void close() {
-        setVisible(false);
+    public Supplier getSelectedSupplier(){
+        return suppliers.getSelectedValue();
     }
+
     private void filterSelect(){
-        Object o = priceListTree.getLastSelectedPathComponent();
-        controller.selectFilter(controller.getByName(o.toString()),suppliers.getSelectedValue());
+        controller.setFilter();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -149,7 +153,7 @@ public class ItemFilterView extends Window implements View {
 
     private void finishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishActionPerformed
         filterSelect();
-        close();
+        back();
     }//GEN-LAST:event_finishActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

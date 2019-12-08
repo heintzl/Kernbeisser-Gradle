@@ -5,11 +5,12 @@
  */
 package kernbeisser.Windows.UserGroupSelector;
 
-import kernbeisser.CustomComponents.Column;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.CustomComponents.DBTable.DBTable;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.DBEntitys.UserGroup;
+import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.swing.*;
@@ -21,18 +22,18 @@ import java.util.function.Consumer;
  *
  * @author julik
  */
-public class UserGroupSelector extends javax.swing.JFrame {
+public class UserGroupSelector extends Window {
     private DBTable userTable;
     private DBTable groupMembersTable;
     private UserGroup newUserGroup;
-    private Consumer<UserGroup> finchAction;
+    private Consumer<UserGroup> finishAction;
     /**
      * Creates new form UserGroupSelector
      */
-    public UserGroupSelector(Consumer<UserGroup> f) {
+    public UserGroupSelector(Window current,Consumer<UserGroup> f) {
+        super(current);
         initComponents();
-        finchAction=f;
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        finishAction=f;
         userTable= new DBTable<>("select u from User u",
                 Column.create("Username", User::getUsername),
                 Column.create("Vorname", User::getFirstName),
@@ -76,7 +77,7 @@ public class UserGroupSelector extends javax.swing.JFrame {
         enterGroup = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         searchBar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -163,8 +164,8 @@ public class UserGroupSelector extends javax.swing.JFrame {
         userTable.refresh();
     }//GEN-LAST:event_searchBarActionPerformed
     private void enterGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enterGroupActionPerformed
-        finchAction.accept(newUserGroup);
-        dispose();
+        finishAction.accept(newUserGroup);
+        back();
     }//GEN-LAST:event_enterGroupActionPerformed
 
 

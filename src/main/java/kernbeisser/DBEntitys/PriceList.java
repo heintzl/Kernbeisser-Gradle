@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -112,5 +113,18 @@ public class PriceList implements Serializable {
 
     public static List<PriceList> getAll(String condition){
         return Tools.getAll(PriceList.class,condition);
+    }
+
+    public Collection<PriceList> getAllPriceLists(){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = " + getId(), PriceList.class).getResultList();
+        em.close();
+        return out;
+    }
+    public static Collection<PriceList> getAllHeadPriceLists(){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = null", PriceList.class).getResultList();
+        em.close();
+        return out;
     }
 }

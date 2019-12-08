@@ -37,7 +37,7 @@ public class CashierMenuView extends Window implements View {
         catalogRefresh = new javax.swing.JButton();
         back = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         addItem.setText("Artikel Bearbeiten");
         addItem.addActionListener(new java.awt.event.ActionListener() {
@@ -128,7 +128,7 @@ public class CashierMenuView extends Window implements View {
     }//GEN-LAST:event_addUserActionPerformed
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
-        close();
+        back();
     }//GEN-LAST:event_backActionPerformed
 
     private void addPriceListsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPriceListsActionPerformed
@@ -148,15 +148,6 @@ public class CashierMenuView extends Window implements View {
         return controller;
     }
 
-    @Override
-    public void open() {
-        setVisible(true);
-    }
-
-    @Override
-    public void close() {
-        setVisible(false);
-    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

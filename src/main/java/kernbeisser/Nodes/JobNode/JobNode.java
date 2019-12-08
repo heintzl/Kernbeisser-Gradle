@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows.Nodes;
+package kernbeisser.Nodes.JobNode;
 
 import kernbeisser.CustomComponents.Node.Node;
 import kernbeisser.DBEntitys.Job;

@@ -15,24 +15,21 @@ class CashierShoppingMaskController implements Controller {
     CashierShoppingMaskController(User seller,CashierShoppingMaskView view){
         this.view=view;
         this.model=new CashierShoppingMaskModel(seller);
+        view.setUsers(model.getAllUser());
     }
 
-    ShoppingMask startShoppingFor(User customer) throws NullPointerException{
+    void startShoppingFor(User customer) throws NullPointerException{
         if(customer==null)throw new NullPointerException("No selected Object");
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(customer);
         saleSession.setSeller(model.getSeller());
         ShoppingMask shoppingMask = new ShoppingMask(saleSession);
-        model.getOpenSessions().add(shoppingMask);
-        return shoppingMask;
-    }
-
-    List<User> getAllUser(){
-        return User.getAll(null);
+        view.openShoppingMask(shoppingMask);
     }
 
     @Override
     public void refresh() {
+
     }
 
     @Override

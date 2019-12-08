@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -137,6 +138,14 @@ public class Tools {
         return output;
     }
 
+    public static <I, O> List<O> transform(Collection<I> in, Function<I, O> transformer) {
+        List<O> output = new ArrayList<>(in.size());
+        for (I i : in) {
+            output.add(transformer.apply(i));
+        }
+        return output;
+    }
+
     public static <T> Function<String, T> findParser(Class<T> c) {
         if (c.equals(Boolean.class) || c.equals(boolean.class))
             return e -> e.equals("null") ? null : c.cast(Boolean.parseBoolean(e));
@@ -181,5 +190,9 @@ public class Tools {
         List<T> out = em.createQuery("select c from "+c.getName()+" c "+(condition!=null?condition:""),c).getResultList();
         em.close();
         return out;
+    }
+    public static <T extends Collection> T filterNull(T in){
+        in.removeIf(Objects::isNull);
+        return in;
     }
 }

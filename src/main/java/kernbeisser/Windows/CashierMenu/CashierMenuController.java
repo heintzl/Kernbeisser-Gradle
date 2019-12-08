@@ -4,8 +4,9 @@ import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskView;
 import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.ManagePriceLists.ManagePriceLists;
-import kernbeisser.Windows.ManageUser.ManageUser;
+import kernbeisser.Windows.ManageItems.ManageItemsView;
+import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
+import kernbeisser.Windows.ManageUser.ManageUserView;
 
 class CashierMenuController implements Controller {
     private CashierMenuModel model;
@@ -32,47 +33,18 @@ class CashierMenuController implements Controller {
     }
 
     public void openManageItems(){
-        new ManageUser(model.getUser().getPermission())   {
-            @Override
-            public void finish() {
-                dispose();
-                view.open();
-            }
-        };
-        view.close();
+        new ManageItemsView(view);
     }
     public void openManageUsers(){
-        new ManageUser(model.getUser().getPermission())   {
-            @Override
-            public void finish() {
-                dispose();
-                view.open();
-            }
-        };
-        view.close();
+        new ManageUserView(view,model.getUser().getPermission());
     }
     public void openManagePriceLists(){
-        new ManagePriceLists()  {
-            @Override
-            public void finish() {
-                dispose();
-                view.open();
-            }
-        };
-        view.close();
+        new ManagePriceListsView(view);
     }
     public void openCashierMask(){
-        new CashierShoppingMaskView(model.getUser(),view).open();
-        view.close();
+        new CashierShoppingMaskView(model.getUser(),view);
     }
     public void openCatalogInput(){
-        new CatalogInputView() {
-            @Override
-            public void finish() {
-                dispose();
-                view.open();
-            }
-        };
-        view.close();
+        new CatalogInputView(view);
     }
 }

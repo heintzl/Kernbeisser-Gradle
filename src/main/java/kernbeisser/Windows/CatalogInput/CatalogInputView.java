@@ -34,15 +34,7 @@ public class CatalogInputView extends Window implements View {
         return controller;
     }
 
-    @Override
-    public void open() {
 
-    }
-
-    @Override
-    public void close() {
-
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -59,7 +51,7 @@ public class CatalogInputView extends Window implements View {
         jLabel1 = new javax.swing.JLabel();
         importFile = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         importText.setText("Daten aus dem Textfeld importieren");
         importText.addActionListener(new java.awt.event.ActionListener() {

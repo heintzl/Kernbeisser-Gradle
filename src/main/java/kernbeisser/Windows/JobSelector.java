@@ -11,15 +11,12 @@ import java.awt.*;
 import java.util.Set;
 
 public class JobSelector extends JFrame {
-    private NodeList<Job> selectedJobs;
-    private NodeList<Job> jobs;
     public JobSelector(JFrame parent, Set<Job> x){
-        EntityManager em = DBConnection.getEntityManager();
         if(parent!=null)
         setComponentOrientation(parent.getComponentOrientation());
         setLocationRelativeTo(parent);
-        jobs = new NodeList<>(Node.toNodes(em.createQuery("select j from Job j", Job.class).getResultList()));
-        selectedJobs = new NodeList<>(Node.toNodes(x));
+        NodeList<Job> jobs = new NodeList<>(Node.toNodes(Job.getAll(null)));
+        NodeList<Job> selectedJobs = new NodeList<>(Node.toNodes(x));
         jobs.addNodeSelectionListener(selectedJobs::addNode);
         selectedJobs.addNodeSelectionListener(selectedJobs::removeNode);
         setLayout(new GridLayout(0,2));

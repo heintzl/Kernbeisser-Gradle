@@ -41,7 +41,7 @@ public class User implements Serializable {
     private String extraJobs;
 
     @JoinColumn
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<Job> jobs = new HashSet<>(20);
 
     @Column

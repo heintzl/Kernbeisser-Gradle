@@ -256,6 +256,8 @@ public class StartUp extends javax.swing.JFrame {
     private synchronized void importDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importDataActionPerformed
         new Thread(()-> {
             try {
+                importData.setEnabled(false);
+                importNoData.setEnabled(false);
                 extractDataSet(new File(dataSetURL.getText()));
                 finish();
                 dispose();

@@ -5,9 +5,8 @@
  */
 package kernbeisser.Windows.CashierShoppingMask;
 
-import kernbeisser.CustomComponents.Column;
-import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.ShoppingMask.ShoppingMask;
@@ -33,13 +32,8 @@ public class CashierShoppingMaskView extends Window implements View {
      */
     public CashierShoppingMaskView(User seller, Window current) {
         super(current);
-        controller=new CashierShoppingMaskController(seller,this);
-    }
-
-    @Override
-    public void open() {
         initComponents();
-        userTable.setObjects(controller.getAllUser());
+        controller=new CashierShoppingMaskController(seller,this);
         startShopping.setEnabled(false);
         userTable.addSelectionListener((e)->{
             startShopping.setEnabled(true);
@@ -51,10 +45,19 @@ public class CashierShoppingMaskView extends Window implements View {
         setVisible(true);
     }
 
-    @Override
-    public void close() {
-        dispose();
+    void openShoppingMask(ShoppingMask mask){
+        tabbedPane.addTab("Einkauf f"+'\u00fc'+"r "+mask.getSaleSession().getCustomer().getFirstName(),mask);
     }
+
+    void setUsers(Collection<User> users){
+        userTable.setObjects(users);
+    }
+
+    @Override
+    public Controller getController() {
+        return controller;
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -75,7 +78,7 @@ public class CashierShoppingMaskView extends Window implements View {
 
         jButton2.setText("jButton2");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         tabbedPane.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         tabbedPane.setToolTipText("");
@@ -149,7 +152,7 @@ public class CashierShoppingMaskView extends Window implements View {
     private void startShoppingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
         User user = userTable.getSelectedObject();
         try{
-            tabbedPane.addTab("Einkauf f"+'\u00fc'+"r "+user.getFirstName(),controller.startShoppingFor(user));
+            controller.startShoppingFor(user);
         }catch (NullPointerException e){
             startShopping.setEnabled(false);
         }
@@ -164,11 +167,6 @@ public class CashierShoppingMaskView extends Window implements View {
     private javax.swing.JToggleButton startShopping;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JPanel userTablePane;
-
-    @Override
-    public Controller getController() {
-        return null;
-    }
 
     // End of variables declaration//GEN-END:variables
 }

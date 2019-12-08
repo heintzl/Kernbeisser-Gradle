@@ -5,9 +5,9 @@
  */
 package kernbeisser.Windows.ShoppingMask;
 
-import kernbeisser.CustomComponents.Column;
-import kernbeisser.CustomComponents.DBTable;
-import kernbeisser.CustomComponents.ObjectTable;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.DBTable.DBTable;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Item;
 import kernbeisser.DBEntitys.SaleSession;
@@ -90,6 +90,11 @@ public class ShoppingMask extends javax.swing.JPanel {
         shoppingCartTable.repaintUI();
         customDiscount.setModel(new SpinnerNumberModel(0,0,100,5));
     }
+
+    public SaleSession getSaleSession() {
+        return saleSession;
+    }
+
     private void loadItemStats(){
         Item i = searchItem();
         selected = i;

@@ -7,20 +7,20 @@ package kernbeisser.Windows.Options;
 
 import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.Finisher;
+import kernbeisser.Windows.Window;
 
 /**
  *
  * @author julik
  */
-public abstract class Options extends javax.swing.JFrame implements Finishable {
+public class Options extends Window {
 
     /**
      * Creates new form options
      */
-    public Options() {
+    public Options(Window current) {
+        super(current);
         initComponents();
-        setVisible(true);
-        addWindowListener(new Finisher(this));
     }
 
     /**
@@ -32,7 +32,7 @@ public abstract class Options extends javax.swing.JFrame implements Finishable {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

@@ -6,8 +6,8 @@
 package kernbeisser.Windows.ManageUser;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import kernbeisser.CustomComponents.Column;
-import kernbeisser.CustomComponents.DBTable;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Job;
 import kernbeisser.DBEntitys.User;
@@ -15,59 +15,36 @@ import kernbeisser.DBEntitys.UserGroup;
 import kernbeisser.Enums.Permission;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Translator;
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.JobSelector;
 import kernbeisser.Windows.UserGroupSelector.UserGroupSelector;
+import kernbeisser.Windows.View;
+import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Set;
 
 /**
  *
  * @author julik
  */
-public abstract class ManageUser extends JFrame implements Finishable {
-    private UserGroup userGroup;
-    private Set<Job> jobs = new HashSet<>();
-    private DBTable<User> userSelector;
+public class ManageUserView extends Window implements View {
+    private ManageUserController controller;
+    private ObjectTable<User> userSelector = new ObjectTable<>(
+            Column.create("Username", User::getUsername),
+            Column.create("Vorname", User::getFirstName),
+            Column.create("Nachname", User::getSurname)
+    );
     private Translator t = new Translator();
     /**
      * Creates new form ManageUser
      */
-    public ManageUser(Permission permission) {
+    public ManageUserView(Window current, Permission permission) {
+        super(current);
         initComponents();
-        editUser.setEnabled(true);
-        addWindowListener(new Finisher(this));
-        userSelector = new DBTable<User>(
-                "select u from User u",
-                Column.create("Username", User::getUsername),
-                Column.create("Vorname", User::getFirstName),
-                Column.create("Nachname", User::getSurname)
-        );
-        userSelector.addMouseListener(
-                new MouseAdapter() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        EntityManager em = DBConnection.getEntityManager();
-                        paste(em.createQuery(
-                                "select u from User u where u.username like '"
-                                        +userSelector.getValueAt(userSelector.getSelectedRow(),0)+
-                                        "'",User.class)
-                                .getSingleResult());
-                    }
-                }
-        );
-        JScrollPane jScrollPane = new JScrollPane(userSelector);
-        jScrollPane.setBounds(0,0,getWidth(),getHeight());
-        tableContainer.addTab("All",jScrollPane);
-        setLocationRelativeTo(null);
         switch (permission){
             case ADMIN:
                 this.permission.addItem(t.translate(Permission.ADMIN));
@@ -80,14 +57,35 @@ public abstract class ManageUser extends JFrame implements Finishable {
                 break;
             case BEGINNER:
             case STANDARD:
-                finish();
+                back();
                 JOptionPane.showMessageDialog(this,"Sie haben leider kein zugriff auf dieses fenster");
                 return;
         }
-        setVisible(true);
-        addWindowListener(new Finisher(this));
-
+        controller=new ManageUserController(this,permission);
+        editUser.setEnabled(true);
+        userSelector.addSelectionListener(controller::loadUser);
+        JScrollPane jScrollPane = new JScrollPane(userSelector);
+        jScrollPane.setBounds(0,0,getWidth(),getHeight());
+        tableContainer.addTab("All",jScrollPane);
+        setLocationRelativeTo(null);
     }
+
+    void setUsers(Collection<User> user){
+        userSelector.setObjects(user);
+    }
+
+    void openJobSelector(Set<Job> jobs){
+        new JobSelector(this,jobs);
+    }
+
+    User getSelectedUser(){
+        return userSelector.getSelectedObject();
+    }
+
+    boolean isAlone(){
+        return alone.isSelected();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -134,7 +132,7 @@ public abstract class ManageUser extends JFrame implements Finishable {
         jLabel5 = new javax.swing.JLabel();
         enterUserGroup = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jLabel1.setText("Vorname");
 
@@ -372,77 +370,59 @@ public abstract class ManageUser extends JFrame implements Finishable {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jobsSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jobsSelectorActionPerformed
-        new JobSelector(this,jobs);
+        controller.requestJobSelector();
     }//GEN-LAST:event_jobsSelectorActionPerformed
 
     private void addUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserActionPerformed
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        User user = collectData();
-        if(user==null)return;
-        if(user.getUsername().length()<3){
-            JOptionPane.showMessageDialog(this,"Der gew\u00e4hlte Benutzername ist zu kurz!");
-            Tools.ping(username);
-            return;
-        }else
-        if(JOptionPane.showConfirmDialog(this,"Wollen sie diesen Benutzer wirklich erstellen?")==0){
-            try {
-                if(alone.isSelected()){
-                    userGroup=new UserGroup();
-                    em.persist(userGroup);
-                    user.setUserGroup(userGroup);
-                }
-                em.persist(user);
-            }catch (PersistenceException e){
-                JOptionPane.showMessageDialog(this,"Der Benutzername ist bereits vergeben!");
-                et.rollback();
-                em.close();
+        switch (controller.addUser()) {
+            case ManageUserController.SUCCESS:
+                JOptionPane.showMessageDialog(this,"Der Nutzer wurde erfolgreich hinzugefügt","Nutzer hinzugefügt",JOptionPane.INFORMATION_MESSAGE);
+                break;
+            case ManageUserController.USERNAME_TO_SHORT:
+                JOptionPane.showMessageDialog(this,"Der gew\u00fchlter Benutzername ist ist zu kurz","Nutzername inkorrekt",JOptionPane.WARNING_MESSAGE);
+                Tools.ping(username);
                 return;
-            }
-            em.flush();
-            et.commit();
-            JOptionPane.showMessageDialog(this,"Nutzer erfolgreich erstellt!","Erfolg",JOptionPane.INFORMATION_MESSAGE);
-            em.close();
-            userSelector.refresh();
-        }else {
-            em.close();
+            case ManageUserController.USERNAME_ALREADY_EXISTS:
+                JOptionPane.showMessageDialog(this,"Der von ihnen gew\u00e4hlte Benutzername ist bereits vergeben","Nutzername inkorrekt",JOptionPane.WARNING_MESSAGE);
+                Tools.ping(username);
+                return;
         }
+        controller.refreshUserList();
     }//GEN-LAST:event_addUserActionPerformed
     private void editUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editUserActionPerformed
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        User dbContent= em.createQuery(
-                "select u from User u where username like '"+ userSelector.getValueAt(userSelector.getSelectedRow(),0)+ "'",
-                User.class).getSingleResult();
-        String dbPassword = dbContent.getPassword();
-        User newContent = collectData(dbContent);
-        if(password.getPassword().length==0)
-            newContent.setPassword(dbPassword);
-        et.begin();
-        em.persist(newContent);
-        em.flush();
-        et.commit();
-        em.close();
-        userSelector.refresh();
+        switch (controller.editUser()) {
+            case ManageUserController.SUCCESS:
+                JOptionPane.showMessageDialog(this,"Der Nutzer wurde erfolgreich bearbeited","Nutzer bearbeited",JOptionPane.INFORMATION_MESSAGE);
+                break;
+            case ManageUserController.USERNAME_TO_SHORT:
+                JOptionPane.showMessageDialog(this,"Der gew\u00fchlter Benutzername ist ist zu kurz","Nutzername inkorrekt",JOptionPane.WARNING_MESSAGE);
+                Tools.ping(username);
+                return;
+            case ManageUserController.CANNOT_LEAF_USER_GROUP:
+                JOptionPane.showMessageDialog(this,"Die aktuelle Benutzergruppe kann nicht verlassen werden,\n da diese nur einen Nutzer beinhalted");
+                Tools.ping(enterUserGroup);
+                return;
+            case ManageUserController.USERNAME_ALREADY_EXISTS:
+                JOptionPane.showMessageDialog(this,"Der von ihnen gew\u00e4hlte Benutzername ist bereits vergeben","Nutzername inkorrekt",JOptionPane.WARNING_MESSAGE);
+                Tools.ping(username);
+                return;
+        }
+        controller.refreshUserList();
     }//GEN-LAST:event_editUserActionPerformed
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
-        finish();
-        dispose();
+        back();
     }//GEN-LAST:event_backActionPerformed
 
     private void enterUserGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enterUserGroupActionPerformed
-        new UserGroupSelector(e -> {
-            userGroup=e;
+        new UserGroupSelector(this,e -> {
+            controller.selectUserGroup(e);
             alone.setSelected(false);
         });
     }//GEN-LAST:event_enterUserGroupActionPerformed
 
-    private User collectData(){
-        return collectData(new User());
-    }
-    private User collectData(User user){
+
+    User collectData(User user){
         user.setFirstName(fistName.getText());
         user.setSurname(surname.getText());
         user.setPhoneNumber1(phoneNumber1.getText());
@@ -455,19 +435,15 @@ public abstract class ManageUser extends JFrame implements Finishable {
         user.setKernbeisserKey(kernbeisserKey.isSelected());
         user.setEmployee(employee.isSelected());
         user.getJobs().clear();
-        user.getJobs().addAll(jobs);
         user.setExtraJobs(extraJobs.getText());
         user.setUsername(username.getText());
-        if(!alone.isSelected()&&userGroup==null){
-            Tools.ping(enterUserGroup);
-            Tools.ping(alone);
-            return null;
-        }
-        user.setUserGroup(userGroup);
         user.setPassword(BCrypt.withDefaults().hashToString(12,password.getPassword()));
         return user;
     }
-    private void paste(User user){
+
+
+
+    void paste(User user){
         fistName.setText(user.getFirstName());
         surname.setText(user.getSurname());
         phoneNumber1.setText(user.getPhoneNumber1());
@@ -481,10 +457,8 @@ public abstract class ManageUser extends JFrame implements Finishable {
         permission.setSelectedItem(t.translate(user.getPermission()));
         kernbeisserKey.setSelected(user.isKernbeisserKey());
         employee.setSelected(user.isEmployee());
-        jobs=user.getJobs();
         extraJobs.setText(user.getExtraJobs());
         username.setText(user.getUsername());
-        userGroup=user.getUserGroup();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -524,5 +498,11 @@ public abstract class ManageUser extends JFrame implements Finishable {
     private javax.swing.JTextField surname;
     private javax.swing.JTabbedPane tableContainer;
     private javax.swing.JTextField username;
+
+    @Override
+    public ManageUserController getController() {
+        return controller;
+    }
+
     // End of variables declaration//GEN-END:variables
 }
