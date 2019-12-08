@@ -7,10 +7,10 @@ import java.awt.image.BufferedImage;
 public class Background extends JPanel {
     private Container container;
     private BufferedImage image;
-    Background(BufferedImage image){
+    public Background(BufferedImage image){
         this(image,null);
     }
-    Background(BufferedImage image,Container container){
+    public Background(BufferedImage image, Container container){
         this.container=container;
         this.image=image;
         setBounds(0,0,image.getWidth(),image.getHeight());

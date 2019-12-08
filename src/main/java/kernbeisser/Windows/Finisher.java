@@ -1,8 +1,5 @@
 package kernbeisser.Windows;
 
-import kernbeisser.Finishable;
-
-import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -11,7 +8,7 @@ import java.awt.event.WindowEvent;
  */
 public class Finisher extends WindowAdapter {
     private Finishable window;
-    Finisher(Finishable window){
+    public Finisher(Finishable window){
         this.window=window;
     }
 

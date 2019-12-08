@@ -6,19 +6,19 @@
              version="2.1">
     <persistence-unit name="Kernbeisser">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>kernbeisser.Supplier</class>
-        <class>kernbeisser.PriceList</class>
-        <class>kernbeisser.Item</class>
-        <class>kernbeisser.User</class>
-        <class>kernbeisser.Shelf</class>
-        <class>kernbeisser.ItemKK</class>
-        <class>kernbeisser.UserGroup</class>
-        <class>kernbeisser.ShoppingItem</class>
-        <class>kernbeisser.SaleSession</class>
-        <class>kernbeisser.Purchase</class>
-        <class>kernbeisser.Job</class>
-        <class>kernbeisser.Config</class>
-        <class>kernbeisser.Transaction</class>
+        <class>kernbeisser.DBEntitys.Supplier</class>
+        <class>kernbeisser.DBEntitys.PriceList</class>
+        <class>kernbeisser.DBEntitys.Item</class>
+        <class>kernbeisser.DBEntitys.User</class>
+        <class>kernbeisser.DBEntitys.Shelf</class>
+        <class>kernbeisser.DBEntitys.ItemKK</class>
+        <class>kernbeisser.DBEntitys.UserGroup</class>
+        <class>kernbeisser.DBEntitys.ShoppingItem</class>
+        <class>kernbeisser.DBEntitys.SaleSession</class>
+        <class>kernbeisser.DBEntitys.Purchase</class>
+        <class>kernbeisser.DBEntitys.Job</class>
+        <class>kernbeisser.DBEntitys.Config</class>
+        <class>kernbeisser.DBEntitys.Transaction</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>

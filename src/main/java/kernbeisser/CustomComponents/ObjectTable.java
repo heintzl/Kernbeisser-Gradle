@@ -26,6 +26,9 @@ public class ObjectTable <T> extends JTable {
             }
         });
     }
+    public ObjectTable(Collection<T> fill,Column<T> ... columns){
+        this(fill,Arrays.asList(columns));
+    }
     public ObjectTable(Column<T> ... columns){
         this.columns.addAll(Arrays.asList(columns));
         addMouseListener(new MouseAdapter() {
@@ -114,5 +117,9 @@ public class ObjectTable <T> extends JTable {
                 return false;
             }
         });
+    }
+    public void setObjects(Collection<T> collection){
+        objects=new ArrayList<>(collection);
+        repaintUI();
     }
 }

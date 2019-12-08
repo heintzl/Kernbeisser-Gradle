@@ -1,6 +1,6 @@
 package kernbeisser.Windows;
 
-import kernbeisser.Permission;
+import kernbeisser.Enums.Permission;
 
 import javax.swing.*;
 

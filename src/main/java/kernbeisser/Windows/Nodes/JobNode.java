@@ -6,7 +6,7 @@
 package kernbeisser.Windows.Nodes;
 
 import kernbeisser.CustomComponents.Node.Node;
-import kernbeisser.Job;
+import kernbeisser.DBEntitys.Job;
 
 import javax.swing.*;
 
