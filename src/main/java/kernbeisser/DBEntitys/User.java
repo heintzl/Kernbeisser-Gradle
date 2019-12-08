@@ -1,6 +1,7 @@
 package kernbeisser.DBEntitys;
 
 
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Permission;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
@@ -329,5 +330,12 @@ public class User implements Serializable {
 
     public static List<User> getAll(String condition){
         return Tools.getAll(User.class,condition);
+    }
+
+    public static User getById(int id){
+        EntityManager em = DBConnection.getEntityManager();
+        User out = em.createQuery("select u from User u where id = "+id,User.class).getSingleResult();
+        em.close();
+        return out;
     }
 }

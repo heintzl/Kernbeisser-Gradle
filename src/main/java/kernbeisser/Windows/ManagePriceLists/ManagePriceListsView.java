@@ -29,6 +29,7 @@ public class ManagePriceListsView extends Window implements View {
 
     ManagePriceListsController controller;
     public ManagePriceListsView(Window current) {
+        //TODO Benjamin is working currently on this project
         super(current);
         initComponents();
         controller=new ManagePriceListsController(this);

@@ -17,9 +17,11 @@ public class ManageUserModel implements Model {
     ManageUserModel(Permission permission){
         this.userPermission=permission;
     }
+
     Collection<User> getAllUser(){
         return User.getAll(null);
     }
+
     public UserGroup getUserGroup() {
         return userGroup;
     }
@@ -35,6 +37,7 @@ public class ManageUserModel implements Model {
     public void setSelectedJobs(Set<Job> selectedJobs) {
         this.selectedJobs = selectedJobs;
     }
+
 
     public Permission getUserPermission() {
         return userPermission;

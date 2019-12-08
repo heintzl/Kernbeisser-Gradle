@@ -395,7 +395,7 @@ public class ManageUserView extends Window implements View {
                 JOptionPane.showMessageDialog(this,"Der Nutzer wurde erfolgreich bearbeited","Nutzer bearbeited",JOptionPane.INFORMATION_MESSAGE);
                 break;
             case ManageUserController.USERNAME_TO_SHORT:
-                JOptionPane.showMessageDialog(this,"Der gew\u00fchlter Benutzername ist ist zu kurz","Nutzername inkorrekt",JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Der gew\u00e4lter Benutzername ist ist zu kurz","Nutzername inkorrekt",JOptionPane.WARNING_MESSAGE);
                 Tools.ping(username);
                 return;
             case ManageUserController.CANNOT_LEAF_USER_GROUP:
