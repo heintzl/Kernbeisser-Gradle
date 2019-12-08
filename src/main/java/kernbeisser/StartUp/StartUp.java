@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -361,6 +362,8 @@ public class StartUp extends javax.swing.JFrame {
             int c = 0;
             List<String> lines = Files.readAllLines(itemFile.toPath(), StandardCharsets.UTF_8);
             HashSet<Long> barcode = new HashSet<>(lines.size());
+            HashMap<String,PriceList> priceListHashMap = new HashMap<>();
+            PriceList.getAll(null).forEach(e -> priceListHashMap.put(e.getName(),e));
             itemPB.setMaximum(lines.size());
             for (String l : lines) {
                 String[] columns = l.split(";");
@@ -387,7 +390,7 @@ public class StartUp extends javax.swing.JFrame {
                 item.setSingleDeposit(Integer.parseInt(columns[10]));
                 item.setCrateDeposit(Integer.parseInt(columns[11]));
                 item.setUnit(Unit.valueOf(columns[12].replace("WEIGHT", "GRAM")));
-                item.setPriceList(em.createQuery("select p from PriceList p where name like '" + columns[13] + "'", PriceList.class).getSingleResult());
+                item.setPriceList(priceListHashMap.get(columns[13]));
                 item.setContainerDef(ContainerDefinition.valueOf(columns[14]));
                 item.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
                 item.setSuppliersItemNumber(Integer.parseInt(columns[16]));
