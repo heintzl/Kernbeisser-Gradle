@@ -39,7 +39,7 @@ public class Pay extends javax.swing.JFrame {
         ObjectTable<ShoppingItem> itemTable = new ObjectTable<>(
                 Column.create("Name", ShoppingItem::getName),
                 Column.create("Anzahl", ShoppingItem::getItemAmount),
-                Column.create("Preis", e-> e.getRawPrice()/100f+"\u20AC"+(e.getDiscount()==0?"":(" ("+e.getDiscount()+"% Rabatt)")))
+                Column.create("Preis", e -> e.getRawPrice() / 100f + "\u20AC" + (e.getDiscount() == 0 ? "" : (" (" + e.getDiscount() + "% Rabatt)")))
         );
         itemTable.addAll(items);
         itemPane.add(new JScrollPane(itemTable));

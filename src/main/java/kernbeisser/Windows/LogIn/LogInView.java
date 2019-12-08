@@ -145,18 +145,18 @@ public class LogInView extends Window implements View {
      * @see UserMenu
      */
     private void logIn(){
-        switch (controller.logIn(username.getName(),password.getPassword())) {
+        switch (controller.logIn(username.getText(),password.getPassword())) {
             case LogInController.SUCCESS:
                 controller.openUserMenu();
                 break;
             case LogInController.INCORRECT_USERNAME:
                 Tools.ping(username);
                 JOptionPane.showMessageDialog(this,"Benutzername Falsch!");
-                break;
+                return;
             case LogInController.INCORRECT_PASSWORD:
                 Tools.ping(password);
                 JOptionPane.showMessageDialog(this,"Das von ihnen Angegebene Passwort ist nicht Korrekt");
-                break;
+                return;
 
         }
         back();

@@ -13,6 +13,7 @@ import kernbeisser.Useful.BackGroundWorker;
 import kernbeisser.Useful.Images;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInView;
+import kernbeisser.Windows.Pay.Pay;
 import kernbeisser.Windows.UserMenu.UserMenu;
 
 import javax.persistence.EntityManager;
@@ -47,6 +48,7 @@ public class Main {
         try {
             user = em.createQuery("select u from User u", User.class).setMaxResults(1).getSingleResult();
         } catch (NoResultException e) {
+            //TODO
             user = new User();
             user.setPermission(Permission.ADMIN);
         }
