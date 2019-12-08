@@ -53,4 +53,4 @@ public class EditUserUIView {
     public boolean isModified(Permission data) {
         return false;
     }
-bv}
+}
