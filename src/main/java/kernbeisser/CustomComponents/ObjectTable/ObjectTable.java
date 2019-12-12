@@ -67,7 +67,8 @@ public class ObjectTable <T> extends JTable {
     public boolean contains(T t){
         return objects.contains(t);
     }
-    public T getSelectedObject(){return objects.get(getSelectedRow());}
+    public T getSelectedObject(){
+        return getSelectedRow() != -1 ? objects.get(getSelectedRow()): null;}
     public T get(Function<T,Boolean> function){
         for (T object : objects) {
             if(function.apply(object))return object;

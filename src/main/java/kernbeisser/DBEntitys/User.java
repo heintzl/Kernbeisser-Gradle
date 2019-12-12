@@ -313,4 +313,33 @@ public class User implements Serializable {
     public void setTownCode(long townCode) {
         this.townCode = townCode;
     }
+
+    public void paste(User x){
+        this.salesThisYear = x.salesThisYear;
+        this.salesLastYear = x.salesLastYear;
+        this.interestThisYear = x.interestThisYear;
+        this.shares = x.shares;
+        this.solidaritySurcharge = x.solidaritySurcharge;
+        this.extraJobs = x.extraJobs;
+        this.jobs = x.jobs;
+        this.lastBuy = x.lastBuy;
+        this.kernbeisserKey = x.kernbeisserKey;
+        this.employee = x.employee;
+        this.username = x.username;
+        this.password = x.password;
+        this.firstName = x.firstName;
+        this.surname = x.surname;
+        this.phoneNumber1 = x.phoneNumber1;
+        this.phoneNumber2 = x.phoneNumber2;
+        this.street = x.street;
+        this.town = x.town;
+        this.townCode = x.townCode;
+        this.permission = x.permission;
+        this.email = x.email;
+        this.createDate = x.createDate;
+        this.updateDate = x.updateDate;
+        this.userGroup = x.userGroup;
+        this.transferDate = x.transferDate;
+        this.transferAmount = x.transferAmount;
+    }
 }

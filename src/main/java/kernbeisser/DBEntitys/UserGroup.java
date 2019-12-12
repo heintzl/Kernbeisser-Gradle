@@ -39,4 +39,5 @@ public class UserGroup {
     public static List<UserGroup> getAll(String condition){
         return Tools.getAll(UserGroup.class,condition);
     }
+
 }

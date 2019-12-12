@@ -1,9 +1,6 @@
 package kernbeisser.DBEntitys;
 
 import kernbeisser.Useful.Tools;
-import kernbeisser.Nodes.JobNode.JobNode;
-import kernbeisser.CustomComponents.Node.Node;
-import kernbeisser.CustomComponents.Node.Nodeable;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table
-public class Job implements Nodeable {
+public class Job{
     @Id
     @GeneratedValue
     private int jid;
@@ -56,11 +53,6 @@ public class Job implements Nodeable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public Node toNode() {
-        return new JobNode(this);
     }
 
     public static List<Job> getAll(String condition){
