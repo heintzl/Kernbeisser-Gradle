@@ -5,12 +5,13 @@ import kernbeisser.Enums.UserPersistFeedback;
 import kernbeisser.Windows.Model;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class UserUIModel implements Model {
     private User loaded = new User();
-    private Consumer<UserPersistFeedback> feedbackConsumer;
+    private Function<UserPersistFeedback, Boolean> feedbackConsumer;
 
-    UserUIModel(Consumer<UserPersistFeedback> feedbackConsumer){
+    UserUIModel(Function<UserPersistFeedback,Boolean> feedbackConsumer){
         this.feedbackConsumer=feedbackConsumer;
     }
 

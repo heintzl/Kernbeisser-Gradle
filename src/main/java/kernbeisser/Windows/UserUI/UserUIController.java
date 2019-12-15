@@ -6,11 +6,12 @@ import kernbeisser.Enums.UserPersistFeedback;
 import kernbeisser.Windows.Controller;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class UserUIController implements Controller {
     private UserUIView view;
     private UserUIModel model;
-    UserUIController(UserUIView view, Consumer<UserPersistFeedback> feedback){
+    UserUIController(UserUIView view, Function<UserPersistFeedback, Boolean> feedback){
         this.view=view;
         model=new UserUIModel(feedback);
     }
@@ -24,6 +25,10 @@ public class UserUIController implements Controller {
         User out = model.getLoaded();
         view.getData(out);
         return out;
+    }
+
+    boolean checkPassword(){
+        return model.getLoaded().getPassword() != null;
     }
 
     void changePassword(String to){

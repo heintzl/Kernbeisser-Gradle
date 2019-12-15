@@ -49,14 +49,14 @@ public class ManageUserUIController implements Controller {
                 em.persist(userGroup);
                 newUser.setUserGroup(userGroup);
                 em.persist(newUser);
+                em.flush();
+                et.commit();
+                em.close();
             }catch (PersistenceException ex){
                 et.rollback();
                 em.close();
                 return extractException(ex);
             }
-            em.flush();
-            et.commit();
-            em.close();
             refreshUserTable();
             return UserPersistFeedback.SUCCESS;
         },view::applyFeedback);
@@ -89,14 +89,14 @@ public class ManageUserUIController implements Controller {
             user.paste(e);
             try {
                 em.persist(user);
+                em.flush();
+                et.commit();
+                em.close();
             }catch (PersistenceException ex){
                 et.rollback();
                 em.close();
                 return extractException(ex);
             }
-            em.flush();
-            et.commit();
-            em.close();
             refreshUserTable();
             return UserPersistFeedback.SUCCESS;
         },view::applyFeedback);

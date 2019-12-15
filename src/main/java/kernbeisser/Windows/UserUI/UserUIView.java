@@ -55,7 +55,7 @@ public class UserUIView extends Window implements View {
 
     private UserUIController controller;
 
-    public UserUIView(Window current, Function<User, UserPersistFeedback> submitAction, Consumer<UserPersistFeedback> feedbackConsumer) {
+    public UserUIView(Window current, Function<User, UserPersistFeedback> submitAction, Function<UserPersistFeedback, Boolean> feedbackConsumer) {
         super(current);
         this.controller = new UserUIController(this, feedbackConsumer);
         add(userDataPanel);
@@ -72,8 +72,14 @@ public class UserUIView extends Window implements View {
         });
         chgJobs.addActionListener(e -> new JobSelectorView(this));
         submit.addActionListener(e -> {
-            feedbackConsumer.accept(submitAction.apply(getUser()));
-            back();
+            if (controller.checkPassword()) {
+                if (feedbackConsumer.apply(submitAction.apply(getUser())))
+                    back();
+            } else {
+                controller.changePassword(JOptionPane.showInputDialog(this, "Bitte geben sie ein Password ein"));
+                if (feedbackConsumer.apply(submitAction.apply(getUser())))
+                    back();
+            }
         });
         cancel.addActionListener(e -> back());
     }

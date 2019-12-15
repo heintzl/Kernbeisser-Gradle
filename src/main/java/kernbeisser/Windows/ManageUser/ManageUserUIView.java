@@ -39,8 +39,24 @@ public class ManageUserUIView extends Window implements View {
         close.addActionListener(e -> back());
     }
 
-    void applyFeedback(UserPersistFeedback feedback) {
-        System.out.println(feedback);
+    boolean applyFeedback(UserPersistFeedback feedback) {
+        switch (feedback) {
+            case USERNAME_ALREADY_EXISTS:
+                JOptionPane.showMessageDialog(this, "Der Nutzer kann diesen Nutzernamen nicht erhalten,\nda dieser bereits vergeben ist");
+                return false;
+            case UN_COMPLETE_USER:
+                JOptionPane.showMessageDialog(this, "Das Nutzer konnte nich aktualisert werden,\nda das Nutzervormular wurde nicht vollst\u00e4ndig ausgefüllt wurde");
+                return false;
+            case USERNAME_TO_SHORT:
+                JOptionPane.showMessageDialog(this, "Der Nutzername des eingegeben Nutzers ist zu kurz!");
+                return false;
+            case SUCCESS:
+                JOptionPane.showMessageDialog(this, "Der Vorgang war erfolgreich!");
+                return true;
+            default:
+                JOptionPane.showMessageDialog(this, "Ein undefenierter Fehler ist aufgetreten,\n bitte wenden sie sich an einen Adminestrator");
+                return false;
+        }
     }
 
     void setUsers(Collection<User> users) {
