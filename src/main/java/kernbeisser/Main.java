@@ -5,6 +5,7 @@ import kernbeisser.CustomComponents.ObjectTree.ChildFactory;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Config;
+import kernbeisser.DBEntitys.Job;
 import kernbeisser.DBEntitys.PriceList;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Enums.Permission;
@@ -17,6 +18,7 @@ import kernbeisser.Windows.Pay.Pay;
 import kernbeisser.Windows.UserMenu.UserMenu;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -55,5 +57,19 @@ public class Main {
         }
         User finalUser = user;
         SwingUtilities.invokeLater(() -> new UserMenu(new LogInView(null),finalUser));
+    }
+    private static void createTestJobs(int count){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        for (int i = 0; i < count; i++) {
+            Job j = new Job();
+            j.setDescription("Test Description: "+i);
+            j.setName("Test Job: "+i);
+            em.persist(j);
+        }
+        em.flush();
+        et.commit();
+        em.close();
     }
 }

@@ -58,4 +58,9 @@ public class Job{
     public static List<Job> getAll(String condition){
         return Tools.getAll(Job.class,condition);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Job && ((Job) obj).getId() == this.getId();
+    }
 }
