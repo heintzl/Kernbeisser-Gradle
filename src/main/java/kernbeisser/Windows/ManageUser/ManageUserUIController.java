@@ -80,7 +80,12 @@ public class ManageUserUIController implements Controller {
         view.applyFeedback(UserPersistFeedback.SUCCESS);
     }
 
-    public void edit(){
+    void edit(){
+        User selected = view.getSelectedUser();
+        if(selected==null){
+            view.applyFeedback(UserPersistFeedback.No_USER_SELECTED);
+            return;
+        }
         UserUIView userUIView = new UserUIView(view,e -> {
             EntityManager em = DBConnection.getEntityManager();
             EntityTransaction et = em.getTransaction();
@@ -100,9 +105,7 @@ public class ManageUserUIController implements Controller {
             refreshUserTable();
             return UserPersistFeedback.SUCCESS;
         },view::applyFeedback);
-        User selected = view.getSelectedUser();
-        if(selected!=null)
-            userUIView.loadUser(view.getSelectedUser());
+        userUIView.loadUser(view.getSelectedUser());
     }
 
     private UserPersistFeedback extractException(PersistenceException ex){
