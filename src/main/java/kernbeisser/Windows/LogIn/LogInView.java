@@ -13,7 +13,7 @@ import kernbeisser.Useful.Images;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Background;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.UserMenu.UserMenu;
+import kernbeisser.Windows.UserMenu.UserMenuView;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -142,7 +142,7 @@ public class LogInView extends Window implements View {
     /**
      * Check if the password and the username match with a user
      * and open the UserMenu for the user
-     * @see UserMenu
+     * @see UserMenuView
      */
     private void logIn(){
         switch (controller.logIn(username.getText(),password.getPassword())) {

@@ -4,7 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.UserMenu.UserMenu;
+import kernbeisser.Windows.UserMenu.UserMenuView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -62,7 +62,7 @@ public class LogInController implements Controller {
         return User.getAll(null);
     }
     void openUserMenu(){
-        new UserMenu(view,model.getLoggedIn());
+        new UserMenuView(view,model.getLoggedIn());
     }
 
     @Override

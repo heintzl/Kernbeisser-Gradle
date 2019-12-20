@@ -22,14 +22,14 @@ import java.awt.*;
  *
  * @author julik
  */
-public class UserMenu extends Window {
-    private User user;
+public class UserMenuView extends Window {
+    private UserMenuController controller;
     /**
      * Creates new form UserMenu
      */
-    public UserMenu(Window current,User user) {
+    public UserMenuView(Window current, User user) {
         super(current);
-        this.user=user;
+        this.controller=new UserMenuController(this,user);
         initComponents();
         username.setText(user.getUsername()+"!");
         setSize(1070,678);
@@ -257,40 +257,26 @@ public class UserMenu extends Window {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCashierActionPerformed
-        new CashierMenuView(user, this);
+        controller.startCashierAction();
     }//GEN-LAST:event_startCashierActionPerformed
 
     private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed
-        new LogInView(this);
-        dispose();
+        controller.logOutAction();
     }//GEN-LAST:event_logOutActionPerformed
 
     private void startInventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startInventoryActionPerformed
-        new InventoryMenuView(this);
+        controller.startInventoryAction();
     }//GEN-LAST:event_startInventoryActionPerformed
 
     private void startOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startOptionsActionPerformed
-        new Options(this);
+        controller.startOptionsAction();
     }//GEN-LAST:event_startOptionsActionPerformed
     private void startStatsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStatsActionPerformed
-        new Stats(this);
+        controller.openStats();
     }//GEN-LAST:event_startStatsActionPerformed
 
     private void startShoppingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
-        JFrame jFrame = new JFrame();
-        jFrame.setLayout(new GridLayout(1,1));
-        SaleSession saleSession = new SaleSession();
-        saleSession.setCustomer(user);
-        saleSession.setSeller(user);
-        jFrame.add(new ShoppingMask(saleSession));
-        jFrame.addWindowListener(new Finisher(() -> {
-            jFrame.dispose();
-            this.open();
-        }));
-        jFrame.pack();
-        jFrame.setLocationRelativeTo(null);
-        jFrame.setVisible(true);
-        setVisible(false);
+        controller.startSoloShopping();
     }//GEN-LAST:event_startShoppingActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
