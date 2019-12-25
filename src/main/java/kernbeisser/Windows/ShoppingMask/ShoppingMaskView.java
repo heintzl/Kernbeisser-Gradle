@@ -13,12 +13,16 @@ import kernbeisser.DBEntitys.Item;
 import kernbeisser.DBEntitys.SaleSession;
 import kernbeisser.DBEntitys.ShoppingItem;
 import kernbeisser.DBEntitys.User;
+import kernbeisser.Enums.RawPrice;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Checker;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Translator;
+import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Pay.Pay;
+import kernbeisser.Windows.View;
+import org.omg.CORBA.Object;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -27,61 +31,51 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
+
+import static kernbeisser.Enums.RawPrice.*;
 
 /**
  *
  * @author julik
  */
-public class ShoppingMask extends javax.swing.JPanel {
-    private Item selected = null;
-    private int value;
-    private int sum = 0;
-    private SaleSession saleSession;
+public class ShoppingMaskView extends javax.swing.JPanel implements View {
+    private ShoppingMaskController controller;
     private ObjectTable<ShoppingItem> shoppingCartTable;
-    private DBTable<Item> withoutBarcodeTable;
-    private DBTable<Item> searchTable;
+    private ObjectTable<Item> withoutBarcodeTable;
+    private ObjectTable<Item> searchTable;
     /**
      * Creates new form ShoppingMask
      */
-    public ShoppingMask(SaleSession saleSession) {
+    public ShoppingMaskView(SaleSession saleSession) {
         initComponents();
         setFilters();
-        this.saleSession=saleSession;
-        User customer = saleSession.getCustomer();
-        value = customer.getUserGroup().getValue();
-        refreshUser(customer);
-        topic.setText("Einkauf f\u00fcr "+customer.getFirstName()+" "+customer.getSurname() +" ("+customer.getUsername()+")");
-        itemNumber.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                loadItemStats();
-            }
-        });
-        withoutBarcodeTable = new DBTable<>("select i from Item i where barcode is null order by name asc",
-                Column.create("Name",Item::getName),
-                Column.create("Artikel-Nummmer",Item::getKbNumber),
-                Column.create("Preis",(e)->e.calculatePrice()/100f+"\u20AC")
+        withoutBarcodeTable = new ObjectTable<>(
+                Column.create("Name", Item::getName),
+                Column.create("Artikel-Nummmer", Item::getKbNumber),
+                Column.create("Preis", (e) -> e.calculatePrice() / 100f + "\u20AC")
         );
         shoppingCartTable = new ObjectTable<>(
                 Column.create("Name", ShoppingItem::getName),
                 Column.create("Anzahl", ShoppingItem::getItemAmount),
                 Column.create("Preis", e-> e.getRawPrice()/100f+"\u20AC"+(e.getDiscount()==0?"":(" ("+e.getDiscount()+"% Rabatt)")))
         );
-        searchTable = new DBTable<>("",
+        searchTable = new ObjectTable<>(
                 Column.create("Name", Item::getName),
                 Column.create("Artikel-Nummer", Item::getKbNumber),
                 Column.create("Preis", e -> e.calculatePrice() / 100f + "\u20AC")
         );
+        controller = new ShoppingMaskController(this,saleSession);
         withoutBarcodeTable.addSelectionListener((e)->{
             itemNumber.setText(e.getKbNumber()+"");
             itemAmount.requestFocus();
-            loadItemStats();
+            controller.loadSelectedItem();
         });
         searchTable.addSelectionListener((e) -> {
             jTabbedPane1.setSelectedIndex(0);
             itemNumber.setText(e.getKbNumber()+"");
             itemAmount.requestFocus();
-            loadItemStats();
+            controller.loadSelectedItem();
         });
         itemsWithoutBarcodePanel.add(new JScrollPane(withoutBarcodeTable));
         shoppingCartPanel.add(new JScrollPane(shoppingCartTable));
@@ -89,15 +83,29 @@ public class ShoppingMask extends javax.swing.JPanel {
         withoutBarcodeTable.repaintUI();
         shoppingCartTable.repaintUI();
         customDiscount.setModel(new SpinnerNumberModel(0,0,100,5));
+        itemNumber.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                controller.loadSelectedItem();
+            }
+        });
     }
 
-    public SaleSession getSaleSession() {
-        return saleSession;
+    void setShoppingCartItems(Collection<ShoppingItem> items){
+        shoppingCartTable.setObjects(items);
     }
 
-    private void loadItemStats(){
-        Item i = searchItem();
-        selected = i;
+    void resetInput(){
+        rawPrice.setText("0.00");
+        itemAmount.setText("1");
+        itemNumber.setText("");
+    }
+
+    void fillWithoutBarcode(Collection<Item> items){
+        withoutBarcodeTable.setObjects(items);
+    }
+
+    void loadItemStats(Item i){
         if(i!=null){
             selectedItem.setText(i.getName());
             unit.setText(new Translator().translate(i.getUnit()));
@@ -118,40 +126,23 @@ public class ShoppingMask extends javax.swing.JPanel {
             editBarcodeField.setText("");
         }
     }
-    private void refreshUser(User user){
+    void loadUserInfo(User user){
+        topic.setText("Einkauf f\u00fcr "+user.getFirstName()+" "+user.getSurname() +" ("+user.getUsername()+")");
         userName.setText("Benutzer: "+user.getFirstName()+" "+user.getSurname()+" ("+user.getUsername()+")");
         userGroupValue.setText("Guthaben: "+user.getUserGroup().getValue()/100f+"\u20AC");
         userValueNow.setText("Jetziges Guthaben: "+user.getUserGroup().getValue()/100f+"\u20AC");
         userGroupMembers.setText("Benutzer-Gruppe: "+ Tools.toSting(user.getUserGroup().getMembers(), e -> user.getFirstName()+","));
     }
-    private void addToShoppingCart(ShoppingItem i){
-        i.setDiscount(useDiscount());
-        i.setRawPrice((int) (i.getRawPrice()*(1-(i.getDiscount()/100f))));
-        if(i.getRawPrice() > 2000) {
-            if(JOptionPane.showConfirmDialog(
-                    this,
-                    "Ist der eingegebene Preis von " + i.getRawPrice() / 100f + "\u20AC korrekt?",
-                    "Sehr hoher Preis!", JOptionPane.INFORMATION_MESSAGE)!=0)return;
-        }
-        ShoppingItem inside = shoppingCartTable.get(e -> e.equals(i));
-        if(inside!=null){
-            inside.setRawPrice(i.getRawPrice()+inside.getRawPrice());
-            inside.setItemAmount(i.getItemAmount()+inside.getItemAmount());
-            shoppingCartTable.repaintUI();
-        }else {
-            shoppingCartTable.add(i);
-        }
-        sum+=i.getRawPrice();
-        repaintValues();
-    }
-    private void repaintValues(){
-        if(value-sum<0)
+
+    void repaintValues(int costs,int value){
+        if(value-costs<0)
             userValueLater.setForeground(Color.RED);
         else
             userValueLater.setForeground(Color.GREEN);
-        totalPrice.setText("Preis: "+ (sum) /100f+"\u20AC");
-        userValueLater.setText("Guthaben nach dem Einkauf: "+ (value-sum) /100f+"\u20AC");
+        totalPrice.setText("Preis: "+ (costs) /100f+"\u20AC");
+        userValueLater.setText("Guthaben nach dem Einkauf: "+ (value-costs) /100f+"\u20AC");
     }
+
     private void setFilters(){
         Tools.setDoubleFilter(rawPrice);
         Tools.setDoubleFilter(hiddenItemDeposit);
@@ -159,29 +150,26 @@ public class ShoppingMask extends javax.swing.JPanel {
         Tools.setRealNumberFilter(itemAmount);
         Tools.setRealNumberFilter(hiddenItemAmount);
     }
-    private Item searchItem(){
-        if(itemNumber.getText().length()<1)return null;
-        EntityManager em = DBConnection.getEntityManager();
-        try{
-            return em.createQuery("select i from Item i where kbNumber like '"+itemNumber.getText()+"'",Item.class).getSingleResult();
-        }catch (NoResultException e) {
-            try{
-                return em.createQuery("select i from Item i where barcode like '%"+itemNumber.getText()+ "'",Item.class).setMaxResults(1).getSingleResult();
-            }catch (NoResultException e1){
-                return null;
-            }
-        }
+
+    boolean isPriceCorrect(int v){
+        return JOptionPane.showConfirmDialog(
+                this,
+                "Ist der eingegebene Preis von " + v / 100f + "\u20AC korrekt?",
+                "Sehr hoher Preis!", JOptionPane.INFORMATION_MESSAGE)==0;
     }
 
-    private int useDiscount(){
-        int discount = 0;
-        if(discountHalfPrice.isSelected())discount = 50;
-        else if(discountCustom.isSelected()){
-            discount = (Integer)customDiscount.getValue();
-            if(lockCustomDiscount.isSelected())return discount;
-        }
+    boolean isDiscountLocked(){
+        return lockCustomDiscount.isSelected();
+    }
+
+    void setDefaultDiscount(){
         discountNormalPrice.setSelected(true);
-        return discount;
+    }
+
+    int getDiscount(){
+        if(discountHalfPrice.isSelected())return 50;
+        else if(discountCustom.isSelected())return (Integer)customDiscount.getValue();
+        return 0;
     }
 
     /**
@@ -249,7 +237,7 @@ public class ShoppingMask extends javax.swing.JPanel {
         discountHalfPrice = new javax.swing.JRadioButton();
         discountCustom = new javax.swing.JRadioButton();
         customDiscount = new javax.swing.JSpinner();
-        jLabel10 = new javax.swing.JLabel();
+        JLabel jLabel10 = new JLabel();
         lockCustomDiscount = new javax.swing.JCheckBox();
         shoppingCartPanel = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
@@ -981,35 +969,55 @@ public class ShoppingMask extends javax.swing.JPanel {
     }//GEN-LAST:event_hiddenItemAmountActionPerformed
 
     private void addRawPrice(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRawPrice
-        Checker c = new Checker();
-        int price = 0;
+        if (organics.isSelected()) controller.addToShoppingCart(ORGANIC);
+        else if (bakeryProduct.isSelected()) controller.addToShoppingCart(BACKER);
+        else if (deposit.isSelected()) controller.addToShoppingCart(DEPOSIT);
+    }//GEN-LAST:event_addRawPrice
+
+    boolean isPositiveDeposit(){
+        return depositIn.isSelected();
+    }
+
+    boolean isContainerDiscount(){
+        return discountContainerPrice.isSelected();
+    }
+
+    private int getOrganicBackerDepositValue(){
         try {
-            price = c.checkPrice(rawPrice,1,500000);
+            return  new Checker().checkPrice(rawPrice,1,500000);
         }catch (IncorrectInput e){
             Tools.ping(e.getComponent());
-            return;
+            return 0;
         }
-        if (organics.isSelected()) addToShoppingCart(ShoppingItem.getOrganic(price));
-        else if (bakeryProduct.isSelected()) addToShoppingCart(ShoppingItem.getBakeryProduct(price));
-        else if (deposit.isSelected())addToShoppingCart(ShoppingItem.getDeposit(depositIn.isSelected()?-price:price));
-        rawPrice.setText("0.00");
-    }//GEN-LAST:event_addRawPrice
+    }
+
+    int getOrganicPrice(){
+        return getOrganicBackerDepositValue();
+    }
+    int getBackerPrice(){
+        return getOrganicBackerDepositValue();
+    }
+    int getDepositPrice(){
+        return getOrganicBackerDepositValue();
+    }
+
+    int getInputItemAmount(){
+        Checker c = new Checker();
+        try{
+            return c.checkInteger(itemAmount,1,Integer.MAX_VALUE);
+        } catch (IncorrectInput incorrectInput) {
+            Tools.ping(itemAmount);
+            return -1;
+        }
+    }
+    String getInputItemNumber(){
+        return itemNumber.getText();
+    }
 
 
     private void itemNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemNumberActionPerformed
-        Item search = searchItem();
-        if(search==null){
-            Tools.ping(itemNumber);
-            return;
-        }
-        if(discountContainerPrice.isSelected())search.setSurcharge(search.getSurcharge()/2);
-        ShoppingItem item = new ShoppingItem(search);
-        item.setItemAmount(Integer.parseInt(itemAmount.getText()));
-        item.setRawPrice(search.calculatePrice()*item.getItemAmount());
-        addToShoppingCart(item);
+        controller.addToShoppingCart();
         itemNumber.requestFocus();
-        itemAmount.setText("1");
-        itemNumber.setText("");
     }//GEN-LAST:event_itemNumberActionPerformed
 
     private void itemAmountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemAmountActionPerformed
@@ -1024,77 +1032,91 @@ public class ShoppingMask extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_hiddenItemDepositActionPerformed
 
-    private void addHiddenItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenItemActionPerformed
-        ShoppingItem shoppingItem = new ShoppingItem();
-        shoppingItem.setItemAmount(Integer.parseInt(hiddenItemAmount.getText()));
-        shoppingItem.setName(hiddenItemName.getText());
-        shoppingItem.setVatLow(hiddenItemVATlow.isSelected());
+    String getHiddenItemName(){
+        return hiddenItemName.getText();
+    }
+
+    boolean isHiddenItemVATLow(){
+        return hiddenItemVATlow.isSelected();
+    }
+
+    int getHiddenItemPrice(){
         Checker c = new Checker();
         try {
-            shoppingItem.setRawPrice((int)((c.checkPrice(hiddenItemPrice)+c.checkPrice(hiddenItemDeposit))*(1+(hiddenItemVATlow.isSelected()? VAT.LOW.getValue()/100f:VAT.HIGH.getValue()/100f))));
+            return c.checkPrice(hiddenItemPrice);
         } catch (IncorrectInput incorrectInput) {
             Tools.ping(hiddenItemPrice);
-            Tools.ping(hiddenItemDeposit);
+            return 0;
         }
-        shoppingItem.setItemAmount(Integer.parseInt(hiddenItemAmount.getText()));
-        addToShoppingCart(shoppingItem);
+    }
+
+    int getHiddenItemDeposit(){
+        Checker c  = new Checker();
+        try {
+            return c.checkInteger(hiddenItemDeposit);
+        } catch (IncorrectInput incorrectInput) {
+            Tools.ping(hiddenItemDeposit);
+            return 0;
+        }
+    }
+
+    ShoppingItem getSelected(){
+        return shoppingCartTable.getSelectedObject();
+    }
+
+    private void addHiddenItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenItemActionPerformed
+        controller.addHiddenItemToShoppingCart();
     }//GEN-LAST:event_addHiddenItemActionPerformed
 
     private void clearShoppingSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearShoppingSessionActionPerformed
-        shoppingCartTable.clear();
-        sum=0;
-        repaintValues();
+        controller.clearShoppingCart();
     }//GEN-LAST:event_clearShoppingSessionActionPerformed
 
     private void deleteSelectedItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteSelectedItemActionPerformed
-        ShoppingItem i = shoppingCartTable.getSelectedObject();
-        sum-=i.getRawPrice();
-        shoppingCartTable.remove(i);
-        repaintValues();
+        controller.removeSelected();
     }//GEN-LAST:event_deleteSelectedItemActionPerformed
 
 
     private void payActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_payActionPerformed
-        new Pay(saleSession,shoppingCartTable.getItems(),()->{});
+        controller.startPay();
     }//GEN-LAST:event_payActionPerformed
 
-    private void editBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarcodeActionPerformed
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        Item update = em.createQuery("select i from Item i where id ="+selected.getIid(),Item.class).getSingleResult();
+    long getBarcode(){
         try {
-            update.setBarcode(new Checker().checkLong(editBarcodeField));
+            return new Checker().checkLong(editBarcodeField);
         } catch (IncorrectInput incorrectInput) {
-            Tools.ping(editBarcodeField);
-            return;
+            return -1;
         }
-        em.persist(update);
-        em.flush();
-        et.commit();
-        em.close();
-        JOptionPane.showMessageDialog(this,"Der barcode von \""+selected.getName()+"\"\n wurde zu "+update.getBarcode()+" ge\u00e4ndert!");
+    }
+
+    private void editBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarcodeActionPerformed
+        if (controller.editBarcode()) {
+            JOptionPane.showMessageDialog(this,"Der Barcode von \""+selectedItem.getText()+"\"\n wurde zu "+editBarcodeField.getText()+" ge\u00e4ndert!");
+        }else {
+            JOptionPane.showMessageDialog(this, "Der Barcode konnte nicht ge"+'\u00e4'+"ndert werden!");
+        }
     }//GEN-LAST:event_editBarcodeActionPerformed
 
     private void editBarcodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarcodeFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_editBarcodeFieldActionPerformed
 
+    String getSearch(){
+        return searchField.getText();
+    }
+
+    boolean isSearchInName(){return searchName.isSelected();}
+    boolean isSearchInPriceList(){return searchPriceList.isSelected();}
+    boolean isSearchInKBNumber(){return searchKBNumber.isSelected();}
+    boolean isSearchInBarcode(){return searchBarcode.isSelected();}
+
     private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
-        String s = searchField.getText();
-        if(searchName.isSelected()||searchPriceList.isSelected()||searchKBNumber.isSelected()||searchBarcode.isSelected()){
-            String query = "select i from Item i where "+
-                    (searchBarcode.isSelected() ? "barcode like '%sh' OR " : "")+
-                    (searchKBNumber.isSelected() ? "kbNumber like 'sh' OR ":"")+
-                    (searchName.isSelected() ? "name like 'sh%' OR ":"")+
-                    (searchPriceList.isSelected()?"priceList.name like 'sh%' OR ":"");
-            query=query.substring(0,query.length()-3).replaceAll("sh",s);
-            searchTable.setQuery(query);
-            searchTable.refresh();
-        }
-        else return;
+        controller.searchItems();
     }//GEN-LAST:event_searchFieldActionPerformed
 
+    void fillSearchSolutions(Collection<Item> items){
+        searchTable.setObjects(items);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addHiddenItem;
@@ -1127,7 +1149,6 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JLabel itemNumberInfo;
     private javax.swing.JLabel itemPriceInfo;
     private javax.swing.JPanel itemsWithoutBarcodePanel;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
@@ -1175,5 +1196,14 @@ public class ShoppingMask extends javax.swing.JPanel {
     private javax.swing.JLabel userName;
     private javax.swing.JLabel userValueLater;
     private javax.swing.JLabel userValueNow;
+
+    @Override
+    public ShoppingMaskController getController() {
+        return controller;
+    }
+
+    void shoppingCartDataChanged() {
+        shoppingCartTable.repaintUI();
+    }
     // End of variables declaration//GEN-END:variables
 }

@@ -71,6 +71,17 @@ public class ShoppingItem implements Serializable {
         this.netPrice = price;
     }
 
+    public Item extractItem(){
+        EntityManager em = DBConnection.getEntityManager();
+        try{
+            return em.createQuery("SELECT i from Item i where kbNumber = "+kbNumber,Item.class).getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }finally {
+            em.close();
+        }
+    }
+
     public static ShoppingItem getOrganic(int price) {
         ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();

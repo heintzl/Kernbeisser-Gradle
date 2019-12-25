@@ -444,4 +444,8 @@ public class Item {
     public static List<Item> getAll(String condition){
         return Tools.getAll(Item.class,condition);
     }
+
+    public static Item getByKbNumber(int kbNumber){
+        return Item.getAll("where kbNumber = "+kbNumber).get(0);
+    }
 }

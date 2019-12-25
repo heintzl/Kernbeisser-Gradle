@@ -4,18 +4,9 @@ package kernbeisser.Windows.UserMenu;/*
  * and open the template in the editor.
  */
 
-import kernbeisser.DBEntitys.SaleSession;
 import kernbeisser.DBEntitys.User;
-import kernbeisser.Windows.CashierMenu.CashierMenuView;
-import kernbeisser.Windows.Finisher;
-import kernbeisser.Windows.InventoryMenu.InventoryMenuView;
-import kernbeisser.Windows.LogIn.LogInView;
-import kernbeisser.Windows.Options.Options;
-import kernbeisser.Windows.ShoppingMask.ShoppingMask;
-import kernbeisser.Windows.Stats.Stats;
 import kernbeisser.Windows.Window;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**

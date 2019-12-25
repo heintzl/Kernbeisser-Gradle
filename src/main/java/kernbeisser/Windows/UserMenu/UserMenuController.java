@@ -7,7 +7,7 @@ import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.InventoryMenu.InventoryMenuView;
 import kernbeisser.Windows.LogIn.LogInView;
 import kernbeisser.Windows.Options.Options;
-import kernbeisser.Windows.ShoppingMask.ShoppingMask;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 import kernbeisser.Windows.Stats.Stats;
 
 import javax.swing.*;
@@ -26,7 +26,7 @@ public class UserMenuController {
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(model.getOwner());
         saleSession.setSeller(model.getOwner());
-        jFrame.add(new ShoppingMask(saleSession));
+        jFrame.add(new ShoppingMaskView(saleSession));
         jFrame.addWindowListener(new Finisher(() -> {
             jFrame.dispose();
             view.open();
