@@ -6,7 +6,7 @@ import kernbeisser.Useful.Images;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class Window extends JFrame {
+public class Window extends JFrame {
     private final Window current;
     private static final Image STANDARD_IMAGE;
     static {

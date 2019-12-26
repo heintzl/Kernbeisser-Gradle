@@ -6,7 +6,7 @@ import kernbeisser.DBEntitys.ShoppingItem;
 import kernbeisser.Enums.RawPrice;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Pay.Pay;
+import kernbeisser.Windows.Pay.PayView;
 
 public class ShoppingMaskController implements Controller {
     private ShoppingMaskView view;
@@ -127,8 +127,6 @@ public class ShoppingMaskController implements Controller {
     }
 
     void startPay() {
-        new Pay(model.getSaleSession(),model.getShoppingCart(),() -> {
-
-        });
+        new PayView(view.getWindow(),model.getSaleSession(),model.getShoppingCart(),() -> {});
     }
 }

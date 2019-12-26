@@ -19,7 +19,7 @@ class CashierShoppingMaskController implements Controller {
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(customer);
         saleSession.setSeller(model.getSeller());
-        ShoppingMaskView shoppingMask = new ShoppingMaskView(saleSession);
+        ShoppingMaskView shoppingMask = new ShoppingMaskView(view,saleSession);
         view.openShoppingMask(shoppingMask);
     }
 

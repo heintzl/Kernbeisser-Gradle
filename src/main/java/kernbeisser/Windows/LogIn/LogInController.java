@@ -42,7 +42,6 @@ public class LogInController implements Controller {
             return INCORRECT_USERNAME;
         }
     }
-
     List<List<User>> getABCUser(){
         EntityManager em = DBConnection.getEntityManager();
         List<List<User>> out = new ArrayList<>();

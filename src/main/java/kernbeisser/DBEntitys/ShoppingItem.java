@@ -23,7 +23,7 @@ public class ShoppingItem implements Serializable {
     private int rawPrice;
     @Column
     private int netPrice;
-    @JoinColumn
+    @JoinColumn(nullable = false)
     @ManyToOne
     private Purchase purchase;
     @Column

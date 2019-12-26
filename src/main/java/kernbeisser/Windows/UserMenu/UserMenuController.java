@@ -9,6 +9,7 @@ import kernbeisser.Windows.LogIn.LogInView;
 import kernbeisser.Windows.Options.Options;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 import kernbeisser.Windows.Stats.Stats;
+import kernbeisser.Windows.Window;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,12 +22,12 @@ public class UserMenuController {
         this.model=new UserMenuModel(owner);
     }
     void startSoloShopping(){
-        JFrame jFrame = new JFrame();
+        Window jFrame = new Window(view);
         jFrame.setLayout(new GridLayout(1,1));
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(model.getOwner());
         saleSession.setSeller(model.getOwner());
-        jFrame.add(new ShoppingMaskView(saleSession));
+        jFrame.add(new ShoppingMaskView(jFrame, saleSession));
         jFrame.addWindowListener(new Finisher(() -> {
             jFrame.dispose();
             view.open();

@@ -59,7 +59,6 @@ public class LogInView extends Window implements View {
         jTabbedPane1.addTab("Alle",new JScrollPane(allUser));
     }
 
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
