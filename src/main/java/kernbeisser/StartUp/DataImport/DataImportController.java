@@ -125,7 +125,9 @@ public class DataImportController implements Controller {
                 job.setDescription(columns[1]);
                 jobs.add(job);
             }
+            view.setUserProgress(1);
             model.saveAll(jobs);
+            view.setUserProgress(2);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -180,7 +182,9 @@ public class DataImportController implements Controller {
                 user.setUserGroup(userGroup);
                 secondary.setUserGroup(userGroup);
             }
+            view.setUserProgress(3);
             model.saveAllUsers(users);
+            view.setUserProgress(4);
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -195,7 +199,9 @@ public class DataImportController implements Controller {
                 pl.setName(columns[0]);
                 pl.setSuperPriceList(priceLists.get(columns[1]));
             }
+            view.setItemProgress(3);
             model.saveAll(priceLists.values());
+            view.setItemProgress(4);
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -216,7 +222,9 @@ public class DataImportController implements Controller {
                 supplier.setKeeper(columns[6]);
                 suppliers.add(supplier);
             }
+            view.setItemProgress(1);
             model.saveAll(suppliers);
+            view.setItemProgress(2);
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -282,7 +290,9 @@ public class DataImportController implements Controller {
                 item.setCoveredIntake(Boolean.parseBoolean(columns[36]));
                 items.add(item);
             }
+            view.setItemProgress(5);
             model.saveAll(items);
+            view.setItemProgress(6);
         }catch (IOException e){
             e.printStackTrace();
         }

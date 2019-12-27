@@ -6,7 +6,6 @@ import kernbeisser.DBEntitys.Config;
 import kernbeisser.DBEntitys.Job;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Enums.Permission;
-import kernbeisser.StartUp.StartUp;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInView;
 import kernbeisser.Windows.UserMenu.UserMenuView;

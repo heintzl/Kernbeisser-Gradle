@@ -19,6 +19,8 @@ public class DataImportView extends Window implements View {
     private JCheckBox importUser;
     private JProgressBar itemProgress;
     private JProgressBar userProgress;
+    private JLabel currentActionItems;
+    private JLabel currentActionUser;
 
     private DataImportController controller;
 
@@ -55,6 +57,7 @@ public class DataImportView extends Window implements View {
         dataPath.setText(s);
     }
 
+
     void itemSourceFound(boolean is){
         importItems.setSelected(is);
         importItems.setEnabled(is);
@@ -62,6 +65,30 @@ public class DataImportView extends Window implements View {
     void userSourceFound(boolean is){
         importUser.setSelected(is);
         importUser.setEnabled(is);
+    }
+
+    void setUserProgress(int i){
+        userProgress.setValue(i);
+        currentActionUser.setVisible(true);
+        currentActionUser.setText("Benutzer: "+(i < 2 ? "Jobs" : "Benutzer")+" "+(i % 2 == 0 ? "zur Datenbank gespeichert" : "werden konvertiert")+"...");
+    }
+    void setItemProgress(int i){
+        itemProgress.setValue(i);
+        String target = "";
+        String status = i % 2 == 0 ? "zur Datenbank gespeichert" : "werden konvertiert";
+        switch (i){
+            case 1:
+            case 2: target="Lieferanten";
+                break;
+            case 3:
+            case 4: target = "Preislisten";
+                break;
+            case 5:
+            case 6: target = "Artikel";
+                break;
+        }
+        currentActionItems.setVisible(true);
+        currentActionItems.setText("Artikel: "+target+" "+status+"...");
     }
 
     boolean importUser(){
