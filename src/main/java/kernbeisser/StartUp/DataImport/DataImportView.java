@@ -71,23 +71,40 @@ public class DataImportView extends Window implements View {
         userProgress.setValue(i);
         currentActionUser.setVisible(true);
         currentActionUser.setText("Benutzer: "+(i < 2 ? "Jobs" : "Benutzer")+" "+(i % 2 == 0 ? "zur Datenbank gespeichert" : "werden konvertiert")+"...");
+        itemProgress.setValue(i);
+        String target = "";
+        String status = i % 2 == 1 ? "auf der Datenbank gespeichert" : "werden konvertiert";
+        switch (i){
+            case 0: currentActionUser.setVisible(true);
+            case 1: target="Jobs";
+                break;
+            case 2:
+            case 3: target = "Nutzer";
+                break;
+            case 4:
+                currentActionUser.setText("Nutzer Fertig");
+                return;
+        }
+        currentActionUser.setText("Nutzer: "+target+" "+status+"...");
     }
     void setItemProgress(int i){
         itemProgress.setValue(i);
         String target = "";
-        String status = i % 2 == 0 ? "zur Datenbank gespeichert" : "werden konvertiert";
+        String status = i % 2 == 1 ? "auf der Datenbank gespeichert" : "werden konvertiert";
         switch (i){
-            case 1:
-            case 2: target="Lieferanten";
+            case 0: currentActionItems.setVisible(true);
+            case 1: target="Lieferanten";
                 break;
-            case 3:
-            case 4: target = "Preislisten";
+            case 2:
+            case 3: target = "Preislisten";
                 break;
-            case 5:
-            case 6: target = "Artikel";
+            case 4:
+            case 5: target = "Artikel";
                 break;
+            case 6:
+                currentActionItems.setText("Artikel Fertig");
+                return;
         }
-        currentActionItems.setVisible(true);
         currentActionItems.setText("Artikel: "+target+" "+status+"...");
     }
 
@@ -104,9 +121,9 @@ public class DataImportView extends Window implements View {
     }
 
     void itemSourcesNotExists() {
-        JOptionPane.showMessageDialog(this,"Der Artikeldatensatz beinhalted pfade von dateien die nicht exesistieren!","Artikeldatensatz unvollst\u00e4ndig",JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this,"Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!","Artikeldatensatz unvollst\u00e4ndig",JOptionPane.ERROR_MESSAGE);
     }
     void userSourcesNotExists() {
-        JOptionPane.showMessageDialog(this,"Der Nutzerdatensatz beinhalted pfade von dateien die nicht exesistieren!","Nutzerdatensatz unvollst\u00e4ndig",JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this,"Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!","Nutzerdatensatz unvollst\u00e4ndig",JOptionPane.ERROR_MESSAGE);
     }
 }

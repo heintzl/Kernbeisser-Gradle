@@ -1,5 +1,6 @@
 package kernbeisser.StartUp.DataImport;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntitys.*;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
@@ -17,7 +18,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class DataImportController implements Controller {
@@ -82,17 +87,20 @@ public class DataImportController implements Controller {
     void importData(){
         if(isValidDataSource()){
             String jsonPath =  view.getFilePath();
-            String relativePath = jsonPath.substring(0,jsonPath.lastIndexOf("\\")-1)+"/";
+            String relativePath = jsonPath.substring(0,jsonPath.lastIndexOf("\\"))+"/";
             JSONObject path = extractJSON();
             if(view.importItems()){
                 JSONObject itemPath = path.getJSONObject("ItemData");
                 File suppliers = new File(relativePath+itemPath.getString("Suppliers"));
                 File priceLists = new File(relativePath+itemPath.getString("PriceLists"));
-                File items = new File(relativePath+itemPath.getString("items"));
+                File items = new File(relativePath+itemPath.getString("Items"));
                 if(suppliers.exists()&&priceLists.exists()&&items.exists()){
-                    parseSuppliers(suppliers);
-                    parsePriceLists(priceLists);
-                    parseItems(items);
+                    new Thread(() -> {
+                        view.setItemProgress(0);
+                        parseSuppliers(suppliers);
+                        parsePriceLists(priceLists);
+                        parseItems(items);
+                    }).start();
                 }else {
                     view.itemSourceFound(false);
                     view.itemSourcesNotExists();
@@ -103,8 +111,11 @@ public class DataImportController implements Controller {
                 File users = new File(relativePath+userPath.getString("Users"));
                 File jobs = new File(relativePath+userPath.getString("Jobs"));
                 if(jobs.exists()&&users.exists()){
-                    parseJobs(jobs);
-                    parseUsers(jobs);
+                    new Thread(() -> {
+                        view.setUserProgress(0);
+                        parseJobs(jobs);
+                        parseUsers(users);
+                    }).start();
                 }
                 else {
                     view.userSourceFound(false);
@@ -117,7 +128,7 @@ public class DataImportController implements Controller {
     private void parseJobs(File f){
         try{
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            Collection<Job> jobs = new ArrayList<>(lines.size());
+            Collection<Job> jobs = new ArrayList<>((int)(lines.size()*1.5));
             for (String line : lines) {
                 String[] columns = line.split(";");
                 Job job = new Job();
@@ -137,22 +148,23 @@ public class DataImportController implements Controller {
             HashMap<String, Job> jobs = new HashMap<>();
             Job.getAll(null).forEach(e -> jobs.put(e.getName(),e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            Collection<User> users = new ArrayList<>(lines.size());
+            String defaultPassword = BCrypt.withDefaults().hashToString(12,"start".toCharArray());
             for (String l : lines) {
                 String[] columns = l.split(";");
                 User user = new User();
                 User secondary = new User();
                 UserGroup userGroup = new UserGroup();
-                user.setSalesThisYear(Integer.parseInt(columns[0]));
-                user.setSalesLastYear(Integer.parseInt(columns[1]));
-                userGroup.setInterestThisYear(Integer.parseInt(columns[2]));
+                user.setSalesThisYear((int)(Float.parseFloat(columns[0].replace(",","."))*100));
+                user.setSalesLastYear((int)(Float.parseFloat(columns[1].replace(",","."))*100));
+                userGroup.setInterestThisYear((int)(Float.parseFloat(columns[2].replace(",","."))*100));
                 user.setShares(Integer.parseInt(columns[3]));
                 user.setSolidaritySurcharge(Integer.parseInt(columns[4]));
                 secondary.setFirstName(columns[5]);
                 secondary.setSurname(columns[6]);
                 user.setExtraJobs(columns[7]);
                 user.setJobs(Tools.extract(HashSet::new,columns[8],"§",jobs::get));
-                user.setLastBuy(Date.valueOf(columns[9]));
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                user.setLastBuy(Date.valueOf(LocalDate.parse(columns[9].replace("Noch nie","11.03.4000"),df)));
                 user.setKernbeisserKey(Boolean.parseBoolean(columns[10]));
                 user.setEmployee(Boolean.parseBoolean(columns[11]));
                 //IdentityCode: Unused, column 12
@@ -175,15 +187,18 @@ public class DataImportController implements Controller {
                 }
                 user.setEmail(columns[21]);
                 //CreateDate: is't used(create new CreateDate), column 22
-                userGroup.setValue((int) (Float.parseFloat(columns[23])*100));
+                userGroup.setValue((int) (Float.parseFloat(columns[23].replace(",","."))*100));
                 //TransactionDates: not used, column 24
                 //TransactionValues: not used, column 25
                 user.setStreet(columns[26]);
                 user.setUserGroup(userGroup);
+                user.setPassword(defaultPassword);
+                secondary.setPassword(defaultPassword);
+                user.setUsername(user.getFirstName()+"."+user.getSurname()+user.getTownCode());
+                secondary.setUsername(secondary.getFirstName()+"."+secondary.getSurname()+secondary.getTownCode());
                 secondary.setUserGroup(userGroup);
+                model.saveUser(user,secondary.getFirstName().equals("") ? null : secondary,userGroup);
             }
-            view.setUserProgress(3);
-            model.saveAllUsers(users);
             view.setUserProgress(4);
         }catch (IOException e){
             e.printStackTrace();

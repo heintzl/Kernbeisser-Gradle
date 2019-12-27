@@ -11,6 +11,7 @@ import java.util.Collection;
 
 class DataImportModel implements Model {
     <T> void saveAll(Collection<T> v){
+        if(v.size()==0)return;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -19,7 +20,7 @@ class DataImportModel implements Model {
             em.persist(t);
             c++;
             if(c % 20 == 0){
-                em.close();
+                em.flush();
                 em.clear();
             }
         }
@@ -27,22 +28,18 @@ class DataImportModel implements Model {
         et.commit();
         em.close();
     }
-    void saveAllUsers(Collection<User> users){
+    void saveUser(User first,User second,UserGroup userGroup){
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        int c = 0;
-        for (User u : users) {
-            em.persist(u.getUserGroup());
-            em.persist(u);
-            c++;
-            if(c % 10 == 0){
-                em.close();
-                em.clear();
-            }
+        em.persist(userGroup);
+        first.setUserGroup(userGroup);
+        em.persist(first);
+        if(second!=null){
+            second.setUserGroup(userGroup);
+            em.persist(second);
         }
         em.flush();
         et.commit();
-        em.close();
     }
 }

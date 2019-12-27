@@ -6,6 +6,7 @@ import kernbeisser.DBEntitys.Config;
 import kernbeisser.DBEntitys.Job;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Enums.Permission;
+import kernbeisser.StartUp.DataImport.DataImportView;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInView;
 import kernbeisser.Windows.UserMenu.UserMenuView;
@@ -29,22 +30,23 @@ public class Main {
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         Images.setPath(new File("src/main/resources/Images"));
-        EntityManager em = DBConnection.getEntityManager();
+        DBConnection.getEntityManager();
         Config.loadConfigs();
         if(Config.getConfig("firstStart")==null){
-            new StartUp().waitFor();
-            Config.setConfig("firstStart", LocalDate.now().toString());
+            new DataImportView(null){
+                @Override
+                public void finish() {
+                    openLogIn();
+                    Config.setConfig("firstStart", LocalDate.now().toString());
+                }
+            };
+        }else {
+            openLogIn();
         }
-        User user;
-        try {
-            user = em.createQuery("select u from User u", User.class).setMaxResults(1).getSingleResult();
-        } catch (NoResultException e) {
-            //TODO
-            user = new User();
-            user.setPermission(Permission.ADMIN);
-        }
-        User finalUser = user;
-        SwingUtilities.invokeLater(() -> new UserMenuView(new LogInView(null),finalUser));
+    }
+    private static void openLogIn(){
+        //SwingUtilities.invokeLater(() -> new UserMenuView(null,new User()));
+        SwingUtilities.invokeLater(() -> new LogInView(null));
     }
     private static void createTestJobs(int count){
         EntityManager em = DBConnection.getEntityManager();

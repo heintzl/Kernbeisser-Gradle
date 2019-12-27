@@ -32,7 +32,7 @@ public class LogInController implements Controller {
                     "select u from User u where u.username like :username", User.class)
                     .setParameter("username", username).
                             getSingleResult();
-            if(!(BCrypt.verifyer().verify(password,user.getPassword().toCharArray()).verified)){
+            if(BCrypt.verifyer().verify(password,user.getPassword().toCharArray()).verified){
                 model.setLoggedIn(user);
                 return SUCCESS;
             }else {
