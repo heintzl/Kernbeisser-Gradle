@@ -7,7 +7,6 @@ import kernbeisser.DBEntitys.Job;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.Enums.Permission;
 import kernbeisser.StartUp.StartUp;
-import kernbeisser.Useful.BackGroundWorker;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInView;
 import kernbeisser.Windows.UserMenu.UserMenuView;
@@ -37,7 +36,6 @@ public class Main {
             new StartUp().waitFor();
             Config.setConfig("firstStart", LocalDate.now().toString());
         }
-        BackGroundWorker.start();
         User user;
         try {
             user = em.createQuery("select u from User u", User.class).setMaxResults(1).getSingleResult();
