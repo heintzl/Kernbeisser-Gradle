@@ -117,7 +117,7 @@ public class Tools {
         }).start();
     }
 
-    public static <T, O extends Collection> O extract(Supplier<O> supplier, String s, String separator, Function<String, T> method) {
+    public static <T, O extends Collection<T>> O extract(Supplier<O> supplier, String s, String separator, Function<String, T> method) {
         String[] columns = s.split(separator);
         O out = supplier.get();
         for (String column : columns) {

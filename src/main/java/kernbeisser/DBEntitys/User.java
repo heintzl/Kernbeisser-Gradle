@@ -10,10 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table
@@ -30,9 +27,6 @@ public class User implements Serializable {
     private int salesLastYear;
 
     @Column
-    private int interestThisYear;
-
-    @Column
     private int shares;
 
     @Column
@@ -43,7 +37,7 @@ public class User implements Serializable {
 
     @JoinColumn
     @OneToMany(fetch = FetchType.EAGER)
-    private Set<Job> jobs = new HashSet<>(20);
+    private Set<Job> jobs = new HashSet<>();
 
     @Column
     private Date lastBuy;
@@ -97,11 +91,6 @@ public class User implements Serializable {
     @JoinColumn(nullable = false)
     private UserGroup userGroup;
 
-    @ElementCollection
-    private List<String> transferDate = new ArrayList<>(5);
-
-    @ElementCollection
-    private List<Integer> transferAmount = new ArrayList<>(5);
 
     public int getSalesThisYear() {
         return salesThisYear;
@@ -117,14 +106,6 @@ public class User implements Serializable {
 
     public void setSalesLastYear(int salesLastYear) {
         this.salesLastYear = salesLastYear;
-    }
-
-    public int getInterestThisYear() {
-        return interestThisYear;
-    }
-
-    public void setInterestThisYear(int interestThisYear) {
-        this.interestThisYear = interestThisYear;
     }
 
     public int getShares() {
@@ -153,6 +134,11 @@ public class User implements Serializable {
 
     public Set<Job> getJobs() {
         return jobs;
+    }
+
+    public void setJobs(Set<Job> jobs){
+        this.jobs.clear();
+        this.jobs.addAll(jobs);
     }
 
     public Date getLastBuy() {
@@ -259,21 +245,6 @@ public class User implements Serializable {
         return createDate;
     }
 
-    public List<String> getTransferDate() {
-        return transferDate;
-    }
-
-    public void setTransferDate(List<String> transferDate) {
-        this.transferDate = transferDate;
-    }
-
-    public List<Integer> getTransferAmount() {
-        return transferAmount;
-    }
-
-    public void setTransferAmount(List<Integer> transferAmount) {
-        this.transferAmount = transferAmount;
-    }
 
     public UserGroup getUserGroup() {
         return userGroup;
@@ -314,10 +285,13 @@ public class User implements Serializable {
         this.townCode = townCode;
     }
 
+    public Collection<Transaction> getAllTransactions(){
+        return Transaction.getAll("where from.id = "+id+" or to.id = "+id);
+    }
+
     public void paste(User x){
         this.salesThisYear = x.salesThisYear;
         this.salesLastYear = x.salesLastYear;
-        this.interestThisYear = x.interestThisYear;
         this.shares = x.shares;
         this.solidaritySurcharge = x.solidaritySurcharge;
         this.extraJobs = x.extraJobs;
@@ -339,7 +313,5 @@ public class User implements Serializable {
         this.createDate = x.createDate;
         this.updateDate = x.updateDate;
         this.userGroup = x.userGroup;
-        this.transferDate = x.transferDate;
-        this.transferAmount = x.transferAmount;
     }
 }

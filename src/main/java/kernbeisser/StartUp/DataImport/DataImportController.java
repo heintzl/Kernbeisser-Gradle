@@ -10,11 +10,8 @@ import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
 import org.json.JSONObject;
 
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -118,22 +115,72 @@ public class DataImportController implements Controller {
     }
 
     private void parseJobs(File f){
-
+        try{
+            List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+            Collection<Job> jobs = new ArrayList<>(lines.size());
+            for (String line : lines) {
+                String[] columns = line.split(";");
+                Job job = new Job();
+                job.setName(columns[0]);
+                job.setDescription(columns[1]);
+                jobs.add(job);
+            }
+            model.saveAll(jobs);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     private void parseUsers(File f){
         try {
             HashMap<String, Job> jobs = new HashMap<>();
+            Job.getAll(null).forEach(e -> jobs.put(e.getName(),e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+            Collection<User> users = new ArrayList<>(lines.size());
             for (String l : lines) {
                 String[] columns = l.split(";");
                 User user = new User();
+                User secondary = new User();
+                UserGroup userGroup = new UserGroup();
                 user.setSalesThisYear(Integer.parseInt(columns[0]));
                 user.setSalesLastYear(Integer.parseInt(columns[1]));
-                user.setInterestThisYear(Integer.parseInt(columns[2]));
+                userGroup.setInterestThisYear(Integer.parseInt(columns[2]));
                 user.setShares(Integer.parseInt(columns[3]));
                 user.setSolidaritySurcharge(Integer.parseInt(columns[4]));
+                secondary.setFirstName(columns[5]);
+                secondary.setSurname(columns[6]);
                 user.setExtraJobs(columns[7]);
+                user.setJobs(Tools.extract(HashSet::new,columns[8],"§",jobs::get));
+                user.setLastBuy(Date.valueOf(columns[9]));
+                user.setKernbeisserKey(Boolean.parseBoolean(columns[10]));
+                user.setEmployee(Boolean.parseBoolean(columns[11]));
+                //IdentityCode: Unused, column 12
+                //Username: Unknown, column 13
+                //Password: Start, column 14
+                user.setFirstName(columns[15]);
+                user.setSurname(columns[16]);
+                user.setPhoneNumber1(columns[17]);
+                user.setPhoneNumber2(columns[18]);
+                for (String s : columns[19].split(" ")) {
+                    if(s.equals(""))continue;
+                    try{
+                        user.setTownCode(Integer.parseInt(s));
+                    }catch (NumberFormatException e){
+                        user.setTown(s);
+                    }
+                }
+                switch (Integer.parseInt(columns[20])){
+                    //TODO
+                }
+                user.setEmail(columns[21]);
+                //CreateDate: is't used(create new CreateDate), column 22
+                userGroup.setValue((int) (Float.parseFloat(columns[23])*100));
+                //TransactionDates: not used, column 24
+                //TransactionValues: not used, column 25
+                user.setStreet(columns[26]);
+                user.setUserGroup(userGroup);
+                secondary.setUserGroup(userGroup);
             }
+            model.saveAllUsers(users);
         }catch (IOException e){
             e.printStackTrace();
         }

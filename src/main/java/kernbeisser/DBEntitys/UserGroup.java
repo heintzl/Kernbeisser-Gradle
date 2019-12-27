@@ -17,6 +17,9 @@ public class UserGroup {
     @Column
     private int value;
 
+    @Column
+    private int interestThisYear;
+
     public int getValue() {
         return value;
     }
@@ -27,6 +30,14 @@ public class UserGroup {
 
     public int getId() {
         return gid;
+    }
+
+    public int getInterestThisYear() {
+        return interestThisYear;
+    }
+
+    public void setInterestThisYear(int interestThisYear) {
+        this.interestThisYear = interestThisYear;
     }
 
     public Collection<User> getMembers(){
