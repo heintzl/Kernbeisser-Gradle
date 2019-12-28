@@ -28,14 +28,20 @@ public class ObjectTree <T> extends JTree {
         refresh();
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         addTreeSelectionListener(e -> {
-            Object o = getLastSelectedPathComponent();
-            if(!(o instanceof ObjectNode))return;
-            ObjectNode<T> node = (ObjectNode<T>) o;
-            if(node.getValue()==null)return;
+            T t = getSelected();
+            if(t!=null)
             for (NodeSelectionListener<T> listener : selectionListeners) {
-                listener.select(node.getValue());
+                listener.select(t);
             }
         });
+    }
+
+    public T getSelected(){
+        Object o = getLastSelectedPathComponent();
+        if(!(o instanceof ObjectNode))return null;
+        ObjectNode<T> node = (ObjectNode<T>) o;
+        return  node.getValue();
+
     }
 
     public void addSelectionListener(NodeSelectionListener<T> listener){

@@ -12,23 +12,15 @@ import java.util.function.BiConsumer;
 public class ItemFilterController implements Controller {
     private ItemFilterView view;
     private ItemFilterModel model;
-    ItemFilterController(ItemFilterView view, BiConsumer<PriceList,Supplier> consumer){
+    ItemFilterController(ItemFilterView view){
         this.view=view;
-        this.model=new ItemFilterModel(consumer);
+        this.model=new ItemFilterModel();
         view.setSuppliers(model.getAllSuppliers());
-    }
-
-    void selectFilter(PriceList p,Supplier s){
-        model.getConsumer().accept(p,s);
     }
 
     @Override
     public void refresh() {
 
-    }
-
-    void setFilter(){
-        selectFilter(model.searchPriceListByName(view.getSelectedPriceListName()),view.getSelectedSupplier());
     }
 
     @Override

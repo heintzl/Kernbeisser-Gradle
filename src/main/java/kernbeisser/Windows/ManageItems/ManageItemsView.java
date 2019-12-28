@@ -22,7 +22,6 @@ import kernbeisser.Useful.Checker;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Translator;
 import kernbeisser.Windows.*;
-import kernbeisser.Windows.ItemFilter.ItemFilterView;
 import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;

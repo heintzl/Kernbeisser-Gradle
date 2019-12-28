@@ -45,7 +45,6 @@ public class Main {
         }
     }
     private static void openLogIn(){
-        //SwingUtilities.invokeLater(() -> new UserMenuView(null,new User()));
         SwingUtilities.invokeLater(() -> new LogInView(null));
     }
     private static void createTestJobs(int count){
