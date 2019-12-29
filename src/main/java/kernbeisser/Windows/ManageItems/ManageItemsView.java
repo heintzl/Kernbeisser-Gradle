@@ -22,6 +22,7 @@ import kernbeisser.Useful.Checker;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Translator;
 import kernbeisser.Windows.*;
+import kernbeisser.Windows.ItemFilter.ItemFilterView;
 import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
@@ -645,7 +646,12 @@ public class ManageItemsView extends Window implements View {
         loadSearchSolutions();
     }//GEN-LAST:event_searchBarKeyReleased
     private void requestFilter(){
-        new ItemFilterView(this,controller::setFilter);
+        new ItemFilterView(this){
+            @Override
+            public void finish() {
+                ManageItemsView.this.controller.setFilter(getSelectedPriceList(),getSelectedSupplier());
+            }
+        };
         filter.setEnabled(false);
     }
     private void loadSearchSolutions(){

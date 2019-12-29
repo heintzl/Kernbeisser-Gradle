@@ -21,7 +21,7 @@ public class ItemFilterView extends Window implements View {
 
     private ItemFilterController controller;
 
-    ItemFilterView(Window current){
+    public ItemFilterView(Window current){
         super(current);
         controller = new ItemFilterController(this);
         commit.addActionListener(e -> back());

@@ -9,6 +9,7 @@ import kernbeisser.Windows.UserMenu.UserMenuView;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class LogInController implements Controller {
@@ -18,7 +19,8 @@ public class LogInController implements Controller {
     LogInController(LogInView view){
         this.view=view;
         this.model=new LogInModel();
-        model.setLoggedIn(null);
+        fillABCUser();
+        fillAllUser();
     }
 
     static final int INCORRECT_USERNAME = 0;
@@ -26,42 +28,19 @@ public class LogInController implements Controller {
     static final int SUCCESS = 2;
 
     int logIn() {
-        EntityManager em = DBConnection.getEntityManager();
-        try{
-            User user = em.createQuery(
-                    "select u from User u where u.username like :username", User.class)
-                    .setParameter("username", view.getUsername()).
-                            getSingleResult();
-            if(BCrypt.verifyer().verify(view.getPassword(),user.getPassword().toCharArray()).verified){
-                model.setLoggedIn(user);
-                return SUCCESS;
-            }else {
-                return INCORRECT_PASSWORD;
-            }
-        }catch (NoResultException e){
-            return INCORRECT_USERNAME;
-        }
+        return model.logIn(view.getUsername(),view.getPassword());
     }
-    List<List<User>> getABCUser(){
-        EntityManager em = DBConnection.getEntityManager();
-        List<List<User>> out = new ArrayList<>();
+    void fillABCUser(){
         for (int i = 97; i < 123; i++) {
-            out.add(em.createQuery("select u from User u where u.username like '" + ((char) i) + "%' Order by username asc",User.class).getResultList());
+            char c  = Character.toUpperCase((char) i);
+            view.addTab(Character.toString(c),model.getAllUserWitchBeginsWith(c));
         }
-        em.close();
-        return out;
     }
-    List<User> getAllWhichBeginsWith(char i){
-        EntityManager em = DBConnection.getEntityManager();
-        List<User> out = em.createQuery("select u from User u where u.username like '" +i+ "%' Order by username asc",User.class).getResultList();
-        em.close();
-        return out;
-    }
-    List<User> getAllUser(){
-        return User.getAll(null);
+    void fillAllUser(){
+        view.addTab("Alle",model.getAllUser());
     }
     void openUserMenu(){
-        new UserMenuView(view,model.getLoggedIn());
+        new UserMenuView(view, LogInModel.getLoggedIn());
     }
 
     @Override

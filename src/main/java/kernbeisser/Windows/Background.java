@@ -23,6 +23,7 @@ public class Background extends JPanel {
             setBounds(0, 0, (int)size,(int)(size*proportion));
         }
         graphics2D.drawImage(image,0,0,getWidth(),getHeight(),null);
+        super.paint(g);
     }
     public BufferedImage getImage() {
         return image;

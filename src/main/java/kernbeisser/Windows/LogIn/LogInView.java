@@ -25,12 +25,13 @@ import java.util.Collection;
 public class LogInView extends Window implements View {
 
 
-    private LogInController controller;
-    private JPanel panel1;
+    private JPanel main;
     private JButton logIn;
     private JPasswordField password;
     private JTextField username;
     private JTabbedPane users;
+
+    private LogInController controller;
 
     /**
      * Creates new form LogIn from LogInView.form
@@ -39,14 +40,11 @@ public class LogInView extends Window implements View {
      */
     public LogInView(kernbeisser.Windows.Window current) {
         super(current);
+        add(main);
         controller=new LogInController(this);
         logIn.addActionListener(e -> logIn());
         password.addActionListener(e -> logIn());
         setSize(Tools.getScreenWidth()/2, Tools.getScreenHeight()/2);
-        Background b = new Background(Images.getImage("basil.png"));
-        b.autoSize(this);
-        b.setBounds(0,0,500,300);
-        add(b);
         setLocationRelativeTo(null);
     }
 
@@ -93,4 +91,7 @@ public class LogInView extends Window implements View {
     }
 
 
+    private void createUIComponents() {
+
+    }
 }
