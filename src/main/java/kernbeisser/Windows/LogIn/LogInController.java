@@ -25,14 +25,14 @@ public class LogInController implements Controller {
     static final int INCORRECT_PASSWORD = 1;
     static final int SUCCESS = 2;
 
-    int logIn(String username, char[] password) {
+    int logIn() {
         EntityManager em = DBConnection.getEntityManager();
         try{
             User user = em.createQuery(
                     "select u from User u where u.username like :username", User.class)
-                    .setParameter("username", username).
+                    .setParameter("username", view.getUsername()).
                             getSingleResult();
-            if(BCrypt.verifyer().verify(password,user.getPassword().toCharArray()).verified){
+            if(BCrypt.verifyer().verify(view.getPassword(),user.getPassword().toCharArray()).verified){
                 model.setLoggedIn(user);
                 return SUCCESS;
             }else {
