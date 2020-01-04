@@ -9,11 +9,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.DBTable.DBTable;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.PriceListTree;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.Item;
-import kernbeisser.DBEntitys.ItemKK;
-import kernbeisser.DBEntitys.PriceList;
-import kernbeisser.DBEntitys.Supplier;
+import kernbeisser.DBEntitys.*;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.Unit;
@@ -33,6 +29,7 @@ import java.awt.event.MouseEvent;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
@@ -48,17 +45,10 @@ public class ManageItemsView extends Window implements View {
      */
     public ManageItemsView(Window current) {
         super(current);
-        controller = new ManageItemsController(this);
         initComponents();
-        setVisible(true);
-        EntityManager em = DBConnection.getEntityManager();
-        controller.getAllPriceListNames().forEach(itemPriceList::addItem);
-        em.createQuery("select s from Supplier s",Supplier.class).getResultStream().forEach(e -> itemSupplier.addItem(e.getName()));
-        em.close();
         itemPriceList.setSelectedItem(PriceList.getSingleItemPriceList());
         Tools.forEach(Unit.values(), e -> itemUnit.addItem(t.translate(e)));
         Tools.forEach(ContainerDefinition.values(), e -> itemContainerDef.addItem(t.translate(e)));
-        setFilters();
         itemVAThigh.addActionListener(e -> itemVATlow.setSelected(!itemVAThigh.isSelected()));
         itemVATlow.addActionListener(e -> itemVAThigh.setSelected(!itemVATlow.isSelected()));
         kbItems= new ObjectTable<>(
@@ -70,14 +60,7 @@ public class ManageItemsView extends Window implements View {
                 Column.create("Wiegbar", Item::isWeighAble),
                 Column.create("Gel\u00f6scht", Item::isDeleted)
         );
-        kbItems.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                EntityManager em = DBConnection.getEntityManager();
-                pasteData(kbItems.getSelectedObject());
-                em.close();
-            }
-        });
+        kbItems.addSelectionListener(e -> controller.pasteKbItem());
         searchSolutionPane.addTab("Ergebnisse",new JScrollPane(kbItems));
         kkItems = new DBTable<>("select i from ItemKK i",
                 Column.create("Kornkraft-Nummer", ItemKK::getKkNumber),
@@ -87,17 +70,8 @@ public class ManageItemsView extends Window implements View {
                 Column.create("Menge",ItemKK::getAmount),
                 Column.create("Einheit",ItemKK::getUnit)
         );
-        kkItems.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                EntityManager em = DBConnection.getEntityManager();
-                pasteData(
-                        em.createQuery("select i from ItemKK i where i.kkNumber = "+
-                                kkItems.getValueAt(kkItems.getSelectedRow(),0),ItemKK.class)
-                                .getSingleResult()
-                );
-            }
-        });
+        kkItems.addSelectionListener(e -> controller.pasteKkItem());
+        controller = new ManageItemsController(this);
     }
 
     /**
@@ -597,22 +571,38 @@ public class ManageItemsView extends Window implements View {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    Item getSelectedKbItem(){
+        return kbItems.getSelectedObject();
+    }
+
+    ItemKK getSelectedKkItem(){
+        return kkItems.getSelectedObject();
+    }
+
+    void setPriceLists(Collection<String> priceLists){
+        itemPriceList.removeAllItems();
+        priceLists.forEach(itemPriceList::addItem);
+    }
+
+    void fillSupplier(Collection<Supplier> suppliers){
+        suppliers.forEach(e -> itemSupplier.addItem(e.getName()));
+    }
+
+    void setSelectedPriceList(PriceList p){
+        itemPriceList.setSelectedItem(p.getName());
+    }
+
     private void filterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterActionPerformed
         requestFilter();
     }//GEN-LAST:event_filterActionPerformed
 
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        Item collected = collect();
-        if(collected==null)return;
-        if(controller.save(collected))
-        JOptionPane.showMessageDialog(this,"Der Artikel wurde erfolgreich gespeichert!");
+        if(controller.save())
+            JOptionPane.showMessageDialog(this,"Der Artikel wurde erfolgreich gespeichert!");
         else {
-            Item item = controller.searchItem(itemBarcode.getText(),itemKbNumber.getText());
-            JOptionPane.showMessageDialog(this,"Der Artikel \u00fcberschneidet sich mit folgendem Artikel:\nArtikelname: "+item.getName()+
-                    "\nBarcode:       "+item.getBarcode()+
-                    "\nKBNummer: "+item.getKbNumber(),"Artikel\u00fcberschneidungen",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,"Der Artikle überschneidet sich, Bitte überprüfen sie ob der \nBarcode oder die Kernbeissernummer noch nicht vergeben ist");
         }
-        loadSearchSolutions();
+        controller.loadSearchSolutions();
     }//GEN-LAST:event_saveActionPerformed
 
     private void itemSearchPriceListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSearchPriceListActionPerformed
@@ -622,61 +612,60 @@ public class ManageItemsView extends Window implements View {
         jFrame.setSize(400,600);
         jFrame.setLocationRelativeTo(null);
         PriceListTree priceListTree = new PriceListTree();
-        priceListTree.addTreeSelectionListener(e -> {
-            Object o =priceListTree.getLastSelectedPathComponent();
-            if(o!=null){
-                itemPriceList.removeAllItems();
-                controller.getPriceLists(null).forEach((a)->itemPriceList.addItem(a.getName()));
-                itemPriceList.setSelectedItem(o.toString());
-                jFrame.dispose();
-            }});
+        priceListTree.addSelectionListener(e -> {
+            controller.loadSearchSolutions();
+            jFrame.dispose();
+        });
         jFrame.add(new JScrollPane(priceListTree));
         jFrame.setVisible(true);
     }//GEN-LAST:event_itemSearchPriceListActionPerformed
 
     private void searchInCatalogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInCatalogActionPerformed
-        if(searchInCatalog.isSelected()){
-            searchSolutionPane.addTab("Katalog",new JScrollPane(kkItems));
-        }else {
-            searchSolutionPane.remove(1);
-        }
+        controller.loadSearchSolutions();
     }//GEN-LAST:event_searchInCatalogActionPerformed
 
     private void searchBarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchBarKeyReleased
-        loadSearchSolutions();
+        controller.loadSearchSolutions();
     }//GEN-LAST:event_searchBarKeyReleased
     private void requestFilter(){
-        new ItemFilterView(this){
-            @Override
-            public void finish() {
-                ManageItemsView.this.controller.setFilter(getSelectedPriceList(),getSelectedSupplier());
-            }
-        };
-        filter.setEnabled(false);
+        controller.requestFilter();
     }
-    private void loadSearchSolutions(){
-        String search = searchBar.getText();
-        int selected = searchSolutionPane.getSelectedIndex();
-        kbItems.setObjects(controller.searchItems(search,search,search));
-        if(searchInCatalog.isSelected()){
-            kkItems.setObjects(controller.searchItemKKs(search,search,search));
+
+    String getSearchBar(){
+        return searchBar.getText();
+    }
+
+    boolean isSearchInCatalog(){
+        return searchInCatalog.isSelected();
+    }
+
+    int getSelectedTab() {
+        return searchSolutionPane.getSelectedIndex();
+    }
+
+    void setSelectedTab(int i){
+        searchSolutionPane.setSelectedIndex(i);
+    }
+
+    void setSearchSolution(Collection<Item> items,Collection<ItemKK> kkItems){
+        if(items!=null){
+            kbItems.setObjects(items);
         }
-        searchSolutionPane.setSelectedIndex(Math.min(selected,searchSolutionPane.getTabCount()-1));
+        if(kkItems!=null){
+            this.kkItems.setObjects(kkItems);
+        }
     }
-    private Item collect(){
+
+
+    Item collect(){
         Checker c = new Checker();
-        EntityManager em = DBConnection.getEntityManager();
         try {
             Item item = new Item();
             item.setName(itemName.getText());
             item.setAmount(c.checkInteger(itemAmount));
             item.setNetPrice(c.checkPrice(itemNetPrice));
             if(itemSupplier.getSelectedItem()==null)throw new IncorrectInput(itemSupplier,Supplier.class);
-            Supplier s = em.createQuery("select s from Supplier s where s.name like '"+
-                    itemSupplier.getSelectedItem().toString()+"'",Supplier.class)
-                    .getSingleResult();
-            if(s==null)throw new IncorrectInput(itemSupplier,Supplier.class);
-            else item.setSupplier(s);
+            item.setSupplier(c.checkSupplier(itemSupplier));
             item.setBarcode(itemBarcode.getText().equals("")?null:c.checkLong(itemBarcode));
             item.setSpecialPriceNet(0);
             item.setVatLow(itemVAThigh.isSelected());
@@ -685,11 +674,7 @@ public class ManageItemsView extends Window implements View {
             item.setCrateDeposit(c.checkPrice(itemCrateDeposit));
             item.setUnit(t.translate(Unit.class, itemUnit.getSelectedItem().toString()));
             if(itemPriceList.getSelectedItem()==null)throw new IncorrectInput(itemPriceList,PriceList.class);
-            PriceList priceList = em.createQuery("select p from PriceList p where p.name like '"+
-                    itemPriceList.getSelectedItem().toString()+"'",PriceList.class)
-                    .getSingleResult();
-            if(priceList==null)throw new IncorrectInput(itemPriceList,PriceList.class);
-            else item.setPriceList(priceList);
+            item.setPriceList(c.checkPriceList(itemPriceList));
             item.setContainerDef(t.translate(ContainerDefinition.class, itemContainerDef.getSelectedItem().toString()));
             item.setContainerSize(c.checkDouble(itemContainerSize));
             item.setSuppliersItemNumber(c.checkInteger(itemSupplierNumber));
@@ -725,19 +710,18 @@ public class ManageItemsView extends Window implements View {
         }
 
     }
-    private void pasteData(Item item){
-        EntityManager em = DBConnection.getEntityManager();
+    void pasteData(Item item){
         itemKbNumber.setText(String.valueOf(item.getKbNumber()));
         itemName.setText(item.getName());
         itemInfo.setText(item.getInfo());
-        itemSupplier.setSelectedItem(em.createQuery("select s from Supplier s where s.sid = "+item.getSupplier().getId(),Supplier.class).toString());
+        itemSupplier.setSelectedItem(item.getSupplier().getName());
         itemSupplierNumber.setText(String.valueOf(item.getSuppliersItemNumber()));
         itemNetPrice.setText(String.valueOf(item.getNetPrice()));
         itemAmount.setText(String.valueOf(item.getAmount()));
         itemSellPrice.setText(String.valueOf(item.getSurcharge()+item.getNetPrice()));
         itemSingleDeposit.setText(String.valueOf(item.getSingleDeposit()));
         itemCrateDeposit.setText(String.valueOf(item.getCrateDeposit()));
-        itemPriceList.setSelectedItem(em.createQuery("select p from PriceList p where p.superPriceList.pid = "+item.getPriceList().getId(),PriceList.class).toString());
+        itemPriceList.setSelectedItem(item.getPriceList().getName());
         itemContainerSize.setText(String.valueOf(item.getContainerSize()));
         itemUnit.setSelectedItem(t.translate(item.getUnit()));
         itemContainerDef.setSelectedItem(t.translate(item.getContainerDef()));
@@ -755,7 +739,7 @@ public class ManageItemsView extends Window implements View {
         itemListed.setText(item.isListed()?"Verf\u00fcgbar":"Ausgelisted");
         itemListed.setForeground(new Color(item.isListed()? 0x00EE00 : 0xEE0000));
     }
-    private void pasteData(ItemKK item){
+    void pasteData(ItemKK item){
         itemKbNumber.setText("0");
         itemName.setText(item.getName());
         itemSupplier.setSelectedItem(Supplier.getKKSupplier().getName());
@@ -781,7 +765,7 @@ public class ManageItemsView extends Window implements View {
         itemInvPrice.setText("0");
         itemWeighAble.setSelected(false);
     }
-    private void setFilters(){
+    void setFilters(){
         Tools.setDoubleFilter(itemNetPrice);
         Tools.setDoubleFilter(itemSingleDeposit);
         Tools.setDoubleFilter(itemCrateDeposit);

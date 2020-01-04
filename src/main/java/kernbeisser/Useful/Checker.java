@@ -1,7 +1,11 @@
 package kernbeisser.Useful;
 
+import kernbeisser.DBEntitys.PriceList;
+import kernbeisser.DBEntitys.Supplier;
 import kernbeisser.Exeptions.IncorrectInput;
 
+import javax.persistence.NoResultException;
+import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 
@@ -109,6 +113,22 @@ public class Checker {
             return Long.parseLong(component.getText());
         } catch (NumberFormatException e) {
             throw new IncorrectInput(component, Long.class);
+        }
+    }
+
+    public Supplier checkSupplier(JComboBox<String> s) throws IncorrectInput {
+        try{
+            return Supplier.getAll("where name like "+s.getSelectedItem()).get(0);
+        }catch (NoResultException | IndexOutOfBoundsException e){
+            throw new IncorrectInput(s,Supplier.class);
+        }
+    }
+
+    public PriceList checkPriceList(JComboBox<String> s) throws IncorrectInput {
+        try{
+            return PriceList.getAll("where name like "+s.getSelectedItem()).get(0);
+        }catch (NoResultException | IndexOutOfBoundsException e){
+            throw new IncorrectInput(s,PriceList.class);
         }
     }
 }
