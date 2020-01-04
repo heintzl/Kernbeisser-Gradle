@@ -7,7 +7,8 @@ package kernbeisser.Windows.CatalogInput;
 
 import kernbeisser.Exeptions.FileReadException;
 import kernbeisser.Exeptions.ObjectParseException;
-import kernbeisser.Windows.*;
+import kernbeisser.Windows.View;
+import kernbeisser.Windows.Window;
 
 import javax.swing.*;
 

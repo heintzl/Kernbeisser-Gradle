@@ -5,8 +5,6 @@
  */
 package kernbeisser.Windows.Options;
 
-import kernbeisser.Windows.Finishable;
-import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.Window;
 
 /**

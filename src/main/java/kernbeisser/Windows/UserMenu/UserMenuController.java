@@ -11,7 +11,6 @@ import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 import kernbeisser.Windows.Stats.Stats;
 import kernbeisser.Windows.Window;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class UserMenuController {

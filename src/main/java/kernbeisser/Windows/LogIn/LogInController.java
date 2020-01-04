@@ -1,16 +1,7 @@
 package kernbeisser.Windows.LogIn;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.UserMenu.UserMenuView;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class LogInController implements Controller {
     private LogInView view;

@@ -4,7 +4,6 @@ import kernbeisser.DBEntitys.User;
 import kernbeisser.Enums.UserPersistFeedback;
 import kernbeisser.Windows.Model;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class UserUIModel implements Model {

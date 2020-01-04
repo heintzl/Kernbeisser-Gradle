@@ -5,9 +5,9 @@
  */
 package kernbeisser.Windows.UserGroupSelector;
 
+import kernbeisser.CustomComponents.DBTable.DBTable;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.CustomComponents.DBTable.DBTable;
 import kernbeisser.DBEntitys.User;
 import kernbeisser.DBEntitys.UserGroup;
 import kernbeisser.Windows.Window;

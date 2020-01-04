@@ -5,8 +5,6 @@ import kernbeisser.DBEntitys.Supplier;
 import kernbeisser.Windows.Model;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.function.BiConsumer;
 
 class ItemFilterModel implements Model{
 

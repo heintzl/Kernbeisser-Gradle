@@ -1,8 +1,6 @@
 package kernbeisser.Windows.InventoryMenu;
 
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 
 public class InventoryMenuController implements Controller {
 

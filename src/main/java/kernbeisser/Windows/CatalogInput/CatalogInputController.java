@@ -1,14 +1,10 @@
 package kernbeisser.Windows.CatalogInput;
 
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.ItemKK;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Exeptions.FileReadException;
 import kernbeisser.Exeptions.ObjectParseException;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
-
 
 import java.io.File;
 import java.io.IOException;

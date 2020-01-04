@@ -5,7 +5,7 @@
  */
 package kernbeisser.Windows.Stats;
 
-import kernbeisser.Windows.*;
+import kernbeisser.Windows.Window;
 
 /**
  *

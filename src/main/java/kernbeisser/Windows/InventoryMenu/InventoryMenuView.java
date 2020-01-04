@@ -5,7 +5,8 @@
  */
 package kernbeisser.Windows.InventoryMenu;
 
-import kernbeisser.Windows.*;
+import kernbeisser.Windows.View;
+import kernbeisser.Windows.Window;
 
 /**
  *

@@ -10,7 +10,6 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 
 public class ManageUserUIView extends Window implements View {

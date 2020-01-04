@@ -6,7 +6,6 @@ import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
 
 import java.util.Collection;
-import java.util.List;
 
 public class JobSelectorController implements Controller {
     private JobSelectorModel model;

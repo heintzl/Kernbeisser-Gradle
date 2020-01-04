@@ -4,15 +4,11 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Item;
 import kernbeisser.DBEntitys.SaleSession;
 import kernbeisser.DBEntitys.ShoppingItem;
-import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Useful.Checker;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 

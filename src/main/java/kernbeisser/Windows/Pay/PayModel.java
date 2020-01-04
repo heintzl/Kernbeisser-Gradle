@@ -1,7 +1,10 @@
 package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.*;
+import kernbeisser.DBEntitys.Purchase;
+import kernbeisser.DBEntitys.SaleSession;
+import kernbeisser.DBEntitys.ShoppingItem;
+import kernbeisser.DBEntitys.UserGroup;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -9,13 +12,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.text.MessageFormat;
 import java.util.Collection;
 
 class PayModel implements Model {

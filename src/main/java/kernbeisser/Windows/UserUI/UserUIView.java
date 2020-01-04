@@ -8,9 +8,6 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class UserUIView extends Window implements View {

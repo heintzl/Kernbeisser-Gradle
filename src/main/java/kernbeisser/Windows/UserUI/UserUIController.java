@@ -5,7 +5,6 @@ import kernbeisser.DBEntitys.User;
 import kernbeisser.Enums.UserPersistFeedback;
 import kernbeisser.Windows.Controller;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class UserUIController implements Controller {

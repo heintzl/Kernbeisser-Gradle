@@ -8,7 +8,6 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 
 public class JobSelectorView extends Window implements View {

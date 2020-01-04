@@ -5,11 +5,14 @@
  */
 package kernbeisser.Windows.ManageItems;
 
-import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.DBTable.DBTable;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.PriceListTree;
-import kernbeisser.DBEntitys.*;
+import kernbeisser.DBEntitys.Item;
+import kernbeisser.DBEntitys.ItemKK;
+import kernbeisser.DBEntitys.PriceList;
+import kernbeisser.DBEntitys.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.Unit;
@@ -17,15 +20,11 @@ import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Checker;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Translator;
-import kernbeisser.Windows.*;
-import kernbeisser.Windows.ItemFilter.ItemFilterView;
+import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
-import javax.persistence.EntityManager;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;

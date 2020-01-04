@@ -4,7 +4,6 @@ import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.Model;
 
 import java.util.Collection;
-import java.util.List;
 
 public class CashierShoppingMaskModel implements Model {
     private User seller;

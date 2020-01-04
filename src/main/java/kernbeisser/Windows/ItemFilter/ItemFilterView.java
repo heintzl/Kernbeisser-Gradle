@@ -7,7 +7,6 @@ import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBEntitys.PriceList;
 import kernbeisser.DBEntitys.Supplier;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.ItemFilter.ItemFilterController;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 

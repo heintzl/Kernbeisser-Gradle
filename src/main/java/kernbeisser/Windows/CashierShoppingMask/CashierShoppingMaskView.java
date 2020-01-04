@@ -8,8 +8,9 @@ package kernbeisser.Windows.CashierShoppingMask;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntitys.User;
-import kernbeisser.Windows.*;
+import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
+import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;

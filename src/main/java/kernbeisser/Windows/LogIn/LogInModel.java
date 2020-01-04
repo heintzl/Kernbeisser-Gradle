@@ -7,7 +7,6 @@ import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-
 import java.util.Collection;
 
 import static kernbeisser.Windows.LogIn.LogInController.*;
