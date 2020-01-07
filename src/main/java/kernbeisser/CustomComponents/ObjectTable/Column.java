@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 public interface Column <T> {
     String getName();
-    String getValue(T t);
+    Object getValue(T t);
     static<T> Column<T> create(String s, Function<T, Object> v){
         return new Column<T>() {
             @Override
@@ -13,8 +13,8 @@ public interface Column <T> {
             }
 
             @Override
-            public String getValue(T t) {
-                return v.apply(t).toString();
+            public Object getValue(T t) {
+                return v.apply(t);
             }
         };
     }
