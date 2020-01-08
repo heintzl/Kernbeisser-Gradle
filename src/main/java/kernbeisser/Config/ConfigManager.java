@@ -13,10 +13,13 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class ConfigManager{
-    private static final File file = new File("config.txt");
+    //Static only class
+    private ConfigManager(){}
+
+    private static final File file = new File("config.json");
     private static final JSONObject config = new JSONObject(fileToString(StandardCharsets.UTF_8));
 
-    public JSONObject getHeader(){
+    public static JSONObject getHeader(){
         return config;
     }
 
@@ -32,15 +35,39 @@ public class ConfigManager{
         }
     }
 
+    public static String[] getDBAccessData(){
+        JSONObject obj = getDBAccess();
+        return new String[]{obj.getString("URL"),obj.getString("Username"),obj.getString("Password")};
+    }
+
+    public static JSONObject getDBAccess(){
+        return getHeader().getJSONObject("DBAccess");
+    }
+
+    public static void updateFile(){
+        createFileIfNotExists();
+        if(!file.delete())return;
+        try {
+            if(file.createNewFile()) {
+                FileWriter fw = new FileWriter(file);
+                fw.write(config.toString());
+                fw.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static void createFileIfNotExists(){
         if(file.exists())return;
         JSONObject object = new JSONObject();
         JSONObject dbAccess = new JSONObject();
+        dbAccess.put("URL","");
         dbAccess.put("Username","");
         dbAccess.put("Password","");
         object.put("DBAccess",dbAccess);
         object.put("Init",false);
+        object.put("ImagePath","");
         try {
             if(file.createNewFile()) {
                 FileWriter fw = new FileWriter(file);

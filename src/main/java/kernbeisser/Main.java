@@ -1,18 +1,22 @@
 package kernbeisser;
 
 
+import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Config;
 import kernbeisser.DBEntitys.Job;
 import kernbeisser.StartUp.DataImport.DataImportView;
 import kernbeisser.Useful.Images;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.function.Function;
 
@@ -23,22 +27,11 @@ public class Main {
      * checks all needed Tables and PriceLists
      * and as least shows the LogIn Window
      */
-    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException, URISyntaxException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         Images.setPath(new File("src/main/resources/Images"));
         DBConnection.getEntityManager();
-        Config.loadConfigs();
-        if(Config.getConfig("firstStart")==null){
-            new DataImportView(null){
-                @Override
-                public void finish() {
-                    openLogIn();
-                    Config.setConfig("firstStart", LocalDate.now().toString());
-                }
-            };
-        }else {
-            openLogIn();
-        }
+        openLogIn();
     }
     private static void openLogIn(){
         SwingUtilities.invokeLater(() -> new LogInView(null));

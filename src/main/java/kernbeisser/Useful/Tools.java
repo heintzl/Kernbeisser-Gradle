@@ -6,9 +6,12 @@ import javax.persistence.EntityManager;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +36,7 @@ public class Tools {
         }
         return out;
     }
+
 
     public static <T> String toSting(T[] in, Function<T, String> transformer) {
         StringBuilder stringBuilder = new StringBuilder();
