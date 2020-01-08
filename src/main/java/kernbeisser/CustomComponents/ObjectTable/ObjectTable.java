@@ -3,6 +3,7 @@ package kernbeisser.CustomComponents.ObjectTable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,6 +18,7 @@ public class ObjectTable <T> extends JTable {
     private ArrayList<T> objects = new ArrayList<>();
     private ArrayList<Column<T>> columns = new ArrayList<>();
     private boolean complex = false;
+
     public ObjectTable(Collection<Column<T>> columns){
         this.columns.addAll(columns);
         addMouseListener(new MouseAdapter() {
@@ -74,9 +76,14 @@ public class ObjectTable <T> extends JTable {
     private void handleCellComponentEvents(){
         if(!complex)return;
         Object cell = getValueAt(getSelectedRow(),getSelectedColumn());
+        if(!(cell instanceof Component))return;
+        Component com = (Component) cell;
+        com.setFocusable(true);
+        com.requestFocus();
         if(cell instanceof AbstractButton){
             ((AbstractButton) cell).doClick();
         }
+
     }
     public void addColumn(Column<T> column){
         columns.add(column);

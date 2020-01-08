@@ -12,26 +12,26 @@ import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class Config {
-    private static File file = new File("config.txt");
-    private static HashMap<String,Config> configs;
+public class ConfigManager{
+    private static final File file = new File("config.txt");
+    private static final JSONObject config = new JSONObject(fileToString(StandardCharsets.UTF_8));
 
-
-    static {
-        createFileIfNotExists();
-
+    public JSONObject getHeader(){
+        return config;
     }
 
-    private static String fileToString(File f, Charset charset) {
+    private static String fileToString(Charset charset) {
         try {
+            createFileIfNotExists();
             StringBuilder sb = new StringBuilder();
-            Files.readAllLines(f.toPath(), charset).forEach(sb.append("\n")::append);
+            Files.readAllLines(file.toPath(), charset).forEach(sb.append("\n")::append);
             return sb.toString();
         }catch (IOException e){
             e.printStackTrace();
             return null;
         }
     }
+
 
     private static void createFileIfNotExists(){
         if(file.exists())return;

@@ -4,16 +4,12 @@ package kernbeisser;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Config;
 import kernbeisser.DBEntitys.Job;
-import kernbeisser.DBEntitys.User;
-import kernbeisser.Enums.Permission;
 import kernbeisser.StartUp.DataImport.DataImportView;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInView;
-import kernbeisser.Windows.UserMenu.UserMenuView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import java.io.File;
 import java.lang.reflect.Field;
