@@ -1,5 +1,7 @@
 package kernbeisser.Useful;
 
+import kernbeisser.Config.ConfigManager;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -16,6 +18,10 @@ public class Images {
      * @see HashMap
      */
     private static HashMap<String, BufferedImage> images = new HashMap<>();
+
+    static {
+        collectImages(new File(ConfigManager.getHeader().getString("ImagePath")));
+    }
 
     /**
      * sets the image source path
