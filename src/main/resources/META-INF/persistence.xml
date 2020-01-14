@@ -19,6 +19,7 @@
         <class>kernbeisser.DBEntitys.Job</class>
         <class>kernbeisser.DBEntitys.Config</class>
         <class>kernbeisser.DBEntitys.Transaction</class>
+        <class>kernbeisser.DBEntitys.SurchargeTable</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>

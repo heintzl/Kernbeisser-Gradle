@@ -47,8 +47,9 @@ public class Item {
     @Column
     private boolean vatLow;
 
-    @Column
-    private int surcharge;
+    @ManyToOne
+    @JoinColumn
+    private SurchargeTable surcharge;
 
     @Column
     private int singleDeposit;
@@ -136,7 +137,7 @@ public class Item {
     private boolean coveredIntake;
 
     public int calculatePrice(){
-        return (int) (netPrice*((surcharge/100f)+1)*(((vatLow ? VAT.LOW.getValue() : VAT.HIGH.getValue())/100f)+1));
+        return (int) (netPrice*((surcharge.getSurcharge()/100f)+1)*(((vatLow ? VAT.LOW.getValue() : VAT.HIGH.getValue())/100f)+1));
     }
 
     public int getIid() {
@@ -207,11 +208,11 @@ public class Item {
         this.vatLow = vatLow;
     }
 
-    public int getSurcharge() {
+    public SurchargeTable getSurcharge() {
         return surcharge;
     }
 
-    public void setSurcharge(int surcharge) {
+    public void setSurcharge(SurchargeTable surcharge) {
         this.surcharge = surcharge;
     }
 
