@@ -668,7 +668,7 @@ public class ManageItemsView extends Window implements View {
             item.setBarcode(itemBarcode.getText().equals("")?null:c.checkLong(itemBarcode));
             item.setSpecialPriceNet(0);
             item.setVatLow(itemVAThigh.isSelected());
-            item.setSurcharge(c.checkPrice(itemSellPrice) - c.checkPrice(itemNetPrice));
+            //TODO item.setSurcharge(c.checkPrice(itemSellPrice) - c.checkPrice(itemNetPrice));
             item.setSingleDeposit(c.checkPrice(itemSingleDeposit));
             item.setCrateDeposit(c.checkPrice(itemCrateDeposit));
             item.setUnit(t.translate(Unit.class, itemUnit.getSelectedItem().toString()));
@@ -717,7 +717,7 @@ public class ManageItemsView extends Window implements View {
         itemSupplierNumber.setText(String.valueOf(item.getSuppliersItemNumber()));
         itemNetPrice.setText(String.valueOf(item.getNetPrice()));
         itemAmount.setText(String.valueOf(item.getAmount()));
-        itemSellPrice.setText(String.valueOf(item.getSurcharge()+item.getNetPrice()));
+        //TODO itemSellPrice.setText(String.valueOf(item.getSurcharge()+item.getNetPrice()));
         itemSingleDeposit.setText(String.valueOf(item.getSingleDeposit()));
         itemCrateDeposit.setText(String.valueOf(item.getCrateDeposit()));
         itemPriceList.setSelectedItem(item.getPriceList().getName());

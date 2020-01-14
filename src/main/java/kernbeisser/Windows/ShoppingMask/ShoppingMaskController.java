@@ -66,7 +66,7 @@ public class ShoppingMaskController implements Controller {
         ShoppingItem item = new ShoppingItem(search);
         item.setItemAmount(view.getInputItemAmount());
         item.setRawPrice(search.calculatePrice()*item.getItemAmount());
-        if(view.isContainerDiscount())search.setSurcharge(search.getSurcharge()/2);
+        //TODO if(view.isContainerDiscount())search.setSurcharge(search.getSurcharge().getSurcharge()/2);
         addToShoppingCart(item);
     }
 

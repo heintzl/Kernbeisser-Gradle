@@ -275,7 +275,7 @@ public class DataImportController implements Controller {
                 }
                 item.setSpecialPriceNet(Integer.parseInt(columns[7]));
                 item.setVatLow(Boolean.parseBoolean(columns[8]));
-                item.setSurcharge(Integer.parseInt(columns[9]));
+                //TODO item.setSurcharge(Integer.parseInt(columns[9]));
                 item.setSingleDeposit(Integer.parseInt(columns[10]));
                 item.setCrateDeposit(Integer.parseInt(columns[11]));
                 item.setUnit(Unit.valueOf(columns[12].replace("WEIGHT", "GRAM")));
