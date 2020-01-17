@@ -1,4 +1,4 @@
-package kernbeisser.Windows.ManageItems.EditItem;
+package kernbeisser.Windows.EditItem;
 
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
@@ -14,9 +14,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
-import java.util.Objects;
 
 public class EditItemView extends Window implements View {
     private JButton commit;
@@ -43,11 +41,16 @@ public class EditItemView extends Window implements View {
 
     private EditItemController controller;
 
-    public EditItemView(Window current) {
+    public EditItemView(EditItemController controller,Window current) {
         super(current);
-        this.controller = new EditItemController(this);
+        this.controller = controller;
+        cancel.addActionListener((e) -> back());
+        commit.addActionListener((e) -> controller.finished());
         add(main);
+        pack();
+        setLocationRelativeTo(null);
     }
+
 
     private void createUIComponents() {
         barcode = new LongParseField();
@@ -110,8 +113,7 @@ public class EditItemView extends Window implements View {
         containerDefinition.setSelectedItem(item.getContainerDef());
     }
 
-    Item collectItem() {
-        Item out = new Item();
+    Item collectItem(Item out) {
         out.setName(itemName.getText());
         out.setNetPrice((int) (netPrice.getValue() * 100));
         out.setSingleDeposit((int) (deposit.getValue() * 100));

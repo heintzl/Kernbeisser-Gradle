@@ -4,7 +4,7 @@ import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskView;
 import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.ManageItems.ManageItemsView;
+import kernbeisser.Windows.ManageItems.EditItems.EditItems;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
 import kernbeisser.Windows.ManageUser.ManageUserUIView;
 
@@ -33,7 +33,7 @@ class CashierMenuController implements Controller {
     }
 
     public void openManageItems(){
-        new ManageItemsView(view);
+        new EditItems(this.getView());
     }
     public void openManageUsers(){
         new ManageUserUIView(view,model.getUser().getPermission());

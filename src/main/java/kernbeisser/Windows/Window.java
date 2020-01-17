@@ -14,6 +14,8 @@ public class Window extends JFrame {
     }
     public Window(Window currentWindow){
         setIconImage(STANDARD_IMAGE);
+        pack();
+        setLocationRelativeTo(null);
         this.current=currentWindow;
         addWindowListener((WindowCloseEvent)e -> {
             back();
