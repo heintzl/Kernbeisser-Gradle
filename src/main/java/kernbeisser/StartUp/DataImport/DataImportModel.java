@@ -10,7 +10,7 @@ import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
 class DataImportModel implements Model {
-    <T> void saveAll(Collection<T> v){
+    <T> void batchSaveAll(Collection<T> v){
         if(v.size()==0)return;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -23,6 +23,18 @@ class DataImportModel implements Model {
                 em.flush();
                 em.clear();
             }
+        }
+        em.flush();
+        et.commit();
+        em.close();
+    }
+    <T> void saveAll(Collection<T> v){
+        if(v.size()==0)return;
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        for (T t : v) {
+            em.persist(t);
         }
         em.flush();
         et.commit();

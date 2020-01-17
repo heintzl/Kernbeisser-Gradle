@@ -18,9 +18,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.Date;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -137,7 +134,7 @@ public class DataImportController implements Controller {
                 jobs.add(job);
             }
             view.setUserProgress(1);
-            model.saveAll(jobs);
+            model.batchSaveAll(jobs);
             view.setUserProgress(2);
         } catch (IOException e) {
             e.printStackTrace();
@@ -213,6 +210,7 @@ public class DataImportController implements Controller {
                 PriceList pl = new PriceList();
                 pl.setName(columns[0]);
                 pl.setSuperPriceList(priceLists.get(columns[1]));
+                priceLists.put(pl.getName(),pl);
             }
             view.setItemProgress(3);
             model.saveAll(priceLists.values());
@@ -238,7 +236,7 @@ public class DataImportController implements Controller {
                 suppliers.add(supplier);
             }
             view.setItemProgress(1);
-            model.saveAll(suppliers);
+            model.batchSaveAll(suppliers);
             view.setItemProgress(2);
         }catch (IOException e){
             e.printStackTrace();
@@ -306,7 +304,7 @@ public class DataImportController implements Controller {
                 items.add(item);
             }
             view.setItemProgress(5);
-            model.saveAll(items);
+            model.batchSaveAll(items);
             view.setItemProgress(6);
         }catch (IOException e){
             e.printStackTrace();

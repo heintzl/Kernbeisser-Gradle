@@ -21,7 +21,7 @@ public class FilterField extends JTextField {
             @Override
             public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
                 StringBuilder sb = new StringBuilder(fb.getDocument().getText(0,fb.getDocument().getLength()));
-                sb.delete(offset,length);
+                sb.delete(offset,offset);
                 if(check.apply(sb.toString()))
                     fb.remove(offset,length);
             }
