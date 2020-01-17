@@ -3,6 +3,7 @@ package kernbeisser.Useful;
 import kernbeisser.DBConnection.DBConnection;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Id;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -198,5 +200,20 @@ public class Tools {
     public static <T extends Collection> T filterNull(T in){
         in.removeIf(Objects::isNull);
         return in;
+    }
+    public static <T> T mergeWithoutId(T in){
+        try {
+            T out = (T) in.getClass().getDeclaredConstructor().newInstance();
+            for (Field field : out.getClass().getDeclaredFields()) {
+                if(field.getAnnotation(Id.class)==null) {
+                    field.setAccessible(true);
+                    field.set(out, field.get(in));
+                }
+            }
+            return out;
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

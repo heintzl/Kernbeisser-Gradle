@@ -8,7 +8,7 @@ import java.util.List;
 
 @Table
 @Entity
-public class SurchargeTable implements Serializable {
+public class SurchargeTable implements Serializable, Cloneable {
 
 
     public SurchargeTable(){}
@@ -89,5 +89,14 @@ public class SurchargeTable implements Serializable {
         this.setTo(surchargeTable.getTo());
         this.setFrom(surchargeTable.getFrom());
         this.setSupplier(surchargeTable.getSupplier());
+    }
+
+    @Override
+    public SurchargeTable clone(){
+        try {
+            return (SurchargeTable) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 }

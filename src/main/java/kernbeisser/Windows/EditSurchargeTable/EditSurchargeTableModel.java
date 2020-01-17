@@ -4,6 +4,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntitys.Supplier;
 import kernbeisser.DBEntitys.SurchargeTable;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -32,7 +33,7 @@ public class EditSurchargeTableModel implements Model {
                 edit(table);
                 break;
             case ADD:
-                add(new SurchargeTable(table));
+                add(Tools.mergeWithoutId(surchargeTable));
                 break;
         }
     }
@@ -41,11 +42,12 @@ public class EditSurchargeTableModel implements Model {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        SurchargeTable edit = em.find(SurchargeTable.class,surchargeTable);
+        SurchargeTable edit = em.find(SurchargeTable.class,surchargeTable.getStid());
         edit.setFrom(surchargeTable.getFrom());
         edit.setTo(surchargeTable.getTo());
         edit.setSurcharge(surchargeTable.getSurcharge());
         edit.setSupplier(surchargeTable.getSupplier());
+        edit.setName(surchargeTable.getName());
         em.persist(edit);
         em.flush();
         et.commit();

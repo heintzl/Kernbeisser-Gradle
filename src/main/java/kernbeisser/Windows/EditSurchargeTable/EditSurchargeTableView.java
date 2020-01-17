@@ -25,6 +25,8 @@ class EditSurchargeTableView extends Window{
         commit.addActionListener((e) -> controller.commit());
         cancel.addActionListener((e) -> back());
         add(main);
+        pack();
+        setLocationRelativeTo(null);
     }
 
     void setSuppliers(Collection<Supplier> suppliers){
