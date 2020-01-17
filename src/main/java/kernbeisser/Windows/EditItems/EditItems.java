@@ -1,4 +1,4 @@
-package kernbeisser.Windows.ManageItems.EditItems;
+package kernbeisser.Windows.EditItems;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntitys.Item;

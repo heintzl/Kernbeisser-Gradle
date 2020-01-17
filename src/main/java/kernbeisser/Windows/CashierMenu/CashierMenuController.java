@@ -4,7 +4,7 @@ import kernbeisser.DBEntitys.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskView;
 import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.ManageItems.EditItems.EditItems;
+import kernbeisser.Windows.EditItems.EditItems;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
 import kernbeisser.Windows.ManageUser.ManageUserUIView;
 

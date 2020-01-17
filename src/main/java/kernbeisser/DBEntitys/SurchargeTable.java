@@ -1,12 +1,17 @@
 package kernbeisser.DBEntitys;
 
+import kernbeisser.Useful.Tools;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Table
 @Entity
 public class SurchargeTable implements Serializable {
 
+
+    public SurchargeTable(){}
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,5 +76,18 @@ public class SurchargeTable implements Serializable {
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
+    }
+
+    public static List<SurchargeTable> getAll(String condition){
+        return Tools.getAll(SurchargeTable.class,condition);
+    }
+
+    public SurchargeTable(SurchargeTable surchargeTable){
+        this.setName(surchargeTable.getName());
+        this.setSurcharge(surchargeTable.getSurcharge());
+        this.setName(surchargeTable.getName());
+        this.setTo(surchargeTable.getTo());
+        this.setFrom(surchargeTable.getFrom());
+        this.setSupplier(surchargeTable.getSupplier());
     }
 }
