@@ -2,8 +2,9 @@ package kernbeisser.Windows.UserMenu;
 
 import kernbeisser.DBEntitys.SaleSession;
 import kernbeisser.DBEntitys.User;
+import kernbeisser.Windows.*;
+import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.CashierMenu.CashierMenuView;
-import kernbeisser.Windows.Finisher;
 import kernbeisser.Windows.InventoryMenu.InventoryMenuView;
 import kernbeisser.Windows.LogIn.LogInView;
 import kernbeisser.Windows.Options.Options;
@@ -13,46 +14,58 @@ import kernbeisser.Windows.Window;
 
 import java.awt.*;
 
-public class UserMenuController {
+public class UserMenuController implements Controller {
     private UserMenuView view;
     private UserMenuModel model;
-    UserMenuController(UserMenuView view,User owner){
-        this.view=view;
+    public UserMenuController(Window current, User owner){
+        this.view=new UserMenuView(this,current);
         this.model=new UserMenuModel(owner);
+        view.setUsername(owner.getUsername());
+        view.setBuyHistory(model.getAllPurchase());
     }
-    void startSoloShopping(){
+
+
+    public void showPurchase() {
+
+    }
+
+    @Override
+    public View getView() {
+        return view;
+    }
+
+    @Override
+    public Model getModel() {
+        return model;
+    }
+
+    public void beginSelfShopping() {
         Window jFrame = new Window(view);
         jFrame.setLayout(new GridLayout(1,1));
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(model.getOwner());
         saleSession.setSeller(model.getOwner());
         jFrame.add(new ShoppingMaskView(jFrame, saleSession));
-        jFrame.addWindowListener(new Finisher(() -> {
-            jFrame.dispose();
-            view.open();
-        }));
         jFrame.pack();
         jFrame.setLocationRelativeTo(null);
         jFrame.setVisible(true);
     }
-    void openStats(){
-        new Stats(view);
-    }
-    void startCashierAction() {
-        new CashierMenuView(model.getOwner(), view);
-    }
 
-    void logOutAction() {
-        new LogInView(null);
+    public void logOut() {
         view.back();
     }
 
-    void startInventoryAction() {
-        new InventoryMenuView(view);
+    public void beginCashierJob() {
+        new CashierMenuController(view,model.getOwner());
     }
 
-    void startOptionsAction() {
-        new Options(view);
+    public void showProfile() {
     }
 
+    public void showValueHistory() {
+    }
+
+    public void startInventory() {
+
+    }
 }

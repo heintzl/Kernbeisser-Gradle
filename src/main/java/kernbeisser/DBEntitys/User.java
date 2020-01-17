@@ -289,6 +289,10 @@ public class User implements Serializable {
         return Transaction.getAll("where from.id = "+id+" or to.id = "+id);
     }
 
+    public Collection<Purchase> getAllPurchases(){
+        return Purchase.getAll("where session.customer.id = "+id);
+    }
+
     public void paste(User x){
         this.salesThisYear = x.salesThisYear;
         this.salesLastYear = x.salesLastYear;

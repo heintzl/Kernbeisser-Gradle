@@ -10,7 +10,7 @@ public class EditSurchargeTables extends ObjectViewController<SurchargeTable> {
     public static void main(String[] args) {
         new EditSurchargeTables(null);
     }
-    EditSurchargeTables(Window current){
+    public EditSurchargeTables(Window current){
         super(current, (s, m) -> new EditSurchargeTableController(null, s, m), SurchargeTable.getAll(null),
                 Column.create("Liefernat", SurchargeTable::getSupplier),
                 Column.create("Von", SurchargeTable::getFrom),

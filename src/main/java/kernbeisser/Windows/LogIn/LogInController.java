@@ -1,7 +1,7 @@
 package kernbeisser.Windows.LogIn;
 
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.UserMenu.UserMenuView;
+import kernbeisser.Windows.UserMenu.UserMenuController;
 
 public class LogInController implements Controller {
     private LogInView view;
@@ -31,7 +31,7 @@ public class LogInController implements Controller {
         view.addTab("Alle",model.getAllUser());
     }
     void openUserMenu(){
-        new UserMenuView(view, LogInModel.getLoggedIn());
+        new UserMenuController(view, LogInModel.getLoggedIn());
     }
 
     @Override
