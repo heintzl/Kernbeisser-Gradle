@@ -34,47 +34,47 @@ public class LogInView extends Window implements View {
      * with all Tables from A-Z
      * and a Table with all Users
      */
-    public LogInView(kernbeisser.Windows.Window current) {
+    public LogInView(Window current) {
         super(current);
         add(main);
-        controller=new LogInController(this);
+        controller = new LogInController(this);
         logIn.addActionListener(e -> logIn());
         password.addActionListener(e -> logIn());
-        setSize(Tools.getScreenWidth()/2, Tools.getScreenHeight()/2);
+        setSize(Tools.getScreenWidth() / 2, Tools.getScreenHeight() / 2);
         setLocationRelativeTo(null);
     }
 
-    void addTab(String title, Collection<User> users){
+    void addTab(String title, Collection<User> users) {
         ObjectTable<User> userTable = new ObjectTable<>(
                 users,
                 Column.create("Username", User::getUsername),
                 Column.create("Vorname", User::getFirstName),
                 Column.create("Nachname", User::getSurname));
-        userTable.getTableHeader().setFont(new Font("arial",Font.BOLD,12));
+        userTable.getTableHeader().setFont(new Font("arial", Font.BOLD, 12));
         userTable.getSelectionModel().addListSelectionListener(e -> username.setText(userTable.getSelectedObject().getUsername()));
         this.users.addTab(title, new JScrollPane(userTable));
     }
 
-    String getUsername(){
+    String getUsername() {
         return username.getText();
     }
 
-    char[] getPassword(){
+    char[] getPassword() {
         return password.getPassword();
     }
 
-    private void logIn(){
+    private void logIn() {
         switch (controller.logIn()) {
             case LogInController.SUCCESS:
                 controller.openUserMenu();
                 break;
             case LogInController.INCORRECT_USERNAME:
                 Tools.ping(username);
-                JOptionPane.showMessageDialog(this,"Benutzername Falsch!");
+                JOptionPane.showMessageDialog(this, "Benutzername Falsch!");
                 return;
             case LogInController.INCORRECT_PASSWORD:
                 Tools.ping(password);
-                JOptionPane.showMessageDialog(this,"Das von ihnen Angegebene Passwort ist nicht Korrekt");
+                JOptionPane.showMessageDialog(this, "Das von ihnen Angegebene Passwort ist nicht Korrekt");
                 return;
 
         }
@@ -90,4 +90,5 @@ public class LogInView extends Window implements View {
     private void createUIComponents() {
 
     }
+
 }

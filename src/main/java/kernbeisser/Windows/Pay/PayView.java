@@ -10,9 +10,10 @@ import kernbeisser.Windows.Window;
 
 import javax.print.PrintService;
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
-public class PayView extends Window implements View{
+public class PayView extends Window implements View {
     private JPanel main;
     private JButton commit;
     private JRadioButton printBon;
@@ -29,7 +30,7 @@ public class PayView extends Window implements View{
         add(main);
         pack();
         setLocationRelativeTo(current);
-        controller=new PayController(this,saleSession,shoppingCart,transferCompleted);
+        controller = new PayController(this, saleSession, shoppingCart, transferCompleted);
         commit.addActionListener(e -> {
             controller.commit();
         });
@@ -38,22 +39,22 @@ public class PayView extends Window implements View{
         });
     }
 
-    PrintService getSelectedPrintService(){
+    PrintService getSelectedPrintService() {
         return printers.getItemAt(printers.getSelectedIndex());
     }
 
-    void setPrintServices(PrintService[] printServices){
+    void setPrintServices(PrintService[] printServices) {
         printers.removeAllItems();
         for (PrintService service : printServices) {
             printers.addItem(service);
         }
     }
 
-    void setSelectedPrintService(PrintService printService){
+    void setSelectedPrintService(PrintService printService) {
         printers.setSelectedItem(printService);
     }
 
-    void fillShoppingCart(Collection<ShoppingItem> items){
+    void fillShoppingCart(Collection<ShoppingItem> items) {
         shoppingCart.setObjects(items);
     }
 
@@ -69,4 +70,5 @@ public class PayView extends Window implements View{
     public Controller getController() {
         return controller;
     }
+
 }

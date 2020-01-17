@@ -11,6 +11,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class ItemFilterView extends Window implements View {
@@ -20,22 +21,22 @@ public class ItemFilterView extends Window implements View {
 
     private ItemFilterController controller;
 
-    public ItemFilterView(Window current){
+    public ItemFilterView(Window current) {
         super(current);
         controller = new ItemFilterController(this);
         commit.addActionListener(e -> back());
     }
 
-    public PriceList getSelectedPriceList(){
+    public PriceList getSelectedPriceList() {
         return priceLists.getSelected();
     }
 
-    public Supplier getSelectedSupplier(){
+    public Supplier getSelectedSupplier() {
         return suppliers.getSelectedObject();
     }
 
     private void createUIComponents() {
-        priceLists= new PriceListTree();
+        priceLists = new PriceListTree();
         suppliers = new ObjectTable<>(Column.create("Name", Supplier::getName), Column.create("Abk\u00fcrzung", Supplier::getShortName));
     }
 
@@ -47,4 +48,5 @@ public class ItemFilterView extends Window implements View {
     public Controller getController() {
         return controller;
     }
+
 }

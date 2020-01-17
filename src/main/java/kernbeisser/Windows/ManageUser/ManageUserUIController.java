@@ -83,7 +83,7 @@ public class ManageUserUIController implements Controller {
     void edit(){
         User selected = view.getSelectedUser();
         if(selected==null){
-            view.applyFeedback(UserPersistFeedback.No_USER_SELECTED);
+            view.applyFeedback(UserPersistFeedback.NO_USER_SELECTED);
             return;
         }
         UserUIView userUIView = new UserUIView(view,e -> {

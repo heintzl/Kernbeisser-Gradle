@@ -3,21 +3,16 @@ package kernbeisser;
 
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.Config;
 import kernbeisser.DBEntitys.Job;
 import kernbeisser.StartUp.DataImport.DataImportView;
-import kernbeisser.Useful.Images;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
 import java.util.function.Function;
 
 public class Main {
@@ -29,8 +24,10 @@ public class Main {
      */
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException, URISyntaxException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        Images.setPath(new File("src/main/resources/Images"));
         DBConnection.getEntityManager();
+        if(!ConfigManager.getHeader().getBoolean("Init"))
+            SwingUtilities.invokeLater(() -> new DataImportView(new LogInView(null)));
+        else
         openLogIn();
     }
     private static void openLogIn(){

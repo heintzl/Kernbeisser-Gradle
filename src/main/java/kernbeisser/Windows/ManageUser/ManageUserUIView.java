@@ -10,6 +10,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class ManageUserUIView extends Window implements View {
@@ -39,8 +40,8 @@ public class ManageUserUIView extends Window implements View {
 
     boolean applyFeedback(UserPersistFeedback feedback) {
         switch (feedback) {
-            case No_USER_SELECTED:
-                JOptionPane.showMessageDialog(this,"Zum bearbeiten eines Nutzers muss dieser ausgewählt sein,\nbitte wählen sie den zu bearbeitenden Nutzer aus");
+            case NO_USER_SELECTED:
+                JOptionPane.showMessageDialog(this, "Zum bearbeiten eines Nutzers muss dieser ausgewählt sein,\nbitte wählen sie den zu bearbeitenden Nutzer aus");
                 return false;
             case USERNAME_ALREADY_EXISTS:
                 JOptionPane.showMessageDialog(this, "Der Nutzer kann diesen Nutzernamen nicht erhalten,\nda dieser bereits vergeben ist");

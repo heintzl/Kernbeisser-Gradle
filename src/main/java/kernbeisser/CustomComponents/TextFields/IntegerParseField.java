@@ -13,7 +13,7 @@ public class IntegerParseField extends FilterField{
             }
         });
     }
-    IntegerParseField(){
+    public IntegerParseField(){
         super(e -> {
             try{
                 Integer.parseInt(e);
@@ -22,5 +22,8 @@ public class IntegerParseField extends FilterField{
                 return false;
             }
         });
+    }
+    public int getValue(){
+        return Integer.parseInt(getText());
     }
 }

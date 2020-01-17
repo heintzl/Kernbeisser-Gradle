@@ -45,73 +45,83 @@ public class DataImportView extends Window implements View {
         search.addActionListener(e -> controller.openFileExplorer());
     }
 
-    String getFilePath(){
+    String getFilePath() {
         return dataPath.getText();
     }
 
-    void setValidDataSource(boolean is){
+    void setValidDataSource(boolean is) {
         dataPath.setForeground(is ? Color.GREEN : Color.RED);
     }
 
-    void setFilePath(String s){
+    void setFilePath(String s) {
         dataPath.setText(s);
     }
 
 
-    void itemSourceFound(boolean is){
+    void itemSourceFound(boolean is) {
         importItems.setSelected(is);
         importItems.setEnabled(is);
     }
-    void userSourceFound(boolean is){
+
+    void userSourceFound(boolean is) {
         importUser.setSelected(is);
         importUser.setEnabled(is);
     }
 
-    void setUserProgress(int i){
+    void setUserProgress(int i) {
         userProgress.setValue(i);
         currentActionUser.setVisible(true);
-        currentActionUser.setText("Benutzer: "+(i < 2 ? "Jobs" : "Benutzer")+" "+(i % 2 == 0 ? "zur Datenbank gespeichert" : "werden konvertiert")+"...");
+        currentActionUser.setText("Benutzer: " + (i < 2 ? "Jobs" : "Benutzer") + " " + (i % 2 == 0 ? "zur Datenbank gespeichert" : "werden konvertiert") + "...");
         itemProgress.setValue(i);
         String target = "";
         String status = i % 2 == 1 ? "auf der Datenbank gespeichert" : "werden konvertiert";
-        switch (i){
-            case 0: currentActionUser.setVisible(true);
-            case 1: target="Jobs";
+        switch (i) {
+            case 0:
+                currentActionUser.setVisible(true);
+            case 1:
+                target = "Jobs";
                 break;
             case 2:
-            case 3: target = "Nutzer";
+            case 3:
+                target = "Nutzer";
                 break;
             case 4:
                 currentActionUser.setText("Nutzer Fertig");
                 return;
         }
-        currentActionUser.setText("Nutzer: "+target+" "+status+"...");
+        currentActionUser.setText("Nutzer: " + target + " " + status + "...");
     }
-    void setItemProgress(int i){
+
+    void setItemProgress(int i) {
         itemProgress.setValue(i);
         String target = "";
         String status = i % 2 == 1 ? "auf der Datenbank gespeichert" : "werden konvertiert";
-        switch (i){
-            case 0: currentActionItems.setVisible(true);
-            case 1: target="Lieferanten";
+        switch (i) {
+            case 0:
+                currentActionItems.setVisible(true);
+            case 1:
+                target = "Lieferanten";
                 break;
             case 2:
-            case 3: target = "Preislisten";
+            case 3:
+                target = "Preislisten";
                 break;
             case 4:
-            case 5: target = "Artikel";
+            case 5:
+                target = "Artikel";
                 break;
             case 6:
                 currentActionItems.setText("Artikel Fertig");
                 return;
         }
-        currentActionItems.setText("Artikel: "+target+" "+status+"...");
+        currentActionItems.setText("Artikel: " + target + " " + status + "...");
     }
 
-    boolean importUser(){
+    boolean importUser() {
         return importUser.isSelected();
     }
-    boolean importItems(){
+
+    boolean importItems() {
         return importItems.isSelected();
     }
 
@@ -121,9 +131,11 @@ public class DataImportView extends Window implements View {
     }
 
     void itemSourcesNotExists() {
-        JOptionPane.showMessageDialog(this,"Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!","Artikeldatensatz unvollst\u00e4ndig",JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Artikeldatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
     }
+
     void userSourcesNotExists() {
-        JOptionPane.showMessageDialog(this,"Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!","Nutzerdatensatz unvollst\u00e4ndig",JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Nutzerdatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
     }
+
 }

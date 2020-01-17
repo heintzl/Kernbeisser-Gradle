@@ -17,7 +17,6 @@
         <class>kernbeisser.DBEntitys.SaleSession</class>
         <class>kernbeisser.DBEntitys.Purchase</class>
         <class>kernbeisser.DBEntitys.Job</class>
-        <class>kernbeisser.DBEntitys.Config</class>
         <class>kernbeisser.DBEntitys.Transaction</class>
         <class>kernbeisser.DBEntitys.SurchargeTable</class>
         <properties>

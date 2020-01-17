@@ -20,6 +20,7 @@ import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Checker;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Translator;
+import kernbeisser.Windows.ManageItems.EditItem.EditItemView;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -44,6 +45,7 @@ public class ManageItemsView extends Window implements View {
      */
     public ManageItemsView(Window current) {
         super(current);
+        new EditItemView(this);
         initComponents();
         itemPriceList.setSelectedItem(PriceList.getSingleItemPriceList());
         Tools.forEach(Unit.values(), e -> itemUnit.addItem(t.translate(e)));
@@ -571,6 +573,7 @@ public class ManageItemsView extends Window implements View {
     }// </editor-fold>//GEN-END:initComponents
 
     Item getSelectedKbItem(){
+        new EditItemView(this);
         return kbItems.getSelectedObject();
     }
 

@@ -11,7 +11,7 @@ public class LongParseField extends FilterField{
             }
         });
     }
-    LongParseField(){
+    public LongParseField(){
         super(e -> {
             try{
                 Long.parseLong(e);
@@ -20,5 +20,8 @@ public class LongParseField extends FilterField{
                 return false;
             }
         });
+    }
+    public long getValue(){
+        return Long.parseLong(getText());
     }
 }

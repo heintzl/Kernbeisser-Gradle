@@ -1,6 +1,7 @@
 package kernbeisser.DBEntitys;
 
 
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.Unit;
@@ -46,10 +47,6 @@ public class Item {
 
     @Column
     private boolean vatLow;
-
-    @ManyToOne
-    @JoinColumn
-    private SurchargeTable surcharge;
 
     @Column
     private int singleDeposit;
@@ -137,7 +134,7 @@ public class Item {
     private boolean coveredIntake;
 
     public int calculatePrice(){
-        return (int) (netPrice*((surcharge.getSurcharge()/100f)+1)*(((vatLow ? VAT.LOW.getValue() : VAT.HIGH.getValue())/100f)+1));
+        return (int) (netPrice*((getSurcharge().getSurcharge()/100f)+1)*(((vatLow ? VAT.LOW.getValue() : VAT.HIGH.getValue())/100f)+1));
     }
 
     public int getIid() {
@@ -209,11 +206,17 @@ public class Item {
     }
 
     public SurchargeTable getSurcharge() {
-        return surcharge;
-    }
-
-    public void setSurcharge(SurchargeTable surcharge) {
-        this.surcharge = surcharge;
+        //TODO really expensive!
+        EntityManager em = DBConnection.getEntityManager();
+        try{
+            return em.createQuery("select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number", SurchargeTable.class)
+                    .setParameter("supplier",supplier.getId())
+                    .setParameter("number",getSuppliersItemNumber())
+                    .setMaxResults(1)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
     }
 
     public int getSingleDeposit() {

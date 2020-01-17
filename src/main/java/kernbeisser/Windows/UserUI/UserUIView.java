@@ -8,6 +8,8 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.util.function.Function;
 
 public class UserUIView extends Window implements View {
@@ -67,7 +69,7 @@ public class UserUIView extends Window implements View {
                 JOptionPane.showMessageDialog(null, "Password ge\u00e4ndert!");
             }
         });
-        chgJobs.addActionListener(e -> new JobSelectorView(this,getUser().getJobs()));
+        chgJobs.addActionListener(e -> new JobSelectorView(this, getUser().getJobs()));
         submit.addActionListener(e -> {
             if (controller.checkPassword()) {
                 if (feedbackConsumer.apply(submitAction.apply(getUser())))
@@ -140,4 +142,5 @@ public class UserUIView extends Window implements View {
     public Controller getController() {
         return controller;
     }
+
 }

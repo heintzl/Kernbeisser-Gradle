@@ -8,6 +8,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class JobSelectorView extends Window implements View {
@@ -20,11 +21,11 @@ public class JobSelectorView extends Window implements View {
 
     private JobSelectorController controller;
 
-    public JobSelectorView(Window current,Collection<Job> currentJobs) {
+    public JobSelectorView(Window current, Collection<Job> currentJobs) {
         super(current);
-        controller = new JobSelectorController(this,currentJobs);
+        controller = new JobSelectorController(this, currentJobs);
         add(mainPanel);
-        setSize(500,500);
+        setSize(500, 500);
         setLocationRelativeTo(current);
         cancel.addActionListener(e -> back());
         move.addActionListener(e -> {
@@ -64,14 +65,15 @@ public class JobSelectorView extends Window implements View {
         );
     }
 
-    Collection<Job> getSelectedJobs(){
+    Collection<Job> getSelectedJobs() {
         return selectedJobs.getItems();
     }
 
-    void fillAvailableJobs(Collection<Job> jobs){
+    void fillAvailableJobs(Collection<Job> jobs) {
         availableJobs.setObjects(jobs);
     }
-    void fillSelectedJobs(Collection<Job> jobs){
+
+    void fillSelectedJobs(Collection<Job> jobs) {
         selectedJobs.setObjects(jobs);
     }
 

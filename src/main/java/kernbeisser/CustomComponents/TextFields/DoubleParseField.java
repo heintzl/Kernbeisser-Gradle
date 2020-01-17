@@ -16,7 +16,7 @@ public class DoubleParseField extends FilterField {
         });
     }
 
-    DoubleParseField(){
+    public DoubleParseField(){
         super(e -> {
             try{
                 Double.parseDouble(e);
@@ -25,5 +25,9 @@ public class DoubleParseField extends FilterField {
                 return false;
             }
         });
+    }
+
+    public double getValue(){
+        return Double.parseDouble(getText());
     }
 }
