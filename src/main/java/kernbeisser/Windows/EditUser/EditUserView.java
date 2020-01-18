@@ -1,16 +1,14 @@
-package kernbeisser.Windows.UserUI;
+package kernbeisser.Windows.EditUser;
 
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.UserPersistFeedback;
+import kernbeisser.Enums.Permission;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JobSelector.JobSelectorView;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.util.function.Function;
 
-public class UserUIView extends Window implements View {
+class EditUserView extends Window implements View {
     private JLabel lblVorname;
     private JLabel lblNachname;
     private JTextField firstName;
@@ -33,7 +31,7 @@ public class UserUIView extends Window implements View {
     private JTextField unserName;
     private JButton chgPassword;
     private JLabel lblRolle;
-    private JComboBox roles;
+    private JComboBox<Permission> roles;
     private JLabel lblHasKey;
     private JLabel lblIsEmployee;
     private JCheckBox hasKey;
@@ -49,12 +47,13 @@ public class UserUIView extends Window implements View {
     private JTextField extraJobs;
     private JButton cancel;
     private JButton submit;
+    private JPanel buttonPanel;
 
-    private UserUIController controller;
+    private EditUserController controller;
 
-    public UserUIView(Window current, Function<User, UserPersistFeedback> submitAction, Function<UserPersistFeedback, Boolean> feedbackConsumer) {
+    public EditUserView(EditUserController controller, Window current) {
         super(current);
-        this.controller = new UserUIController(this, feedbackConsumer);
+        this.controller = controller;
         add(userDataPanel);
         setSize(500, 580);
         setLocationRelativeTo(current);
@@ -67,27 +66,13 @@ public class UserUIView extends Window implements View {
                 JOptionPane.showMessageDialog(null, "Password ge\u00e4ndert!");
             }
         });
-        chgJobs.addActionListener(e -> new JobSelectorView(this, getUser().getJobs()));
+        chgJobs.addActionListener(e -> controller.openJobSelector());
         submit.addActionListener(e -> {
-            if (controller.checkPassword()) {
-                if (feedbackConsumer.apply(submitAction.apply(getUser())))
-                    back();
-            } else {
-                controller.changePassword(JOptionPane.showInputDialog(this, "Bitte geben sie ein Password ein"));
-                if (feedbackConsumer.apply(submitAction.apply(getUser())))
-                    back();
-            }
+            controller.doAction();
         });
         cancel.addActionListener(e -> back());
     }
 
-    public void loadUser(User user) {
-        controller.loadUser(user);
-    }
-
-    public User getUser() {
-        return controller.getUser();
-    }
 
     void setData(User data) {
         firstName.setText(data.getFirstName());
@@ -102,7 +87,7 @@ public class UserUIView extends Window implements View {
         extraJobs.setText(data.getExtraJobs());
     }
 
-    void getData(User data) {
+    User getData(User data) {
         data.setFirstName(firstName.getText());
         data.setSurname(lastName.getText());
         data.setStreet(street.getText());
@@ -113,27 +98,7 @@ public class UserUIView extends Window implements View {
         data.setKernbeisserKey(hasKey.isSelected());
         data.setEmployee(isEmployee.isSelected());
         data.setExtraJobs(extraJobs.getText());
-    }
-
-    public boolean isModified(User data) {
-        if (firstName.getText() != null ? !firstName.getText().equals(data.getFirstName()) : data.getFirstName() != null)
-            return true;
-        if (lastName.getText() != null ? !lastName.getText().equals(data.getSurname()) : data.getSurname() != null)
-            return true;
-        if (street.getText() != null ? !street.getText().equals(data.getStreet()) : data.getStreet() != null)
-            return true;
-        if (town.getText() != null ? !town.getText().equals(data.getTown()) : data.getTown() != null) return true;
-        if (phone1.getText() != null ? !phone1.getText().equals(data.getPhoneNumber1()) : data.getPhoneNumber1() != null)
-            return true;
-        if (phone2.getText() != null ? !phone2.getText().equals(data.getPhoneNumber2()) : data.getPhoneNumber2() != null)
-            return true;
-        if (unserName.getText() != null ? !unserName.getText().equals(data.getUsername()) : data.getUsername() != null)
-            return true;
-        if (hasKey.isSelected() != data.isKernbeisserKey()) return true;
-        if (isEmployee.isSelected() != data.isEmployee()) return true;
-        if (extraJobs.getText() != null ? !extraJobs.getText().equals(data.getExtraJobs()) : data.getExtraJobs() != null)
-            return true;
-        return false;
+        return data;
     }
 
     @Override

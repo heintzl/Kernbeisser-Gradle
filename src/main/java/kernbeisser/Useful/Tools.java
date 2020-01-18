@@ -203,17 +203,23 @@ public class Tools {
     }
     public static <T> T mergeWithoutId(T in){
         try {
-            T out = (T) in.getClass().getDeclaredConstructor().newInstance();
-            for (Field field : out.getClass().getDeclaredFields()) {
-                if(field.getAnnotation(Id.class)==null) {
-                    field.setAccessible(true);
-                    field.set(out, field.get(in));
-                }
-            }
-            return out;
+            return mergeWithoutId(in,(T) in.getClass().getDeclaredConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
             return null;
         }
+    }
+    public static <T> T mergeWithoutId(T in,T toOverride){
+        for (Field field : toOverride.getClass().getDeclaredFields()) {
+            if(field.getAnnotation(Id.class)==null) {
+                field.setAccessible(true);
+                try {
+                    field.set(toOverride, field.get(in));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return toOverride;
     }
 }
