@@ -1,16 +1,11 @@
 package kernbeisser.Windows.CatalogInput;
 
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.ItemKK;
+import kernbeisser.DBEntities.ItemKK;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Exeptions.FileReadException;
 import kernbeisser.Exeptions.ObjectParseException;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -37,11 +32,7 @@ class CatalogInputController implements Controller {
     }
 
     boolean importData(String s) throws ObjectParseException {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
         ArrayList<ItemKK> catalog = new ArrayList<>();
-        et.begin();
-        em.createNativeQuery("truncate catalog").executeUpdate();
         for(String line : s.split("\n")) {
             ItemKK item = extractItemKK(line.replace("'", ""));
             if (item != null)
@@ -55,12 +46,8 @@ class CatalogInputController implements Controller {
             if (item.getCrateDeposit() != 0)
                 item.setCrateDeposit(deposit.get(item.getCrateDeposit()));
         }
-        for (ItemKK kk : catalog) {
-            em.persist(kk);
-        }
-        em.flush();
-        et.commit();
-        em.close();
+        model.clearCatalog();
+        model.saveAll(catalog);
         return true;
     }
     ItemKK extractItemKK(String line) throws ObjectParseException {

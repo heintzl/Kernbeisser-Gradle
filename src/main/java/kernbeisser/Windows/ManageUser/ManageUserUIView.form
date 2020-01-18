@@ -2,15 +2,11 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kernbeisser.Windows.ManageUser.ManageUserUIView">
   <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="5" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="500" height="400"/>
+      <xy x="20" y="20" width="502" height="502"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <component id="e758" class="kernbeisser.CustomComponents.ObjectTable.ObjectTable" binding="userTable" custom-create="true">
-        <constraints border-constraint="Center"/>
-        <properties/>
-      </component>
       <component id="2190c" class="javax.swing.JLabel">
         <constraints border-constraint="North"/>
         <properties>
@@ -65,6 +61,17 @@
           </grid>
         </children>
       </grid>
+      <scrollpane id="949f1">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="e758" class="kernbeisser.CustomComponents.ObjectTable.ObjectTable" binding="userTable" custom-create="true">
+            <constraints/>
+            <properties/>
+          </component>
+        </children>
+      </scrollpane>
     </children>
   </grid>
 </form>

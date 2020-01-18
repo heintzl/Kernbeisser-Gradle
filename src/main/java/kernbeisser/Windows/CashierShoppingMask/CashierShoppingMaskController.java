@@ -1,13 +1,9 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import kernbeisser.DBEntitys.SaleSession;
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.ShoppingMask.ShoppingMask;
-import kernbeisser.Windows.View;
-
-import java.util.List;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 
 class CashierShoppingMaskController implements Controller {
     private CashierShoppingMaskModel model;
@@ -23,7 +19,7 @@ class CashierShoppingMaskController implements Controller {
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(customer);
         saleSession.setSeller(model.getSeller());
-        ShoppingMask shoppingMask = new ShoppingMask(saleSession);
+        ShoppingMaskView shoppingMask = new ShoppingMaskView(view,saleSession);
         view.openShoppingMask(shoppingMask);
     }
 

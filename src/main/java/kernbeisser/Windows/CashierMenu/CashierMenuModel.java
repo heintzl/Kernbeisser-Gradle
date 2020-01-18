@@ -1,7 +1,7 @@
 package kernbeisser.Windows.CashierMenu;
 
 
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Model;
 
 class CashierMenuModel implements Model {

@@ -6,14 +6,17 @@ import kernbeisser.Useful.Images;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class Window extends JFrame {
+public class Window extends JFrame {
     private final Window current;
+    private static Window lastOpened;
     private static final Image STANDARD_IMAGE;
     static {
         STANDARD_IMAGE = Images.getImage("Icon.png");
     }
     public Window(Window currentWindow){
         setIconImage(STANDARD_IMAGE);
+        pack();
+        setLocationRelativeTo(null);
         this.current=currentWindow;
         addWindowListener((WindowCloseEvent)e -> {
             back();
@@ -21,7 +24,14 @@ public abstract class Window extends JFrame {
         if(currentWindow!=null)
         currentWindow.close();
         this.open();
+        lastOpened=this;
     }
+
+    public static Window getLastOpened() {
+        return lastOpened;
+    }
+
+    
 
     public final void back(){
         if(current==null){

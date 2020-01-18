@@ -6,19 +6,19 @@
              version="2.1">
     <persistence-unit name="Kernbeisser">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>kernbeisser.DBEntitys.Supplier</class>
-        <class>kernbeisser.DBEntitys.PriceList</class>
-        <class>kernbeisser.DBEntitys.Item</class>
-        <class>kernbeisser.DBEntitys.User</class>
-        <class>kernbeisser.DBEntitys.Shelf</class>
-        <class>kernbeisser.DBEntitys.ItemKK</class>
-        <class>kernbeisser.DBEntitys.UserGroup</class>
-        <class>kernbeisser.DBEntitys.ShoppingItem</class>
-        <class>kernbeisser.DBEntitys.SaleSession</class>
-        <class>kernbeisser.DBEntitys.Purchase</class>
-        <class>kernbeisser.DBEntitys.Job</class>
-        <class>kernbeisser.DBEntitys.Config</class>
-        <class>kernbeisser.DBEntitys.Transaction</class>
+        <class>kernbeisser.DBEntities.Supplier</class>
+        <class>kernbeisser.DBEntities.PriceList</class>
+        <class>kernbeisser.DBEntities.Item</class>
+        <class>kernbeisser.DBEntities.User</class>
+        <class>kernbeisser.DBEntities.Shelf</class>
+        <class>kernbeisser.DBEntities.ItemKK</class>
+        <class>kernbeisser.DBEntities.UserGroup</class>
+        <class>kernbeisser.DBEntities.ShoppingItem</class>
+        <class>kernbeisser.DBEntities.SaleSession</class>
+        <class>kernbeisser.DBEntities.Purchase</class>
+        <class>kernbeisser.DBEntities.Job</class>
+        <class>kernbeisser.DBEntities.Transaction</class>
+        <class>kernbeisser.DBEntities.SurchargeTable</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>

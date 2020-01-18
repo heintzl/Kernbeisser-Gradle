@@ -1,19 +1,21 @@
 package kernbeisser.Windows.CashierMenu;
 
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskView;
 import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.ManageItems.ManageItemsView;
+import kernbeisser.Windows.EditItems.EditItems;
+import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
-import kernbeisser.Windows.ManageUser.ManageUserView;
+import kernbeisser.Windows.ManageUser.ManageUserUIView;
+import kernbeisser.Windows.Window;
 
-class CashierMenuController implements Controller {
+public class CashierMenuController implements Controller {
     private CashierMenuModel model;
     private CashierMenuView view;
 
-    CashierMenuController(User user,CashierMenuView view){
-        this.view=view;
+    public CashierMenuController(Window current,User user){
+        this.view= new CashierMenuView(this,current);
         model=new CashierMenuModel(user);
     }
 
@@ -33,10 +35,13 @@ class CashierMenuController implements Controller {
     }
 
     public void openManageItems(){
-        new ManageItemsView(view);
+        new EditItems(this.getView());
+    }
+    public void openManageSurchargeTables(){
+        new EditSurchargeTables(getView());
     }
     public void openManageUsers(){
-        new ManageUserView(view,model.getUser().getPermission());
+        new ManageUserUIView(view,model.getUser().getPermission());
     }
     public void openManagePriceLists(){
         new ManagePriceListsView(view);
