@@ -1,6 +1,6 @@
 package kernbeisser.Windows.UserUI;
 
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.UserPersistFeedback;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.JobSelector.JobSelectorView;
@@ -8,8 +8,6 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
 import java.util.function.Function;
 
 public class UserUIView extends Window implements View {

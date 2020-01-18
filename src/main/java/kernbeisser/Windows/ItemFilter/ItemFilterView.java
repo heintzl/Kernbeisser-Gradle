@@ -4,14 +4,13 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.PriceListTree;
-import kernbeisser.DBEntitys.PriceList;
-import kernbeisser.DBEntitys.Supplier;
+import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 
 public class ItemFilterView extends Window implements View {

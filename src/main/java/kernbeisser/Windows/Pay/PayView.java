@@ -2,15 +2,14 @@ package kernbeisser.Windows.Pay;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntitys.SaleSession;
-import kernbeisser.DBEntitys.ShoppingItem;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.print.PrintService;
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 
 public class PayView extends Window implements View {

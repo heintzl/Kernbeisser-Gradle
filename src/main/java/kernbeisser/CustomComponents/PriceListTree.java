@@ -2,16 +2,9 @@ package kernbeisser.CustomComponents;
 
 import kernbeisser.CustomComponents.ObjectTree.ChildFactory;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.PriceList;
+import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
-import kernbeisser.Windows.Window;
 
-import javax.persistence.EntityManager;
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeSelectionModel;
 import java.util.Collection;
 
 /**

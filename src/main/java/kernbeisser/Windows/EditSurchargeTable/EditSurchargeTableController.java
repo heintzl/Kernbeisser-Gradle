@@ -1,8 +1,7 @@
 package kernbeisser.Windows.EditSurchargeTable;
 
-import kernbeisser.DBEntitys.SurchargeTable;
+import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Windows.EditItem.EditItemController;
 import kernbeisser.Windows.Window;
 
 public class EditSurchargeTableController {

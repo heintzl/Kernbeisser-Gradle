@@ -1,8 +1,8 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import kernbeisser.DBEntitys.Item;
-import kernbeisser.DBEntitys.SaleSession;
-import kernbeisser.DBEntitys.ShoppingItem;
+import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.RawPrice;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;

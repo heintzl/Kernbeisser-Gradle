@@ -1,8 +1,8 @@
 package kernbeisser.Windows.EditSurchargeTable;
 
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
-import kernbeisser.DBEntitys.Supplier;
-import kernbeisser.DBEntitys.SurchargeTable;
+import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;

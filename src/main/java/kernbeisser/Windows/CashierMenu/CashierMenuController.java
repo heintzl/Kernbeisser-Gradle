@@ -1,6 +1,6 @@
 package kernbeisser.Windows.CashierMenu;
 
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskView;
 import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;

@@ -2,7 +2,7 @@ package kernbeisser.Windows.UserMenu;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntitys.Purchase;
+import kernbeisser.DBEntities.Purchase;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;

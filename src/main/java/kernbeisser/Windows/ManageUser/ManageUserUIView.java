@@ -2,7 +2,7 @@ package kernbeisser.Windows.ManageUser;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Permission;
 import kernbeisser.Enums.UserPersistFeedback;
 import kernbeisser.Windows.Controller;
@@ -10,7 +10,6 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 
 public class ManageUserUIView extends Window implements View {

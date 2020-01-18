@@ -1,6 +1,6 @@
 package kernbeisser.Windows.JobSelector;
 
-import kernbeisser.DBEntitys.Job;
+import kernbeisser.DBEntities.Job;
 import kernbeisser.Windows.Model;
 
 import java.util.Collection;

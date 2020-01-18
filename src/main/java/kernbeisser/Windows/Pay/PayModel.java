@@ -1,10 +1,10 @@
 package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.Purchase;
-import kernbeisser.DBEntitys.SaleSession;
-import kernbeisser.DBEntitys.ShoppingItem;
-import kernbeisser.DBEntitys.UserGroup;
+import kernbeisser.DBEntities.Purchase;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;

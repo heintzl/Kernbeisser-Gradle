@@ -1,4 +1,4 @@
-package kernbeisser.DBEntitys;
+package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Useful.Tools;

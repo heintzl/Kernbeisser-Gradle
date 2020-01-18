@@ -9,7 +9,7 @@
           <factory-entry name="Kernbeisser" />
         </datasource-mapping>
         <naming-strategy-map />
-        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/../../src/main/java/kernbeisser/DBEntitys/Item.java" />
+        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/../../src/main/java/kernbeisser/DBEntities/Item.java" />
       </configuration>
     </facet>
   </component>

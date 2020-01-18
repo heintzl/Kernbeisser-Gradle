@@ -1,6 +1,6 @@
 package kernbeisser.Windows.EditItem;
 
-import kernbeisser.DBEntitys.Item;
+import kernbeisser.DBEntities.Item;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;

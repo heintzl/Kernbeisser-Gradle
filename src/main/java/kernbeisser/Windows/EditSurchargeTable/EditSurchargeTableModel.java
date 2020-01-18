@@ -1,8 +1,8 @@
 package kernbeisser.Windows.EditSurchargeTable;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.Supplier;
-import kernbeisser.DBEntitys.SurchargeTable;
+import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;

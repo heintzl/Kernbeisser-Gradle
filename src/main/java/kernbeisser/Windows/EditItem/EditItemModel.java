@@ -1,9 +1,9 @@
 package kernbeisser.Windows.EditItem;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.Item;
-import kernbeisser.DBEntitys.PriceList;
-import kernbeisser.DBEntitys.Supplier;
+import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Unit;

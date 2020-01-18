@@ -8,8 +8,8 @@ package kernbeisser.Windows.UserGroupSelector;
 import kernbeisser.CustomComponents.DBTable.DBTable;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.User;
-import kernbeisser.DBEntitys.UserGroup;
+import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;

@@ -1,7 +1,7 @@
 package kernbeisser.Windows.UserUI;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.UserPersistFeedback;
 import kernbeisser.Windows.Controller;
 

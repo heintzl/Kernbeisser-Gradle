@@ -1,6 +1,6 @@
 package kernbeisser.Windows.CatalogInput;
 
-import kernbeisser.DBEntitys.ItemKK;
+import kernbeisser.DBEntities.ItemKK;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Exeptions.FileReadException;
 import kernbeisser.Exeptions.ObjectParseException;

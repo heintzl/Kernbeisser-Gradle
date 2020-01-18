@@ -1,8 +1,8 @@
 package kernbeisser.Windows.ManageUser;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.User;
-import kernbeisser.DBEntitys.UserGroup;
+import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.UserPersistFeedback;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.UserUI.UserUIView;

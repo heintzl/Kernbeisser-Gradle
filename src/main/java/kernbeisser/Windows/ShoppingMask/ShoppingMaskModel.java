@@ -1,9 +1,9 @@
 package kernbeisser.Windows.ShoppingMask;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.Item;
-import kernbeisser.DBEntitys.SaleSession;
-import kernbeisser.DBEntitys.ShoppingItem;
+import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;

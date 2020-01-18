@@ -1,6 +1,6 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Model;
 
 import java.util.Collection;

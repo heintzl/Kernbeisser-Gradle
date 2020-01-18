@@ -1,4 +1,4 @@
-package kernbeisser.DBEntitys;
+package kernbeisser.DBEntities;
 
 import kernbeisser.Enums.Unit;
 import kernbeisser.Useful.Tools;

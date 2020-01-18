@@ -2,7 +2,7 @@ package kernbeisser.Windows.LogIn;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;

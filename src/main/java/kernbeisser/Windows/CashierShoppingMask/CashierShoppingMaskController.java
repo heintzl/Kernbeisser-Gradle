@@ -1,7 +1,7 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import kernbeisser.DBEntitys.SaleSession;
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 

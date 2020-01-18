@@ -3,7 +3,7 @@ package kernbeisser;
 
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.Job;
+import kernbeisser.DBEntities.Job;
 import kernbeisser.StartUp.DataImport.DataImportView;
 import kernbeisser.Windows.LogIn.LogInView;
 

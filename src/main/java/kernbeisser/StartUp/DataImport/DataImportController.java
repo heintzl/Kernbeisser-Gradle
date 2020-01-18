@@ -1,7 +1,7 @@
 package kernbeisser.StartUp.DataImport;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import kernbeisser.DBEntitys.*;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.Unit;

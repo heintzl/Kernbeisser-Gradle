@@ -1,7 +1,7 @@
 package kernbeisser.Windows.EditSurchargeTables;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.DBEntitys.SurchargeTable;
+import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Windows.EditSurchargeTable.EditSurchargeTableController;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
 import kernbeisser.Windows.Window;

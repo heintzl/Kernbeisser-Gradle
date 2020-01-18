@@ -1,15 +1,10 @@
 package kernbeisser.Windows.UserMenu;
 
-import kernbeisser.DBEntitys.SaleSession;
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
-import kernbeisser.Windows.CashierMenu.CashierMenuView;
-import kernbeisser.Windows.InventoryMenu.InventoryMenuView;
-import kernbeisser.Windows.LogIn.LogInView;
-import kernbeisser.Windows.Options.Options;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
-import kernbeisser.Windows.Stats.Stats;
 import kernbeisser.Windows.Window;
 
 import java.awt.*;

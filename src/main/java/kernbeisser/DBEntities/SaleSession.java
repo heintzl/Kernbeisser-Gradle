@@ -1,6 +1,5 @@
-package kernbeisser.DBEntitys;
+package kernbeisser.DBEntities;
 
-import kernbeisser.DBEntitys.User;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;

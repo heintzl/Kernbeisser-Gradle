@@ -1,8 +1,8 @@
 package kernbeisser.StartUp.DataImport;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.User;
-import kernbeisser.DBEntitys.UserGroup;
+import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;

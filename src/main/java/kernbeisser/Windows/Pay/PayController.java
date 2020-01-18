@@ -1,7 +1,7 @@
 package kernbeisser.Windows.Pay;
 
-import kernbeisser.DBEntitys.SaleSession;
-import kernbeisser.DBEntitys.ShoppingItem;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;

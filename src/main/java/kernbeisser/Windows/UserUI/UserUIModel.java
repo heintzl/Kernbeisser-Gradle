@@ -1,6 +1,6 @@
 package kernbeisser.Windows.UserUI;
 
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.UserPersistFeedback;
 import kernbeisser.Windows.Model;
 

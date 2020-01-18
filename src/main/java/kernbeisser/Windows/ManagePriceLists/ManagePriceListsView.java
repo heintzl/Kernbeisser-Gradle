@@ -7,7 +7,7 @@ package kernbeisser.Windows.ManagePriceLists;
 
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.PriceList;
+import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.View;

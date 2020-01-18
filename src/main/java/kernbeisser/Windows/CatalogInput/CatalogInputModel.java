@@ -1,7 +1,7 @@
 package kernbeisser.Windows.CatalogInput;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.ItemKK;
+import kernbeisser.DBEntities.ItemKK;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;

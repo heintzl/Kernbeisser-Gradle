@@ -1,7 +1,7 @@
 package kernbeisser.Windows.UserMenu;
 
-import kernbeisser.DBEntitys.Purchase;
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.Purchase;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Model;
 
 import java.util.Collection;

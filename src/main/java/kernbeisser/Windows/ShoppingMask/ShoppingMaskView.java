@@ -7,10 +7,10 @@ package kernbeisser.Windows.ShoppingMask;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntitys.Item;
-import kernbeisser.DBEntitys.SaleSession;
-import kernbeisser.DBEntitys.ShoppingItem;
-import kernbeisser.DBEntitys.User;
+import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Checker;
 import kernbeisser.Useful.Tools;

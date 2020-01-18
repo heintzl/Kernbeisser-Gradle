@@ -1,7 +1,7 @@
 package kernbeisser.Useful;
 
-import kernbeisser.DBEntitys.PriceList;
-import kernbeisser.DBEntitys.Supplier;
+import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Exeptions.IncorrectInput;
 
 import javax.persistence.NoResultException;

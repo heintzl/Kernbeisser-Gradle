@@ -1,19 +1,10 @@
 package kernbeisser.CustomComponents.ObjectTree;
 
-import kernbeisser.DBEntitys.PriceList;
-import kernbeisser.DBEntitys.User;
-
 import javax.swing.*;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public class ObjectTree <T> extends JTree {
     private Collection<T> startValues;

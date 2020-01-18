@@ -1,7 +1,6 @@
-package kernbeisser.DBEntitys;
+package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntitys.SaleSession;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 
