@@ -12,6 +12,7 @@ import kernbeisser.Windows.Window;
 import javax.swing.*;
 import java.util.Collection;
 
+
 public class ManageUserUIView extends Window implements View {
     private JPanel mainPanel;
     private ObjectTable<User> userTable;
