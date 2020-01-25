@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kernbeisser.Windows.Trasaction.TrasactionView">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kernbeisser.Windows.Trasaction.TransactionView">
   <grid id="27dc6" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="5" right="5"/>
     <constraints>
@@ -22,9 +22,14 @@
             </constraints>
             <properties/>
             <border type="none"/>
-            <children/>
+            <children>
+              <component id="2d5fd" class="kernbeisser.CustomComponents.ObjectTable.ObjectTable" binding="transactions" custom-create="true" default-binding="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
           </scrollpane>
-          <grid id="72885" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="72885" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -42,10 +47,10 @@
               </component>
               <vspacer id="e4dfe">
                 <constraints>
-                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
               </vspacer>
-              <component id="973c2" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+              <component id="973c2" class="javax.swing.JTextField" binding="from">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -61,7 +66,7 @@
                   <text value="Von"/>
                 </properties>
               </component>
-              <component id="6c251" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+              <component id="6c251" class="javax.swing.JTextField" binding="to">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -69,7 +74,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="9addc" class="javax.swing.JCheckBox" binding="vonKernbeisserCheckBox" default-binding="true">
+              <component id="9addc" class="javax.swing.JCheckBox" binding="formKBValue">
                 <constraints>
                   <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -85,7 +90,7 @@
                   <text value="Betrag (Euro)"/>
                 </properties>
               </component>
-              <component id="2bdac" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="textField3" default-binding="true">
+              <component id="2bdac" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="value">
                 <constraints>
                   <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -93,11 +98,19 @@
                 </constraints>
                 <properties/>
               </component>
+              <component id="a06eb" class="javax.swing.JButton" binding="addTransaction">
+                <constraints>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Auftrag Hinzufügen"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>
       </grid>
-      <component id="b79ef" class="javax.swing.JButton" binding="überweisungenTätigenButton" default-binding="true">
+      <component id="b79ef" class="javax.swing.JButton" binding="transferTransactions">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
