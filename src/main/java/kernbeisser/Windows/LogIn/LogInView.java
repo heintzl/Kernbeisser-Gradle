@@ -67,6 +67,8 @@ public class LogInView extends Window implements View {
         switch (controller.logIn()) {
             case LogInController.SUCCESS:
                 controller.openUserMenu();
+                username.setText("");
+                password.setText("");
                 break;
             case LogInController.INCORRECT_USERNAME:
                 Tools.ping(username);

@@ -8,6 +8,7 @@ public class DoubleParseField extends FilterField {
     DoubleParseField(double min,double max){
         super(e -> {
             try{
+                if(e.equals(""))return true;
                 double v = Double.parseDouble(e);
                 return v >= min && v <= max;
             }catch (NumberFormatException ex){
@@ -19,6 +20,7 @@ public class DoubleParseField extends FilterField {
     public DoubleParseField(){
         super(e -> {
             try{
+                if(e.equals(""))return true;
                 Double.parseDouble(e);
                 return true;
             }catch (NumberFormatException ex){
@@ -28,6 +30,6 @@ public class DoubleParseField extends FilterField {
     }
 
     public double getValue(){
-        return Double.parseDouble(getText());
+        return getText().equals("") ? 0 : Double.parseDouble(getText());
     }
 }

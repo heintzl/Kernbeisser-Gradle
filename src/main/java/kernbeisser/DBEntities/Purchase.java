@@ -50,9 +50,9 @@ public class Purchase {
         return out;
     }
 
-    public int getSum(){
+    public long getSum(){
         EntityManager em = DBConnection.getEntityManager();
-        int i = (int) em.createQuery("select sum(i.netPrice) from ShoppingItem i").getSingleResult();
+        Long i = (Long) em.createQuery("select sum(i.rawPrice) from ShoppingItem i").getSingleResult();
         System.out.println(i);
         em.close();
         return i;

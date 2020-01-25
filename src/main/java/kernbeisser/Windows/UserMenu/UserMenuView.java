@@ -53,16 +53,11 @@ public class UserMenuView extends Window implements View {
     private void createUIComponents() {
         buyHistory = new ObjectTable<>(
                 Column.create("Datum", Purchase::getCreateDate),
-                Column.create("Betrag", Purchase::getSum),
+                Column.create("Betrag", e -> e.getSum()/100f+"€"),
                 Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession().getSeller().getSurname()),
-                Column.create("", (e) -> new JButton(new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent a) {
-                        controller.showPurchase();
-                    }
-                })
-        ));
-        buyHistory.setComplex(true);
+                Column.create("Anschauen", (e) -> "Anschauen",System.out::println)
+        );
+        //buyHistory.setComplex(true);
     }
 
     @Override

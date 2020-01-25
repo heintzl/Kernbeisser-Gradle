@@ -215,7 +215,7 @@ public class Item {
                     .setMaxResults(1)
                     .getSingleResult();
         }catch (NoResultException e){
-            return null;
+            return SurchargeTable.DEFAULT;
         }
     }
 

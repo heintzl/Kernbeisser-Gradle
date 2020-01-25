@@ -10,6 +10,17 @@ import java.util.List;
 @Entity
 public class SurchargeTable implements Serializable, Cloneable {
 
+    public static final SurchargeTable DEFAULT;
+
+    static {
+        SurchargeTable standard = new SurchargeTable();
+        standard.from = -1;
+        standard.to = -1;
+        standard.name = "DEFAULT";
+        standard.supplier = null;
+        standard.surcharge = 7;
+        DEFAULT = standard;
+    }
 
     public SurchargeTable(){}
 
@@ -82,21 +93,4 @@ public class SurchargeTable implements Serializable, Cloneable {
         return Tools.getAll(SurchargeTable.class,condition);
     }
 
-    public SurchargeTable(SurchargeTable surchargeTable){
-        this.setName(surchargeTable.getName());
-        this.setSurcharge(surchargeTable.getSurcharge());
-        this.setName(surchargeTable.getName());
-        this.setTo(surchargeTable.getTo());
-        this.setFrom(surchargeTable.getFrom());
-        this.setSupplier(surchargeTable.getSupplier());
-    }
-
-    @Override
-    public SurchargeTable clone(){
-        try {
-            return (SurchargeTable) super.clone();
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
-    }
 }

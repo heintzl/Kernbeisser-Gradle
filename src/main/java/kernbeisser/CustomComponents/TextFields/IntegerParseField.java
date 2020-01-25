@@ -6,6 +6,7 @@ public class IntegerParseField extends FilterField{
     IntegerParseField(int max,int min) {
         super(e -> {
             try{
+                if(e.equals(""))return true;
                 int v = Integer.parseInt(e);
                 return v >= min && v <= max;
             }catch (NumberFormatException ex){
@@ -16,6 +17,7 @@ public class IntegerParseField extends FilterField{
     public IntegerParseField(){
         super(e -> {
             try{
+                if(e.equals(""))return true;
                 Integer.parseInt(e);
                 return true;
             }catch (NumberFormatException ex){
@@ -24,6 +26,6 @@ public class IntegerParseField extends FilterField{
         });
     }
     public int getValue(){
-        return Integer.parseInt(getText());
+        return getText().equals("") ? 0 : Integer.parseInt(getText());
     }
 }

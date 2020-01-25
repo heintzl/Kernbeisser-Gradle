@@ -4,6 +4,7 @@ public class LongParseField extends FilterField{
     LongParseField(long min,long max){
         super(e -> {
             try{
+                if(e.equals(""))return true;
                 long v = Long.parseLong(e);
                 return v >= min && v <= max;
             }catch (NumberFormatException ex){
@@ -14,6 +15,7 @@ public class LongParseField extends FilterField{
     public LongParseField(){
         super(e -> {
             try{
+                if(e.equals(""))return true;
                 Long.parseLong(e);
                 return true;
             }catch (NumberFormatException ex){
@@ -22,6 +24,6 @@ public class LongParseField extends FilterField{
         });
     }
     public long getValue(){
-        return Long.parseLong(getText());
+        return getText().equals("") ? 0 : Long.parseLong(getText());
     }
 }
