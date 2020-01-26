@@ -5,7 +5,12 @@ import kernbeisser.Enums.Unit;
 import kernbeisser.Exeptions.FileReadException;
 import kernbeisser.Exeptions.ObjectParseException;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.Window;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,30 +18,34 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class CatalogInputController implements Controller {
+public class CatalogInputController implements Controller {
     private CatalogInputModel model;
     private CatalogInputView view;
 
-    CatalogInputController(CatalogInputView view){
-        this.view=view;
+    public CatalogInputController(Window current){
+        this.model=new CatalogInputModel();
+        view = new CatalogInputView(current,this);
     }
 
-    boolean importData(File f) throws ObjectParseException, FileReadException {
+    private void importData(File f){
         StringBuilder sb = new StringBuilder();
         try {
             Files.readAllLines(f.toPath(), StandardCharsets.ISO_8859_1).forEach(e-> sb.append(e).append("\n"));
-            return importData(sb.toString());
+            importData(sb.toString());
         } catch (IOException e) {
-            throw new FileReadException(f,StandardCharsets.ISO_8859_1);
+            view.cannotReadFile();
         }
     }
 
-    boolean importData(String s) throws ObjectParseException {
+    private void importData(String s){
         ArrayList<ItemKK> catalog = new ArrayList<>();
         for(String line : s.split("\n")) {
             ItemKK item = extractItemKK(line.replace("'", ""));
-            if (item != null)
+            if (item != null){
                 catalog.add(item);
+            }else {
+                return;
+            }
         }
         HashMap<Integer,Integer> deposit = new HashMap<>();
         catalog.forEach(e -> deposit.put(e.getKkNumber(),e.getNetPrice()));
@@ -48,9 +57,8 @@ class CatalogInputController implements Controller {
         }
         model.clearCatalog();
         model.saveAll(catalog);
-        return true;
     }
-    ItemKK extractItemKK(String line) throws ObjectParseException {
+    ItemKK extractItemKK(String line) {
         ItemKK item = new ItemKK();
         String[] values = line.split(";");
         try {
@@ -66,8 +74,9 @@ class CatalogInputController implements Controller {
             item.setNetPrice((int) Math.round(Double.parseDouble(values[37].replace(",","."))*100));
             if(!values[26].equals(""))item.setSingleDeposit(Integer.parseInt(values[26]));
             if(!values[27].equals(""))item.setCrateDeposit(Integer.parseInt(values[27]));
-        }catch (Exception e){
-            throw new ObjectParseException(line,ItemKK.class);
+        }catch (NumberFormatException e){
+            view.extractItemError();
+            return null;
         }
         return item;
     }
@@ -101,11 +110,6 @@ class CatalogInputController implements Controller {
     }
 
     @Override
-    public void refresh() {
-
-    }
-
-    @Override
     public CatalogInputView getView() {
         return view;
     }
@@ -113,5 +117,24 @@ class CatalogInputController implements Controller {
     @Override
     public CatalogInputModel getModel() {
         return model;
+    }
+
+    void importFromString(){
+        String s = view.getData();
+        if(s.equals(""))view.extractItemError();
+        importData(s);
+    }
+
+    void importFromFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Katalog Datei","txt","*"));
+        fileChooser.addActionListener(e -> {
+            if(fileChooser.getSelectedFile()!=null){
+                File f = fileChooser.getSelectedFile();
+                importData(f);
+            }
+        });
+        fileChooser.showOpenDialog(view);
+
     }
 }

@@ -22,11 +22,8 @@ public class UserMenuView extends Window implements View {
     private JLabel welcome;
     private JPanel main;
 
-    private UserMenuController controller;
-
     UserMenuView(UserMenuController controller,Window current){
         super(current);
-        this.controller = controller;
         startInventory.addActionListener(e -> controller.startInventory());
         showValueHistory.addActionListener(e -> controller.showValueHistory());
         showProfile.addActionListener(e -> controller.showProfile());
@@ -60,8 +57,4 @@ public class UserMenuView extends Window implements View {
         //buyHistory.setComplex(true);
     }
 
-    @Override
-    public Controller getController() {
-        return controller;
-    }
 }

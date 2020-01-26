@@ -9,6 +9,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
@@ -46,18 +47,14 @@ public class CashierShoppingMaskView extends Window implements View {
         setVisible(true);
     }
 
-    void openShoppingMask(ShoppingMaskView mask){
-        tabbedPane.addTab("Einkauf f"+'\u00fc'+"r "+mask.getController().getModel().getSaleSession().getCustomer().getFirstName(),mask);
+    void openShoppingMask(ShoppingMaskController controller){
+        tabbedPane.addTab("Einkauf f"+'\u00fc'+"r "+controller.getModel().getSaleSession().getCustomer().getFirstName(),controller.getView());
     }
 
     void setUsers(Collection<User> users){
         userTable.setObjects(users);
     }
 
-    @Override
-    public Controller getController() {
-        return controller;
-    }
 
 
     /**

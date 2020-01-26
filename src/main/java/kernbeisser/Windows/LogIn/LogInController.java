@@ -2,13 +2,14 @@ package kernbeisser.Windows.LogIn;
 
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.UserMenu.UserMenuController;
+import kernbeisser.Windows.Window;
 
 public class LogInController implements Controller {
     private LogInView view;
     private LogInModel model;
 
-    LogInController(LogInView view){
-        this.view=view;
+    public LogInController(Window current){
+        this.view= new LogInView(current,this);
         this.model=new LogInModel();
         fillABCUser();
         fillAllUser();
@@ -18,19 +19,21 @@ public class LogInController implements Controller {
     static final int INCORRECT_PASSWORD = 1;
     static final int SUCCESS = 2;
 
-    int logIn() {
-        return model.logIn(view.getUsername(),view.getPassword());
+    void logIn() {
+        int feedback = model.logIn(view.getUsername(),view.getPassword());
+        view.applyFeedback(feedback);
+        if(feedback==SUCCESS)openUserMenu();
     }
-    void fillABCUser(){
+    private void fillABCUser(){
         for (int i = 97; i < 123; i++) {
             char c  = Character.toUpperCase((char) i);
             view.addTab(Character.toString(c),model.getAllUserWitchBeginsWith(c));
         }
     }
-    void fillAllUser(){
+    private void fillAllUser(){
         view.addTab("Alle",model.getAllUser());
     }
-    void openUserMenu(){
+    private void openUserMenu(){
         new UserMenuController(view, LogInModel.getLoggedIn());
     }
 

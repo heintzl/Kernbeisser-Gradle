@@ -2,6 +2,7 @@ package kernbeisser.Windows.CashierMenu;
 
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskView;
+import kernbeisser.Windows.CatalogInput.CatalogInputController;
 import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditItems.EditItems;
@@ -50,6 +51,6 @@ public class CashierMenuController implements Controller {
         new CashierShoppingMaskView(model.getUser(),view);
     }
     public void openCatalogInput(){
-        new CatalogInputView(view);
+        new CatalogInputController(view);
     }
 }

@@ -17,17 +17,12 @@ public class InventoryMenuView extends Window implements View {
     /**
      * Creates new form InventoryMenu
      */
-    public InventoryMenuView(Window current) {
+    public InventoryMenuView(Window current,InventoryMenuController controller) {
         super(current);
-        controller=new InventoryMenuController(this);
         initComponents();
     }
 
 
-    @Override
-    public InventoryMenuController getController() {
-        return controller;
-    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

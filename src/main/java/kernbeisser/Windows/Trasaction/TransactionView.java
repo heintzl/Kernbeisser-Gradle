@@ -19,11 +19,8 @@ class TransactionView extends Window implements View {
     private ObjectTable<Transaction> transactions;
     private JButton addTransaction;
 
-    private TransactionController controller;
-
     TransactionView(Window current,TransactionController controller) {
         super(current);
-        this.controller = controller;
         transferTransactions.addActionListener((e) -> controller.transfer());
         addTransaction.addActionListener(e -> controller.addTransaction());
     }
@@ -51,11 +48,7 @@ class TransactionView extends Window implements View {
                 Column.create("Überweissungsbetrag",e -> e.getValue()/100f+"€")
         );
     }
-
-    @Override
-    public Controller getController() {
-        return controller;
-    }
+    
 
     public void invalidFrom() {
 

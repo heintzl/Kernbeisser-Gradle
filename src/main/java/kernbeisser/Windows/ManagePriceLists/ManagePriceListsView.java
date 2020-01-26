@@ -240,9 +240,5 @@ public class ManagePriceListsView extends Window implements View {
     private JButton save;
     private JTextField superPriceList;
 
-    @Override
-    public Controller getController() {
-        return controller;
-    }
     // End of variables declaration//GEN-END:variables
 }

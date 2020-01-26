@@ -49,11 +49,8 @@ class EditUserView extends Window implements View {
     private JButton submit;
     private JPanel buttonPanel;
 
-    private EditUserController controller;
-
     public EditUserView(EditUserController controller, Window current) {
         super(current);
-        this.controller = controller;
         add(userDataPanel);
         setSize(500, 580);
         setLocationRelativeTo(current);
@@ -101,9 +98,5 @@ class EditUserView extends Window implements View {
         return data;
     }
 
-    @Override
-    public Controller getController() {
-        return controller;
-    }
 
 }

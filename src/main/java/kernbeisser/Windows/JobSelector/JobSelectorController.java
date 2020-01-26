@@ -4,6 +4,7 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
+import kernbeisser.Windows.Window;
 
 import java.util.Collection;
 
@@ -11,8 +12,8 @@ public class JobSelectorController implements Controller {
     private JobSelectorModel model;
     private JobSelectorView view;
 
-    JobSelectorController(JobSelectorView view, Collection<Job> jobs){
-        this.view=view;
+    public JobSelectorController(Window current, Collection<Job> jobs){
+        this.view=new JobSelectorView(current,this);
         this.model=new JobSelectorModel(jobs);
 
         view.fillSelectedJobs(model.getCurrentJobs());

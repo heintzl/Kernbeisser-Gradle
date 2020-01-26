@@ -4,6 +4,7 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 import kernbeisser.Windows.Window;
 
@@ -40,7 +41,7 @@ public class UserMenuController implements Controller {
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(model.getOwner());
         saleSession.setSeller(model.getOwner());
-        jFrame.add(new ShoppingMaskView(jFrame, saleSession));
+        jFrame.add(new ShoppingMaskController(jFrame, saleSession).getView());
         jFrame.pack();
         jFrame.setLocationRelativeTo(null);
         jFrame.setVisible(true);

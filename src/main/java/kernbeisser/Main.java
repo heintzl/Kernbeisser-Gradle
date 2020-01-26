@@ -4,7 +4,9 @@ package kernbeisser;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
+import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.StartUp.DataImport.DataImportView;
+import kernbeisser.Windows.LogIn.LogInController;
 import kernbeisser.Windows.LogIn.LogInView;
 
 import javax.persistence.EntityManager;
@@ -26,12 +28,12 @@ public class Main {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         DBConnection.getEntityManager();
         if(!ConfigManager.getHeader().getBoolean("Init"))
-            SwingUtilities.invokeLater(() -> new DataImportView(new LogInView(null)));
+            SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));
         else
         openLogIn();
     }
     private static void openLogIn(){
-        SwingUtilities.invokeLater(() -> new LogInView(null));
+        SwingUtilities.invokeLater(() -> new LogInController(null));
     }
     private static void createTestJobs(int count){
         EntityManager em = DBConnection.getEntityManager();

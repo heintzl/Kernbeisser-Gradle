@@ -39,11 +39,8 @@ public class EditItemView extends Window implements View {
     private JComboBox<VAT> vat;
     private JPanel main;
 
-    private EditItemController controller;
-
     public EditItemView(EditItemController controller,Window current) {
         super(current);
-        this.controller = controller;
         cancel.addActionListener((e) -> back());
         commit.addActionListener((e) -> controller.finished());
         add(main);
@@ -134,9 +131,5 @@ public class EditItemView extends Window implements View {
         return out;
     }
 
-    @Override
-    public Controller getController() {
-        return controller;
-    }
 
 }

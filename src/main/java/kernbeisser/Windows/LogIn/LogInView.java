@@ -27,19 +27,17 @@ public class LogInView extends Window implements View {
     private JTextField username;
     private JTabbedPane users;
 
-    private LogInController controller;
 
     /**
      * Creates new form LogIn from LogInView.form
      * with all Tables from A-Z
      * and a Table with all Users
      */
-    public LogInView(Window current) {
+    public LogInView(Window current,LogInController controller) {
         super(current);
         add(main);
-        controller = new LogInController(this);
-        logIn.addActionListener(e -> logIn());
-        password.addActionListener(e -> logIn());
+        logIn.addActionListener(e -> controller.logIn());
+        password.addActionListener(e -> controller.logIn());
         setSize(Tools.getScreenWidth() / 2, Tools.getScreenHeight() / 2);
         setLocationRelativeTo(null);
     }
@@ -63,10 +61,9 @@ public class LogInView extends Window implements View {
         return password.getPassword();
     }
 
-    private void logIn() {
-        switch (controller.logIn()) {
+    void applyFeedback(int feedback){
+        switch (feedback) {
             case LogInController.SUCCESS:
-                controller.openUserMenu();
                 username.setText("");
                 password.setText("");
                 break;
@@ -81,11 +78,6 @@ public class LogInView extends Window implements View {
 
         }
         back();
-    }
-
-    @Override
-    public Controller getController() {
-        return controller;
     }
 
 

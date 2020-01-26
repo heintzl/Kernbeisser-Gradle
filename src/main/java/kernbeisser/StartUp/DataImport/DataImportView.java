@@ -22,16 +22,8 @@ public class DataImportView extends Window implements View {
     private JLabel currentActionItems;
     private JLabel currentActionUser;
 
-    private DataImportController controller;
-
-    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        new DataImportView(null);
-    }
-
-    public DataImportView(Window currentWindow) {
+    DataImportView(Window currentWindow, DataImportController controller) {
         super(currentWindow);
-        controller = new DataImportController(this);
         add(main);
         pack();
         setLocationRelativeTo(currentWindow);
@@ -43,6 +35,7 @@ public class DataImportView extends Window implements View {
             }
         });
         search.addActionListener(e -> controller.openFileExplorer());
+        cancel.addActionListener(e -> back());
     }
 
     String getFilePath() {
@@ -125,10 +118,6 @@ public class DataImportView extends Window implements View {
         return importItems.isSelected();
     }
 
-    @Override
-    public Controller getController() {
-        return controller;
-    }
 
     void itemSourcesNotExists() {
         JOptionPane.showMessageDialog(this, "Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Artikeldatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);

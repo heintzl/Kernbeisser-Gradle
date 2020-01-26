@@ -4,6 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JobSelector.JobSelectorController;
 import kernbeisser.Windows.JobSelector.JobSelectorView;
 import kernbeisser.Windows.Window;
 
@@ -36,6 +37,6 @@ public class EditUserController implements Controller {
     }
 
     public void openJobSelector() {
-        new JobSelectorView(this.view, model.getUser().getJobs());
+        new JobSelectorController(this.view, model.getUser().getJobs());
     }
 }

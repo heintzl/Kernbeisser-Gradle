@@ -18,11 +18,9 @@ public class JobSelectorView extends Window implements View {
     private ObjectTable<Job> availableJobs;
     private ObjectTable<Job> selectedJobs;
 
-    private JobSelectorController controller;
 
-    public JobSelectorView(Window current, Collection<Job> currentJobs) {
+    public JobSelectorView(Window current,JobSelectorController controller) {
         super(current);
-        controller = new JobSelectorController(this, currentJobs);
         add(mainPanel);
         setSize(500, 500);
         setLocationRelativeTo(current);
@@ -74,11 +72,6 @@ public class JobSelectorView extends Window implements View {
 
     void fillSelectedJobs(Collection<Job> jobs) {
         selectedJobs.setObjects(jobs);
-    }
-
-    @Override
-    public Controller getController() {
-        return controller;
     }
 
 }

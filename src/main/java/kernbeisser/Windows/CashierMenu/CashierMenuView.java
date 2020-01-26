@@ -30,10 +30,4 @@ public class CashierMenuView extends Window implements View {
         setLocationRelativeTo(null);
     }
 
-    private CashierMenuController controller;
-
-    @Override
-    public Controller getController() {
-        return controller;
-    }
 }
