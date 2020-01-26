@@ -1,6 +1,7 @@
 package kernbeisser.StartUp.DataImport;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
@@ -120,6 +121,8 @@ public class DataImportController implements Controller {
                     view.userSourcesNotExists();
                 }
             }
+            ConfigManager.getHeader().put("Init",true);
+            ConfigManager.updateFile();
         }
     }
 
@@ -314,6 +317,8 @@ public class DataImportController implements Controller {
 
     void cancel(){
         view.back();
+        ConfigManager.getHeader().put("Init",true);
+        ConfigManager.updateFile();
     }
 
     @Override

@@ -38,7 +38,7 @@ public class LogInView extends Window implements View {
         add(main);
         logIn.addActionListener(e -> controller.logIn());
         password.addActionListener(e -> controller.logIn());
-        setSize(Tools.getScreenWidth() / 2, Tools.getScreenHeight() / 2);
+        setSize(Tools.getScreenWidth() / 2, 600);
         setLocationRelativeTo(null);
     }
 
@@ -49,7 +49,10 @@ public class LogInView extends Window implements View {
                 Column.create("Vorname", User::getFirstName),
                 Column.create("Nachname", User::getSurname));
         userTable.getTableHeader().setFont(new Font("arial", Font.BOLD, 12));
-        userTable.getSelectionModel().addListSelectionListener(e -> username.setText(userTable.getSelectedObject().getUsername()));
+        userTable.getSelectionModel().addListSelectionListener(e -> {
+            username.setText(userTable.getSelectedObject().getUsername());
+            password.requestFocus();
+        });
         this.users.addTab(title, new JScrollPane(userTable));
     }
 
@@ -79,7 +82,6 @@ public class LogInView extends Window implements View {
         }
         back();
     }
-
 
     private void createUIComponents() {
 
