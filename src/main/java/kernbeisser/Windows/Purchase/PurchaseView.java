@@ -19,11 +19,15 @@ public class PurchaseView extends Window implements View {
     private JLabel count;
     private JLabel seller;
     private JLabel customer;
+    private JPanel main;
 
 
     PurchaseView(Window current,PurchaseController controller){
         super(current);
+        add(main);
         finish.addActionListener((e) -> back());
+        setSize(current.getSize());
+        setLocationRelativeTo(current);
     }
 
     void setDate(String date){
@@ -38,7 +42,7 @@ public class PurchaseView extends Window implements View {
         seller.setText(sellerName);
     }
 
-    void setSum(int sum){
+    void setSum(long sum){
         this.sum.setText(sum / 100f + "€");
     }
     void setItemCount(int c){

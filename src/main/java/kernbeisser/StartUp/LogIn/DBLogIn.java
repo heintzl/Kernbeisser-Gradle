@@ -1,4 +1,4 @@
-package kernbeisser.StartUp.DataImport;
+package kernbeisser.StartUp.LogIn;
 
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;

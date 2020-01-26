@@ -22,8 +22,11 @@ public class UserMenuView extends Window implements View {
     private JLabel welcome;
     private JPanel main;
 
+    private UserMenuController controller;
+
     UserMenuView(UserMenuController controller,Window current){
         super(current);
+        this.controller=controller;
         startInventory.addActionListener(e -> controller.startInventory());
         showValueHistory.addActionListener(e -> controller.showValueHistory());
         showProfile.addActionListener(e -> controller.showProfile());
@@ -52,7 +55,7 @@ public class UserMenuView extends Window implements View {
                 Column.create("Datum", Purchase::getCreateDate),
                 Column.create("Betrag", e -> e.getSum()/100f+"€"),
                 Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession().getSeller().getSurname()),
-                Column.create("Anschauen", (e) -> "Anschauen",System.out::println)
+                Column.create("Anschauen", (e) -> "Anschauen",(e)->controller.showPurchase())
         );
         //buyHistory.setComplex(true);
     }

@@ -7,7 +7,7 @@ import kernbeisser.Windows.Model;
 import java.util.Collection;
 
 public class UserMenuModel implements Model {
-    private User owner;
+    private final User owner;
     UserMenuModel(User owner) {
         this.owner=owner;
     }
@@ -18,8 +18,5 @@ public class UserMenuModel implements Model {
 
     public Collection<Purchase> getAllPurchase(){
         return owner.getAllPurchases();
-    }
-    public void setOwner(User owner) {
-        this.owner = owner;
     }
 }
