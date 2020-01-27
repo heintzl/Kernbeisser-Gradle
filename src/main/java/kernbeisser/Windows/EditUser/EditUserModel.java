@@ -2,12 +2,14 @@ package kernbeisser.Windows.EditUser;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceException;
 
 public class EditUserModel implements Model {
 
@@ -19,17 +21,23 @@ public class EditUserModel implements Model {
         this.mode = mode;
     }
 
-    void doAction(User user){
-        switch (mode){
-            case ADD:
-                add(user);
-                break;
-            case EDIT:
-                edit(user);
-                break;
-            case REMOVE:
-                remove(user);
-                break;
+    boolean doAction(User user){
+        try {
+            switch (mode) {
+                case ADD:
+                    add(user);
+                    break;
+                case EDIT:
+                    edit(user);
+                    break;
+                case REMOVE:
+                    remove(user);
+                    break;
+            }
+            return true;
+        }catch (PersistenceException e){
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -57,6 +65,9 @@ public class EditUserModel implements Model {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
+        UserGroup newUserGroup = new UserGroup();
+        em.persist(newUserGroup);
+        user.setUserGroup(newUserGroup);
         em.persist(Tools.mergeWithoutId(user));
         em.flush();
         et.commit();

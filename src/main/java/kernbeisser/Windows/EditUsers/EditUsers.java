@@ -8,7 +8,7 @@ import kernbeisser.Windows.Window;
 
 public class EditUsers extends ObjectViewController<User> {
     public EditUsers(Window current){
-        super(current,(u,m) -> new EditUserController(current,u,m),User.getAll("order by firstName ASC"),
+        super(current,EditUserController::new,() -> User.getAll("order by firstName ASC"),
                 Column.create("Vorname",User::getFirstName),
                 Column.create("Nachname",User::getSurname),
                 Column.create("Username",User::getSurname)

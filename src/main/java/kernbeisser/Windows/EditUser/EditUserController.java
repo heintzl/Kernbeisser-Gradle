@@ -32,11 +32,11 @@ public class EditUserController implements Controller {
         return view;
     }
 
-    public void doAction() {
-        model.doAction(view.getData(model.getUser()));
+    void doAction() {
+        if(model.doAction(view.getData(model.getUser())))view.back();
     }
 
-    public void openJobSelector() {
+    void openJobSelector() {
         new JobSelectorController(this.view, model.getUser().getJobs());
     }
 }
