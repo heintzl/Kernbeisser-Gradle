@@ -1,6 +1,5 @@
 package kernbeisser.StartUp.DataImport;
 
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 

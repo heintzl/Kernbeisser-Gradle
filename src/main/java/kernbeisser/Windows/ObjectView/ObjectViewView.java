@@ -1,10 +1,13 @@
 package kernbeisser.Windows.ObjectView;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class ObjectViewView <T> extends Window {
@@ -18,6 +21,9 @@ public class ObjectViewView <T> extends Window {
     ObjectViewView(Window current,ObjectViewController<T> controller){
         super(current);
         add(main);
+        add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS,20, Color.GREEN));
+        edit.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL,20,Color.ORANGE));
+        delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH,20,Color.RED));
         add.addActionListener(e -> controller.add());
         edit.addActionListener(e -> controller.edit());
         delete.addActionListener(e -> controller.delete());

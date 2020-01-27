@@ -1,6 +1,8 @@
 package kernbeisser;
 
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
@@ -26,6 +28,7 @@ public class Main {
      */
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException, URISyntaxException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        IconFontSwing.register(FontAwesome.getIconFont());
         DBConnection.getEntityManager();
         if(!ConfigManager.getHeader().getBoolean("Init"))
             SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));

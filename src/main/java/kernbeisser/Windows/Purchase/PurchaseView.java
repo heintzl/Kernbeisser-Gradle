@@ -57,7 +57,7 @@ public class PurchaseView extends Window implements View {
         items = new ObjectTable<ShoppingItem>(
                 Column.create("Artikelname",ShoppingItem::getName),
                 Column.create("Anzahl",ShoppingItem::getItemAmount),
-                Column.create("Verkaufs Preis",ShoppingItem::getRawPrice),
+                Column.create("Verkaufs Preis",e -> e.getRawPrice()/100f+"€"),
                 Column.create("Netto Preis",ShoppingItem::getNetPrice)
         );
     }
