@@ -4,10 +4,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.Enums.ContainerDefinition;
-import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.Unit;
-import kernbeisser.Enums.VAT;
+import kernbeisser.Enums.*;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -22,18 +20,25 @@ public class EditItemModel implements Model {
         this.item = item;
     }
     Item getSource(){return item;}
-    void doAction(Item item){
-        switch (mode){
-            case ADD:
-                addItem(item);
-                break;
-            case EDIT:
-                editItem(item);
-                break;
-            case REMOVE:
-                removeItem(item);
-                break;
+    boolean doAction(Item item){
+        try{
+            switch (mode){
+                case ADD:
+                    addItem(item);
+                    break;
+                case EDIT:
+                    editItem(item);
+                    break;
+                case REMOVE:
+                    removeItem(item);
+                    break;
+            }
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
         }
+
     }
     private void removeItem(Item item){
         EntityManager em = DBConnection.getEntityManager();
@@ -83,11 +88,26 @@ public class EditItemModel implements Model {
         et.commit();
         em.close();
     }
+
+    boolean kbNumberExists(int kbNumber){
+        EntityManager em = DBConnection.getEntityManager();
+        boolean exists = em.createQuery("select id from Item where kbNumber = "+kbNumber).getResultList().size()>0;
+        em.close();
+        return exists;
+    }
+
+    boolean barcodeExists(long barcode){
+        EntityManager em = DBConnection.getEntityManager();
+        boolean exists = em.createQuery("select id from Item where barcode = "+barcode).getResultList().size()>0;
+        em.close();
+        return exists;
+    }
+
     private void addItem(Item item){
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.persist(item);
+        em.persist(Tools.mergeWithoutId(item));
         em.flush();
         et.commit();
         em.close();
@@ -99,4 +119,8 @@ public class EditItemModel implements Model {
     }
     Collection<Supplier> getAllSuppliers(){return Supplier.getAll(null);}
     Collection<PriceList> getAllPriceLists(){return PriceList.getAll(null);}
+
+    public Mode getMode() {
+        return mode;
+    }
 }

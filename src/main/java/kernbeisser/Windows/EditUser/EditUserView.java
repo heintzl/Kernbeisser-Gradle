@@ -55,13 +55,8 @@ class EditUserView extends Window implements View {
         setSize(500, 580);
         setLocationRelativeTo(current);
         chgPassword.addActionListener(e -> {
-            String password = JOptionPane.showInputDialog("Bitte geben sie das neue Passwort ein:");
-            if (password.length() < 4) {
-                JOptionPane.showMessageDialog(null, "Das Passwort ist leider zu kurz, es muss mindestens 4 zeichen lang sein");
-            } else {
-                controller.changePassword(password);
-                JOptionPane.showMessageDialog(null, "Password ge\u00e4ndert!");
-            }
+            controller.requestChangePassword();
+
         });
         chgJobs.addActionListener(e -> controller.openJobSelector());
         submit.addActionListener(e -> {
@@ -98,5 +93,26 @@ class EditUserView extends Window implements View {
         return data;
     }
 
+    void passwordToShort(){
+        JOptionPane.showMessageDialog(null, "Das Passwort ist leider zu kurz, es muss mindestens 4 zeichen lang sein");
+    }
 
+    String requestPassword(){
+        return JOptionPane.showInputDialog("Bitte geben sie das neue Passwort ein:");
+    }
+
+    void passwordChanged(){
+        JOptionPane.showMessageDialog(null, "Password ge\u00e4ndert!");
+    }
+
+    void usernameAlreadyExists() {
+        JOptionPane.showMessageDialog(this,"Der Benutzername ist bereits vergeben");
+    }
+
+    void setPermissions(Permission[] permission) {
+        this.roles.removeAllItems();
+        for (Permission p : permission) {
+            roles.addItem(p);
+        }
+    }
 }

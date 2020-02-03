@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -221,5 +223,21 @@ public class Tools {
             }
         }
         return toOverride;
+    }
+    public static void setPromptText(JTextField jTextField,String promptText){
+        jTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(jTextField.getText().equals(promptText))
+                    jTextField.setText("");
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(jTextField.getText().equals("")){
+                    jTextField.setText(promptText);
+                }
+            }
+        });
     }
 }

@@ -4,6 +4,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.Permission;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
@@ -19,6 +20,10 @@ public class EditUserModel implements Model {
     public EditUserModel(User user, Mode mode) {
         this.user = user;
         this.mode = mode;
+        if(mode==Mode.ADD)user.setPassword(null);
+    }
+    Permission[] getAllPermission(){
+        return Permission.values();
     }
 
     boolean doAction(User user){
@@ -39,6 +44,13 @@ public class EditUserModel implements Model {
             e.printStackTrace();
             return false;
         }
+    }
+
+    boolean usernameExists(String username){
+        EntityManager em = DBConnection.getEntityManager();
+        boolean exists = em.createQuery("select id from User where username like :username").setParameter("username",username).getResultList().size()>0;
+        em.close();
+        return exists;
     }
 
     private void remove(User user) {
@@ -76,5 +88,9 @@ public class EditUserModel implements Model {
 
     public User getUser() {
         return user;
+    }
+
+    public Mode getMode() {
+        return mode;
     }
 }

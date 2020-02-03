@@ -7,9 +7,9 @@ import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
+import kernbeisser.Enums.Permission;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -32,7 +32,7 @@ public class EditItemView extends Window implements View {
     private DoubleParseField containerSize;
     private JComboBox<Unit> unit;
     private JComboBox<ContainerDefinition> containerDefinition;
-    private LongParseField barcode;
+    private JTextField barcode;
     private JCheckBox showInShoppingMask;
     private JCheckBox weighable;
     private JTextArea extraInfo;
@@ -42,7 +42,7 @@ public class EditItemView extends Window implements View {
     public EditItemView(EditItemController controller,Window current) {
         super(current);
         cancel.addActionListener((e) -> back());
-        commit.addActionListener((e) -> controller.finished());
+        commit.addActionListener((e) -> controller.doAction());
         add(main);
         pack();
         setLocationRelativeTo(null);
@@ -121,7 +121,11 @@ public class EditItemView extends Window implements View {
         out.setCrateDeposit((int) (crateDeposit.getValue() * 100));
         out.setContainerSize(containerSize.getValue());
         out.setAmount(amount.getValue());
-        out.setBarcode(barcode.getValue());
+        try{
+            out.setBarcode(Long.parseLong(barcode.getText()));
+        }catch (NumberFormatException e){
+            out.setBarcode(null);
+        }
         out.setShowInShop(showInShoppingMask.isSelected());
         out.setWeighAble(weighable.isSelected());
         out.setInfo(extraInfo.getText());
@@ -131,5 +135,11 @@ public class EditItemView extends Window implements View {
         return out;
     }
 
+    void kbNumberAlreadyExists() {
+        JOptionPane.showMessageDialog(this,"Die Kernbeisser-Nummer ist bereits vergeben");
+    }
 
+    void barcodeAlreadyExists(){
+        JOptionPane.showMessageDialog(this,"Der Barcode ist bereits vergeben");
+    }
 }

@@ -11,7 +11,7 @@ public class EditUsers extends ObjectViewController<User> {
         super(current,EditUserController::new,() -> User.getAll("order by firstName ASC"),
                 Column.create("Vorname",User::getFirstName),
                 Column.create("Nachname",User::getSurname),
-                Column.create("Username",User::getSurname)
+                Column.create("Benutzername",User::getUsername)
                 );
     }
 }

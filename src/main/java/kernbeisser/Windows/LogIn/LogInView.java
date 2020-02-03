@@ -5,6 +5,8 @@
  */
 package kernbeisser.Windows.LogIn;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.User;
@@ -40,6 +42,8 @@ public class LogInView extends Window implements View {
         password.addActionListener(e -> controller.logIn());
         setSize(Tools.getScreenWidth() / 2, 600);
         setLocationRelativeTo(null);
+        logIn.setIcon(IconFontSwing.buildIcon(FontAwesome.ARROW_RIGHT,15,new Color(0x3C39FF)));
+
     }
 
     void addTab(String title, Collection<User> users) {
@@ -82,9 +86,4 @@ public class LogInView extends Window implements View {
         }
         back();
     }
-
-    private void createUIComponents() {
-
-    }
-
 }

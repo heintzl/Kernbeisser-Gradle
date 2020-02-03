@@ -13,13 +13,13 @@ public class EditItemController implements Controller {
     private EditItemModel model;
     public EditItemController(Window current, Item item, Mode mode){
         this.view=new EditItemView(this,current);
-        model=new EditItemModel(item,mode);
+        model=new EditItemModel(item != null ? item : new Item(),mode);
         view.setPriceLists(model.getAllPriceLists());
         view.setSuppliers(model.getAllSuppliers());
         view.setUnits(model.getAllUnits());
         view.setContainerDefinitions(model.getAllContainerDefinitions());
         view.setVATs(model.getAllVATs());
-        view.pasteItem(item);
+        view.pasteItem(model.getSource());
     }
 
     @Override
@@ -32,7 +32,21 @@ public class EditItemController implements Controller {
         return model;
     }
 
-    void finished() {
-        model.doAction(view.collectItem(model.getSource()));
+    void doAction() {
+        Item data = view.collectItem(model.getSource());
+        switch (model.getMode()){
+            case ADD:
+                if(model.kbNumberExists(data.getKbNumber())){
+                    view.kbNumberAlreadyExists();
+                    return;
+                }
+                if(data.getBarcode()!=null){
+                    if(model.barcodeExists(data.getBarcode()))
+                        view.barcodeAlreadyExists();
+                }
+        }
+        if (model.doAction(view.collectItem(model.getSource()))) {
+            view.back();
+        }
     }
 }
