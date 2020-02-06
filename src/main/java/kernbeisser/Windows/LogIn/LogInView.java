@@ -42,7 +42,7 @@ public class LogInView extends Window implements View {
         password.addActionListener(e -> controller.logIn());
         setSize(Tools.getScreenWidth() / 2, 600);
         setLocationRelativeTo(null);
-        logIn.setIcon(IconFontSwing.buildIcon(FontAwesome.ARROW_RIGHT,15,new Color(0x3C39FF)));
+        logIn.setIcon(IconFontSwing.buildIcon(FontAwesome.SIGN_IN,15,new Color(0x3C39FF)));
 
     }
 
