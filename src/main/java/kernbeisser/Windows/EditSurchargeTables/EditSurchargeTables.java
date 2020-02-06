@@ -11,7 +11,7 @@ public class EditSurchargeTables extends ObjectViewController<SurchargeTable> {
         new EditSurchargeTables(null);
     }
     public EditSurchargeTables(Window current){
-        super(current,EditSurchargeTableController::new,() -> SurchargeTable.getAll(null),
+        super(current,EditSurchargeTableController::new,SurchargeTable::defaultSearch,
                 Column.create("Liefernat", SurchargeTable::getSupplier),
                 Column.create("Von", SurchargeTable::getFrom),
                 Column.create("Bis", SurchargeTable::getTo),

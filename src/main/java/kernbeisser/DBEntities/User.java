@@ -293,29 +293,13 @@ public class User implements Serializable {
         return Purchase.getAll("where session.customer.id = "+id);
     }
 
-    public void paste(User x){
-        this.salesThisYear = x.salesThisYear;
-        this.salesLastYear = x.salesLastYear;
-        this.shares = x.shares;
-        this.solidaritySurcharge = x.solidaritySurcharge;
-        this.extraJobs = x.extraJobs;
-        this.jobs = x.jobs;
-        this.lastBuy = x.lastBuy;
-        this.kernbeisserKey = x.kernbeisserKey;
-        this.employee = x.employee;
-        this.username = x.username;
-        this.password = x.password;
-        this.firstName = x.firstName;
-        this.surname = x.surname;
-        this.phoneNumber1 = x.phoneNumber1;
-        this.phoneNumber2 = x.phoneNumber2;
-        this.street = x.street;
-        this.town = x.town;
-        this.townCode = x.townCode;
-        this.permission = x.permission;
-        this.email = x.email;
-        this.createDate = x.createDate;
-        this.updateDate = x.updateDate;
-        this.userGroup = x.userGroup;
+    public static Collection<User> defaultSearch(String s,int max){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<User> out = em.createQuery("select u from User u where firstName like :search or surname like :search or username like :search order by firstName ASC",User.class)
+                .setParameter("search",s+"%")
+                .setMaxResults(max)
+                .getResultList();
+        em.close();
+        return out;
     }
 }

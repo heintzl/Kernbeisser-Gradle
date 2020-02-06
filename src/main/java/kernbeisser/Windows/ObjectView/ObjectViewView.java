@@ -4,6 +4,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
@@ -17,7 +18,9 @@ public class ObjectViewView <T> extends Window {
     private JButton back;
     private JButton delete;
     private JPanel main;
-    private JButton refresh;
+    private JTextField searchBar;
+    private JButton search;
+    private IntegerParseField maxResults;
 
     private ObjectViewController<T> controller;
 
@@ -29,12 +32,13 @@ public class ObjectViewView <T> extends Window {
         add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS,20, new Color(71, 189, 23)));
         edit.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL,20,new Color(69, 189, 174)));
         delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH,20,new Color(189, 101, 85)));
-        refresh.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH,20,new Color(56, 64, 189)));
+        search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH,20,new Color(117, 126, 255)));
         add.addActionListener(e -> controller.add());
         edit.addActionListener(e -> controller.edit());
         delete.addActionListener(e -> controller.delete());
         back.addActionListener(e -> back());
-        refresh.addActionListener(e -> controller.refresh());
+        search.addActionListener(e -> controller.refresh());
+        searchBar.addActionListener(e -> controller.refresh());
         pack();
         setLocationRelativeTo(null);
     }
@@ -49,6 +53,14 @@ public class ObjectViewView <T> extends Window {
 
     void setAddAvailable(boolean s){
         add.setEnabled(s);
+    }
+
+    int getMax(){
+        return maxResults.getValue();
+    }
+
+    String getSearch(){
+        return searchBar.getText();
     }
 
     @Override

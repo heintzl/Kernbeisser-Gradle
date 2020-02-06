@@ -240,4 +240,18 @@ public class Tools {
             }
         });
     }
+    public static long tryParseLong(String s){
+        try{
+            return Long.parseLong(s);
+        }catch (NumberFormatException e){
+            return 0;
+        }
+    }public static int tryParseInteger(String s){
+        try{
+            return Integer.parseInt(s);
+        }catch (NumberFormatException e){
+            return 0;
+        }
+    }
+
 }

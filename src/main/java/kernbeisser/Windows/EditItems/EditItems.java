@@ -8,7 +8,7 @@ import kernbeisser.Windows.Window;
 
 public class EditItems extends ObjectViewController <Item>{
     public EditItems(Window current){
-        super(current,EditItemController::new, () -> Item.getAll(null),
+        super(current,EditItemController::new, Item::defaultSearch,
                 Column.create("Name", Item::getName),
                 Column.create("Ladennummer", Item::getKbNumber),
                 Column.create("Lieferantenummer", Item::getSuppliersItemNumber)

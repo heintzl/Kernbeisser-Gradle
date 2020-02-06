@@ -7,10 +7,12 @@ import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
+import org.hibernate.type.StandardBasicTypes;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -448,6 +450,21 @@ public class Item {
     public static List<Item> getAll(String condition){
         return Tools.getAll(Item.class,condition);
     }
+
+    public static Collection<Item> defaultSearch(String s,int max){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Item> out = em.createQuery(
+                "select i from Item i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or barcode like '%"+s+"'",
+                Item.class
+                )
+                .setParameter("n",Tools.tryParseInteger(s))
+                .setParameter("s",s+"%")
+                .setMaxResults(max)
+                .getResultList();
+        em.close();
+        return out;
+    }
+
 
     public static Item getByKbNumber(int kbNumber){
         return Item.getAll("where kbNumber = "+kbNumber).get(0);

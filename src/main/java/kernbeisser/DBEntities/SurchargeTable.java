@@ -1,9 +1,11 @@
 package kernbeisser.DBEntities;
 
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 @Table
@@ -91,6 +93,15 @@ public class SurchargeTable implements Serializable, Cloneable {
 
     public static List<SurchargeTable> getAll(String condition){
         return Tools.getAll(SurchargeTable.class,condition);
+    }
+
+    public static Collection<SurchargeTable> defaultSearch(String s, int max){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<SurchargeTable> out = em.createQuery("select s from SurchargeTable s where s.name like %:search% or s.supplier.name like %:search% or s.supplier.shortName like %:search%",SurchargeTable.class)
+                .setParameter("search",s)
+                .getResultList();
+        em.close();
+        return out;
     }
 
 }
