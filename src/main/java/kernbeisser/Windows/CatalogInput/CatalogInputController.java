@@ -38,27 +38,36 @@ public class CatalogInputController implements Controller {
     }
 
     private void importData(String s){
-        ArrayList<ItemKK> catalog = new ArrayList<>();
-        for(String line : s.split("\n")) {
-            ItemKK item = extractItemKK(line.replace("'", ""));
-            if (item != null){
-                catalog.add(item);
-            }else {
-                return;
+        view.enableButtons(false);
+        Thread t = new Thread(() -> {
+            ArrayList<ItemKK> catalog = new ArrayList<>();
+            for (String line : s.split("\n")) {
+                ItemKK item = extractItemKK(line.replace("'", ""));
+                if (item != null) {
+                    catalog.add(item);
+                }
             }
+            HashMap<Integer, Integer> deposit = new HashMap<>();
+            catalog.forEach(e -> deposit.put(e.getKkNumber(), e.getNetPrice()));
+            for (ItemKK item : catalog) {
+                if (item.getSingleDeposit() != 0)
+                    item.setSingleDeposit(deposit.get(item.getSingleDeposit()));
+                if (item.getCrateDeposit() != 0)
+                    item.setCrateDeposit(deposit.get(item.getCrateDeposit()));
+            }
+            model.clearCatalog();
+            model.saveAll(catalog);
+        });
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        HashMap<Integer,Integer> deposit = new HashMap<>();
-        catalog.forEach(e -> deposit.put(e.getKkNumber(),e.getNetPrice()));
-        for (ItemKK item : catalog) {
-            if (item.getSingleDeposit() != 0)
-                item.setSingleDeposit(deposit.get(item.getSingleDeposit()));
-            if (item.getCrateDeposit() != 0)
-                item.setCrateDeposit(deposit.get(item.getCrateDeposit()));
-        }
-        model.clearCatalog();
-        model.saveAll(catalog);
+        view.success();
+        view.enableButtons(true);
     }
-    ItemKK extractItemKK(String line) {
+    private ItemKK extractItemKK(String line) {
         ItemKK item = new ItemKK();
         String[] values = line.split(";");
         try {

@@ -9,11 +9,13 @@ public class CatalogInputView extends Window implements View {
     private JButton importString;
     private JButton importFile;
     private JTextArea stringData;
+    private JPanel main;
 
     CatalogInputView(Window current, CatalogInputController controller){
         super(current);
         importFile.addActionListener(e -> controller.importFromFile());
         importString.addActionListener(e -> controller.importFromString());
+        add(main);
     }
 
     void extractItemError() {
@@ -24,7 +26,16 @@ public class CatalogInputView extends Window implements View {
         JOptionPane.showMessageDialog(this,"Die angegebene Datei kann nicht gefunden werden!");
     }
 
+    void enableButtons(boolean b){
+        importString.setEnabled(b);
+        importFile.setEnabled(b);
+    }
+
     public String getData() {
         return stringData.getText();
+    }
+
+    public void success() {
+        JOptionPane.showMessageDialog(this,"Der Katalog wurde erfolgreich aktualiesert");
     }
 }

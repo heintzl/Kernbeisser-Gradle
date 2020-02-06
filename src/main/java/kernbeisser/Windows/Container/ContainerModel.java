@@ -57,4 +57,8 @@ public class ContainerModel implements Model {
     public User getUser() {
         return user;
     }
+
+    void removeNew(Container unpaidOrder) {
+        newContainers.remove(unpaidOrder);
+    }
 }

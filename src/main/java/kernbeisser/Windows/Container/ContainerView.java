@@ -22,13 +22,15 @@ public class ContainerView extends Window{
     private JLabel size;
     private DoubleParseField netPrice;
     private JLabel sellingPrice;
+    private JPanel main;
 
     private ContainerController controller;
 
     ContainerView(Window window,ContainerController controller){
         super(window);
         this.controller=controller;
-
+        commit.addActionListener((e) -> controller.commit());
+        add(main);
     }
 
     public double getNetPrice() {
@@ -43,8 +45,17 @@ public class ContainerView extends Window{
         return kkNumber.getValue();
     }
 
+
     private void createUIComponents() {
         lastContainers = new ObjectTable<>(
+                Column.create("Anzahl", Container::getAmount),
+                Column.create("Ladennummer", Container::getKBNumber),
+                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber()),
+                Column.create("Produktname", e -> e.getItem().getName()),
+                Column.create("Netto-Preis", e -> e.getNetPrice() / 100f + "€"),
+                Column.create("Verkaufspreis", e -> e.getPrice() / 100f + "€")
+        );
+        unpaidContainers = new ObjectTable<>(
                 Column.create("Anzahl", Container::getAmount),
                 Column.create("Ladennummer", Container::getKBNumber),
                 Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber()),
@@ -72,6 +83,9 @@ public class ContainerView extends Window{
         );
     }
 
+    Container getSelectedUnpaidOrder(){
+        return unpaidContainers.getSelectedObject();
+    }
 
     void setUnpaidContainers(Collection<Container> containers) {
         unpaidContainers.setObjects(containers);

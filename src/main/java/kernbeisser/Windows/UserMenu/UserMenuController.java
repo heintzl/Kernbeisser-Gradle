@@ -4,6 +4,7 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
+import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
@@ -64,5 +65,9 @@ public class UserMenuController implements Controller {
 
     public void startInventory() {
 
+    }
+
+    public void orderContainers() {
+        new ContainerController(view,model.getOwner());
     }
 }

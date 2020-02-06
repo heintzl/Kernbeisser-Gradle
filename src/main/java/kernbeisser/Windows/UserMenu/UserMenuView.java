@@ -21,6 +21,7 @@ public class UserMenuView extends Window implements View {
     private JButton startInventory;
     private JLabel welcome;
     private JPanel main;
+    private JButton orderContainer;
 
     private UserMenuController controller;
 
@@ -33,6 +34,7 @@ public class UserMenuView extends Window implements View {
         beginCashierJob.addActionListener(e -> controller.beginCashierJob());
         logOut.addActionListener(e -> controller.logOut());
         beginSelfShopping.addActionListener(e -> controller.beginSelfShopping());
+        orderContainer.addActionListener(e -> controller.orderContainers());
         add(main);
         setSize(900,600);
         setLocationRelativeTo(null);

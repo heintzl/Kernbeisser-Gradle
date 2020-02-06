@@ -11,7 +11,7 @@ import java.util.Collection;
 public class ContainerController {
     private ContainerView view;
     private ContainerModel model;
-    ContainerController(Window current, User user){
+    public ContainerController(Window current, User user){
         model = new ContainerModel(user);
         view = new ContainerView(current,this);
         view.setLastContainers(model.getLastContainers());
@@ -47,6 +47,7 @@ public class ContainerController {
     }
 
     public void remove() {
+        model.removeNew(view.getSelectedUnpaidOrder());
         refreshUnpaidContainers();
     }
 
