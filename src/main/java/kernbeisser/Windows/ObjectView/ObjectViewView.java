@@ -85,4 +85,8 @@ public class ObjectViewView <T> extends Window {
     private void createUIComponents() {
         objectTable = new ObjectTable<>();
     }
+
+    boolean commitDelete(){
+        return JOptionPane.showConfirmDialog(this,"Soll dieses Object wirklich gelöschst werden?")==0;
+    }
 }

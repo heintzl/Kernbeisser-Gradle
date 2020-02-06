@@ -41,52 +41,10 @@ public class EditItemModel implements Model {
 
     }
     private void removeItem(Item item){
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        em.remove(item);
-        em.flush();
-        et.commit();
-        em.close();
+        Tools.delete(item.getIid(),item);
     }
     private void editItem(Item item){
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        Item edit = em.find(Item.class,item.getIid());
-        edit.setContainerDef(item.getContainerDef());
-        edit.setSupplier(item.getSupplier());
-        edit.setPriceList(item.getPriceList());
-        edit.setInfo(item.getInfo());
-        edit.setWeighAble(item.isWeighAble());
-        edit.setShowInShop(item.isShowInShop());
-        edit.setBarcode(item.getBarcode());
-        edit.setAmount(item.getAmount());
-        edit.setContainerSize(item.getContainerSize());
-        edit.setCrateDeposit(item.getCrateDeposit());
-        edit.setSuppliersItemNumber(item.getSuppliersItemNumber());
-        edit.setVatLow(item.isVatLow());
-        edit.setNetPrice(item.getNetPrice());
-        edit.setKbNumber(item.getKbNumber());
-        edit.setSingleDeposit(item.getSingleDeposit());
-        edit.setName(item.getName());
-        edit.setDeleteAllowed(item.isDeleteAllowed());
-        edit.setCooling(item.getCooling());
-        edit.setCoveredIntake(item.isCoveredIntake());
-        edit.setDeleted(item.isDeleted());
-        edit.setDeletedDate(item.getDeletedDate());
-        edit.setDelivered(item.getDelivered());
-        edit.setIntake(item.getIntake());
-        edit.setListed(item.isListed());
-        edit.setPrintAgain(item.isPrintAgain());
-        edit.setSold(item.getSold());
-        edit.setSpecialPriceMonth(item.getSpecialPriceMonth());
-        edit.setSpecialPriceNet(item.getSpecialPriceNet());
-        edit.setUnit(item.getUnit());
-        em.persist(edit);
-        em.flush();
-        et.commit();
-        em.close();
+        Tools.edit(item.getIid(),item);
     }
 
     boolean kbNumberExists(int kbNumber){

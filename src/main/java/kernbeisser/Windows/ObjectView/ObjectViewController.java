@@ -44,6 +44,7 @@ public class ObjectViewController <T>{
     }
 
     void delete(){
+        if(view.commitDelete())
         model.remove(view,view.getSelectedObject());
     }
 

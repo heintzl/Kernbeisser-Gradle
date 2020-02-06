@@ -54,23 +54,11 @@ public class EditUserModel implements Model {
     }
 
     private void remove(User user) {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        em.remove(em.find(User.class,user.getId()));
-        em.flush();
-        et.commit();
-        em.close();
+        Tools.delete(user,user.getId());
     }
 
     private void edit(User user) {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        em.persist(Tools.mergeWithoutId(user,em.find(User.class,user.getId())));
-        em.flush();
-        et.commit();
-        em.close();
+        Tools.edit(user.getId(),user);
     }
 
     private void add(User user) {

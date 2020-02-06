@@ -9,6 +9,7 @@ import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceException;
 import java.util.Collection;
 
 public class EditSurchargeTableModel implements Model {
@@ -24,34 +25,28 @@ public class EditSurchargeTableModel implements Model {
         this.mode = mode;
     }
 
-    void doAction(SurchargeTable table){
-        switch (mode){
-            case REMOVE:
-                remove(table);
-                break;
-            case EDIT:
-                edit(table);
-                break;
-            case ADD:
-                add(Tools.mergeWithoutId(surchargeTable));
-                break;
+    boolean doAction(SurchargeTable table){
+        try {
+            switch (mode) {
+                case REMOVE:
+                    remove(table);
+                    break;
+                case EDIT:
+                    edit(table);
+                    break;
+                case ADD:
+                    add(Tools.mergeWithoutId(surchargeTable));
+                    break;
+            }
+            return true;
+        }catch (PersistenceException e){
+            e.printStackTrace();
+            return false;
         }
     }
 
     private void edit(SurchargeTable surchargeTable){
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        SurchargeTable edit = em.find(SurchargeTable.class,surchargeTable.getStid());
-        edit.setFrom(surchargeTable.getFrom());
-        edit.setTo(surchargeTable.getTo());
-        edit.setSurcharge(surchargeTable.getSurcharge());
-        edit.setSupplier(surchargeTable.getSupplier());
-        edit.setName(surchargeTable.getName());
-        em.persist(edit);
-        em.flush();
-        et.commit();
-        em.close();
+        Tools.edit(surchargeTable.getStid(),surchargeTable);
     }
     private void add(SurchargeTable surchargeTable){
         EntityManager em = DBConnection.getEntityManager();
@@ -66,7 +61,7 @@ public class EditSurchargeTableModel implements Model {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.remove(surchargeTable);
+        em.remove(em.find(SurchargeTable.class,surchargeTable.getStid()));
         em.flush();
         et.commit();
         em.close();

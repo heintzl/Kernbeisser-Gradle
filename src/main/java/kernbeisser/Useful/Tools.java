@@ -1,8 +1,10 @@
 package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.User;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Id;
 import javax.swing.*;
 import javax.swing.text.*;
@@ -246,12 +248,30 @@ public class Tools {
         }catch (NumberFormatException e){
             return 0;
         }
-    }public static int tryParseInteger(String s){
+    }
+    public static int tryParseInteger(String s){
         try{
             return Integer.parseInt(s);
         }catch (NumberFormatException e){
             return 0;
         }
     }
-
+    public static <T> void delete(T t,Object key){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.remove(em.find(t.getClass(),key));
+        em.flush();
+        et.commit();
+        em.close();
+    }
+    public static <T> void edit(Object key,T to){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.persist(Tools.mergeWithoutId(to,em.find(to.getClass(),key)));
+        em.flush();
+        et.commit();
+        em.close();
+    }
 }

@@ -14,8 +14,12 @@ public class EditUserController implements Controller {
     private EditUserView view;
     private EditUserModel model;
     public EditUserController(Window current, User user, Mode mode){
-        this.view=new EditUserView(this,current);
         model=new EditUserModel(user == null ? new User() : user,mode);
+        if(mode==Mode.REMOVE){
+            model.doAction(user);
+            return;
+        }
+        else this.view=new EditUserView(this,current);
         view.setPermissions(model.getAllPermission());
         view.setData(model.getUser());
     }
@@ -55,7 +59,7 @@ public class EditUserController implements Controller {
                         view.usernameAlreadyExists();
                         return;
                     }
-
+                break;
             case ADD:
                 if(model.usernameExists(data.getUsername())){
                     view.usernameAlreadyExists();
@@ -63,6 +67,7 @@ public class EditUserController implements Controller {
                 }
                 if(data.getPassword()==null)
                     requestChangePassword();
+                break;
         }
         if(model.doAction(data))view.back();
     }
