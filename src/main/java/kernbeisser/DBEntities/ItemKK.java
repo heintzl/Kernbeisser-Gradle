@@ -182,8 +182,9 @@ public class ItemKK implements Serializable {
     public static ItemKK getByKbNumber(int kbNumber){
         EntityManager em = DBConnection.getEntityManager();
         try{
-            return em.createQuery("select ik from ItemKK ik where kkNumber = (select suppliersItemNumber from Item i where i.kbNumber = :n and i.supplier.shortName != 'KK')", ItemKK.class)
+            return em.createQuery("select ik from ItemKK ik where kkNumber = (select suppliersItemNumber from Item i where i.kbNumber = :n and i.supplier.shortName = 'KK')", ItemKK.class)
                     .setParameter("n",kbNumber)
+                    .setMaxResults(1)
                     .getSingleResult();
         }catch (NoResultException e){
             return null;

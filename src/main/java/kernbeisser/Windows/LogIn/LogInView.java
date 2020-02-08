@@ -45,7 +45,6 @@ public class LogInView extends Window implements View {
         logIn.setIcon(IconFontSwing.buildIcon(FontAwesome.SIGN_IN,15,new Color(0x3C39FF)));
 
     }
-
     void addTab(String title, Collection<User> users) {
         ObjectTable<User> userTable = new ObjectTable<>(
                 users,

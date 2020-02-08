@@ -9,6 +9,8 @@ import kernbeisser.DBEntities.Container;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 public class ContainerView extends Window{
@@ -30,11 +32,19 @@ public class ContainerView extends Window{
         super(window);
         this.controller=controller;
         commit.addActionListener((e) -> controller.commit());
+        kkNumber.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                controller.searchKK();
+            }
+        });
+        kbNumber.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                controller.searchKB();
+            }
+        });
         add(main);
-    }
-
-    public double getNetPrice() {
-        return netPrice.getValue();
     }
 
     int getAmount(){
@@ -45,6 +55,9 @@ public class ContainerView extends Window{
         return kkNumber.getValue();
     }
 
+    int getNetPrice(){
+        return (int)(netPrice.getValue()*100);
+    }
 
     private void createUIComponents() {
         lastContainers = new ObjectTable<>(
@@ -81,6 +94,30 @@ public class ContainerView extends Window{
                     }
                 }
         );
+    }
+
+    void setItemName(String s){
+        name.setText(s);
+    }
+    void setItemSize(String s){
+        size.setText(s);
+    }
+    void setSellingPrice(String s){
+        sellingPrice.setText(s);
+    }
+    void setKbNumber(String s){
+        kbNumber.setText(s);
+    }
+    void setKkNumber(String s){
+        kkNumber.setText(s);
+    }
+
+    void setNetPrice(String s){
+        netPrice.setText(s);
+    }
+
+    void setAmount(String s){
+        amount.setText(s);
     }
 
     Container getSelectedUnpaidOrder(){

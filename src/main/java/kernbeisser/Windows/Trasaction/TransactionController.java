@@ -7,12 +7,22 @@ import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
+import java.util.Collections;
+
 public class TransactionController implements Controller {
     private TransactionModel model;
     private TransactionView view;
-    TransactionController(Window current){
+    public TransactionController(Window current,User user){
         model = new TransactionModel();
         view = new TransactionView(current,this);
+        switch (user.getPermission()){
+            case ADMIN:
+            case MONEY_MANAGER:
+                break;
+            default:
+                view.setFromEnabled(false);
+                view.setFrom(user.getUsername());
+        }
     }
     @Override
     public View getView() {
@@ -24,11 +34,15 @@ public class TransactionController implements Controller {
         return model;
     }
 
-    public void transfer() {
+    void transfer() {
+        if(!view.confirm())return;
         model.transfer();
+        view.success();
+        model.getTransactions().clear();
+        view.setTransactions(model.getTransactions());
     }
 
-    public void addTransaction() {
+    void addTransaction() {
         Transaction transaction = new Transaction();
         if(view.isFromKB()){
             transaction.setFrom(null);
@@ -47,6 +61,11 @@ public class TransactionController implements Controller {
         transaction.setTo(to);
         transaction.setValue(view.getValue());
         model.addTransaction(transaction);
+        view.setTransactions(model.getTransactions());
+    }
+
+    void remove() {
+        model.remove(view.getSelectedTransaction());
         view.setTransactions(model.getTransactions());
     }
 }

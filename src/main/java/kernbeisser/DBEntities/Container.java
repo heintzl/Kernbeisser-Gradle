@@ -30,6 +30,9 @@ public class Container implements Serializable {
     private int amount;
 
     @Column
+    private int netPrice;
+
+    @Column
     private boolean payed;
 
     @Column
@@ -100,16 +103,26 @@ public class Container implements Serializable {
     }
 
     public int getKBNumber(){
-        List<Item> items = Item.getAll("where kbNumber = "+item.getKkNumber());
+        List<Item> items = Item.getAll("where suppliersItemNumber = "+item.getKkNumber());
         if(items==null)return -1;
         else return items.get(0).getKbNumber();
     }
 
     public int getNetPrice(){
-        return item.getNetPrice()*amount;
+        return netPrice;
     }
 
-    public int getPrice(){
+    public int calculateOriginalPrice(){
         return item.getContainerPrice()*amount;
+    }
+
+
+    public int getPrice(){
+        item.setNetPrice(netPrice);
+        return item.getContainerPrice();
+    }
+
+    public void setNetPrice(int overriddenPrice) {
+        this.netPrice = overriddenPrice;
     }
 }

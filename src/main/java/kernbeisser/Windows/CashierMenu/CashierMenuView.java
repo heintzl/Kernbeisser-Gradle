@@ -19,6 +19,7 @@ public class CashierMenuView extends Window implements View {
     private JButton startCashier;
     private JButton refreshCatalog;
     private JPanel main;
+    private JButton transfer;
 
     CashierMenuView(CashierMenuController controller,Window current){
         super(current);
@@ -28,6 +29,7 @@ public class CashierMenuView extends Window implements View {
         refreshCatalog.addActionListener(e -> controller.openCatalogInput());
         startCashier.addActionListener(e -> controller.openCashierMask());
         quitCashierJob.addActionListener(e -> back());
+        transfer.addActionListener(e -> controller.openTransfer());
         startCashier.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART,20,new Color(49, 114, 128)));
         startCashier.setRolloverIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART,25,new Color(43, 128, 9)));
         editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(165, 4, 46)));

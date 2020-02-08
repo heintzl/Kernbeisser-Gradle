@@ -302,4 +302,9 @@ public class User implements Serializable {
         em.close();
         return out;
     }
+
+    @Override
+    public String toString() {
+        return username;
+    }
 }

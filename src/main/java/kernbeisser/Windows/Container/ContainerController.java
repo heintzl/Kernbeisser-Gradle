@@ -40,15 +40,60 @@ public class ContainerController {
         }
         newContainer.setItem(item);
         newContainer.setPayed(false);
+        newContainer.setNetPrice(view.getNetPrice());
         newContainer.setAmount(view.getAmount());
         newContainer.setUser(model.getUser());
+        newContainer.setNetPrice(view.getNetPrice());
         model.addContainer(newContainer);
         refreshUnpaidContainers();
+        clear();
     }
 
     public void remove() {
         model.removeNew(view.getSelectedUnpaidOrder());
         refreshUnpaidContainers();
+    }
+
+    public void searchKK(){
+        clear();
+        view.setKkNumber("");
+        pasteData(model.getItemByKkNumber(view.getKkNumber()));
+    }
+    public void searchKB(){
+        clear();
+        view.setKkNumber("");
+        pasteData(model.getItemByKbNumber(view.getKbNumber()));
+    }
+
+    private void pasteData(ItemKK item){
+        if(item!=null){
+            Container c = new Container();
+            c.setItem(item);
+            c.setAmount(1);
+            c.setNetPrice(c.calculateOriginalPrice());
+            c.setPayed(false);
+            pasteData(c);
+        }
+    }
+
+    private void clear(){
+        view.setNetPrice("");
+        view.setItemSize("1");
+        view.setAmount("");
+        view.setItemName("Kein Artikel ausgewählt");
+        view.setSellingPrice("");
+        //view.setKkNumber("");
+        //view.setKbNumber("");
+    }
+
+    private void pasteData(Container c){
+        view.setItemSize(c.getItem().getContainerSize()+" x "+c.getItem().getAmount()+c.getItem().getUnit().getShortName());
+        view.setKbNumber(String.valueOf(c.getKBNumber()));
+        view.setKkNumber(String.valueOf(c.getItem().getKkNumber()));
+        view.setSellingPrice(c.calculateOriginalPrice()/100f+"€");
+        view.setItemName(c.getItem().getName());
+        view.setAmount(String.valueOf(c.getAmount()));
+        view.setNetPrice(c.getNetPrice() / 100f + "€");
     }
 
     void exit() {

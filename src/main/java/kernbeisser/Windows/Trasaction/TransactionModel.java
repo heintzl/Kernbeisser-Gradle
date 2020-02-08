@@ -3,6 +3,7 @@ package kernbeisser.Windows.Trasaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -18,7 +19,7 @@ class TransactionModel implements Model {
     }
 
     User findUser(String username){
-        List<User> users = User.getAll("where username like "+username);
+        List<User> users = User.getAll("where username like '"+username+"'");
         return users!=null ? users.get(0) : null;
     }
 
@@ -27,12 +28,12 @@ class TransactionModel implements Model {
     }
 
     void transfer() {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        transactions.forEach(em::persist);
-        em.flush();
-        et.commit();
-        em.close();
+        for (Transaction transaction : transactions) {
+            Transaction.doTransaction(transaction.getFrom(),transaction.getTo(),transaction.getValue());
+        }
+    }
+
+    public void remove(Transaction selectedTransaction) {
+        transactions.remove(selectedTransaction);
     }
 }
