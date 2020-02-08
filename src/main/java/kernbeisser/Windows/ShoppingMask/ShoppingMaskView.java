@@ -39,7 +39,8 @@ public class ShoppingMaskView extends javax.swing.JPanel implements View {
     /**
      * Creates new form ShoppingMask
      */
-    public ShoppingMaskView(Window window, SaleSession saleSession) {
+    public ShoppingMaskView(Window window, ShoppingMaskController controller) {
+        this.controller = controller;
         initComponents();
         this.window=window;
         setFilters();
@@ -58,7 +59,6 @@ public class ShoppingMaskView extends javax.swing.JPanel implements View {
                 Column.create("Artikel-Nummer", Item::getKbNumber),
                 Column.create("Preis", e -> e.calculatePrice() / 100f + "\u20AC")
         );
-        controller = new ShoppingMaskController(this,saleSession);
         withoutBarcodeTable.addSelectionListener((e)->{
             itemNumber.setText(e.getKbNumber()+"");
             itemAmount.requestFocus();
@@ -1193,11 +1193,6 @@ public class ShoppingMaskView extends javax.swing.JPanel implements View {
     private javax.swing.JLabel userName;
     private javax.swing.JLabel userValueLater;
     private javax.swing.JLabel userValueNow;
-
-    @Override
-    public ShoppingMaskController getController() {
-        return controller;
-    }
 
     void shoppingCartDataChanged() {
         shoppingCartTable.repaintUI();

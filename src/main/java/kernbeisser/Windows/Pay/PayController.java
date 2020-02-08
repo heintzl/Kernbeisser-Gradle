@@ -5,17 +5,18 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
+import kernbeisser.Windows.Window;
 
 import java.util.Collection;
 
-class PayController implements Controller {
+public class PayController implements Controller {
 
     private PayModel model;
     private PayView view;
 
-    PayController(PayView view, SaleSession saleSession, Collection<ShoppingItem> shoppingCart,Runnable transferCompleted){
-        this.view=view;
+    public PayController(Window current, SaleSession saleSession, Collection<ShoppingItem> shoppingCart, Runnable transferCompleted){
         model=new PayModel(saleSession,shoppingCart,transferCompleted);
+        view = new PayView(current,this);
         view.fillShoppingCart(model.getShoppingCart());
         view.setPrintServices(model.getAllPrinters());
         view.setSelectedPrintService(model.getDefaultPrinter());

@@ -2,12 +2,14 @@ package kernbeisser.Windows.CashierMenu;
 
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskView;
+import kernbeisser.Windows.CatalogInput.CatalogInputController;
 import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditItems.EditItems;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
+import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
-import kernbeisser.Windows.ManageUser.ManageUserUIView;
+import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.Window;
 
 public class CashierMenuController implements Controller {
@@ -41,7 +43,7 @@ public class CashierMenuController implements Controller {
         new EditSurchargeTables(getView());
     }
     public void openManageUsers(){
-        new ManageUserUIView(view,model.getUser().getPermission());
+        new EditUsers(getView());
     }
     public void openManagePriceLists(){
         new ManagePriceListsView(view);
@@ -50,6 +52,10 @@ public class CashierMenuController implements Controller {
         new CashierShoppingMaskView(model.getUser(),view);
     }
     public void openCatalogInput(){
-        new CatalogInputView(view);
+        new CatalogInputController(view);
+    }
+
+    public void openTransfer() {
+        new TransactionController(view,model.getUser());
     }
 }

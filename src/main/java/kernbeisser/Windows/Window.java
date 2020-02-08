@@ -16,6 +16,8 @@ public class Window extends JFrame {
     public Window(Window currentWindow){
         setIconImage(STANDARD_IMAGE);
         pack();
+        if(currentWindow!=null)
+        setSize(currentWindow.getSize());
         setLocationRelativeTo(null);
         this.current=currentWindow;
         addWindowListener((WindowCloseEvent)e -> {
@@ -30,9 +32,6 @@ public class Window extends JFrame {
     public static Window getLastOpened() {
         return lastOpened;
     }
-
-    
-
     public final void back(){
         if(current==null){
             finish();

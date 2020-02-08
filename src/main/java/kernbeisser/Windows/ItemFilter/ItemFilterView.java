@@ -18,11 +18,9 @@ public class ItemFilterView extends Window implements View {
     private ObjectTree<PriceList> priceLists;
     private ObjectTable<Supplier> suppliers;
 
-    private ItemFilterController controller;
 
     public ItemFilterView(Window current) {
         super(current);
-        controller = new ItemFilterController(this);
         commit.addActionListener(e -> back());
     }
 
@@ -43,9 +41,5 @@ public class ItemFilterView extends Window implements View {
         suppliers.setObjects(allSuppliers);
     }
 
-    @Override
-    public Controller getController() {
-        return controller;
-    }
 
 }

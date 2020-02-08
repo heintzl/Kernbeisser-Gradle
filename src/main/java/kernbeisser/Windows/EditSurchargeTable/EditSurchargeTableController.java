@@ -11,12 +11,15 @@ public class EditSurchargeTableController {
 
     public EditSurchargeTableController(Window current, SurchargeTable surchargeTable, Mode mode){
         this.model = new EditSurchargeTableModel(surchargeTable == null ? new SurchargeTable() : surchargeTable,mode);
-        this.view = new EditSurchargeTableView(this,current);
+        if(mode==Mode.REMOVE){
+            model.doAction(surchargeTable);
+            return;
+        }else this.view = new EditSurchargeTableView(this,current);
         view.setSuppliers(model.getAllSuppliers());
         view.paste(model.getSurchargeTable());
     }
 
     public void commit() {
-        model.doAction(view.collect(model.getSurchargeTable()));
+        if(model.doAction(view.collect(model.getSurchargeTable())))view.back();
     }
 }

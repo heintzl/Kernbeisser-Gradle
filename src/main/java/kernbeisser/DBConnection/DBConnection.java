@@ -2,7 +2,7 @@ package kernbeisser.DBConnection;
 
 
 import kernbeisser.Config.ConfigManager;
-import kernbeisser.StartUp.DataImport.DBLogIn;
+import kernbeisser.StartUp.LogIn.DBLogIn;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

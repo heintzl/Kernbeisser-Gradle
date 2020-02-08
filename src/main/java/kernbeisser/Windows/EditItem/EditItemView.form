@@ -184,7 +184,7 @@
                       <text value="Barcode"/>
                     </properties>
                   </component>
-                  <component id="d0e0e" class="kernbeisser.CustomComponents.TextFields.LongParseField" binding="barcode" custom-create="true">
+                  <component id="179d1" class="javax.swing.JTextField" binding="barcode">
                     <constraints>
                       <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>

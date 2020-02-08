@@ -20,35 +20,13 @@ public class ObjectTable <T> extends JTable {
     private boolean complex = false;
 
     public ObjectTable(Collection<Column<T>> columns){
-        this.columns.addAll(columns);
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                handleCellComponentEvents();
-                if(getSelectedRow()==-1)return;
-                T selected = objects.get(getSelectedRow());
-                for (ObjectSelectionListener<T> listener : selectionListeners) {
-                    listener.selected(selected);
-                }
-            }
-        });
+        this(null,columns);
     }
     public ObjectTable(Collection<T> fill,Column<T> ... columns){
         this(fill,Arrays.asList(columns));
     }
     public ObjectTable(Column<T> ... columns){
-        this.columns.addAll(Arrays.asList(columns));
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                handleCellComponentEvents();
-                if(getSelectedRow()==-1)return;
-                T selected = objects.get(getSelectedRow());
-                for (ObjectSelectionListener<T> listener : selectionListeners) {
-                    listener.selected(selected);
-                }
-            }
-        });
+        this(Arrays.asList(columns));
     }
 
     public void setComplex(boolean v){
@@ -66,6 +44,7 @@ public class ObjectTable <T> extends JTable {
                 handleCellComponentEvents();
                 if(getSelectedRow()==-1)return;
                 T selected = objects.get(getSelectedRow());
+                ObjectTable.this.columns.get(getSelectedColumn()).onAction(selected);
                 for (ObjectSelectionListener<T> listener : selectionListeners) {
                     listener.selected(selected);
                 }
@@ -146,7 +125,6 @@ public class ObjectTable <T> extends JTable {
             }
         });
         if(complex) {
-
             for (String name : names) {
                 getColumn(name).setCellRenderer((table, value, isSelected, hasFocus, row, column) -> {
                     if (value instanceof Component)

@@ -1,6 +1,7 @@
 package kernbeisser.StartUp.DataImport;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
@@ -9,6 +10,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
+import kernbeisser.Windows.Window;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -25,8 +27,8 @@ import java.util.*;
 public class DataImportController implements Controller {
     private DataImportView view;
     private DataImportModel model;
-    DataImportController(DataImportView dataImportView) {
-        this.view=dataImportView;
+    public DataImportController(Window current) {
+        this.view= new DataImportView(current,this);
         model=new DataImportModel();
     }
 
@@ -119,6 +121,8 @@ public class DataImportController implements Controller {
                     view.userSourcesNotExists();
                 }
             }
+            ConfigManager.getHeader().put("Init",true);
+            ConfigManager.updateFile();
         }
     }
 
@@ -313,6 +317,8 @@ public class DataImportController implements Controller {
 
     void cancel(){
         view.back();
+        ConfigManager.getHeader().put("Init",true);
+        ConfigManager.updateFile();
     }
 
     @Override

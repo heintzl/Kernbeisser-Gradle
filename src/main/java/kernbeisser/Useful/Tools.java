@@ -1,12 +1,16 @@
 package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.User;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Id;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -203,17 +207,71 @@ public class Tools {
     }
     public static <T> T mergeWithoutId(T in){
         try {
-            T out = (T) in.getClass().getDeclaredConstructor().newInstance();
-            for (Field field : out.getClass().getDeclaredFields()) {
-                if(field.getAnnotation(Id.class)==null) {
-                    field.setAccessible(true);
-                    field.set(out, field.get(in));
-                }
-            }
-            return out;
+            return mergeWithoutId(in,(T) in.getClass().getDeclaredConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
             return null;
         }
+    }
+    public static <T> T mergeWithoutId(T in,T toOverride){
+        for (Field field : toOverride.getClass().getDeclaredFields()) {
+            if(field.getAnnotation(Id.class)==null) {
+                field.setAccessible(true);
+                try {
+                    field.set(toOverride, field.get(in));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return toOverride;
+    }
+    public static void setPromptText(JTextField jTextField,String promptText){
+        jTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(jTextField.getText().equals(promptText))
+                    jTextField.setText("");
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(jTextField.getText().equals("")){
+                    jTextField.setText(promptText);
+                }
+            }
+        });
+    }
+    public static long tryParseLong(String s){
+        try{
+            return Long.parseLong(s);
+        }catch (NumberFormatException e){
+            return 0;
+        }
+    }
+    public static int tryParseInteger(String s){
+        try{
+            return Integer.parseInt(s);
+        }catch (NumberFormatException e){
+            return 0;
+        }
+    }
+    public static <T> void delete(T t,Object key){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.remove(em.find(t.getClass(),key));
+        em.flush();
+        et.commit();
+        em.close();
+    }
+    public static <T> void edit(Object key,T to){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.persist(Tools.mergeWithoutId(to,em.find(to.getClass(),key)));
+        em.flush();
+        et.commit();
+        em.close();
     }
 }

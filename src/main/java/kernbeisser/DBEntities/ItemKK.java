@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Useful.Tools;
 
@@ -142,5 +143,53 @@ public class ItemKK implements Serializable {
 
     public static List<ItemKK> getAll(String condition){
         return Tools.getAll(ItemKK.class,condition);
+    }
+
+    public SurchargeTable getSurcharge() {
+        //TODO really expensive!
+        EntityManager em = DBConnection.getEntityManager();
+        try{
+            return em.createQuery("select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number", SurchargeTable.class)
+                    .setParameter("supplier",Supplier.getKKSupplier().getId())
+                    .setParameter("number",kkNumber)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return SurchargeTable.DEFAULT;
+        }
+    }
+
+    public int getContainerPrice(){
+        return (int) ((netPrice*((getSurcharge().getSurcharge()/200f)+1))+0.5);
+    }
+
+    public int calculatePrice() {
+        return (int) ((netPrice*((getSurcharge().getSurcharge()/100f)+1))+0.5);
+    }
+
+    public static ItemKK getByKkNumber(int kkNumber){
+        EntityManager em = DBConnection.getEntityManager();
+        try{
+            return em.createQuery("select k from ItemKK k where kkNumber = :n",ItemKK.class)
+                    .setParameter("n",kkNumber)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }finally {
+            em.close();
+        }
+    }
+    public static ItemKK getByKbNumber(int kbNumber){
+        EntityManager em = DBConnection.getEntityManager();
+        try{
+            return em.createQuery("select ik from ItemKK ik where kkNumber = (select suppliersItemNumber from Item i where i.kbNumber = :n and i.supplier.shortName = 'KK')", ItemKK.class)
+                    .setParameter("n",kbNumber)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }finally {
+            em.close();
+        }
     }
 }

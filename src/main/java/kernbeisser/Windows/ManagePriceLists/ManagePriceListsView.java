@@ -8,8 +8,6 @@ package kernbeisser.Windows.ManagePriceLists;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Finishable;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 import org.hibernate.Session;
@@ -240,9 +238,5 @@ public class ManagePriceListsView extends Window implements View {
     private JButton save;
     private JTextField superPriceList;
 
-    @Override
-    public Controller getController() {
-        return controller;
-    }
     // End of variables declaration//GEN-END:variables
 }

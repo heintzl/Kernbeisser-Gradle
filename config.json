@@ -1,9 +1,1 @@
-{
-  "Init": false,
-  "DBAccess": {
-    "Username": "Application",
-    "URL": "jdbc:mysql://localhost/kernbeisser",
-    "Password": "KB29.06.2019CreateDate"
-  },
-  "ImagePath": "src/main/resources/Images"
-}
+{"Init":true,"DBAccess":{"Username":"Application","URL":"jdbc:mysql://localhost/kernbeisser","Password":"KB29.06.2019CreateDate"},"ImagePath":"src/main/resources/Images"}

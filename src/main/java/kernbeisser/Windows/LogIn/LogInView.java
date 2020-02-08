@@ -5,6 +5,8 @@
  */
 package kernbeisser.Windows.LogIn;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.User;
@@ -27,23 +29,22 @@ public class LogInView extends Window implements View {
     private JTextField username;
     private JTabbedPane users;
 
-    private LogInController controller;
 
     /**
      * Creates new form LogIn from LogInView.form
      * with all Tables from A-Z
      * and a Table with all Users
      */
-    public LogInView(Window current) {
+    public LogInView(Window current,LogInController controller) {
         super(current);
         add(main);
-        controller = new LogInController(this);
-        logIn.addActionListener(e -> logIn());
-        password.addActionListener(e -> logIn());
-        setSize(Tools.getScreenWidth() / 2, Tools.getScreenHeight() / 2);
+        logIn.addActionListener(e -> controller.logIn());
+        password.addActionListener(e -> controller.logIn());
+        setSize(Tools.getScreenWidth() / 2, 600);
         setLocationRelativeTo(null);
-    }
+        logIn.setIcon(IconFontSwing.buildIcon(FontAwesome.SIGN_IN,15,new Color(0x3C39FF)));
 
+    }
     void addTab(String title, Collection<User> users) {
         ObjectTable<User> userTable = new ObjectTable<>(
                 users,
@@ -51,7 +52,10 @@ public class LogInView extends Window implements View {
                 Column.create("Vorname", User::getFirstName),
                 Column.create("Nachname", User::getSurname));
         userTable.getTableHeader().setFont(new Font("arial", Font.BOLD, 12));
-        userTable.getSelectionModel().addListSelectionListener(e -> username.setText(userTable.getSelectedObject().getUsername()));
+        userTable.getSelectionModel().addListSelectionListener(e -> {
+            username.setText(userTable.getSelectedObject().getUsername());
+            password.requestFocus();
+        });
         this.users.addTab(title, new JScrollPane(userTable));
     }
 
@@ -63,10 +67,11 @@ public class LogInView extends Window implements View {
         return password.getPassword();
     }
 
-    private void logIn() {
-        switch (controller.logIn()) {
+    void applyFeedback(int feedback){
+        switch (feedback) {
             case LogInController.SUCCESS:
-                controller.openUserMenu();
+                username.setText("");
+                password.setText("");
                 break;
             case LogInController.INCORRECT_USERNAME:
                 Tools.ping(username);
@@ -80,15 +85,4 @@ public class LogInView extends Window implements View {
         }
         back();
     }
-
-    @Override
-    public Controller getController() {
-        return controller;
-    }
-
-
-    private void createUIComponents() {
-
-    }
-
 }

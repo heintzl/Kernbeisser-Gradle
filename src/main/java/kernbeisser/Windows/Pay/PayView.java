@@ -12,7 +12,7 @@ import javax.print.PrintService;
 import javax.swing.*;
 import java.util.Collection;
 
-public class PayView extends Window implements View {
+class PayView extends Window implements View {
     private JPanel main;
     private JButton commit;
     private JRadioButton printBon;
@@ -22,14 +22,12 @@ public class PayView extends Window implements View {
     private JButton cancel;
     private ObjectTable<ShoppingItem> shoppingCart;
 
-    private PayController controller;
 
-    public PayView(Window current, SaleSession saleSession, Collection<ShoppingItem> shoppingCart, Runnable transferCompleted) {
+    public PayView(Window current, PayController controller) {
         super(current);
         add(main);
         pack();
         setLocationRelativeTo(current);
-        controller = new PayController(this, saleSession, shoppingCart, transferCompleted);
         commit.addActionListener(e -> {
             controller.commit();
         });
@@ -65,9 +63,5 @@ public class PayView extends Window implements View {
         );
     }
 
-    @Override
-    public Controller getController() {
-        return controller;
-    }
 
 }
