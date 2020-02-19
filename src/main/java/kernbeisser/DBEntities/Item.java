@@ -212,7 +212,7 @@ public class Item {
         EntityManager em = DBConnection.getEntityManager();
         try{
             return em.createQuery("select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number", SurchargeTable.class)
-                    .setParameter("supplier",supplier.getId())
+                    .setParameter("supplier",supplier != null ? supplier.getId() : -1)
                     .setParameter("number",getSuppliersItemNumber())
                     .setMaxResults(1)
                     .getSingleResult();

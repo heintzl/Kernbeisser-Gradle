@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ShoppingMask;
 
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -12,10 +13,12 @@ import kernbeisser.Windows.Window;
 public class ShoppingMaskUIController implements Controller {
     private ShoppingMaskUIView view;
     private ShoppingMaskModel model;
+    private ShoppingCartController shoppingCartController;
 
     public ShoppingMaskUIController(Window current, SaleSession saleSession){
-        this.view=new ShoppingMaskUIView(current,this);
         model=new ShoppingMaskModel(saleSession);
+        this.shoppingCartController = new ShoppingCartController(model.getValue());
+        this.view=new ShoppingMaskUIView(current,this,shoppingCartController);
         view.loadUserInfo(saleSession.getCustomer());
         //view.fillWithoutBarcode(model.getAllItemsWithoutBarcode());
     }
@@ -27,8 +30,18 @@ public class ShoppingMaskUIController implements Controller {
         return null;
     }
 
-    void addToShoppingCart(ShoppingItem i) {
+    void addToShoppingCart() {
+        shoppingCartController.addShoppingItem(extract());
     }
+
+    void searchByKbNumber(){
+
+    }
+
+    private ShoppingItem extract(){
+        return ShoppingItem.getBakeryProduct(200);
+    }
+
     /*
         if(i.getItemAmount()==0||i.getAmount()==0)return;
         i.setDiscount(view.getDiscount());
@@ -130,6 +143,6 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void startPay() {
-        new PayController(view.getWindow(),model.getSaleSession(),model.getShoppingCart(),() -> {});
+        new PayController(view,model.getSaleSession(),model.getShoppingCart(),() -> {});
     }
 }

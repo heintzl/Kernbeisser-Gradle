@@ -6,9 +6,10 @@ import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
-class EditSurchargeTableView extends Window{
+class EditSurchargeTableView extends Window {
     private final EditSurchargeTableController controller;
     private JButton commit;
     private JButton cancel;
@@ -19,7 +20,7 @@ class EditSurchargeTableView extends Window{
     private IntegerParseField surcharge;
     private JPanel main;
 
-    EditSurchargeTableView(EditSurchargeTableController controller,Window current) {
+    EditSurchargeTableView(EditSurchargeTableController controller, Window current) {
         super(current);
         this.controller = controller;
         commit.addActionListener((e) -> controller.commit());
@@ -29,12 +30,12 @@ class EditSurchargeTableView extends Window{
         setLocationRelativeTo(null);
     }
 
-    void setSuppliers(Collection<Supplier> suppliers){
+    void setSuppliers(Collection<Supplier> suppliers) {
         supplier.removeAllItems();
         suppliers.forEach(supplier::addItem);
     }
 
-    void paste(SurchargeTable table){
+    void paste(SurchargeTable table) {
         name.setText(table.getName());
         from.setText(String.valueOf(table.getFrom()));
         to.setText(String.valueOf(table.getTo()));
@@ -42,7 +43,7 @@ class EditSurchargeTableView extends Window{
         surcharge.setText(String.valueOf(table.getSurcharge()));
     }
 
-    SurchargeTable collect(SurchargeTable table){
+    SurchargeTable collect(SurchargeTable table) {
         table.setSupplier((Supplier) supplier.getSelectedItem());
         table.setSurcharge(surcharge.getValue());
         table.setFrom(from.getValue());
@@ -50,4 +51,5 @@ class EditSurchargeTableView extends Window{
         table.setName(name.getText());
         return table;
     }
+
 }

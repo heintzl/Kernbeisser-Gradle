@@ -94,6 +94,7 @@ public class ShoppingItem implements Serializable {
             organic.setName("Obst und Gem\u00fcse");
             organic.setDeleteAllowed(false);
             organic.setKbNumber(-1);
+            organic.setUnit(Unit.STACK);
             em.persist(organic);
             em.flush();
             et.commit();
@@ -115,6 +116,7 @@ public class ShoppingItem implements Serializable {
             et.begin();
             Item bakeryProduct = new Item();
             bakeryProduct.setName("Backware");
+            bakeryProduct.setUnit(Unit.STACK);
             bakeryProduct.setDeleteAllowed(false);
             bakeryProduct.setKbNumber(-2);
             em.persist(bakeryProduct);
@@ -139,6 +141,7 @@ public class ShoppingItem implements Serializable {
             Item deposit = new Item();
             deposit.setName("Pfand");
             deposit.setKbNumber(-3);
+            deposit.setUnit(Unit.STACK);
             deposit.setDeleteAllowed(false);
             em.persist(deposit);
             em.flush();
@@ -208,7 +211,7 @@ public class ShoppingItem implements Serializable {
     }
 
     public Unit getUnit() {
-        return unit;
+        return unit != null ? unit : Unit.NONE;
     }
 
     public void setUnit(Unit unit) {

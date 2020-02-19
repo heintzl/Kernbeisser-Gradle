@@ -7,6 +7,8 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 
 class EditUserView extends Window implements View {
     private JLabel lblVorname;
@@ -93,20 +95,20 @@ class EditUserView extends Window implements View {
         return data;
     }
 
-    void passwordToShort(){
+    void passwordToShort() {
         JOptionPane.showMessageDialog(null, "Das Passwort ist leider zu kurz, es muss mindestens 4 zeichen lang sein");
     }
 
-    String requestPassword(){
+    String requestPassword() {
         return JOptionPane.showInputDialog("Bitte geben sie das neue Passwort ein:");
     }
 
-    void passwordChanged(){
+    void passwordChanged() {
         JOptionPane.showMessageDialog(null, "Password ge\u00e4ndert!");
     }
 
     void usernameAlreadyExists() {
-        JOptionPane.showMessageDialog(this,"Der Benutzername ist bereits vergeben");
+        JOptionPane.showMessageDialog(this, "Der Benutzername ist bereits vergeben");
     }
 
     void setPermissions(Permission[] permission) {
@@ -115,4 +117,5 @@ class EditUserView extends Window implements View {
             roles.addItem(p);
         }
     }
+
 }

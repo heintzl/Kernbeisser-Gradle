@@ -8,6 +8,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class JobSelectorView extends Window implements View {
@@ -19,7 +20,7 @@ public class JobSelectorView extends Window implements View {
     private ObjectTable<Job> selectedJobs;
 
 
-    public JobSelectorView(Window current,JobSelectorController controller) {
+    public JobSelectorView(Window current, JobSelectorController controller) {
         super(current);
         add(mainPanel);
         setSize(500, 500);

@@ -10,6 +10,7 @@ import kernbeisser.Windows.Window;
 
 import javax.print.PrintService;
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 class PayView extends Window implements View {

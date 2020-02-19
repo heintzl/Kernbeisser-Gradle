@@ -9,11 +9,12 @@ import kernbeisser.DBEntities.Container;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-public class ContainerView extends Window{
+public class ContainerView extends Window {
     private ObjectTable<Container> unpaidContainers;
     private JButton commit;
     private ObjectTable<Container> lastContainers;
@@ -28,9 +29,9 @@ public class ContainerView extends Window{
 
     private ContainerController controller;
 
-    ContainerView(Window window,ContainerController controller){
+    ContainerView(Window window, ContainerController controller) {
         super(window);
-        this.controller=controller;
+        this.controller = controller;
         commit.addActionListener((e) -> controller.commit());
         kkNumber.addKeyListener(new KeyAdapter() {
             @Override
@@ -47,16 +48,16 @@ public class ContainerView extends Window{
         add(main);
     }
 
-    int getAmount(){
+    int getAmount() {
         return amount.getValue();
     }
 
-    int getKkNumber(){
+    int getKkNumber() {
         return kkNumber.getValue();
     }
 
-    int getNetPrice(){
-        return (int)(netPrice.getValue()*100);
+    int getNetPrice() {
+        return (int) (netPrice.getValue() * 100);
     }
 
     private void createUIComponents() {
@@ -75,7 +76,7 @@ public class ContainerView extends Window{
                 Column.create("Produktname", e -> e.getItem().getName()),
                 Column.create("Netto-Preis", e -> e.getNetPrice() / 100f + "€"),
                 Column.create("Verkaufspreis", e -> e.getPrice() / 100f + "€"),
-                new Column<Container>(){
+                new Column<Container>() {
                     @Override
                     public String getName() {
                         return "Löschen";
@@ -88,7 +89,7 @@ public class ContainerView extends Window{
 
                     @Override
                     public void onAction(Container container) {
-                        if(container.getId()==0){
+                        if (container.getId() == 0) {
                             controller.remove();
                         }
                     }
@@ -96,38 +97,43 @@ public class ContainerView extends Window{
         );
     }
 
-    void setItemName(String s){
+    void setItemName(String s) {
         name.setText(s);
     }
-    void setItemSize(String s){
+
+    void setItemSize(String s) {
         size.setText(s);
     }
-    void setSellingPrice(String s){
+
+    void setSellingPrice(String s) {
         sellingPrice.setText(s);
     }
-    void setKbNumber(String s){
+
+    void setKbNumber(String s) {
         kbNumber.setText(s);
     }
-    void setKkNumber(String s){
+
+    void setKkNumber(String s) {
         kkNumber.setText(s);
     }
 
-    void setNetPrice(String s){
+    void setNetPrice(String s) {
         netPrice.setText(s);
     }
 
-    void setAmount(String s){
+    void setAmount(String s) {
         amount.setText(s);
     }
 
-    Container getSelectedUnpaidOrder(){
+    Container getSelectedUnpaidOrder() {
         return unpaidContainers.getSelectedObject();
     }
 
     void setUnpaidContainers(Collection<Container> containers) {
         unpaidContainers.setObjects(containers);
     }
-    void setLastContainers(Collection<Container> containers){
+
+    void setLastContainers(Collection<Container> containers) {
         lastContainers.setObjects(containers);
     }
 
@@ -141,6 +147,7 @@ public class ContainerView extends Window{
     }
 
     void noItemFound() {
-        JOptionPane.showMessageDialog(this,"Es konnte kein Kornkraft Artikel mit dieser Kornkraft / Kernbeisser Nummer gefunden werden");
+        JOptionPane.showMessageDialog(this, "Es konnte kein Kornkraft Artikel mit dieser Kornkraft / Kernbeisser Nummer gefunden werden");
     }
+
 }

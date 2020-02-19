@@ -668,13 +668,17 @@
                   <title-color color="-16752083"/>
                 </border>
                 <children>
-                  <grid id="3543d" binding="shoppingListPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+                  <grid id="3543d" binding="shoppingListPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
                     <constraints border-constraint="Center"/>
                     <properties>
                       <background color="-1"/>
                     </properties>
                     <border type="none"/>
-                    <children/>
+                    <children>
+                      <nested-form id="2fc66" form-file="kernbeisser/CustomComponents/ShoppingTable/ShoppingCartView.form" binding="shoppingCartView" custom-create="true">
+                        <constraints border-constraint="Center"/>
+                      </nested-form>
+                    </children>
                   </grid>
                   <grid id="e94be" binding="shoppingActionPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="2">
                     <constraints border-constraint="South"/>

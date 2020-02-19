@@ -4,6 +4,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class CatalogInputView extends Window implements View {
     private JButton importString;
@@ -11,7 +12,7 @@ public class CatalogInputView extends Window implements View {
     private JTextArea stringData;
     private JPanel main;
 
-    CatalogInputView(Window current, CatalogInputController controller){
+    CatalogInputView(Window current, CatalogInputController controller) {
         super(current);
         importFile.addActionListener(e -> controller.importFromFile());
         importString.addActionListener(e -> controller.importFromString());
@@ -19,14 +20,14 @@ public class CatalogInputView extends Window implements View {
     }
 
     void extractItemError() {
-        JOptionPane.showMessageDialog(this,"Es liegt ein fehler in der Quelle, ein Artikel kann nicht eingelesen werden!");
+        JOptionPane.showMessageDialog(this, "Es liegt ein fehler in der Quelle, ein Artikel kann nicht eingelesen werden!");
     }
 
     void cannotReadFile() {
-        JOptionPane.showMessageDialog(this,"Die angegebene Datei kann nicht gefunden werden!");
+        JOptionPane.showMessageDialog(this, "Die angegebene Datei kann nicht gefunden werden!");
     }
 
-    void enableButtons(boolean b){
+    void enableButtons(boolean b) {
         importString.setEnabled(b);
         importFile.setEnabled(b);
     }
@@ -36,6 +37,7 @@ public class CatalogInputView extends Window implements View {
     }
 
     public void success() {
-        JOptionPane.showMessageDialog(this,"Der Katalog wurde erfolgreich aktualiesert");
+        JOptionPane.showMessageDialog(this, "Der Katalog wurde erfolgreich aktualiesert");
     }
+
 }
