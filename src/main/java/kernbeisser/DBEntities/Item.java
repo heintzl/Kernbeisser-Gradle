@@ -7,7 +7,6 @@ import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
-import org.hibernate.type.StandardBasicTypes;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -33,6 +32,9 @@ public class Item {
 
     @Column
     private int amount;
+
+    @Column
+    private int surcharge;
 
     @Column
     private int netPrice;
@@ -135,9 +137,6 @@ public class Item {
     @Column
     private boolean coveredIntake;
 
-    public int calculatePrice(){
-        return (int) (netPrice*((getSurcharge().getSurcharge()/100f)+1)*(((vatLow ? VAT.LOW.getValue() : VAT.HIGH.getValue())/100f)+1));
-    }
 
     public int getIid() {
         return iid;
@@ -207,7 +206,7 @@ public class Item {
         this.vatLow = vatLow;
     }
 
-    public SurchargeTable getSurcharge() {
+    public SurchargeTable getSurchargeTable() {
         //TODO really expensive!
         EntityManager em = DBConnection.getEntityManager();
         try{
@@ -219,6 +218,14 @@ public class Item {
         }catch (NoResultException e){
             return SurchargeTable.DEFAULT;
         }
+    }
+
+    public int getSurcharge() {
+        return surcharge;
+    }
+
+    public void setSurcharge(int surcharge) {
+        this.surcharge = surcharge;
     }
 
     public int getSingleDeposit() {
@@ -467,6 +474,24 @@ public class Item {
 
 
     public static Item getByKbNumber(int kbNumber){
-        return Item.getAll("where kbNumber = "+kbNumber).get(0);
+        EntityManager em = DBConnection.getEntityManager();
+        try{
+            return em.createQuery("select i from Item i where kbNumber = :n",Item.class).setParameter("n",kbNumber).getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }finally {
+            em.close();
+        }
+    }
+
+    public static Item getBySuppliersItemNumber(int suppliersNumber) {
+        EntityManager em = DBConnection.getEntityManager();
+        try{
+            return em.createQuery("select i from Item i where suppliersItemNumber = :n",Item.class).setParameter("n",suppliersNumber).getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }finally {
+            em.close();
+        }
     }
 }

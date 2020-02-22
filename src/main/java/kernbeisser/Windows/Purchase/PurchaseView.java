@@ -22,9 +22,12 @@ public class PurchaseView extends Window implements View {
     private JLabel customer;
     private JPanel main;
 
+    private final PurchaseController controller;
+
 
     PurchaseView(Window current, PurchaseController controller) {
         super(current);
+        this.controller = controller;
         add(main);
         finish.addActionListener((e) -> back());
         setSize(current.getSize());
@@ -59,8 +62,8 @@ public class PurchaseView extends Window implements View {
         items = new ObjectTable<ShoppingItem>(
                 Column.create("Artikelname", ShoppingItem::getName),
                 Column.create("Anzahl", ShoppingItem::getItemAmount),
-                Column.create("Verkaufs Preis", e -> e.getRawPrice() / 100f + "€"),
-                Column.create("Netto Preis", ShoppingItem::getNetPrice)
+                Column.create("Verkaufs Preis", e -> controller.getPrice(e) / 100f + "€"),
+                Column.create("Netto Preis", e -> controller.getPrice(e)/100f+"€")
         );
     }
 

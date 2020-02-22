@@ -4,6 +4,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -42,7 +43,7 @@ public class ShoppingMaskModel implements Model {
     int calculateTotalPrice(){
         int out = 0;
         for (ShoppingItem item : shoppingCart) {
-            out+=item.getRawPrice();
+            out+= PriceCalculator.getShoppingItemPrice(item,saleSession.getCustomer().getSolidaritySurcharge());
         }
         return out;
     }
@@ -113,5 +114,9 @@ public class ShoppingMaskModel implements Model {
 
     public void setSaleSession(SaleSession saleSession) {
         this.saleSession = saleSession;
+    }
+
+    Item getBySupplierItemNumber(int suppliersNumber) {
+        return Item.getBySuppliersItemNumber(suppliersNumber);
     }
 }

@@ -2,6 +2,7 @@ package kernbeisser.Windows.Purchase;
 
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
@@ -22,6 +23,12 @@ public class PurchaseController implements Controller {
         view.setItemCount(items.size());
         view.setSum(purchase.getSum());
         view.setItems(items);
+    }
+
+
+
+    int getPrice(ShoppingItem item){
+        return PriceCalculator.getShoppingItemPrice(item,model.getLoaded().getSession().getCustomer().getSolidaritySurcharge());
     }
 
     @Override

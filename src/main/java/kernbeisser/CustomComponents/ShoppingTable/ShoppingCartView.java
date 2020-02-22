@@ -5,6 +5,8 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.Unit;
+import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.View;
 
 import javax.swing.*;
@@ -51,19 +53,19 @@ public class ShoppingCartView extends JPanel implements View {
                     return name;
                 }),
                 Column.create("2", e -> {
-                    JLabel discount = new JLabel(e.getDiscount()+"%");
+                    JLabel discount = new JLabel(e.getDiscount()==PriceCalculator.CONTAINER_DISCOUNT ? "Vorbestellt" : e.getDiscount()+"%");
                     discount.setFont(gridFont);
                     discount.setHorizontalAlignment(SwingConstants.RIGHT);
                     return discount;
                 }),
                 Column.create("3", e -> {
-                    JLabel price = new JLabel(e.getRawPrice()/100f+"€");
+                    JLabel price = new JLabel(controller.getPrice(e)/100f+"€");
                     price.setFont(gridFont);
                     price.setHorizontalAlignment(SwingConstants.RIGHT);
                     return price;
                 }),
                 Column.create("4", e -> {
-                    JLabel amount = new JLabel(e.getAmount()+e.getUnit().getShortName());
+                    JLabel amount = new JLabel(e.isWeighAble() ? (e.getUnit().toUnit(e.getAmount()*e.getItemAmount())+ e.getUnit().getShortName()) : e.getItemAmount()+Unit.STACK.getShortName());
                     amount.setFont(gridFont);
                     amount.setHorizontalAlignment(SwingConstants.RIGHT);
                     return amount;
@@ -71,7 +73,7 @@ public class ShoppingCartView extends JPanel implements View {
                 Column.create("delete", (e) -> new JPanel(){
                     @Override
                     public void paint(Graphics g) {
-                        g.drawImage(IconFontSwing.buildImage(FontAwesome.TRASH,size,Color.RED),(getWidth()/2)-(size/2),0,null);
+                        g.drawImage(IconFontSwing.buildImage(FontAwesome.TRASH,size+5,Color.RED),(getWidth()/2)-(size/2),3,null);
                     }
                 },controller::delete)
         );
