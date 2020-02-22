@@ -71,7 +71,7 @@ public class ShoppingMaskUIController implements Controller {
             case ShoppingMaskUIView.BAKED_GOODS:
                 return ShoppingItem.getBakeryProduct(view.getPrice());
             case ShoppingMaskUIView.DEPOSIT:
-                return ShoppingItem.getDeposit(view.getPrice());
+                return ShoppingItem.getDeposit(view.getDeposit());
             case ShoppingMaskUIView.CUSTOM_PRODUCT:
                 ShoppingItem o = new ShoppingItem();
                 o.setItemAmount((int)view.getAmount());
@@ -82,7 +82,7 @@ public class ShoppingMaskUIController implements Controller {
             case ShoppingMaskUIView.PRODUCE:
                 return ShoppingItem.getOrganic(view.getPrice());
             case ShoppingMaskUIView.RETURN_DEPOSIT:
-                return ShoppingItem.getDeposit(-view.getPrice());
+                return ShoppingItem.getDeposit(-view.getDeposit());
             default:
                 return null;
         }

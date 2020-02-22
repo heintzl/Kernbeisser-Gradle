@@ -100,6 +100,8 @@ public class ShoppingMaskUIView extends Window implements View {
                 controller.searchByKbNumber();
             }
         });
+        kbNumber.addActionListener(e -> controller.addToShoppingCart());
+        suppliersItemNumber.addActionListener(e -> controller.addToShoppingCart());
         suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -345,5 +347,9 @@ public class ShoppingMaskUIView extends Window implements View {
 
     public String getItemName() {
         return articleName.getName();
+    }
+
+    public int getDeposit() {
+        return (int) (deposit.getValue()*100);
     }
 }
