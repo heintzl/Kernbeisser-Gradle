@@ -35,16 +35,17 @@ public class LogInView extends Window implements View {
      * with all Tables from A-Z
      * and a Table with all Users
      */
-    public LogInView(Window current,LogInController controller) {
+    public LogInView(Window current, LogInController controller) {
         super(current);
         add(main);
         logIn.addActionListener(e -> controller.logIn());
         password.addActionListener(e -> controller.logIn());
         setSize(Tools.getScreenWidth() / 2, 600);
         setLocationRelativeTo(null);
-        logIn.setIcon(IconFontSwing.buildIcon(FontAwesome.SIGN_IN,15,new Color(0x3C39FF)));
+        logIn.setIcon(IconFontSwing.buildIcon(FontAwesome.SIGN_IN, 15, new Color(0x3C39FF)));
 
     }
+
     void addTab(String title, Collection<User> users) {
         ObjectTable<User> userTable = new ObjectTable<>(
                 users,
@@ -67,7 +68,7 @@ public class LogInView extends Window implements View {
         return password.getPassword();
     }
 
-    void applyFeedback(int feedback){
+    void applyFeedback(int feedback) {
         switch (feedback) {
             case LogInController.SUCCESS:
                 username.setText("");
@@ -85,4 +86,5 @@ public class LogInView extends Window implements View {
         }
         back();
     }
+
 }

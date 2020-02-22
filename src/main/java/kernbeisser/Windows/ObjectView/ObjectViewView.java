@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class ObjectViewView <T> extends Window {
+public class ObjectViewView<T> extends Window {
     private ObjectTable<T> objectTable;
     private JButton add;
     private JButton edit;
@@ -24,15 +24,15 @@ public class ObjectViewView <T> extends Window {
 
     private ObjectViewController<T> controller;
 
-    ObjectViewView(Window current,ObjectViewController<T> controller){
+    ObjectViewView(Window current, ObjectViewController<T> controller) {
         super(current);
-        this.controller=controller;
+        this.controller = controller;
         add(main);
         objectTable.addSelectionListener((e) -> controller.select());
-        add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS,20, new Color(71, 189, 23)));
-        edit.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL,20,new Color(69, 189, 174)));
-        delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH,20,new Color(189, 101, 85)));
-        search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH,20,new Color(117, 126, 255)));
+        add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(71, 189, 23)));
+        edit.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(69, 189, 174)));
+        delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, new Color(189, 101, 85)));
+        search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(117, 126, 255)));
         add.addActionListener(e -> controller.add());
         edit.addActionListener(e -> controller.edit());
         delete.addActionListener(e -> controller.delete());
@@ -43,42 +43,42 @@ public class ObjectViewView <T> extends Window {
         setLocationRelativeTo(null);
     }
 
-    void setEditAvailable(boolean s){
+    void setEditAvailable(boolean s) {
         edit.setEnabled(s);
     }
 
-    void setRemoveAvailable(boolean s){
+    void setRemoveAvailable(boolean s) {
         delete.setEnabled(s);
     }
 
-    void setAddAvailable(boolean s){
+    void setAddAvailable(boolean s) {
         add.setEnabled(s);
     }
 
-    int getMax(){
+    int getMax() {
         return maxResults.getValue();
     }
 
-    String getSearch(){
+    String getSearch() {
         return searchBar.getText();
     }
 
     @Override
     protected void open() {
-        if(controller!=null)
-        controller.refresh();
+        if (controller != null)
+            controller.refresh();
         super.open();
     }
 
-    T getSelectedObject(){
+    T getSelectedObject() {
         return objectTable.getSelectedObject();
     }
 
-    void setObjects(Collection<T> objects){
+    void setObjects(Collection<T> objects) {
         objectTable.setObjects(objects);
     }
 
-    void addColumn(Column<T> column){
+    void addColumn(Column<T> column) {
         objectTable.addColumn(column);
     }
 
@@ -86,7 +86,8 @@ public class ObjectViewView <T> extends Window {
         objectTable = new ObjectTable<>();
     }
 
-    boolean commitDelete(){
-        return JOptionPane.showConfirmDialog(this,"Soll dieses Object wirklich gelöschst werden?")==0;
+    boolean commitDelete() {
+        return JOptionPane.showConfirmDialog(this, "Soll dieses Object wirklich gelöschst werden?") == 0;
     }
+
 }

@@ -21,7 +21,7 @@ public class CashierMenuView extends Window implements View {
     private JPanel main;
     private JButton transfer;
 
-    CashierMenuView(CashierMenuController controller,Window current){
+    CashierMenuView(CashierMenuController controller, Window current) {
         super(current);
         editItems.addActionListener(e -> controller.openManageItems());
         editUser.addActionListener(e -> controller.openManageUsers());
@@ -30,8 +30,8 @@ public class CashierMenuView extends Window implements View {
         startCashier.addActionListener(e -> controller.openCashierMask());
         quitCashierJob.addActionListener(e -> back());
         transfer.addActionListener(e -> controller.openTransfer());
-        startCashier.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART,20,new Color(49, 114, 128)));
-        startCashier.setRolloverIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART,25,new Color(43, 128, 9)));
+        startCashier.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
+        startCashier.setRolloverIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 25, new Color(43, 128, 9)));
         editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(165, 4, 46)));
         editPriceList.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(165, 4, 46)));
         editItems.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(165, 4, 46)));
@@ -39,7 +39,7 @@ public class CashierMenuView extends Window implements View {
         refreshCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 20, new Color(60, 57, 255)));
         changeSurchargeTable.addActionListener(e -> controller.openManageSurchargeTables());
         add(main);
-        setSize(900,600);
+        setSize(900, 600);
         setLocationRelativeTo(null);
     }
 

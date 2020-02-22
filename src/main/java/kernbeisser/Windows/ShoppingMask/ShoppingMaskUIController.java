@@ -1,10 +1,12 @@
 package kernbeisser.Windows.ShoppingMask;
 
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.RawPrice;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.Window;
@@ -12,23 +14,80 @@ import kernbeisser.Windows.Window;
 public class ShoppingMaskUIController implements Controller {
     private ShoppingMaskUIView view;
     private ShoppingMaskModel model;
+    private ShoppingCartController shoppingCartController;
 
     public ShoppingMaskUIController(Window current, SaleSession saleSession){
-        this.view=new ShoppingMaskUIView(current,this);
         model=new ShoppingMaskModel(saleSession);
+        this.shoppingCartController = new ShoppingCartController(model.getValue(),model.getSaleSession().getCustomer().getSolidaritySurcharge());
+        this.view=new ShoppingMaskUIView(current,this,shoppingCartController);
         view.loadUserInfo(saleSession.getCustomer());
         //view.fillWithoutBarcode(model.getAllItemsWithoutBarcode());
     }
 
-    private ShoppingItem shoppingCartContains(ShoppingItem pattern){
-        for (ShoppingItem item : model.getShoppingCart()) {
-            if(item.equals(pattern))return item;
-        }
-        return null;
+    void addToShoppingCart() {
+        ShoppingItem item = extract();
+        if(item!=null)shoppingCartController.addShoppingItem(item);
     }
 
-    void addToShoppingCart(ShoppingItem i) {
+    void searchByKbNumber(){
+        view.defaultSettings();
+        Item found = model.getByKbNumber(view.getArticleNumber());
+        if(found!=null)view.loadItemStats(found);
     }
+
+    void searchBySupplierItemsNumber(){
+        view.defaultSettings();
+        Item found = model.getBySupplierItemNumber(view.getSuppliersNumber());
+        if(found!=null)view.loadItemStats(found);
+    }
+
+    int getPrice(Item item){
+        return PriceCalculator.getItemPrice(item,0,model.getSaleSession().getCustomer().getSolidaritySurcharge());
+    }
+    private ShoppingItem extract(){
+        switch (view.getOption()){
+            case ShoppingMaskUIView.ARTICLE_NUMBER:
+                Item i = null;
+                int kb = view.getArticleNumber();
+                if(kb!=0)i = model.getByKbNumber(kb);
+                if(i == null){
+                    int supplier = view.getSuppliersNumber();
+                    if(supplier!=0)
+                        i=model.getBySupplierItemNumber(supplier);
+                    if(i == null){
+                        view.noArticleFound();
+                        return null;
+                    }
+                }
+                ShoppingItem out = new ShoppingItem(i);
+                out.setDiscount(view.getDiscount());
+                view.setDiscount();
+                if(out.isWeighAble()){
+                    out.setAmount(i.getUnit().toUnit(view.getAmount()));
+                    out.setItemAmount(1);
+                }
+                else out.setItemAmount((int) view.getAmount());
+                return out;
+            case ShoppingMaskUIView.BAKED_GOODS:
+                return ShoppingItem.getBakeryProduct(view.getPrice());
+            case ShoppingMaskUIView.DEPOSIT:
+                return ShoppingItem.getDeposit(view.getPrice());
+            case ShoppingMaskUIView.CUSTOM_PRODUCT:
+                ShoppingItem o = new ShoppingItem();
+                o.setItemAmount((int)view.getAmount());
+                o.setItemNetPrice(view.getPrice());
+                o.setName(view.getItemName());
+                o.setAmount(o.getUnit().toUnit(view.getAmount()));
+                return o;
+            case ShoppingMaskUIView.PRODUCE:
+                return ShoppingItem.getOrganic(view.getPrice());
+            case ShoppingMaskUIView.RETURN_DEPOSIT:
+                return ShoppingItem.getDeposit(-view.getPrice());
+            default:
+                return null;
+        }
+    }
+
     /*
         if(i.getItemAmount()==0||i.getAmount()==0)return;
         i.setDiscount(view.getDiscount());
@@ -130,6 +189,6 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void startPay() {
-        new PayController(view.getWindow(),model.getSaleSession(),model.getShoppingCart(),() -> {});
+        new PayController(view,model.getSaleSession(),model.getShoppingCart(),() -> {});
     }
 }

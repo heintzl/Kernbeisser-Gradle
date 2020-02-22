@@ -277,7 +277,7 @@ public class DataImportController implements Controller {
                 }
                 item.setSpecialPriceNet(Integer.parseInt(columns[7]));
                 item.setVatLow(Boolean.parseBoolean(columns[8]));
-                //TODO item.setSurcharge(Integer.parseInt(columns[9]));
+                item.setSurcharge(Integer.parseInt(columns[9]));
                 item.setSingleDeposit(Integer.parseInt(columns[10]));
                 item.setCrateDeposit(Integer.parseInt(columns[11]));
                 item.setUnit(Unit.valueOf(columns[12].replace("WEIGHT", "GRAM")));
@@ -285,7 +285,7 @@ public class DataImportController implements Controller {
                 item.setContainerDef(ContainerDefinition.valueOf(columns[14]));
                 item.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
                 item.setSuppliersItemNumber(Integer.parseInt(columns[16]));
-                item.setWeighAble(Boolean.parseBoolean(columns[17]));
+                item.setWeighAble(!Boolean.parseBoolean(columns[17]));
                 item.setListed(Boolean.parseBoolean(columns[18]));
                 item.setShowInShop(Boolean.parseBoolean(columns[19]));
                 item.setDeleted(Boolean.parseBoolean(columns[20]));

@@ -8,6 +8,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 
@@ -25,9 +26,9 @@ public class UserMenuView extends Window implements View {
 
     private UserMenuController controller;
 
-    UserMenuView(UserMenuController controller,Window current){
+    UserMenuView(UserMenuController controller, Window current) {
         super(current);
-        this.controller=controller;
+        this.controller = controller;
         startInventory.addActionListener(e -> controller.startInventory());
         showValueHistory.addActionListener(e -> controller.showValueHistory());
         showProfile.addActionListener(e -> controller.showProfile());
@@ -36,28 +37,28 @@ public class UserMenuView extends Window implements View {
         beginSelfShopping.addActionListener(e -> controller.beginSelfShopping());
         orderContainer.addActionListener(e -> controller.orderContainers());
         add(main);
-        setSize(900,600);
+        setSize(900, 600);
         setLocationRelativeTo(null);
     }
 
-    Purchase getSelected(){
+    Purchase getSelected() {
         return buyHistory.getSelectedObject();
     }
 
-    void setBuyHistory(Collection<Purchase> purchases){
+    void setBuyHistory(Collection<Purchase> purchases) {
         buyHistory.setObjects(purchases);
     }
 
-    void setUsername(String s){
-        welcome.setText("Willkommen "+s);
+    void setUsername(String s) {
+        welcome.setText("Willkommen " + s);
     }
 
     private void createUIComponents() {
         buyHistory = new ObjectTable<>(
                 Column.create("Datum", Purchase::getCreateDate),
-                Column.create("Betrag", e -> e.getSum()/100f+"€"),
+                Column.create("Betrag", e -> e.getSum() / 100f + "€"),
                 Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession().getSeller().getSurname()),
-                Column.create("Anschauen", (e) -> "Anschauen",(e)->controller.showPurchase())
+                Column.create("Anschauen", (e) -> "Anschauen", (e) -> controller.showPurchase())
         );
         //buyHistory.setComplex(true);
     }

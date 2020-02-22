@@ -14,6 +14,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class EditItemView extends Window implements View {
@@ -39,7 +40,7 @@ public class EditItemView extends Window implements View {
     private JComboBox<VAT> vat;
     private JPanel main;
 
-    public EditItemView(EditItemController controller,Window current) {
+    public EditItemView(EditItemController controller, Window current) {
         super(current);
         cancel.addActionListener((e) -> back());
         commit.addActionListener((e) -> controller.doAction());
@@ -121,9 +122,9 @@ public class EditItemView extends Window implements View {
         out.setCrateDeposit((int) (crateDeposit.getValue() * 100));
         out.setContainerSize(containerSize.getValue());
         out.setAmount(amount.getValue());
-        try{
+        try {
             out.setBarcode(Long.parseLong(barcode.getText()));
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             out.setBarcode(null);
         }
         out.setShowInShop(showInShoppingMask.isSelected());
@@ -136,10 +137,11 @@ public class EditItemView extends Window implements View {
     }
 
     void kbNumberAlreadyExists() {
-        JOptionPane.showMessageDialog(this,"Die Kernbeisser-Nummer ist bereits vergeben");
+        JOptionPane.showMessageDialog(this, "Die Kernbeisser-Nummer ist bereits vergeben");
     }
 
-    void barcodeAlreadyExists(){
-        JOptionPane.showMessageDialog(this,"Der Barcode ist bereits vergeben");
+    void barcodeAlreadyExists() {
+        JOptionPane.showMessageDialog(this, "Der Barcode ist bereits vergeben");
     }
+
 }

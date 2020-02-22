@@ -153,7 +153,7 @@
                       <text value="Lief.-Artikelnr.:"/>
                     </properties>
                   </component>
-                  <component id="3657f" class="javax.swing.JTextField" binding="kbNumber">
+                  <component id="11129" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="kbNumber">
                     <constraints>
                       <grid row="6" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -163,11 +163,11 @@
                     <properties>
                       <background color="-1"/>
                       <font size="16" style="0"/>
-                      <foreground color="-1"/>
-                      <text value="kbNumber"/>
+                      <foreground color="-16777216"/>
+                      <text value=""/>
                     </properties>
                   </component>
-                  <component id="25d4b" class="javax.swing.JTextField" binding="suppliersItemNumber">
+                  <component id="3aebf" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="suppliersItemNumber">
                     <constraints>
                       <grid row="7" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -213,7 +213,7 @@
                       <text value="Preis:"/>
                     </properties>
                   </component>
-                  <component id="5bb79" class="javax.swing.JTextField" binding="price">
+                  <component id="bc220" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="price">
                     <constraints>
                       <grid row="9" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.3" weighty="0.0"/>
@@ -233,7 +233,7 @@
                       <text value="Menge:"/>
                     </properties>
                   </component>
-                  <component id="add16" class="javax.swing.JTextField" binding="packAmount">
+                  <component id="834e0" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="articleAmount">
                     <constraints>
                       <grid row="11" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
@@ -243,7 +243,7 @@
                       <font size="16" style="0"/>
                     </properties>
                   </component>
-                  <component id="6325d" class="javax.swing.JTextField" binding="amount">
+                  <component id="f8f5d" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="amount">
                     <constraints>
                       <grid row="10" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
@@ -253,14 +253,14 @@
                       <font size="16" style="0"/>
                     </properties>
                   </component>
-                  <component id="881a3" class="javax.swing.JLabel">
+                  <component id="881a3" class="javax.swing.JLabel" binding="articleAmountLabel">
                     <constraints>
                       <grid row="11" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
-                      <text value="Gebindegröße:"/>
+                      <text value="Packungsmenge:"/>
                     </properties>
                   </component>
                   <component id="f325b" class="javax.swing.JLabel">
@@ -273,7 +273,7 @@
                       <text value="Pfand:"/>
                     </properties>
                   </component>
-                  <component id="ae02d" class="javax.swing.JTextField" binding="deposit">
+                  <component id="72f4" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="deposit">
                     <constraints>
                       <grid row="12" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
@@ -357,7 +357,9 @@
                     </constraints>
                     <properties>
                       <background color="-1"/>
+                      <enabled value="true"/>
                       <font size="16" style="0"/>
+                      <foreground color="-16777216"/>
                       <text value="€/kg"/>
                     </properties>
                   </component>
@@ -372,7 +374,7 @@
                       <text value="g"/>
                     </properties>
                   </component>
-                  <component id="dcce4" class="javax.swing.JLabel" binding="packUnit">
+                  <component id="dcce4" class="javax.swing.JLabel" binding="articleUnit">
                     <constraints>
                       <grid row="11" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
@@ -465,7 +467,7 @@
                       <toolTipText value="Artikel einkaufen"/>
                     </properties>
                   </component>
-                  <component id="96766" class="javax.swing.JTextField" binding="variablePercentage">
+                  <component id="69840" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="variablePercentage">
                     <constraints>
                       <grid row="18" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
@@ -668,13 +670,17 @@
                   <title-color color="-16752083"/>
                 </border>
                 <children>
-                  <grid id="3543d" binding="shoppingListPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+                  <grid id="3543d" binding="shoppingListPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
                     <constraints border-constraint="Center"/>
                     <properties>
                       <background color="-1"/>
                     </properties>
                     <border type="none"/>
-                    <children/>
+                    <children>
+                      <nested-form id="2fc66" form-file="kernbeisser/CustomComponents/ShoppingTable/ShoppingCartView.form" binding="shoppingCartView" custom-create="true">
+                        <constraints border-constraint="Center"/>
+                      </nested-form>
+                    </children>
                   </grid>
                   <grid id="e94be" binding="shoppingActionPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="2">
                     <constraints border-constraint="South"/>

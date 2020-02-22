@@ -13,7 +13,7 @@ public class FilterField extends JTextField {
             @Override
             public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
                 StringBuilder sb = new StringBuilder(fb.getDocument().getText(0,fb.getDocument().getLength()));
-                sb.insert(offset,text);
+                sb.replace(offset,Math.min(offset+text.length(),sb.length()),text);
                 if(check.apply(sb.toString()))
                 fb.replace(offset,length,text,attrs);
             }

@@ -6,9 +6,7 @@ import kernbeisser.Windows.*;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.Purchase.PurchaseController;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 import kernbeisser.Windows.Window;
 
 import java.awt.*;
@@ -39,15 +37,10 @@ public class UserMenuController implements Controller {
     }
 
     public void beginSelfShopping() {
-        Window jFrame = new Window(view);
-        jFrame.setLayout(new GridLayout(1,1));
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(model.getOwner());
         saleSession.setSeller(model.getOwner());
-        jFrame.add(new ShoppingMaskUIController(jFrame, saleSession).getView());
-        jFrame.pack();
-        jFrame.setLocationRelativeTo(null);
-        jFrame.setVisible(true);
+        new ShoppingMaskUIController(view,saleSession);
     }
 
     public void logOut() {
