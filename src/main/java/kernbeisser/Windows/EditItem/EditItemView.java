@@ -7,14 +7,12 @@ import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
-import kernbeisser.Enums.Permission;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 
 public class EditItemView extends Window implements View {

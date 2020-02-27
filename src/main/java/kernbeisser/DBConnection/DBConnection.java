@@ -26,6 +26,7 @@ public class DBConnection {
             entityManagerFactory = Persistence.createEntityManagerFactory("Kernbeisser",properties);
             return true;
         }catch (Exception e){
+            e.printStackTrace();
             return false;
         }
     }

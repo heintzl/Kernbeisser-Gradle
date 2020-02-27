@@ -1,16 +1,17 @@
 package kernbeisser.Windows.EditUser;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.Permission;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
+import java.util.Collection;
 
 public class EditUserModel implements Model {
 
@@ -22,8 +23,9 @@ public class EditUserModel implements Model {
         this.mode = mode;
         if(mode==Mode.ADD)user.setPassword(null);
     }
-    Permission[] getAllPermission(){
-        return Permission.values();
+
+    Collection<Permission> getAllPermission(){
+        return Permission.getAll(null);
     }
 
     boolean doAction(User user){

@@ -1,14 +1,12 @@
 package kernbeisser.Windows.EditUser;
 
+import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Permission;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
+import java.util.Collection;
 
 class EditUserView extends Window implements View {
     private JLabel lblVorname;
@@ -111,7 +109,7 @@ class EditUserView extends Window implements View {
         JOptionPane.showMessageDialog(this, "Der Benutzername ist bereits vergeben");
     }
 
-    void setPermissions(Permission[] permission) {
+    void setPermissions(Collection<Permission> permission) {
         this.roles.removeAllItems();
         for (Permission p : permission) {
             roles.addItem(p);

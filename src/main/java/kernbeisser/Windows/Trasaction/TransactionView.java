@@ -6,6 +6,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -28,7 +29,7 @@ class TransactionView extends Window implements View {
     private JButton delete;
 
     TransactionView(Window current, TransactionController controller) {
-        super(current);
+        super(current, Key.ACTION_TRANSACTION);
         transferTransactions.addActionListener((e) -> controller.transfer());
         transferTransactions.setIcon(IconFontSwing.buildIcon(FontAwesome.CHECK, 20, Color.GREEN));
         addTransaction.addActionListener(e -> controller.addTransaction());
@@ -71,9 +72,12 @@ class TransactionView extends Window implements View {
     }
 
     void setFromEnabled(boolean b) {
-        formKBValue.setSelected(false);
-        formKBValue.setEnabled(false);
         from.setEnabled(false);
+    }
+
+    void setFromKB(boolean b){
+        formKBValue.setSelected(false);
+        formKBValue.setEnabled(b);
     }
 
     private void createUIComponents() {

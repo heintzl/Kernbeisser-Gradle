@@ -2,12 +2,11 @@ package kernbeisser.Windows.Trasaction;
 
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
-
-import java.util.Collections;
 
 public class TransactionController implements Controller {
     private TransactionModel model;
@@ -15,14 +14,8 @@ public class TransactionController implements Controller {
     public TransactionController(Window current,User user){
         model = new TransactionModel();
         view = new TransactionView(current,this);
-        switch (user.getPermission()){
-            case ADMIN:
-            case MONEY_MANAGER:
-                break;
-            default:
-                view.setFromEnabled(false);
-                view.setFrom(user.getUsername());
-        }
+        view.setFromEnabled(user.hasPermission(Key.ACTION_TRANSACTION_FROM_OTHER));
+        view.setFromKB(user.hasPermission(Key.ACTION_TRANSACTION_FROM_KB));
     }
     @Override
     public View getView() {
