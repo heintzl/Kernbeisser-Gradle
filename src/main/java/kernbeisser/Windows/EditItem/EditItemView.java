@@ -7,6 +7,7 @@ import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
+import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.View;
@@ -45,11 +46,11 @@ public class EditItemView extends Window implements View {
         add(main);
         pack();
         setLocationRelativeTo(null);
+        amount.setRequiredKeys(Key.ITEM_AMOUNT_READ,Key.ITEM_AMOUNT_WRITE);
     }
 
 
     private void createUIComponents() {
-        barcode = new LongParseField();
         amount = new IntegerParseField();
         netPrice = new DoubleParseField();
         deposit = new DoubleParseField();

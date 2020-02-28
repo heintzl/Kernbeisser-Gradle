@@ -63,6 +63,7 @@ class EditUserView extends Window implements View {
             controller.doAction();
         });
         cancel.addActionListener(e -> back());
+
     }
 
 
