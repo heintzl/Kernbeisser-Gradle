@@ -1,5 +1,8 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
+import kernbeisser.Enums.Key;
+import kernbeisser.Windows.LogIn.LogInModel;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.function.Consumer;
@@ -59,6 +62,43 @@ public interface Column <T> {
                 });
                 button.setText(value.apply(t));
                 return button;
+            }
+        };
+    }
+
+    static <T> Column<T> create(String s, Function<T,Object> v, Consumer<T> action, Key... keys){
+
+        return new Column<T>() {
+            boolean read;
+            @Override
+            public String getName() {
+                read = LogInModel.getLoggedIn().hasPermission(keys);
+                return s;
+            }
+
+            @Override
+            public Object getValue(T t) {
+                return read ? v.apply(t) : "***********";
+            }
+
+            @Override
+            public void onAction(T t) {
+                action.accept(t);
+            }
+        };
+    }
+    static <T> Column<T> create(String s, Function<T,Object> v, Key... keys){
+        return new Column<T>() {
+            boolean read;
+            @Override
+            public String getName() {
+                read = LogInModel.getLoggedIn().hasPermission(keys);
+                return s;
+            }
+
+            @Override
+            public Object getValue(T t) {
+                return read ? v.apply(t) : "***********";
             }
         };
     }

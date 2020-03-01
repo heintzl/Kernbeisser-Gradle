@@ -19,7 +19,7 @@ import java.util.Collection;
 public class EditItemView extends Window implements View {
     private JButton commit;
     private JButton cancel;
-    private JTextField itemName;
+    private kernbeisser.CustomComponents.TextFields.PermissionField itemName;
     private JComboBox<Supplier> supplier;
     private DoubleParseField netPrice;
     private DoubleParseField deposit;
@@ -32,7 +32,7 @@ public class EditItemView extends Window implements View {
     private DoubleParseField containerSize;
     private JComboBox<Unit> unit;
     private JComboBox<ContainerDefinition> containerDefinition;
-    private JTextField barcode;
+    private kernbeisser.CustomComponents.TextFields.PermissionField barcode;
     private JCheckBox showInShoppingMask;
     private JCheckBox weighable;
     private JTextArea extraInfo;
@@ -47,6 +47,11 @@ public class EditItemView extends Window implements View {
         pack();
         setLocationRelativeTo(null);
         amount.setRequiredKeys(Key.ITEM_AMOUNT_READ,Key.ITEM_AMOUNT_WRITE);
+        netPrice.setRequiredKeys(Key.ITEM_NET_PRICE_READ,Key.ITEM_NET_PRICE_WRITE);
+        deposit.setRequiredKeys(Key.ITEM_SINGLE_DEPOSIT_READ, Key.ITEM_SINGLE_DEPOSIT_WRITE);
+        kbItemNumber.setRequiredKeys(Key.ITEM_KB_NUMBER_READ, Key.ITEM_KB_NUMBER_READ);
+        supplierItemNumber.setRequiredKeys(Key.ITEM_SUPPLIERS_ITEM_NUMBER_READ,Key.ITEM_SUPPLIERS_ITEM_NUMBER_WRITE);
+        crateDeposit.setRequiredKeys(Key.ITEM_CRATE_DEPOSIT_READ,Key.ITEM_CRATE_DEPOSIT_WRITE);
     }
 
 
