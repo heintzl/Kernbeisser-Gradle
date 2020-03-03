@@ -1,6 +1,8 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 
 public class CashierShoppingUIView {
     private JLabel customerName;
@@ -52,4 +54,5 @@ public class CashierShoppingUIView {
     private void createUIComponents() {
         // TODO: place custom component creation code here
     }
+
 }

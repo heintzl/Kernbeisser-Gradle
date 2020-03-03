@@ -3,8 +3,7 @@ package kernbeisser.Windows.CashierShoppingMask;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 
 class CashierShoppingMaskController implements Controller {
     private CashierShoppingMaskModel model;
@@ -20,7 +19,7 @@ class CashierShoppingMaskController implements Controller {
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(customer);
         saleSession.setSeller(model.getSeller());
-        ShoppingMaskController shoppingMask = new ShoppingMaskController(view,saleSession);
+        ShoppingMaskUIController shoppingMask = new ShoppingMaskUIController(view,saleSession);
         view.openShoppingMask(shoppingMask);
     }
 

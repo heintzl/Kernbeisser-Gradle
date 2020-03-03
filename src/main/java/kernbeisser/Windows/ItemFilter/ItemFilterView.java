@@ -11,6 +11,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class ItemFilterView extends Window implements View {

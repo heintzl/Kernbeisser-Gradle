@@ -19,10 +19,6 @@ public class ShoppingItem implements Serializable {
     private int amount;
     @Column
     private int discount;
-    @Column
-    private int rawPrice;
-    @Column
-    private int netPrice;
     @JoinColumn(nullable = false)
     @ManyToOne
     private Purchase purchase;
@@ -37,8 +33,6 @@ public class ShoppingItem implements Serializable {
     @Column
     private boolean vatLow;
     @Column
-    private int itemRawPrice;
-    @Column
     private Unit unit;
     @Column
     private boolean weighAble;
@@ -46,6 +40,9 @@ public class ShoppingItem implements Serializable {
     private int suppliersItemNumber;
     @Column(length = 5)
     private String shortName;
+
+    @Column
+    private int surcharge;
 
     public ShoppingItem() {
     }
@@ -59,7 +56,7 @@ public class ShoppingItem implements Serializable {
         this.unit = item.getUnit();
         this.vatLow = item.isVatLow();
         this.weighAble=item.isWeighAble();
-        this.itemRawPrice=item.calculatePrice();
+        this.surcharge = item.getSurcharge();
         if(item.getSupplier()!=null)
         this.shortName=item.getSupplier().getShortName();
         this.suppliersItemNumber=item.getSuppliersItemNumber();
@@ -68,7 +65,6 @@ public class ShoppingItem implements Serializable {
     public ShoppingItem(Item item, int discount, int price) {
         this(item);
         this.discount = discount;
-        this.netPrice = price;
     }
 
     public Item extractItem(){
@@ -94,13 +90,14 @@ public class ShoppingItem implements Serializable {
             organic.setName("Obst und Gem\u00fcse");
             organic.setDeleteAllowed(false);
             organic.setKbNumber(-1);
+            organic.setUnit(Unit.STACK);
             em.persist(organic);
             em.flush();
             et.commit();
             out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Obst und Gem\u00fcse'", Item.class).getSingleResult());
         }
-        out.setRawPrice(price);
         out.setItemAmount(1);
+        out.setItemNetPrice(price);
         em.close();
         return out;
     }
@@ -115,6 +112,7 @@ public class ShoppingItem implements Serializable {
             et.begin();
             Item bakeryProduct = new Item();
             bakeryProduct.setName("Backware");
+            bakeryProduct.setUnit(Unit.STACK);
             bakeryProduct.setDeleteAllowed(false);
             bakeryProduct.setKbNumber(-2);
             em.persist(bakeryProduct);
@@ -122,8 +120,8 @@ public class ShoppingItem implements Serializable {
             et.commit();
             out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Backware'", Item.class).getSingleResult());
         }
-        out.setRawPrice(price);
         out.setItemAmount(1);
+        out.setItemNetPrice(price);
         em.close();
         return out;
     }
@@ -139,14 +137,15 @@ public class ShoppingItem implements Serializable {
             Item deposit = new Item();
             deposit.setName("Pfand");
             deposit.setKbNumber(-3);
+            deposit.setUnit(Unit.STACK);
             deposit.setDeleteAllowed(false);
             em.persist(deposit);
             em.flush();
             et.commit();
             out = new ShoppingItem(em.createQuery("select  i from Item i where name like 'Pfand'", Item.class).getSingleResult());
         }
-        out.setRawPrice(price);
         out.setItemAmount(1);
+        out.setItemNetPrice(price);
         em.close();
         return out;
     }
@@ -191,14 +190,6 @@ public class ShoppingItem implements Serializable {
         this.vatLow = vatLow;
     }
 
-    public int getRawPrice() {
-        return rawPrice;
-    }
-
-    public void setRawPrice(int rawPrice) {
-        this.rawPrice = rawPrice;
-    }
-
     public boolean isWeighAble() {
         return weighAble;
     }
@@ -208,7 +199,7 @@ public class ShoppingItem implements Serializable {
     }
 
     public Unit getUnit() {
-        return unit;
+        return unit != null ? unit : Unit.NONE;
     }
 
     public void setUnit(Unit unit) {
@@ -238,7 +229,7 @@ public class ShoppingItem implements Serializable {
 
     @Override
     public int hashCode() {
-        return kbNumber*(discount+1)*getName().hashCode();
+        return kbNumber*((discount%100)+1)*amount;
     }
 
     @Override
@@ -278,23 +269,15 @@ public class ShoppingItem implements Serializable {
         this.shortName = shortName;
     }
 
-    public int getNetPrice() {
-        return netPrice;
-    }
-
-    public void setNetPrice(int netPrice) {
-        this.netPrice = netPrice;
-    }
-
-    public int getItemRawPrice() {
-        return itemRawPrice;
-    }
-
-    public void setItemRawPrice(int itemRawPrice) {
-        this.itemRawPrice = itemRawPrice;
-    }
-
     public static List<ShoppingItem> getAll(String condition){
         return Tools.getAll(ShoppingItem.class,condition);
+    }
+
+    public int getSurcharge() {
+        return surcharge;
+    }
+
+    public void setSurcharge(int surcharge) {
+        this.surcharge = surcharge;
     }
 }

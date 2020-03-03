@@ -4,6 +4,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -22,14 +23,14 @@ public class ShoppingMaskModel implements Model {
         this.saleSession=saleSession;
     }
 
-    Item searchItem(String itemNumber){
+    Item searchItem(String itemNumber) {
         EntityManager em = DBConnection.getEntityManager();
-        try{
-            return em.createQuery("select i from Item i where kbNumber = '"+itemNumber+"'",Item.class).getSingleResult();
-        }catch (NoResultException e) {
-            try{
-                return em.createQuery("select i from Item i where barcode like '%"+itemNumber+ "'",Item.class).setMaxResults(1).getSingleResult();
-            }catch (NoResultException e1){
+        try {
+            return em.createQuery("select i from Item i where kbNumber = '" + itemNumber + "'", Item.class).getSingleResult();
+        } catch (NoResultException e) {
+            try {
+                return em.createQuery("select i from Item i where barcode like '%" + itemNumber + "'", Item.class).setMaxResults(1).getSingleResult();
+            } catch (NoResultException e1) {
                 return null;
             }
         }
@@ -42,7 +43,7 @@ public class ShoppingMaskModel implements Model {
     int calculateTotalPrice(){
         int out = 0;
         for (ShoppingItem item : shoppingCart) {
-            out+=item.getRawPrice();
+            out+= PriceCalculator.getShoppingItemPrice(item,saleSession.getCustomer().getSolidaritySurcharge());
         }
         return out;
     }
@@ -61,6 +62,10 @@ public class ShoppingMaskModel implements Model {
             em.close();
         }
         return out;
+    }
+
+    Item getByKbNumber(int kbNumber){
+        return Item.getByKbNumber(kbNumber);
     }
 
     boolean editBarcode(int itemId, long newBarcode){
@@ -109,5 +114,9 @@ public class ShoppingMaskModel implements Model {
 
     public void setSaleSession(SaleSession saleSession) {
         this.saleSession = saleSession;
+    }
+
+    Item getBySupplierItemNumber(int suppliersNumber) {
+        return Item.getBySuppliersItemNumber(suppliersNumber);
     }
 }

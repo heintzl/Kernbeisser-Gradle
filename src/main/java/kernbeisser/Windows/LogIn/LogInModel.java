@@ -3,6 +3,7 @@ package kernbeisser.Windows.LogIn;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Main;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -30,6 +31,7 @@ public class LogInModel implements Model {
                     .setParameter("username", username).
                             getSingleResult();
             if(BCrypt.verifyer().verify(password,user.getPassword().toCharArray()).verified){
+                Main.makeAdmin(user);
                 loggedIn=user;
                 return SUCCESS;
             }else {

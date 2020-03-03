@@ -64,6 +64,10 @@ public class ObjectTable <T> extends JTable {
         }
 
     }
+    public void setColumns(Collection<Column<T>> columns){
+        this.columns = new ArrayList<>(columns);
+        repaintUI();
+    }
     public void addColumn(Column<T> column){
         columns.add(column);
     }

@@ -5,6 +5,7 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -35,7 +36,7 @@ class PayModel implements Model {
     }
 
     int shoppingCartSum(){
-        return shoppingCart.stream().mapToInt(ShoppingItem::getRawPrice).sum();
+        return shoppingCart.stream().mapToInt(e -> PriceCalculator.getShoppingItemPrice(e,saleSession.getCustomer().getSolidaritySurcharge())).sum();
     }
     boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, int sum){
         //Build connection by default

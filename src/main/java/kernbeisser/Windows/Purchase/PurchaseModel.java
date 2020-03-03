@@ -17,4 +17,8 @@ public class PurchaseModel implements Model {
     long getSum(){
         return loaded.getSum();
     }
+
+    public Purchase getLoaded() {
+        return loaded;
+    }
 }

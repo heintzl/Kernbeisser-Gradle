@@ -10,6 +10,7 @@ import kernbeisser.Windows.Window;
 
 import javax.print.PrintService;
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 class PayView extends Window implements View {
@@ -23,8 +24,13 @@ class PayView extends Window implements View {
     private ObjectTable<ShoppingItem> shoppingCart;
 
 
+    private final PayController controller;
+
+
     public PayView(Window current, PayController controller) {
         super(current);
+        this.controller = controller;
+
         add(main);
         pack();
         setLocationRelativeTo(current);
@@ -59,7 +65,7 @@ class PayView extends Window implements View {
         shoppingCart = new ObjectTable<>(
                 Column.create("Name", ShoppingItem::getName),
                 Column.create("Anzahl", ShoppingItem::getItemAmount),
-                Column.create("Preis", e -> e.getRawPrice() / 100f + "€")
+                Column.create("Preis", e -> controller.getPrice(e) / 100f + "€")
         );
     }
 

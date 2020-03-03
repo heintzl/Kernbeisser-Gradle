@@ -2,7 +2,7 @@ package kernbeisser.DBEntities;
 
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.Permission;
+import kernbeisser.Enums.Key;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -22,6 +22,10 @@ public class User implements Serializable {
 
     @Column
     private int salesThisYear;
+
+    @JoinColumn
+    @OneToMany
+    private Set<Permission> permissions;
 
     @Column
     private int salesLastYear;
@@ -74,9 +78,6 @@ public class User implements Serializable {
 
     @Column
     private long townCode;
-
-    @Column
-    private Permission permission = Permission.STANDARD;
 
     @Column
     private String email;
@@ -225,14 +226,6 @@ public class User implements Serializable {
         this.street = address;
     }
 
-    public Permission getPermission() {
-        return permission;
-    }
-
-    public void setPermission(Permission permission) {
-        this.permission = permission;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -264,7 +257,7 @@ public class User implements Serializable {
 
     public static User getById(int id){
         EntityManager em = DBConnection.getEntityManager();
-        User out = em.createQuery("select u from User u where id = "+id,User.class).getSingleResult();
+        User out = em.createQuery("select u from User u where u.id = "+id,User.class).getSingleResult();
         em.close();
         return out;
     }
@@ -295,7 +288,7 @@ public class User implements Serializable {
 
     public static Collection<User> defaultSearch(String s,int max){
         EntityManager em = DBConnection.getEntityManager();
-        Collection<User> out = em.createQuery("select u from User u where firstName like :search or surname like :search or username like :search order by firstName ASC",User.class)
+        Collection<User> out = em.createQuery("select u from User u where u.firstName like :search or u.surname like :search or u.username like :search order by u.firstName ASC",User.class)
                 .setParameter("search",s+"%")
                 .setMaxResults(max)
                 .getResultList();
@@ -306,5 +299,37 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return username;
+    }
+
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public boolean hasPermission(Key ... keys){
+        for (Key key : keys) {
+            boolean hasPermission = false;
+            for (Permission permission : permissions) {
+                if(permission.contains(key)){
+                    hasPermission = true;
+                    break;
+                }
+            }
+            if(!hasPermission)return false;
+        }
+        return true;
+    }
+    public boolean hasPermission(Collection<Key> keys){
+        for (Key key : keys) {
+            boolean hasPermission = false;
+            for (Permission permission : permissions) {
+                if(permission.contains(key))hasPermission = true;
+            }
+            if(!hasPermission)return false;
+        }
+        return true;
     }
 }
