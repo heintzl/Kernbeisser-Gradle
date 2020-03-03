@@ -6,15 +6,17 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import javax.swing.*;
 import java.awt.*;
 
-public class PermissionComboBox <T> extends JComboBox <T>{
+public class PermissionComboBox <T> extends JComboBox <T> implements RequiresPermission{
     private boolean write = true;
 
-    private void setRequiredReadKeys(Key... keys){
-        setRenderer(LogInModel.getLoggedIn().hasPermission(keys) ? (list, value, index, isSelected, cellHasFocus) -> new JLabel("**********") : new DefaultListCellRenderer());
+    @Override
+    public void setReadable(boolean b) {
+        setRenderer(b ? (list, value, index, isSelected, cellHasFocus) -> new JLabel("**********") : new DefaultListCellRenderer());
     }
 
-    private void setRequiredWriteKeys(Key... keys){
-        write = LogInModel.getLoggedIn().hasPermission(keys);
+    @Override
+    public void setWriteable(boolean b) {
+        write = b;
         setEnabled(write);
     }
 

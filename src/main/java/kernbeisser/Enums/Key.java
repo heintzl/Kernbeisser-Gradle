@@ -8,6 +8,7 @@ public enum Key {
     ACTION_TRANSACTION(KeyCategory.ACTION,Security.LOW),
     ACTION_TRANSACTION_FROM_OTHER(KeyCategory.ACTION,Security.EXTREME),
     ACTION_TRANSACTION_FROM_KB(KeyCategory.ACTION,Security.EXTREME),
+    ACTION_EDIT_USER(KeyCategory.ACTION,Security.MIDDLE),
 
     //DataBase Changes:
     USER_ID_READ(KeyCategory.USERS,Security.EXTREME),
@@ -290,8 +291,7 @@ public enum Key {
     SALE_SESSION_CUSTOMER_READ(KeyCategory.SALE_SESSION,Security.EXTREME),
     SALE_SESSION_CUSTOMER_WRITE(KeyCategory.SALE_SESSION,Security.EXTREME),
     SALE_SESSION_SELLER_READ(KeyCategory.SALE_SESSION,Security.EXTREME),
-    SALE_SESSION_SELLER_WRITE(KeyCategory.SALE_SESSION,Security.EXTREME),
-    ;
+    SALE_SESSION_SELLER_WRITE(KeyCategory.SALE_SESSION,Security.EXTREME);
 
     private final KeyCategory category;
     private final Security security;

@@ -313,7 +313,10 @@ public class User implements Serializable {
         for (Key key : keys) {
             boolean hasPermission = false;
             for (Permission permission : permissions) {
-                if(permission.contains(key))hasPermission = true;
+                if(permission.contains(key)){
+                    hasPermission = true;
+                    break;
+                }
             }
             if(!hasPermission)return false;
         }

@@ -2,6 +2,7 @@ package kernbeisser.Windows.EditUser;
 
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -11,10 +12,10 @@ import java.util.Collection;
 class EditUserView extends Window implements View {
     private JLabel lblVorname;
     private JLabel lblNachname;
-    private JTextField firstName;
-    private JTextField lastName;
+    private kernbeisser.CustomComponents.TextFields.PermissionField firstName;
+    private kernbeisser.CustomComponents.TextFields.PermissionField lastName;
     private JLabel lblStrasse;
-    private JTextField street;
+    private kernbeisser.CustomComponents.TextFields.PermissionField street;
     private JLabel lblPlz;
     private JLabel lblOrt;
     private JLabel grpUser;
@@ -24,33 +25,33 @@ class EditUserView extends Window implements View {
     private JLabel grpLogin;
     private JLabel lblUsername;
     private JLabel lblPasswort;
-    private JTextField postalCode;
-    private JTextField town;
-    private JTextField phone1;
-    private JTextField phone2;
-    private JTextField unserName;
-    private JButton chgPassword;
+    private kernbeisser.CustomComponents.TextFields.PermissionField postalCode;
+    private kernbeisser.CustomComponents.TextFields.PermissionField town;
+    private kernbeisser.CustomComponents.TextFields.PermissionField phone1;
+    private kernbeisser.CustomComponents.TextFields.PermissionField phone2;
+    private kernbeisser.CustomComponents.TextFields.PermissionField username;
+    private kernbeisser.CustomComponents.PermissionButton chgPassword;
     private JLabel lblRolle;
-    private JComboBox<Permission> roles;
+    private kernbeisser.CustomComponents.PermissionComboBox roles;
     private JLabel lblHasKey;
     private JLabel lblIsEmployee;
-    private JCheckBox hasKey;
-    private JCheckBox isEmployee;
+    private kernbeisser.CustomComponents.PermissionCheckBox hasKey;
+    private kernbeisser.CustomComponents.PermissionCheckBox isEmployee;
     private JLabel lblZusatzdienste;
     private JLabel lblAnteile;
     private JLabel grpGenossenschaft;
     private JSpinner shares;
     private JSpinner solidarySupplement;
-    private JButton chgJobs;
+    private kernbeisser.CustomComponents.PermissionButton chgJobs;
     private JLabel lblDienste;
     private JPanel userDataPanel;
-    private JTextField extraJobs;
+    private kernbeisser.CustomComponents.TextFields.PermissionField extraJobs;
     private JButton cancel;
     private JButton submit;
     private JPanel buttonPanel;
 
     public EditUserView(EditUserController controller, Window current) {
-        super(current);
+        super(current, Key.ACTION_EDIT_USER);
         add(userDataPanel);
         setSize(500, 580);
         setLocationRelativeTo(current);
@@ -64,6 +65,12 @@ class EditUserView extends Window implements View {
         });
         cancel.addActionListener(e -> back());
 
+        postalCode.setRequiredKeys(Key.USER_TOWN_CODE_READ,Key.USER_TOWN_CODE_WRITE);
+        town.setRequiredKeys(Key.USER_TOWN_READ,Key.USER_TOWN_WRITE);
+        phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ,Key.USER_PHONE_NUMBER1_WRITE);
+        phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ,Key.USER_PHONE_NUMBER2_WRITE);
+        username.setRequiredKeys(Key.USER_USERNAME_READ,Key.USER_USERNAME_WRITE);
+        street.setRequiredKeys(Key.USER_STREET_READ,Key.USER_STREET_WRITE);
     }
 
 
@@ -74,7 +81,7 @@ class EditUserView extends Window implements View {
         town.setText(data.getTown());
         phone1.setText(data.getPhoneNumber1());
         phone2.setText(data.getPhoneNumber2());
-        unserName.setText(data.getUsername());
+        username.setText(data.getUsername());
         hasKey.setSelected(data.isKernbeisserKey());
         isEmployee.setSelected(data.isEmployee());
         extraJobs.setText(data.getExtraJobs());
@@ -87,7 +94,7 @@ class EditUserView extends Window implements View {
         data.setTown(town.getText());
         data.setPhoneNumber1(phone1.getText());
         data.setPhoneNumber2(phone2.getText());
-        data.setUsername(unserName.getText());
+        data.setUsername(username.getText());
         data.setKernbeisserKey(hasKey.isSelected());
         data.setEmployee(isEmployee.isSelected());
         data.setExtraJobs(extraJobs.getText());

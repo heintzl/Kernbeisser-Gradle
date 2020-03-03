@@ -56,6 +56,19 @@ public class Main {
         et.commit();
         em.close();
     }
+
+    public static void makeAdmin(User user){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        User us = em.find(user.getClass(),user.getId());
+        us.getPermissions().add(em.createQuery("select p from Permission p where name like 'Admin'",Permission.class).getSingleResult());
+        em.persist(us);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+
     private static void printClass(Class c,Function<Field,String> transformer){
         for (Field field : c.getDeclaredFields()) {
             System.out.println(transformer.apply(field));
