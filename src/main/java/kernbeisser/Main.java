@@ -5,7 +5,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Job;
+import kernbeisser.DBEntities.*;
 import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.StartUp.DataImport.DataImportView;
 import kernbeisser.Windows.LogIn.LogInController;
@@ -27,13 +27,17 @@ public class Main {
      * and as least shows the LogIn Window
      */
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException, URISyntaxException {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        IconFontSwing.register(FontAwesome.getIconFont());
-        DBConnection.getEntityManager();
+        doA(SaleSession.class);
+        buildEnvironment();
         if(!ConfigManager.getHeader().getBoolean("Init"))
             SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));
         else
-        openLogIn();
+            openLogIn();
+    }
+    public static void buildEnvironment() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException{
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        IconFontSwing.register(FontAwesome.getIconFont());
+        DBConnection.getEntityManager();
     }
     private static void openLogIn(){
         SwingUtilities.invokeLater(() -> new LogInController(null));
@@ -52,9 +56,34 @@ public class Main {
         et.commit();
         em.close();
     }
+
+    public static void makeAdmin(User user){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        User us = em.find(user.getClass(),user.getId());
+        us.getPermissions().add(em.createQuery("select p from Permission p where name like 'Admin'",Permission.class).getSingleResult());
+        em.persist(us);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+
     private static void printClass(Class c,Function<Field,String> transformer){
         for (Field field : c.getDeclaredFields()) {
             System.out.println(transformer.apply(field));
         }
+    }
+    private static void doA(Class c){
+        printClass(c, e -> doB(c.getSimpleName())+"_"+doB(e.getName())+"_READ,\n"+doB(c.getSimpleName())+"_"+doB(e.getName())+"_WRITE,");
+    }
+    public static String doB(String s){
+        int pos = 0;
+        for (char c : s.toCharArray()) {
+            if(Character.isUpperCase(c)&&pos!=0)
+                s = s.replaceFirst(c+"","_"+c);
+                pos+=2;
+        }
+        return s.toUpperCase();
     }
 }

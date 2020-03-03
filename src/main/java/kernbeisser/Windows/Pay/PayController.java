@@ -2,6 +2,7 @@ package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
@@ -30,6 +31,10 @@ public class PayController implements Controller {
     void commit() {
         commitPay();
         checkBon();
+    }
+
+    int getPrice(ShoppingItem item){
+        return PriceCalculator.getShoppingItemPrice(item,model.getSaleSession().getCustomer().getSolidaritySurcharge());
     }
 
     @Override

@@ -62,6 +62,7 @@ public class EditItemModel implements Model {
     }
 
     private void addItem(Item item){
+        item.setSurcharge(item.getSurchargeTable().getSurcharge());
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();

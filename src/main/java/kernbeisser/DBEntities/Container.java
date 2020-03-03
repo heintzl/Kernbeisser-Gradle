@@ -104,7 +104,7 @@ public class Container implements Serializable {
 
     public int getKBNumber(){
         List<Item> items = Item.getAll("where suppliersItemNumber = "+item.getKkNumber());
-        if(items==null)return -1;
+        if(items==null||items.size()==0)return -1;
         else return items.get(0).getKbNumber();
     }
 

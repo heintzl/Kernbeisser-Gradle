@@ -7,7 +7,7 @@ import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
-import kernbeisser.Enums.Permission;
+import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.View;
@@ -19,7 +19,7 @@ import java.util.Collection;
 public class EditItemView extends Window implements View {
     private JButton commit;
     private JButton cancel;
-    private JTextField itemName;
+    private kernbeisser.CustomComponents.TextFields.PermissionField itemName;
     private JComboBox<Supplier> supplier;
     private DoubleParseField netPrice;
     private DoubleParseField deposit;
@@ -32,25 +32,30 @@ public class EditItemView extends Window implements View {
     private DoubleParseField containerSize;
     private JComboBox<Unit> unit;
     private JComboBox<ContainerDefinition> containerDefinition;
-    private JTextField barcode;
+    private kernbeisser.CustomComponents.TextFields.PermissionField barcode;
     private JCheckBox showInShoppingMask;
     private JCheckBox weighable;
     private JTextArea extraInfo;
     private JComboBox<VAT> vat;
     private JPanel main;
 
-    public EditItemView(EditItemController controller,Window current) {
+    public EditItemView(EditItemController controller, Window current) {
         super(current);
         cancel.addActionListener((e) -> back());
         commit.addActionListener((e) -> controller.doAction());
         add(main);
         pack();
         setLocationRelativeTo(null);
+        amount.setRequiredKeys(Key.ITEM_AMOUNT_READ,Key.ITEM_AMOUNT_WRITE);
+        netPrice.setRequiredKeys(Key.ITEM_NET_PRICE_READ,Key.ITEM_NET_PRICE_WRITE);
+        deposit.setRequiredKeys(Key.ITEM_SINGLE_DEPOSIT_READ, Key.ITEM_SINGLE_DEPOSIT_WRITE);
+        kbItemNumber.setRequiredKeys(Key.ITEM_KB_NUMBER_READ, Key.ITEM_KB_NUMBER_READ);
+        supplierItemNumber.setRequiredKeys(Key.ITEM_SUPPLIERS_ITEM_NUMBER_READ,Key.ITEM_SUPPLIERS_ITEM_NUMBER_WRITE);
+        crateDeposit.setRequiredKeys(Key.ITEM_CRATE_DEPOSIT_READ,Key.ITEM_CRATE_DEPOSIT_WRITE);
     }
 
 
     private void createUIComponents() {
-        barcode = new LongParseField();
         amount = new IntegerParseField();
         netPrice = new DoubleParseField();
         deposit = new DoubleParseField();
@@ -121,9 +126,9 @@ public class EditItemView extends Window implements View {
         out.setCrateDeposit((int) (crateDeposit.getValue() * 100));
         out.setContainerSize(containerSize.getValue());
         out.setAmount(amount.getValue());
-        try{
+        try {
             out.setBarcode(Long.parseLong(barcode.getText()));
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             out.setBarcode(null);
         }
         out.setShowInShop(showInShoppingMask.isSelected());
@@ -136,10 +141,11 @@ public class EditItemView extends Window implements View {
     }
 
     void kbNumberAlreadyExists() {
-        JOptionPane.showMessageDialog(this,"Die Kernbeisser-Nummer ist bereits vergeben");
+        JOptionPane.showMessageDialog(this, "Die Kernbeisser-Nummer ist bereits vergeben");
     }
 
-    void barcodeAlreadyExists(){
-        JOptionPane.showMessageDialog(this,"Der Barcode ist bereits vergeben");
+    void barcodeAlreadyExists() {
+        JOptionPane.showMessageDialog(this, "Der Barcode ist bereits vergeben");
     }
+
 }

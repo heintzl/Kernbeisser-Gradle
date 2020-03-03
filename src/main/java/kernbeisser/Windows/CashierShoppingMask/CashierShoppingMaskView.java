@@ -8,9 +8,7 @@ package kernbeisser.Windows.CashierShoppingMask;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -47,7 +45,7 @@ public class CashierShoppingMaskView extends Window implements View {
         setVisible(true);
     }
 
-    void openShoppingMask(ShoppingMaskController controller){
+    void openShoppingMask(ShoppingMaskUIController controller){
         tabbedPane.addTab("Einkauf f"+'\u00fc'+"r "+controller.getModel().getSaleSession().getCustomer().getFirstName(),controller.getView());
     }
 

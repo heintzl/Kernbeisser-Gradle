@@ -70,7 +70,7 @@
                       <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
-                  <component id="e073d" class="javax.swing.JTextField" binding="itemName">
+                  <component id="2f3c3" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="itemName">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -184,7 +184,7 @@
                       <text value="Barcode"/>
                     </properties>
                   </component>
-                  <component id="179d1" class="javax.swing.JTextField" binding="barcode">
+                  <component id="b4239" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="barcode">
                     <constraints>
                       <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>

@@ -56,7 +56,7 @@ public class ContainerController {
 
     public void searchKK(){
         clear();
-        view.setKkNumber("");
+        view.setKbNumber("");
         pasteData(model.getItemByKkNumber(view.getKkNumber()));
     }
     public void searchKB(){

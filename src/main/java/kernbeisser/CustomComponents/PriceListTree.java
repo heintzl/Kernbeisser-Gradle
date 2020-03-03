@@ -32,7 +32,8 @@ public class PriceListTree extends ObjectTree<PriceList> {
             public String getName(PriceList priceList) {
                 return priceList.getName();
             }
-        }, "Preislisten", PriceList.getAllHeadPriceLists());
+        },
+                "Preislisten", PriceList.getAllHeadPriceLists());
         if (optionToEdit) {
             PriceList p = new PriceList() {
                 @Override
