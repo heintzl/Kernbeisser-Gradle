@@ -1,6 +1,7 @@
 package kernbeisser.StartUp.DataImport;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -8,6 +9,7 @@ import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Id;
 import java.util.Collection;
 
 class DataImportModel implements Model {
@@ -66,6 +68,26 @@ class DataImportModel implements Model {
         em.persist(userGroup);
         user.setUserGroup(userGroup);
         em.persist(user);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+
+    void saveAllItems(Collection<Item> items){
+        if(items.size()==0)return;
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        int c = 0;
+        for (Item t : items) {
+            t.getSpecialPriceMonths().forEach(em::persist);
+            em.persist(t);
+            c++;
+            if(c % 20 == 0){
+                em.flush();
+                em.clear();
+            }
+        }
         em.flush();
         et.commit();
         em.close();

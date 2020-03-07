@@ -6,6 +6,7 @@
              version="2.1">
     <persistence-unit name="Kernbeisser">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>kernbeisser.DBEntities.Offer</class>
         <class>kernbeisser.DBEntities.Supplier</class>
         <class>kernbeisser.DBEntities.PriceList</class>
         <class>kernbeisser.DBEntities.Item</class>

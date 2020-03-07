@@ -3,10 +3,7 @@ package kernbeisser.StartUp.DataImport;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBEntities.*;
-import kernbeisser.Enums.ContainerDefinition;
-import kernbeisser.Enums.Cooling;
-import kernbeisser.Enums.Key;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
@@ -23,6 +20,7 @@ import java.nio.file.Files;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 public class DataImportController implements Controller {
@@ -291,7 +289,7 @@ public class DataImportController implements Controller {
                 } catch (NumberFormatException e) {
                     item.setBarcode(null);
                 }
-                item.setSpecialPriceNet(Integer.parseInt(columns[7]));
+                //columns[7] look at line 311
                 item.setVatLow(Boolean.parseBoolean(columns[8]));
                 item.setSurcharge(Integer.parseInt(columns[9]));
                 item.setSingleDeposit(Integer.parseInt(columns[10]));
@@ -310,7 +308,7 @@ public class DataImportController implements Controller {
                 item.setLoss(Integer.parseInt(columns[23]));
                 item.setInfo(columns[24]);
                 item.setSold(Integer.parseInt(columns[25]));
-                item.setSpecialPriceMonth(Tools.extract(ArrayList::new, columns[26], "_", Boolean::parseBoolean));
+                item.setSpecialPriceMonth(extractOffers(Tools.extract(Boolean.class, columns[26], "_", Boolean::parseBoolean),Integer.parseInt(columns[7])));
                 item.setDelivered(Integer.parseInt(columns[27]));
                 item.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
                 item.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
@@ -324,7 +322,7 @@ public class DataImportController implements Controller {
                 items.add(item);
             }
             view.setItemProgress(5);
-            model.batchSaveAll(items);
+            model.saveAllItems(items);
             view.setItemProgress(6);
         }catch (IOException e){
             e.printStackTrace();
@@ -335,6 +333,27 @@ public class DataImportController implements Controller {
         view.back();
         ConfigManager.getHeader().put("dbIsInitialized",true);
         ConfigManager.updateFile();
+    }
+
+    private List<Offer> extractOffers(Boolean[] months,int price){
+        int from = -1;
+        ArrayList<Offer> out = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        for (int i = 1; i < months.length+1; i++) {
+            if (months[i-1]) {
+                if(from==-1)from = i;
+                continue;
+            }
+            if(from == -1)continue;
+            Offer offer = new Offer();
+            offer.setSpecialNetPrice(price);
+            offer.setFromDate(Date.valueOf(LocalDate.of(today.getYear(),from,1)));
+            offer.setToDate(Date.valueOf(LocalDate.of(today.getYear(),from+(i-1-from),1).with(TemporalAdjusters.lastDayOfMonth())));
+            offer.setRepeatMode(Repeat.EVERY_YEAR);
+            out.add(offer);
+            from = -1;
+        }
+        return out;
     }
 
     @Override

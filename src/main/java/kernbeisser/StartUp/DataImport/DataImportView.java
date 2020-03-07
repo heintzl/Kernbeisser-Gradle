@@ -132,6 +132,6 @@ public class DataImportView extends Window implements View {
     }
 
     String requestPassword() {
-        return JOptionPane.showInputDialog(this,"Biite geben sie ein Password für den automatisch erzeugten Admin ein");
+        return JOptionPane.showInputDialog(this,"Bitte geben sie ein Password für den automatisch erzeugten Admin ein");
     }
 }

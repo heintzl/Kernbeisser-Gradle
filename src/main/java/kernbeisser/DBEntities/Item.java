@@ -321,6 +321,10 @@ public class Item {
         this.deleteAllowed = deleteAllowed;
     }
 
+    public void setSpecialPriceMonth(List<Offer> specialPriceMonth) {
+        this.specialPriceMonth = specialPriceMonth;
+    }
+
     public List<Offer> getSpecialPriceMonths() {
         return specialPriceMonth;
     }
