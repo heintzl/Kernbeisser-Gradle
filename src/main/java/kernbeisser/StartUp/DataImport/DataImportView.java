@@ -38,7 +38,7 @@ public class DataImportView extends Window implements View {
         cancel.addActionListener(e -> controller.cancel());
     }
 
-    boolean createStandardAdmin(){
+    boolean createStandardAdmin() {
         return importStandardAdmin.isSelected();
     }
 
@@ -68,7 +68,9 @@ public class DataImportView extends Window implements View {
     void setUserProgress(int i) {
         userProgress.setValue(i);
         currentActionUser.setVisible(true);
-        currentActionUser.setText("Benutzer: " + (i < 2 ? "Jobs" : "Benutzer") + " " + (i % 2 == 0 ? "zur Datenbank gespeichert" : "werden konvertiert") + "...");
+        currentActionUser.setText("Benutzer: " + (i < 2 ? "Jobs" : "Benutzer") + " " + (i % 2 == 0
+                                                                                        ? "zur Datenbank gespeichert"
+                                                                                        : "werden konvertiert") + "...");
         itemProgress.setValue(i);
         String target = "";
         String status = i % 2 == 1 ? "auf der Datenbank gespeichert" : "werden konvertiert";
@@ -124,14 +126,17 @@ public class DataImportView extends Window implements View {
 
 
     void itemSourcesNotExists() {
-        JOptionPane.showMessageDialog(this, "Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Artikeldatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!",
+                                      "Artikeldatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
     }
 
     void userSourcesNotExists() {
-        JOptionPane.showMessageDialog(this, "Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Nutzerdatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!",
+                                      "Nutzerdatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
     }
 
     String requestPassword() {
-        return JOptionPane.showInputDialog(this,"Biite geben sie ein Password für den automatisch erzeugten Admin ein");
+        return JOptionPane.showInputDialog(this,
+                                           "Biite geben sie ein Password für den automatisch erzeugten Admin ein");
     }
 }

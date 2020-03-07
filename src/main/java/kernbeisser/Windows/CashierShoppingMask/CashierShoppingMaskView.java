@@ -17,7 +17,6 @@ import java.awt.*;
 import java.util.Collection;
 
 /**
- *
  * @author julik
  */
 public class CashierShoppingMaskView extends Window implements View {
@@ -27,32 +26,34 @@ public class CashierShoppingMaskView extends Window implements View {
             Column.create("Vorname", User::getFirstName),
             Column.create("Benutzername", User::getUsername)
     );
+
     /**
      * Creates new form CashierShoppingMask
      */
     public CashierShoppingMaskView(User seller, Window current) {
         super(current);
         initComponents();
-        controller=new CashierShoppingMaskController(seller,this);
+        controller = new CashierShoppingMaskController(seller, this);
         startShopping.setEnabled(false);
-        userTable.addSelectionListener((e)->{
+        userTable.addSelectionListener((e) -> {
             startShopping.setEnabled(true);
-            startShopping.setText("Einkauf f\u00fcr "+e.getFirstName()+" "+e.getSurname()+" beginnen");
+            startShopping.setText("Einkauf f\u00fcr " + e.getFirstName() + " " + e.getSurname() + " beginnen");
         });
         userTablePane.add(new JScrollPane(userTable));
         setLocationRelativeTo(null);
-        tabbedPane.setFont( new Font( "Dialog", Font.BOLD | Font.ITALIC, 13 ) );
+        tabbedPane.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 13));
         setVisible(true);
     }
 
-    void openShoppingMask(ShoppingMaskUIController controller){
-        tabbedPane.addTab("Einkauf f"+'\u00fc'+"r "+controller.getModel().getSaleSession().getCustomer().getFirstName(),controller.getView());
+    void openShoppingMask(ShoppingMaskUIController controller) {
+        tabbedPane.addTab(
+                "Einkauf f" + '\u00fc' + "r " + controller.getModel().getSaleSession().getCustomer().getFirstName(),
+                controller.getView());
     }
 
-    void setUsers(Collection<User> users){
+    void setUsers(Collection<User> users) {
         userTable.setObjects(users);
     }
-
 
 
     /**
@@ -82,7 +83,11 @@ public class CashierShoppingMaskView extends Window implements View {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("Einkauf f\u00fcr jemanden beginnen");
 
-        userTablePane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Benutzer ausw\u00e4hlen:", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+        userTablePane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Benutzer ausw\u00e4hlen:",
+                                                                             javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+                                                                             javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                                                                             new java.awt.Font("Tahoma", 0,
+                                                                                               14))); // NOI18N
         userTablePane.setLayout(new java.awt.GridLayout(1, 1));
 
         jButton1.setForeground(new java.awt.Color(255, 153, 0));
@@ -99,32 +104,61 @@ public class CashierShoppingMaskView extends Window implements View {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(24, 24, 24)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jButton1)
-                                        .addComponent(jLabel1)
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(userTablePane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 705, Short.MAX_VALUE)
-                                                .addComponent(startShopping)))
-                                .addContainerGap())
+                             .addGroup(jPanel1Layout.createSequentialGroup()
+                                                    .addGap(24, 24, 24)
+                                                    .addGroup(jPanel1Layout.createParallelGroup(
+                                                            javax.swing.GroupLayout.Alignment.LEADING)
+                                                                           .addComponent(jButton1)
+                                                                           .addComponent(jLabel1)
+                                                                           .addGroup(
+                                                                                   jPanel1Layout.createSequentialGroup()
+                                                                                                .addComponent(
+                                                                                                        userTablePane,
+                                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                .addPreferredGap(
+                                                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                                                                        705,
+                                                                                                        Short.MAX_VALUE)
+                                                                                                .addComponent(
+                                                                                                        startShopping)))
+                                                    .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGap(0, 0, Short.MAX_VALUE)
-                                                .addComponent(startShopping))
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(jButton1)
-                                                .addGap(21, 21, 21)
-                                                .addComponent(jLabel1)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(userTablePane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addContainerGap())
+                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                                                                                .addContainerGap()
+                                                                                                .addGroup(
+                                                                                                        jPanel1Layout.createParallelGroup(
+                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                                                     .addGroup(
+                                                                                                                             jPanel1Layout
+                                                                                                                                     .createSequentialGroup()
+                                                                                                                                     .addGap(0,
+                                                                                                                                             0,
+                                                                                                                                             Short.MAX_VALUE)
+                                                                                                                                     .addComponent(
+                                                                                                                                             startShopping))
+                                                                                                                     .addGroup(
+                                                                                                                             jPanel1Layout
+                                                                                                                                     .createSequentialGroup()
+                                                                                                                                     .addComponent(
+                                                                                                                                             jButton1)
+                                                                                                                                     .addGap(21,
+                                                                                                                                             21,
+                                                                                                                                             21)
+                                                                                                                                     .addComponent(
+                                                                                                                                             jLabel1)
+                                                                                                                                     .addGap(18,
+                                                                                                                                             18,
+                                                                                                                                             18)
+                                                                                                                                     .addComponent(
+                                                                                                                                             userTablePane,
+                                                                                                                                             javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                             javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                             Short.MAX_VALUE)))
+                                                                                                .addContainerGap())
         );
 
         tabbedPane.addTab("Hauptseite", jPanel1);
@@ -133,26 +167,27 @@ public class CashierShoppingMaskView extends Window implements View {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(tabbedPane)
-                                .addContainerGap())
+                      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                                                  .addComponent(tabbedPane)
+                                                                                  .addContainerGap())
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(tabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
+                      .addComponent(tabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void startShoppingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
+    private void startShoppingActionPerformed(
+            java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startShoppingActionPerformed
         User user = userTable.getSelectedObject();
-        try{
+        try {
             controller.startShoppingFor(user);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             startShopping.setEnabled(false);
         }
-        tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
+        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
     }//GEN-LAST:event_startShoppingActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

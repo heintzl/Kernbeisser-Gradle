@@ -28,45 +28,49 @@ import java.util.*;
 public class DataImportController implements Controller {
     private DataImportView view;
     private DataImportModel model;
+
     public DataImportController(Window current) {
-        this.view= new DataImportView(current,this);
-        model=new DataImportModel();
+        this.view = new DataImportView(current, this);
+        model = new DataImportModel();
     }
 
-    void openFileExplorer(){
+    void openFileExplorer() {
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jFileChooser.setFileFilter(new FileNameExtensionFilter("Config-File","JSON","json"));
+        jFileChooser.setFileFilter(new FileNameExtensionFilter("Config-File", "JSON", "json"));
         jFileChooser.addActionListener(e -> {
-            if(jFileChooser.getSelectedFile()==null)return;
+            if (jFileChooser.getSelectedFile() == null) {
+                return;
+            }
             view.setFilePath(jFileChooser.getSelectedFile().getAbsolutePath());
             checkDataSource();
         });
         jFileChooser.showOpenDialog(view);
     }
 
-    private boolean isValidDataSource(){
+    private boolean isValidDataSource() {
         return view.getFilePath().toUpperCase().endsWith(".JSON") && new File(view.getFilePath()).exists();
     }
 
 
-    void checkDataSource(){
-        if(isValidDataSource()){
+    void checkDataSource() {
+        if (isValidDataSource()) {
             view.setValidDataSource(true);
             JSONObject dataConfig = extractJSON();
-            if(dataConfig.has("UserData")){
+            if (dataConfig.has("UserData")) {
                 JSONObject jsonObject = dataConfig.getJSONObject("UserData");
-                view.userSourceFound(jsonObject.has("Users")&&jsonObject.has("Jobs"));
-            }else {
+                view.userSourceFound(jsonObject.has("Users") && jsonObject.has("Jobs"));
+            } else {
                 view.userSourceFound(false);
             }
-            if(dataConfig.has("ItemData")){
+            if (dataConfig.has("ItemData")) {
                 JSONObject jsonObject = dataConfig.getJSONObject("ItemData");
-                view.itemSourceFound(jsonObject.has("Suppliers")&&jsonObject.has("Items")&&jsonObject.has("PriceLists"));
-            }else {
+                view.itemSourceFound(
+                        jsonObject.has("Suppliers") && jsonObject.has("Items") && jsonObject.has("PriceLists"));
+            } else {
                 view.itemSourceFound(false);
             }
-        }else {
+        } else {
             view.setValidDataSource(false);
             view.userSourceFound(false);
             view.itemSourceFound(false);
@@ -74,7 +78,7 @@ public class DataImportController implements Controller {
 
     }
 
-    private JSONObject extractJSON(){
+    private JSONObject extractJSON() {
         StringBuilder sb = new StringBuilder();
         try {
             Files.readAllLines(new File(view.getFilePath()).toPath()).forEach(sb::append);
@@ -84,47 +88,46 @@ public class DataImportController implements Controller {
         return new JSONObject(sb.toString());
     }
 
-    void importData(){
-        if(isValidDataSource()){
-            String jsonPath =  view.getFilePath();
-            String relativePath = jsonPath.substring(0,jsonPath.lastIndexOf("\\"))+"/";
+    void importData() {
+        if (isValidDataSource()) {
+            String jsonPath = view.getFilePath();
+            String relativePath = jsonPath.substring(0, jsonPath.lastIndexOf("\\")) + "/";
             JSONObject path = extractJSON();
-            if(view.importItems()){
+            if (view.importItems()) {
                 JSONObject itemPath = path.getJSONObject("ItemData");
-                File suppliers = new File(relativePath+itemPath.getString("Suppliers"));
-                File priceLists = new File(relativePath+itemPath.getString("PriceLists"));
-                File items = new File(relativePath+itemPath.getString("Items"));
-                if(suppliers.exists()&&priceLists.exists()&&items.exists()){
+                File suppliers = new File(relativePath + itemPath.getString("Suppliers"));
+                File priceLists = new File(relativePath + itemPath.getString("PriceLists"));
+                File items = new File(relativePath + itemPath.getString("Items"));
+                if (suppliers.exists() && priceLists.exists() && items.exists()) {
                     new Thread(() -> {
                         view.setItemProgress(0);
                         parseSuppliers(suppliers);
                         parsePriceLists(priceLists);
                         parseItems(items);
                     }).start();
-                }else {
+                } else {
                     view.itemSourceFound(false);
                     view.itemSourcesNotExists();
                 }
             }
-            if(view.importUser()){
+            if (view.importUser()) {
                 JSONObject userPath = path.getJSONObject("UserData");
-                File users = new File(relativePath+userPath.getString("Users"));
-                File jobs = new File(relativePath+userPath.getString("Jobs"));
-                if(jobs.exists()&&users.exists()){
+                File users = new File(relativePath + userPath.getString("Users"));
+                File jobs = new File(relativePath + userPath.getString("Jobs"));
+                if (jobs.exists() && users.exists()) {
                     new Thread(() -> {
                         view.setUserProgress(0);
                         parseJobs(jobs);
                         parseUsers(users);
                     }).start();
-                }
-                else {
+                } else {
                     view.userSourceFound(false);
                     view.userSourcesNotExists();
                 }
             }
-            ConfigManager.getHeader().put("Init",true);
+            ConfigManager.getHeader().put("Init", true);
             ConfigManager.updateFile();
-            if(view.createStandardAdmin()){
+            if (view.createStandardAdmin()) {
                 Permission admin = new Permission();
                 admin.getKeySet().addAll(Arrays.asList(Key.values()));
                 admin.setName("Admin(System Created)");
@@ -135,17 +138,17 @@ public class DataImportController implements Controller {
                 String password;
                 do {
                     password = view.requestPassword();
-                }while (password.equals(""));
-                user.setPassword(BCrypt.withDefaults().hashToString(12,password.toCharArray()));
-                model.saveWithPermission(user,admin);
+                } while (password.equals(""));
+                user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
+                model.saveWithPermission(user, admin);
             }
         }
     }
 
-    private void parseJobs(File f){
-        try{
+    private void parseJobs(File f) {
+        try {
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            Collection<Job> jobs = new ArrayList<>((int)(lines.size()*1.5));
+            Collection<Job> jobs = new ArrayList<>((int) (lines.size() * 1.5));
             for (String line : lines) {
                 String[] columns = line.split(";");
                 Job job = new Job();
@@ -160,28 +163,29 @@ public class DataImportController implements Controller {
             e.printStackTrace();
         }
     }
-    private void parseUsers(File f){
+
+    private void parseUsers(File f) {
         try {
-            HashMap<String, Job> jobs = new HashMap<>();
-            Job.getAll(null).forEach(e -> jobs.put(e.getName(),e));
+            HashMap<String,Job> jobs = new HashMap<>();
+            Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            String defaultPassword = BCrypt.withDefaults().hashToString(12,"start".toCharArray());
+            String defaultPassword = BCrypt.withDefaults().hashToString(12, "start".toCharArray());
             for (String l : lines) {
                 String[] columns = l.split(";");
                 User user = new User();
                 User secondary = new User();
                 UserGroup userGroup = new UserGroup();
-                user.setSalesThisYear((int)(Float.parseFloat(columns[0].replace(",","."))*100));
-                user.setSalesLastYear((int)(Float.parseFloat(columns[1].replace(",","."))*100));
-                userGroup.setInterestThisYear((int)(Float.parseFloat(columns[2].replace(",","."))*100));
+                user.setSalesThisYear((int) (Float.parseFloat(columns[0].replace(",", ".")) * 100));
+                user.setSalesLastYear((int) (Float.parseFloat(columns[1].replace(",", ".")) * 100));
+                userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", ".")) * 100));
                 user.setShares(Integer.parseInt(columns[3]));
                 user.setSolidaritySurcharge(Integer.parseInt(columns[4]));
                 secondary.setFirstName(columns[5]);
                 secondary.setSurname(columns[6]);
                 user.setExtraJobs(columns[7]);
-                user.setJobs(Tools.extract(HashSet::new,columns[8],"§",jobs::get));
+                user.setJobs(Tools.extract(HashSet::new, columns[8], "§", jobs::get));
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-                user.setLastBuy(Date.valueOf(LocalDate.parse(columns[9].replace("Noch nie","11.03.4000"),df)));
+                user.setLastBuy(Date.valueOf(LocalDate.parse(columns[9].replace("Noch nie", "11.03.4000"), df)));
                 user.setKernbeisserKey(Boolean.parseBoolean(columns[10]));
                 user.setEmployee(Boolean.parseBoolean(columns[11]));
                 //IdentityCode: Unused, column 12
@@ -192,55 +196,59 @@ public class DataImportController implements Controller {
                 user.setPhoneNumber1(columns[17]);
                 user.setPhoneNumber2(columns[18]);
                 for (String s : columns[19].split(" ")) {
-                    if(s.equals(""))continue;
-                    try{
+                    if (s.equals("")) {
+                        continue;
+                    }
+                    try {
                         user.setTownCode(Integer.parseInt(s));
-                    }catch (NumberFormatException e){
+                    } catch (NumberFormatException e) {
                         user.setTown(s);
                     }
                 }
-                switch (Integer.parseInt(columns[20])){
+                switch (Integer.parseInt(columns[20])) {
                     //TODO
                 }
                 user.setEmail(columns[21]);
                 //CreateDate: is't used(create new CreateDate), column 22
-                userGroup.setValue((int) (Float.parseFloat(columns[23].replace(",","."))*100));
+                userGroup.setValue((int) (Float.parseFloat(columns[23].replace(",", ".")) * 100));
                 //TransactionDates: not used, column 24
                 //TransactionValues: not used, column 25
                 user.setStreet(columns[26]);
                 user.setUserGroup(userGroup);
                 user.setPassword(defaultPassword);
                 secondary.setPassword(defaultPassword);
-                user.setUsername(user.getFirstName()+"."+user.getSurname()+user.getTownCode());
-                secondary.setUsername(secondary.getFirstName()+"."+secondary.getSurname()+secondary.getTownCode());
+                user.setUsername(user.getFirstName() + "." + user.getSurname() + user.getTownCode());
+                secondary.setUsername(
+                        secondary.getFirstName() + "." + secondary.getSurname() + secondary.getTownCode());
                 secondary.setUserGroup(userGroup);
-                model.saveUser(user,secondary.getFirstName().equals("") ? null : secondary,userGroup);
+                model.saveUser(user, secondary.getFirstName().equals("") ? null : secondary, userGroup);
             }
             view.setUserProgress(4);
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private void parsePriceLists(File f){
+
+    private void parsePriceLists(File f) {
         try {
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            HashMap<String, PriceList> priceLists = new HashMap<>();
+            HashMap<String,PriceList> priceLists = new HashMap<>();
             for (String l : lines) {
                 String[] columns = l.split(";");
                 PriceList pl = new PriceList();
                 pl.setName(columns[0]);
                 pl.setSuperPriceList(priceLists.get(columns[1]));
-                priceLists.put(pl.getName(),pl);
+                priceLists.put(pl.getName(), pl);
             }
             view.setItemProgress(3);
             model.saveAll(priceLists.values());
             view.setItemProgress(4);
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void parseSuppliers(File f){
+    private void parseSuppliers(File f) {
         try {
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
             Collection<Supplier> suppliers = new ArrayList<>(lines.size());
@@ -258,7 +266,7 @@ public class DataImportController implements Controller {
             view.setItemProgress(1);
             model.batchSaveAll(suppliers);
             view.setItemProgress(2);
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -267,8 +275,8 @@ public class DataImportController implements Controller {
         try {
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
             HashSet<Long> barcode = new HashSet<>(lines.size());
-            HashMap<String, PriceList> priceListHashMap = new HashMap<>();
-            HashMap<String, Supplier> suppliers = new HashMap<>();
+            HashMap<String,PriceList> priceListHashMap = new HashMap<>();
+            HashMap<String,Supplier> suppliers = new HashMap<>();
             Collection<Item> items = new ArrayList<>(lines.size());
             Supplier.getAll(null).forEach(e -> suppliers.put(e.getShortName(), e));
             PriceList.getAll(null).forEach(e -> priceListHashMap.put(e.getName(), e));
@@ -326,14 +334,14 @@ public class DataImportController implements Controller {
             view.setItemProgress(5);
             model.batchSaveAll(items);
             view.setItemProgress(6);
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    void cancel(){
+    void cancel() {
         view.back();
-        ConfigManager.getHeader().put("Init",true);
+        ConfigManager.getHeader().put("Init", true);
         ConfigManager.updateFile();
     }
 

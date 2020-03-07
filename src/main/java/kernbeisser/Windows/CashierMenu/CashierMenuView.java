@@ -2,13 +2,11 @@ package kernbeisser.Windows.CashierMenu;
 
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
 
 public class CashierMenuView extends Window implements View {
     private JButton editItems;

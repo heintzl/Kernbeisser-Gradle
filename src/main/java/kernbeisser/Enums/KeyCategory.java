@@ -1,6 +1,6 @@
 package kernbeisser.Enums;
 
-public enum  KeyCategory {
+public enum KeyCategory {
     ACTION,
     SPECIAL,
     USERS,

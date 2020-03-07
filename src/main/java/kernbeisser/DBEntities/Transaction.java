@@ -29,11 +29,11 @@ public class Transaction {
     @CreationTimestamp
     private Date date;
 
-    private static void transfer(User from,User to,int value){
+    private static void transfer(User from, User to, int value) {
         Transaction transaction = new Transaction();
-        transaction.value=value;
-        transaction.from=from;
-        transaction.to=to;
+        transaction.value = value;
+        transaction.from = from;
+        transaction.to = to;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -71,21 +71,21 @@ public class Transaction {
         return date;
     }
 
-    public static List<Transaction> getAll(String condition){
-        return Tools.getAll(Transaction.class,condition);
+    public static List<Transaction> getAll(String condition) {
+        return Tools.getAll(Transaction.class, condition);
     }
 
-    public static void doTransaction(User from, User to, int value){
+    public static void doTransaction(User from, User to, int value) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        if(from!=null){
-            UserGroup fromUG =em.find(UserGroup.class,from.getUserGroup().getId());
-            fromUG.setValue(fromUG.getValue()-value);
+        if (from != null) {
+            UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
+            fromUG.setValue(fromUG.getValue() - value);
             em.persist(fromUG);
         }
-        UserGroup toUG =em.find(UserGroup.class,to.getUserGroup().getId());
-        toUG.setValue(toUG.getValue()+value);
+        UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
+        toUG.setValue(toUG.getValue() + value);
         em.persist(toUG);
         Transaction transaction = new Transaction();
         transaction.setValue(value);

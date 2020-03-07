@@ -7,9 +7,10 @@ import kernbeisser.Windows.View;
 public class ManagePriceListsController implements Controller {
     private ManagePriceListsModel model;
     private ManagePriceListsView view;
-    ManagePriceListsController(ManagePriceListsView view){
-        this.view=view;
-        this.model=new ManagePriceListsModel();
+
+    ManagePriceListsController(ManagePriceListsView view) {
+        this.view = view;
+        this.model = new ManagePriceListsModel();
     }
 
     @Override

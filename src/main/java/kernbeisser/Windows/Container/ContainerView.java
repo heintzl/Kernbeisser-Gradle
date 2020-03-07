@@ -2,14 +2,12 @@ package kernbeisser.Windows.Container;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -147,7 +145,8 @@ public class ContainerView extends Window {
     }
 
     void noItemFound() {
-        JOptionPane.showMessageDialog(this, "Es konnte kein Kornkraft Artikel mit dieser Kornkraft / Kernbeisser Nummer gefunden werden");
+        JOptionPane.showMessageDialog(this,
+                                      "Es konnte kein Kornkraft Artikel mit dieser Kornkraft / Kernbeisser Nummer gefunden werden");
     }
 
 }

@@ -13,9 +13,10 @@ import java.util.Collection;
 public class PurchaseController implements Controller {
     private final PurchaseModel model;
     private final PurchaseView view;
-    public PurchaseController(Window current, Purchase purchase){
+
+    public PurchaseController(Window current, Purchase purchase) {
         model = new PurchaseModel(purchase);
-        view = new PurchaseView(current,this);
+        view = new PurchaseView(current, this);
         view.setCustomer(purchase.getSession().getCustomer().getUsername());
         view.setSeller(purchase.getSession().getSeller().getUsername());
         view.setDate(purchase.getCreateDate().toString());
@@ -26,9 +27,11 @@ public class PurchaseController implements Controller {
     }
 
 
-
-    int getPrice(ShoppingItem item){
-        return PriceCalculator.getShoppingItemPrice(item,model.getLoaded().getSession().getCustomer().getSolidaritySurcharge());
+    int getPrice(ShoppingItem item) {
+        return PriceCalculator.getShoppingItemPrice(item, model.getLoaded()
+                                                               .getSession()
+                                                               .getCustomer()
+                                                               .getSolidaritySurcharge());
     }
 
     @Override

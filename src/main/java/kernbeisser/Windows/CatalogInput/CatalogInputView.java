@@ -4,7 +4,6 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class CatalogInputView extends Window implements View {
     private JButton importString;
@@ -20,7 +19,8 @@ public class CatalogInputView extends Window implements View {
     }
 
     void extractItemError() {
-        JOptionPane.showMessageDialog(this, "Es liegt ein fehler in der Quelle, ein Artikel kann nicht eingelesen werden!");
+        JOptionPane.showMessageDialog(this,
+                                      "Es liegt ein fehler in der Quelle, ein Artikel kann nicht eingelesen werden!");
     }
 
     void cannotReadFile() {

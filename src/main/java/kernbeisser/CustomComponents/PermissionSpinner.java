@@ -2,8 +2,8 @@ package kernbeisser.CustomComponents;
 
 import javax.swing.*;
 
-public class PermissionSpinner extends JSpinner implements RequiresPermission{
-    private boolean write = true,read = true;
+public class PermissionSpinner extends JSpinner implements RequiresPermission {
+    private boolean write = true, read = true;
 
     @Override
     public void setReadable(boolean b) {

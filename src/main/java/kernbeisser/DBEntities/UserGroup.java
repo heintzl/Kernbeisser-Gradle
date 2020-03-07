@@ -40,15 +40,16 @@ public class UserGroup {
         this.interestThisYear = interestThisYear;
     }
 
-    public Collection<User> getMembers(){
+    public Collection<User> getMembers() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<User> out = em.createQuery("select u from User u where userGroup.id = "+gid,User.class).getResultList();
+        Collection<User> out = em.createQuery("select u from User u where userGroup.id = " + gid, User.class)
+                                 .getResultList();
         em.close();
         return out;
     }
 
-    public static List<UserGroup> getAll(String condition){
-        return Tools.getAll(UserGroup.class,condition);
+    public static List<UserGroup> getAll(String condition) {
+        return Tools.getAll(UserGroup.class, condition);
     }
 
 }
