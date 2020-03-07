@@ -47,9 +47,6 @@ public class Item {
     private Long barcode;
 
     @Column
-    private int specialPriceNet;
-
-    @Column
     private boolean vatLow;
 
     @Column
@@ -101,9 +98,9 @@ public class Item {
     @Column
     private int sold;
 
-    @Column
-    @ElementCollection
-    private List<Boolean> specialPriceMonth = new ArrayList<>(12);
+    @JoinColumn
+    @OneToMany
+    private List<Offer> specialPriceMonth = new ArrayList<>();
 
     @Column
     private int delivered;
@@ -188,14 +185,6 @@ public class Item {
 
     public void setBarcode(Long barcode) {
         this.barcode = barcode;
-    }
-
-    public int getSpecialPriceNet() {
-        return specialPriceNet;
-    }
-
-    public void setSpecialPriceNet(int specialPriceNet) {
-        this.specialPriceNet = specialPriceNet;
     }
 
     public boolean isVatLow() {
@@ -332,12 +321,8 @@ public class Item {
         this.deleteAllowed = deleteAllowed;
     }
 
-    public List<Boolean> getSpecialPriceMonth() {
+    public List<Offer> getSpecialPriceMonths() {
         return specialPriceMonth;
-    }
-
-    public void setSpecialPriceMonth(List<Boolean> specialPriceMonth) {
-        this.specialPriceMonth = specialPriceMonth;
     }
 
     public int getDelivered() {

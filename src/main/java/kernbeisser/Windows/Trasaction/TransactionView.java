@@ -72,7 +72,7 @@ class TransactionView extends Window implements View {
     }
 
     void setFromEnabled(boolean b) {
-        from.setEnabled(false);
+        from.setEnabled(b);
     }
 
     void setFromKB(boolean b){

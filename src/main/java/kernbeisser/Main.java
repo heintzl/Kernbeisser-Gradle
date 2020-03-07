@@ -29,7 +29,7 @@ public class Main {
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException, URISyntaxException {
         doA(SaleSession.class);
         buildEnvironment();
-        if(!ConfigManager.getHeader().getBoolean("Init"))
+        if(!ConfigManager.getHeader().getBoolean("dbIsInitialized"))
             SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));
         else
             openLogIn();

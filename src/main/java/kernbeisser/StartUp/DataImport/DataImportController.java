@@ -122,7 +122,7 @@ public class DataImportController implements Controller {
                     view.userSourcesNotExists();
                 }
             }
-            ConfigManager.getHeader().put("Init",true);
+            ConfigManager.getHeader().put("dbIsInitialized",true);
             ConfigManager.updateFile();
             if(view.createStandardAdmin()){
                 Permission admin = new Permission();
@@ -333,7 +333,7 @@ public class DataImportController implements Controller {
 
     void cancel(){
         view.back();
-        ConfigManager.getHeader().put("Init",true);
+        ConfigManager.getHeader().put("dbIsInitialized",true);
         ConfigManager.updateFile();
     }
 

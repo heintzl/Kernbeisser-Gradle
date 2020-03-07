@@ -66,7 +66,7 @@ public class ConfigManager{
         dbAccess.put("Username","");
         dbAccess.put("Password","");
         object.put("DBAccess",dbAccess);
-        object.put("Init",false);
+        object.put("dbIsInitialized",false);
         object.put("ImagePath","");
         try {
             if(file.createNewFile()) {
