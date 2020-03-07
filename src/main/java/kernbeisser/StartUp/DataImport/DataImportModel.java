@@ -1,6 +1,7 @@
 package kernbeisser.StartUp.DataImport;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.Model;
@@ -53,5 +54,20 @@ class DataImportModel implements Model {
         }
         em.flush();
         et.commit();
+    }
+
+    void saveWithPermission(User user, Permission permission){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et  = em.getTransaction();
+        et.begin();
+        em.persist(permission);
+        user.getPermissions().add(permission);
+        UserGroup userGroup = new UserGroup();
+        em.persist(userGroup);
+        user.setUserGroup(userGroup);
+        em.persist(user);
+        em.flush();
+        et.commit();
+        em.close();
     }
 }
