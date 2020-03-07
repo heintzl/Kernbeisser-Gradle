@@ -25,7 +25,7 @@ public class User implements Serializable {
 
     @JoinColumn
     @OneToMany
-    private Set<Permission> permissions;
+    private Set<Permission> permissions = new HashSet<>();
 
     @Column
     private int salesLastYear;

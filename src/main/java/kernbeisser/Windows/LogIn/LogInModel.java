@@ -31,7 +31,9 @@ public class LogInModel implements Model {
                     .setParameter("username", username).
                             getSingleResult();
             if(BCrypt.verifyer().verify(password,user.getPassword().toCharArray()).verified){
-                Main.makeAdmin(user);
+                //Is only available when the permission Admin exits
+                //used to make the log in easier while testing
+                //Main.makeAdmin(user);
                 loggedIn=user;
                 return SUCCESS;
             }else {

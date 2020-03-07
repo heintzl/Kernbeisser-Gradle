@@ -20,6 +20,7 @@ public class DataImportView extends Window implements View {
     private JProgressBar userProgress;
     private JLabel currentActionItems;
     private JLabel currentActionUser;
+    private JCheckBox importStandardAdmin;
 
     DataImportView(Window currentWindow, DataImportController controller) {
         super(currentWindow);
@@ -35,6 +36,10 @@ public class DataImportView extends Window implements View {
         });
         search.addActionListener(e -> controller.openFileExplorer());
         cancel.addActionListener(e -> controller.cancel());
+    }
+
+    boolean createStandardAdmin(){
+        return importStandardAdmin.isSelected();
     }
 
     String getFilePath() {
@@ -126,4 +131,7 @@ public class DataImportView extends Window implements View {
         JOptionPane.showMessageDialog(this, "Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Nutzerdatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
     }
 
+    String requestPassword() {
+        return JOptionPane.showInputDialog(this,"Biite geben sie ein Password für den automatisch erzeugten Admin ein");
+    }
 }

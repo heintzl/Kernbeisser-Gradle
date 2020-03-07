@@ -5,6 +5,7 @@ import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
+import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
@@ -123,6 +124,21 @@ public class DataImportController implements Controller {
             }
             ConfigManager.getHeader().put("Init",true);
             ConfigManager.updateFile();
+            if(view.createStandardAdmin()){
+                Permission admin = new Permission();
+                admin.getKeySet().addAll(Arrays.asList(Key.values()));
+                admin.setName("Admin(System Created)");
+                User user = new User();
+                user.setFirstName("System");
+                user.setSurname("Admin");
+                user.setUsername("Admin");
+                String password;
+                do {
+                    password = view.requestPassword();
+                }while (password.equals(""));
+                user.setPassword(BCrypt.withDefaults().hashToString(12,password.toCharArray()));
+                model.saveWithPermission(user,admin);
+            }
         }
     }
 
