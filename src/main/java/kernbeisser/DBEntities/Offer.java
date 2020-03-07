@@ -55,11 +55,11 @@ public class Offer {
         this.specialNetPrice = specialNetPrice;
     }
 
-    public void setRepeatMode(Repeat repeat) {
-        this.repeatMode = repeat;
-    }
-
     public Repeat getRepeatMode() {
         return repeatMode;
+    }
+
+    public void setRepeatMode(Repeat repeat) {
+        this.repeatMode = repeat;
     }
 }

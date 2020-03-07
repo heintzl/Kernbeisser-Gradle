@@ -22,6 +22,10 @@ public class Permission {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Key> keySet = new HashSet<>();
 
+    public static List<Permission> getAll(String condition) {
+        return Tools.getAll(Permission.class, condition);
+    }
+
     public int getId() {
         return id;
     }
@@ -42,16 +46,12 @@ public class Permission {
         this.keySet = keySet;
     }
 
-    public boolean contains(Key key){
+    public boolean contains(Key key) {
         return keySet.contains(key);
     }
 
     @Override
     public String toString() {
         return name;
-    }
-
-    public static List<Permission> getAll(String condition){
-        return Tools.getAll(Permission.class,condition);
     }
 }

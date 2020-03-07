@@ -65,12 +65,12 @@ class EditUserView extends Window implements View {
         });
         cancel.addActionListener(e -> back());
 
-        postalCode.setRequiredKeys(Key.USER_TOWN_CODE_READ,Key.USER_TOWN_CODE_WRITE);
-        town.setRequiredKeys(Key.USER_TOWN_READ,Key.USER_TOWN_WRITE);
-        phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ,Key.USER_PHONE_NUMBER1_WRITE);
-        phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ,Key.USER_PHONE_NUMBER2_WRITE);
-        username.setRequiredKeys(Key.USER_USERNAME_READ,Key.USER_USERNAME_WRITE);
-        street.setRequiredKeys(Key.USER_STREET_READ,Key.USER_STREET_WRITE);
+        postalCode.setRequiredKeys(Key.USER_TOWN_CODE_READ, Key.USER_TOWN_CODE_WRITE);
+        town.setRequiredKeys(Key.USER_TOWN_READ, Key.USER_TOWN_WRITE);
+        phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ, Key.USER_PHONE_NUMBER1_WRITE);
+        phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ, Key.USER_PHONE_NUMBER2_WRITE);
+        username.setRequiredKeys(Key.USER_USERNAME_READ, Key.USER_USERNAME_WRITE);
+        street.setRequiredKeys(Key.USER_STREET_READ, Key.USER_STREET_WRITE);
     }
 
 

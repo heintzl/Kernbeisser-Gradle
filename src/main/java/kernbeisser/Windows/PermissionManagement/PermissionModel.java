@@ -14,22 +14,23 @@ import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
 class PermissionModel implements Model {
-    void addKey(Permission permission,Key key){
+    void addKey(Permission permission, Key key) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        Permission db = em.find(Permission.class,permission.getId());
+        Permission db = em.find(Permission.class, permission.getId());
         db.getKeySet().add(key);
         em.persist(db);
         em.flush();
         et.commit();
         em.close();
     }
-    void removeKey(Permission permission, Key key){
+
+    void removeKey(Permission permission, Key key) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        Permission db = em.find(Permission.class,permission.getId());
+        Permission db = em.find(Permission.class, permission.getId());
         db.getKeySet().remove(key);
         em.persist(db);
         em.flush();
@@ -37,7 +38,7 @@ class PermissionModel implements Model {
         em.close();
     }
 
-    Collection<Permission> getAllPermissions(){
+    Collection<Permission> getAllPermissions() {
         return Permission.getAll(null);
     }
 
@@ -50,7 +51,7 @@ class PermissionModel implements Model {
     }
 
     void deletePermission(Permission selectedObject) {
-        Tools.delete(selectedObject,selectedObject.getId());
+        Tools.delete(selectedObject, selectedObject.getId());
     }
 
     void addPermission(String permissionName) {

@@ -8,8 +8,9 @@ public enum Cooling implements Named {
     NONE("Keine Kühlung");
 
     private final String name;
-    Cooling(String name){
-        this.name=name;
+
+    Cooling(String name) {
+        this.name = name;
     }
 
     @Override

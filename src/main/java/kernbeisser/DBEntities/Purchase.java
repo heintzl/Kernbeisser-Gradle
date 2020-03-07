@@ -23,7 +23,11 @@ public class Purchase {
     @CreationTimestamp
     private Date createDate;
 
-    public Date getCreateDate(){
+    public static List<Purchase> getAll(String condition) {
+        return Tools.getAll(Purchase.class, condition);
+    }
+
+    public Date getCreateDate() {
         return createDate;
     }
 
@@ -39,18 +43,15 @@ public class Purchase {
         this.session = session;
     }
 
-    public static List<Purchase> getAll(String condition){
-        return Tools.getAll(Purchase.class,condition);
-    }
-
-    public Collection<ShoppingItem> getAllItems(){
+    public Collection<ShoppingItem> getAllItems() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<ShoppingItem> out = em.createQuery("select i from ShoppingItem i where i.purchase.id = "+sid,ShoppingItem.class).getResultList();
+        Collection<ShoppingItem> out = em.createQuery("select i from ShoppingItem i where i.purchase.id = " + sid,
+                                                      ShoppingItem.class).getResultList();
         em.close();
         return out;
     }
 
-    public long getSum(){
+    public long getSum() {
         EntityManager em = DBConnection.getEntityManager();
         Long i = (Long) em.createQuery("select sum(i.rawPrice) from ShoppingItem i").getSingleResult();
         System.out.println(i);

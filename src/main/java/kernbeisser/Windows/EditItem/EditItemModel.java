@@ -15,14 +15,19 @@ import java.util.Collection;
 public class EditItemModel implements Model {
     private final Mode mode;
     private Item item;
-    EditItemModel(Item item,Mode mode){
-        this.mode=mode;
+
+    EditItemModel(Item item, Mode mode) {
+        this.mode = mode;
         this.item = item;
     }
-    Item getSource(){return item;}
-    boolean doAction(Item item){
-        try{
-            switch (mode){
+
+    Item getSource() {
+        return item;
+    }
+
+    boolean doAction(Item item) {
+        try {
+            switch (mode) {
                 case ADD:
                     addItem(item);
                     break;
@@ -34,34 +39,36 @@ public class EditItemModel implements Model {
                     break;
             }
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
 
     }
-    private void removeItem(Item item){
-        Tools.delete(item.getIid(),item);
-    }
-    private void editItem(Item item){
-        Tools.edit(item.getIid(),item);
+
+    private void removeItem(Item item) {
+        Tools.delete(item.getIid(), item);
     }
 
-    boolean kbNumberExists(int kbNumber){
+    private void editItem(Item item) {
+        Tools.edit(item.getIid(), item);
+    }
+
+    boolean kbNumberExists(int kbNumber) {
         EntityManager em = DBConnection.getEntityManager();
-        boolean exists = em.createQuery("select id from Item where kbNumber = "+kbNumber).getResultList().size()>0;
+        boolean exists = em.createQuery("select id from Item where kbNumber = " + kbNumber).getResultList().size() > 0;
         em.close();
         return exists;
     }
 
-    boolean barcodeExists(long barcode){
+    boolean barcodeExists(long barcode) {
         EntityManager em = DBConnection.getEntityManager();
-        boolean exists = em.createQuery("select id from Item where barcode = "+barcode).getResultList().size()>0;
+        boolean exists = em.createQuery("select id from Item where barcode = " + barcode).getResultList().size() > 0;
         em.close();
         return exists;
     }
 
-    private void addItem(Item item){
+    private void addItem(Item item) {
         item.setSurcharge(item.getSurchargeTable().getSurcharge());
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -71,13 +78,26 @@ public class EditItemModel implements Model {
         et.commit();
         em.close();
     }
-    Unit[] getAllUnits(){return Unit.values();}
-    ContainerDefinition[] getAllContainerDefinitions(){return ContainerDefinition.values();}
-    VAT[] getAllVATs(){
+
+    Unit[] getAllUnits() {
+        return Unit.values();
+    }
+
+    ContainerDefinition[] getAllContainerDefinitions() {
+        return ContainerDefinition.values();
+    }
+
+    VAT[] getAllVATs() {
         return VAT.values();
     }
-    Collection<Supplier> getAllSuppliers(){return Supplier.getAll(null);}
-    Collection<PriceList> getAllPriceLists(){return PriceList.getAll(null);}
+
+    Collection<Supplier> getAllSuppliers() {
+        return Supplier.getAll(null);
+    }
+
+    Collection<PriceList> getAllPriceLists() {
+        return PriceList.getAll(null);
+    }
 
     public Mode getMode() {
         return mode;

@@ -57,7 +57,9 @@ public class UserMenuView extends Window implements View {
         buyHistory = new ObjectTable<>(
                 Column.create("Datum", Purchase::getCreateDate),
                 Column.create("Betrag", e -> e.getSum() / 100f + "€"),
-                Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession().getSeller().getSurname()),
+                Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession()
+                                                                                                     .getSeller()
+                                                                                                     .getSurname()),
                 Column.create("Anschauen", (e) -> "Anschauen", (e) -> controller.showPurchase())
         );
         //buyHistory.setComplex(true);

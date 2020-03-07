@@ -8,13 +8,16 @@ import java.util.Collection;
 
 public class PurchaseModel implements Model {
     private final Purchase loaded;
-    PurchaseModel(Purchase loaded){
-        this.loaded=loaded;
+
+    PurchaseModel(Purchase loaded) {
+        this.loaded = loaded;
     }
-    Collection<ShoppingItem> getAllItems(){
+
+    Collection<ShoppingItem> getAllItems() {
         return loaded.getAllItems();
     }
-    long getSum(){
+
+    long getSum() {
         return loaded.getSum();
     }
 

@@ -46,12 +46,12 @@ public class EditItemView extends Window implements View {
         add(main);
         pack();
         setLocationRelativeTo(null);
-        amount.setRequiredKeys(Key.ITEM_AMOUNT_READ,Key.ITEM_AMOUNT_WRITE);
-        netPrice.setRequiredKeys(Key.ITEM_NET_PRICE_READ,Key.ITEM_NET_PRICE_WRITE);
+        amount.setRequiredKeys(Key.ITEM_AMOUNT_READ, Key.ITEM_AMOUNT_WRITE);
+        netPrice.setRequiredKeys(Key.ITEM_NET_PRICE_READ, Key.ITEM_NET_PRICE_WRITE);
         deposit.setRequiredKeys(Key.ITEM_SINGLE_DEPOSIT_READ, Key.ITEM_SINGLE_DEPOSIT_WRITE);
         kbItemNumber.setRequiredKeys(Key.ITEM_KB_NUMBER_READ, Key.ITEM_KB_NUMBER_READ);
-        supplierItemNumber.setRequiredKeys(Key.ITEM_SUPPLIERS_ITEM_NUMBER_READ,Key.ITEM_SUPPLIERS_ITEM_NUMBER_WRITE);
-        crateDeposit.setRequiredKeys(Key.ITEM_CRATE_DEPOSIT_READ,Key.ITEM_CRATE_DEPOSIT_WRITE);
+        supplierItemNumber.setRequiredKeys(Key.ITEM_SUPPLIERS_ITEM_NUMBER_READ, Key.ITEM_SUPPLIERS_ITEM_NUMBER_WRITE);
+        crateDeposit.setRequiredKeys(Key.ITEM_CRATE_DEPOSIT_READ, Key.ITEM_CRATE_DEPOSIT_WRITE);
     }
 
 

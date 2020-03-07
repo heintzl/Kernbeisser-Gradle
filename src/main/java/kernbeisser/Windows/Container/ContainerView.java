@@ -52,12 +52,24 @@ public class ContainerView extends Window {
         return amount.getValue();
     }
 
+    void setAmount(String s) {
+        amount.setText(s);
+    }
+
     int getKkNumber() {
         return kkNumber.getValue();
     }
 
+    void setKkNumber(String s) {
+        kkNumber.setText(s);
+    }
+
     int getNetPrice() {
         return (int) (netPrice.getValue() * 100);
+    }
+
+    void setNetPrice(String s) {
+        netPrice.setText(s);
     }
 
     private void createUIComponents() {
@@ -109,22 +121,6 @@ public class ContainerView extends Window {
         sellingPrice.setText(s);
     }
 
-    void setKbNumber(String s) {
-        kbNumber.setText(s);
-    }
-
-    void setKkNumber(String s) {
-        kkNumber.setText(s);
-    }
-
-    void setNetPrice(String s) {
-        netPrice.setText(s);
-    }
-
-    void setAmount(String s) {
-        amount.setText(s);
-    }
-
     Container getSelectedUnpaidOrder() {
         return unpaidContainers.getSelectedObject();
     }
@@ -141,13 +137,18 @@ public class ContainerView extends Window {
         return kbNumber.getValue();
     }
 
+    void setKbNumber(String s) {
+        kbNumber.setText(s);
+    }
+
     @Override
     public void finish() {
         controller.exit();
     }
 
     void noItemFound() {
-        JOptionPane.showMessageDialog(this, "Es konnte kein Kornkraft Artikel mit dieser Kornkraft / Kernbeisser Nummer gefunden werden");
+        JOptionPane.showMessageDialog(this,
+                                      "Es konnte kein Kornkraft Artikel mit dieser Kornkraft / Kernbeisser Nummer gefunden werden");
     }
 
 }

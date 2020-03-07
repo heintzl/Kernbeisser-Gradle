@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.stream.IntStream;
 
-public class PermissionView extends Window{
+public class PermissionView extends Window {
     private ObjectTable<Permission> permission;
     private JPanel main;
     private JComboBox<KeyCategory> category;
@@ -24,7 +24,7 @@ public class PermissionView extends Window{
     private JButton add;
     private JButton delete;
 
-    PermissionView(PermissionController controller,Window window){
+    PermissionView(PermissionController controller, Window window) {
         super(window/*,Key.PERMISSION_KEY_SET_READ,Key.PERMISSION_NAME_READ*/);
         add(main);
         add.addActionListener(e -> controller.addPermission());
@@ -34,31 +34,34 @@ public class PermissionView extends Window{
         back.addActionListener(e -> back());
     }
 
-    Permission getSelectedObject(){
+    Permission getSelectedObject() {
         return permission.getSelectedObject();
     }
 
-    String getPermissionName(){
-        return JOptionPane.showInputDialog(this,"Bitte geben sie den Namen der neuen Berechtigung ein");
+    String getPermissionName() {
+        return JOptionPane.showInputDialog(this, "Bitte geben sie den Namen der neuen Berechtigung ein");
     }
 
     private void createUIComponents() {
         permission = new ObjectTable<>();
     }
 
-    void setAddEnable(boolean b){
+    void setAddEnable(boolean b) {
         add.setEnabled(b);
     }
-    void setDeleteEnable(boolean b){
+
+    void setDeleteEnable(boolean b) {
         delete.setEnabled(b);
     }
 
 
-    void setColumns(Collection<Column<Permission>> permissionColumns){
+    void setColumns(Collection<Column<Permission>> permissionColumns) {
         permission.setColumns(permissionColumns);
         int i = 0;
         for (Column<Permission> permissionColumn : permissionColumns) {
-            int s = (int) (permission.getFontMetrics(permission.getFont()).getStringBounds(permissionColumn.getName(),null).getWidth()+50);
+            int s = (int) (permission.getFontMetrics(permission.getFont())
+                                     .getStringBounds(permissionColumn.getName(), null)
+                                     .getWidth() + 50);
             permission.getColumnModel().getColumn(i).setMinWidth(s);
             permission.getColumnModel().getColumn(i).setMaxWidth(s);
             permission.getColumnModel().getColumn(i).setWidth(s);
@@ -66,17 +69,18 @@ public class PermissionView extends Window{
         }
     }
 
-    void setValues(Collection<Permission> permissions){
+    void setValues(Collection<Permission> permissions) {
         this.permission.setObjects(permissions);
     }
 
-    void setSecurities(Security[] securities){
+    void setSecurities(Security[] securities) {
         security.removeAllItems();
         for (Security security : securities) {
             this.security.addItem(security);
         }
     }
-    void setCategories(KeyCategory[] categories){
+
+    void setCategories(KeyCategory[] categories) {
         category.removeAllItems();
         for (KeyCategory keyCategory : categories) {
             category.addItem(keyCategory);

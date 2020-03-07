@@ -17,23 +17,23 @@ public class DBConnection {
         logInWithConfig();
     }
 
-    public static boolean tryLogIn(String url,String username,String password){
+    public static boolean tryLogIn(String url, String username, String password) {
         HashMap<String,String> properties = new HashMap<>(3);
-        properties.put("javax.persistence.jdbc.user",username);
-        properties.put("javax.persistence.jdbc.url",url);
-        properties.put("javax.persistence.jdbc.password",password);
-        try{
-            entityManagerFactory = Persistence.createEntityManagerFactory("Kernbeisser",properties);
+        properties.put("javax.persistence.jdbc.user", username);
+        properties.put("javax.persistence.jdbc.url", url);
+        properties.put("javax.persistence.jdbc.password", password);
+        try {
+            entityManagerFactory = Persistence.createEntityManagerFactory("Kernbeisser", properties);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public static void logInWithConfig(){
+    public static void logInWithConfig() {
         String[] conf = ConfigManager.getDBAccessData();
-        if(!tryLogIn(conf[0],conf[1],conf[2])){
+        if (!tryLogIn(conf[0], conf[1], conf[2])) {
             new DBLogIn(null);
         }
     }
@@ -43,7 +43,7 @@ public class DBConnection {
     }
 
     public static EntityManager getEntityManager() {
-        while (entityManagerFactory==null){
+        while (entityManagerFactory == null) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

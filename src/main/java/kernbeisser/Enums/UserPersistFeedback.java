@@ -13,8 +13,9 @@ public enum UserPersistFeedback implements Named {
     NO_USER_SELECTED("Es wurde kein Nutzer ausgew\u00e4hlt,\n bitte w\u00e4hlen sie einen Nutzer aus");
 
     final String message;
-    UserPersistFeedback(String s){
-        this.message =s;
+
+    UserPersistFeedback(String s) {
+        this.message = s;
     }
 
     @Override

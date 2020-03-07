@@ -2,12 +2,14 @@ package kernbeisser.CustomComponents.ObjectTree;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-public class ObjectNode <T> extends DefaultMutableTreeNode {
+public class ObjectNode<T> extends DefaultMutableTreeNode {
     private T value;
-    ObjectNode(T value,String name){
+
+    ObjectNode(T value, String name) {
         super(name);
-        this.value=value;
+        this.value = value;
     }
+
     public T getValue() {
         return value;
     }

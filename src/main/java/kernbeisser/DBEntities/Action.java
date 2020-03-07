@@ -41,6 +41,10 @@ public class Action {
         this(user, null, action);
     }
 
+    public static List<Action> getAll(String condition) {
+        return Tools.getAll(Action.class, condition);
+    }
+
     public Date getDate() {
         return date;
     }
@@ -71,9 +75,5 @@ public class Action {
 
     public User getUser() {
         return user;
-    }
-
-    public static List<Action> getAll(String condition){
-        return Tools.getAll(Action.class,condition);
     }
 }

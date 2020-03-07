@@ -77,7 +77,8 @@ public class ShoppingMaskUIView extends Window implements View {
     private ButtonGroup optGrpArticleType;
     private char currentArticleType;
 
-    public ShoppingMaskUIView(Window window, ShoppingMaskUIController controller,ShoppingCartController shoppingCartController) {
+    public ShoppingMaskUIView(Window window, ShoppingMaskUIController controller,
+                              ShoppingCartController shoppingCartController) {
         super(window);
         this.cartController = shoppingCartController;
         this.controller = controller;
@@ -164,25 +165,6 @@ public class ShoppingMaskUIView extends Window implements View {
         this.articleName.setText(value);
     }
 
-    public void setAmount(String value) {
-        this.amount.setText(value);
-        this.kbNumber.setEnabled(!value.equals("--"));
-    }
-
-    public void setPrice(String value) {
-        this.price.setText(value);
-        this.kbNumber.setEnabled(!value.equals("--"));
-    }
-
-    public void setArticleAmount(String value) {
-        this.articleAmount.setText(value);
-        this.kbNumber.setEnabled(!value.equals("--"));
-    }
-
-    public void setDeposit(String value) {
-        this.deposit.setText(value);
-    }
-
     public void setOptTaxLow() {
         this.optTaxLow.setSelected(true);
     }
@@ -263,28 +245,46 @@ public class ShoppingMaskUIView extends Window implements View {
         }
     }
 
-
-
-    public int getOption(){
-        if(optArticleNo.isSelected())return ARTICLE_NUMBER;
-        if(optBakedGoods.isSelected())return BAKED_GOODS;
-        if(optCustomProduct.isSelected()) return CUSTOM_PRODUCT;
-        if(optDeposit.isSelected())return DEPOSIT;
-        if(optDepositReturn.isSelected())return RETURN_DEPOSIT;
-        if(optProduce.isSelected())return PRODUCE;
+    public int getOption() {
+        if (optArticleNo.isSelected()) {
+            return ARTICLE_NUMBER;
+        }
+        if (optBakedGoods.isSelected()) {
+            return BAKED_GOODS;
+        }
+        if (optCustomProduct.isSelected()) {
+            return CUSTOM_PRODUCT;
+        }
+        if (optDeposit.isSelected()) {
+            return DEPOSIT;
+        }
+        if (optDepositReturn.isSelected()) {
+            return RETURN_DEPOSIT;
+        }
+        if (optProduce.isSelected()) {
+            return PRODUCE;
+        }
         return -1;
     }
 
     public int getDiscount() {
-        if(priceStandard.isSelected())return 0;
-        if(price50Percent.isSelected())return 50;
-        if(priceVariablePercentage.isSelected())return variablePercentage.getValue();
-        if(pricePreordered.isSelected())return PriceCalculator.CONTAINER_DISCOUNT;
+        if (priceStandard.isSelected()) {
+            return 0;
+        }
+        if (price50Percent.isSelected()) {
+            return 50;
+        }
+        if (priceVariablePercentage.isSelected()) {
+            return variablePercentage.getValue();
+        }
+        if (pricePreordered.isSelected()) {
+            return PriceCalculator.CONTAINER_DISCOUNT;
+        }
         return 0;
     }
 
-    public void setDiscount(){
-        if(!rememberReductionSetting.isSelected()) {
+    public void setDiscount() {
+        if (!rememberReductionSetting.isSelected()) {
             priceStandard.setSelected(true);
         }
     }
@@ -294,33 +294,48 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     int getPrice() {
-        return (int)((price.getValue()*100)+0.5);
+        return (int) ((price.getValue() * 100) + 0.5);
+    }
+
+    public void setPrice(String value) {
+        this.price.setText(value);
+        this.kbNumber.setEnabled(!value.equals("--"));
     }
 
     int getArticleNumber() {
         return kbNumber.getValue();
     }
-    int getSuppliersNumber(){
+
+    int getSuppliersNumber() {
         return suppliersItemNumber.getValue();
     }
 
     void noArticleFound() {
-        JOptionPane.showConfirmDialog(this,"Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
+        JOptionPane.showConfirmDialog(this,
+                                      "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
     }
 
     public double getAmount() {
         return amount.getValue();
     }
 
+    public void setAmount(String value) {
+        this.amount.setText(value);
+        this.kbNumber.setEnabled(!value.equals("--"));
+    }
+
     void loadItemStats(Item item) {
         articleUnit.setText(Unit.STACK.getShortName());
-        kbNumber.setText(item.getKbNumber()+"");
-        suppliersItemNumber.setText(item.getSuppliersItemNumber()+"");
-        articleName.setText(item.getName().length() > 16 ? new StringBuilder(item.getName()).replace(16,item.getName().length(),"...").toString() : item.getName());
-        articleAmount.setText(item.getUnit().fromUnit(item.getAmount())+"");
+        kbNumber.setText(item.getKbNumber() + "");
+        suppliersItemNumber.setText(item.getSuppliersItemNumber() + "");
+        articleName.setText(
+                item.getName().length() > 16
+                ? new StringBuilder(item.getName()).replace(16, item.getName().length(), "...").toString()
+                : item.getName());
+        articleAmount.setText(item.getUnit().fromUnit(item.getAmount()) + "");
         articleUnit.setText(item.getUnit().getShortName());
-        price.setText(controller.getPrice(item)/100f+"");
-        priceUnit.setText(item.isWeighAble() ? "€/kg":"€");
+        price.setText(controller.getPrice(item) / 100f + "");
+        priceUnit.setText(item.isWeighAble() ? "€/kg" : "€");
         amountUnit.setText(item.isWeighAble() ? "g" : "stk.");
         articleAmount.setVisible(!item.isWeighAble());
         articleUnit.setVisible(!item.isWeighAble());
@@ -329,7 +344,7 @@ public class ShoppingMaskUIView extends Window implements View {
         optTaxStandard.setSelected(!item.isVatLow());
     }
 
-    void defaultSettings(){
+    void defaultSettings() {
         price.setText("0.00");
         depositUnit.setText("€");
         priceUnit.setText("€");
@@ -341,8 +356,13 @@ public class ShoppingMaskUIView extends Window implements View {
 
     }
 
-    int getArticleAmount(){
+    int getArticleAmount() {
         return articleAmount.getValue();
+    }
+
+    public void setArticleAmount(String value) {
+        this.articleAmount.setText(value);
+        this.kbNumber.setEnabled(!value.equals("--"));
     }
 
     public String getItemName() {
@@ -350,6 +370,10 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     public int getDeposit() {
-        return (int) (deposit.getValue()*100);
+        return (int) (deposit.getValue() * 100);
+    }
+
+    public void setDeposit(String value) {
+        this.deposit.setText(value);
     }
 }

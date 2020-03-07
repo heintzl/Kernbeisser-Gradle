@@ -34,7 +34,7 @@ public class PriceList implements Serializable {
     @CreationTimestamp
     private Date createDate;
 
-    private static void savePriceList(String name){
+    private static void savePriceList(String name) {
         PriceList p = new PriceList();
         p.setName(name);
         EntityManager em = DBConnection.getEntityManager();
@@ -45,21 +45,24 @@ public class PriceList implements Serializable {
         et.commit();
         em.close();
     }
-    private static PriceList getPriceList(String name) throws NoResultException{
+
+    private static PriceList getPriceList(String name) throws NoResultException {
         EntityManager em = DBConnection.getEntityManager();
-        try{
-            PriceList out = em.createQuery("select p from PriceList p where name like '"+name+"'",PriceList.class).getSingleResult();
+        try {
+            PriceList out = em.createQuery("select p from PriceList p where name like '" + name + "'", PriceList.class)
+                              .getSingleResult();
             em.close();
             return out;
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             em.close();
             throw e;
         }
     }
-    private static PriceList getOrCreate(String name){
-        try{
+
+    private static PriceList getOrCreate(String name) {
+        try {
             return getPriceList(name);
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             savePriceList(name);
             return getPriceList(name);
         }
@@ -71,6 +74,18 @@ public class PriceList implements Serializable {
 
     public static PriceList getCoveredIntakePriceList() {
         return getOrCreate("Verdeckte Aufnahme");
+    }
+
+    public static List<PriceList> getAll(String condition) {
+        return Tools.getAll(PriceList.class, condition);
+    }
+
+    public static Collection<PriceList> getAllHeadPriceLists() {
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = null",
+                                                   PriceList.class).getResultList();
+        em.close();
+        return out;
     }
 
     public Date getUpdateDate() {
@@ -111,19 +126,10 @@ public class PriceList implements Serializable {
         return name;
     }
 
-    public static List<PriceList> getAll(String condition){
-        return Tools.getAll(PriceList.class,condition);
-    }
-
-    public Collection<PriceList> getAllPriceLists(){
+    public Collection<PriceList> getAllPriceLists() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = " + getId(), PriceList.class).getResultList();
-        em.close();
-        return out;
-    }
-    public static Collection<PriceList> getAllHeadPriceLists(){
-        EntityManager em = DBConnection.getEntityManager();
-        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = null", PriceList.class).getResultList();
+        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = " + getId(),
+                                                   PriceList.class).getResultList();
         em.close();
         return out;
     }

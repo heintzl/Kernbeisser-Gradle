@@ -13,8 +13,8 @@ import javax.persistence.Id;
 import java.util.Collection;
 
 class DataImportModel implements Model {
-    <T> void batchSaveAll(Collection<T> v){
-        if(v.size()==0)return;
+    <T> void batchSaveAll(Collection<T> v) {
+        if (v.size() == 0) return;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -22,7 +22,7 @@ class DataImportModel implements Model {
         for (T t : v) {
             em.persist(t);
             c++;
-            if(c % 20 == 0){
+            if (c % 20 == 0) {
                 em.flush();
                 em.clear();
             }
@@ -31,8 +31,9 @@ class DataImportModel implements Model {
         et.commit();
         em.close();
     }
-    <T> void saveAll(Collection<T> v){
-        if(v.size()==0)return;
+
+    <T> void saveAll(Collection<T> v) {
+        if (v.size() == 0) return;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -43,14 +44,15 @@ class DataImportModel implements Model {
         et.commit();
         em.close();
     }
-    void saveUser(User first,User second,UserGroup userGroup){
+
+    void saveUser(User first, User second, UserGroup userGroup) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
         em.persist(userGroup);
         first.setUserGroup(userGroup);
         em.persist(first);
-        if(second!=null){
+        if (second != null) {
             second.setUserGroup(userGroup);
             em.persist(second);
         }
@@ -58,9 +60,9 @@ class DataImportModel implements Model {
         et.commit();
     }
 
-    void saveWithPermission(User user, Permission permission){
+    void saveWithPermission(User user, Permission permission) {
         EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et  = em.getTransaction();
+        EntityTransaction et = em.getTransaction();
         et.begin();
         em.persist(permission);
         user.getPermissions().add(permission);
@@ -73,8 +75,8 @@ class DataImportModel implements Model {
         em.close();
     }
 
-    void saveAllItems(Collection<Item> items){
-        if(items.size()==0)return;
+    void saveAllItems(Collection<Item> items) {
+        if (items.size() == 0) return;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -83,7 +85,7 @@ class DataImportModel implements Model {
             t.getSpecialPriceMonths().forEach(em::persist);
             em.persist(t);
             c++;
-            if(c % 20 == 0){
+            if (c % 20 == 0) {
                 em.flush();
                 em.clear();
             }

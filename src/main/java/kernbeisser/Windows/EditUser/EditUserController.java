@@ -13,22 +13,24 @@ import javax.swing.*;
 public class EditUserController implements Controller {
     private EditUserView view;
     private EditUserModel model;
-    public EditUserController(Window current, User user, Mode mode){
-        model=new EditUserModel(user == null ? new User() : user,mode);
-        if(mode==Mode.REMOVE){
+
+    public EditUserController(Window current, User user, Mode mode) {
+        model = new EditUserModel(user == null ? new User() : user, mode);
+        if (mode == Mode.REMOVE) {
             model.doAction(user);
             return;
+        } else {
+            this.view = new EditUserView(this, current);
         }
-        else this.view=new EditUserView(this,current);
         view.setPermissions(model.getAllPermission());
         view.setData(model.getUser());
     }
 
-    private void changePassword(String to){
-        model.getUser().setPassword(BCrypt.withDefaults().hashToString(12,to.toCharArray()));
+    private void changePassword(String to) {
+        model.getUser().setPassword(BCrypt.withDefaults().hashToString(12, to.toCharArray()));
     }
 
-    void requestChangePassword(){
+    void requestChangePassword() {
         String password = view.requestPassword();
         if (password.length() < 4) {
             view.passwordToShort();
@@ -54,22 +56,26 @@ public class EditUserController implements Controller {
         User data = view.getData(model.getUser());
         switch (model.getMode()) {
             case EDIT:
-                if(!data.getUsername().equals(model.getUser().getUsername()))
-                    if(model.usernameExists(data.getUsername())){
+                if (!data.getUsername().equals(model.getUser().getUsername())) {
+                    if (model.usernameExists(data.getUsername())) {
                         view.usernameAlreadyExists();
                         return;
                     }
+                }
                 break;
             case ADD:
-                if(model.usernameExists(data.getUsername())){
+                if (model.usernameExists(data.getUsername())) {
                     view.usernameAlreadyExists();
                     return;
                 }
-                if(data.getPassword()==null)
+                if (data.getPassword() == null) {
                     requestChangePassword();
+                }
                 break;
         }
-        if(model.doAction(data))view.back();
+        if (model.doAction(data)) {
+            view.back();
+        }
     }
 
     void openJobSelector() {

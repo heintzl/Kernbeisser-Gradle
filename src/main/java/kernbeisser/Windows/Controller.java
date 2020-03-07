@@ -9,8 +9,10 @@ public interface Controller extends ActionListener {
         refresh();
     }
 
-    default void refresh() {}
+    default void refresh() {
+    }
 
-    View  getView();
+    View getView();
+
     Model getModel();
 }

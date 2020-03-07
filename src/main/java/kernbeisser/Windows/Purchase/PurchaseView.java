@@ -13,6 +13,7 @@ import java.awt.*;
 import java.util.Collection;
 
 public class PurchaseView extends Window implements View {
+    private final PurchaseController controller;
     private JButton finish;
     private ObjectTable<ShoppingItem> items;
     private JLabel date;
@@ -21,8 +22,6 @@ public class PurchaseView extends Window implements View {
     private JLabel seller;
     private JLabel customer;
     private JPanel main;
-
-    private final PurchaseController controller;
 
 
     PurchaseView(Window current, PurchaseController controller) {
@@ -63,7 +62,7 @@ public class PurchaseView extends Window implements View {
                 Column.create("Artikelname", ShoppingItem::getName),
                 Column.create("Anzahl", ShoppingItem::getItemAmount),
                 Column.create("Verkaufs Preis", e -> controller.getPrice(e) / 100f + "€"),
-                Column.create("Netto Preis", e -> controller.getPrice(e)/100f+"€")
+                Column.create("Netto Preis", e -> controller.getPrice(e) / 100f + "€")
         );
     }
 

@@ -14,30 +14,31 @@ public class ContainerModel implements Model {
     private final Collection<Container> newContainers = new ArrayList<>();
     private final User user;
 
-    ContainerModel(User user){
-        this.user=user;
+    ContainerModel(User user) {
+        this.user = user;
     }
 
     Collection<Container> getOldContainers() {
         return Container.getAll("where payed = false");
     }
 
-    Collection<Container> getLastContainers(){
+    Collection<Container> getLastContainers() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<Container> out = em.createQuery("select c from Container c order by createDate desc",Container.class).getResultList();
+        Collection<Container> out = em.createQuery("select c from Container c order by createDate desc",
+                                                   Container.class).getResultList();
         em.close();
         return out;
     }
 
-    Collection<Container> getNewContainers(){
+    Collection<Container> getNewContainers() {
         return newContainers;
     }
 
-    void addContainer(Container container){
+    void addContainer(Container container) {
         newContainers.add(container);
     }
 
-    void saveChanges(){
+    void saveChanges() {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -50,7 +51,8 @@ public class ContainerModel implements Model {
     ItemKK getItemByKbNumber(int kbNumber) {
         return ItemKK.getByKbNumber(kbNumber);
     }
-    ItemKK getItemByKkNumber(int kkNumber){
+
+    ItemKK getItemByKkNumber(int kkNumber) {
         return ItemKK.getByKkNumber(kkNumber);
     }
 

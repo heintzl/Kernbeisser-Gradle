@@ -8,18 +8,21 @@ import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 class CashierShoppingMaskController implements Controller {
     private CashierShoppingMaskModel model;
     private CashierShoppingMaskView view;
-    CashierShoppingMaskController(User seller,CashierShoppingMaskView view){
-        this.view=view;
-        this.model=new CashierShoppingMaskModel(seller);
+
+    CashierShoppingMaskController(User seller, CashierShoppingMaskView view) {
+        this.view = view;
+        this.model = new CashierShoppingMaskModel(seller);
         view.setUsers(model.getAllUser());
     }
 
-    void startShoppingFor(User customer) throws NullPointerException{
-        if(customer==null)throw new NullPointerException("No selected Object");
+    void startShoppingFor(User customer) throws NullPointerException {
+        if (customer == null) {
+            throw new NullPointerException("No selected Object");
+        }
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(customer);
         saleSession.setSeller(model.getSeller());
-        ShoppingMaskUIController shoppingMask = new ShoppingMaskUIController(view,saleSession);
+        ShoppingMaskUIController shoppingMask = new ShoppingMaskUIController(view, saleSession);
         view.openShoppingMask(shoppingMask);
     }
 

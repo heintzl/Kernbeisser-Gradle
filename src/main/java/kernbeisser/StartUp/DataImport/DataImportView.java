@@ -38,7 +38,7 @@ public class DataImportView extends Window implements View {
         cancel.addActionListener(e -> controller.cancel());
     }
 
-    boolean createStandardAdmin(){
+    boolean createStandardAdmin() {
         return importStandardAdmin.isSelected();
     }
 
@@ -46,14 +46,13 @@ public class DataImportView extends Window implements View {
         return dataPath.getText();
     }
 
-    void setValidDataSource(boolean is) {
-        dataPath.setForeground(is ? Color.GREEN : Color.RED);
-    }
-
     void setFilePath(String s) {
         dataPath.setText(s);
     }
 
+    void setValidDataSource(boolean is) {
+        dataPath.setForeground(is ? Color.GREEN : Color.RED);
+    }
 
     void itemSourceFound(boolean is) {
         importItems.setSelected(is);
@@ -132,6 +131,6 @@ public class DataImportView extends Window implements View {
     }
 
     String requestPassword() {
-        return JOptionPane.showInputDialog(this,"Bitte geben sie ein Password für den automatisch erzeugten Admin ein");
+        return JOptionPane.showInputDialog(this, "Bitte geben sie ein Password für den automatisch erzeugten Admin ein");
     }
 }

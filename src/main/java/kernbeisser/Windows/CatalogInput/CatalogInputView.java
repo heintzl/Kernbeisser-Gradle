@@ -20,7 +20,8 @@ public class CatalogInputView extends Window implements View {
     }
 
     void extractItemError() {
-        JOptionPane.showMessageDialog(this, "Es liegt ein fehler in der Quelle, ein Artikel kann nicht eingelesen werden!");
+        JOptionPane.showMessageDialog(this,
+                                      "Es liegt ein fehler in der Quelle, ein Artikel kann nicht eingelesen werden!");
     }
 
     void cannotReadFile() {

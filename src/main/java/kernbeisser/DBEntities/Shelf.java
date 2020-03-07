@@ -12,6 +12,10 @@ public class Shelf {
 
     private String note;
 
+    public static List<Shelf> getAll(String condition) {
+        return Tools.getAll(Shelf.class, condition);
+    }
+
     public int getId() {
         return id;
     }
@@ -34,9 +38,5 @@ public class Shelf {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public static List<Shelf> getAll(String condition){
-        return Tools.getAll(Shelf.class,condition);
     }
 }

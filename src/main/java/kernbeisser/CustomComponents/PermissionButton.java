@@ -2,8 +2,8 @@ package kernbeisser.CustomComponents;
 
 import javax.swing.*;
 
-public class PermissionButton extends JButton implements RequiresPermission{
-    private boolean read = true,write = true;
+public class PermissionButton extends JButton implements RequiresPermission {
+    private boolean read = true, write = true;
 
     @Override
     public void setReadable(boolean b) {

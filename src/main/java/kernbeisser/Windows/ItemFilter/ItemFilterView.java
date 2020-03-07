@@ -35,7 +35,8 @@ public class ItemFilterView extends Window implements View {
 
     private void createUIComponents() {
         priceLists = new PriceListTree();
-        suppliers = new ObjectTable<>(Column.create("Name", Supplier::getName), Column.create("Abk\u00fcrzung", Supplier::getShortName));
+        suppliers = new ObjectTable<>(Column.create("Name", Supplier::getName),
+                                      Column.create("Abk\u00fcrzung", Supplier::getShortName));
     }
 
     void setSuppliers(Collection<Supplier> allSuppliers) {

@@ -21,10 +21,11 @@ class PayModel implements Model {
     private final SaleSession saleSession;
     private final Collection<ShoppingItem> shoppingCart;
     private final Runnable transferCompleted;
-    PayModel(SaleSession saleSession,Collection<ShoppingItem> shoppingCart,Runnable transferCompleted){
-        this.shoppingCart=shoppingCart;
+
+    PayModel(SaleSession saleSession, Collection<ShoppingItem> shoppingCart, Runnable transferCompleted) {
+        this.shoppingCart = shoppingCart;
         this.saleSession = saleSession;
-        this.transferCompleted=transferCompleted;
+        this.transferCompleted = transferCompleted;
     }
 
     Collection<ShoppingItem> getShoppingCart() {
@@ -35,10 +36,14 @@ class PayModel implements Model {
         return saleSession;
     }
 
-    int shoppingCartSum(){
-        return shoppingCart.stream().mapToInt(e -> PriceCalculator.getShoppingItemPrice(e,saleSession.getCustomer().getSolidaritySurcharge())).sum();
+    int shoppingCartSum() {
+        return shoppingCart.stream()
+                           .mapToInt(e -> PriceCalculator.getShoppingItemPrice(e, saleSession.getCustomer()
+                                                                                             .getSolidaritySurcharge()))
+                           .sum();
     }
-    boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, int sum){
+
+    boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, int sum) {
         //Build connection by default
         EntityManager em = DBConnection.getEntityManager();
 
@@ -48,10 +53,10 @@ class PayModel implements Model {
 
         try {
             //Create saleSession if not exists
-            SaleSession db = em.find(SaleSession.class,saleSession.getId());
-            if(db==null){
+            SaleSession db = em.find(SaleSession.class, saleSession.getId());
+            if (db == null) {
                 em.persist(saleSession);
-                db=saleSession;
+                db = saleSession;
             }
 
             //Save ShoppingItems in Purchase
@@ -76,7 +81,7 @@ class PayModel implements Model {
 
             //Success
             return true;
-        }catch (PersistenceException e){
+        } catch (PersistenceException e) {
             e.printStackTrace();
 
             //Undo transaction
@@ -89,29 +94,30 @@ class PayModel implements Model {
             return false;
         }
     }
-    void runTransferCompleted(){
+
+    void runTransferCompleted() {
         transferCompleted.run();
     }
 
-    PrintService[] getAllPrinters(){
-        return PrintServiceLookup.lookupPrintServices(null,null);
+    PrintService[] getAllPrinters() {
+        return PrintServiceLookup.lookupPrintServices(null, null);
     }
 
-    void print(PrintService printService){
+    void print(PrintService printService) {
         try {
             //Creates new PrinterJob
-            PrinterJob p =  PrinterJob.getPrinterJob();
+            PrinterJob p = PrinterJob.getPrinterJob();
 
             //Sets selected PrintService
             p.setPrintService(printService);
 
-            
+
         } catch (PrinterException e) {
             e.printStackTrace();
         }
     }
 
-    PrintService getDefaultPrinter(){
+    PrintService getDefaultPrinter() {
         return PrintServiceLookup.lookupDefaultPrintService();
     }
 }

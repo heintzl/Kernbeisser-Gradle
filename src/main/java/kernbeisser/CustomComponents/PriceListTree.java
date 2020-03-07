@@ -23,17 +23,17 @@ public class PriceListTree extends ObjectTree<PriceList> {
      */
     public PriceListTree(boolean optionToEdit) {
         super(new ChildFactory<PriceList>() {
-            @Override
-            public Collection<PriceList> produce(PriceList priceList) {
-                return priceList.getAllPriceLists();
-            }
+                  @Override
+                  public Collection<PriceList> produce(PriceList priceList) {
+                      return priceList.getAllPriceLists();
+                  }
 
-            @Override
-            public String getName(PriceList priceList) {
-                return priceList.getName();
-            }
-        },
-                "Preislisten", PriceList.getAllHeadPriceLists());
+                  @Override
+                  public String getName(PriceList priceList) {
+                      return priceList.getName();
+                  }
+              },
+              "Preislisten", PriceList.getAllHeadPriceLists());
         if (optionToEdit) {
             PriceList p = new PriceList() {
                 @Override
@@ -45,7 +45,7 @@ public class PriceListTree extends ObjectTree<PriceList> {
             getStartValues().add(p);
             refresh();
             addSelectionListener(e -> {
-                if (e.getId() == Integer.MIN_VALUE)
+                if (e.getId() == Integer.MIN_VALUE) {
                     new ManagePriceListsView(null) {
                         @Override
                         public void finish() {
@@ -53,6 +53,7 @@ public class PriceListTree extends ObjectTree<PriceList> {
                             PriceListTree.this.setModel(new PriceListTree().getModel());
                         }
                     };
+                }
             });
         }
     }

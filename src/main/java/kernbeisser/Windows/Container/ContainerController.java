@@ -11,29 +11,30 @@ import java.util.Collection;
 public class ContainerController {
     private ContainerView view;
     private ContainerModel model;
-    public ContainerController(Window current, User user){
+
+    public ContainerController(Window current, User user) {
         model = new ContainerModel(user);
-        view = new ContainerView(current,this);
+        view = new ContainerView(current, this);
         view.setLastContainers(model.getLastContainers());
         refreshUnpaidContainers();
     }
 
-    private void refreshUnpaidContainers(){
+    private void refreshUnpaidContainers() {
         Collection<Container> newContainers = model.getNewContainers();
         Collection<Container> oldContainers = model.getOldContainers();
-        Collection<Container> containers = new ArrayList<>(newContainers.size()+oldContainers.size());
+        Collection<Container> containers = new ArrayList<>(newContainers.size() + oldContainers.size());
         containers.addAll(oldContainers);
         containers.addAll(newContainers);
         view.setUnpaidContainers(containers);
     }
 
-    public void commit(){
+    public void commit() {
         Container newContainer = new Container();
         newContainer.setAmount(view.getAmount());
         ItemKK item = model.getItemByKbNumber(view.getKbNumber());
-        if(item==null){
+        if (item == null) {
             item = model.getItemByKkNumber(view.getKkNumber());
-            if(item==null){
+            if (item == null) {
                 view.noItemFound();
                 return;
             }
@@ -54,19 +55,20 @@ public class ContainerController {
         refreshUnpaidContainers();
     }
 
-    public void searchKK(){
+    public void searchKK() {
         clear();
         view.setKbNumber("");
         pasteData(model.getItemByKkNumber(view.getKkNumber()));
     }
-    public void searchKB(){
+
+    public void searchKB() {
         clear();
         view.setKkNumber("");
         pasteData(model.getItemByKbNumber(view.getKbNumber()));
     }
 
-    private void pasteData(ItemKK item){
-        if(item!=null){
+    private void pasteData(ItemKK item) {
+        if (item != null) {
             Container c = new Container();
             c.setItem(item);
             c.setAmount(1);
@@ -76,7 +78,7 @@ public class ContainerController {
         }
     }
 
-    private void clear(){
+    private void clear() {
         view.setNetPrice("");
         view.setItemSize("1");
         view.setAmount("");
@@ -86,11 +88,13 @@ public class ContainerController {
         //view.setKbNumber("");
     }
 
-    private void pasteData(Container c){
-        view.setItemSize(c.getItem().getContainerSize()+" x "+c.getItem().getAmount()+c.getItem().getUnit().getShortName());
+    private void pasteData(Container c) {
+        view.setItemSize(c.getItem().getContainerSize() + " x " + c.getItem().getAmount() + c.getItem()
+                                                                                             .getUnit()
+                                                                                             .getShortName());
         view.setKbNumber(String.valueOf(c.getKBNumber()));
         view.setKkNumber(String.valueOf(c.getItem().getKkNumber()));
-        view.setSellingPrice(c.calculateOriginalPrice()/100f+"€");
+        view.setSellingPrice(c.calculateOriginalPrice() / 100f + "€");
         view.setItemName(c.getItem().getName());
         view.setAmount(String.valueOf(c.getAmount()));
         view.setNetPrice(c.getNetPrice() / 100f + "€");

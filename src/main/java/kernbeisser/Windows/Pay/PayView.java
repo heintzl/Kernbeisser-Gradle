@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.Collection;
 
 class PayView extends Window implements View {
+    private final PayController controller;
     private JPanel main;
     private JButton commit;
     private JRadioButton printBon;
@@ -22,9 +23,6 @@ class PayView extends Window implements View {
     private JComboBox<PrintService> printers;
     private JButton cancel;
     private ObjectTable<ShoppingItem> shoppingCart;
-
-
-    private final PayController controller;
 
 
     public PayView(Window current, PayController controller) {
@@ -46,15 +44,15 @@ class PayView extends Window implements View {
         return printers.getItemAt(printers.getSelectedIndex());
     }
 
+    void setSelectedPrintService(PrintService printService) {
+        printers.setSelectedItem(printService);
+    }
+
     void setPrintServices(PrintService[] printServices) {
         printers.removeAllItems();
         for (PrintService service : printServices) {
             printers.addItem(service);
         }
-    }
-
-    void setSelectedPrintService(PrintService printService) {
-        printers.setSelectedItem(printService);
     }
 
     void fillShoppingCart(Collection<ShoppingItem> items) {

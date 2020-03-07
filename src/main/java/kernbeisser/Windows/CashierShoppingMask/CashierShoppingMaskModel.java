@@ -7,13 +7,16 @@ import java.util.Collection;
 
 public class CashierShoppingMaskModel implements Model {
     private User seller;
-    CashierShoppingMaskModel(User seller){
-        this.seller=seller;
+
+    CashierShoppingMaskModel(User seller) {
+        this.seller = seller;
     }
+
     public User getSeller() {
         return seller;
     }
-    Collection<User> getAllUser(){
+
+    Collection<User> getAllUser() {
         return User.getAll(null);
     }
 }

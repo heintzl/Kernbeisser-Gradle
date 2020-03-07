@@ -24,28 +24,40 @@ public class SurchargeTable implements Serializable, Cloneable {
         DEFAULT = standard;
     }
 
-    public SurchargeTable(){}
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
     private int stid;
-
     @Column
     private int surcharge;
-
     @Column(name = "\"from\"")
     private int from;
-
     @Column(name = "\"to\"")
     private int to;
-
     @Column
     private String name;
-
     @JoinColumn
     @ManyToOne
     private Supplier supplier;
+
+    public SurchargeTable() {
+    }
+
+    public static List<SurchargeTable> getAll(String condition) {
+        return Tools.getAll(SurchargeTable.class, condition);
+    }
+
+    public static Collection<SurchargeTable> defaultSearch(String s, int max) {
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<SurchargeTable> out = em.createQuery(
+                "select s from SurchargeTable s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",
+                SurchargeTable.class)
+                                           .setParameter("search", s + "%")
+                                           .setMaxResults(max)
+                                           .getResultList();
+        em.close();
+        return out;
+    }
 
     public int getSurcharge() {
         return surcharge;
@@ -89,20 +101,6 @@ public class SurchargeTable implements Serializable, Cloneable {
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
-    }
-
-    public static List<SurchargeTable> getAll(String condition){
-        return Tools.getAll(SurchargeTable.class,condition);
-    }
-
-    public static Collection<SurchargeTable> defaultSearch(String s, int max){
-        EntityManager em = DBConnection.getEntityManager();
-        Collection<SurchargeTable> out = em.createQuery("select s from SurchargeTable s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",SurchargeTable.class)
-                .setParameter("search",s+"%")
-                .setMaxResults(max)
-                .getResultList();
-        em.close();
-        return out;
     }
 
 }

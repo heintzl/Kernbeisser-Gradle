@@ -34,17 +34,21 @@ public class Tools {
         ArrayList<Field> out = new ArrayList<>();
         for (Field field : pattern.getDeclaredFields()) {
             field.setAccessible(true);
-            if (field.isAnnotationPresent(annotation)) out.add(field);
+            if (field.isAnnotationPresent(annotation)) {
+                out.add(field);
+            }
         }
         for (Field field : pattern.getSuperclass().getDeclaredFields()) {
             field.setAccessible(true);
-            if (field.isAnnotationPresent(annotation)) out.add(field);
+            if (field.isAnnotationPresent(annotation)) {
+                out.add(field);
+            }
         }
         return out;
     }
 
 
-    public static <T> String toSting(T[] in, Function<T, String> transformer) {
+    public static <T> String toSting(T[] in, Function<T,String> transformer) {
         StringBuilder stringBuilder = new StringBuilder();
         for (T t : in) {
             stringBuilder.append(transformer.apply(t));
@@ -52,7 +56,7 @@ public class Tools {
         return stringBuilder.toString();
     }
 
-    public static <T> String toSting(Collection<T> in, Function<T, String> transformer) {
+    public static <T> String toSting(Collection<T> in, Function<T,String> transformer) {
         StringBuilder stringBuilder = new StringBuilder();
         for (T t : in) {
             stringBuilder.append(transformer.apply(t));
@@ -60,7 +64,7 @@ public class Tools {
         return stringBuilder.toString();
     }
 
-    public static <R, T> R build(List<T> in, R r, BiFunction<R, T, R> builder) {
+    public static <R, T> R build(List<T> in, R r, BiFunction<R,T,R> builder) {
         for (T t : in) {
             r = builder.apply(r, t);
         }
@@ -78,8 +82,9 @@ public class Tools {
     public static int add(Integer[] x) {
         int o = 0;
         for (Integer i : x) {
-            if (i != null)
+            if (i != null) {
                 o += i;
+            }
         }
         return o;
     }
@@ -87,9 +92,12 @@ public class Tools {
     public static void setDoubleFilter(JTextComponent c) {
         ((AbstractDocument) c.getDocument()).setDocumentFilter(new DocumentFilter() {
             @Override
-            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".") && text.matches("[,.]")))
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                    throws BadLocationException {
+                if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".") && text.matches(
+                        "[,.]"))) {
                     fb.replace(offset, length, text.replaceAll("[\\D&&[^,.]]", "").replaceAll(",", "."), attrs);
+                }
             }
         });
     }
@@ -97,9 +105,12 @@ public class Tools {
     public static void setRealNumberFilter(JTextComponent c) {
         ((AbstractDocument) c.getDocument()).setDocumentFilter(new DocumentFilter() {
             @Override
-            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".") && text.matches("[,.]")))
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                    throws BadLocationException {
+                if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".") && text.matches(
+                        "[,.]"))) {
                     fb.replace(offset, length, text.replaceAll("[^\\d]", ""), attrs);
+                }
             }
         });
     }
@@ -115,10 +126,11 @@ public class Tools {
             for (int i = forceGround ? 0 : 100; i < 256; i++) {
                 try {
                     Thread.sleep(4);
-                    if (forceGround)
+                    if (forceGround) {
                         component.setForeground(new Color(255 - i, 0, 0));
-                    else
+                    } else {
                         component.setBackground(new Color(255, i, i));
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -127,7 +139,8 @@ public class Tools {
         }).start();
     }
 
-    public static <T, O extends Collection<T>> O extract(Supplier<O> supplier, String s, String separator, Function<String, T> method) {
+    public static <T, O extends Collection<T>> O extract(Supplier<O> supplier, String s, String separator,
+                                                         Function<String,T> method) {
         String[] columns = s.split(separator);
         O out = supplier.get();
         for (String column : columns) {
@@ -136,11 +149,11 @@ public class Tools {
         return out;
     }
 
-    public static <T> T[] extract(Class<T> c, String s, String separator, Function<String, T> method) {
+    public static <T> T[] extract(Class<T> c, String s, String separator, Function<String,T> method) {
         return extract(ArrayList::new, s, separator, method).toArray((T[]) Array.newInstance(c, 0));
     }
 
-    public static <I, O> O[] transform(I[] in, Class<O> out, Function<I, O> transformer) {
+    public static <I, O> O[] transform(I[] in, Class<O> out, Function<I,O> transformer) {
         O[] output = (O[]) Array.newInstance(out, in.length);
         for (int i = 0; i < in.length; i++) {
             output[i] = transformer.apply(in[i]);
@@ -148,7 +161,7 @@ public class Tools {
         return output;
     }
 
-    public static <I, O> List<O> transform(Collection<I> in, Function<I, O> transformer) {
+    public static <I, O> List<O> transform(Collection<I> in, Function<I,O> transformer) {
         List<O> output = new ArrayList<>(in.size());
         for (I i : in) {
             output.add(transformer.apply(i));
@@ -156,16 +169,18 @@ public class Tools {
         return output;
     }
 
-    public static <T> Function<String, T> findParser(Class<T> c) {
-        if (c.equals(Boolean.class) || c.equals(boolean.class))
+    public static <T> Function<String,T> findParser(Class<T> c) {
+        if (c.equals(Boolean.class) || c.equals(boolean.class)) {
             return e -> e.equals("null") ? null : c.cast(Boolean.parseBoolean(e));
-        else if (c.equals(Integer.class) || c.equals(int.class))
+        } else if (c.equals(Integer.class) || c.equals(int.class)) {
             return e -> e.equals("null") ? null : c.cast(Integer.parseInt(e));
-        else if (c.equals(Float.class) || c.equals(float.class))
+        } else if (c.equals(Float.class) || c.equals(float.class)) {
             return e -> e.equals("null") ? null : c.cast(Float.parseFloat(e));
-        else if (c.equals(Double.class) || c.equals(double.class))
+        } else if (c.equals(Double.class) || c.equals(double.class)) {
             return e -> e.equals("null") ? null : c.cast(Double.parseDouble(e));
-        else return c::cast;
+        } else {
+            return c::cast;
+        }
     }
 
     public static <T> void forEach(T[] o, Consumer<T> consumer) {
@@ -195,27 +210,32 @@ public class Tools {
         }
         return out;
     }
-    public static <T> List<T> getAll(Class<T> c,String condition){
+
+    public static <T> List<T> getAll(Class<T> c, String condition) {
         EntityManager em = DBConnection.getEntityManager();
-        List<T> out = em.createQuery("select c from "+c.getName()+" c "+(condition!=null?condition:""),c).getResultList();
+        List<T> out = em.createQuery("select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
+                        .getResultList();
         em.close();
         return out;
     }
-    public static <T extends Collection> T filterNull(T in){
+
+    public static <T extends Collection> T filterNull(T in) {
         in.removeIf(Objects::isNull);
         return in;
     }
-    public static <T> T mergeWithoutId(T in){
+
+    public static <T> T mergeWithoutId(T in) {
         try {
-            return mergeWithoutId(in,(T) in.getClass().getDeclaredConstructor().newInstance());
+            return mergeWithoutId(in, (T) in.getClass().getDeclaredConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
             return null;
         }
     }
-    public static <T> T mergeWithoutId(T in,T toOverride){
+
+    public static <T> T mergeWithoutId(T in, T toOverride) {
         for (Field field : toOverride.getClass().getDeclaredFields()) {
-            if(field.getAnnotation(Id.class)==null) {
+            if (field.getAnnotation(Id.class) == null) {
                 field.setAccessible(true);
                 try {
                     field.set(toOverride, field.get(in));
@@ -226,50 +246,56 @@ public class Tools {
         }
         return toOverride;
     }
-    public static void setPromptText(JTextField jTextField,String promptText){
+
+    public static void setPromptText(JTextField jTextField, String promptText) {
         jTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if(jTextField.getText().equals(promptText))
+                if (jTextField.getText().equals(promptText)) {
                     jTextField.setText("");
+                }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if(jTextField.getText().equals("")){
+                if (jTextField.getText().equals("")) {
                     jTextField.setText(promptText);
                 }
             }
         });
     }
-    public static long tryParseLong(String s){
-        try{
+
+    public static long tryParseLong(String s) {
+        try {
             return Long.parseLong(s);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return 0;
         }
     }
-    public static int tryParseInteger(String s){
-        try{
+
+    public static int tryParseInteger(String s) {
+        try {
             return Integer.parseInt(s);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return 0;
         }
     }
-    public static <T> void delete(T t,Object key){
+
+    public static <T> void delete(T t, Object key) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.remove(em.find(t.getClass(),key));
+        em.remove(em.find(t.getClass(), key));
         em.flush();
         et.commit();
         em.close();
     }
-    public static <T> void edit(Object key,T to){
+
+    public static <T> void edit(Object key, T to) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.persist(Tools.mergeWithoutId(to,em.find(to.getClass(),key)));
+        em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key)));
         em.flush();
         et.commit();
         em.close();

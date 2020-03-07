@@ -41,11 +41,11 @@ public class Container implements Serializable {
     @CreationTimestamp
     private Date createDate;
 
-    public static List<Container> getAll(String condition){
-        return Tools.getAll(Container.class,condition);
+    public static List<Container> getAll(String condition) {
+        return Tools.getAll(Container.class, condition);
     }
 
-    public ItemKK getItem(){
+    public ItemKK getItem() {
         return item;
     }
 
@@ -102,27 +102,29 @@ public class Container implements Serializable {
         return id;
     }
 
-    public int getKBNumber(){
-        List<Item> items = Item.getAll("where suppliersItemNumber = "+item.getKkNumber());
-        if(items==null||items.size()==0)return -1;
-        else return items.get(0).getKbNumber();
+    public int getKBNumber() {
+        List<Item> items = Item.getAll("where suppliersItemNumber = " + item.getKkNumber());
+        if (items == null || items.size() == 0) {
+            return -1;
+        } else {
+            return items.get(0).getKbNumber();
+        }
     }
 
-    public int getNetPrice(){
+    public int getNetPrice() {
         return netPrice;
-    }
-
-    public int calculateOriginalPrice(){
-        return item.getContainerPrice()*amount;
-    }
-
-
-    public int getPrice(){
-        item.setNetPrice(netPrice);
-        return item.getContainerPrice();
     }
 
     public void setNetPrice(int overriddenPrice) {
         this.netPrice = overriddenPrice;
+    }
+
+    public int calculateOriginalPrice() {
+        return item.getContainerPrice() * amount;
+    }
+
+    public int getPrice() {
+        item.setNetPrice(netPrice);
+        return item.getContainerPrice();
     }
 }
