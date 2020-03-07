@@ -6,7 +6,6 @@ import kernbeisser.Windows.Window;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class DBLogIn extends Window {
     private JButton logIn;
@@ -34,7 +33,8 @@ public class DBLogIn extends Window {
                 JOptionPane.showMessageDialog(this, "Die Verbindung wurde erfolgreich erstellt!");
                 back();
             } else {
-                JOptionPane.showMessageDialog(this, "Es kann leider keine Verbindung hergestellt werden,\n bitte \u00fcberpr\u00fcfen sie die Eingaben nach Fehlern");
+                JOptionPane.showMessageDialog(this,
+                                              "Es kann leider keine Verbindung hergestellt werden,\n bitte \u00fcberpr\u00fcfen sie die Eingaben nach Fehlern");
             }
         });
         cancel.addActionListener(e -> {

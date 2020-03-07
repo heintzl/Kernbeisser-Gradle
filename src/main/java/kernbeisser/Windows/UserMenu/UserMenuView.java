@@ -3,13 +3,10 @@ package kernbeisser.Windows.UserMenu;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Purchase;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.Collection;
 
 public class UserMenuView extends Window implements View {
@@ -57,7 +54,9 @@ public class UserMenuView extends Window implements View {
         buyHistory = new ObjectTable<>(
                 Column.create("Datum", Purchase::getCreateDate),
                 Column.create("Betrag", e -> e.getSum() / 100f + "€"),
-                Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession().getSeller().getSurname()),
+                Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession()
+                                                                                                     .getSeller()
+                                                                                                     .getSurname()),
                 Column.create("Anschauen", (e) -> "Anschauen", (e) -> controller.showPurchase())
         );
         //buyHistory.setComplex(true);

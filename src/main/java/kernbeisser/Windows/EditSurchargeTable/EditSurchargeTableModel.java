@@ -16,7 +16,7 @@ public class EditSurchargeTableModel implements Model {
     private final SurchargeTable surchargeTable;
     private final Mode mode;
 
-    Collection<Supplier> getAllSuppliers(){
+    Collection<Supplier> getAllSuppliers() {
         return Supplier.getAll(null);
     }
 
@@ -25,7 +25,7 @@ public class EditSurchargeTableModel implements Model {
         this.mode = mode;
     }
 
-    boolean doAction(SurchargeTable table){
+    boolean doAction(SurchargeTable table) {
         try {
             switch (mode) {
                 case REMOVE:
@@ -39,16 +39,17 @@ public class EditSurchargeTableModel implements Model {
                     break;
             }
             return true;
-        }catch (PersistenceException e){
+        } catch (PersistenceException e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    private void edit(SurchargeTable surchargeTable){
-        Tools.edit(surchargeTable.getStid(),surchargeTable);
+    private void edit(SurchargeTable surchargeTable) {
+        Tools.edit(surchargeTable.getStid(), surchargeTable);
     }
-    private void add(SurchargeTable surchargeTable){
+
+    private void add(SurchargeTable surchargeTable) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -57,11 +58,12 @@ public class EditSurchargeTableModel implements Model {
         et.commit();
         em.close();
     }
-    private void remove(SurchargeTable surchargeTable){
+
+    private void remove(SurchargeTable surchargeTable) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.remove(em.find(SurchargeTable.class,surchargeTable.getStid()));
+        em.remove(em.find(SurchargeTable.class, surchargeTable.getStid()));
         em.flush();
         et.commit();
         em.close();

@@ -3,46 +3,47 @@ package kernbeisser.Enums;
 import kernbeisser.Useful.Named;
 
 public enum Unit implements Named {
-    GRAM("Gramm","g"){},
-    KILOGRAM("Kilogramm","kg"){
+    GRAM("Gramm", "g") {},
+    KILOGRAM("Kilogramm", "kg") {
         @Override
         public int toUnit(double v) {
-            return (int)(v*1000);
+            return (int) (v * 1000);
         }
 
         @Override
         public double fromUnit(int amount) {
-            return amount/1000f;
+            return amount / 1000f;
         }
     },
-    LITER("Liter","l"){
+    LITER("Liter", "l") {
         @Override
         public int toUnit(double v) {
-            return (int)(v*1000);
+            return (int) (v * 1000);
         }
 
         @Override
         public double fromUnit(int amount) {
-            return amount/1000f;
+            return amount / 1000f;
         }
     },
-    MILLILITER("Mililiter","ml"),
-    STACK("Stück","stk"),
-    NONE("Undefinierte-Einheit","?");
+    MILLILITER("Mililiter", "ml"),
+    STACK("Stück", "stk"),
+    NONE("Undefinierte-Einheit", "?");
 
     private final String shortName;
 
     private final String name;
 
-    Unit(String s,String shortName){
-        this.name=s;
-        this.shortName=shortName;
+    Unit(String s, String shortName) {
+        this.name = s;
+        this.shortName = shortName;
     }
 
-    public int toUnit(double v){
-        return (int) (v+0.5);
+    public int toUnit(double v) {
+        return (int) (v + 0.5);
     }
-    public double fromUnit(int amount){
+
+    public double fromUnit(int amount) {
         return amount;
     }
 

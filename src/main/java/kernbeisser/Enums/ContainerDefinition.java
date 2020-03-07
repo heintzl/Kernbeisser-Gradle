@@ -7,8 +7,9 @@ public enum ContainerDefinition implements Named {
     UNKNOWN("Unbekannt"),
     ROUNDED("ungefähr");
     private final String name;
-    ContainerDefinition(String name){
-        this.name=name;
+
+    ContainerDefinition(String name) {
+        this.name = name;
     }
 
     @Override

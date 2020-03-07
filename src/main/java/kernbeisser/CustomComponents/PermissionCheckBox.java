@@ -5,13 +5,15 @@ import kernbeisser.Windows.LogIn.LogInModel;
 
 import javax.swing.*;
 
-public class PermissionCheckBox extends JCheckBox implements RequiresPermission{
-    private boolean read = true,write = true;
+public class PermissionCheckBox extends JCheckBox implements RequiresPermission {
+    private boolean read = true, write = true;
 
     @Override
     public void setReadable(boolean b) {
         read = b;
-        if(!b)setSelected(false);
+        if (!b) {
+            setSelected(false);
+        }
     }
 
     @Override
@@ -20,9 +22,11 @@ public class PermissionCheckBox extends JCheckBox implements RequiresPermission{
         setEnabled(b);
     }
 
-    public void setRequiredReadKeys(Key ... keys){
+    public void setRequiredReadKeys(Key... keys) {
         read = LogInModel.getLoggedIn().hasPermission(keys);
-        if(!read)setEnabled(false);
+        if (!read) {
+            setEnabled(false);
+        }
     }
 
     @Override
@@ -32,6 +36,6 @@ public class PermissionCheckBox extends JCheckBox implements RequiresPermission{
 
     @Override
     public void setEnabled(boolean b) {
-        super.setEnabled(write&&b);
+        super.setEnabled(write && b);
     }
 }

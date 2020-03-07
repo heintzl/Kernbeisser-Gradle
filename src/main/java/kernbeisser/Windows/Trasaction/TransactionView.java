@@ -40,8 +40,9 @@ class TransactionView extends Window implements View {
         transactions.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_DELETE)
+                if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                     controller.remove();
+                }
             }
         });
         add(main);
@@ -75,7 +76,7 @@ class TransactionView extends Window implements View {
         from.setEnabled(false);
     }
 
-    void setFromKB(boolean b){
+    void setFromKB(boolean b) {
         formKBValue.setSelected(false);
         formKBValue.setEnabled(b);
     }

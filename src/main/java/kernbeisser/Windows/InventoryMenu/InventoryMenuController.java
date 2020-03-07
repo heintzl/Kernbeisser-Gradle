@@ -6,9 +6,10 @@ public class InventoryMenuController implements Controller {
 
     private InventoryMenuModel model;
     private InventoryMenuView view;
-    InventoryMenuController(InventoryMenuView view){
-        this.view=view;
-        model=new InventoryMenuModel();
+
+    InventoryMenuController(InventoryMenuView view) {
+        this.view = view;
+        model = new InventoryMenuModel();
     }
 
     @Override

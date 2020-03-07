@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table
-public class Job{
+public class Job {
     @Id
     @GeneratedValue
     private int jid;
@@ -55,8 +55,8 @@ public class Job{
         this.description = description;
     }
 
-    public static List<Job> getAll(String condition){
-        return Tools.getAll(Job.class,condition);
+    public static List<Job> getAll(String condition) {
+        return Tools.getAll(Job.class, condition);
     }
 
     @Override

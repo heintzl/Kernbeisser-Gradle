@@ -5,7 +5,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.Unit;
-import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -209,13 +208,15 @@ public class Item {
     public SurchargeTable getSurchargeTable() {
         //TODO really expensive!
         EntityManager em = DBConnection.getEntityManager();
-        try{
-            return em.createQuery("select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number", SurchargeTable.class)
-                    .setParameter("supplier",supplier != null ? supplier.getId() : -1)
-                    .setParameter("number",getSuppliersItemNumber())
-                    .setMaxResults(1)
-                    .getSingleResult();
-        }catch (NoResultException e){
+        try {
+            return em.createQuery(
+                    "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
+                    SurchargeTable.class)
+                     .setParameter("supplier", supplier != null ? supplier.getId() : -1)
+                     .setParameter("number", getSuppliersItemNumber())
+                     .setMaxResults(1)
+                     .getSingleResult();
+        } catch (NoResultException e) {
             return SurchargeTable.DEFAULT;
         }
     }
@@ -454,43 +455,47 @@ public class Item {
         return name;
     }
 
-    public static List<Item> getAll(String condition){
-        return Tools.getAll(Item.class,condition);
+    public static List<Item> getAll(String condition) {
+        return Tools.getAll(Item.class, condition);
     }
 
-    public static Collection<Item> defaultSearch(String s,int max){
+    public static Collection<Item> defaultSearch(String s, int max) {
         EntityManager em = DBConnection.getEntityManager();
         Collection<Item> out = em.createQuery(
-                "select i from Item i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or barcode like '%"+s+"'",
+                "select i from Item i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or barcode like '%" + s + "'",
                 Item.class
-                )
-                .setParameter("n",Tools.tryParseInteger(s))
-                .setParameter("s",s+"%")
-                .setMaxResults(max)
-                .getResultList();
+        )
+                                 .setParameter("n", Tools.tryParseInteger(s))
+                                 .setParameter("s", s + "%")
+                                 .setMaxResults(max)
+                                 .getResultList();
         em.close();
         return out;
     }
 
 
-    public static Item getByKbNumber(int kbNumber){
+    public static Item getByKbNumber(int kbNumber) {
         EntityManager em = DBConnection.getEntityManager();
-        try{
-            return em.createQuery("select i from Item i where kbNumber = :n",Item.class).setParameter("n",kbNumber).getSingleResult();
-        }catch (NoResultException e){
+        try {
+            return em.createQuery("select i from Item i where kbNumber = :n", Item.class)
+                     .setParameter("n", kbNumber)
+                     .getSingleResult();
+        } catch (NoResultException e) {
             return null;
-        }finally {
+        } finally {
             em.close();
         }
     }
 
     public static Item getBySuppliersItemNumber(int suppliersNumber) {
         EntityManager em = DBConnection.getEntityManager();
-        try{
-            return em.createQuery("select i from Item i where suppliersItemNumber = :n",Item.class).setParameter("n",suppliersNumber).getSingleResult();
-        }catch (NoResultException e){
+        try {
+            return em.createQuery("select i from Item i where suppliersItemNumber = :n", Item.class)
+                     .setParameter("n", suppliersNumber)
+                     .getSingleResult();
+        } catch (NoResultException e) {
             return null;
-        }finally {
+        } finally {
             em.close();
         }
     }

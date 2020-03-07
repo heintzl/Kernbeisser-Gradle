@@ -31,8 +31,11 @@ public class Checker {
     public int checkInteger(JTextComponent component, int min, int max) throws IncorrectInput {
         try {
             int i = Integer.parseInt(component.getText());
-            if (i < min || i > max) throw new IncorrectInput(component, Integer.class);
-            else return i;
+            if (i < min || i > max) {
+                throw new IncorrectInput(component, Integer.class);
+            } else {
+                return i;
+            }
         } catch (NumberFormatException e) {
             throw new IncorrectInput(component, Integer.class);
         }
@@ -60,12 +63,18 @@ public class Checker {
             int price = 0;
             if (parts.length == 2) {
                 int cents = Integer.parseInt(parts[1].substring(0, Math.min(parts[1].length(), 2)));
-                if (parts[1].length() < 2)
+                if (parts[1].length() < 2) {
                     cents *= 10;
+                }
                 price = euros * 100 + cents;
-            } else price = euros * 100;
-            if (price < min || price > max) throw new IncorrectInput(component, Double.class);
-            else return price;
+            } else {
+                price = euros * 100;
+            }
+            if (price < min || price > max) {
+                throw new IncorrectInput(component, Double.class);
+            } else {
+                return price;
+            }
         } catch (NumberFormatException e) {
             throw new IncorrectInput(component, Double.class);
         }
@@ -89,8 +98,11 @@ public class Checker {
     public double checkDouble(JTextComponent component, double min, double max) throws IncorrectInput {
         try {
             double i = Double.parseDouble(component.getText());
-            if (i < min || i > max) throw new IncorrectInput(component, Double.class);
-            else return i;
+            if (i < min || i > max) {
+                throw new IncorrectInput(component, Double.class);
+            } else {
+                return i;
+            }
         } catch (NumberFormatException e) {
             new Thread(() -> {
                 component.setForeground(Color.RED);
@@ -117,18 +129,18 @@ public class Checker {
     }
 
     public Supplier checkSupplier(JComboBox<String> s) throws IncorrectInput {
-        try{
-            return Supplier.getAll("where name like "+s.getSelectedItem()).get(0);
-        }catch (NoResultException | IndexOutOfBoundsException e){
-            throw new IncorrectInput(s,Supplier.class);
+        try {
+            return Supplier.getAll("where name like " + s.getSelectedItem()).get(0);
+        } catch (NoResultException | IndexOutOfBoundsException e) {
+            throw new IncorrectInput(s, Supplier.class);
         }
     }
 
     public PriceList checkPriceList(JComboBox<String> s) throws IncorrectInput {
-        try{
-            return PriceList.getAll("where name like "+s.getSelectedItem()).get(0);
-        }catch (NoResultException | IndexOutOfBoundsException e){
-            throw new IncorrectInput(s,PriceList.class);
+        try {
+            return PriceList.getAll("where name like " + s.getSelectedItem()).get(0);
+        } catch (NoResultException | IndexOutOfBoundsException e) {
+            throw new IncorrectInput(s, PriceList.class);
         }
     }
 }

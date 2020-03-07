@@ -2,28 +2,29 @@ package kernbeisser.Windows.UserMenu;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.*;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
+import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
-
-import java.awt.*;
 
 public class UserMenuController implements Controller {
     private UserMenuView view;
     private UserMenuModel model;
-    public UserMenuController(Window current, User owner){
-        this.view=new UserMenuView(this,current);
-        this.model=new UserMenuModel(owner);
+
+    public UserMenuController(Window current, User owner) {
+        this.view = new UserMenuView(this, current);
+        this.model = new UserMenuModel(owner);
         view.setUsername(owner.getUsername());
         view.setBuyHistory(model.getAllPurchase());
     }
 
 
     public void showPurchase() {
-        new PurchaseController(view,view.getSelected());
+        new PurchaseController(view, view.getSelected());
     }
 
     @Override
@@ -40,7 +41,7 @@ public class UserMenuController implements Controller {
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(model.getOwner());
         saleSession.setSeller(model.getOwner());
-        new ShoppingMaskUIController(view,saleSession);
+        new ShoppingMaskUIController(view, saleSession);
     }
 
     public void logOut() {
@@ -48,7 +49,7 @@ public class UserMenuController implements Controller {
     }
 
     public void beginCashierJob() {
-        new CashierMenuController(view,model.getOwner());
+        new CashierMenuController(view, model.getOwner());
     }
 
     public void showProfile() {
@@ -62,6 +63,6 @@ public class UserMenuController implements Controller {
     }
 
     public void orderContainers() {
-        new ContainerController(view,model.getOwner());
+        new ContainerController(view, model.getOwner());
     }
 }

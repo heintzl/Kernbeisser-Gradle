@@ -6,12 +6,10 @@ import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 
 public class ItemFilterView extends Window implements View {
@@ -35,7 +33,8 @@ public class ItemFilterView extends Window implements View {
 
     private void createUIComponents() {
         priceLists = new PriceListTree();
-        suppliers = new ObjectTable<>(Column.create("Name", Supplier::getName), Column.create("Abk\u00fcrzung", Supplier::getShortName));
+        suppliers = new ObjectTable<>(Column.create("Name", Supplier::getName),
+                                      Column.create("Abk\u00fcrzung", Supplier::getShortName));
     }
 
     void setSuppliers(Collection<Supplier> allSuppliers) {

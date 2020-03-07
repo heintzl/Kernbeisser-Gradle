@@ -140,7 +140,7 @@ public class Supplier implements Serializable {
         this.keeper = keeper;
     }
 
-    public static List<Supplier> getAll(String condition){
-        return Tools.getAll(Supplier.class,condition);
+    public static List<Supplier> getAll(String condition) {
+        return Tools.getAll(Supplier.class, condition);
     }
 }

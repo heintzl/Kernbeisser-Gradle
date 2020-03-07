@@ -8,9 +8,9 @@ public class LogInController implements Controller {
     private LogInView view;
     private LogInModel model;
 
-    public LogInController(Window current){
-        this.view= new LogInView(current,this);
-        this.model=new LogInModel();
+    public LogInController(Window current) {
+        this.view = new LogInView(current, this);
+        this.model = new LogInModel();
         fillABCUser();
         fillAllUser();
     }
@@ -20,20 +20,25 @@ public class LogInController implements Controller {
     static final int SUCCESS = 2;
 
     void logIn() {
-        int feedback = model.logIn(view.getUsername(),view.getPassword());
+        int feedback = model.logIn(view.getUsername(), view.getPassword());
         view.applyFeedback(feedback);
-        if(feedback==SUCCESS)openUserMenu();
-    }
-    private void fillABCUser(){
-        for (int i = 97; i < 123; i++) {
-            char c  = Character.toUpperCase((char) i);
-            view.addTab(Character.toString(c),model.getAllUserWitchBeginsWith(c));
+        if (feedback == SUCCESS) {
+            openUserMenu();
         }
     }
-    private void fillAllUser(){
-        view.addTab("Alle",model.getAllUser());
+
+    private void fillABCUser() {
+        for (int i = 97; i < 123; i++) {
+            char c = Character.toUpperCase((char) i);
+            view.addTab(Character.toString(c), model.getAllUserWitchBeginsWith(c));
+        }
     }
-    private void openUserMenu(){
+
+    private void fillAllUser() {
+        view.addTab("Alle", model.getAllUser());
+    }
+
+    private void openUserMenu() {
         new UserMenuController(view, LogInModel.getLoggedIn());
     }
 
