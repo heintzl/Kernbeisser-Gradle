@@ -1,11 +1,12 @@
 package kernbeisser.Windows.DefaultSearchWindow;
 
+import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Searchable;
 
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public class DefaultSearchWindowModel<T> {
+public class DefaultSearchWindowModel<T> implements Model {
     private final Searchable<T> searchable;
     private final Consumer<T> selectionAction;
 

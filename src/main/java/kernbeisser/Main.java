@@ -29,7 +29,6 @@ public class Main {
     public static void main(String[] args)
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException, IOException, URISyntaxException {
-        doA(SaleSession.class);
         buildEnvironment();
         if (!ConfigManager.getHeader().getBoolean("dbIsInitialized")) {
             SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));
@@ -85,19 +84,4 @@ public class Main {
         }
     }
 
-    private static void doA(Class c) {
-        printClass(c, e -> doB(c.getSimpleName()) + "_" + doB(e.getName()) + "_READ,\n" + doB(
-                c.getSimpleName()) + "_" + doB(e.getName()) + "_WRITE,");
-    }
-
-    public static String doB(String s) {
-        int pos = 0;
-        for (char c : s.toCharArray()) {
-            if (Character.isUpperCase(c) && pos != 0) {
-                s = s.replaceFirst(c + "", "_" + c);
-            }
-            pos += 2;
-        }
-        return s.toUpperCase();
-    }
 }

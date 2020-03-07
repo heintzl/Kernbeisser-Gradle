@@ -144,7 +144,7 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     private void openSearchWindow() {
-        JOptionPane.showMessageDialog(null, "Hier erscheint dann mal das Suchfenster");
+        controller.openSearchWindow();
     }
 
     private void addToCart() {
