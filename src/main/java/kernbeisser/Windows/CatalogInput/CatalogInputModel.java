@@ -9,7 +9,7 @@ import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
 class CatalogInputModel implements Model {
-    void saveAll(Collection<ItemKK> items){
+    void saveAll(Collection<ItemKK> items) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -19,7 +19,8 @@ class CatalogInputModel implements Model {
         em.close();
         //FINISH
     }
-    void clearCatalog(){
+
+    void clearCatalog() {
         EntityManager em = DBConnection.getEntityManager();
         em.createQuery("delete Item");
         em.close();

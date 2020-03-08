@@ -36,7 +36,7 @@ public class Shelf {
         this.note = note;
     }
 
-    public static List<Shelf> getAll(String condition){
-        return Tools.getAll(Shelf.class,condition);
+    public static List<Shelf> getAll(String condition) {
+        return Tools.getAll(Shelf.class, condition);
     }
 }

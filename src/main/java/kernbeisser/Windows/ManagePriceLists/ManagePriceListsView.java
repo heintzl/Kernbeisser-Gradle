@@ -18,27 +18,29 @@ import javax.persistence.NoResultException;
 import javax.swing.*;
 
 /**
- *
  * @author julik
  */
 public class ManagePriceListsView extends Window implements View {
     /**
      * Creates new form AddPriceLists and
      * fills the priceListChooser with the data from the PriceListTree and add the Listeners
+     *
      * @see PriceListTree
      */
 
     ManagePriceListsController controller;
+
     public ManagePriceListsView(Window current) {
         //TODO Benjamin is working currently on this project
         super(current);
         initComponents();
-        controller=new ManagePriceListsController(this);
+        controller = new ManagePriceListsController(this);
         priceListChooser.setModel(new PriceListTree(false).getModel());
         priceListChooser.addTreeSelectionListener(e -> {
-            if(priceListChooser.getSelectionPath()!=null) {
-                if(priceListChooser.getSelectionPath().getPath().length>1)
-                superPriceList.setText(priceListChooser.getLastSelectedPathComponent().toString());
+            if (priceListChooser.getSelectionPath() != null) {
+                if (priceListChooser.getSelectionPath().getPath().length > 1) {
+                    superPriceList.setText(priceListChooser.getLastSelectedPathComponent().toString());
+                }
             }
         });
 
@@ -108,52 +110,70 @@ public class ManagePriceListsView extends Window implements View {
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel4, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(rename)
-                        .addGap(18, 18, 18)
-                        .addComponent(delete)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 204, Short.MAX_VALUE)
-                        .addComponent(esc)
-                        .addGap(33, 33, 33)
-                        .addComponent(save))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 233, GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1)
-                            .addComponent(superPriceList, GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
-                            .addComponent(jLabel2)
-                            .addComponent(priceListName))))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                      .addComponent(jLabel4, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE,
+                                    GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                      .addGroup(layout.createSequentialGroup()
+                                      .addGap(38, 38, 38)
+                                      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                                      .addGroup(layout.createSequentialGroup()
+                                                                      .addComponent(rename)
+                                                                      .addGap(18, 18, 18)
+                                                                      .addComponent(delete)
+                                                                      .addPreferredGap(
+                                                                              LayoutStyle.ComponentPlacement.RELATED,
+                                                                              204, Short.MAX_VALUE)
+                                                                      .addComponent(esc)
+                                                                      .addGap(33, 33, 33)
+                                                                      .addComponent(save))
+                                                      .addGroup(layout.createSequentialGroup()
+                                                                      .addComponent(jScrollPane1,
+                                                                                    GroupLayout.PREFERRED_SIZE, 233,
+                                                                                    GroupLayout.PREFERRED_SIZE)
+                                                                      .addGap(18, 18, 18)
+                                                                      .addGroup(layout.createParallelGroup(
+                                                                              GroupLayout.Alignment.LEADING, false)
+                                                                                      .addComponent(jLabel1)
+                                                                                      .addComponent(superPriceList,
+                                                                                                    GroupLayout.DEFAULT_SIZE,
+                                                                                                    314,
+                                                                                                    Short.MAX_VALUE)
+                                                                                      .addComponent(jLabel2)
+                                                                                      .addComponent(priceListName))))
+                                      .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(jLabel4)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 422, GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(superPriceList, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(16, 16, 16)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(priceListName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(rename)
-                    .addComponent(save)
-                    .addComponent(esc)
-                    .addComponent(delete))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                      .addGroup(layout.createSequentialGroup()
+                                      .addGap(8, 8, 8)
+                                      .addComponent(jLabel4)
+                                      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                      .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 422,
+                                                                    GroupLayout.PREFERRED_SIZE)
+                                                      .addGroup(layout.createSequentialGroup()
+                                                                      .addComponent(jLabel1)
+                                                                      .addPreferredGap(
+                                                                              LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                      .addComponent(superPriceList,
+                                                                                    GroupLayout.PREFERRED_SIZE,
+                                                                                    GroupLayout.DEFAULT_SIZE,
+                                                                                    GroupLayout.PREFERRED_SIZE)
+                                                                      .addGap(16, 16, 16)
+                                                                      .addComponent(jLabel2)
+                                                                      .addPreferredGap(
+                                                                              LayoutStyle.ComponentPlacement.RELATED)
+                                                                      .addComponent(priceListName,
+                                                                                    GroupLayout.PREFERRED_SIZE,
+                                                                                    GroupLayout.DEFAULT_SIZE,
+                                                                                    GroupLayout.PREFERRED_SIZE)))
+                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                      .addComponent(rename)
+                                                      .addComponent(save)
+                                                      .addComponent(esc)
+                                                      .addComponent(delete))
+                                      .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -162,21 +182,23 @@ public class ManagePriceListsView extends Window implements View {
     /**
      * This function is called if the user has been pressed the save Button to save a SuperGroup, Group or PriceList
      * the Function does only save the groups which not already exits because the Groups have a unique Name
+     *
      * @param evt
      */
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
         String pln = priceListName.getText();
-        if(pln.equals("")){
-            JOptionPane.showMessageDialog(this,"Bitte w\u00e4hlen sie einen korrekten Namen");
+        if (pln.equals("")) {
+            JOptionPane.showMessageDialog(this, "Bitte w\u00e4hlen sie einen korrekten Namen");
             return;
         }
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         PriceList spl;
         try {
-            spl = em.createQuery("select p from PriceList p where name like '"+superPriceList.getText()+"'",PriceList.class).getSingleResult();
-        }catch (NoResultException ignored){
-            spl=null;
+            spl = em.createQuery("select p from PriceList p where name like '" + superPriceList.getText() + "'",
+                                 PriceList.class).getSingleResult();
+        } catch (NoResultException ignored) {
+            spl = null;
         }
         PriceList pl = new PriceList();
         pl.setSuperPriceList(spl);
@@ -187,12 +209,13 @@ public class ManagePriceListsView extends Window implements View {
         et.commit();
         em.close();
         priceListChooser.setModel(new PriceListTree().getModel());
-  }//GEN-LAST:event_saveActionPerformed
+    }//GEN-LAST:event_saveActionPerformed
 
     /**
      * if the user pressed the ESC Button the Window get closed and the finish action gets triggered
-     * @see Finishable
+     *
      * @param evt
+     * @see Finishable
      */
     private void escActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_escActionPerformed
         back();
@@ -201,13 +224,18 @@ public class ManagePriceListsView extends Window implements View {
 
     private void renameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameActionPerformed
         Object o = priceListChooser.getLastSelectedPathComponent();
-        if(o==null)return;
+        if (o == null) {
+            return;
+        }
         EntityManager em = DBConnection.getEntityManager();
-        PriceList pl = em.createQuery("select p from PriceList p where name like "+o.toString(),PriceList.class).getSingleResult();
+        PriceList pl = em.createQuery("select p from PriceList p where name like " + o.toString(), PriceList.class)
+                         .getSingleResult();
         EntityTransaction et = em.getTransaction();
         et.begin();
         String newName = JOptionPane.showInputDialog("Bitte neuen Namen eingeben:");
-        if(newName==null)return;
+        if (newName == null) {
+            return;
+        }
         pl.setName(newName);
         em.unwrap(Session.class).update(pl);
         et.commit();
@@ -217,11 +245,16 @@ public class ManagePriceListsView extends Window implements View {
 
     private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
         Object o = priceListChooser.getLastSelectedPathComponent();
-        if(o==null)return;
+        if (o == null) {
+            return;
+        }
         EntityManager em = DBConnection.getEntityManager();
-        if(JOptionPane.showConfirmDialog(this,"Soll die Preisliste "+priceListName.getText()+" wirklich gel\u00f6scht werden")==0)
-            em.createQuery("delete from PriceList p where name like "+priceListName.getText()).executeUpdate();
-        else return;
+        if (JOptionPane.showConfirmDialog(this,
+                                          "Soll die Preisliste " + priceListName.getText() + " wirklich gel\u00f6scht werden") == 0) {
+            em.createQuery("delete from PriceList p where name like " + priceListName.getText()).executeUpdate();
+        } else {
+            return;
+        }
         priceListChooser.setModel(new PriceListTree(false).getModel());
     }//GEN-LAST:event_deleteActionPerformed
 

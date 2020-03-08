@@ -2,14 +2,11 @@ package kernbeisser.Windows.Purchase;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.Item;
-import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 
 public class PurchaseView extends Window implements View {
@@ -63,7 +60,7 @@ public class PurchaseView extends Window implements View {
                 Column.create("Artikelname", ShoppingItem::getName),
                 Column.create("Anzahl", ShoppingItem::getItemAmount),
                 Column.create("Verkaufs Preis", e -> controller.getPrice(e) / 100f + "€"),
-                Column.create("Netto Preis", e -> controller.getPrice(e)/100f+"€")
+                Column.create("Netto Preis", e -> controller.getPrice(e) / 100f + "€")
         );
     }
 

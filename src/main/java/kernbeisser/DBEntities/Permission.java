@@ -42,7 +42,7 @@ public class Permission {
         this.keySet = keySet;
     }
 
-    public boolean contains(Key key){
+    public boolean contains(Key key) {
         return keySet.contains(key);
     }
 
@@ -51,7 +51,7 @@ public class Permission {
         return name;
     }
 
-    public static List<Permission> getAll(String condition){
-        return Tools.getAll(Permission.class,condition);
+    public static List<Permission> getAll(String condition) {
+        return Tools.getAll(Permission.class, condition);
     }
 }

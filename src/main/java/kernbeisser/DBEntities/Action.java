@@ -73,7 +73,7 @@ public class Action {
         return user;
     }
 
-    public static List<Action> getAll(String condition){
-        return Tools.getAll(Action.class,condition);
+    public static List<Action> getAll(String condition) {
+        return Tools.getAll(Action.class, condition);
     }
 }

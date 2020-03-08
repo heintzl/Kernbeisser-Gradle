@@ -40,7 +40,7 @@ public class SaleSession {
         return sSid;
     }
 
-    public static List<SaleSession> getAll(String condition){
-        return Tools.getAll(SaleSession.class,condition);
+    public static List<SaleSession> getAll(String condition) {
+        return Tools.getAll(SaleSession.class, condition);
     }
 }

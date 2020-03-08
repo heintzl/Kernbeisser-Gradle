@@ -17,7 +17,7 @@ public class Images {
      *
      * @see HashMap
      */
-    private static HashMap<String, BufferedImage> images = new HashMap<>();
+    private static HashMap<String,BufferedImage> images = new HashMap<>();
 
     static {
         collectImages(new File(ConfigManager.getHeader().getString("ImagePath")));
@@ -29,7 +29,9 @@ public class Images {
      * @param f the file(Dictionary) which holds all the image sources
      */
     public static void setPath(File f) {
-        if (!f.exists()) System.out.println("path does not exsits");
+        if (!f.exists()) {
+            System.out.println("path does not exsits");
+        }
         images.clear();
         collectImages(f);
     }
@@ -41,8 +43,9 @@ public class Images {
      * @return return the right image with the given name
      */
     public static BufferedImage getImage(String name) {
-        if (images.containsKey(name))
+        if (images.containsKey(name)) {
             return images.get(name);
+        }
         System.err.println("Image not found");
         return null;
     }
@@ -53,10 +56,13 @@ public class Images {
      * @param dir the Dictionary with the images inside
      */
     private static void collectImages(File dir) {
-        if (!dir.isDirectory()) return;
+        if (!dir.isDirectory()) {
+            return;
+        }
         for (File file : dir.listFiles()) {
-            if (file.isDirectory()) collectImages(file);
-            else {
+            if (file.isDirectory()) {
+                collectImages(file);
+            } else {
                 try {
                     images.put(file.getName(), ImageIO.read(file));
                     System.out.println(file.getName());

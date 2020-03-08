@@ -5,11 +5,12 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Job;
+import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.User;
 import kernbeisser.StartUp.DataImport.DataImportController;
-import kernbeisser.StartUp.DataImport.DataImportView;
 import kernbeisser.Windows.LogIn.LogInController;
-import kernbeisser.Windows.LogIn.LogInView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -26,30 +27,38 @@ public class Main {
      * checks all needed Tables and PriceLists
      * and as least shows the LogIn Window
      */
-    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException, URISyntaxException {
+    public static void main(String[] args)
+            throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
+                   IllegalAccessException, IOException, URISyntaxException {
         doA(SaleSession.class);
         buildEnvironment();
-        if(!ConfigManager.getHeader().getBoolean("Init"))
+        if (!ConfigManager.getHeader().getBoolean("Init")) {
             SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));
-        else
+        } else {
             openLogIn();
+        }
     }
-    public static void buildEnvironment() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException{
+
+    public static void buildEnvironment()
+            throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
+                   IllegalAccessException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         IconFontSwing.register(FontAwesome.getIconFont());
         DBConnection.getEntityManager();
     }
-    private static void openLogIn(){
+
+    private static void openLogIn() {
         SwingUtilities.invokeLater(() -> new LogInController(null));
     }
-    private static void createTestJobs(int count){
+
+    private static void createTestJobs(int count) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
         for (int i = 0; i < count; i++) {
             Job j = new Job();
-            j.setDescription("Test Description: "+i);
-            j.setName("Test Job: "+i);
+            j.setDescription("Test Description: " + i);
+            j.setName("Test Job: " + i);
             em.persist(j);
         }
         em.flush();
@@ -57,32 +66,38 @@ public class Main {
         em.close();
     }
 
-    public static void makeAdmin(User user){
+    public static void makeAdmin(User user) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        User us = em.find(user.getClass(),user.getId());
-        us.getPermissions().add(em.createQuery("select p from Permission p where name like 'Admin'",Permission.class).getSingleResult());
+        User us = em.find(user.getClass(), user.getId());
+        us.getPermissions()
+          .add(em.createQuery("select p from Permission p where name like 'Admin'", Permission.class)
+                 .getSingleResult());
         em.persist(us);
         em.flush();
         et.commit();
         em.close();
     }
 
-    private static void printClass(Class c,Function<Field,String> transformer){
+    private static void printClass(Class c, Function<Field,String> transformer) {
         for (Field field : c.getDeclaredFields()) {
             System.out.println(transformer.apply(field));
         }
     }
-    private static void doA(Class c){
-        printClass(c, e -> doB(c.getSimpleName())+"_"+doB(e.getName())+"_READ,\n"+doB(c.getSimpleName())+"_"+doB(e.getName())+"_WRITE,");
+
+    private static void doA(Class c) {
+        printClass(c, e -> doB(c.getSimpleName()) + "_" + doB(e.getName()) + "_READ,\n" + doB(
+                c.getSimpleName()) + "_" + doB(e.getName()) + "_WRITE,");
     }
-    public static String doB(String s){
+
+    public static String doB(String s) {
         int pos = 0;
         for (char c : s.toCharArray()) {
-            if(Character.isUpperCase(c)&&pos!=0)
-                s = s.replaceFirst(c+"","_"+c);
-                pos+=2;
+            if (Character.isUpperCase(c) && pos != 0) {
+                s = s.replaceFirst(c + "", "_" + c);
+            }
+            pos += 2;
         }
         return s.toUpperCase();
     }

@@ -7,8 +7,9 @@ import java.util.Collection;
 
 public class JobSelectorModel implements Model {
     private Collection<Job> currentJobs;
-    JobSelectorModel(Collection<Job> currentJobs){
-        this.currentJobs=currentJobs;
+
+    JobSelectorModel(Collection<Job> currentJobs) {
+        this.currentJobs = currentJobs;
     }
 
     public Collection<Job> getCurrentJobs() {
@@ -20,7 +21,7 @@ public class JobSelectorModel implements Model {
         currentJobs.addAll(newValue);
     }
 
-    Collection<Job> getAllJobs(){
+    Collection<Job> getAllJobs() {
         return Job.getAll(null);
     }
 }

@@ -24,7 +24,8 @@ public class SurchargeTable implements Serializable, Cloneable {
         DEFAULT = standard;
     }
 
-    public SurchargeTable(){}
+    public SurchargeTable() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -91,16 +92,18 @@ public class SurchargeTable implements Serializable, Cloneable {
         this.supplier = supplier;
     }
 
-    public static List<SurchargeTable> getAll(String condition){
-        return Tools.getAll(SurchargeTable.class,condition);
+    public static List<SurchargeTable> getAll(String condition) {
+        return Tools.getAll(SurchargeTable.class, condition);
     }
 
-    public static Collection<SurchargeTable> defaultSearch(String s, int max){
+    public static Collection<SurchargeTable> defaultSearch(String s, int max) {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<SurchargeTable> out = em.createQuery("select s from SurchargeTable s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",SurchargeTable.class)
-                .setParameter("search",s+"%")
-                .setMaxResults(max)
-                .getResultList();
+        Collection<SurchargeTable> out = em.createQuery(
+                "select s from SurchargeTable s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",
+                SurchargeTable.class)
+                                           .setParameter("search", s + "%")
+                                           .setMaxResults(max)
+                                           .getResultList();
         em.close();
         return out;
     }

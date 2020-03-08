@@ -12,9 +12,9 @@ public class JobSelectorController implements Controller {
     private JobSelectorModel model;
     private JobSelectorView view;
 
-    public JobSelectorController(Window current, Collection<Job> jobs){
-        this.view=new JobSelectorView(current,this);
-        this.model=new JobSelectorModel(jobs);
+    public JobSelectorController(Window current, Collection<Job> jobs) {
+        this.view = new JobSelectorView(current, this);
+        this.model = new JobSelectorModel(jobs);
 
         view.fillSelectedJobs(model.getCurrentJobs());
         Collection<Job> availableJobs = model.getAllJobs();
@@ -27,7 +27,7 @@ public class JobSelectorController implements Controller {
 
     }
 
-    void overrideCurrentJobs(){
+    void overrideCurrentJobs() {
         Collection<Job> newContent = view.getSelectedJobs();
         Collection<Job> currentContent = model.getCurrentJobs();
         currentContent.clear();

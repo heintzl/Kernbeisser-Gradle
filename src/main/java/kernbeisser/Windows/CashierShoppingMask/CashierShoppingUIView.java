@@ -1,8 +1,6 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
 
 public class CashierShoppingUIView {
     private JLabel customerName;

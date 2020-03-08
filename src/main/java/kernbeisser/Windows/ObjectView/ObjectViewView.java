@@ -65,8 +65,9 @@ public class ObjectViewView<T> extends Window {
 
     @Override
     protected void open() {
-        if (controller != null)
+        if (controller != null) {
             controller.refresh();
+        }
         super.open();
     }
 

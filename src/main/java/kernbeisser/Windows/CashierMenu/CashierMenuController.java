@@ -3,7 +3,6 @@ package kernbeisser.Windows.CashierMenu;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskView;
 import kernbeisser.Windows.CatalogInput.CatalogInputController;
-import kernbeisser.Windows.CatalogInput.CatalogInputView;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditItems.EditItems;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
@@ -16,9 +15,9 @@ public class CashierMenuController implements Controller {
     private CashierMenuModel model;
     private CashierMenuView view;
 
-    public CashierMenuController(Window current,User user){
-        this.view= new CashierMenuView(this,current);
-        model=new CashierMenuModel(user);
+    public CashierMenuController(Window current, User user) {
+        this.view = new CashierMenuView(this, current);
+        model = new CashierMenuModel(user);
     }
 
     @Override
@@ -36,26 +35,31 @@ public class CashierMenuController implements Controller {
         return model;
     }
 
-    public void openManageItems(){
+    public void openManageItems() {
         new EditItems(this.getView());
     }
-    public void openManageSurchargeTables(){
+
+    public void openManageSurchargeTables() {
         new EditSurchargeTables(getView());
     }
-    public void openManageUsers(){
+
+    public void openManageUsers() {
         new EditUsers(getView());
     }
-    public void openManagePriceLists(){
+
+    public void openManagePriceLists() {
         new ManagePriceListsView(view);
     }
-    public void openCashierMask(){
-        new CashierShoppingMaskView(model.getUser(),view);
+
+    public void openCashierMask() {
+        new CashierShoppingMaskView(model.getUser(), view);
     }
-    public void openCatalogInput(){
+
+    public void openCatalogInput() {
         new CatalogInputController(view);
     }
 
     public void openTransfer() {
-        new TransactionController(view,model.getUser());
+        new TransactionController(view, model.getUser());
     }
 }

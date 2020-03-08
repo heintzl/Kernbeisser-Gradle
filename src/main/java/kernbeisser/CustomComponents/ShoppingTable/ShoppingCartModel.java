@@ -12,16 +12,16 @@ public class ShoppingCartModel implements Model {
     private final int userSurcharge;
 
 
-    ShoppingCartModel(int userValue,int userSurcharge){
+    ShoppingCartModel(int userValue,int userSurcharge) {
         this.userValue = userValue;
         this.userSurcharge = userSurcharge;
     }
 
-    void addItem(ShoppingItem item){
+    void addItem(ShoppingItem item) {
         ShoppingItem current = shoppingItems.get(item);
-        if(current!=null){
-            current.setItemAmount(item.getItemAmount()+current.getItemAmount());
-        }else {
+        if (current != null) {
+            current.setItemAmount(item.getItemAmount() + current.getItemAmount());
+        } else {
             shoppingItems.put(item,item);
         }
     }
@@ -30,7 +30,7 @@ public class ShoppingCartModel implements Model {
         return userValue;
     }
 
-    Collection<ShoppingItem> getItems(){
+    Collection<ShoppingItem> getItems() {
         return shoppingItems.values();
     }
 

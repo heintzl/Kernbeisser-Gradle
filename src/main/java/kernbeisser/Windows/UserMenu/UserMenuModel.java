@@ -8,15 +8,16 @@ import java.util.Collection;
 
 public class UserMenuModel implements Model {
     private final User owner;
+
     UserMenuModel(User owner) {
-        this.owner=owner;
+        this.owner = owner;
     }
 
     public User getOwner() {
         return owner;
     }
 
-    public Collection<Purchase> getAllPurchase(){
+    public Collection<Purchase> getAllPurchase() {
         return owner.getAllPurchases();
     }
 }

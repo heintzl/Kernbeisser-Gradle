@@ -10,7 +10,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table
@@ -25,7 +28,7 @@ public class User implements Serializable {
 
     @JoinColumn
     @OneToMany
-    private Set<Permission> permissions;
+    private Set<Permission> permissions = new HashSet<>();
 
     @Column
     private int salesLastYear;
@@ -137,7 +140,7 @@ public class User implements Serializable {
         return jobs;
     }
 
-    public void setJobs(Set<Job> jobs){
+    public void setJobs(Set<Job> jobs) {
         this.jobs.clear();
         this.jobs.addAll(jobs);
     }
@@ -251,13 +254,13 @@ public class User implements Serializable {
         return updateDate;
     }
 
-    public static List<User> getAll(String condition){
-        return Tools.getAll(User.class,condition);
+    public static List<User> getAll(String condition) {
+        return Tools.getAll(User.class, condition);
     }
 
-    public static User getById(int id){
+    public static User getById(int id) {
         EntityManager em = DBConnection.getEntityManager();
-        User out = em.createQuery("select u from User u where u.id = "+id,User.class).getSingleResult();
+        User out = em.createQuery("select u from User u where u.id = " + id, User.class).getSingleResult();
         em.close();
         return out;
     }
@@ -278,20 +281,22 @@ public class User implements Serializable {
         this.townCode = townCode;
     }
 
-    public Collection<Transaction> getAllTransactions(){
-        return Transaction.getAll("where from.id = "+id+" or to.id = "+id);
+    public Collection<Transaction> getAllTransactions() {
+        return Transaction.getAll("where from.id = " + id + " or to.id = " + id);
     }
 
-    public Collection<Purchase> getAllPurchases(){
-        return Purchase.getAll("where session.customer.id = "+id);
+    public Collection<Purchase> getAllPurchases() {
+        return Purchase.getAll("where session.customer.id = " + id);
     }
 
-    public static Collection<User> defaultSearch(String s,int max){
+    public static Collection<User> defaultSearch(String s, int max) {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<User> out = em.createQuery("select u from User u where u.firstName like :search or u.surname like :search or u.username like :search order by u.firstName ASC",User.class)
-                .setParameter("search",s+"%")
-                .setMaxResults(max)
-                .getResultList();
+        Collection<User> out = em.createQuery(
+                "select u from User u where u.firstName like :search or u.surname like :search or u.username like :search order by u.firstName ASC",
+                User.class)
+                                 .setParameter("search", s + "%")
+                                 .setMaxResults(max)
+                                 .getResultList();
         em.close();
         return out;
     }
@@ -309,26 +314,33 @@ public class User implements Serializable {
         this.permissions = permissions;
     }
 
-    public boolean hasPermission(Key ... keys){
+    public boolean hasPermission(Key... keys) {
         for (Key key : keys) {
             boolean hasPermission = false;
             for (Permission permission : permissions) {
-                if(permission.contains(key)){
+                if (permission.contains(key)) {
                     hasPermission = true;
                     break;
                 }
             }
-            if(!hasPermission)return false;
+            if (!hasPermission) {
+                return false;
+            }
         }
         return true;
     }
-    public boolean hasPermission(Collection<Key> keys){
+
+    public boolean hasPermission(Collection<Key> keys) {
         for (Key key : keys) {
             boolean hasPermission = false;
             for (Permission permission : permissions) {
-                if(permission.contains(key))hasPermission = true;
+                if (permission.contains(key)) {
+                    hasPermission = true;
+                }
             }
-            if(!hasPermission)return false;
+            if (!hasPermission) {
+                return false;
+            }
         }
         return true;
     }

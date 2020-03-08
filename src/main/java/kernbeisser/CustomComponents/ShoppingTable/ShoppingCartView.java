@@ -21,24 +21,25 @@ public class ShoppingCartView extends JPanel implements View {
     private ObjectTable<ShoppingItem> shoppingItems;
     private final ShoppingCartController controller;
 
-    ShoppingCartView(ShoppingCartController controller){
+    ShoppingCartView(ShoppingCartController controller) {
         this.controller = controller;
         add(main);
     }
 
-    void setObjects(Collection<ShoppingItem> items){
+    void setObjects(Collection<ShoppingItem> items) {
         shoppingItems.setObjects(items);
     }
 
-    void clearNodes(){
+    void clearNodes() {
         shoppingItems.removeAll();
     }
 
-    void setSum(int s){
-        sum.setText(s / 100f +"€");
+    void setSum(int s) {
+        sum.setText(s / 100f + "€");
     }
-    void setValue(int s){
-        value.setText(s / 100f+"€");
+
+    void setValue(int s) {
+        value.setText(s / 100f + "€");
     }
 
     private void createUIComponents() {
@@ -46,38 +47,45 @@ public class ShoppingCartView extends JPanel implements View {
         Font gridFont = new Font("Arial",Font.PLAIN,size);
         EmptyBorder margin = new EmptyBorder(new Insets(10,10,10,10));
         shoppingItems = new ObjectTable<>(
-                Column.create("1", e -> {
+                Column.create("1",e -> {
                     JLabel name = new JLabel(e.getName());
                     name.setBorder(margin);
                     name.setFont(gridFont);
                     return name;
                 }),
-                Column.create("2", e -> {
-                    JLabel discount = new JLabel(e.getDiscount()==PriceCalculator.CONTAINER_DISCOUNT ? "Vorbestellt" : e.getDiscount()+"%");
+                Column.create("2",e -> {
+                    JLabel discount = new JLabel(e.getDiscount() == PriceCalculator.CONTAINER_DISCOUNT
+                                                 ? "Vorbestellt"
+                                                 : e.getDiscount() + "%");
                     discount.setFont(gridFont);
                     discount.setHorizontalAlignment(SwingConstants.RIGHT);
                     return discount;
                 }),
-                Column.create("3", e -> {
-                    JLabel price = new JLabel(controller.getPrice(e)/100f+"€");
+                Column.create("3",e -> {
+                    JLabel price = new JLabel(controller.getPrice(e) / 100f + "€");
                     price.setFont(gridFont);
                     price.setHorizontalAlignment(SwingConstants.RIGHT);
                     return price;
                 }),
-                Column.create("4", e -> {
-                    JLabel amount = new JLabel(e.isWeighAble() ? (e.getUnit().toUnit(e.getAmount()*e.getItemAmount())+ e.getUnit().getShortName()) : e.getItemAmount()+Unit.STACK.getShortName());
+                Column.create("4",e -> {
+                    JLabel amount = new JLabel(
+                            e.isWeighAble()
+                            ? (e.getUnit().toUnit(e.getAmount() * e.getItemAmount()) + e.getUnit()
+                                                                                        .getShortName())
+                            : e.getItemAmount() + Unit.STACK.getShortName());
                     amount.setFont(gridFont);
                     amount.setHorizontalAlignment(SwingConstants.RIGHT);
                     return amount;
                 }),
-                Column.create("delete", (e) -> new JPanel(){
+                Column.create("delete",(e) -> new JPanel() {
                     @Override
                     public void paint(Graphics g) {
-                        g.drawImage(IconFontSwing.buildImage(FontAwesome.TRASH,size+5,Color.RED),(getWidth()/2)-(size/2),3,null);
+                        g.drawImage(IconFontSwing.buildImage(FontAwesome.TRASH,size + 5,Color.RED),
+                                    (getWidth() / 2) - (size / 2),3,null);
                     }
                 },controller::delete)
         );
-        shoppingItems.setRowHeight(size+10);
+        shoppingItems.setRowHeight(size + 10);
         shoppingItems.setGridColor(Color.WHITE);
         shoppingItems.setComplex(true);
         shoppingItems.setTableHeader(null);

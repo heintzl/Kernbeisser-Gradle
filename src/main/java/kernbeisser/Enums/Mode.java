@@ -1,6 +1,6 @@
 package kernbeisser.Enums;
 
-public enum  Mode {
+public enum Mode {
     EDIT,
     ADD,
     REMOVE

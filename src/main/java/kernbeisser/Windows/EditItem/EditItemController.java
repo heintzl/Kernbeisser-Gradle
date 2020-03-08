@@ -11,13 +11,15 @@ public class EditItemController implements Controller {
 
     private EditItemView view;
     private EditItemModel model;
-    public EditItemController(Window current, Item item, Mode mode){
-        model=new EditItemModel(item != null ? item : new Item(),mode);
-        if(mode==Mode.REMOVE){
+
+    public EditItemController(Window current, Item item, Mode mode) {
+        model = new EditItemModel(item != null ? item : new Item(), mode);
+        if (mode == Mode.REMOVE) {
             model.doAction(item);
             return;
+        } else {
+            this.view = new EditItemView(this, current);
         }
-        else this.view=new EditItemView(this,current);
         view.setPriceLists(model.getAllPriceLists());
         view.setSuppliers(model.getAllSuppliers());
         view.setUnits(model.getAllUnits());
@@ -44,8 +46,9 @@ public class EditItemController implements Controller {
                 return;
             }
             if (data.getBarcode() != null) {
-                if (model.barcodeExists(data.getBarcode()))
+                if (model.barcodeExists(data.getBarcode())) {
                     view.barcodeAlreadyExists();
+                }
             }
         }
         if (model.doAction(view.collectItem(model.getSource()))) {

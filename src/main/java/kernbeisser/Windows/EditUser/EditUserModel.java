@@ -21,14 +21,16 @@ public class EditUserModel implements Model {
     public EditUserModel(User user, Mode mode) {
         this.user = user;
         this.mode = mode;
-        if(mode==Mode.ADD)user.setPassword(null);
+        if (mode == Mode.ADD) {
+            user.setPassword(null);
+        }
     }
 
-    Collection<Permission> getAllPermission(){
+    Collection<Permission> getAllPermission() {
         return Permission.getAll(null);
     }
 
-    boolean doAction(User user){
+    boolean doAction(User user) {
         try {
             switch (mode) {
                 case ADD:
@@ -42,25 +44,28 @@ public class EditUserModel implements Model {
                     break;
             }
             return true;
-        }catch (PersistenceException e){
+        } catch (PersistenceException e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    boolean usernameExists(String username){
+    boolean usernameExists(String username) {
         EntityManager em = DBConnection.getEntityManager();
-        boolean exists = em.createQuery("select id from User where username like :username").setParameter("username",username).getResultList().size()>0;
+        boolean exists = em.createQuery("select id from User where username like :username")
+                           .setParameter("username", username)
+                           .getResultList()
+                           .size() > 0;
         em.close();
         return exists;
     }
 
     private void remove(User user) {
-        Tools.delete(user,user.getId());
+        Tools.delete(user, user.getId());
     }
 
     private void edit(User user) {
-        Tools.edit(user.getId(),user);
+        Tools.edit(user.getId(), user);
     }
 
     private void add(User user) {

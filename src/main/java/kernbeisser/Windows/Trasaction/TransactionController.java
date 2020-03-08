@@ -11,12 +11,14 @@ import kernbeisser.Windows.Window;
 public class TransactionController implements Controller {
     private TransactionModel model;
     private TransactionView view;
-    public TransactionController(Window current,User user){
+
+    public TransactionController(Window current, User user) {
         model = new TransactionModel();
-        view = new TransactionView(current,this);
+        view = new TransactionView(current, this);
         view.setFromEnabled(user.hasPermission(Key.ACTION_TRANSACTION_FROM_OTHER));
         view.setFromKB(user.hasPermission(Key.ACTION_TRANSACTION_FROM_KB));
     }
+
     @Override
     public View getView() {
         return view;
@@ -28,7 +30,9 @@ public class TransactionController implements Controller {
     }
 
     void transfer() {
-        if(!view.confirm())return;
+        if (!view.confirm()) {
+            return;
+        }
         model.transfer();
         view.success();
         model.getTransactions().clear();
@@ -37,17 +41,17 @@ public class TransactionController implements Controller {
 
     void addTransaction() {
         Transaction transaction = new Transaction();
-        if(view.isFromKB()){
+        if (view.isFromKB()) {
             transaction.setFrom(null);
-        }else {
+        } else {
             User from = model.findUser(view.getFrom());
-            if(from==null){
+            if (from == null) {
                 view.invalidFrom();
                 return;
             }
         }
         User to = model.findUser(view.getTo());
-        if(to==null){
+        if (to == null) {
             view.invalidTo();
             return;
         }
