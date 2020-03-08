@@ -4,8 +4,11 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.Window;
 
@@ -21,6 +24,7 @@ public class ShoppingMaskUIController implements Controller {
                                                                                         .getSolidaritySurcharge());
         this.view = new ShoppingMaskUIView(current, this, shoppingCartController);
         view.loadUserInfo(saleSession.getCustomer());
+        view.maximize();
         //view.fillWithoutBarcode(model.getAllItemsWithoutBarcode());
     }
 
@@ -52,6 +56,7 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     private ShoppingItem extract() {
+        int nettoizedPrice = PriceCalculator.getNetFromGross(view.getPrice(),view.isVatLow());
         switch (view.getOption()) {
             case ShoppingMaskUIView.ARTICLE_NUMBER:
                 Item i = null;
@@ -80,18 +85,19 @@ public class ShoppingMaskUIController implements Controller {
                 }
                 return out;
             case ShoppingMaskUIView.BAKED_GOODS:
-                return ShoppingItem.getBakeryProduct(view.getPrice());
+                return ShoppingItem.getBakeryProduct(nettoizedPrice);
             case ShoppingMaskUIView.DEPOSIT:
                 return ShoppingItem.getDeposit(view.getDeposit());
             case ShoppingMaskUIView.CUSTOM_PRODUCT:
                 ShoppingItem o = new ShoppingItem();
                 o.setItemAmount((int) view.getAmount());
-                o.setItemNetPrice(view.getPrice());
+                o.setItemNetPrice(nettoizedPrice);
                 o.setName(view.getItemName());
                 o.setAmount(o.getUnit().toUnit(view.getAmount()));
+                o.setVatLow(view.isVatLow());
                 return o;
             case ShoppingMaskUIView.PRODUCE:
-                return ShoppingItem.getOrganic(view.getPrice());
+                return ShoppingItem.getOrganic(nettoizedPrice);
             case ShoppingMaskUIView.RETURN_DEPOSIT:
                 return ShoppingItem.getDeposit(-view.getDeposit());
             default:
@@ -202,5 +208,9 @@ public class ShoppingMaskUIController implements Controller {
     void startPay() {
         new PayController(view, model.getSaleSession(), model.getShoppingCart(), () -> {
         });
+    }
+
+    public void editUserAction() {
+        new EditUserController(view, model.getSaleSession().getCustomer(), Mode.EDIT);
     }
 }

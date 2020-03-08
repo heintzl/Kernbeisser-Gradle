@@ -21,6 +21,7 @@ public class ShoppingMaskModel implements Model {
 
     ShoppingMaskModel(SaleSession saleSession) {
         this.saleSession = saleSession;
+        this.value = saleSession.getCustomer().getUserGroup().getValue();
     }
 
     Item searchItem(String itemNumber) {

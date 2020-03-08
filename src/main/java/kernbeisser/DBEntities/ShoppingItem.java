@@ -93,6 +93,7 @@ public class ShoppingItem implements Serializable {
             organic.setName("Obst und Gem\u00fcse");
             organic.setDeleteAllowed(false);
             organic.setKbNumber(-1);
+            organic.setVatLow(true);
             organic.setUnit(Unit.STACK);
             em.persist(organic);
             em.flush();
@@ -121,6 +122,7 @@ public class ShoppingItem implements Serializable {
             bakeryProduct.setUnit(Unit.STACK);
             bakeryProduct.setDeleteAllowed(false);
             bakeryProduct.setKbNumber(-2);
+            bakeryProduct.setVatLow(true);
             em.persist(bakeryProduct);
             em.flush();
             et.commit();

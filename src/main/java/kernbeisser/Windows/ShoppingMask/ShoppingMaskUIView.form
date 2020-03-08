@@ -5,7 +5,10 @@
     <constraints>
       <xy x="20" y="20" width="1284" height="842"/>
     </constraints>
-    <properties/>
+    <properties>
+      <minimumSize width="1024" height="707"/>
+      <preferredSize width="1280" height="689"/>
+    </properties>
     <border type="none"/>
     <children>
       <splitpane id="639a9">
@@ -52,7 +55,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="f551f" binding="ShoppingItemPanel" layout-manager="GridBagLayout">
+              <grid id="f551f" binding="shoppingItemPanel" layout-manager="GridBagLayout">
                 <constraints border-constraint="Center"/>
                 <properties>
                   <autoscrolls value="true"/>
@@ -426,7 +429,6 @@
                     <properties>
                       <borderPainted value="false"/>
                       <contentAreaFilled value="false"/>
-                      <icon value="Images/Icons/cart-icon32.png"/>
                       <inheritsPopupMenu value="true"/>
                       <label value=""/>
                       <text value=""/>
@@ -441,10 +443,9 @@
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <borderPainted value="false"/>
+                      <borderPainted value="true"/>
                       <contentAreaFilled value="false"/>
                       <enabled value="true"/>
-                      <icon value="Images/Icons/cart-icon32.png"/>
                       <inheritsPopupMenu value="true"/>
                       <label value=""/>
                       <text value=""/>
@@ -458,9 +459,8 @@
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <borderPainted value="false"/>
+                      <borderPainted value="true"/>
                       <contentAreaFilled value="false"/>
-                      <icon value="Images/Icons/cart-icon32.png"/>
                       <inheritsPopupMenu value="true"/>
                       <label value=""/>
                       <text value=""/>
@@ -513,9 +513,8 @@
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <borderPainted value="false"/>
+                      <borderPainted value="true"/>
                       <contentAreaFilled value="false"/>
-                      <icon value="Images/Icons/zoom-seach-icon32.png"/>
                       <inheritsPopupMenu value="true"/>
                       <label value=""/>
                       <text value=""/>
@@ -620,7 +619,6 @@
                     <properties>
                       <borderPainted value="false"/>
                       <contentAreaFilled value="false"/>
-                      <icon value="Images/Icons/pencil-icon32.png"/>
                       <inheritsPopupMenu value="true"/>
                       <label value=""/>
                       <text value=""/>

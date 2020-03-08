@@ -1,5 +1,7 @@
 package kernbeisser.Windows.ShoppingMask;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Item;
@@ -11,6 +13,7 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -28,7 +31,7 @@ public class ShoppingMaskUIView extends Window implements View {
     private JLabel customerName;
     private JPanel MainPanel;
     private JPanel westUpperPanel;
-    private JPanel ShoppingItemPanel;
+    private JPanel shoppingItemPanel;
     private JRadioButton optProduce;
     private JRadioButton optBakedGoods;
     private JRadioButton optArticleNo;
@@ -84,10 +87,16 @@ public class ShoppingMaskUIView extends Window implements View {
         add(MainPanel);
         checkout.addActionListener(e -> doCheckout());
         cancelSalesSession.addActionListener(e -> doCancel());
+        searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
         searchArticle.addActionListener(e -> openSearchWindow());
+        addPrice.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addPrice.addActionListener(e -> addToCart());
+        addDeposit.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addDeposit.addActionListener(e -> addToCart());
+        addAmount.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addAmount.addActionListener(e -> addToCart());
+        editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
+        editUser.addActionListener(e -> editUserAction());
         optProduce.addItemListener(e -> articleTypeChange('p'));
         optBakedGoods.addItemListener(e -> articleTypeChange('b'));
         optArticleNo.addItemListener(e -> articleTypeChange('a'));
@@ -149,6 +158,7 @@ public class ShoppingMaskUIView extends Window implements View {
     private void addToCart() {
         controller.addToShoppingCart();
     }
+    private void editUserAction() {controller.editUserAction();}
 
     public void setKbNumber(String value) {
         this.kbNumber.setText(value);
@@ -228,10 +238,10 @@ public class ShoppingMaskUIView extends Window implements View {
             setPrice("");
             priceUnit.setVisible("pbac".indexOf(type) != -1);
             setPriceUnit("€");
-            amount.setVisible(type == 'a');
+            amount.setVisible("ac".indexOf(type) != -1);
+            amount.setText("1");
             setAmountUnit("");
             articleAmount.setVisible(type == 'a');
-            articleAmount.setEnabled(type == 'c');
             setArticleUnit("");
             articleUnit.setVisible(type == 'a');
             deposit.setEnabled("cdr".indexOf(type) != -1);
@@ -243,21 +253,27 @@ public class ShoppingMaskUIView extends Window implements View {
             if (type == 'p') {
                 setArticleName("Obst & Gemüse");
                 price.requestFocusInWindow();
+                shoppingItemPanel.getRootPane().setDefaultButton(addPrice);
             } else if (type == 'b') {
                 setArticleName("Backwaren");
                 price.requestFocusInWindow();
+                shoppingItemPanel.getRootPane().setDefaultButton(addPrice);
             } else if (type == 'd') {
                 setArticleName("Pfand-Behälter");
                 deposit.requestFocusInWindow();
+                shoppingItemPanel.getRootPane().setDefaultButton(addDeposit);
             } else if (type == 'r') {
                 setArticleName("Pfand zurück");
                 deposit.requestFocusInWindow();
+                shoppingItemPanel.getRootPane().setDefaultButton(addDeposit);
             } else if (type == 'a') {
                 setArticleName("");
                 kbNumber.requestFocusInWindow();
+                shoppingItemPanel.getRootPane().setDefaultButton(addAmount);
             } else if (type == 'c') {
                 setArticleName("");
                 articleName.requestFocusInWindow();
+                shoppingItemPanel.getRootPane().setDefaultButton(addPrice);
             }
             articleName.setEnabled(type == 'c');
         }
@@ -370,10 +386,11 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     public String getItemName() {
-        return articleName.getName();
+        return articleName.getText();
     }
 
     public int getDeposit() {
         return (int) (deposit.getValue() * 100);
     }
+    public boolean isVatLow() { return optTaxLow.isSelected(); }
 }

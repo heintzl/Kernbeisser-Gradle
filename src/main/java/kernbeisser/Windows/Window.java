@@ -63,6 +63,7 @@ public class Window extends JFrame {
         setVisible(false);
     }
 
+    public void maximize() {this.setState(MAXIMIZED_BOTH);}
     /**
      * Custom action after the window become cosed
      **/
