@@ -5,6 +5,7 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Unit;
 import kernbeisser.Price.PriceCalculator;
@@ -77,8 +78,7 @@ public class ShoppingMaskUIView extends Window implements View {
     private ButtonGroup optGrpArticleType;
     private char currentArticleType;
 
-    public ShoppingMaskUIView(Window window, ShoppingMaskUIController controller,
-                              ShoppingCartController shoppingCartController) {
+    public ShoppingMaskUIView(Window window, ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         super(window);
         this.cartController = shoppingCartController;
         this.controller = controller;
@@ -114,28 +114,6 @@ public class ShoppingMaskUIView extends Window implements View {
         setLocationRelativeTo(window);
     }
 
-    /*    void loadItemStats(Item i){
-            if(i!=null){
-                selectedItem.setText(i.getName());
-                unit.setText(new Translator().translate(i.getUnit()));
-                price.setText(i.calculatePrice()/100f+"\u20AC");
-                itemAmountInfo.setText("Menge: "+i.getAmount());
-                itemNameInfo.setText("Artikelname: "+i.getName());
-                itemNumberInfo.setText("Artikelnummer: "+i.getKbNumber());
-                itemPriceInfo.setText("Preis: "+i.calculatePrice()/100f+"\u20AC");
-                editBarcodeField.setText(i.getBarcode()+"");
-            }else {
-                selectedItem.setText("Kein Ergebniss");
-                price.setText("0.00\u20AC");
-                unit.setText("");
-                itemAmountInfo.setText("Menge: ");
-                itemNameInfo.setText("Artikelname: ");
-                itemNumberInfo.setText("Artikelnummer: ");
-                itemPriceInfo.setText("Preis: ");
-                editBarcodeField.setText("");
-            }
-        }
-    */
     private void doCancel() {
 
     }
@@ -189,10 +167,11 @@ public class ShoppingMaskUIView extends Window implements View {
         return controller;
     }
 
-    void loadUserInfo(User user) {
-        customerName.setText(user.getFirstName() + " " + user.getSurname());
-        customerLoginName.setText(user.getUsername());
-        customerCredit.setText(user.getUserGroup().getValue() / 100f + "\u20AC");
+    void loadUserInfo(SaleSession saleSession) {
+        customerName.setText(saleSession.getCustomer().getFirstName() + " " + saleSession.getCustomer().getSurname());
+        customerLoginName.setText(saleSession.getCustomer().getUsername());
+        customerCredit.setText(saleSession.getCustomer().getUserGroup().getValue() / 100f + "\u20AC");
+        salesPerson1.setText("");
     }
 
     private void articleTypeChange(char type) {

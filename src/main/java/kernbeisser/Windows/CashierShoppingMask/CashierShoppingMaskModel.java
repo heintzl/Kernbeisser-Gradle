@@ -1,22 +1,11 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.Model;
 
 import java.util.Collection;
 
-public class CashierShoppingMaskModel implements Model {
-    private User seller;
-
-    CashierShoppingMaskModel(User seller) {
-        this.seller = seller;
-    }
-
-    public User getSeller() {
-        return seller;
-    }
-
-    Collection<User> getAllUser() {
-        return User.getAll(null);
+public class CashierShoppingMaskModel {
+    public Collection<User> getUsers(String search) {
+        return User.defaultSearch(search,500);
     }
 }

@@ -5,11 +5,9 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Item;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.RawPrice;
-import kernbeisser.Enums.VAT;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.DefaultSearchWindow.DefaultSearchWindowController;
+import kernbeisser.Windows.DefaultSearchPanel.DefaultSearchPanelController;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.Window;
 
@@ -119,10 +117,10 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void openSearchWindow() {
-        new DefaultSearchWindowController<Item>(view, Item::defaultSearch, view::loadItemStats,
-                                                Column.create("Name",Item::getName),
-                                                Column.create("Barcode",Item::getBarcode),
-                                                Column.create("Lieferant",e -> e.getSupplier().getShortName())
-        );
+        new DefaultSearchPanelController<Item>(Item::defaultSearch, view::loadItemStats,
+                                               Column.create("Name",Item::getName),
+                                               Column.create("Barcode",Item::getBarcode),
+                                               Column.create("Lieferant",e -> e.getSupplier().getShortName())
+        ).getView().asWindow(view);
     }
 }

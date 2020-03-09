@@ -1,4 +1,4 @@
-package kernbeisser.Windows.DefaultSearchWindow;
+package kernbeisser.Windows.DefaultSearchPanel;
 
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -10,11 +10,10 @@ import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableColumnModel;
 import java.awt.*;
 import java.util.Collection;
 
-public class DefaultSearchWindowView<T> extends Window implements View {
+public class DefaultSearchPanelView<T> extends JPanel implements View {
     private ObjectTable<T> values;
     private JPanel main;
     private JButton choose;
@@ -22,11 +21,9 @@ public class DefaultSearchWindowView<T> extends Window implements View {
     private IntegerParseField max;
     private PermissionField search;
 
-    DefaultSearchWindowView(Window current, DefaultSearchWindowController<T> controller) {
-        super(current);
+    DefaultSearchPanelView(DefaultSearchPanelController<T> controller) {
         add(main);
         setSize(500,600);
-        setLocationRelativeTo(current);
         choose.setEnabled(false);
         choose.addActionListener(e -> controller.choose());
         search.addActionListener(e -> controller.refresh());
@@ -41,6 +38,12 @@ public class DefaultSearchWindowView<T> extends Window implements View {
 
     T getSelectedValue() {
         return values.getSelectedObject();
+    }
+
+    public Window asWindow(Window current){
+        Window out = new Window(current);
+        out.add(this);
+        return out;
     }
 
     void setColumns(Collection<Column<T>> columns) {

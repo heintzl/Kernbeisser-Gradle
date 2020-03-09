@@ -1,4 +1,4 @@
-package kernbeisser.Windows.DefaultSearchWindow;
+package kernbeisser.Windows.DefaultSearchPanel;
 
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Searchable;
@@ -6,11 +6,11 @@ import kernbeisser.Windows.Searchable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public class DefaultSearchWindowModel<T> implements Model {
+public class DefaultSearchPanelModel<T> implements Model {
     private final Searchable<T> searchable;
     private final Consumer<T> selectionAction;
 
-    public DefaultSearchWindowModel(Searchable<T> searchable, Consumer<T> selectionAction) {
+    public DefaultSearchPanelModel(Searchable<T> searchable, Consumer<T> selectionAction) {
         this.searchable = searchable;
         this.selectionAction = selectionAction;
     }
