@@ -4,7 +4,6 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 
 public class ShoppingCartController implements Controller {
     private ShoppingCartView view;

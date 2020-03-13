@@ -9,8 +9,6 @@ import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.Window;
 
-import java.awt.*;
-
 public class UserMenuController implements Controller {
     private UserMenuView view;
     private UserMenuModel model;
@@ -28,7 +26,7 @@ public class UserMenuController implements Controller {
     }
 
     @Override
-    public View getView() {
+    public UserMenuView getView() {
         return view;
     }
 

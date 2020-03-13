@@ -22,7 +22,7 @@ public class ShoppingMaskUIController implements Controller {
                                                                                         .getCustomer()
                                                                                         .getSolidaritySurcharge());
         this.view = new ShoppingMaskUIView(current, this, shoppingCartController);
-        view.loadUserInfo(saleSession.getCustomer());
+        view.loadUserInfo(saleSession);
     }
 
     void addToShoppingCart() {

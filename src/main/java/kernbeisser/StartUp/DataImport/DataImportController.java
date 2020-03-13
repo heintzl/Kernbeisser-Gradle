@@ -2,12 +2,12 @@ package kernbeisser.StartUp.DataImport;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.Config.ConfigManager;
+import kernbeisser.CustomComponents.DatePicker.DatePickerView;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 import org.json.JSONObject;
 
@@ -359,7 +359,7 @@ public class DataImportController implements Controller {
     }
 
     @Override
-    public View getView() {
+    public DataImportView getView() {
         return view;
     }
 

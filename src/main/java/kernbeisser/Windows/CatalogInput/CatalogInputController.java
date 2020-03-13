@@ -2,15 +2,11 @@ package kernbeisser.Windows.CatalogInput;
 
 import kernbeisser.DBEntities.ItemKK;
 import kernbeisser.Enums.Unit;
-import kernbeisser.Exeptions.FileReadException;
-import kernbeisser.Exeptions.ObjectParseException;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

@@ -3,7 +3,6 @@ package kernbeisser.Windows.JobSelector;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import java.util.Collection;
@@ -35,7 +34,7 @@ public class JobSelectorController implements Controller {
     }
 
     @Override
-    public View getView() {
+    public JobSelectorView getView() {
         return view;
     }
 

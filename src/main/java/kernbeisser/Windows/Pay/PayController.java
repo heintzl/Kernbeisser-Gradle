@@ -5,7 +5,6 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import java.util.Collection;
@@ -43,7 +42,7 @@ public class PayController implements Controller {
     }
 
     @Override
-    public View getView() {
+    public PayView getView() {
         return view;
     }
 

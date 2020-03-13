@@ -1,5 +1,6 @@
 package kernbeisser.Windows.CashierMenu;
 
+import kernbeisser.CustomComponents.DatePicker.DatePickerView;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.CatalogInput.CatalogInputController;

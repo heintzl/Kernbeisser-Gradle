@@ -5,7 +5,6 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 public class TransactionController implements Controller {
@@ -20,7 +19,7 @@ public class TransactionController implements Controller {
     }
 
     @Override
-    public View getView() {
+    public TransactionView getView() {
         return view;
     }
 

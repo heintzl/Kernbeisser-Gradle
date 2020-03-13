@@ -5,10 +5,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.JobSelector.JobSelectorController;
-import kernbeisser.Windows.JobSelector.JobSelectorView;
 import kernbeisser.Windows.Window;
-
-import javax.swing.*;
 
 public class EditUserController implements Controller {
     private EditUserView view;
