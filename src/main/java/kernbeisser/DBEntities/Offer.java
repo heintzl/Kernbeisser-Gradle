@@ -3,11 +3,12 @@ package kernbeisser.DBEntities;
 import kernbeisser.Enums.Repeat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
 @Table
-public class Offer {
+public class Offer implements Serializable {
     @Id
     @GeneratedValue
     private int oid;
@@ -61,5 +62,15 @@ public class Offer {
 
     public void setRepeatMode(Repeat repeat) {
         this.repeatMode = repeat;
+    }
+
+    @Override
+    public int hashCode() {
+        return oid;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return ((Offer)obj).oid == oid;
     }
 }

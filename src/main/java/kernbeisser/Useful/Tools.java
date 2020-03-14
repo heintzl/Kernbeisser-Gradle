@@ -281,11 +281,11 @@ public class Tools {
         }
     }
 
-    public static <T> void delete(T t, Object key) {
+    public static <T> void delete(Class<T> t, Object key) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.remove(em.find(t.getClass(), key));
+        em.remove(em.find(t, key));
         em.flush();
         et.commit();
         em.close();

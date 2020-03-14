@@ -19,7 +19,6 @@ public class DatePickerView extends Window implements View {
         super(current);
         add(main);
         setSize(200,226);
-        setLocationRelativeTo(null);
         monthSelection.addActionListener(e -> datePickerController.loadMonth());
         chooseButton.addActionListener(e -> datePickerController.commit());
         monthDays.addMouseListener(new MouseAdapter() {

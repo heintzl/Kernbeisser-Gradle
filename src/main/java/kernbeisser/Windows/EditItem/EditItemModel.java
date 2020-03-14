@@ -47,7 +47,7 @@ public class EditItemModel implements Model {
     }
 
     private void removeItem(Item item) {
-        Tools.delete(item.getIid(), item);
+        Tools.delete(Item.class,item.getIid());
     }
 
     private void editItem(Item item) {

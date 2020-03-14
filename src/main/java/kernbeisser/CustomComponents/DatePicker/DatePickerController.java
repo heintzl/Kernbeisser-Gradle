@@ -14,6 +14,7 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 public class DatePickerController implements Controller {
     private DatePickerView view;
@@ -26,7 +27,7 @@ public class DatePickerController implements Controller {
         new DatePickerController(null);
     }
 
-    DatePickerController(Window current){
+    public DatePickerController(Window current){
         view = new DatePickerView(current,this);
         model = new DatePickerModel();
         loadMonth();
@@ -56,9 +57,10 @@ public class DatePickerController implements Controller {
 
     void select() {
         if(view.getSelectedDay()==-1)return;
-        model.setSelectedDate(Year.now().atMonth(view.getSelectedMonth()+1).atDay(view.getSelectedDay()));
-        view.setSelectionButtonText(model.getSelectedDate().getDayOfWeek().getDisplayName(TextStyle.FULL_STANDALONE,
-                                                                                          Locale.GERMANY)+" "+model.getSelectedDate().getDayOfMonth()+" "+model.getSelectedDate().getMonth().getDisplayName(TextStyle.FULL, Locale.GERMANY));
+        LocalDate date = Year.now().atMonth(view.getSelectedMonth()+1).atDay(view.getSelectedDay());
+        if(date.equals(model.getSelectedDate()))commit();
+        else model.setSelectedDate(date);
+        view.setSelectionButtonText(date.getDayOfWeek().getDisplayName(TextStyle.FULL_STANDALONE, Locale.GERMANY)+" "+date.getDayOfMonth()+" "+date.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMANY));
     }
 
     public LocalDate getSelectedValue(){
@@ -78,14 +80,19 @@ public class DatePickerController implements Controller {
     }
 
     @Override
-    public Model getModel() {
+    public DatePickerModel getModel() {
         return model;
     }
 
-    public static LocalDate requestDate(Window current){
+    public static void requestDate(Window current, Consumer<LocalDate> select){
+        new DatePickerController(null){
+            @Override
+            public void finish() {
+                current.setEnabled(true);
+                current.requestFocus();
+                select.accept(getModel().getSelectedDate());
+            }
+        };
         current.setEnabled(false);
-        DatePickerController controller = new DatePickerController(current);
-        Object lock = new Object();
-        return controller.getSelectedValue();
     }
 }

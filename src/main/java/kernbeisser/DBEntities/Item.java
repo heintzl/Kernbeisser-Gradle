@@ -99,18 +99,18 @@ public class Item {
     private int sold;
 
     @JoinColumn
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Offer> specialPriceMonth = new ArrayList<>();
 
     @Column
     private int delivered;
 
     @Column
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<Integer> invShelf = new ArrayList<>(5);
 
     @Column
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<Integer> invStock = new ArrayList<>(5);
 
     @Column

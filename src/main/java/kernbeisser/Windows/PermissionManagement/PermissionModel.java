@@ -51,7 +51,7 @@ class PermissionModel implements Model {
     }
 
     void deletePermission(Permission selectedObject) {
-        Tools.delete(selectedObject, selectedObject.getId());
+        Tools.delete(Permission.class, selectedObject.getId());
     }
 
     void addPermission(String permissionName) {
