@@ -1,7 +1,7 @@
 package kernbeisser.Windows.CatalogInput;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.ItemKK;
+import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -9,7 +9,7 @@ import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
 class CatalogInputModel implements Model {
-    void saveAll(Collection<ItemKK> items) {
+    void saveAll(Collection<ArticleKornkraft> items) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -22,7 +22,7 @@ class CatalogInputModel implements Model {
 
     void clearCatalog() {
         EntityManager em = DBConnection.getEntityManager();
-        em.createQuery("delete Item");
+        em.createQuery("delete Article");
         em.close();
     }
 }

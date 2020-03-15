@@ -41,7 +41,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="32fc9" class="javax.swing.JButton" binding="commit">
+              <component id="32fc9" class="javax.swing.JButton" binding="commitPayment">
                 <constraints/>
                 <properties>
                   <foreground color="-10634437"/>

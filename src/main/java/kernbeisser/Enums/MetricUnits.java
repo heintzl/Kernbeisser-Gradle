@@ -2,7 +2,7 @@ package kernbeisser.Enums;
 
 import kernbeisser.Useful.Named;
 
-public enum Unit implements Named {
+public enum MetricUnits implements Named {
     GRAM("Gramm", "g") {},
     KILOGRAM("Kilogramm", "kg") {
         @Override
@@ -34,7 +34,7 @@ public enum Unit implements Named {
 
     private final String name;
 
-    Unit(String s, String shortName) {
+    MetricUnits(String s, String shortName) {
         this.name = s;
         this.shortName = shortName;
     }

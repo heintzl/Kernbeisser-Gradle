@@ -8,7 +8,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DateParseField;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Repeat;
@@ -27,7 +27,7 @@ public class SpecialPriceEditorView extends Window implements View {
     private kernbeisser.CustomComponents.TextFields.DateParseField from;
     private kernbeisser.CustomComponents.TextFields.DateParseField to;
     private JComboBox<Repeat> repeat;
-    private SearchBoxView<Item> searchBox;
+    private SearchBoxView<Article> searchBox;
     private DoubleParseField specialNetPrice;
     private JButton remove;
     private JButton add;
@@ -96,11 +96,13 @@ public class SpecialPriceEditorView extends Window implements View {
     }
 
     private void createUIComponents() {
-        SearchBoxController<Item> searchBoxController = new SearchBoxController<>(Item::defaultSearch, controller::load,
-                                                                                  Column.create("Name",Item::getName),
-                                                                                  Column.create("Barcode",Item::getBarcode),
-                                                                                  Column.create("Lieferant",Item::getSupplier),
-                                                                                  Column.create("Kernbeissernummer",Item::getKbNumber)
+        SearchBoxController<Article> searchBoxController = new SearchBoxController<>(Article::defaultSearch, controller::load,
+                                                                                     Column.create("Name", Article::getName),
+                                                                                     Column.create("Barcode", Article::getBarcode),
+                                                                                     Column.create("Lieferant",
+                                                                                                   Article::getSupplier),
+                                                                                     Column.create("Kernbeissernummer",
+                                                                                                   Article::getKbNumber)
         );
         searchBox = searchBoxController.getView();
         offers = new ObjectTable<>(Column.create("Von",Offer::getFromDate),Column.create("Bis",Offer::getToDate),Column.create("Aktionsnettopreis",Offer::getSpecialNetPrice),Column.create("Wiederholung",Offer::getRepeatMode));

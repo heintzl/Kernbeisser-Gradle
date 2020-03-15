@@ -1,7 +1,7 @@
 package kernbeisser.Windows.ShoppingMask;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Price.PriceCalculator;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class ShoppingMaskModel implements Model {
-    private Item selected = null;
+    private Article selected = null;
     private int value;
     private Collection<ShoppingItem> shoppingCart = new ArrayList<>();
     private SaleSession saleSession;
@@ -23,14 +23,14 @@ public class ShoppingMaskModel implements Model {
         this.saleSession = saleSession;
     }
 
-    Item searchItem(String itemNumber) {
+    Article searchItem(String itemNumber) {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("select i from Item i where kbNumber = '" + itemNumber + "'", Item.class)
+            return em.createQuery("select i from Article i where i.kbNumber = '" + itemNumber + "'", Article.class)
                      .getSingleResult();
         } catch (NoResultException e) {
             try {
-                return em.createQuery("select i from Item i where barcode like '%" + itemNumber + "'", Item.class)
+                return em.createQuery("select i from Article i where i.barcode like '%" + itemNumber + "'", Article.class)
                          .setMaxResults(1)
                          .getSingleResult();
             } catch (NoResultException e1) {
@@ -51,32 +51,32 @@ public class ShoppingMaskModel implements Model {
         return out;
     }
 
-    Collection<Item> searchItems(String search, boolean searchName, boolean searchPriceList, boolean searchKBNumber,
-                                 boolean searchBarcode) {
-        Collection<Item> out = new ArrayList<>();
+    Collection<Article> searchItems(String search, boolean searchName, boolean searchPriceList, boolean searchKBNumber,
+                                    boolean searchBarcode) {
+        Collection<Article> out = new ArrayList<>();
         if (searchName || searchPriceList || searchKBNumber || searchBarcode) {
-            String query = "select i from Item i where " +
+            String query = "select i from Article i where " +
                            (searchBarcode ? "barcode like '%sh' OR " : "") +
                            (searchKBNumber ? "kbNumber like 'sh' OR " : "") +
                            (searchName ? "name like 'sh%' OR " : "") +
                            (searchPriceList ? "priceList.name like 'sh%' OR " : "");
             query = query.substring(0, query.length() - 3).replaceAll("sh", search);
             EntityManager em = DBConnection.getEntityManager();
-            out = em.createQuery(query, Item.class).getResultList();
+            out = em.createQuery(query, Article.class).getResultList();
             em.close();
         }
         return out;
     }
 
-    Item getByKbNumber(int kbNumber) {
-        return Item.getByKbNumber(kbNumber);
+    Article getByKbNumber(int kbNumber) {
+        return Article.getByKbNumber(kbNumber);
     }
 
     boolean editBarcode(int itemId, long newBarcode) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        Item update = em.find(Item.class, itemId);
+        Article update = em.find(Article.class, itemId);
         update.setBarcode(newBarcode);
         try {
             em.persist(update);
@@ -92,15 +92,15 @@ public class ShoppingMaskModel implements Model {
     }
 
 
-    Collection<Item> getAllItemsWithoutBarcode() {
-        return Item.getAll("where barcode is null order by name asc");
+    Collection<Article> getAllItemsWithoutBarcode() {
+        return Article.getAll("where barcode is null order by name asc");
     }
 
-    public Item getSelected() {
+    public Article getSelected() {
         return selected;
     }
 
-    public void setSelected(Item selected) {
+    public void setSelected(Article selected) {
         this.selected = selected;
     }
 
@@ -120,7 +120,7 @@ public class ShoppingMaskModel implements Model {
         this.saleSession = saleSession;
     }
 
-    Item getBySupplierItemNumber(int suppliersNumber) {
-        return Item.getBySuppliersItemNumber(suppliersNumber);
+    Article getBySupplierItemNumber(int suppliersNumber) {
+        return Article.getBySuppliersItemNumber(suppliersNumber);
     }
 }

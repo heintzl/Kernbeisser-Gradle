@@ -1,7 +1,7 @@
 package kernbeisser.Windows.Container;
 
 import kernbeisser.DBEntities.Container;
-import kernbeisser.DBEntities.ItemKK;
+import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Window;
 
@@ -31,7 +31,7 @@ public class ContainerController {
     public void commit() {
         Container newContainer = new Container();
         newContainer.setAmount(view.getAmount());
-        ItemKK item = model.getItemByKbNumber(view.getKbNumber());
+        ArticleKornkraft item = model.getItemByKbNumber(view.getKbNumber());
         if (item == null) {
             item = model.getItemByKkNumber(view.getKkNumber());
             if (item == null) {
@@ -67,7 +67,7 @@ public class ContainerController {
         pasteData(model.getItemByKbNumber(view.getKbNumber()));
     }
 
-    private void pasteData(ItemKK item) {
+    private void pasteData(ArticleKornkraft item) {
         if (item != null) {
             Container c = new Container();
             c.setItem(item);
@@ -90,7 +90,7 @@ public class ContainerController {
 
     private void pasteData(Container c) {
         view.setItemSize(c.getItem().getContainerSize() + " x " + c.getItem().getAmount() + c.getItem()
-                                                                                             .getUnit()
+                                                                                             .getMetricUnits()
                                                                                              .getShortName());
         view.setKbNumber(String.valueOf(c.getKBNumber()));
         view.setKkNumber(String.valueOf(c.getItem().getKkNumber()));

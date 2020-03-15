@@ -2,7 +2,6 @@ package kernbeisser.StartUp.DataImport;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.Config.ConfigManager;
-import kernbeisser.CustomComponents.DatePicker.DatePickerView;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
@@ -269,62 +268,62 @@ public class DataImportController implements Controller {
             HashSet<Long> barcode = new HashSet<>(lines.size());
             HashMap<String, PriceList> priceListHashMap = new HashMap<>();
             HashMap<String, Supplier> suppliers = new HashMap<>();
-            Collection<Item> items = new ArrayList<>(lines.size());
+            Collection<Article> articles = new ArrayList<>(lines.size());
             Supplier.getAll(null).forEach(e -> suppliers.put(e.getShortName(), e));
             PriceList.getAll(null).forEach(e -> priceListHashMap.put(e.getName(), e));
             for (String l : lines) {
                 String[] columns = l.split(";");
-                Item item = new Item();
-                item.setName(columns[1]);
-                item.setKbNumber(Integer.parseInt(columns[2]));
-                item.setAmount(Integer.parseInt(columns[3]));
-                item.setNetPrice(Integer.parseInt(columns[4]));
-                item.setSupplier(suppliers.get(columns[5].replace("GRE", "GR")));
+                Article article = new Article();
+                article.setName(columns[1]);
+                article.setKbNumber(Integer.parseInt(columns[2]));
+                article.setAmount(Integer.parseInt(columns[3]));
+                article.setNetPrice(Integer.parseInt(columns[4]));
+                article.setSupplier(suppliers.get(columns[5].replace("GRE", "GR")));
                 try {
                     Long ib = Long.parseLong(columns[6]);
                     if (!barcode.contains(ib)) {
-                        item.setBarcode(ib);
+                        article.setBarcode(ib);
                         barcode.add(ib);
                     } else {
-                        item.setBarcode(null);
+                        article.setBarcode(null);
                     }
                 } catch (NumberFormatException e) {
-                    item.setBarcode(null);
+                    article.setBarcode(null);
                 }
                 //columns[7] look at line 311
-                item.setVatLow(Boolean.parseBoolean(columns[8]));
-                item.setSurcharge(Integer.parseInt(columns[9]));
-                item.setSingleDeposit(Integer.parseInt(columns[10]));
-                item.setCrateDeposit(Integer.parseInt(columns[11]));
-                item.setUnit(Unit.valueOf(columns[12].replace("WEIGHT", "GRAM")));
-                item.setPriceList(priceListHashMap.get(columns[13]));
-                item.setContainerDef(ContainerDefinition.valueOf(columns[14]));
-                item.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
-                item.setSuppliersItemNumber(Integer.parseInt(columns[16]));
-                item.setWeighAble(!Boolean.parseBoolean(columns[17]));
-                item.setListed(Boolean.parseBoolean(columns[18]));
-                item.setShowInShop(Boolean.parseBoolean(columns[19]));
-                item.setDeleted(Boolean.parseBoolean(columns[20]));
-                item.setPrintAgain(Boolean.parseBoolean(columns[21]));
-                item.setDeleteAllowed(Boolean.parseBoolean(columns[22]));
-                item.setLoss(Integer.parseInt(columns[23]));
-                item.setInfo(columns[24]);
-                item.setSold(Integer.parseInt(columns[25]));
-                item.setSpecialPriceMonth(extractOffers(Tools.extract(Boolean.class, columns[26], "_", Boolean::parseBoolean), Integer.parseInt(columns[7])));
-                item.setDelivered(Integer.parseInt(columns[27]));
-                item.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
-                item.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
-                item.setInvPrice(Integer.parseInt(columns[30]));
-                item.setIntake(java.sql.Date.valueOf(LocalDate.now()));
-                item.setLastBuy(null);
-                item.setLastDelivery(Date.valueOf(LocalDate.now()));
-                item.setDeletedDate(null);
-                item.setCooling(Cooling.valueOf(columns[35]));
-                item.setCoveredIntake(Boolean.parseBoolean(columns[36]));
-                items.add(item);
+                article.setVatLow(Boolean.parseBoolean(columns[8]));
+                article.setSurcharge(Integer.parseInt(columns[9]));
+                article.setSingleDeposit(Integer.parseInt(columns[10]));
+                article.setCrateDeposit(Integer.parseInt(columns[11]));
+                article.setMetricUnits(MetricUnits.valueOf(columns[12].replace("WEIGHT", "GRAM")));
+                article.setPriceList(priceListHashMap.get(columns[13]));
+                article.setContainerDef(ContainerDefinition.valueOf(columns[14]));
+                article.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
+                article.setSuppliersItemNumber(Integer.parseInt(columns[16]));
+                article.setWeighAble(!Boolean.parseBoolean(columns[17]));
+                article.setListed(Boolean.parseBoolean(columns[18]));
+                article.setShowInShop(Boolean.parseBoolean(columns[19]));
+                article.setDeleted(Boolean.parseBoolean(columns[20]));
+                article.setPrintAgain(Boolean.parseBoolean(columns[21]));
+                article.setDeleteAllowed(Boolean.parseBoolean(columns[22]));
+                article.setLoss(Integer.parseInt(columns[23]));
+                article.setInfo(columns[24]);
+                article.setSold(Integer.parseInt(columns[25]));
+                article.setSpecialPriceMonth(extractOffers(Tools.extract(Boolean.class, columns[26], "_", Boolean::parseBoolean), Integer.parseInt(columns[7])));
+                article.setDelivered(Integer.parseInt(columns[27]));
+                article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
+                article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
+                article.setInvPrice(Integer.parseInt(columns[30]));
+                article.setIntake(java.sql.Date.valueOf(LocalDate.now()));
+                article.setLastBuy(null);
+                article.setLastDelivery(Date.valueOf(LocalDate.now()));
+                article.setDeletedDate(null);
+                article.setCooling(Cooling.valueOf(columns[35]));
+                article.setCoveredIntake(Boolean.parseBoolean(columns[36]));
+                articles.add(article);
             }
             view.setItemProgress(5);
-            model.saveAllItems(items);
+            model.saveAllItems(articles);
             view.setItemProgress(6);
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,8 +1,7 @@
 package kernbeisser.Windows.SpecialPriceEditor;
 
 import kernbeisser.CustomComponents.DatePicker.DatePickerController;
-import kernbeisser.CustomComponents.TextFields.DateParseField;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Main;
@@ -25,9 +24,9 @@ public class SpecialPriceEditorController {
         view.fillRepeat(Repeat.values());
     }
 
-    void load(Item item) {
-        model.setSelectedItem(item);
-        view.setOffers(item.getSpecialPriceMonths());
+    void load(Article article) {
+        model.setSelectedArticle(article);
+        view.setOffers(article.getSpecialPriceMonths());
         view.setRemoveEnable(false);
         view.setEditEnable(false);
     }
@@ -45,9 +44,9 @@ public class SpecialPriceEditorController {
 
 
     public void add() {
-        model.addOffer(model.getSelectedItem(),collect());
+        model.addOffer(model.getSelectedArticle(), collect());
         model.refreshItem();
-        view.setOffers(model.getSelectedItem().getSpecialPriceMonths());
+        view.setOffers(model.getSelectedArticle().getSpecialPriceMonths());
     }
 
     private Offer collect(){
@@ -61,14 +60,14 @@ public class SpecialPriceEditorController {
 
     public void edit() {
         model.refreshItem();
-        view.setOffers(model.getSelectedItem().getSpecialPriceMonths());
+        view.setOffers(model.getSelectedArticle().getSpecialPriceMonths());
         model.edit(model.getSelectedOffer().getOid(),collect());
     }
 
     public void remove() {
-        model.remove(model.getSelectedItem(),model.getSelectedOffer());
+        model.remove(model.getSelectedArticle(), model.getSelectedOffer());
         model.refreshItem();
-        view.setOffers(model.getSelectedItem().getSpecialPriceMonths());
+        view.setOffers(model.getSelectedArticle().getSpecialPriceMonths());
     }
 
     void searchFrom() {

@@ -1,7 +1,7 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "catalog")
-public class ItemKK implements Serializable {
+public class ArticleKornkraft implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,7 +27,7 @@ public class ItemKK implements Serializable {
     private int netPrice;
 
     @Column
-    private Unit unit;
+    private MetricUnits metricUnits;
 
     @Column
     private int kkNumber;
@@ -53,14 +53,14 @@ public class ItemKK implements Serializable {
     //TODO save as double
     private int crateDeposit;
 
-    public static List<ItemKK> getAll(String condition) {
-        return Tools.getAll(ItemKK.class, condition);
+    public static List<ArticleKornkraft> getAll(String condition) {
+        return Tools.getAll(ArticleKornkraft.class, condition);
     }
 
-    public static ItemKK getByKkNumber(int kkNumber) {
+    public static ArticleKornkraft getByKkNumber(int kkNumber) {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("select k from ItemKK k where kkNumber = :n", ItemKK.class)
+            return em.createQuery("select k from ArticleKornkraft k where kkNumber = :n", ArticleKornkraft.class)
                      .setParameter("n", kkNumber)
                      .getSingleResult();
         } catch (NoResultException e) {
@@ -70,12 +70,12 @@ public class ItemKK implements Serializable {
         }
     }
 
-    public static ItemKK getByKbNumber(int kbNumber) {
+    public static ArticleKornkraft getByKbNumber(int kbNumber) {
         EntityManager em = DBConnection.getEntityManager();
         try {
             return em.createQuery(
-                    "select ik from ItemKK ik where kkNumber = (select suppliersItemNumber from Item i where i.kbNumber = :n and i.supplier.shortName = 'KK')",
-                    ItemKK.class)
+                    "select ik from ArticleKornkraft ik where ik.kkNumber = (select i.suppliersItemNumber from Article i where i.kbNumber = :n and i.supplier.shortName = 'KK')",
+                    ArticleKornkraft.class)
                      .setParameter("n", kbNumber)
                      .setMaxResults(1)
                      .getSingleResult();
@@ -98,12 +98,12 @@ public class ItemKK implements Serializable {
         this.name = name;
     }
 
-    public Unit getUnit() {
-        return unit;
+    public MetricUnits getMetricUnits() {
+        return metricUnits;
     }
 
-    public void setUnit(Unit unit) {
-        this.unit = unit;
+    public void setMetricUnits(MetricUnits metricUnits) {
+        this.metricUnits = metricUnits;
     }
 
     public int getKkNumber() {

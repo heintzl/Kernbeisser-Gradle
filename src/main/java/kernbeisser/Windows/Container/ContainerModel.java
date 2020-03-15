@@ -6,7 +6,6 @@ import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -48,12 +47,12 @@ public class ContainerModel implements Model {
         em.close();
     }
 
-    ItemKK getItemByKbNumber(int kbNumber) {
-        return ItemKK.getByKbNumber(kbNumber);
+    ArticleKornkraft getItemByKbNumber(int kbNumber) {
+        return ArticleKornkraft.getByKbNumber(kbNumber);
     }
 
-    ItemKK getItemByKkNumber(int kkNumber) {
-        return ItemKK.getByKkNumber(kkNumber);
+    ArticleKornkraft getItemByKkNumber(int kkNumber) {
+        return ArticleKornkraft.getByKkNumber(kkNumber);
     }
 
     public User getUser() {

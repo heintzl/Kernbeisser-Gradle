@@ -4,8 +4,7 @@ package kernbeisser.DBEntities;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
-import kernbeisser.Enums.Unit;
-import kernbeisser.Enums.VAT;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -17,7 +16,7 @@ import java.util.List;
 @Entity
 @Table
 
-public class Item {
+public class Article {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -58,7 +57,7 @@ public class Item {
     private int crateDeposit;
 
     @Column
-    private Unit unit;
+    private MetricUnits metricUnits;
 
     @ManyToOne
     @JoinColumn(name = "priceListId")
@@ -136,28 +135,28 @@ public class Item {
     @Column
     private boolean coveredIntake;
 
-    public static List<Item> getAll(String condition) {
-        return Tools.getAll(Item.class, condition);
+    public static List<Article> getAll(String condition) {
+        return Tools.getAll(Article.class, condition);
     }
 
-    public static Collection<Item> defaultSearch(String s, int max) {
+    public static Collection<Article> defaultSearch(String s, int max) {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<Item> out = em.createQuery(
-                "select i from Item i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or barcode like '%" + s + "'",
-                Item.class
+        Collection<Article> out = em.createQuery(
+                "select i from Article i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or barcode like '%" + s + "'",
+                Article.class
         )
-                                 .setParameter("n", Tools.tryParseInteger(s))
-                                 .setParameter("s", s + "%")
-                                 .setMaxResults(max)
-                                 .getResultList();
+                                    .setParameter("n", Tools.tryParseInteger(s))
+                                    .setParameter("s", s + "%")
+                                    .setMaxResults(max)
+                                    .getResultList();
         em.close();
         return out;
     }
 
-    public static Item getByKbNumber(int kbNumber) {
+    public static Article getByKbNumber(int kbNumber) {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("select i from Item i where kbNumber = :n", Item.class)
+            return em.createQuery("select i from Article i where kbNumber = :n", Article.class)
                      .setParameter("n", kbNumber)
                      .getSingleResult();
         } catch (NoResultException e) {
@@ -167,10 +166,10 @@ public class Item {
         }
     }
 
-    public static Item getBySuppliersItemNumber(int suppliersNumber) {
+    public static Article getBySuppliersItemNumber(int suppliersNumber) {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("select i from Item i where suppliersItemNumber = :n", Item.class)
+            return em.createQuery("select i from Article i where suppliersItemNumber = :n", Article.class)
                      .setParameter("n", suppliersNumber)
                      .getSingleResult();
         } catch (NoResultException e) {
@@ -280,12 +279,12 @@ public class Item {
         this.crateDeposit = crateDeposit;
     }
 
-    public Unit getUnit() {
-        return unit;
+    public MetricUnits getMetricUnits() {
+        return metricUnits;
     }
 
-    public void setUnit(Unit unit) {
-        this.unit = unit;
+    public void setMetricUnits(MetricUnits metricUnits) {
+        this.metricUnits = metricUnits;
     }
 
     public PriceList getPriceList() {

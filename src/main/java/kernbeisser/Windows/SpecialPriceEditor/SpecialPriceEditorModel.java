@@ -1,8 +1,7 @@
 package kernbeisser.Windows.SpecialPriceEditor;
 
-import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Useful.Tools;
 
@@ -11,7 +10,7 @@ import javax.persistence.EntityTransaction;
 
 public class SpecialPriceEditorModel {
     private Offer selected;
-    private Item selectedItem;
+    private Article selectedArticle;
 
     public void setSelectedOffer(Offer o) {
         this.selected = o;
@@ -25,11 +24,11 @@ public class SpecialPriceEditorModel {
         Tools.edit(offerId,offer);
     }
 
-    void remove(Item item,Offer offer){
+    void remove(Article article, Offer offer){
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        Item i = em.find(Item.class,item.getIid());
+        Article i = em.find(Article.class, article.getIid());
         Offer o = em.find(Offer.class,offer.getOid());
         i.getSpecialPriceMonths().remove(o);
         em.remove(o);
@@ -40,22 +39,22 @@ public class SpecialPriceEditorModel {
     }
 
     public void refreshItem(){
-        selectedItem = DBConnection.getEntityManager().find(Item.class,selectedItem.getIid());
+        selectedArticle = DBConnection.getEntityManager().find(Article.class, selectedArticle.getIid());
     }
 
-    public Item getSelectedItem() {
-        return selectedItem;
+    public Article getSelectedArticle() {
+        return selectedArticle;
     }
 
-    public void setSelectedItem(Item selectedItem) {
-        this.selectedItem = selectedItem;
+    public void setSelectedArticle(Article selectedArticle) {
+        this.selectedArticle = selectedArticle;
     }
 
-    public void addOffer(Item item,Offer offer) {
+    public void addOffer(Article article, Offer offer) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        Item i = em.createQuery("select i from Item i where id = :id",Item.class).setParameter("id",item.getIid()).getSingleResult();
+        Article i = em.createQuery("select i from Article i where id = :id", Article.class).setParameter("id", article.getIid()).getSingleResult();
         em.persist(offer);
         i.getSpecialPriceMonths().add(offer);
         em.flush();

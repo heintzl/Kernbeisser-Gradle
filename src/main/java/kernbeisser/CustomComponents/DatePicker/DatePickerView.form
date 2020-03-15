@@ -36,18 +36,18 @@
             </constraints>
             <properties>
               <model>
-                <item value="Januar"/>
-                <item value="Februar"/>
-                <item value="März"/>
-                <item value="April"/>
-                <item value="Mai"/>
-                <item value="Juni"/>
-                <item value="Juli"/>
-                <item value="August"/>
-                <item value="September"/>
-                <item value="Oktober"/>
-                <item value="November"/>
-                <item value="Dezember"/>
+                <article value="Januar"/>
+                <article value="Februar"/>
+                <article value="März"/>
+                <article value="April"/>
+                <article value="Mai"/>
+                <article value="Juni"/>
+                <article value="Juli"/>
+                <article value="August"/>
+                <article value="September"/>
+                <article value="Oktober"/>
+                <article value="November"/>
+                <article value="Dezember"/>
               </model>
             </properties>
           </component>

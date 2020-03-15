@@ -9,10 +9,10 @@
         <class>kernbeisser.DBEntities.Offer</class>
         <class>kernbeisser.DBEntities.Supplier</class>
         <class>kernbeisser.DBEntities.PriceList</class>
-        <class>kernbeisser.DBEntities.Item</class>
+        <class>kernbeisser.DBEntities.Article</class>
         <class>kernbeisser.DBEntities.User</class>
         <class>kernbeisser.DBEntities.Shelf</class>
-        <class>kernbeisser.DBEntities.ItemKK</class>
+        <class>kernbeisser.DBEntities.ArticleKornkraft</class>
         <class>kernbeisser.DBEntities.UserGroup</class>
         <class>kernbeisser.DBEntities.ShoppingItem</class>
         <class>kernbeisser.DBEntities.SaleSession</class>

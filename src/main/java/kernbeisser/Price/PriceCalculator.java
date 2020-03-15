@@ -1,14 +1,13 @@
 package kernbeisser.Price;
 
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.Unit;
 
 public class PriceCalculator {
     public static final int CONTAINER_DISCOUNT = Integer.MIN_VALUE;
 
-    public static int getItemPrice(Item item, int discount, int userSurcharge) {
-        return getPrice(item.getNetPrice(), item.isVatLow() ? 7 : 19, discount, item.getSurcharge(), userSurcharge);
+    public static int getItemPrice(Article article, int discount, int userSurcharge) {
+        return getPrice(article.getNetPrice(), article.isVatLow() ? 7 : 19, discount, article.getSurcharge(), userSurcharge);
     }
 
     public static int getPrice(double netPrice, double vat, double discount, double surcharge, double userSurcharge) {
@@ -16,9 +15,9 @@ public class PriceCalculator {
     }
 
     public static int getShoppingItemPrice(ShoppingItem item, int userSurcharge) {
-        return getPrice((item.isWeighAble()
-                         ? (item.getItemNetPrice() / 1000f) * item.getAmount() * item.getItemAmount()
-                         : item.getItemNetPrice() * item.getItemAmount()), item.isVatLow() ? 7 : 19,
+        return getPrice((item.isWeighable()
+                         ? (item.getItemNetPrice() / 1000f) * item.getAmount() * item.getItemMultiplier()
+                         : item.getItemNetPrice() * item.getItemMultiplier()), item.isVatLow() ? 7 : 19,
                         item.getDiscount() == CONTAINER_DISCOUNT ? 1 : item.getDiscount(),
                         item.getDiscount() == CONTAINER_DISCOUNT ? item.getSurcharge() / 2f : item.getSurcharge(),
                         userSurcharge);

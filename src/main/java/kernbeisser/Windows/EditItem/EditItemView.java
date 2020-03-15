@@ -2,13 +2,12 @@ package kernbeisser.Windows.EditItem;
 
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
-import kernbeisser.CustomComponents.TextFields.LongParseField;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Key;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
@@ -30,7 +29,7 @@ public class EditItemView extends Window implements View {
     private JComboBox<PriceList> priceList;
     private IntegerParseField amount;
     private DoubleParseField containerSize;
-    private JComboBox<Unit> unit;
+    private JComboBox<MetricUnits> metricUnits;
     private JComboBox<ContainerDefinition> containerDefinition;
     private kernbeisser.CustomComponents.TextFields.PermissionField barcode;
     private JCheckBox showInShoppingMask;
@@ -65,10 +64,10 @@ public class EditItemView extends Window implements View {
         containerSize = new DoubleParseField();
     }
 
-    void setUnits(Unit[] units) {
-        unit.removeAllItems();
-        for (Unit u : units) {
-            unit.addItem(u);
+    void setUnits(MetricUnits[] metricUnits) {
+        this.metricUnits.removeAllItems();
+        for (MetricUnits u : metricUnits) {
+            this.metricUnits.addItem(u);
         }
     }
 
@@ -96,26 +95,26 @@ public class EditItemView extends Window implements View {
         }
     }
 
-    void pasteItem(Item item) {
-        itemName.setText(item.getName());
-        netPrice.setText(String.valueOf(item.getNetPrice() / 100f));
-        deposit.setText(String.valueOf(item.getSingleDeposit() / 100f));
-        kbItemNumber.setText(String.valueOf(item.getKbNumber()));
-        vat.setSelectedItem(item.isVatLow() ? VAT.LOW : VAT.HIGH);
-        supplierItemNumber.setText(String.valueOf(item.getSuppliersItemNumber()));
-        crateDeposit.setText(String.valueOf(item.getCrateDeposit() / 100f));
-        containerSize.setText(String.valueOf(item.getContainerSize()));
-        amount.setText(String.valueOf(item.getAmount()));
-        barcode.setText(String.valueOf(item.getBarcode()));
-        showInShoppingMask.setSelected(item.isShowInShop());
-        weighable.setSelected(item.isWeighAble());
-        extraInfo.setText(item.getInfo());
-        priceList.setSelectedItem(item.getPriceList());
-        supplier.setSelectedItem(item.getSupplier());
-        containerDefinition.setSelectedItem(item.getContainerDef());
+    void pasteItem(Article article) {
+        itemName.setText(article.getName());
+        netPrice.setText(String.valueOf(article.getNetPrice() / 100f));
+        deposit.setText(String.valueOf(article.getSingleDeposit() / 100f));
+        kbItemNumber.setText(String.valueOf(article.getKbNumber()));
+        vat.setSelectedItem(article.isVatLow() ? VAT.LOW : VAT.HIGH);
+        supplierItemNumber.setText(String.valueOf(article.getSuppliersItemNumber()));
+        crateDeposit.setText(String.valueOf(article.getCrateDeposit() / 100f));
+        containerSize.setText(String.valueOf(article.getContainerSize()));
+        amount.setText(String.valueOf(article.getAmount()));
+        barcode.setText(String.valueOf(article.getBarcode()));
+        showInShoppingMask.setSelected(article.isShowInShop());
+        weighable.setSelected(article.isWeighAble());
+        extraInfo.setText(article.getInfo());
+        priceList.setSelectedItem(article.getPriceList());
+        supplier.setSelectedItem(article.getSupplier());
+        containerDefinition.setSelectedItem(article.getContainerDef());
     }
 
-    Item collectItem(Item out) {
+    Article collectItem(Article out) {
         out.setName(itemName.getText());
         out.setNetPrice((int) (netPrice.getValue() * 100));
         out.setSingleDeposit((int) (deposit.getValue() * 100));

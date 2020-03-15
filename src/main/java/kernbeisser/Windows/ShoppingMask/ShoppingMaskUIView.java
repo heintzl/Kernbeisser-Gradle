@@ -4,10 +4,9 @@ import javax.swing.*;
 
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
@@ -17,6 +16,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class ShoppingMaskUIView extends Window implements View {
+    //TODO: create Enum
     static final int ARTICLE_NUMBER = 0;
     static final int BAKED_GOODS = 1;
     static final int CUSTOM_PRODUCT = 2;
@@ -248,6 +248,8 @@ public class ShoppingMaskUIView extends Window implements View {
         return -1;
     }
 
+
+
     public int getDiscount() {
         if (priceStandard.isSelected()) {
             return 0;
@@ -274,7 +276,7 @@ public class ShoppingMaskUIView extends Window implements View {
         shoppingCartView = cartController.getView();
     }
 
-    int getPrice() {
+    int getPriceVATIncluded() {
         return (int) ((price.getValue() * 100) + 0.5);
     }
 
@@ -283,7 +285,7 @@ public class ShoppingMaskUIView extends Window implements View {
         this.kbNumber.setEnabled(!value.equals("--"));
     }
 
-    int getArticleNumber() {
+    int getKBArticleNumber() {
         return kbNumber.getValue();
     }
 
@@ -305,24 +307,24 @@ public class ShoppingMaskUIView extends Window implements View {
         this.kbNumber.setEnabled(!value.equals("--"));
     }
 
-    void loadItemStats(Item item) {
-        articleUnit.setText(Unit.STACK.getShortName());
-        kbNumber.setText(item.getKbNumber() + "");
-        suppliersItemNumber.setText(item.getSuppliersItemNumber() + "");
+    void loadItemStats(Article article) {
+        articleUnit.setText(MetricUnits.STACK.getShortName());
+        kbNumber.setText(article.getKbNumber() + "");
+        suppliersItemNumber.setText(article.getSuppliersItemNumber() + "");
         articleName.setText(
-                item.getName().length() > 16
-                ? new StringBuilder(item.getName()).replace(16, item.getName().length(), "...").toString()
-                : item.getName());
-        articleAmount.setText(item.getUnit().fromUnit(item.getAmount()) + "");
-        articleUnit.setText(item.getUnit().getShortName());
-        price.setText(controller.getPrice(item) / 100f + "");
-        priceUnit.setText(item.isWeighAble() ? "€/kg" : "€");
-        amountUnit.setText(item.isWeighAble() ? "g" : "stk.");
-        articleAmount.setVisible(!item.isWeighAble());
-        articleUnit.setVisible(!item.isWeighAble());
-        articleAmountLabel.setVisible(!item.isWeighAble());
-        optTaxLow.setSelected(item.isVatLow());
-        optTaxStandard.setSelected(!item.isVatLow());
+                article.getName().length() > 16
+                ? new StringBuilder(article.getName()).replace(16, article.getName().length(), "...").toString()
+                : article.getName());
+        articleAmount.setText(article.getMetricUnits().fromUnit(article.getAmount()) + "");
+        articleUnit.setText(article.getMetricUnits().getShortName());
+        price.setText(controller.getPrice(article) / 100f + "");
+        priceUnit.setText(article.isWeighAble() ? "€/kg" : "€");
+        amountUnit.setText(article.isWeighAble() ? "g" : "stk.");
+        articleAmount.setVisible(!article.isWeighAble());
+        articleUnit.setVisible(!article.isWeighAble());
+        articleAmountLabel.setVisible(!article.isWeighAble());
+        optTaxLow.setSelected(article.isVatLow());
+        optTaxStandard.setSelected(!article.isVatLow());
     }
 
     void defaultSettings() {

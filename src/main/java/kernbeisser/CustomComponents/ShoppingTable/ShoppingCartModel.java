@@ -20,7 +20,7 @@ public class ShoppingCartModel implements Model {
     void addItem(ShoppingItem item) {
         ShoppingItem current = shoppingItems.get(item);
         if (current != null) {
-            current.setItemAmount(item.getItemAmount() + current.getItemAmount());
+            current.setItemMultiplier(item.getItemMultiplier() + current.getItemMultiplier());
         } else {
             shoppingItems.put(item, item);
         }

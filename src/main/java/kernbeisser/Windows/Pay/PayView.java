@@ -2,21 +2,18 @@ package kernbeisser.Windows.Pay;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.print.PrintService;
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 
 class PayView extends Window implements View {
     private final PayController controller;
     private JPanel main;
-    private JButton commit;
+    private JButton commitPayment;
     private JRadioButton printBon;
     private JRadioButton printNoBon;
     private JComboBox paperFormat;
@@ -25,15 +22,15 @@ class PayView extends Window implements View {
     private ObjectTable<ShoppingItem> shoppingCart;
 
 
-    public PayView(Window current, PayController controller) {
+    public PayView(Window current, PayController payController) {
         super(current);
-        this.controller = controller;
+        this.controller = payController;
 
         add(main);
         pack();
         setLocationRelativeTo(current);
-        commit.addActionListener(e -> {
-            controller.commit();
+        commitPayment.addActionListener(e -> {
+            payController.commitPayment();
         });
         cancel.addActionListener(e -> {
             this.back();
@@ -62,7 +59,7 @@ class PayView extends Window implements View {
     private void createUIComponents() {
         shoppingCart = new ObjectTable<>(
                 Column.create("Name", ShoppingItem::getName),
-                Column.create("Anzahl", ShoppingItem::getItemAmount),
+                Column.create("Anzahl", ShoppingItem::getItemMultiplier),
                 Column.create("Preis", e -> controller.getPrice(e) / 100f + "€")
         );
     }

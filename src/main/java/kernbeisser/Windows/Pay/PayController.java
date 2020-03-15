@@ -23,17 +23,11 @@ public class PayController implements Controller {
         view.setSelectedPrintService(model.getDefaultPrinter());
     }
 
-    private boolean commitPay() {
-        return model.pay(model.getSaleSession(), model.getShoppingCart(), model.shoppingCartSum());
-    }
-
-    private boolean checkBon() {
-        return false;
-    }
-
-    void commit() {
-        commitPay();
-        checkBon();
+    void commitPayment() {
+        boolean paymentSuccessful = model.pay(model.getSaleSession(), model.getShoppingCart(), model.shoppingCartSum());
+        if (paymentSuccessful) {
+            model.print(view.getSelectedPrintService());
+        }
     }
 
     int getPrice(ShoppingItem item) {

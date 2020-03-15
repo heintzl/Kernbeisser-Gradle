@@ -17,7 +17,7 @@ public class Container implements Serializable {
 
     @ManyToOne
     @JoinColumn
-    private ItemKK item;
+    private ArticleKornkraft item;
 
     @ManyToOne
     @JoinColumn
@@ -45,11 +45,11 @@ public class Container implements Serializable {
         return Tools.getAll(Container.class, condition);
     }
 
-    public ItemKK getItem() {
+    public ArticleKornkraft getItem() {
         return item;
     }
 
-    public void setItem(ItemKK item) {
+    public void setItem(ArticleKornkraft item) {
         this.item = item;
     }
 
@@ -103,11 +103,11 @@ public class Container implements Serializable {
     }
 
     public int getKBNumber() {
-        List<Item> items = Item.getAll("where suppliersItemNumber = " + item.getKkNumber());
-        if (items == null || items.size() == 0) {
+        List<Article> articles = Article.getAll("where suppliersItemNumber = " + item.getKkNumber());
+        if (articles == null || articles.size() == 0) {
             return -1;
         } else {
-            return items.get(0).getKbNumber();
+            return articles.get(0).getKbNumber();
         }
     }
 

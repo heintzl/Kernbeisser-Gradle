@@ -5,7 +5,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.View;
 
@@ -69,10 +69,10 @@ public class ShoppingCartView extends JPanel implements View {
                 }),
                 Column.create("4", e -> {
                     JLabel amount = new JLabel(
-                            e.isWeighAble()
-                            ? (e.getUnit().toUnit(e.getAmount() * e.getItemAmount()) + e.getUnit()
-                                                                                        .getShortName())
-                            : e.getItemAmount() + Unit.STACK.getShortName());
+                            e.isWeighable()
+                            ? (e.getMetricUnits().toUnit(e.getAmount() * e.getItemMultiplier()) + e.getMetricUnits()
+                                                                                                   .getShortName())
+                            : e.getItemMultiplier() + MetricUnits.STACK.getShortName());
                     amount.setFont(gridFont);
                     amount.setHorizontalAlignment(SwingConstants.RIGHT);
                     return amount;

@@ -2,7 +2,7 @@ package kernbeisser.Windows.ShoppingMask;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Price.PriceCalculator;
@@ -26,7 +26,7 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void addToShoppingCart() {
-        ShoppingItem item = extract();
+        ShoppingItem item = extractShoppingItemFromUI();
         if (item != null) {
             shoppingCartController.addShoppingItem(item);
         }
@@ -34,7 +34,7 @@ public class ShoppingMaskUIController implements Controller {
 
     void searchByKbNumber() {
         view.defaultSettings();
-        Item found = model.getByKbNumber(view.getArticleNumber());
+        Article found = model.getByKbNumber(view.getKBArticleNumber());
         if (found != null) {
             view.loadItemStats(found);
         }
@@ -42,59 +42,60 @@ public class ShoppingMaskUIController implements Controller {
 
     void searchBySupplierItemsNumber() {
         view.defaultSettings();
-        Item found = model.getBySupplierItemNumber(view.getSuppliersNumber());
+        Article found = model.getBySupplierItemNumber(view.getSuppliersNumber());
         if (found != null) {
             view.loadItemStats(found);
         }
     }
 
-    int getPrice(Item item) {
-        return PriceCalculator.getItemPrice(item, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
+    int getPrice(Article article) {
+        return PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
     }
 
-    private ShoppingItem extract() {
+    private ShoppingItem extractShoppingItemFromUI() {
         switch (view.getOption()) {
             case ShoppingMaskUIView.ARTICLE_NUMBER:
-                Item i = null;
-                int kb = view.getArticleNumber();
-                if (kb != 0) {
-                    i = model.getByKbNumber(kb);
+                Article extractedArticle = null;
+                int kbArticleNumber = view.getKBArticleNumber();
+                if (kbArticleNumber != 0) {
+                    extractedArticle = model.getByKbNumber(kbArticleNumber);
                 }
-                if (i == null) {
+                if (extractedArticle == null) {
                     int supplier = view.getSuppliersNumber();
                     if (supplier != 0) {
-                        i = model.getBySupplierItemNumber(supplier);
+                        extractedArticle = model.getBySupplierItemNumber(supplier);
                     }
-                    if (i == null) {
+                    if (extractedArticle == null) {
                         view.noArticleFound();
                         return null;
+                        //TODO throw NoResultException instead of null
                     }
                 }
-                ShoppingItem out = new ShoppingItem(i);
-                out.setDiscount(view.getDiscount());
+                ShoppingItem shoppingItem = new ShoppingItem(extractedArticle);
+                shoppingItem.setDiscount(view.getDiscount());
                 view.setDiscount();
-                if (out.isWeighAble()) {
-                    out.setAmount(i.getUnit().toUnit(view.getAmount()));
-                    out.setItemAmount(1);
+                if (shoppingItem.isWeighable()) {
+                    shoppingItem.setAmount(extractedArticle.getMetricUnits().toUnit(view.getAmount()));
+                    shoppingItem.setItemMultiplier(1);
                 } else {
-                    out.setItemAmount((int) view.getAmount());
+                    shoppingItem.setItemMultiplier((int) view.getAmount());
                 }
-                return out;
+                return shoppingItem;
             case ShoppingMaskUIView.BAKED_GOODS:
-                return ShoppingItem.getBakeryProduct(view.getPrice());
+                return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded());
             case ShoppingMaskUIView.DEPOSIT:
-                return ShoppingItem.getDeposit(view.getDeposit());
+                return ShoppingItem.createDeposit(view.getDeposit());
             case ShoppingMaskUIView.CUSTOM_PRODUCT:
-                ShoppingItem o = new ShoppingItem();
-                o.setItemAmount((int) view.getAmount());
-                o.setItemNetPrice(view.getPrice());
-                o.setName(view.getItemName());
-                o.setAmount(o.getUnit().toUnit(view.getAmount()));
-                return o;
+                ShoppingItem customItem = new ShoppingItem();
+                customItem.setItemMultiplier((int) view.getAmount());
+                customItem.setItemNetPrice(view.getPriceVATIncluded());
+                customItem.setName(view.getItemName());
+                customItem.setAmount(customItem.getMetricUnits().toUnit(view.getAmount()));
+                return customItem;
             case ShoppingMaskUIView.PRODUCE:
-                return ShoppingItem.getOrganic(view.getPrice());
+                return ShoppingItem.createOrganic(view.getPriceVATIncluded());
             case ShoppingMaskUIView.RETURN_DEPOSIT:
-                return ShoppingItem.getDeposit(-view.getDeposit());
+                return ShoppingItem.createDeposit(view.getDeposit()*(-1));
             default:
                 return null;
         }
@@ -118,10 +119,10 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void openSearchWindow() {
-        new DefaultSearchPanelController<Item>(Item::defaultSearch, view::loadItemStats,
-                                               Column.create("Name",Item::getName),
-                                               Column.create("Barcode",Item::getBarcode),
-                                               Column.create("Lieferant",e -> e.getSupplier().getShortName())
+        new DefaultSearchPanelController<Article>(Article::defaultSearch, view::loadItemStats,
+                                                  Column.create("Name", Article::getName),
+                                                  Column.create("Barcode", Article::getBarcode),
+                                                  Column.create("Lieferant",e -> e.getSupplier().getShortName())
         ).getView().asWindow(view);
     }
 }
