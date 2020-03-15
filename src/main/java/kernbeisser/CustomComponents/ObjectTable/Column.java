@@ -89,11 +89,10 @@ public interface Column<T> {
 
     static <T> Column<T> create(String s, Function<T,Object> v, Key... keys) {
         return new Column<T>() {
-            boolean read;
+            boolean read = LogInModel.getLoggedIn().hasPermission(keys);
 
             @Override
             public String getName() {
-                read = LogInModel.getLoggedIn().hasPermission(keys);
                 return s;
             }
 

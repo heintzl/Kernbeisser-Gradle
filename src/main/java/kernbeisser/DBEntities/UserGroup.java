@@ -15,6 +15,7 @@ public class UserGroup {
     private int gid;
 
     @Column
+    //TODO save as double
     private int value;
 
     @Column

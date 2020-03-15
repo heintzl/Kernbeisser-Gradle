@@ -29,8 +29,10 @@ public class ShoppingItem implements Serializable {
     @Column
     private int itemAmount;
     @Column
+    //TODO save as double
     private int itemNetPrice;
     @Column
+    //TODO save as double
     private boolean vatLow;
     @Column
     private Unit unit;

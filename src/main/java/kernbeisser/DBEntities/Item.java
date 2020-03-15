@@ -37,6 +37,7 @@ public class Item {
     private int surcharge;
 
     @Column
+    //TODO save as double
     private int netPrice;
 
     @ManyToOne
@@ -47,6 +48,7 @@ public class Item {
     private Long barcode;
 
     @Column
+    //TODO: Fremdschlüssel
     private boolean vatLow;
 
     @Column

@@ -30,7 +30,7 @@ public class Main {
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException, IOException, URISyntaxException {
         buildEnvironment();
-        if (!ConfigManager.getHeader().getBoolean("dbIsInitialized")) {
+        if (!ConfigManager.isDbInitialized()) {
             SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));
         } else {
             openLogIn();

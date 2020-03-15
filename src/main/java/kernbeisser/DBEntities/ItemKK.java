@@ -23,6 +23,7 @@ public class ItemKK implements Serializable {
     private String producer;
 
     @Column
+    //TODO save as double
     private int netPrice;
 
     @Column
@@ -32,6 +33,7 @@ public class ItemKK implements Serializable {
     private int kkNumber;
 
     @Column
+    //TODO save as double
     private boolean vatLow;
 
     @Column
@@ -44,9 +46,11 @@ public class ItemKK implements Serializable {
     private double containerSize;
 
     @Column
+    //TODO save as double
     private int singleDeposit;
 
     @Column
+    //TODO save as double
     private int crateDeposit;
 
     public static List<ItemKK> getAll(String condition) {

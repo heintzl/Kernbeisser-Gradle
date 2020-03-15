@@ -1,5 +1,6 @@
 package kernbeisser.StartUp.DataImport;
 
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -26,14 +27,15 @@ public class DataImportView extends Window implements View {
         super(currentWindow);
         add(main);
         pack();
+        setSize(500,500);
         setLocationRelativeTo(currentWindow);
         importData.addActionListener(e -> controller.importData());
-        dataPath.addKeyListener(new KeyAdapter() {
+        /*dataPath.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 controller.checkDataSource();
             }
-        });
+        });*/
         search.addActionListener(e -> controller.openFileExplorer());
         cancel.addActionListener(e -> controller.cancel());
     }

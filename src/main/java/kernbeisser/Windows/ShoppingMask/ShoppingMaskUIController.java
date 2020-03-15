@@ -113,6 +113,7 @@ public class ShoppingMaskUIController implements Controller {
 
     void startPay() {
         new PayController(view, model.getSaleSession(), model.getShoppingCart(), () -> {
+
         });
     }
 

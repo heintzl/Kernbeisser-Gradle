@@ -29,6 +29,7 @@ public class SurchargeTable implements Serializable, Cloneable {
     @Column
     private int stid;
     @Column
+    //TODO save as double
     private int surcharge;
     @Column(name = "\"from\"")
     private int from;

@@ -109,6 +109,7 @@ public class ShoppingMaskUIView extends Window implements View {
                 controller.searchBySupplierItemsNumber();
             }
         });
+        checkout.addActionListener(e -> controller.startPay());
         articleTypeChange('a');
         pack();
         setLocationRelativeTo(window);
@@ -171,7 +172,8 @@ public class ShoppingMaskUIView extends Window implements View {
         customerName.setText(saleSession.getCustomer().getFirstName() + " " + saleSession.getCustomer().getSurname());
         customerLoginName.setText(saleSession.getCustomer().getUsername());
         customerCredit.setText(saleSession.getCustomer().getUserGroup().getValue() / 100f + "\u20AC");
-        salesPerson1.setText("");
+        salesPerson1.setText(saleSession.getSeller().getUsername());
+        salesPerson2.setText("saleSession.getSeller().getUsername()");
     }
 
     private void articleTypeChange(char type) {
