@@ -21,7 +21,7 @@ public class ShoppingCartController implements Controller {
         refresh();
     }
 
-    int getPrice(ShoppingItem item) {
+    double getPrice(ShoppingItem item) {
         return PriceCalculator.getShoppingItemPrice(item, model.getUserSurcharge());
     }
 

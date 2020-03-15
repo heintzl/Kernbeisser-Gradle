@@ -15,8 +15,7 @@ public class UserGroup {
     private int gid;
 
     @Column
-    //TODO save as double
-    private int value;
+    private double value;
 
     @Column
     private int interestThisYear;
@@ -25,11 +24,11 @@ public class UserGroup {
         return Tools.getAll(UserGroup.class, condition);
     }
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(double value) {
         this.value = value;
     }
 

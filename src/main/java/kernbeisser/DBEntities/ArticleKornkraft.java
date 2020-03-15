@@ -23,8 +23,7 @@ public class ArticleKornkraft implements Serializable {
     private String producer;
 
     @Column
-    //TODO save as double
-    private int netPrice;
+    private double netPrice;
 
     @Column
     private MetricUnits metricUnits;
@@ -33,8 +32,7 @@ public class ArticleKornkraft implements Serializable {
     private int kkNumber;
 
     @Column
-    //TODO save as double
-    private boolean vatLow;
+    private double vatLow;
 
     @Column
     private int amount;
@@ -47,11 +45,11 @@ public class ArticleKornkraft implements Serializable {
 
     @Column
     //TODO save as double
-    private int singleDeposit;
+    private double singleDeposit;
 
     @Column
     //TODO save as double
-    private int crateDeposit;
+    private double crateDeposit;
 
     public static List<ArticleKornkraft> getAll(String condition) {
         return Tools.getAll(ArticleKornkraft.class, condition);
@@ -114,11 +112,11 @@ public class ArticleKornkraft implements Serializable {
         this.kkNumber = kkNumber;
     }
 
-    public boolean isVatLow() {
+    public double isVatLow() {
         return vatLow;
     }
 
-    public void setVatLow(boolean vatLow) {
+    public void setVatLow(double vatLow) {
         this.vatLow = vatLow;
     }
 
@@ -146,23 +144,23 @@ public class ArticleKornkraft implements Serializable {
         this.containerSize = containerSize;
     }
 
-    public int getSingleDeposit() {
+    public double getSingleDeposit() {
         return singleDeposit;
     }
 
-    public void setSingleDeposit(int singleDeposit) {
+    public void setSingleDeposit(double singleDeposit) {
         this.singleDeposit = singleDeposit;
     }
 
-    public int getCrateDeposit() {
+    public double getCrateDeposit() {
         return crateDeposit;
     }
 
-    public void setCrateDeposit(int crateDeposit) {
+    public void setCrateDeposit(double crateDeposit) {
         this.crateDeposit = crateDeposit;
     }
 
-    public int getNetPrice() {
+    public double getNetPrice() {
         return netPrice;
     }
 
@@ -199,6 +197,6 @@ public class ArticleKornkraft implements Serializable {
     }
 
     public int calculatePrice() {
-        return (int) ((netPrice * ((getSurcharge().getSurcharge() / 100f) + 1)) + 0.5);
+        return (int) ((netPrice * ((getSurcharge().getSurcharge()) + 1)) + 0.5);
     }
 }

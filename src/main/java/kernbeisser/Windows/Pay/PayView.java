@@ -60,7 +60,7 @@ class PayView extends Window implements View {
         shoppingCart = new ObjectTable<>(
                 Column.create("Name", ShoppingItem::getName),
                 Column.create("Anzahl", ShoppingItem::getItemMultiplier),
-                Column.create("Preis", e -> controller.getPrice(e) / 100f + "€")
+                Column.create("Preis", e -> controller.getPrice(e)  + "€")
         );
     }
 

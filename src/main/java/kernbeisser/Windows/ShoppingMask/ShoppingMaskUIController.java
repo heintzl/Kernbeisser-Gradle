@@ -48,7 +48,7 @@ public class ShoppingMaskUIController implements Controller {
         }
     }
 
-    int getPrice(Article article) {
+    double getPrice(Article article) {
         return PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
     }
 

@@ -30,7 +30,7 @@ public class PayController implements Controller {
         }
     }
 
-    int getPrice(ShoppingItem item) {
+    double getPrice(ShoppingItem item) {
         return PriceCalculator.getShoppingItemPrice(item,
                                                     model.getSaleSession().getCustomer().getSolidaritySurcharge());
     }

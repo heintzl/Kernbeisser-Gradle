@@ -2,6 +2,7 @@ package kernbeisser.Windows.CatalogInput;
 
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
 
@@ -43,14 +44,14 @@ public class CatalogInputController implements Controller {
                     catalog.add(item);
                 }
             }
-            HashMap<Integer,Integer> deposit = new HashMap<>();
+            HashMap<Integer,Double> deposit = new HashMap<>();
             catalog.forEach(e -> deposit.put(e.getKkNumber(), e.getNetPrice()));
             for (ArticleKornkraft item : catalog) {
                 if (item.getSingleDeposit() != 0) {
-                    item.setSingleDeposit(deposit.get(item.getSingleDeposit()));
+                    item.setSingleDeposit(deposit.get((int)(item.getSingleDeposit()*100)));
                 }
                 if (item.getCrateDeposit() != 0) {
-                    item.setCrateDeposit(deposit.get(item.getCrateDeposit()));
+                    item.setCrateDeposit(deposit.get((int)(item.getCrateDeposit()*100)));
                 }
             }
             model.clearCatalog();
@@ -80,7 +81,7 @@ public class CatalogInputController implements Controller {
             item.setContainerSize(Double.parseDouble(values[22].replaceAll(",", ".")));
             item.setMetricUnits(findUnit(values[23]));
             item.setAmount(extractAmount(values[23].replaceAll("\\D", ""), item.getMetricUnits()));
-            item.setVatLow(values[33].equals("1"));
+            item.setVatLow(values[33].equals("1") ? VAT.LOW.getValue() : VAT.HIGH.getValue());
             item.setNetPrice((int) Math.round(Double.parseDouble(values[37].replace(",", ".")) * 100));
             if (!values[26].equals("")) {
                 item.setSingleDeposit(Integer.parseInt(values[26]));

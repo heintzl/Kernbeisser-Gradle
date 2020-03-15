@@ -26,7 +26,7 @@ public class ShoppingMaskModel implements Model {
     Article searchItem(String itemNumber) {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("select i from Article i where i.kbNumber = '" + itemNumber + "'", Article.class)
+            return em.createQuery("select i from Article i where kbNumber = '" + itemNumber + "'", Article.class)
                      .getSingleResult();
         } catch (NoResultException e) {
             try {

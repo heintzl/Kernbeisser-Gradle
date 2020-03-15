@@ -35,11 +35,11 @@ public class ShoppingCartView extends JPanel implements View {
     }
 
     void setSum(int s) {
-        sum.setText(s / 100f + "€");
+        sum.setText(s  + "€");
     }
 
     void setValue(int s) {
-        value.setText(s / 100f + "€");
+        value.setText(s  + "€");
     }
 
     private void createUIComponents() {
@@ -62,7 +62,7 @@ public class ShoppingCartView extends JPanel implements View {
                     return discount;
                 }),
                 Column.create("3", e -> {
-                    JLabel price = new JLabel(controller.getPrice(e) / 100f + "€");
+                    JLabel price = new JLabel(controller.getPrice(e)  + "€");
                     price.setFont(gridFont);
                     price.setHorizontalAlignment(SwingConstants.RIGHT);
                     return price;

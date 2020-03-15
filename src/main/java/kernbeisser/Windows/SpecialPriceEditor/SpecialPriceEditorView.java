@@ -84,7 +84,7 @@ public class SpecialPriceEditorView extends Window implements View {
     }
 
     void setSpecialNetPrice(int p){
-        specialNetPrice.setText(p / 100f + "");
+        specialNetPrice.setText(p  + "");
     }
 
     void setEditEnable(boolean b){

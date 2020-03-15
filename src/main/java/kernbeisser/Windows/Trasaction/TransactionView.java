@@ -85,7 +85,7 @@ class TransactionView extends Window implements View {
         transactions = new ObjectTable<>(
                 Column.create("Von", e -> e.getFrom() == null ? "Kernbeisser" : e.getTo()),
                 Column.create("Zu", Transaction::getTo),
-                Column.create("Überweissungsbetrag", e -> e.getValue() / 100f + "€")
+                Column.create("Überweissungsbetrag", e -> e.getValue()  + "€")
         );
     }
 

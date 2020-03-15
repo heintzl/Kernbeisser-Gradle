@@ -56,7 +56,7 @@ public class UserMenuView extends Window implements View {
     private void createUIComponents() {
         buyHistory = new ObjectTable<>(
                 Column.create("Datum", Purchase::getCreateDate),
-                Column.create("Betrag", e -> e.getSum() / 100f + "€"),
+                Column.create("Betrag", e -> e.getSum() + "€"),
                 Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession()
                                                                                                      .getSeller()
                                                                                                      .getSurname()),

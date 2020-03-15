@@ -14,6 +14,7 @@ import kernbeisser.Windows.Window;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 
 public class ShoppingMaskUIView extends Window implements View {
     //TODO: create Enum
@@ -171,7 +172,7 @@ public class ShoppingMaskUIView extends Window implements View {
     void loadUserInfo(SaleSession saleSession) {
         customerName.setText(saleSession.getCustomer().getFirstName() + " " + saleSession.getCustomer().getSurname());
         customerLoginName.setText(saleSession.getCustomer().getUsername());
-        customerCredit.setText(saleSession.getCustomer().getUserGroup().getValue() / 100f + "\u20AC");
+        customerCredit.setText(saleSession.getCustomer().getUserGroup().getValue() + "\u20AC");
         salesPerson1.setText(saleSession.getSeller().getUsername());
         salesPerson2.setText("saleSession.getSeller().getUsername()");
     }
@@ -317,14 +318,14 @@ public class ShoppingMaskUIView extends Window implements View {
                 : article.getName());
         articleAmount.setText(article.getMetricUnits().fromUnit(article.getAmount()) + "");
         articleUnit.setText(article.getMetricUnits().getShortName());
-        price.setText(controller.getPrice(article) / 100f + "");
+        price.setText(String.format("%.2f", controller.getPrice(article)));
         priceUnit.setText(article.isWeighAble() ? "€/kg" : "€");
         amountUnit.setText(article.isWeighAble() ? "g" : "stk.");
         articleAmount.setVisible(!article.isWeighAble());
         articleUnit.setVisible(!article.isWeighAble());
         articleAmountLabel.setVisible(!article.isWeighAble());
-        optTaxLow.setSelected(article.isVatLow());
-        optTaxStandard.setSelected(!article.isVatLow());
+        optTaxLow.setSelected(article.getVAT().getValue()==0.07);
+        optTaxStandard.setSelected(article.getVAT().getValue()!=0.07);
     }
 
     void defaultSettings() {

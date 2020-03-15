@@ -5,6 +5,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -33,11 +34,10 @@ public class Article {
     private int amount;
 
     @Column
-    private int surcharge;
+    private double surcharge;
 
     @Column
-    //TODO save as double
-    private int netPrice;
+    private double netPrice;
 
     @ManyToOne
     @JoinColumn(name = "supplierId")
@@ -47,14 +47,13 @@ public class Article {
     private Long barcode;
 
     @Column
-    //TODO: Fremdschlüssel
-    private boolean vatLow;
+    private VAT vat;
 
     @Column
-    private int singleDeposit;
+    private double singleDeposit;
 
     @Column
-    private int crateDeposit;
+    private double crateDeposit;
 
     @Column
     private MetricUnits metricUnits;
@@ -115,7 +114,7 @@ public class Article {
     private List<Integer> invStock = new ArrayList<>(5);
 
     @Column
-    private int invPrice;
+    private double invPrice;
 
     @Column
     private Date intake;
@@ -207,11 +206,11 @@ public class Article {
         this.amount = amount;
     }
 
-    public int getNetPrice() {
+    public double getNetPrice() {
         return netPrice;
     }
 
-    public void setNetPrice(int netPrice) {
+    public void setNetPrice(double netPrice) {
         this.netPrice = netPrice;
     }
 
@@ -231,12 +230,12 @@ public class Article {
         this.barcode = barcode;
     }
 
-    public boolean isVatLow() {
-        return vatLow;
+    public VAT getVAT() {
+        return vat;
     }
 
-    public void setVatLow(boolean vatLow) {
-        this.vatLow = vatLow;
+    public void setVAT(VAT vatLow) {
+        this.vat = vatLow;
     }
 
     public SurchargeTable getSurchargeTable() {
@@ -255,27 +254,27 @@ public class Article {
         }
     }
 
-    public int getSurcharge() {
+    public double getSurcharge() {
         return surcharge;
     }
 
-    public void setSurcharge(int surcharge) {
+    public void setSurcharge(double surcharge) {
         this.surcharge = surcharge;
     }
 
-    public int getSingleDeposit() {
+    public double getSingleDeposit() {
         return singleDeposit;
     }
 
-    public void setSingleDeposit(int singleDeposit) {
+    public void setSingleDeposit(double singleDeposit) {
         this.singleDeposit = singleDeposit;
     }
 
-    public int getCrateDeposit() {
+    public double getCrateDeposit() {
         return crateDeposit;
     }
 
-    public void setCrateDeposit(int crateDeposit) {
+    public void setCrateDeposit(double crateDeposit) {
         this.crateDeposit = crateDeposit;
     }
 
@@ -399,11 +398,11 @@ public class Article {
         this.invStock = invStock;
     }
 
-    public int getInvPrice() {
+    public double getInvPrice() {
         return invPrice;
     }
 
-    public void setInvPrice(int invPrice) {
+    public void setInvPrice(double invPrice) {
         this.invPrice = invPrice;
     }
 

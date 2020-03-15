@@ -3,18 +3,18 @@ package kernbeisser.Enums;
 import kernbeisser.Useful.Named;
 
 public enum VAT implements Named {
-    LOW("Niedrig(7%)", 7),
-    HIGH("Hoch(19%)", 19);
+    LOW("Niedrig(7%)", 0.07),
+    HIGH("Hoch(19%)", 0.19);
 
     private final String name;
-    private final int value;
+    private final double value;
 
-    VAT(String name, int value) {
+    VAT(String name, double value) {
         this.name = name;
         this.value = value;
     }
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 

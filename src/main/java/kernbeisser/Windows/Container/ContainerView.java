@@ -78,16 +78,16 @@ public class ContainerView extends Window {
                 Column.create("Ladennummer", Container::getKBNumber),
                 Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber()),
                 Column.create("Produktname", e -> e.getItem().getName()),
-                Column.create("Netto-Preis", e -> e.getNetPrice() / 100f + "€"),
-                Column.create("Verkaufspreis", e -> e.getPrice() / 100f + "€")
+                Column.create("Netto-Preis", e -> e.getNetPrice() + "€"),
+                Column.create("Verkaufspreis", e -> e.getPrice() + "€")
         );
         unpaidContainers = new ObjectTable<>(
                 Column.create("Anzahl", Container::getAmount),
                 Column.create("Ladennummer", Container::getKBNumber),
                 Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber()),
                 Column.create("Produktname", e -> e.getItem().getName()),
-                Column.create("Netto-Preis", e -> e.getNetPrice() / 100f + "€"),
-                Column.create("Verkaufspreis", e -> e.getPrice() / 100f + "€"),
+                Column.create("Netto-Preis", e -> e.getNetPrice() + "€"),
+                Column.create("Verkaufspreis", e -> e.getPrice() + "€"),
                 new Column<Container>() {
                     @Override
                     public String getName() {

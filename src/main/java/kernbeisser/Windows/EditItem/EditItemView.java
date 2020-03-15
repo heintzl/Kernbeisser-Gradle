@@ -97,12 +97,12 @@ public class EditItemView extends Window implements View {
 
     void pasteItem(Article article) {
         itemName.setText(article.getName());
-        netPrice.setText(String.valueOf(article.getNetPrice() / 100f));
-        deposit.setText(String.valueOf(article.getSingleDeposit() / 100f));
+        netPrice.setText(String.valueOf(article.getNetPrice()));
+        deposit.setText(String.valueOf(article.getSingleDeposit()));
         kbItemNumber.setText(String.valueOf(article.getKbNumber()));
-        vat.setSelectedItem(article.isVatLow() ? VAT.LOW : VAT.HIGH);
+        vat.setSelectedItem(article.getVAT());
         supplierItemNumber.setText(String.valueOf(article.getSuppliersItemNumber()));
-        crateDeposit.setText(String.valueOf(article.getCrateDeposit() / 100f));
+        crateDeposit.setText(String.valueOf(article.getCrateDeposit() ));
         containerSize.setText(String.valueOf(article.getContainerSize()));
         amount.setText(String.valueOf(article.getAmount()));
         barcode.setText(String.valueOf(article.getBarcode()));
@@ -119,7 +119,7 @@ public class EditItemView extends Window implements View {
         out.setNetPrice((int) (netPrice.getValue() * 100));
         out.setSingleDeposit((int) (deposit.getValue() * 100));
         out.setKbNumber(kbItemNumber.getValue());
-        out.setVatLow(vat.getSelectedItem() == VAT.LOW);
+        out.setVAT((VAT) vat.getSelectedItem());
         out.setSuppliersItemNumber(supplierItemNumber.getValue());
         out.setSuppliersItemNumber(supplierItemNumber.getValue());
         out.setCrateDeposit((int) (crateDeposit.getValue() * 100));

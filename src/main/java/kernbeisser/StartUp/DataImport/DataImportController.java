@@ -169,9 +169,9 @@ public class DataImportController implements Controller {
                 User user = new User();
                 User secondary = new User();
                 UserGroup userGroup = new UserGroup();
-                user.setSalesThisYear((int) (Float.parseFloat(columns[0].replace(",", ".")) * 100));
-                user.setSalesLastYear((int) (Float.parseFloat(columns[1].replace(",", ".")) * 100));
-                userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", ".")) * 100));
+                user.setSalesThisYear((int) (Float.parseFloat(columns[0].replace(",", "."))));
+                user.setSalesLastYear((int) (Float.parseFloat(columns[1].replace(",", "."))));
+                userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", "."))));
                 user.setShares(Integer.parseInt(columns[3]));
                 user.setSolidaritySurcharge(Integer.parseInt(columns[4]));
                 secondary.setFirstName(columns[5]);
@@ -277,7 +277,7 @@ public class DataImportController implements Controller {
                 article.setName(columns[1]);
                 article.setKbNumber(Integer.parseInt(columns[2]));
                 article.setAmount(Integer.parseInt(columns[3]));
-                article.setNetPrice(Integer.parseInt(columns[4]));
+                article.setNetPrice(Integer.parseInt(columns[4])/100.);
                 article.setSupplier(suppliers.get(columns[5].replace("GRE", "GR")));
                 try {
                     Long ib = Long.parseLong(columns[6]);
@@ -291,10 +291,10 @@ public class DataImportController implements Controller {
                     article.setBarcode(null);
                 }
                 //columns[7] look at line 311
-                article.setVatLow(Boolean.parseBoolean(columns[8]));
-                article.setSurcharge(Integer.parseInt(columns[9]));
-                article.setSingleDeposit(Integer.parseInt(columns[10]));
-                article.setCrateDeposit(Integer.parseInt(columns[11]));
+                article.setVAT(Boolean.parseBoolean(columns[8]) ? VAT.LOW : VAT.HIGH);
+                article.setSurcharge(Integer.parseInt(columns[9])/100.);
+                article.setSingleDeposit(Integer.parseInt(columns[10])/100.);
+                article.setCrateDeposit(Integer.parseInt(columns[11])/100.);
                 article.setMetricUnits(MetricUnits.valueOf(columns[12].replace("WEIGHT", "GRAM")));
                 article.setPriceList(priceListHashMap.get(columns[13]));
                 article.setContainerDef(ContainerDefinition.valueOf(columns[14]));
@@ -313,7 +313,7 @@ public class DataImportController implements Controller {
                 article.setDelivered(Integer.parseInt(columns[27]));
                 article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
                 article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
-                article.setInvPrice(Integer.parseInt(columns[30]));
+                article.setInvPrice(Integer.parseInt(columns[30])/100.);
                 article.setIntake(java.sql.Date.valueOf(LocalDate.now()));
                 article.setLastBuy(null);
                 article.setLastDelivery(Date.valueOf(LocalDate.now()));

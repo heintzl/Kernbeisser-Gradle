@@ -2,6 +2,7 @@ package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -29,11 +30,9 @@ public class ShoppingItem implements Serializable {
     @Column
     private int itemMultiplier = 1;
     @Column
-    //TODO save as double
-    private int itemNetPrice;
+    private double itemNetPrice;
     @Column
-    //TODO save as double
-    private boolean vatLow;
+    private double vat;
     @Column
     private MetricUnits metricUnits;
     @Column
@@ -42,9 +41,8 @@ public class ShoppingItem implements Serializable {
     private int suppliersItemNumber;
     @Column(length = 5)
     private String shortName;
-
     @Column
-    private int surcharge;
+    private double surcharge;
 
     public ShoppingItem() {
     }
@@ -56,7 +54,7 @@ public class ShoppingItem implements Serializable {
         this.itemNetPrice = article.getNetPrice();
         //TODO this.rawPrice = item.getSurcharge();
         this.metricUnits = article.getMetricUnits();
-        this.vatLow = article.isVatLow();
+        this.vat = article.getVAT().getValue();
         this.weighAble = article.isWeighAble();
         this.surcharge = article.getSurcharge();
         if (article.getSupplier() != null) {
@@ -189,20 +187,20 @@ public class ShoppingItem implements Serializable {
         this.amount = amount;
     }
 
-    public int getItemNetPrice() {
+    public double getItemNetPrice() {
         return itemNetPrice;
     }
 
-    public void setItemNetPrice(int netPrice) {
+    public void setItemNetPrice(double netPrice) {
         this.itemNetPrice = netPrice;
     }
 
-    public boolean isVatLow() {
-        return vatLow;
+    public double getVat() {
+        return vat;
     }
 
-    public void setVatLow(boolean vatLow) {
-        this.vatLow = vatLow;
+    public void setVat(double vatLow) {
+        this.vat = vatLow;
     }
 
     public boolean isWeighable() {
@@ -285,11 +283,11 @@ public class ShoppingItem implements Serializable {
         this.shortName = shortName;
     }
 
-    public int getSurcharge() {
+    public double getSurcharge() {
         return surcharge;
     }
 
-    public void setSurcharge(int surcharge) {
+    public void setSurcharge(double surcharge) {
         this.surcharge = surcharge;
     }
 }

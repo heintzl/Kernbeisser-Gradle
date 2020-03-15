@@ -94,10 +94,10 @@ public class ContainerController {
                                                                                              .getShortName());
         view.setKbNumber(String.valueOf(c.getKBNumber()));
         view.setKkNumber(String.valueOf(c.getItem().getKkNumber()));
-        view.setSellingPrice(c.calculateOriginalPrice() / 100f + "€");
+        view.setSellingPrice(c.calculateOriginalPrice()  + "€");
         view.setItemName(c.getItem().getName());
         view.setAmount(String.valueOf(c.getAmount()));
-        view.setNetPrice(c.getNetPrice() / 100f + "€");
+        view.setNetPrice(c.getNetPrice()  + "€");
     }
 
     void exit() {
