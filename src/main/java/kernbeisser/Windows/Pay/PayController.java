@@ -29,6 +29,7 @@ public class PayController implements Controller {
     }
 
     private boolean checkBon() {
+        model.print(model.getDefaultPrinter());
         return false;
     }
 

@@ -7,6 +7,13 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Model;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.util.JRSaver;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -15,7 +22,10 @@ import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.util.Collection;
+import java.nio.file.Paths;
+import java.util.*;
+
+import static net.sf.jasperreports.engine.JasperCompileManager.compileReport;
 
 class PayModel implements Model {
     private final SaleSession saleSession;
@@ -104,6 +114,23 @@ class PayModel implements Model {
     }
 
     void print(PrintService printService) {
+        try {
+            String basePath = "/home/timo/JaspersoftWorkspace/MyReports";
+            JasperDesign jspDesign = JRXmlLoader.load(
+                    Paths.get(basePath, "Blank_A4.jrxml").toFile());
+            JasperReport jspReport = compileReport(jspDesign);
+            Map<String,Object> reportParamMap = new HashMap<>();
+            reportParamMap.put("BonNo", 47);
+            List<String> amounts = new ArrayList<String>();
+            amounts.add("1x");
+            amounts.add("2x");
+            reportParamMap.put("ItemAmount", amounts);
+            JasperPrint jspPrint = JasperFillManager.fillReport(jspReport, reportParamMap);
+            JRSaver.saveObject(jspPrint, Paths.get(basePath, "Blank_A4.jrprint").toFile());
+//            JasperPrintManager.printReport(jspPrint, false);
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
         try {
             //Creates new PrinterJob
             PrinterJob p = PrinterJob.getPrinterJob();

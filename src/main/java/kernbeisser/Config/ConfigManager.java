@@ -10,6 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class ConfigManager {
+
+    public static final int CONFIG_FILE_INDENT_FACTOR = 2;
+
     //Static only class
     private ConfigManager() {
     }
@@ -50,7 +53,7 @@ public class ConfigManager {
         try {
             if (file.createNewFile()) {
                 FileWriter fw = new FileWriter(file);
-                fw.write(config.toString());
+                fw.write(config.toString(CONFIG_FILE_INDENT_FACTOR));
                 fw.close();
             }
         } catch (IOException e) {
@@ -73,7 +76,7 @@ public class ConfigManager {
         try {
             if (file.createNewFile()) {
                 FileWriter fw = new FileWriter(file);
-                fw.write(object.toString(2));
+                fw.write(object.toString(CONFIG_FILE_INDENT_FACTOR));
                 fw.close();
             }
         } catch (IOException e) {
