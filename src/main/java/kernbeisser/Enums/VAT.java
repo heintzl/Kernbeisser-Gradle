@@ -1,21 +1,33 @@
 package kernbeisser.Enums;
 
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.VATConstant;
 import kernbeisser.Useful.Named;
 
+import javax.persistence.EntityManager;
+
 public enum VAT implements Named {
-    LOW("Niedrig(7%)", 0.07),
-    HIGH("Hoch(19%)", 0.19);
+    LOW("Niedrig(7%)"){
+        @Override
+        public double getValue() {
+            return VATConstant.getLow().getValue();
+        }
+    },
+    HIGH("Hoch(19%)"){
+        @Override
+        public double getValue() {
+            return VATConstant.getHigh().getValue();
+        }
+    };
 
     private final String name;
-    private final double value;
 
-    VAT(String name, double value) {
+    VAT(String name) {
         this.name = name;
-        this.value = value;
     }
 
-    public double getValue() {
-        return value;
+    public double getValue(){
+        return -1;
     }
 
     @Override
@@ -27,4 +39,5 @@ public enum VAT implements Named {
     public String getName() {
         return name;
     }
+
 }
