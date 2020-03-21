@@ -57,6 +57,7 @@ public class SpecialPriceEditorView extends Window implements View {
         searchTo.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR,ICON_SIZE,Color.GRAY));
         searchFrom.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR,ICON_SIZE,Color.GRAY));
         setSize(670,600);
+        windowInitialized();
     }
 
     void fillRepeat(Repeat[] repeats){

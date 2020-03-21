@@ -39,6 +39,7 @@ public class UserMenuView extends Window implements View {
         add(main);
         setSize(900, 600);
         setLocationRelativeTo(null);
+        windowInitialized();
     }
 
     Purchase getSelected() {

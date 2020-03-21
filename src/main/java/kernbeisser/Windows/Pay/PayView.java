@@ -35,6 +35,7 @@ class PayView extends Window implements View {
         cancel.addActionListener(e -> {
             this.back();
         });
+        windowInitialized();
     }
 
     PrintService getSelectedPrintService() {

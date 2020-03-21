@@ -43,7 +43,7 @@ public class LogInView extends Window implements View {
         setSize(Tools.getScreenWidth() / 2, 600);
         setLocationRelativeTo(null);
         logIn.setIcon(IconFontSwing.buildIcon(FontAwesome.SIGN_IN, 15, new Color(0x3C39FF)));
-
+        windowInitialized();
     }
 
     void addTab(String title, Collection<User> users) {

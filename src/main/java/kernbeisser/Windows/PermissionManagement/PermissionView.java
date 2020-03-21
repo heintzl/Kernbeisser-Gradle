@@ -32,6 +32,7 @@ public class PermissionView extends Window {
         category.addActionListener(e -> controller.loadSolutions());
         security.addActionListener(e -> controller.loadSolutions());
         back.addActionListener(e -> back());
+        windowInitialized();
     }
 
     Permission getSelectedObject() {

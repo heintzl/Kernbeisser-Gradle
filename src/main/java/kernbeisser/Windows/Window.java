@@ -26,19 +26,24 @@ public class Window extends JFrame {
             return;
         }
         setIconImage(STANDARD_IMAGE);
-        pack();
-        if (currentWindow != null) {
-            setSize(currentWindow.getSize());
+        lastOpened = this;
+    }
+
+    protected final void windowInitialized(){
+        if(getSize().height == 0 && getSize().width == 0) {
+            pack();
+            if (current != null) {
+                setSize(current.getSize());
+            }
         }
         setLocationRelativeTo(null);
         addWindowListener((WindowCloseEvent) e -> {
             back();
         });
-        if (currentWindow != null) {
-            currentWindow.close();
+        if (current != null) {
+            current.close();
         }
         this.open();
-        lastOpened = this;
     }
 
     public static Window getLastOpened() {

@@ -46,6 +46,7 @@ public class ContainerView extends Window {
             }
         });
         add(main);
+        windowInitialized();
     }
 
     int getAmount() {

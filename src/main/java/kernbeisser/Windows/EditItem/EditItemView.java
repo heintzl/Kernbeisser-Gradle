@@ -51,6 +51,7 @@ public class EditItemView extends Window implements View {
         kbItemNumber.setRequiredKeys(Key.ITEM_KB_NUMBER_READ, Key.ITEM_KB_NUMBER_READ);
         supplierItemNumber.setRequiredKeys(Key.ITEM_SUPPLIERS_ITEM_NUMBER_READ, Key.ITEM_SUPPLIERS_ITEM_NUMBER_WRITE);
         crateDeposit.setRequiredKeys(Key.ITEM_CRATE_DEPOSIT_READ, Key.ITEM_CRATE_DEPOSIT_WRITE);
+        windowInitialized();
     }
 
 

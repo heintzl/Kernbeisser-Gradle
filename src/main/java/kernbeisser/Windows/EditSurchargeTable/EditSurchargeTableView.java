@@ -28,6 +28,7 @@ class EditSurchargeTableView extends Window {
         add(main);
         pack();
         setLocationRelativeTo(null);
+        windowInitialized();
     }
 
     void setSuppliers(Collection<Supplier> suppliers) {

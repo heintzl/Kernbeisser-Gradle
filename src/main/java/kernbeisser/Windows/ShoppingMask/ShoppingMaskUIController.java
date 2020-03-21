@@ -5,6 +5,7 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.DefaultSearchPanel.DefaultSearchPanelController;
@@ -90,7 +91,10 @@ public class ShoppingMaskUIController implements Controller {
                 customItem.setItemMultiplier((int) view.getAmount());
                 customItem.setItemNetPrice(view.getPriceVATIncluded());
                 customItem.setName(view.getItemName());
+                customItem.setVat(view.getSelectedVAT().getValue());
+                customItem.setMetricUnits(MetricUnits.STACK);
                 customItem.setAmount(customItem.getMetricUnits().toUnit(view.getAmount()));
+                customItem.setItemMultiplier(view.getArticleAmount());
                 return customItem;
             case ShoppingMaskUIView.PRODUCE:
                 return ShoppingItem.createOrganic(view.getPriceVATIncluded());

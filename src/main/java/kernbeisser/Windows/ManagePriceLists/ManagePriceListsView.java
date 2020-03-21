@@ -54,7 +54,7 @@ public class ManagePriceListsView extends Window implements View {
                 }
             }
         });
-
+        windowInitialized();
     }
 
     /**

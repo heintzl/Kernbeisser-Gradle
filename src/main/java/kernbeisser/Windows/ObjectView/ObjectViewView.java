@@ -41,6 +41,7 @@ public class ObjectViewView<T> extends Window {
         searchBar.addActionListener(e -> controller.refresh());
         pack();
         setLocationRelativeTo(null);
+        windowInitialized();
     }
 
     void setEditAvailable(boolean s) {

@@ -28,6 +28,7 @@ public class PurchaseView extends Window implements View {
         finish.addActionListener((e) -> back());
         setSize(current.getSize());
         setLocationRelativeTo(current);
+        windowInitialized();
     }
 
     void setDate(String date) {

@@ -41,6 +41,7 @@ public class CashierMenuView extends Window implements View {
         add(main);
         setSize(900, 600);
         setLocationRelativeTo(null);
+        windowInitialized();
     }
 
 }

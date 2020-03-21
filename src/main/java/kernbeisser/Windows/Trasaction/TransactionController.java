@@ -64,4 +64,8 @@ public class TransactionController implements Controller {
         model.remove(view.getSelectedTransaction());
         view.setTransactions(model.getTransactions());
     }
+
+    void loadUser(User user) {
+
+    }
 }

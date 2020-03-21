@@ -50,6 +50,7 @@ public class JobSelectorView extends Window implements View {
             availableJobs.add(job);
             selectedJobs.remove(job);
         });
+        windowInitialized();
     }
 
     private void createUIComponents() {

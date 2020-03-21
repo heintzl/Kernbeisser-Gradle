@@ -23,6 +23,7 @@ public class ItemFilterView extends Window implements View {
     public ItemFilterView(Window current) {
         super(current);
         commit.addActionListener(e -> back());
+        windowInitialized();
     }
 
     public PriceList getSelectedPriceList() {

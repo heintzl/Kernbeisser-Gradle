@@ -65,6 +65,7 @@ public class UserGroupSelector extends Window {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        windowInitialized();
     }
 
     private void selectUser(User user) {

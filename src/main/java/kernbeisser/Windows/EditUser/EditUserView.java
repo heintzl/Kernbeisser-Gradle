@@ -71,6 +71,7 @@ class EditUserView extends Window implements View {
         phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ, Key.USER_PHONE_NUMBER2_WRITE);
         username.setRequiredKeys(Key.USER_USERNAME_READ, Key.USER_USERNAME_WRITE);
         street.setRequiredKeys(Key.USER_STREET_READ, Key.USER_STREET_WRITE);
+        windowInitialized();
     }
 
 

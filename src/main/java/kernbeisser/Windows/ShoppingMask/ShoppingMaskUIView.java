@@ -7,6 +7,7 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
@@ -114,6 +115,9 @@ public class ShoppingMaskUIView extends Window implements View {
         articleTypeChange('a');
         pack();
         setLocationRelativeTo(window);
+        optTaxLow.setText(VAT.LOW.getName());
+        optTaxStandard.setText(VAT.HIGH.getName());
+        windowInitialized();
     }
 
     private void doCancel() {
@@ -337,7 +341,6 @@ public class ShoppingMaskUIView extends Window implements View {
         articleName.setText("Kein Artikel gefunden!");
         amountUnit.setText("");
         articleUnit.setText("");
-
     }
 
     int getArticleAmount() {
@@ -359,5 +362,9 @@ public class ShoppingMaskUIView extends Window implements View {
 
     public void setDeposit(String value) {
         this.deposit.setText(value);
+    }
+
+    VAT getSelectedVAT() {
+        return optTaxLow.isSelected() ? VAT.LOW : VAT.HIGH;
     }
 }

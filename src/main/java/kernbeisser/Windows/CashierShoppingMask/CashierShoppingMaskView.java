@@ -39,6 +39,7 @@ public class CashierShoppingMaskView extends Window{
                 controller.refresh();
             }
         });
+        windowInitialized();
     }
 
     private void createUIComponents() {

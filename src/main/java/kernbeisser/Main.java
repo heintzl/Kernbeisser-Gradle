@@ -6,6 +6,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.Setting;
 import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.StartUp.DataImport.DataImportView;
 import kernbeisser.Windows.LogIn.LogInController;
@@ -35,6 +36,8 @@ public class Main {
         } else {
             openLogIn();
         }
+
+
     }
 
     public static void buildEnvironment()
