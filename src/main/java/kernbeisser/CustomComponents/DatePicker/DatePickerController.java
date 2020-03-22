@@ -85,14 +85,14 @@ public class DatePickerController implements Controller {
     }
 
     public static void requestDate(Window current, Consumer<LocalDate> select){
-        new DatePickerController(null){
-            @Override
-            public void finish() {
-                current.setEnabled(true);
-                current.requestFocus();
-                select.accept(getModel().getSelectedDate());
-            }
-        };
-        current.setEnabled(false);
+            new DatePickerController(null) {
+                @Override
+                public void finish() {
+                    current.setEnabled(true);
+                    current.requestFocus();
+                    select.accept(getModel().getSelectedDate());
+                }
+            };
+            current.setEnabled(false);
     }
 }

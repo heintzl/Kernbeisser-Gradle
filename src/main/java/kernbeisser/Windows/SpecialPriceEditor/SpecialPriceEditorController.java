@@ -71,6 +71,7 @@ public class SpecialPriceEditorController {
     }
 
     void searchFrom() {
+
         DatePickerController.requestDate(view,view::setFrom);
     }
 

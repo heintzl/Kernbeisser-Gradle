@@ -23,8 +23,8 @@
         <class>kernbeisser.DBEntities.Container</class>
         <class>kernbeisser.DBEntities.Permission</class>
         <class>kernbeisser.DBEntities.Offer</class>
-        <class>kernbeisser.DBEntities.VATConstant</class>
         <class>kernbeisser.DBEntities.SettingValue</class>
+        <class>kernbeisser.DBEntities.UserSettingValue</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>

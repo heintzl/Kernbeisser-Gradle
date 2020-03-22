@@ -2,6 +2,7 @@ package kernbeisser.Windows.UserMenu;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.UserSetting;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
@@ -18,6 +19,7 @@ public class UserMenuController implements Controller {
         this.model = new UserMenuModel(owner);
         view.setUsername(owner.getUsername());
         view.setBuyHistory(model.getAllPurchase());
+        System.out.println(UserSetting.THEME.getValue(owner));
     }
 
 
