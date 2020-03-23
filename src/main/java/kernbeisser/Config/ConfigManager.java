@@ -39,6 +39,7 @@ public class ConfigManager {
         return getHeader().getBoolean("dbIsInitialized");
     }
 
+
     public static String[] getDBAccessData() {
         JSONObject obj = getDBAccess();
         return new String[]{obj.getString("URL"), obj.getString("Username"), obj.getString("Password")};
