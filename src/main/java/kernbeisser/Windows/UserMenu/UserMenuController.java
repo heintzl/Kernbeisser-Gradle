@@ -19,7 +19,6 @@ public class UserMenuController implements Controller {
         this.model = new UserMenuModel(owner);
         view.setUsername(owner.getUsername());
         view.setBuyHistory(model.getAllPurchase());
-        System.out.println(UserSetting.THEME.getValue(owner));
     }
 
 

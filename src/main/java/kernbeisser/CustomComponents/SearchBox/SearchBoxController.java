@@ -23,6 +23,10 @@ public class SearchBoxController<T> implements Controller {
         search();
     }
 
+    public T getSelectedObject(){
+        return view.getSelectedObject();
+    }
+
     void search(){
         view.setObjects(model.getValues(view.getSearch()));
     }
@@ -39,5 +43,9 @@ public class SearchBoxController<T> implements Controller {
     @Override
     public SearchBoxModel<T> getModel() {
         return model;
+    }
+
+    public void refreshLoadSolutions() {
+        search();
     }
 }

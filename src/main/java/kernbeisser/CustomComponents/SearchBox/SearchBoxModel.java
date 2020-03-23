@@ -1,5 +1,6 @@
 package kernbeisser.CustomComponents.SearchBox;
 
+import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Searchable;
 
@@ -7,8 +8,6 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 public class SearchBoxModel<T> implements Model {
-    private final int MAX_SEARCH_RESULTS = 500;
-
     private final Searchable<T> searchable;
     private final Consumer<T> select;
 
@@ -17,7 +16,7 @@ public class SearchBoxModel<T> implements Model {
         this.select = select;
     }
     Collection<T> getValues(String s){
-        return searchable.search(s,MAX_SEARCH_RESULTS);
+        return searchable.search(s,Setting.DEFAULT_MAX_SEARCH.getIntValue());
     }
 
     public void select(T selectedObject) {

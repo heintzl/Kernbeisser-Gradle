@@ -29,7 +29,7 @@ public class Window extends JFrame {
         lastOpened = this;
     }
 
-    protected final void windowInitialized(){
+    public final void windowInitialized(){
         if(getSize().height == 0 && getSize().width == 0) {
             pack();
             if (current != null) {
