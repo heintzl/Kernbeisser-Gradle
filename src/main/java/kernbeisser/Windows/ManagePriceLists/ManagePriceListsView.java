@@ -52,7 +52,7 @@ public class ManagePriceListsView extends Window implements View {
         super(current);   // TODO Hier noch Keys einfügen
         initComponents(); // wird noch ersetzt durch neuen UI-Builder
         this.controller = controller;
-        priceListChooser.setModel(new PriceListTree(false).getModel());
+        //priceListChooser.setModel(new PriceListTree(false).getModel());
         priceListChooser.addTreeSelectionListener(e -> {
             if (priceListChooser.getSelectionPath() != null) {
                 if (priceListChooser.getSelectionPath().getPath().length > 1) {
@@ -287,4 +287,8 @@ public class ManagePriceListsView extends Window implements View {
     private JTextField superPriceList;
 
     // End of variables declaration//GEN-END:variables
+
+    public JTree getPriceListChooser() {
+        return priceListChooser;
+    }
 }

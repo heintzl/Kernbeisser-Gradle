@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ManagePriceLists;
 
+import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
@@ -15,13 +16,14 @@ public class ManagePriceListsController implements Controller {
     }
     */
     public ManagePriceListsController(Window current) {
+        model = new ManagePriceListsModel();
         view = new ManagePriceListsView(this, current);
-        this.model = new ManagePriceListsModel();
+        refresh();
     }
 
     @Override
     public void refresh() {
-
+        view.getPriceListChooser().setModel(model.getPriceListTreeModel());
     }
 
     @Override
