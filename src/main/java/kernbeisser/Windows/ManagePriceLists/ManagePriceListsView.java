@@ -8,6 +8,7 @@ package kernbeisser.Windows.ManagePriceLists;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 import org.hibernate.Session;
@@ -30,7 +31,7 @@ public class ManagePriceListsView extends Window implements View {
 
     ManagePriceListsController controller;
 
-    public ManagePriceListsView(Window current) {
+    /*public ManagePriceListsView(Window current) {
         //TODO Benjamin is working currently on this project
         super(current);
         initComponents();
@@ -45,7 +46,21 @@ public class ManagePriceListsView extends Window implements View {
         });
 
     }
+    */
 
+    ManagePriceListsView(ManagePriceListsController controller, Window current) {
+        super(current);   // TODO Hier noch Keys einfügen
+        initComponents(); // wird noch ersetzt durch neuen UI-Builder
+        this.controller = controller;
+        priceListChooser.setModel(new PriceListTree(false).getModel());
+        priceListChooser.addTreeSelectionListener(e -> {
+            if (priceListChooser.getSelectionPath() != null) {
+                if (priceListChooser.getSelectionPath().getPath().length > 1) {
+                    superPriceList.setText(priceListChooser.getLastSelectedPathComponent().toString());
+                }
+            }
+        });
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

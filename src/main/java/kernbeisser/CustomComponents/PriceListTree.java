@@ -34,7 +34,7 @@ public class PriceListTree extends ObjectTree<PriceList> {
                   }
               },
               "Preislisten",PriceList.getAllHeadPriceLists());
-        if (optionToEdit) {
+        /*if (optionToEdit) {
             PriceList p = new PriceList() {
                 @Override
                 public int getId() {
@@ -55,6 +55,6 @@ public class PriceListTree extends ObjectTree<PriceList> {
                     };
                 }
             });
-        }
+        } */
     }
 }
