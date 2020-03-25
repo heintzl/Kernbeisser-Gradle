@@ -12,8 +12,9 @@ public class PermissionComboBox<T> extends JComboBox<T> implements RequiresPermi
     @Override
     public void setReadable(boolean b) {
         setRenderer(b
-                    ? (list, value, index, isSelected, cellHasFocus) -> new JLabel("**********")
-                    : new DefaultListCellRenderer());
+                    ? new DefaultListCellRenderer()
+                    : (list, value, index, isSelected, cellHasFocus) -> new JLabel("**********")
+                    );
     }
 
     @Override

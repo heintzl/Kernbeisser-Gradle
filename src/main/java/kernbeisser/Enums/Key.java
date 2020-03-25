@@ -1,5 +1,7 @@
 package kernbeisser.Enums;
 
+import kernbeisser.Windows.LogIn.LogInModel;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -9,6 +11,7 @@ public enum Key {
     ACTION_TRANSACTION_FROM_OTHER(KeyCategory.ACTION, Security.EXTREME),
     ACTION_TRANSACTION_FROM_KB(KeyCategory.ACTION, Security.EXTREME),
     ACTION_EDIT_USER(KeyCategory.ACTION, Security.MIDDLE),
+    ACTION_ORDER_CONTAINER(KeyCategory.ACTION,Security.LOW),
 
     //DataBase Changes:
     USER_ID_READ(KeyCategory.USERS, Security.EXTREME),
@@ -77,14 +80,14 @@ public enum Key {
     ARTICLE_BARCODE_WRITE(KeyCategory.ARTICLE, Security.LOW),
     ARTICLE_SPECIAL_PRICE_NET_READ(KeyCategory.ARTICLE, Security.LOW),
     ARTICLE_SPECIAL_PRICE_NET_WRITE(KeyCategory.ARTICLE, Security.LOW),
-    ARTICLE_VAT_LOW_READ(KeyCategory.ARTICLE, Security.LOW),
-    ARTICLE_VAT_LOW_WRITE(KeyCategory.ARTICLE, Security.LOW),
+    ARTICLE_VAT_READ(KeyCategory.ARTICLE, Security.LOW),
+    ARTICLE_VAT_WRITE(KeyCategory.ARTICLE, Security.LOW),
     ARTICLE_SINGLE_DEPOSIT_READ(KeyCategory.ARTICLE, Security.LOW),
     ARTICLE_SINGLE_DEPOSIT_WRITE(KeyCategory.ARTICLE, Security.LOW),
     ARTICLE_CRATE_DEPOSIT_READ(KeyCategory.ARTICLE, Security.LOW),
     ARTICLE_CRATE_DEPOSIT_WRITE(KeyCategory.ARTICLE, Security.LOW),
-    ARTICLE_UNIT_READ(KeyCategory.ARTICLE, Security.LOW),
-    ARTICLE_UNIT_WRITE(KeyCategory.ARTICLE, Security.LOW),
+    ARTICLE_METRIC_UNITS_READ(KeyCategory.ARTICLE, Security.LOW),
+    ARTICLE_METRIC_UNITS_WRITE(KeyCategory.ARTICLE, Security.LOW),
     ARTICLE_PRICE_LIST_READ(KeyCategory.ARTICLE, Security.LOW),
     ARTICLE_PRICE_LIST_WRITE(KeyCategory.ARTICLE, Security.LOW),
     ARTICLE_CONTAINER_DEF_READ(KeyCategory.ARTICLE, Security.LOW),
@@ -301,6 +304,10 @@ public enum Key {
         this.category = category;
     }
 
+    public boolean userHas(){
+        return LogInModel.getLoggedIn().hasPermission(this);
+    }
+
     public static Collection<Key> find(KeyCategory category) {
         Collection<Key> out = new ArrayList<>();
         for (Key value : values()) {
@@ -320,4 +327,5 @@ public enum Key {
         }
         return out;
     }
+
 }

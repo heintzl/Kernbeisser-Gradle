@@ -3,6 +3,7 @@ package kernbeisser.Windows.Container;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Window;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class ContainerController {
         model = new ContainerModel(user);
         view = new ContainerView(current, this);
         view.setLastContainers(model.getLastContainers());
+        view.setInsertSectionEnabled(Key.ACTION_ORDER_CONTAINER.userHas());
         refreshUnpaidContainers();
     }
 
@@ -72,7 +74,7 @@ public class ContainerController {
             Container c = new Container();
             c.setItem(item);
             c.setAmount(1);
-            c.setNetPrice(c.calculateOriginalPrice());
+            c.setNetPrice(0);
             c.setPayed(false);
             pasteData(c);
         }
@@ -90,11 +92,10 @@ public class ContainerController {
 
     private void pasteData(Container c) {
         view.setItemSize(c.getItem().getContainerSize() + " x " + c.getItem().getAmount() + c.getItem()
-                                                                                             .getMetricUnits()
-                                                                                             .getShortName());
+                                                                                             .getMetricUnits().getShortName());
         view.setKbNumber(String.valueOf(c.getKBNumber()));
         view.setKkNumber(String.valueOf(c.getItem().getKkNumber()));
-        view.setSellingPrice(c.calculateOriginalPrice()  + "€");
+        view.setSellingPrice(0  + "€");
         view.setItemName(c.getItem().getName());
         view.setAmount(String.valueOf(c.getAmount()));
         view.setNetPrice(c.getNetPrice()  + "€");

@@ -1,12 +1,11 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Pay.PayController;
@@ -28,9 +27,10 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void addToShoppingCart() {
-        ShoppingItem item = extractShoppingItemFromUI();
-        if (item != null) {
-            shoppingCartController.addShoppingItem(item);
+        try {
+            shoppingCartController.addShoppingItem(extractShoppingItemFromUI());
+        } catch (UndefinedInputException undefinedInputException) {
+            view.noArticleFound();
         }
     }
 
@@ -54,7 +54,7 @@ public class ShoppingMaskUIController implements Controller {
         return PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
     }
 
-    private ShoppingItem extractShoppingItemFromUI() {
+    private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
         switch (view.getOption()) {
             case ShoppingMaskUIView.ARTICLE_NUMBER:
                 Article extractedArticle = null;
@@ -67,11 +67,8 @@ public class ShoppingMaskUIController implements Controller {
                     if (supplier != 0) {
                         extractedArticle = model.getBySupplierItemNumber(supplier);
                     }
-                    if (extractedArticle == null) {
-                        view.noArticleFound();
-                        return null;
-                        //TODO throw NoResultException instead of null
-                    }
+                    if (extractedArticle == null) throw new UndefinedInputException();
+
                 }
                 ShoppingItem shoppingItem = new ShoppingItem(extractedArticle);
                 shoppingItem.setDiscount(view.getDiscount());

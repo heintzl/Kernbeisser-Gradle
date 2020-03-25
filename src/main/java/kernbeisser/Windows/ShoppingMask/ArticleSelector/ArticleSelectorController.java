@@ -4,6 +4,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.View;
@@ -28,9 +29,12 @@ public class ArticleSelectorController implements Controller {
             }
             return articles;
         }, consumer,
-                                                        Column.create("Name", Article::getName),
-                                                        Column.create("Barcode", Article::getBarcode),
-                                                        Column.create("Lieferant", e -> e.getSupplier().getShortName()));
+                                                        Column.create("Name", Article::getName, Key.ARTICLE_NAME_READ),
+                                                        Column.create("Barcode", Article::getBarcode,
+                                                                      Key.ARTICLE_BARCODE_READ),
+                                                        Column.create("Lieferant", e -> e.getSupplier().getShortName(),
+                                                                      Key.ARTICLE_SUPPLIER_READ,
+                                                                      Key.SUPPLIER_SHORT_NAME_READ));
         this.model = new ArticleSelectorModel(consumer);
         this.view = new ArticleSelectorView(current,this);
     }

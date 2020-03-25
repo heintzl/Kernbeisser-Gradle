@@ -52,7 +52,6 @@ public class ShoppingItem implements Serializable {
         this.kbNumber = article.getKbNumber();
         this.amount = article.getAmount();
         this.itemNetPrice = article.getNetPrice();
-        //TODO this.rawPrice = item.getSurcharge();
         this.metricUnits = article.getMetricUnits();
         this.vat = article.getVAT().getValue();
         this.weighAble = article.isWeighAble();
@@ -68,7 +67,7 @@ public class ShoppingItem implements Serializable {
         this.discount = discount;
     }
 
-    public static ShoppingItem createOrganic(int price) {
+    public static ShoppingItem createOrganic(double price) {
         ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -96,7 +95,7 @@ public class ShoppingItem implements Serializable {
         return out;
     }
 
-    public static ShoppingItem createBakeryProduct(int price) {
+    public static ShoppingItem createBakeryProduct(double price) {
         ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -122,7 +121,7 @@ public class ShoppingItem implements Serializable {
         return out;
     }
 
-    public static ShoppingItem createDeposit(int price) {
+    public static ShoppingItem createDeposit(double price) {
         ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();

@@ -2,21 +2,20 @@ package kernbeisser.Windows.Container;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Container;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 public class ContainerView extends Window {
     private ObjectTable<Container> unpaidContainers;
-    private JButton commit;
+    private kernbeisser.CustomComponents.PermissionButton commit;
     private ObjectTable<Container> lastContainers;
     private IntegerParseField amount;
     private IntegerParseField kbNumber;
@@ -26,6 +25,8 @@ public class ContainerView extends Window {
     private DoubleParseField netPrice;
     private JLabel sellingPrice;
     private JPanel main;
+    private JPanel insertSection;
+    private JLabel insertSectionLabel;
 
     private ContainerController controller;
 
@@ -47,6 +48,11 @@ public class ContainerView extends Window {
         });
         add(main);
         windowInitialized();
+    }
+
+    void setInsertSectionEnabled(boolean b){
+        insertSection.setVisible(b);
+        insertSectionLabel.setVisible(b);
     }
 
     int getAmount() {
@@ -75,20 +81,20 @@ public class ContainerView extends Window {
 
     private void createUIComponents() {
         lastContainers = new ObjectTable<>(
-                Column.create("Anzahl", Container::getAmount),
-                Column.create("Ladennummer", Container::getKBNumber),
-                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber()),
-                Column.create("Produktname", e -> e.getItem().getName()),
-                Column.create("Netto-Preis", e -> e.getNetPrice() + "€"),
-                Column.create("Verkaufspreis", e -> e.getPrice() + "€")
+                Column.create("Anzahl", Container::getAmount, Key.CONTAINER_AMOUNT_READ),
+                Column.create("Ladennummer", Container::getKBNumber,Key.CONTAINER_ITEM_READ,Key.ARTICLE_KB_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Produktname", e -> e.getItem().getName(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_NAME_READ),
+                Column.create("Netto-Preis", e -> e.getNetPrice() + "€",Key.CONTAINER_ITEM_READ,Key.ARTICLE_NET_PRICE_READ),
+                Column.create("Verkaufspreis", e -> "notDefined" + "€")
         );
         unpaidContainers = new ObjectTable<>(
-                Column.create("Anzahl", Container::getAmount),
-                Column.create("Ladennummer", Container::getKBNumber),
-                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber()),
-                Column.create("Produktname", e -> e.getItem().getName()),
-                Column.create("Netto-Preis", e -> e.getNetPrice() + "€"),
-                Column.create("Verkaufspreis", e -> e.getPrice() + "€"),
+                Column.create("Anzahl", Container::getAmount,Key.CONTAINER_AMOUNT_READ),
+                Column.create("Ladennummer", Container::getKBNumber,Key.CONTAINER_ITEM_READ,Key.ARTICLE_KB_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Produktname", e -> e.getItem().getName(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_NAME_READ),
+                Column.create("Netto-Preis", e -> e.getNetPrice() + "€",Key.CONTAINER_ITEM_READ,Key.ARTICLE_NET_PRICE_READ),
+                Column.create("Verkaufspreis", e -> "notDefined" + "€"),
                 new Column<Container>() {
                     @Override
                     public String getName() {

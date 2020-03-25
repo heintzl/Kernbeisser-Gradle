@@ -44,11 +44,9 @@ public class ArticleKornkraft implements Serializable {
     private double containerSize;
 
     @Column
-    //TODO save as double
     private double singleDeposit;
 
     @Column
-    //TODO save as double
     private double crateDeposit;
 
     public static List<ArticleKornkraft> getAll(String condition) {
@@ -164,7 +162,7 @@ public class ArticleKornkraft implements Serializable {
         return netPrice;
     }
 
-    public void setNetPrice(int netPrice) {
+    public void setNetPrice(double netPrice) {
         this.netPrice = netPrice;
     }
 
@@ -190,13 +188,5 @@ public class ArticleKornkraft implements Serializable {
         } catch (NoResultException e) {
             return SurchargeTable.DEFAULT;
         }
-    }
-
-    public int getContainerPrice() {
-        return (int) ((netPrice * ((getSurcharge().getSurcharge() / 200f) + 1)) + 0.5);
-    }
-
-    public int calculatePrice() {
-        return (int) ((netPrice * ((getSurcharge().getSurcharge()) + 1)) + 0.5);
     }
 }

@@ -48,10 +48,10 @@ public class CatalogInputController implements Controller {
             catalog.forEach(e -> deposit.put(e.getKkNumber(), e.getNetPrice()));
             for (ArticleKornkraft item : catalog) {
                 if (item.getSingleDeposit() != 0) {
-                    item.setSingleDeposit(deposit.get((int)(item.getSingleDeposit()*100)));
+                    item.setSingleDeposit(deposit.get((int)(item.getSingleDeposit())));
                 }
                 if (item.getCrateDeposit() != 0) {
-                    item.setCrateDeposit(deposit.get((int)(item.getCrateDeposit()*100)));
+                    item.setCrateDeposit(deposit.get((int)(item.getCrateDeposit())));
                 }
             }
             model.clearCatalog();

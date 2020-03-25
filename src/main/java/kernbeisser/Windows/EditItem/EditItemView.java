@@ -19,23 +19,23 @@ public class EditItemView extends Window implements View {
     private JButton commit;
     private JButton cancel;
     private kernbeisser.CustomComponents.TextFields.PermissionField itemName;
-    private JComboBox<Supplier> supplier;
+    private kernbeisser.CustomComponents.PermissionComboBox supplier;
     private DoubleParseField netPrice;
     private DoubleParseField deposit;
     private IntegerParseField kbItemNumber;
     private IntegerParseField supplierItemNumber;
     private DoubleParseField crateDeposit;
-    private JButton search;
-    private JComboBox<PriceList> priceList;
+    private kernbeisser.CustomComponents.PermissionButton search;
+    private kernbeisser.CustomComponents.PermissionComboBox priceList;
     private IntegerParseField amount;
     private DoubleParseField containerSize;
-    private JComboBox<MetricUnits> metricUnits;
-    private JComboBox<ContainerDefinition> containerDefinition;
+    private kernbeisser.CustomComponents.PermissionComboBox metricUnits;
+    private kernbeisser.CustomComponents.PermissionComboBox containerDefinition;
     private kernbeisser.CustomComponents.TextFields.PermissionField barcode;
-    private JCheckBox showInShoppingMask;
-    private JCheckBox weighable;
+    private kernbeisser.CustomComponents.PermissionCheckBox showInShoppingMask;
+    private kernbeisser.CustomComponents.PermissionCheckBox weighable;
     private JTextArea extraInfo;
-    private JComboBox<VAT> vat;
+    private kernbeisser.CustomComponents.PermissionComboBox vat;
     private JPanel main;
 
     public EditItemView(EditItemController controller, Window current) {
@@ -45,12 +45,26 @@ public class EditItemView extends Window implements View {
         add(main);
         pack();
         setLocationRelativeTo(null);
+        itemName.setRequiredKeys(Key.ARTICLE_NAME_READ,Key.ARTICLE_NAME_WRITE);
         amount.setRequiredKeys(Key.ARTICLE_AMOUNT_READ, Key.ARTICLE_AMOUNT_WRITE);
         netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ, Key.ARTICLE_NET_PRICE_WRITE);
+        supplier.setRequiredReadKeys(Key.ARTICLE_SUPPLIER_READ,Key.SUPPLIER_NAME_READ);
+        supplier.setRequiredWriteKeys(Key.ARTICLE_SUPPLIER_WRITE);
+        netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ,Key.ARTICLE_NET_PRICE_WRITE);
         deposit.setRequiredKeys(Key.ARTICLE_SINGLE_DEPOSIT_READ, Key.ARTICLE_SINGLE_DEPOSIT_WRITE);
         kbItemNumber.setRequiredKeys(Key.ARTICLE_KB_NUMBER_READ, Key.ARTICLE_KB_NUMBER_READ);
-        supplierItemNumber.setRequiredKeys(Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ, Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE);
+        supplierItemNumber.setRequiredKeys(Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE);
         crateDeposit.setRequiredKeys(Key.ARTICLE_CRATE_DEPOSIT_READ, Key.ARTICLE_CRATE_DEPOSIT_WRITE);
+        priceList.setRequiredReadKeys(Key.ARTICLE_PRICE_LIST_READ,Key.PRICELIST_NAME_READ);
+        priceList.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
+        search.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
+        vat.setRequiredKeys(Key.ARTICLE_VAT_READ,Key.ARTICLE_VAT_WRITE);
+        metricUnits.setRequiredKeys(Key.ARTICLE_METRIC_UNITS_READ, Key.ARTICLE_METRIC_UNITS_WRITE);
+        barcode.setRequiredKeys(Key.ARTICLE_BARCODE_READ,Key.ARTICLE_BARCODE_WRITE);
+        containerDefinition.setRequiredKeys(Key.ARTICLE_CONTAINER_DEF_READ,Key.ARTICLE_CONTAINER_DEF_WRITE);
+        containerSize.setRequiredKeys(Key.ARTICLE_CONTAINER_SIZE_READ,Key.ARTICLE_CONTAINER_SIZE_WRITE);
+        showInShoppingMask.setRequiredReadKeys(Key.ARTICLE_SHOW_IN_SHOP_READ,Key.ARTICLE_SHOW_IN_SHOP_WRITE);
+        weighable.setRequiredReadKeys(Key.ARTICLE_WEIGHABLE_READ,Key.ARTICLE_WEIGHABLE_WRITE);
         windowInitialized();
     }
 

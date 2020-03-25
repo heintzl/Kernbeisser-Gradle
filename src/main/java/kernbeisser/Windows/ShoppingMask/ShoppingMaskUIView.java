@@ -281,8 +281,8 @@ public class ShoppingMaskUIView extends Window implements View {
         shoppingCartView = cartController.getView();
     }
 
-    int getPriceVATIncluded() {
-        return (int) ((price.getValue() * 100) + 0.5);
+    double getPriceVATIncluded() {
+        return price.getValue();
     }
 
     public void setPrice(String value) {

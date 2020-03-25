@@ -22,6 +22,7 @@ public class ObjectViewController<T> {
             view.addColumn(column);
         }
         putItems();
+        view.windowInitialized();
     }
 
     void select() {

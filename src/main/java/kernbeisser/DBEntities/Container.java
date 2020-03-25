@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -24,13 +25,16 @@ public class Container implements Serializable {
     private User user;
 
     @Column
+    private double userSurcharge;
+
+    @Column
     private String info;
 
     @Column
     private int amount;
 
     @Column
-    private int netPrice;
+    private double netPrice;
 
     @Column
     private boolean payed;
@@ -111,7 +115,7 @@ public class Container implements Serializable {
         }
     }
 
-    public int getNetPrice() {
+    public double getNetPrice() {
         return netPrice;
     }
 
@@ -119,12 +123,13 @@ public class Container implements Serializable {
         this.netPrice = overriddenPrice;
     }
 
-    public int calculateOriginalPrice() {
-        return item.getContainerPrice() * amount;
+
+    public double getUserSurcharge() {
+        return userSurcharge;
     }
 
-    public int getPrice() {
-        item.setNetPrice(netPrice);
-        return item.getContainerPrice();
+    public void setUserSurcharge(double userSurcharge) {
+        this.userSurcharge = userSurcharge;
     }
+
 }
