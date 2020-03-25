@@ -5,6 +5,7 @@
  */
 package kernbeisser.Windows.ManagePriceLists;
 
+import kernbeisser.CustomComponents.ObjectTree.ObjectNode;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
@@ -53,13 +54,10 @@ public class ManagePriceListsView extends Window implements View {
         initComponents(); // wird noch ersetzt durch neuen UI-Builder
         this.controller = controller;
         //priceListChooser.setModel(new PriceListTree(false).getModel());
-        priceListChooser.addTreeSelectionListener(e -> {
-            if (priceListChooser.getSelectionPath() != null) {
-                if (priceListChooser.getSelectionPath().getPath().length > 1) {
-                    superPriceList.setText(priceListChooser.getLastSelectedPathComponent().toString());
-                }
-            }
-        });
+        priceListChooser.addTreeSelectionListener(e -> controller.displayCurrentSuperPriceList());
+        save.addActionListener(e -> controller.saveAction());
+        rename.addActionListener(e -> controller.renameAction());
+        delete.addActionListener(e -> controller.deleteAction());
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -201,7 +199,7 @@ public class ManagePriceListsView extends Window implements View {
      * @param evt
      */
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        String pln = priceListName.getText();
+        /*String pln = priceListName.getText();
         if (pln.equals("")) {
             JOptionPane.showMessageDialog(this, "Bitte w\u00e4hlen sie einen korrekten Namen");
             return;
@@ -223,14 +221,14 @@ public class ManagePriceListsView extends Window implements View {
         em.flush();
         et.commit();
         em.close();
-        priceListChooser.setModel(new PriceListTree().getModel());
+        priceListChooser.setModel(new PriceListTree().getModel()); */
     }//GEN-LAST:event_saveActionPerformed
 
     /**
      * if the user pressed the ESC Button the Window get closed and the finish action gets triggered
      *
      * @param evt
-     * @see Finishable
+     * see Finishable
      */
     private void escActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_escActionPerformed
         back();
@@ -291,4 +289,19 @@ public class ManagePriceListsView extends Window implements View {
     public JTree getPriceListChooser() {
         return priceListChooser;
     }
+
+    public JTextField getSuperPriceList() {
+        return superPriceList;
+    }
+
+    public String newPriceListName() { return priceListName.getText(); }
+
+    public PriceList selectedSuperPriceList() {
+        //PriceListTree priceListTree = (PriceListTree) priceListChooser;
+        // Das ist echt nicht schön, besser wäre, den PriceListtree direkt zu verwenden. Dann würde man mit
+        // getSelected direkt an die PriceList drankommen
+        ObjectNode node = (ObjectNode) priceListChooser.getLastSelectedPathComponent();
+        return (PriceList) node.getValue();
+    }
+
 }

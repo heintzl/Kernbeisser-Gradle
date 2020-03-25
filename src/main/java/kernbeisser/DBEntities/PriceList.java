@@ -34,9 +34,14 @@ public class PriceList implements Serializable {
     @CreationTimestamp
     private Date createDate;
 
-    private static void savePriceList(String name) {
+    public static void savePriceList(String name) {
+        savePriceList(name, null);
+    }
+
+    public static void savePriceList(String priceListName, PriceList superPriceList) {
         PriceList p = new PriceList();
-        p.setName(name);
+        p.setName(priceListName);
+        p.setSuperPriceList(superPriceList);
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
