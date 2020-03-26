@@ -160,6 +160,7 @@ public class DataImportController implements Controller {
 
     private void parseUsers(File f) {
         try {
+            HashSet<String> usernames = new HashSet<>();
             HashMap<String, Job> jobs = new HashMap<>();
             Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
@@ -209,14 +210,28 @@ public class DataImportController implements Controller {
                 user.setUserGroup(userGroup);
                 user.setPassword(defaultPassword);
                 secondary.setPassword(defaultPassword);
-                user.setUsername(user.getFirstName() + "." + user.getSurname() + user.getTownCode());
-                secondary.setUsername(secondary.getFirstName() + "." + secondary.getSurname() + secondary.getTownCode());
+                generateUsername(usernames, user);
+                generateUsername(usernames, secondary);
                 secondary.setUserGroup(userGroup);
                 model.saveUser(user, secondary.getFirstName().equals("") ? null : secondary, userGroup);
             }
             view.setUserProgress(4);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void generateUsername(HashSet<String> usernames, User user) {
+        for (int i = 1; i < user.getSurname().length(); i++) {
+            String generatedUsername = (user.getFirstName().split(" ")[0]+"."+user.getSurname().substring(0,i)).toLowerCase();
+            if (!usernames.contains(generatedUsername)) {
+                user.setUsername(generatedUsername);
+                usernames.add(generatedUsername);
+                break;
+            }
+        }
+        if(user.getUsername()==null){
+            user.setUsername(user.getFirstName()+"."+user.getSurname()+new Random().nextLong());
         }
     }
 

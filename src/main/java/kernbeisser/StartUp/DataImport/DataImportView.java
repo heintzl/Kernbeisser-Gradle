@@ -38,6 +38,7 @@ public class DataImportView extends Window implements View {
         });*/
         search.addActionListener(e -> controller.openFileExplorer());
         cancel.addActionListener(e -> controller.cancel());
+        windowInitialized();
     }
 
     boolean createStandardAdmin() {
