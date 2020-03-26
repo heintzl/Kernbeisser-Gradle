@@ -11,6 +11,7 @@ import java.awt.*;
 public class Window extends JFrame {
     private static final Image STANDARD_IMAGE;
     private static Window lastOpened;
+    private boolean access = true;
 
     static {
         STANDARD_IMAGE = Images.getImage("Icon.png");
@@ -21,7 +22,9 @@ public class Window extends JFrame {
     public Window(Window currentWindow, Key... required) {
         this.current = currentWindow;
         if (required.length != 0 && !LogInModel.getLoggedIn().hasPermission(required)) {
+            access = false;
             JOptionPane.showMessageDialog(currentWindow, "Sie haben keine Berechtigung dieses Fenster zu öffnen");
+            windowInitialized();
             back();
             return;
         }
@@ -30,6 +33,7 @@ public class Window extends JFrame {
     }
 
     public final void windowInitialized(){
+        if(!access)return;
         if(getSize().height == 0 && getSize().width == 0) {
             pack();
             if (current != null) {

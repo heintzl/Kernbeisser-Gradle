@@ -14,6 +14,14 @@ public interface RequiresPermission {
         setWriteable(LogInModel.getLoggedIn().hasPermission(write));
     }
 
+    default void setReadWrite(Key key){
+        if (key.name().endsWith("READ")) {
+            setRequiredKeys(Key.valueOf(key.name().replace("READ","WRITE")),key);
+        }else if(key.name().endsWith("WRITE")){
+            setRequiredKeys(key,Key.valueOf(key.name().replace("WRITE","READ")));
+        }
+    }
+
     default void setRequiredWriteKeys(Key... keys) {
         setWriteable(LogInModel.getLoggedIn().hasPermission(keys));
     }
