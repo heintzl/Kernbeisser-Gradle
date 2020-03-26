@@ -27,6 +27,10 @@ public class Job {
     @UpdateTimestamp
     private Date updateDate;
 
+    public static List<Job> getAll(String condition) {
+        return Tools.getAll(Job.class, condition);
+    }
+
     public Date getCreateDate() {
         return createDate;
     }
@@ -53,10 +57,6 @@ public class Job {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public static List<Job> getAll(String condition) {
-        return Tools.getAll(Job.class, condition);
     }
 
     @Override

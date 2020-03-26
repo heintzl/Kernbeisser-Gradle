@@ -3,14 +3,10 @@ package kernbeisser.StartUp.DataImport;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBEntities.*;
-import kernbeisser.Enums.ContainerDefinition;
-import kernbeisser.Enums.Cooling;
-import kernbeisser.Enums.Key;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 import org.json.JSONObject;
 
@@ -23,6 +19,7 @@ import java.nio.file.Files;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 public class DataImportController implements Controller {
@@ -39,9 +36,7 @@ public class DataImportController implements Controller {
         jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jFileChooser.setFileFilter(new FileNameExtensionFilter("Config-File", "JSON", "json"));
         jFileChooser.addActionListener(e -> {
-            if (jFileChooser.getSelectedFile() == null) {
-                return;
-            }
+            if (jFileChooser.getSelectedFile() == null) return;
             view.setFilePath(jFileChooser.getSelectedFile().getAbsolutePath());
             checkDataSource();
         });
@@ -65,8 +60,7 @@ public class DataImportController implements Controller {
             }
             if (dataConfig.has("ItemData")) {
                 JSONObject jsonObject = dataConfig.getJSONObject("ItemData");
-                view.itemSourceFound(
-                        jsonObject.has("Suppliers") && jsonObject.has("Items") && jsonObject.has("PriceLists"));
+                view.itemSourceFound(jsonObject.has("Suppliers") && jsonObject.has("Items") && jsonObject.has("PriceLists"));
             } else {
                 view.itemSourceFound(false);
             }
@@ -125,7 +119,7 @@ public class DataImportController implements Controller {
                     view.userSourcesNotExists();
                 }
             }
-            ConfigManager.getHeader().put("Init", true);
+            ConfigManager.getHeader().put("dbIsInitialized", true);
             ConfigManager.updateFile();
             if (view.createStandardAdmin()) {
                 Permission admin = new Permission();
@@ -166,7 +160,7 @@ public class DataImportController implements Controller {
 
     private void parseUsers(File f) {
         try {
-            HashMap<String,Job> jobs = new HashMap<>();
+            HashMap<String, Job> jobs = new HashMap<>();
             Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
             String defaultPassword = BCrypt.withDefaults().hashToString(12, "start".toCharArray());
@@ -175,9 +169,9 @@ public class DataImportController implements Controller {
                 User user = new User();
                 User secondary = new User();
                 UserGroup userGroup = new UserGroup();
-                user.setSalesThisYear((int) (Float.parseFloat(columns[0].replace(",", ".")) * 100));
-                user.setSalesLastYear((int) (Float.parseFloat(columns[1].replace(",", ".")) * 100));
-                userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", ".")) * 100));
+                user.setSalesThisYear((int) (Float.parseFloat(columns[0].replace(",", "."))));
+                user.setSalesLastYear((int) (Float.parseFloat(columns[1].replace(",", "."))));
+                userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", "."))));
                 user.setShares(Integer.parseInt(columns[3]));
                 user.setSolidaritySurcharge(Integer.parseInt(columns[4]));
                 secondary.setFirstName(columns[5]);
@@ -196,9 +190,7 @@ public class DataImportController implements Controller {
                 user.setPhoneNumber1(columns[17]);
                 user.setPhoneNumber2(columns[18]);
                 for (String s : columns[19].split(" ")) {
-                    if (s.equals("")) {
-                        continue;
-                    }
+                    if (s.equals("")) continue;
                     try {
                         user.setTownCode(Integer.parseInt(s));
                     } catch (NumberFormatException e) {
@@ -218,8 +210,7 @@ public class DataImportController implements Controller {
                 user.setPassword(defaultPassword);
                 secondary.setPassword(defaultPassword);
                 user.setUsername(user.getFirstName() + "." + user.getSurname() + user.getTownCode());
-                secondary.setUsername(
-                        secondary.getFirstName() + "." + secondary.getSurname() + secondary.getTownCode());
+                secondary.setUsername(secondary.getFirstName() + "." + secondary.getSurname() + secondary.getTownCode());
                 secondary.setUserGroup(userGroup);
                 model.saveUser(user, secondary.getFirstName().equals("") ? null : secondary, userGroup);
             }
@@ -232,7 +223,7 @@ public class DataImportController implements Controller {
     private void parsePriceLists(File f) {
         try {
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            HashMap<String,PriceList> priceLists = new HashMap<>();
+            HashMap<String, PriceList> priceLists = new HashMap<>();
             for (String l : lines) {
                 String[] columns = l.split(";");
                 PriceList pl = new PriceList();
@@ -275,64 +266,64 @@ public class DataImportController implements Controller {
         try {
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
             HashSet<Long> barcode = new HashSet<>(lines.size());
-            HashMap<String,PriceList> priceListHashMap = new HashMap<>();
-            HashMap<String,Supplier> suppliers = new HashMap<>();
-            Collection<Item> items = new ArrayList<>(lines.size());
+            HashMap<String, PriceList> priceListHashMap = new HashMap<>();
+            HashMap<String, Supplier> suppliers = new HashMap<>();
+            Collection<Article> articles = new ArrayList<>(lines.size());
             Supplier.getAll(null).forEach(e -> suppliers.put(e.getShortName(), e));
             PriceList.getAll(null).forEach(e -> priceListHashMap.put(e.getName(), e));
             for (String l : lines) {
                 String[] columns = l.split(";");
-                Item item = new Item();
-                item.setName(columns[1]);
-                item.setKbNumber(Integer.parseInt(columns[2]));
-                item.setAmount(Integer.parseInt(columns[3]));
-                item.setNetPrice(Integer.parseInt(columns[4]));
-                item.setSupplier(suppliers.get(columns[5].replace("GRE", "GR")));
+                Article article = new Article();
+                article.setName(columns[1]);
+                article.setKbNumber(Integer.parseInt(columns[2]));
+                article.setAmount(Integer.parseInt(columns[3]));
+                article.setNetPrice(Integer.parseInt(columns[4])/100.);
+                article.setSupplier(suppliers.get(columns[5].replace("GRE", "GR")));
                 try {
                     Long ib = Long.parseLong(columns[6]);
                     if (!barcode.contains(ib)) {
-                        item.setBarcode(ib);
+                        article.setBarcode(ib);
                         barcode.add(ib);
                     } else {
-                        item.setBarcode(null);
+                        article.setBarcode(null);
                     }
                 } catch (NumberFormatException e) {
-                    item.setBarcode(null);
+                    article.setBarcode(null);
                 }
-                item.setSpecialPriceNet(Integer.parseInt(columns[7]));
-                item.setVatLow(Boolean.parseBoolean(columns[8]));
-                item.setSurcharge(Integer.parseInt(columns[9]));
-                item.setSingleDeposit(Integer.parseInt(columns[10]));
-                item.setCrateDeposit(Integer.parseInt(columns[11]));
-                item.setUnit(Unit.valueOf(columns[12].replace("WEIGHT", "GRAM")));
-                item.setPriceList(priceListHashMap.get(columns[13]));
-                item.setContainerDef(ContainerDefinition.valueOf(columns[14]));
-                item.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
-                item.setSuppliersItemNumber(Integer.parseInt(columns[16]));
-                item.setWeighAble(!Boolean.parseBoolean(columns[17]));
-                item.setListed(Boolean.parseBoolean(columns[18]));
-                item.setShowInShop(Boolean.parseBoolean(columns[19]));
-                item.setDeleted(Boolean.parseBoolean(columns[20]));
-                item.setPrintAgain(Boolean.parseBoolean(columns[21]));
-                item.setDeleteAllowed(Boolean.parseBoolean(columns[22]));
-                item.setLoss(Integer.parseInt(columns[23]));
-                item.setInfo(columns[24]);
-                item.setSold(Integer.parseInt(columns[25]));
-                item.setSpecialPriceMonth(Tools.extract(ArrayList::new, columns[26], "_", Boolean::parseBoolean));
-                item.setDelivered(Integer.parseInt(columns[27]));
-                item.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
-                item.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
-                item.setInvPrice(Integer.parseInt(columns[30]));
-                item.setIntake(java.sql.Date.valueOf(LocalDate.now()));
-                item.setLastBuy(null);
-                item.setLastDelivery(Date.valueOf(LocalDate.now()));
-                item.setDeletedDate(null);
-                item.setCooling(Cooling.valueOf(columns[35]));
-                item.setCoveredIntake(Boolean.parseBoolean(columns[36]));
-                items.add(item);
+                //columns[7] look at line 311
+                article.setVAT(Boolean.parseBoolean(columns[8]) ? VAT.LOW : VAT.HIGH);
+                article.setSurcharge(Integer.parseInt(columns[9])/100.);
+                article.setSingleDeposit(Integer.parseInt(columns[10])/100.);
+                article.setCrateDeposit(Integer.parseInt(columns[11])/100.);
+                article.setMetricUnits(MetricUnits.valueOf(columns[12].replace("WEIGHT", "GRAM")));
+                article.setPriceList(priceListHashMap.get(columns[13]));
+                article.setContainerDef(ContainerDefinition.valueOf(columns[14]));
+                article.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
+                article.setSuppliersItemNumber(Integer.parseInt(columns[16]));
+                article.setWeighAble(!Boolean.parseBoolean(columns[17]));
+                article.setListed(Boolean.parseBoolean(columns[18]));
+                article.setShowInShop(Boolean.parseBoolean(columns[19]));
+                article.setDeleted(Boolean.parseBoolean(columns[20]));
+                article.setPrintAgain(Boolean.parseBoolean(columns[21]));
+                article.setDeleteAllowed(Boolean.parseBoolean(columns[22]));
+                article.setLoss(Integer.parseInt(columns[23]));
+                article.setInfo(columns[24]);
+                article.setSold(Integer.parseInt(columns[25]));
+                article.setSpecialPriceMonth(extractOffers(Tools.extract(Boolean.class, columns[26], "_", Boolean::parseBoolean), Integer.parseInt(columns[7])));
+                article.setDelivered(Integer.parseInt(columns[27]));
+                article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
+                article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
+                article.setInvPrice(Integer.parseInt(columns[30])/100.);
+                article.setIntake(java.sql.Date.valueOf(LocalDate.now()));
+                article.setLastBuy(null);
+                article.setLastDelivery(Date.valueOf(LocalDate.now()));
+                article.setDeletedDate(null);
+                article.setCooling(Cooling.valueOf(columns[35]));
+                article.setCoveredIntake(Boolean.parseBoolean(columns[36]));
+                articles.add(article);
             }
             view.setItemProgress(5);
-            model.batchSaveAll(items);
+            model.saveAllItems(articles);
             view.setItemProgress(6);
         } catch (IOException e) {
             e.printStackTrace();
@@ -341,12 +332,33 @@ public class DataImportController implements Controller {
 
     void cancel() {
         view.back();
-        ConfigManager.getHeader().put("Init", true);
+        ConfigManager.getHeader().put("dbIsInitialized", true);
         ConfigManager.updateFile();
     }
 
+    private List<Offer> extractOffers(Boolean[] months, int price) {
+        int from = -1;
+        ArrayList<Offer> out = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        for (int i = 1; i < months.length + 1; i++) {
+            if (months[i - 1]) {
+                if (from == -1) from = i;
+                continue;
+            }
+            if (from == -1) continue;
+            Offer offer = new Offer();
+            offer.setSpecialNetPrice(price);
+            offer.setFromDate(Date.valueOf(LocalDate.of(today.getYear(), from, 1)));
+            offer.setToDate(Date.valueOf(LocalDate.of(today.getYear(), from + (i - 1 - from), 1).with(TemporalAdjusters.lastDayOfMonth())));
+            offer.setRepeatMode(Repeat.EVERY_YEAR);
+            out.add(offer);
+            from = -1;
+        }
+        return out;
+    }
+
     @Override
-    public View getView() {
+    public DataImportView getView() {
         return view;
     }
 

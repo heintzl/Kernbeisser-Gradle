@@ -2,6 +2,7 @@ package kernbeisser.Windows.PermissionManagement;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.KeyCategory;
 import kernbeisser.Enums.Security;
@@ -50,7 +51,7 @@ class PermissionModel implements Model {
     }
 
     void deletePermission(Permission selectedObject) {
-        Tools.delete(selectedObject, selectedObject.getId());
+        Tools.delete(Permission.class, selectedObject.getId());
     }
 
     void addPermission(String permissionName) {

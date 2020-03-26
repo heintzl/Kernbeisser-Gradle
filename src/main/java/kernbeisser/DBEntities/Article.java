@@ -4,7 +4,8 @@ package kernbeisser.DBEntities;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import java.util.List;
 @Entity
 @Table
 
-public class Item {
+public class Article {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,10 +34,10 @@ public class Item {
     private int amount;
 
     @Column
-    private int surcharge;
+    private double surcharge;
 
     @Column
-    private int netPrice;
+    private double netPrice;
 
     @ManyToOne
     @JoinColumn(name = "supplierId")
@@ -46,19 +47,16 @@ public class Item {
     private Long barcode;
 
     @Column
-    private int specialPriceNet;
+    private VAT vat;
 
     @Column
-    private boolean vatLow;
+    private double singleDeposit;
 
     @Column
-    private int singleDeposit;
+    private double crateDeposit;
 
     @Column
-    private int crateDeposit;
-
-    @Column
-    private Unit unit;
+    private MetricUnits metricUnits;
 
     @ManyToOne
     @JoinColumn(name = "priceListId")
@@ -100,23 +98,23 @@ public class Item {
     @Column
     private int sold;
 
-    @Column
-    @ElementCollection
-    private List<Boolean> specialPriceMonth = new ArrayList<>(12);
+    @JoinColumn
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Offer> specialPriceMonth = new ArrayList<>();
 
     @Column
     private int delivered;
 
     @Column
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<Integer> invShelf = new ArrayList<>(5);
 
     @Column
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<Integer> invStock = new ArrayList<>(5);
 
     @Column
-    private int invPrice;
+    private double invPrice;
 
     @Column
     private Date intake;
@@ -136,6 +134,49 @@ public class Item {
     @Column
     private boolean coveredIntake;
 
+    public static List<Article> getAll(String condition) {
+        return Tools.getAll(Article.class, condition);
+    }
+
+    public static Collection<Article> defaultSearch(String s, int max) {
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Article> out = em.createQuery(
+                "select i from Article i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or barcode like '%" + s + "'",
+                Article.class
+        )
+                                    .setParameter("n", Tools.tryParseInteger(s))
+                                    .setParameter("s", s + "%")
+                                    .setMaxResults(max)
+                                    .getResultList();
+        em.close();
+        return out;
+    }
+
+    public static Article getByKbNumber(int kbNumber) {
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            return em.createQuery("select i from Article i where kbNumber = :n", Article.class)
+                     .setParameter("n", kbNumber)
+                     .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public static Article getBySuppliersItemNumber(int suppliersNumber) {
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            return em.createQuery("select i from Article i where suppliersItemNumber = :n", Article.class)
+                     .setParameter("n", suppliersNumber)
+                     .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 
     public int getIid() {
         return iid;
@@ -165,11 +206,11 @@ public class Item {
         this.amount = amount;
     }
 
-    public int getNetPrice() {
+    public double getNetPrice() {
         return netPrice;
     }
 
-    public void setNetPrice(int netPrice) {
+    public void setNetPrice(double netPrice) {
         this.netPrice = netPrice;
     }
 
@@ -189,20 +230,12 @@ public class Item {
         this.barcode = barcode;
     }
 
-    public int getSpecialPriceNet() {
-        return specialPriceNet;
+    public VAT getVAT() {
+        return vat;
     }
 
-    public void setSpecialPriceNet(int specialPriceNet) {
-        this.specialPriceNet = specialPriceNet;
-    }
-
-    public boolean isVatLow() {
-        return vatLow;
-    }
-
-    public void setVatLow(boolean vatLow) {
-        this.vatLow = vatLow;
+    public void setVAT(VAT vatLow) {
+        this.vat = vatLow;
     }
 
     public SurchargeTable getSurchargeTable() {
@@ -221,36 +254,36 @@ public class Item {
         }
     }
 
-    public int getSurcharge() {
+    public double getSurcharge() {
         return surcharge;
     }
 
-    public void setSurcharge(int surcharge) {
+    public void setSurcharge(double surcharge) {
         this.surcharge = surcharge;
     }
 
-    public int getSingleDeposit() {
+    public double getSingleDeposit() {
         return singleDeposit;
     }
 
-    public void setSingleDeposit(int singleDeposit) {
+    public void setSingleDeposit(double singleDeposit) {
         this.singleDeposit = singleDeposit;
     }
 
-    public int getCrateDeposit() {
+    public double getCrateDeposit() {
         return crateDeposit;
     }
 
-    public void setCrateDeposit(int crateDeposit) {
+    public void setCrateDeposit(double crateDeposit) {
         this.crateDeposit = crateDeposit;
     }
 
-    public Unit getUnit() {
-        return unit;
+    public MetricUnits getMetricUnits() {
+        return metricUnits;
     }
 
-    public void setUnit(Unit unit) {
-        this.unit = unit;
+    public void setMetricUnits(MetricUnits metricUnits) {
+        this.metricUnits = metricUnits;
     }
 
     public PriceList getPriceList() {
@@ -333,12 +366,12 @@ public class Item {
         this.deleteAllowed = deleteAllowed;
     }
 
-    public List<Boolean> getSpecialPriceMonth() {
-        return specialPriceMonth;
+    public void setSpecialPriceMonth(List<Offer> specialPriceMonth) {
+        this.specialPriceMonth = specialPriceMonth;
     }
 
-    public void setSpecialPriceMonth(List<Boolean> specialPriceMonth) {
-        this.specialPriceMonth = specialPriceMonth;
+    public List<Offer> getSpecialPriceMonths() {
+        return specialPriceMonth;
     }
 
     public int getDelivered() {
@@ -365,11 +398,11 @@ public class Item {
         this.invStock = invStock;
     }
 
-    public int getInvPrice() {
+    public double getInvPrice() {
         return invPrice;
     }
 
-    public void setInvPrice(int invPrice) {
+    public void setInvPrice(double invPrice) {
         this.invPrice = invPrice;
     }
 
@@ -453,50 +486,5 @@ public class Item {
     @Override
     public String toString() {
         return name;
-    }
-
-    public static List<Item> getAll(String condition) {
-        return Tools.getAll(Item.class, condition);
-    }
-
-    public static Collection<Item> defaultSearch(String s, int max) {
-        EntityManager em = DBConnection.getEntityManager();
-        Collection<Item> out = em.createQuery(
-                "select i from Item i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or barcode like '%" + s + "'",
-                Item.class
-        )
-                                 .setParameter("n", Tools.tryParseInteger(s))
-                                 .setParameter("s", s + "%")
-                                 .setMaxResults(max)
-                                 .getResultList();
-        em.close();
-        return out;
-    }
-
-
-    public static Item getByKbNumber(int kbNumber) {
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery("select i from Item i where kbNumber = :n", Item.class)
-                     .setParameter("n", kbNumber)
-                     .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    public static Item getBySuppliersItemNumber(int suppliersNumber) {
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery("select i from Item i where suppliersItemNumber = :n", Item.class)
-                     .setParameter("n", suppliersNumber)
-                     .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
-        }
     }
 }

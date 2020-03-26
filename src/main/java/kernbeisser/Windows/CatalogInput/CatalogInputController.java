@@ -1,7 +1,8 @@
 package kernbeisser.Windows.CatalogInput;
 
-import kernbeisser.DBEntities.ItemKK;
-import kernbeisser.Enums.Unit;
+import kernbeisser.DBEntities.ArticleKornkraft;
+import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
 
@@ -36,21 +37,21 @@ public class CatalogInputController implements Controller {
     private void importData(String s) {
         view.enableButtons(false);
         Thread t = new Thread(() -> {
-            ArrayList<ItemKK> catalog = new ArrayList<>();
+            ArrayList<ArticleKornkraft> catalog = new ArrayList<>();
             for (String line : s.split("\n")) {
-                ItemKK item = extractItemKK(line.replace("'", ""));
+                ArticleKornkraft item = extractItemKK(line.replace("'", ""));
                 if (item != null) {
                     catalog.add(item);
                 }
             }
-            HashMap<Integer,Integer> deposit = new HashMap<>();
+            HashMap<Integer,Double> deposit = new HashMap<>();
             catalog.forEach(e -> deposit.put(e.getKkNumber(), e.getNetPrice()));
-            for (ItemKK item : catalog) {
+            for (ArticleKornkraft item : catalog) {
                 if (item.getSingleDeposit() != 0) {
-                    item.setSingleDeposit(deposit.get(item.getSingleDeposit()));
+                    item.setSingleDeposit(deposit.get((int)(item.getSingleDeposit())));
                 }
                 if (item.getCrateDeposit() != 0) {
-                    item.setCrateDeposit(deposit.get(item.getCrateDeposit()));
+                    item.setCrateDeposit(deposit.get((int)(item.getCrateDeposit())));
                 }
             }
             model.clearCatalog();
@@ -66,8 +67,8 @@ public class CatalogInputController implements Controller {
         view.enableButtons(true);
     }
 
-    private ItemKK extractItemKK(String line) {
-        ItemKK item = new ItemKK();
+    private ArticleKornkraft extractItemKK(String line) {
+        ArticleKornkraft item = new ArticleKornkraft();
         String[] values = line.split(";");
         try {
             if (values.length < 42 || values[23].equals("Display") || values[23].equals("Sets")) {
@@ -78,9 +79,9 @@ public class CatalogInputController implements Controller {
             item.setName(values[6]);
             item.setProducer(values[10]);
             item.setContainerSize(Double.parseDouble(values[22].replaceAll(",", ".")));
-            item.setUnit(findUnit(values[23]));
-            item.setAmount(extractAmount(values[23].replaceAll("\\D", ""), item.getUnit()));
-            item.setVatLow(values[33].equals("1"));
+            item.setMetricUnits(findUnit(values[23]));
+            item.setAmount(extractAmount(values[23].replaceAll("\\D", ""), item.getMetricUnits()));
+            item.setVatLow(values[33].equals("1") ? VAT.LOW.getValue() : VAT.HIGH.getValue());
             item.setNetPrice((int) Math.round(Double.parseDouble(values[37].replace(",", ".")) * 100));
             if (!values[26].equals("")) {
                 item.setSingleDeposit(Integer.parseInt(values[26]));
@@ -95,21 +96,21 @@ public class CatalogInputController implements Controller {
         return item;
     }
 
-    private Unit findUnit(String s) {
+    private MetricUnits findUnit(String s) {
         if (s.toUpperCase().contains("L")) {
-            return Unit.LITER;
+            return MetricUnits.LITER;
         } else if (s.toUpperCase().contains("ML")) {
-            return Unit.MILLILITER;
+            return MetricUnits.MILLILITER;
         } else if (s.toUpperCase().contains("KG")) {
-            return Unit.KILOGRAM;
+            return MetricUnits.KILOGRAM;
         } else if (s.toUpperCase().contains("G")) {
-            return Unit.GRAM;
+            return MetricUnits.GRAM;
         } else {
-            return Unit.STACK;
+            return MetricUnits.STACK;
         }
     }
 
-    private int extractAmount(String s, Unit u) {
+    private int extractAmount(String s, MetricUnits u) {
         try {
             double d = Double.parseDouble(s.replaceAll(",", "."));
             switch (u) {

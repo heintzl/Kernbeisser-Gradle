@@ -86,7 +86,7 @@
                       <text value="Lieferant"/>
                     </properties>
                   </component>
-                  <component id="da10d" class="javax.swing.JComboBox" binding="supplier">
+                  <component id="a16ea" class="kernbeisser.CustomComponents.PermissionComboBox" binding="supplier">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -135,14 +135,14 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="44514" class="javax.swing.JButton" binding="search">
+                      <component id="5f662" class="kernbeisser.CustomComponents.PermissionButton" binding="search">
                         <constraints border-constraint="East"/>
                         <properties>
                           <horizontalAlignment value="0"/>
                           <text value="Suchen"/>
                         </properties>
                       </component>
-                      <component id="b606e" class="javax.swing.JComboBox" binding="priceList">
+                      <component id="ecf2d" class="kernbeisser.CustomComponents.PermissionComboBox" binding="priceList">
                         <constraints border-constraint="Center"/>
                         <properties/>
                       </component>
@@ -190,7 +190,7 @@
                     </constraints>
                     <properties/>
                   </component>
-                  <component id="132a9" class="javax.swing.JCheckBox" binding="showInShoppingMask">
+                  <component id="d3964" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="showInShoppingMask">
                     <constraints>
                       <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -198,7 +198,7 @@
                       <text value="Einblenden in der Einkaufsmaske"/>
                     </properties>
                   </component>
-                  <component id="64315" class="javax.swing.JCheckBox" binding="weighable">
+                  <component id="c2180" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="weighable">
                     <constraints>
                       <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -266,7 +266,7 @@
                       <text value="Einheit"/>
                     </properties>
                   </component>
-                  <component id="3ebae" class="javax.swing.JComboBox" binding="unit">
+                  <component id="a7ded" class="kernbeisser.CustomComponents.PermissionComboBox" binding="metricUnits">
                     <constraints>
                       <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -280,7 +280,7 @@
                       <text value="Gebinde-Definition"/>
                     </properties>
                   </component>
-                  <component id="e0524" class="javax.swing.JComboBox" binding="containerDefinition">
+                  <component id="624e5" class="kernbeisser.CustomComponents.PermissionComboBox" binding="containerDefinition">
                     <constraints>
                       <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -310,7 +310,7 @@
                       <text value="Mehrwert steuer"/>
                     </properties>
                   </component>
-                  <component id="d5933" class="javax.swing.JComboBox" binding="vat">
+                  <component id="7326e" class="kernbeisser.CustomComponents.PermissionComboBox" binding="vat">
                     <constraints>
                       <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>

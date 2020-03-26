@@ -15,16 +15,20 @@ public class UserGroup {
     private int gid;
 
     @Column
-    private int value;
+    private double value;
 
     @Column
     private int interestThisYear;
 
-    public int getValue() {
+    public static List<UserGroup> getAll(String condition) {
+        return Tools.getAll(UserGroup.class, condition);
+    }
+
+    public double getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
@@ -46,10 +50,6 @@ public class UserGroup {
                                  .getResultList();
         em.close();
         return out;
-    }
-
-    public static List<UserGroup> getAll(String condition) {
-        return Tools.getAll(UserGroup.class, condition);
     }
 
 }

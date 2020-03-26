@@ -4,8 +4,11 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
@@ -27,9 +30,44 @@ class TransactionView extends Window implements View {
     private JPanel main;
     private JButton back;
     private JButton delete;
+    private JButton a5€Button;
+    private JButton a10€Button;
+    private JButton a15€Button;
+    private JButton a20€Button;
+    private JButton a25€Button;
+    private JButton a30€Button;
+    private JButton a40€Button;
+    private JButton a35€Button;
+    private JButton a65€Button;
+    private JButton a75€Button;
+    private JButton a50€Button;
+    private JButton a45€Button;
+    private JButton a60€Button;
+    private JButton a55€Button;
+    private JButton a70€Button;
+    private JButton a80€Button;
+    private JButton a85€Button;
+    private JButton a95€Button;
+    private JButton a90€Button;
+    private JButton a100€Button;
+    private JButton a200€Button;
+    private JButton a100€Button1;
+    private JButton a300€Button;
+    private JButton a400€Button;
+    private JButton a500€Button;
+    private JButton a600€Button;
+    private JButton a700€Button;
+    private JButton a800€Button;
+    private JButton a900€Button;
+    private JButton a1000€Button;
+
+    private SearchBoxView searchBoxView;
+
+    private TransactionController controller;
 
     TransactionView(Window current, TransactionController controller) {
         super(current, Key.ACTION_TRANSACTION);
+        this.controller = controller;
         transferTransactions.addActionListener((e) -> controller.transfer());
         transferTransactions.setIcon(IconFontSwing.buildIcon(FontAwesome.CHECK, 20, Color.GREEN));
         addTransaction.addActionListener(e -> controller.addTransaction());
@@ -46,6 +84,7 @@ class TransactionView extends Window implements View {
             }
         });
         add(main);
+        windowInitialized();
     }
 
     void setTransactions(Collection<Transaction> transactions) {
@@ -56,24 +95,20 @@ class TransactionView extends Window implements View {
         return to.getText();
     }
 
-    String getFrom() {
-        return from.getText();
-    }
-
-    boolean isFromKB() {
-        return formKBValue.isSelected();
-    }
-
     void setTo(String s) {
         to.setText(s);
+    }
+
+    String getFrom() {
+        return from.getText();
     }
 
     void setFrom(String s) {
         from.setText(s);
     }
 
-    void setFromEnabled(boolean b) {
-        from.setEnabled(false);
+    boolean isFromKB() {
+        return formKBValue.isSelected();
     }
 
     void setFromKB(boolean b) {
@@ -81,12 +116,17 @@ class TransactionView extends Window implements View {
         formKBValue.setEnabled(b);
     }
 
+    void setFromEnabled(boolean b) {
+        from.setEnabled(b);
+    }
+
     private void createUIComponents() {
         transactions = new ObjectTable<>(
                 Column.create("Von", e -> e.getFrom() == null ? "Kernbeisser" : e.getTo()),
                 Column.create("Zu", Transaction::getTo),
-                Column.create("Überweissungsbetrag", e -> e.getValue() / 100f + "€")
+                Column.create("Überweissungsbetrag", e -> e.getValue()  + "€")
         );
+        SearchBoxController<User> userSearchBoxController = new SearchBoxController<User>(User::defaultSearch,controller::loadUser);
     }
 
     void success() {

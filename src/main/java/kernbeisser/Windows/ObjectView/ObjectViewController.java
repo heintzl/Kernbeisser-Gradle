@@ -1,9 +1,15 @@
 package kernbeisser.Windows.ObjectView;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.Window;
+
+import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class ObjectViewController<T> {
     private ObjectViewModel<T> model;
@@ -16,6 +22,7 @@ public class ObjectViewController<T> {
             view.addColumn(column);
         }
         putItems();
+        view.windowInitialized();
     }
 
     void select() {

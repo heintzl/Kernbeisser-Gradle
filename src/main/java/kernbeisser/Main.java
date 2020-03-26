@@ -5,12 +5,12 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Job;
-import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.Setting;
 import kernbeisser.StartUp.DataImport.DataImportController;
+import kernbeisser.StartUp.DataImport.DataImportView;
 import kernbeisser.Windows.LogIn.LogInController;
+import kernbeisser.Windows.LogIn.LogInView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -30,13 +30,14 @@ public class Main {
     public static void main(String[] args)
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException, IOException, URISyntaxException {
-        doA(SaleSession.class);
         buildEnvironment();
-        if (!ConfigManager.getHeader().getBoolean("Init")) {
+        if (!ConfigManager.isDbInitialized()) {
             SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));
         } else {
             openLogIn();
         }
+
+
     }
 
     public static void buildEnvironment()
@@ -86,19 +87,4 @@ public class Main {
         }
     }
 
-    private static void doA(Class c) {
-        printClass(c, e -> doB(c.getSimpleName()) + "_" + doB(e.getName()) + "_READ,\n" + doB(
-                c.getSimpleName()) + "_" + doB(e.getName()) + "_WRITE,");
-    }
-
-    public static String doB(String s) {
-        int pos = 0;
-        for (char c : s.toCharArray()) {
-            if (Character.isUpperCase(c) && pos != 0) {
-                s = s.replaceFirst(c + "", "_" + c);
-            }
-            pos += 2;
-        }
-        return s.toUpperCase();
-    }
 }

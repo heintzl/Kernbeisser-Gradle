@@ -29,7 +29,18 @@ public class ManagePriceListsView extends Window implements View {
      */
 
     ManagePriceListsController controller;
-
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JButton delete;
+    private JButton esc;
+    private JLabel jLabel1;
+    private JLabel jLabel2;
+    private JLabel jLabel4;
+    private JScrollPane jScrollPane1;
+    private JTree priceListChooser;
+    private JTextField priceListName;
+    private JButton rename;
+    private JButton save;
+    private JTextField superPriceList;
     public ManagePriceListsView(Window current) {
         //TODO Benjamin is working currently on this project
         super(current);
@@ -43,7 +54,7 @@ public class ManagePriceListsView extends Window implements View {
                 }
             }
         });
-
+        windowInitialized();
     }
 
     /**
@@ -257,19 +268,6 @@ public class ManagePriceListsView extends Window implements View {
         }
         priceListChooser.setModel(new PriceListTree(false).getModel());
     }//GEN-LAST:event_deleteActionPerformed
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton delete;
-    private JButton esc;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel4;
-    private JScrollPane jScrollPane1;
-    private JTree priceListChooser;
-    private JTextField priceListName;
-    private JButton rename;
-    private JButton save;
-    private JTextField superPriceList;
 
     // End of variables declaration//GEN-END:variables
 }

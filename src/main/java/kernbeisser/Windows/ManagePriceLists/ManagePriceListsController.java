@@ -2,7 +2,6 @@ package kernbeisser.Windows.ManagePriceLists;
 
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 
 public class ManagePriceListsController implements Controller {
     private ManagePriceListsModel model;
@@ -19,7 +18,7 @@ public class ManagePriceListsController implements Controller {
     }
 
     @Override
-    public View getView() {
+    public ManagePriceListsView getView() {
         return view;
     }
 

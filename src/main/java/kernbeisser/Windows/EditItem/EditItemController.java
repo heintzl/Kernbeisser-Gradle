@@ -1,10 +1,9 @@
 package kernbeisser.Windows.EditItem;
 
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 public class EditItemController implements Controller {
@@ -12,10 +11,10 @@ public class EditItemController implements Controller {
     private EditItemView view;
     private EditItemModel model;
 
-    public EditItemController(Window current, Item item, Mode mode) {
-        model = new EditItemModel(item != null ? item : new Item(), mode);
+    public EditItemController(Window current, Article article, Mode mode) {
+        model = new EditItemModel(article != null ? article : new Article(), mode);
         if (mode == Mode.REMOVE) {
-            model.doAction(item);
+            model.doAction(article);
             return;
         } else {
             this.view = new EditItemView(this, current);
@@ -29,7 +28,7 @@ public class EditItemController implements Controller {
     }
 
     @Override
-    public View getView() {
+    public EditItemView getView() {
         return view;
     }
 
@@ -39,7 +38,7 @@ public class EditItemController implements Controller {
     }
 
     void doAction() {
-        Item data = view.collectItem(model.getSource());
+        Article data = view.collectItem(model.getSource());
         if (model.getMode() == Mode.ADD) {
             if (model.kbNumberExists(data.getKbNumber())) {
                 view.kbNumberAlreadyExists();
