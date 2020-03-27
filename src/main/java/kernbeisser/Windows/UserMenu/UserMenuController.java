@@ -6,6 +6,7 @@ import kernbeisser.Enums.UserSetting;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.Window;
@@ -14,10 +15,10 @@ public class UserMenuController implements Controller {
     private UserMenuView view;
     private UserMenuModel model;
 
-    public UserMenuController(Window current, User owner) {
+    public UserMenuController(Window current) {
         this.view = new UserMenuView(this, current);
-        this.model = new UserMenuModel(owner);
-        view.setUsername(owner.getUsername());
+        this.model = new UserMenuModel();
+        view.setUsername(LogInModel.getLoggedIn().getUsername());
         view.setBuyHistory(model.getAllPurchase());
     }
 

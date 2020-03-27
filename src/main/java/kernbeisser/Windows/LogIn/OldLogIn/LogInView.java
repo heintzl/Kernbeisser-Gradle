@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kernbeisser.Windows.LogIn;
+package kernbeisser.Windows.LogIn.OldLogIn;
 
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -67,23 +67,7 @@ public class LogInView extends Window implements View {
         return password.getPassword();
     }
 
-    void applyFeedback(int feedback) {
-        switch (feedback) {
-            case LogInController.SUCCESS:
-                username.setText("");
-                password.setText("");
-                break;
-            case LogInController.INCORRECT_USERNAME:
-                Tools.ping(username);
-                JOptionPane.showMessageDialog(this, "Benutzername Falsch!");
-                return;
-            case LogInController.INCORRECT_PASSWORD:
-                Tools.ping(password);
-                JOptionPane.showMessageDialog(this, "Das von ihnen Angegebene Passwort ist nicht Korrekt");
-                return;
-
-        }
-        back();
+    public void accessDenied() {
+        JOptionPane.showMessageDialog(this,"Zugriff verweigert.\nBitte überprüfen sie ihre Anmeldedaten,\n sollte das Problem weiter bestehen,\n melden sie sich bitte bei einem Admin\n");
     }
-
 }
