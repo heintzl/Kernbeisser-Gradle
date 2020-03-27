@@ -1,6 +1,7 @@
 package kernbeisser.StartUp.DataImport;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -12,9 +13,7 @@ import java.util.Collection;
 
 class DataImportModel implements Model {
     <T> void batchSaveAll(Collection<T> v) {
-        if (v.size() == 0) {
-            return;
-        }
+        if (v.size() == 0) return;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -33,9 +32,7 @@ class DataImportModel implements Model {
     }
 
     <T> void saveAll(Collection<T> v) {
-        if (v.size() == 0) {
-            return;
-        }
+        if (v.size() == 0) return;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -72,6 +69,26 @@ class DataImportModel implements Model {
         em.persist(userGroup);
         user.setUserGroup(userGroup);
         em.persist(user);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+
+    void saveAllItems(Collection<Article> articles) {
+        if (articles.size() == 0) return;
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        int c = 0;
+        for (Article t : articles) {
+            t.getSpecialPriceMonths().forEach(em::persist);
+            em.persist(t);
+            c++;
+            if (c % 20 == 0) {
+                em.flush();
+                em.clear();
+            }
+        }
         em.flush();
         et.commit();
         em.close();

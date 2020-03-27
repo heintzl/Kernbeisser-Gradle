@@ -16,6 +16,7 @@ public class CatalogInputView extends Window implements View {
         importFile.addActionListener(e -> controller.importFromFile());
         importString.addActionListener(e -> controller.importFromString());
         add(main);
+        windowInitialized();
     }
 
     void extractItemError() {

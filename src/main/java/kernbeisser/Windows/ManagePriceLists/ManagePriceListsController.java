@@ -4,23 +4,21 @@ import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
-
-import javax.swing.*;
 
 public class ManagePriceListsController implements Controller {
     private ManagePriceListsModel model;
     private ManagePriceListsView view;
 
-    /*ManagePriceListsController(ManagePriceListsView view) {
-        this.view = view;
-        this.model = new ManagePriceListsModel();
-    }
-    */
+
     public ManagePriceListsController(Window current) {
+        this.view = new ManagePriceListsView(current,this){
+            @Override
+            public void finish() {
+                ManagePriceListsController.this.finish();
+            }
+        };
         model = new ManagePriceListsModel();
-        view = new ManagePriceListsView(this, current);
         refresh();
     }
 
@@ -57,8 +55,11 @@ public class ManagePriceListsController implements Controller {
         view.getPriceListChooser().setModel(model.getPriceListTreeModel());
     }
 
+    //Only to override
+    public void finish(){}
+
     @Override
-    public View getView() {
+    public ManagePriceListsView getView() {
         return view;
     }
 

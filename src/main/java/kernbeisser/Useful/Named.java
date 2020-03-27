@@ -1,8 +1,8 @@
 package kernbeisser.Useful;
 
-public interface Named {
-    String getName();
+import kernbeisser.Enums.VAT;
 
+public interface Named {
     static <T extends Named> T toEnum(Class<T> c, String s) {
         if (!c.isEnum()) {
             return null;
@@ -14,4 +14,6 @@ public interface Named {
         }
         return null;
     }
+
+    String getName();
 }

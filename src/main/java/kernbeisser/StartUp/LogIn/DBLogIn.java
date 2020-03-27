@@ -40,6 +40,7 @@ public class DBLogIn extends Window {
         cancel.addActionListener(e -> {
             back();
         });
+        windowInitialized();
     }
 
 }

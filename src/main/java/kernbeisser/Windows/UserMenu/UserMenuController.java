@@ -2,13 +2,12 @@ package kernbeisser.Windows.UserMenu;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.UserSetting;
+import kernbeisser.Windows.*;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
-import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 public class UserMenuController implements Controller {
@@ -28,7 +27,7 @@ public class UserMenuController implements Controller {
     }
 
     @Override
-    public View getView() {
+    public UserMenuView getView() {
         return view;
     }
 

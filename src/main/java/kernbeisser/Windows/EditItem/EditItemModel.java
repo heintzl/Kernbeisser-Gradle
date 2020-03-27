@@ -1,13 +1,10 @@
 package kernbeisser.Windows.EditItem;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.Enums.ContainerDefinition;
-import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.Unit;
-import kernbeisser.Enums.VAT;
+import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
@@ -17,28 +14,28 @@ import java.util.Collection;
 
 public class EditItemModel implements Model {
     private final Mode mode;
-    private Item item;
+    private Article article;
 
-    EditItemModel(Item item, Mode mode) {
+    EditItemModel(Article article, Mode mode) {
         this.mode = mode;
-        this.item = item;
+        this.article = article;
     }
 
-    Item getSource() {
-        return item;
+    Article getSource() {
+        return article;
     }
 
-    boolean doAction(Item item) {
+    boolean doAction(Article article) {
         try {
             switch (mode) {
                 case ADD:
-                    addItem(item);
+                    addItem(article);
                     break;
                 case EDIT:
-                    editItem(item);
+                    editItem(article);
                     break;
                 case REMOVE:
-                    removeItem(item);
+                    removeItem(article);
                     break;
             }
             return true;
@@ -49,41 +46,41 @@ public class EditItemModel implements Model {
 
     }
 
-    private void removeItem(Item item) {
-        Tools.delete(item.getIid(), item);
+    private void removeItem(Article article) {
+        Tools.delete(Article.class, article.getIid());
     }
 
-    private void editItem(Item item) {
-        Tools.edit(item.getIid(), item);
+    private void editItem(Article article) {
+        Tools.edit(article.getIid(), article);
     }
 
     boolean kbNumberExists(int kbNumber) {
         EntityManager em = DBConnection.getEntityManager();
-        boolean exists = em.createQuery("select id from Item where kbNumber = " + kbNumber).getResultList().size() > 0;
+        boolean exists = em.createQuery("select id from Article where kbNumber = " + kbNumber).getResultList().size() > 0;
         em.close();
         return exists;
     }
 
     boolean barcodeExists(long barcode) {
         EntityManager em = DBConnection.getEntityManager();
-        boolean exists = em.createQuery("select id from Item where barcode = " + barcode).getResultList().size() > 0;
+        boolean exists = em.createQuery("select id from Article where barcode = " + barcode).getResultList().size() > 0;
         em.close();
         return exists;
     }
 
-    private void addItem(Item item) {
-        item.setSurcharge(item.getSurchargeTable().getSurcharge());
+    private void addItem(Article article) {
+        article.setSurcharge(article.getSurchargeTable().getSurcharge());
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.persist(Tools.mergeWithoutId(item));
+        em.persist(Tools.mergeWithoutId(article));
         em.flush();
         et.commit();
         em.close();
     }
 
-    Unit[] getAllUnits() {
-        return Unit.values();
+    MetricUnits[] getAllUnits() {
+        return MetricUnits.values();
     }
 
     ContainerDefinition[] getAllContainerDefinitions() {

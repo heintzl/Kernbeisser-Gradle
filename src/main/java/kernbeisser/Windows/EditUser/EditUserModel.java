@@ -61,7 +61,7 @@ public class EditUserModel implements Model {
     }
 
     private void remove(User user) {
-        Tools.delete(user, user.getId());
+        Tools.delete(User.class, user.getId());
     }
 
     private void edit(User user) {

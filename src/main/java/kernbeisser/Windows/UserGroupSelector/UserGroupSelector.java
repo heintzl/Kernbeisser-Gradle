@@ -26,6 +26,14 @@ public class UserGroupSelector extends Window {
     private DBTable groupMembersTable;
     private UserGroup newUserGroup;
     private Consumer<UserGroup> finishAction;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton enterGroup;
+    private javax.swing.JPanel groupMembers;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JTextField searchBar;
+    private javax.swing.JPanel searchPanel;
+
 
     /**
      * Creates new form UserGroupSelector
@@ -57,6 +65,7 @@ public class UserGroupSelector extends Window {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        windowInitialized();
     }
 
     private void selectUser(User user) {
@@ -224,14 +233,5 @@ public class UserGroupSelector extends Window {
         finishAction.accept(newUserGroup);
         back();
     }//GEN-LAST:event_enterGroupActionPerformed
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton enterGroup;
-    private javax.swing.JPanel groupMembers;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JTextField searchBar;
-    private javax.swing.JPanel searchPanel;
     // End of variables declaration//GEN-END:variables
 }

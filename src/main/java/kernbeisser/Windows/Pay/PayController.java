@@ -5,7 +5,6 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import java.util.Collection;
@@ -24,27 +23,20 @@ public class PayController implements Controller {
         view.setSelectedPrintService(model.getDefaultPrinter());
     }
 
-    private boolean commitPay() {
-        return model.pay(model.getSaleSession(), model.getShoppingCart(), model.shoppingCartSum());
+    void commitPayment() {
+        boolean paymentSuccessful = model.pay(model.getSaleSession(), model.getShoppingCart(), model.shoppingCartSum());
+        if (paymentSuccessful) {
+            model.print(view.getSelectedPrintService());
+        }
     }
 
-    private boolean checkBon() {
-        model.print(model.getDefaultPrinter());
-        return false;
-    }
-
-    void commit() {
-        commitPay();
-        checkBon();
-    }
-
-    int getPrice(ShoppingItem item) {
+    double getPrice(ShoppingItem item) {
         return PriceCalculator.getShoppingItemPrice(item,
                                                     model.getSaleSession().getCustomer().getSolidaritySurcharge());
     }
 
     @Override
-    public View getView() {
+    public PayView getView() {
         return view;
     }
 

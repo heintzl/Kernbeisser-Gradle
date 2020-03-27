@@ -10,8 +10,8 @@ public class ShoppingCartController implements Controller {
     private ShoppingCartModel model;
 
 
-    public ShoppingCartController(int userValue,int userSurcharge) {
-        model = new ShoppingCartModel(userValue,userSurcharge);
+    public ShoppingCartController(int userValue, int userSurcharge) {
+        model = new ShoppingCartModel(userValue, userSurcharge);
         view = new ShoppingCartView(this);
         refresh();
     }
@@ -21,8 +21,8 @@ public class ShoppingCartController implements Controller {
         refresh();
     }
 
-    int getPrice(ShoppingItem item) {
-        return PriceCalculator.getShoppingItemPrice(item,model.getUserSurcharge());
+    double getPrice(ShoppingItem item) {
+        return PriceCalculator.getShoppingItemPrice(item, model.getUserSurcharge());
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ShoppingCartController implements Controller {
         int sum = 0;
         view.setObjects(model.getItems());
         for (ShoppingItem item : model.getItems()) {
-            sum += PriceCalculator.getShoppingItemPrice(item,model.getUserSurcharge());
+            sum += PriceCalculator.getShoppingItemPrice(item, model.getUserSurcharge());
         }
         view.setSum(sum);
         view.setValue(model.getUserValue() - sum);

@@ -11,8 +11,9 @@ import javax.swing.*;
 import java.util.Collection;
 
 class PayView extends Window implements View {
+    private final PayController controller;
     private JPanel main;
-    private JButton commit;
+    private JButton commitPayment;
     private JRadioButton printBon;
     private JRadioButton printNoBon;
     private JComboBox paperFormat;
@@ -21,26 +22,28 @@ class PayView extends Window implements View {
     private ObjectTable<ShoppingItem> shoppingCart;
 
 
-    private final PayController controller;
-
-
-    public PayView(Window current, PayController controller) {
+    public PayView(Window current, PayController payController) {
         super(current);
-        this.controller = controller;
+        this.controller = payController;
 
         add(main);
         pack();
         setLocationRelativeTo(current);
-        commit.addActionListener(e -> {
-            controller.commit();
+        commitPayment.addActionListener(e -> {
+            payController.commitPayment();
         });
         cancel.addActionListener(e -> {
             this.back();
         });
+        windowInitialized();
     }
 
     PrintService getSelectedPrintService() {
         return printers.getItemAt(printers.getSelectedIndex());
+    }
+
+    void setSelectedPrintService(PrintService printService) {
+        printers.setSelectedItem(printService);
     }
 
     void setPrintServices(PrintService[] printServices) {
@@ -50,10 +53,6 @@ class PayView extends Window implements View {
         }
     }
 
-    void setSelectedPrintService(PrintService printService) {
-        printers.setSelectedItem(printService);
-    }
-
     void fillShoppingCart(Collection<ShoppingItem> items) {
         shoppingCart.setObjects(items);
     }
@@ -61,8 +60,8 @@ class PayView extends Window implements View {
     private void createUIComponents() {
         shoppingCart = new ObjectTable<>(
                 Column.create("Name", ShoppingItem::getName),
-                Column.create("Anzahl", ShoppingItem::getItemAmount),
-                Column.create("Preis", e -> controller.getPrice(e) / 100f + "€")
+                Column.create("Anzahl", ShoppingItem::getItemMultiplier),
+                Column.create("Preis", e -> controller.getPrice(e)  + "€")
         );
     }
 

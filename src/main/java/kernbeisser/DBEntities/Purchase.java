@@ -1,6 +1,7 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -23,6 +24,12 @@ public class Purchase {
     @CreationTimestamp
     private Date createDate;
 
+    private double userSurcharge;
+
+    public static List<Purchase> getAll(String condition) {
+        return Tools.getAll(Purchase.class, condition);
+    }
+
     public Date getCreateDate() {
         return createDate;
     }
@@ -39,10 +46,6 @@ public class Purchase {
         this.session = session;
     }
 
-    public static List<Purchase> getAll(String condition) {
-        return Tools.getAll(Purchase.class, condition);
-    }
-
     public Collection<ShoppingItem> getAllItems() {
         EntityManager em = DBConnection.getEntityManager();
         Collection<ShoppingItem> out = em.createQuery("select i from ShoppingItem i where i.purchase.id = " + sid,
@@ -51,11 +54,24 @@ public class Purchase {
         return out;
     }
 
-    public long getSum() {
+    public double getSum() {
         EntityManager em = DBConnection.getEntityManager();
-        Long i = (Long) em.createQuery("select sum(i.rawPrice) from ShoppingItem i").getSingleResult();
-        System.out.println(i);
+        double sum = em.createQuery("select s from ShoppingItem s where purchase.id = :id",
+                                    ShoppingItem.class)
+                       .setParameter("id", sid)
+                       .getResultList()
+                       .stream()
+                       .mapToDouble(e -> PriceCalculator.getShoppingItemPrice(e, userSurcharge))
+                       .sum();
         em.close();
-        return i;
+        return sum;
+    }
+
+    public double getUserSurcharge() {
+        return userSurcharge;
+    }
+
+    public void setUserSurcharge(double userSurcharge) {
+        this.userSurcharge = userSurcharge;
     }
 }

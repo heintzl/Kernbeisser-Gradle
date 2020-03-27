@@ -23,7 +23,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="1bff1" class="kernbeisser.CustomComponents.ObjectTable.ObjectTable" binding="items" custom-create="true" default-binding="true">
+          <component id="1bff1" class="kernbeisser.CustomComponents.ObjectTable.ObjectTable" binding="items" custom-create="true">
             <constraints/>
             <properties/>
           </component>

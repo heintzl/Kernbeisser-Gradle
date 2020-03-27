@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.util.Collection;
 
 public class PurchaseView extends Window implements View {
+    private final PurchaseController controller;
     private JButton finish;
     private ObjectTable<ShoppingItem> items;
     private JLabel date;
@@ -19,8 +20,6 @@ public class PurchaseView extends Window implements View {
     private JLabel customer;
     private JPanel main;
 
-    private final PurchaseController controller;
-
 
     PurchaseView(Window current, PurchaseController controller) {
         super(current);
@@ -29,6 +28,7 @@ public class PurchaseView extends Window implements View {
         finish.addActionListener((e) -> back());
         setSize(current.getSize());
         setLocationRelativeTo(current);
+        windowInitialized();
     }
 
     void setDate(String date) {
@@ -43,8 +43,8 @@ public class PurchaseView extends Window implements View {
         seller.setText(sellerName);
     }
 
-    void setSum(long sum) {
-        this.sum.setText(sum / 100f + "€");
+    void setSum(double sum) {
+        this.sum.setText(sum  + "€");
     }
 
     void setItemCount(int c) {
@@ -58,9 +58,9 @@ public class PurchaseView extends Window implements View {
     private void createUIComponents() {
         items = new ObjectTable<ShoppingItem>(
                 Column.create("Artikelname", ShoppingItem::getName),
-                Column.create("Anzahl", ShoppingItem::getItemAmount),
-                Column.create("Verkaufs Preis", e -> controller.getPrice(e) / 100f + "€"),
-                Column.create("Netto Preis", e -> controller.getPrice(e) / 100f + "€")
+                Column.create("Anzahl", ShoppingItem::getItemMultiplier),
+                Column.create("Verkaufs Preis", e -> controller.getPrice(e)  + "€"),
+                Column.create("Netto Preis", e -> controller.getPrice(e)  + "€")
         );
     }
 
