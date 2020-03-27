@@ -6,6 +6,8 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Window;
 
+import javax.swing.*;
+
 public class ManagePriceListsController implements Controller {
     private ManagePriceListsModel model;
     private ManagePriceListsView view;
@@ -23,20 +25,16 @@ public class ManagePriceListsController implements Controller {
     }
 
     void displayCurrentSuperPriceList() {
-        if (view.getPriceListChooser().getSelectionPath() != null) {
-            if (view.getPriceListChooser().getSelectionPath().getPath().length > 1) {
-                view.getSuperPriceList().setText(view.getPriceListChooser().getLastSelectedPathComponent().toString());
-            }
-        }
+        view.setSuperPriceListName(view.getSelectedPriceList().getName());
     }
 
     void saveAction(){
-        String priceListName = view.newPriceListName();
+        String priceListName = view.getPriceListName();
         if (priceListName.equals("")) {
             JOptionPane.showMessageDialog(view, "Bitte w\u00e4hlen sie einen korrekten Namen");
             return;
         }
-        model.savePriceList(priceListName, view.selectedSuperPriceList());
+        model.savePriceList(priceListName, view.getSelectedPriceList());
         refresh();
         return;
     }
@@ -52,7 +50,7 @@ public class ManagePriceListsController implements Controller {
     @Override
     public void refresh() {
         model.refresh();
-        view.getPriceListChooser().setModel(model.getPriceListTreeModel());
+        view.getPriceListTree().setModel(model.getPriceListTreeModel());
     }
 
     //Only to override

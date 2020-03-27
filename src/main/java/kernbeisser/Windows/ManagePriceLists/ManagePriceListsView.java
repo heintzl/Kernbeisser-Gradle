@@ -42,11 +42,11 @@ public class ManagePriceListsView extends Window implements View {
         delete.setRequiredWriteKeys(Key.ACTION_DELETE_PRICELIST);
         edit.setRequiredWriteKeys(Key.ACTION_EDIT_PRICELIST,Key.PRICELIST_NAME_WRITE,Key.PRICELIST_SUPER_PRICE_LIST_WRITE);
         priceListName.setRequiredWriteKeys(Key.PRICELIST_NAME_WRITE);
-        priceListTree.addSelectionListener(e -> controller.priceListSelected());
+        priceListTree.addSelectionListener(e -> controller.displayCurrentSuperPriceList());
         add(main);
-        add.addActionListener(e -> controller.addTriggered());
-        edit.addActionListener(e -> controller.editTriggered());
-        delete.addActionListener(e -> controller.deleteTriggered());
+        add.addActionListener(e -> controller.saveAction());
+        edit.addActionListener(e -> controller.renameAction());
+        delete.addActionListener(e -> controller.deleteAction());
         windowInitialized();
     }
 
@@ -81,7 +81,9 @@ public class ManagePriceListsView extends Window implements View {
         priceListTree = new PriceListTree();
     }
 
-
+    public PriceListTree getPriceListTree() {
+        return priceListTree;
+    }
 
     //TODO: Look for methods that you need for the model
 
