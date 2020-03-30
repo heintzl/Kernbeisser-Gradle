@@ -1,10 +1,14 @@
 package kernbeisser.Windows.ManagePriceLists;
 
 import kernbeisser.CustomComponents.PriceListTree;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
+import javax.persistence.PersistenceException;
 import javax.swing.tree.TreeModel;
+import org.hibernate.testing.transaction.TransactionUtil;
 
 public class ManagePriceListsModel implements Model {
 
@@ -22,4 +26,7 @@ public class ManagePriceListsModel implements Model {
         PriceList.savePriceList(name, superPriceList);
     }
 
+    public void deletePriceList(PriceList toDelete) throws PersistenceException {
+        PriceList.deletePriceList(toDelete);
+    }
 }

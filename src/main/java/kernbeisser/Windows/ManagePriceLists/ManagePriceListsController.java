@@ -6,6 +6,7 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Window;
 
+import javax.persistence.PersistenceException;
 import javax.swing.*;
 
 public class ManagePriceListsController implements Controller {
@@ -44,7 +45,19 @@ public class ManagePriceListsController implements Controller {
     }
 
     void deleteAction() {
-
+        PriceList toDelete = view.getSelectedPriceList();
+        if (toDelete == null) {
+            return;
+        }
+        if (JOptionPane.showConfirmDialog(view,
+                                          "Soll die Preisliste " + toDelete.getName() + " wirklich gel\u00f6scht werden") == 0) {
+            try {
+                model.deletePriceList(toDelete);
+                refresh();
+            } catch (PersistenceException e) {
+                JOptionPane.showMessageDialog(view, "Preisliste konnte nicht gelöscht werden.\n Entweder hat diese Preisliste noch Unterpreislisten oder Artikel, die auf ihr stehen.");
+            }
+        }
     }
 
     @Override
@@ -55,6 +68,10 @@ public class ManagePriceListsController implements Controller {
 
     //Only to override
     public void finish(){}
+
+    public void back() {
+        view.back();
+    };
 
     @Override
     public ManagePriceListsView getView() {

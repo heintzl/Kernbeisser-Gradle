@@ -22,6 +22,7 @@ import javax.swing.*;
 
 public class ManagePriceListsView extends Window implements View {
 
+    //TODO back or commit button can be deleted, they should have the same function
     private PermissionField priceListName;
     private PriceListTree priceListTree;
     private kernbeisser.CustomComponents.PermissionButton add;
@@ -47,6 +48,8 @@ public class ManagePriceListsView extends Window implements View {
         add.addActionListener(e -> controller.saveAction());
         edit.addActionListener(e -> controller.renameAction());
         delete.addActionListener(e -> controller.deleteAction());
+        back.addActionListener(e -> controller.back());
+        commit.addActionListener((e -> controller.back()));
         windowInitialized();
     }
 
