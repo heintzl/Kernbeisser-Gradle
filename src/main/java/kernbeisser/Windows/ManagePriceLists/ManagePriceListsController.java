@@ -41,7 +41,17 @@ public class ManagePriceListsController implements Controller {
     }
 
     void renameAction() {
-
+        PriceList toRename = view.getSelectedPriceList();
+        String newName = view.getPriceListName();
+        if (toRename == null) {
+            return;
+        }
+        if (newName.equals("")) {
+            JOptionPane.showMessageDialog(view, "Bitte w\u00e4hlen sie einen korrekten Namen");
+            return;
+        }
+        model.renamePriceList(toRename, newName);
+        refresh();
     }
 
     void deleteAction() {

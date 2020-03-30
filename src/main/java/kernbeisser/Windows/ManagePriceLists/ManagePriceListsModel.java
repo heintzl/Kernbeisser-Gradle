@@ -3,12 +3,12 @@ package kernbeisser.Windows.ManagePriceLists;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
+import org.hibernate.Session;
+import org.hibernate.testing.transaction.TransactionUtil;
 
 import javax.persistence.PersistenceException;
 import javax.swing.tree.TreeModel;
-import org.hibernate.testing.transaction.TransactionUtil;
 
 public class ManagePriceListsModel implements Model {
 
@@ -28,5 +28,10 @@ public class ManagePriceListsModel implements Model {
 
     public void deletePriceList(PriceList toDelete) throws PersistenceException {
         PriceList.deletePriceList(toDelete);
+    }
+
+    public void renamePriceList(PriceList toRename, String newName) {
+        toRename.setName(newName);
+        TransactionUtil.doInJPA(DBConnection::getEntityManagerFactory, em -> { em.unwrap(Session.class).update(toRename);});
     }
 }
