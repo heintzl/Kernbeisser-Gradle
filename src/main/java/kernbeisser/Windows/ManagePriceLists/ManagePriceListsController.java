@@ -13,6 +13,9 @@ public class ManagePriceListsController implements Controller {
     private ManagePriceListsModel model;
     private ManagePriceListsView view;
 
+    //TODO When the root is selected, the displayCurrentSuperpriceList should be activated, too.
+    //TODO Nice to have: At Changes in the Tree, not to reload the hole tree to keep expansion state und selected Node
+
 
     public ManagePriceListsController(Window current) {
         this.view = new ManagePriceListsView(current,this){
@@ -74,6 +77,8 @@ public class ManagePriceListsController implements Controller {
     public void refresh() {
         model.refresh();
         view.getPriceListTree().setModel(model.getPriceListTreeModel());
+        view.setSuperPriceListName("");
+        view.setPriceListName("");
     }
 
     //Only to override
