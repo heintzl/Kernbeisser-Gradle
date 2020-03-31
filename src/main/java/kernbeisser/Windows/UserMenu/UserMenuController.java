@@ -41,7 +41,9 @@ public class UserMenuController implements Controller {
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(model.getOwner());
         saleSession.setSeller(model.getOwner());
-        new ShoppingMaskUIController(view, saleSession);
+        Window w = new Window(view);
+        w.add(new ShoppingMaskUIController(saleSession).getView());
+        w.windowInitialized();
     }
 
     public void logOut() {

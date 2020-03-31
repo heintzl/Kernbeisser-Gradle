@@ -4,9 +4,12 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.CustomComponents.PermissionButton;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
@@ -16,58 +19,39 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 public class CashierShoppingMaskView extends Window{
-    private JButton start;
-    private JButton cancel;
-    private ObjectTable<User> users;
-    private JButton search;
-    private JTextField searchBox;
     private JPanel main;
+    private JTabbedPane tabbedPane;
+    private SearchBoxView<User> searchBoxView;
+    private PermissionButton openShoppingMask;
 
+    private CashierShoppingMaskController controller;
 
     CashierShoppingMaskView(CashierShoppingMaskController controller, Window window){
         super(window);
-        add(main);
+        this.controller = controller;
+        openShoppingMask.addActionListener(e -> controller.openMaskWindow());
         setSize(500,600);
-        start.addActionListener(e -> controller.openMaskWindow());
-        cancel.addActionListener(e -> back());
-        search.addActionListener(e -> controller.refresh());
-        users.addSelectionListener(e -> controller.select());
-        search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH,15,new Color(0x757EFF)));
-        searchBox.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                controller.refresh();
-            }
-        });
+        add(main);
         windowInitialized();
     }
 
     private void createUIComponents() {
-        users = new ObjectTable<User>(
-                Column.create("Benutzername", User::getUsername, Key.USER_USERNAME_READ),
-                Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),
-                Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ)
-                );
+        searchBoxView =  controller.getSearchBoxView();
     }
 
-    void setUsers(Collection<User> users){
-        this.users.setObjects(users);
+    void setSearchBoxView(SearchBoxView<User> userSearchBoxView){
+        this.searchBoxView = userSearchBoxView;
     }
 
-    User getSelectedUser(){
-        return users.getSelectedObject();
+    void addShoppingMaskView(String title,ShoppingMaskUIView view){
+        this.tabbedPane.addTab(title,view);
     }
 
-    void setEnable(boolean b){
-        start.setEnabled(b);
-        if(!b)start.setText("Nutzer auswählen");
+    public void setStartFor(String username) {
+        openShoppingMask.setText("Einkauf für "+username+" beginnen");
     }
 
-    void setTarget(String target){
-        start.setText("Einkauf für "+target+" beginnen");
-    }
-
-    public String getSearch() {
-        return searchBox.getText();
+    public void setOpenShoppingMaskEnabled(boolean b) {
+        openShoppingMask.setEnabled(b);
     }
 }

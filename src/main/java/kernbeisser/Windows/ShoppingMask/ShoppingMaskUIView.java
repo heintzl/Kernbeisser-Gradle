@@ -17,7 +17,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 
-public class ShoppingMaskUIView extends Window implements View {
+public class ShoppingMaskUIView extends JPanel implements View {
     //TODO: create Enum
     static final int ARTICLE_NUMBER = 0;
     static final int BAKED_GOODS = 1;
@@ -80,8 +80,7 @@ public class ShoppingMaskUIView extends Window implements View {
     private ButtonGroup optGrpArticleType;
     private char currentArticleType;
 
-    public ShoppingMaskUIView(Window window, ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
-        super(window);
+    public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
         this.controller = controller;
         add(MainPanel);
@@ -113,11 +112,8 @@ public class ShoppingMaskUIView extends Window implements View {
         });
         checkout.addActionListener(e -> controller.startPay());
         articleTypeChange('a');
-        pack();
-        setLocationRelativeTo(window);
         optTaxLow.setText(VAT.LOW.getName());
         optTaxStandard.setText(VAT.HIGH.getName());
-        windowInitialized();
     }
 
     private void doCancel() {
