@@ -30,6 +30,14 @@ class TransactionModel implements Model {
         }
     }
 
+    double getSum(){
+        return transactions.stream().mapToDouble(Transaction::getValue).sum();
+    }
+
+    int getCount(){
+        return transactions.size();
+    }
+
     public void remove(Transaction selectedTransaction) {
         transactions.remove(selectedTransaction);
     }

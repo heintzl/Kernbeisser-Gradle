@@ -22,13 +22,15 @@ public class TransactionController implements Controller {
     public TransactionController(Window current, User user) {
         model = new TransactionModel();
         userSearchBoxController = new SearchBoxController<>(User::defaultSearch, this::loadUser,
-                                                            Column.create("Username", User::getUsername,Key.USER_USERNAME_READ),
+                                                            Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ),
                                                             Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),
-                                                            Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ));
+                                                            Column.create("Username", User::getUsername,Key.USER_USERNAME_READ)
+                                                            );
         view = new TransactionView(current, this);
         view.setFromEnabled(user.hasPermission(Key.ACTION_TRANSACTION_FROM_OTHER));
         view.setFromKBEnable(user.hasPermission(Key.ACTION_TRANSACTION_FROM_KB));
         view.setFrom(LogInModel.getLoggedIn().getUsername());
+        refreshTable();
     }
 
     @Override
@@ -53,6 +55,10 @@ public class TransactionController implements Controller {
 
     void addTransaction() {
         Transaction transaction = new Transaction();
+        if(view.getValue()<0.01){
+            view.invalidValue();
+            return;
+        }
         if (view.isFromKB()) {
             transaction.setFrom(null);
         } else {
@@ -70,13 +76,19 @@ public class TransactionController implements Controller {
         }
         transaction.setValue(view.getValue());
         model.addTransaction(transaction);
-        view.setTransactions(model.getTransactions());
+        refreshTable();
         view.setValue("0.00");
     }
 
     void remove() {
         model.remove(view.getSelectedTransaction());
+        refreshTable();
+    }
+
+    private void refreshTable(){
         view.setTransactions(model.getTransactions());
+        view.setCount(model.getCount());
+        view.setSum(model.getSum());
     }
 
     void loadUser(User user) {
