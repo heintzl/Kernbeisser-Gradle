@@ -62,7 +62,7 @@ public class ShoppingCartView extends JPanel implements View {
                     return discount;
                 }),
                 Column.create("3", e -> {
-                    JLabel price = new JLabel(controller.getPrice(e)  + "€");
+                    JLabel price = new JLabel(String.format("%.2f€",controller.getPrice(e)));
                     price.setFont(gridFont);
                     price.setHorizontalAlignment(SwingConstants.RIGHT);
                     return price;
