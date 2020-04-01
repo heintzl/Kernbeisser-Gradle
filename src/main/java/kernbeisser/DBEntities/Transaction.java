@@ -16,7 +16,6 @@ public class Transaction {
     private int id;
 
     @Column
-    //TODO save as double
     private double value;
 
     @JoinColumn

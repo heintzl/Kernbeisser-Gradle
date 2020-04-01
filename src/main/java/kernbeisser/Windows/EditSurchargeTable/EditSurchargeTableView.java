@@ -16,7 +16,7 @@ class EditSurchargeTableView extends Window {
     private JTextField name;
     private IntegerParseField from;
     private IntegerParseField to;
-    private IntegerParseField surcharge;
+    private kernbeisser.CustomComponents.TextFields.DoubleParseField surcharge;
     private JPanel main;
 
     EditSurchargeTableView(EditSurchargeTableController controller, Window current) {
