@@ -96,11 +96,15 @@ public class User implements Serializable {
         return Tools.getAll(User.class, condition);
     }
 
-    public static User getById(int id) {
+    public static User getByUsername(String username) throws NoResultException{
         EntityManager em = DBConnection.getEntityManager();
-        User out = em.createQuery("select u from User u where u.id = " + id, User.class).getSingleResult();
-        em.close();
-        return out;
+        try{
+            return em.createQuery("select u from User u where u.username = :username", User.class).setParameter("username",username).getSingleResult();
+        }catch (NoResultException e){
+            throw e;
+        }finally {
+            em.close();
+        }
     }
 
     public static Collection<User> defaultSearch(String s, int max) {
