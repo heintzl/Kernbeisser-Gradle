@@ -3,6 +3,7 @@ package kernbeisser.Windows.LogIn;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Key;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.Model;
 
@@ -31,7 +32,7 @@ public class LogInModel implements Model {
                     "select u from User u where u.username like :username", User.class)
                           .setParameter("username", username).
                                   getSingleResult();
-            if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
+            if ( BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified && user.hasPermission(Key.ACTION_LOGIN)) {
                 loggedIn = user;
             } else {
                 throw new AccessDeniedException();

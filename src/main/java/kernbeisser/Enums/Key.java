@@ -11,6 +11,7 @@ public enum Key {
     ACTION_OPEN_MANAGE_PRICELISTS(KeyCategory.WINDOW,Security.LOW),
 
     //Actions
+    ACTION_LOGIN(KeyCategory.ACTION,Security.LOW),
     ACTION_TRANSACTION(KeyCategory.ACTION, Security.LOW),
     ACTION_TRANSACTION_FROM_OTHER(KeyCategory.ACTION, Security.EXTREME),
     ACTION_TRANSACTION_FROM_KB(KeyCategory.ACTION, Security.EXTREME),
