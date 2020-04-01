@@ -13,6 +13,7 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
@@ -322,8 +323,8 @@ public class ShoppingMaskUIView extends JPanel implements View {
         priceUnit.setText(article.isWeighAble() ? "€/kg" : "€");
         amountUnit.setText(article.isWeighAble() ? "g" : "stk.");
         articleAmount.setVisible(!article.isWeighAble());
+        articleAmountLabel.setForeground(article.isWeighAble() ? Color.WHITE : Color.BLACK);
         articleUnit.setVisible(!article.isWeighAble());
-        articleAmountLabel.setVisible(!article.isWeighAble());
         optTaxLow.setSelected(article.getVAT().getValue()==0.07);
         optTaxStandard.setSelected(article.getVAT().getValue()!=0.07);
     }
