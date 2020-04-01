@@ -7,6 +7,7 @@ import kernbeisser.Useful.Tools;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import java.util.Collection;
 
 public class SpecialPriceEditorModel {
     private Offer selected;
@@ -60,6 +61,20 @@ public class SpecialPriceEditorModel {
         em.flush();
         et.commit();
         em.close();
+    }
+
+    public Collection<Article> searchArticle(String search,int maxResults,boolean onlyActionArticle){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Article> out = em.createQuery(
+                "select i from Article i where (kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n)"+(onlyActionArticle ?" and size(i.specialPriceMonth) > 0" : ""),
+                Article.class
+        )
+                                    .setParameter("n", Tools.tryParseInteger(search))
+                                    .setParameter("s", search + "%")
+                                    .setMaxResults(maxResults)
+                                    .getResultList();
+        em.close();
+        return out;
     }
 
 }

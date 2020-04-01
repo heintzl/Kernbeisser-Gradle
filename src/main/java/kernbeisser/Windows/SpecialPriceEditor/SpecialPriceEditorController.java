@@ -1,13 +1,18 @@
 package kernbeisser.Windows.SpecialPriceEditor;
 
 import kernbeisser.CustomComponents.DatePicker.DatePickerController;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Main;
 import kernbeisser.Windows.Window;
+import org.apache.commons.collections.CollectionUtils;
 
 import javax.swing.*;
+import java.util.Collection;
 
 public class SpecialPriceEditorController {
     public static void main(String[] args)
@@ -16,17 +21,44 @@ public class SpecialPriceEditorController {
         Main.buildEnvironment();
         new SpecialPriceEditorController(null);
     }
-    private final SpecialPriceEditorView view;
+    private SpecialPriceEditorView view;
     private final SpecialPriceEditorModel model;
+
+    private final SearchBoxController<Article> searchBoxController;
     SpecialPriceEditorController(Window current){
-        this.view = new SpecialPriceEditorView(this,current);
         this.model = new SpecialPriceEditorModel();
+        this.searchBoxController = new SearchBoxController<Article>((s,m) -> model.searchArticle(s, m, view != null && view.filterOnlyActionArticle()),
+                                                                    this::load,
+                                                                    Column.create("Name", Article::getName),
+                                                                    Column.create("Barcode", Article::getBarcode),
+                                                                    Column.create("Lieferant",
+                                                                           Article::getSupplier),
+                                                                    Column.create("Kernbeissernummer",
+                                                                           Article::getKbNumber)
+        ){
+            @Override
+            public void search() {
+                super.search();
+                if(view!=null)
+                load(null);
+            }
+        };
+        this.view = new SpecialPriceEditorView(this,current);
         view.fillRepeat(Repeat.values());
     }
 
     void load(Article article) {
+        if(article==null){
+            view.setOffers(CollectionUtils.EMPTY_COLLECTION);
+            view.setAddEnable(false);
+            view.setSelectedArticleIdentifier(null);
+        }else {
+            view.setOffers(article.getSpecialPriceMonths());
+            view.setAddEnable(true);
+            view.setSelectedArticleIdentifier(article.getName());
+
+        }
         model.setSelectedArticle(article);
-        view.setOffers(article.getSpecialPriceMonths());
         view.setRemoveEnable(false);
         view.setEditEnable(false);
     }
@@ -71,11 +103,18 @@ public class SpecialPriceEditorController {
     }
 
     void searchFrom() {
-
         DatePickerController.requestDate(view,view::setFrom);
+    }
+
+    SearchBoxView<Article> getSearchBoxView(){
+        return searchBoxController.getView();
     }
 
     void searchTo() {
         DatePickerController.requestDate(view,view::setTo);
+    }
+
+    void refreshSearchSolutions(){
+        searchBoxController.refreshLoadSolutions();
     }
 }
