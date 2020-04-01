@@ -1,21 +1,34 @@
 package kernbeisser.Windows.Trasaction;
 
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Window;
+
+import javax.persistence.NoResultException;
 
 public class TransactionController implements Controller {
     private TransactionModel model;
     private TransactionView view;
 
+    private SearchBoxController<User> userSearchBoxController;
+
     public TransactionController(Window current, User user) {
         model = new TransactionModel();
+        userSearchBoxController = new SearchBoxController<>(User::defaultSearch, this::loadUser,
+                                                            Column.create("Username", User::getUsername,Key.USER_USERNAME_READ),
+                                                            Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),
+                                                            Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ));
         view = new TransactionView(current, this);
         view.setFromEnabled(user.hasPermission(Key.ACTION_TRANSACTION_FROM_OTHER));
-        view.setFromKB(user.hasPermission(Key.ACTION_TRANSACTION_FROM_KB));
+        view.setFromKBEnable(user.hasPermission(Key.ACTION_TRANSACTION_FROM_KB));
+        view.setFrom(LogInModel.getLoggedIn().getUsername());
     }
 
     @Override
@@ -43,21 +56,22 @@ public class TransactionController implements Controller {
         if (view.isFromKB()) {
             transaction.setFrom(null);
         } else {
-            User from = model.findUser(view.getFrom());
-            if (from == null) {
+            try {
+                transaction.setFrom(model.findUser(view.getFrom()));
+            }catch (NoResultException e){
                 view.invalidFrom();
                 return;
             }
         }
-        User to = model.findUser(view.getTo());
-        if (to == null) {
+        try {
+            transaction.setTo(model.findUser(view.getTo()));
+        }catch (NoResultException e){
             view.invalidTo();
-            return;
         }
-        transaction.setTo(to);
         transaction.setValue(view.getValue());
         model.addTransaction(transaction);
         view.setTransactions(model.getTransactions());
+        view.setValue("0.00");
     }
 
     void remove() {
@@ -66,6 +80,10 @@ public class TransactionController implements Controller {
     }
 
     void loadUser(User user) {
+        view.setTo(user.getUsername());
+    }
 
+    public SearchBoxView<User> getSearchBoxView() {
+        return userSearchBoxController.getView();
     }
 }

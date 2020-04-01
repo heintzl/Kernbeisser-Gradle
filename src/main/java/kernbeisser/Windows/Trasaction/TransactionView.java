@@ -30,38 +30,42 @@ class TransactionView extends Window implements View {
     private JPanel main;
     private JButton back;
     private JButton delete;
-    private JButton a5€Button;
-    private JButton a10€Button;
-    private JButton a15€Button;
-    private JButton a20€Button;
-    private JButton a25€Button;
-    private JButton a30€Button;
-    private JButton a40€Button;
-    private JButton a35€Button;
-    private JButton a65€Button;
-    private JButton a75€Button;
-    private JButton a50€Button;
-    private JButton a45€Button;
-    private JButton a60€Button;
-    private JButton a55€Button;
-    private JButton a70€Button;
-    private JButton a80€Button;
-    private JButton a85€Button;
-    private JButton a95€Button;
-    private JButton a90€Button;
-    private JButton a100€Button;
-    private JButton a200€Button;
-    private JButton a100€Button1;
-    private JButton a300€Button;
-    private JButton a400€Button;
-    private JButton a500€Button;
-    private JButton a600€Button;
-    private JButton a700€Button;
-    private JButton a800€Button;
-    private JButton a900€Button;
-    private JButton a1000€Button;
+
+    //Fast transaction buttons only paste there value into the from field
+    private JButton a5;
+    private JButton a10;
+    private JButton a15;
+    private JButton a20;
+    private JButton a25;
+    private JButton a30;
+    private JButton a40;
+    private JButton a35;
+    private JButton a65;
+    private JButton a75;
+    private JButton a50;
+    private JButton a45;
+    private JButton a60;
+    private JButton a55;
+    private JButton a70;
+    private JButton a80;
+    private JButton a85;
+    private JButton a95;
+    private JButton a90;
+    private JButton a100;
+    private JButton a150;
+    private JButton a125;
+    private JButton a175;
+    private JButton a200;
+    private JButton a225;
+    private JButton a250;
+    private JButton a300;
+    private JButton a350;
+    private JButton a450;
+    private JButton a500;
+    private JButton a400;
 
     private SearchBoxView searchBoxView;
+
 
     private TransactionController controller;
 
@@ -85,6 +89,131 @@ class TransactionView extends Window implements View {
         });
         add(main);
         windowInitialized();
+        formKBValue.addActionListener(e -> from.setEnabled(!formKBValue.isSelected()));
+        a5.addActionListener(e -> {
+            value.setText("5.0");
+            controller.addTransaction();
+        });
+        a10.addActionListener(e -> {
+            value.setText("10.0");
+            controller.addTransaction();
+        });
+        a15.addActionListener(e -> {
+            value.setText("15.0");
+            controller.addTransaction();
+        });
+        a20.addActionListener(e -> {
+            value.setText("20.0");
+            controller.addTransaction();
+        });
+        a25.addActionListener(e -> {
+            value.setText("25.0");
+            controller.addTransaction();
+        });
+        a30.addActionListener(e -> {
+            value.setText("30.0");
+            controller.addTransaction();
+        });
+        a40.addActionListener(e -> {
+            value.setText("40.0");
+            controller.addTransaction();
+        });
+        a35.addActionListener(e -> {
+            value.setText("35.0");
+            controller.addTransaction();
+        });
+        a65.addActionListener(e -> {
+            value.setText("65.0");
+            controller.addTransaction();
+        });
+        a75.addActionListener(e -> {
+            value.setText("75.0");
+            controller.addTransaction();
+        });
+        a50.addActionListener(e -> {
+            value.setText("50.0");
+            controller.addTransaction();
+        });
+        a45.addActionListener(e -> {
+            value.setText("45.0");
+            controller.addTransaction();
+        });
+        a60.addActionListener(e -> {
+            value.setText("60.0");
+            controller.addTransaction();
+        });
+        a55.addActionListener(e -> {
+            value.setText("55.0");
+            controller.addTransaction();
+        });
+        a70.addActionListener(e -> {
+            value.setText("70.0");
+            controller.addTransaction();
+        });
+        a80.addActionListener(e -> {
+            value.setText("80.0");
+            controller.addTransaction();
+        });
+        a85.addActionListener(e -> {
+            value.setText("85.0");
+            controller.addTransaction();
+        });
+        a95.addActionListener(e -> {
+            value.setText("95.0");
+            controller.addTransaction();
+        });
+        a90.addActionListener(e -> {
+            value.setText("90.0");
+            controller.addTransaction();
+        });
+        a100.addActionListener(e -> {
+            value.setText("100.0");
+            controller.addTransaction();
+        });
+        a150.addActionListener(e -> {
+            value.setText("150.0");
+            controller.addTransaction();
+        });
+        a125.addActionListener(e -> {
+            value.setText("125.0");
+            controller.addTransaction();
+        });
+        a175.addActionListener(e -> {
+            value.setText("175.0");
+            controller.addTransaction();
+        });
+        a200.addActionListener(e -> {
+            value.setText("200.0");
+            controller.addTransaction();
+        });
+        a225.addActionListener(e -> {
+            value.setText("225.0");
+            controller.addTransaction();
+        });
+        a250.addActionListener(e -> {
+            value.setText("250.0");
+            controller.addTransaction();
+        });
+        a300.addActionListener(e -> {
+            value.setText("300.0");
+            controller.addTransaction();
+        });
+        a350.addActionListener(e -> {
+            value.setText("350.0");
+            controller.addTransaction();
+        });
+        a450.addActionListener(e -> {
+            value.setText("450.0");
+            controller.addTransaction();
+        });
+        a500.addActionListener(e -> {
+            value.setText("500.0");
+            controller.addTransaction();
+        });
+        a400.addActionListener(e -> {
+            value.setText("400.0");
+            controller.addTransaction();
+        });
     }
 
     void setTransactions(Collection<Transaction> transactions) {
@@ -111,13 +240,17 @@ class TransactionView extends Window implements View {
         return formKBValue.isSelected();
     }
 
-    void setFromKB(boolean b) {
-        formKBValue.setSelected(false);
+    void setFromKBEnable(boolean b) {
+        formKBValue.setSelected(b);
         formKBValue.setEnabled(b);
+        if(b) {
+            from.setEnabled(false);
+        }
     }
 
     void setFromEnabled(boolean b) {
         from.setEnabled(b);
+        searchBoxView.setVisible(b);
     }
 
     private void createUIComponents() {
@@ -126,7 +259,7 @@ class TransactionView extends Window implements View {
                 Column.create("Zu", Transaction::getTo),
                 Column.create("Überweissungsbetrag", e -> e.getValue()  + "€")
         );
-        SearchBoxController<User> userSearchBoxController = new SearchBoxController<User>(User::defaultSearch,controller::loadUser);
+        searchBoxView = controller.getSearchBoxView();
     }
 
     void success() {
@@ -145,12 +278,15 @@ class TransactionView extends Window implements View {
         JOptionPane.showMessageDialog(this, "Der eingetragen Empfänger kann nicht gefunden werden!");
     }
 
-    public int getValue() {
-        return (int) (value.getValue() * 100);
+    public double getValue() {
+        return value.getValue();
     }
 
     Transaction getSelectedTransaction() {
         return transactions.getSelectedObject();
     }
 
+    public void setValue(String s) {
+        value.setText(s);
+    }
 }

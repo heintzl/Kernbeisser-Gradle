@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kernbeisser.Windows.Trasaction.TransactionView">
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="2" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="0" left="0" bottom="5" right="5"/>
+    <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="843" height="748"/>
+      <xy x="20" y="20" width="848" height="780"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -101,7 +101,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="d490" class="javax.swing.JButton" binding="a5€Button" default-binding="true">
+                  <component id="d490" class="javax.swing.JButton" binding="a5">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -109,12 +109,7 @@
                       <text value="5€"/>
                     </properties>
                   </component>
-                  <vspacer id="97ddc">
-                    <constraints>
-                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                  </vspacer>
-                  <component id="8ed98" class="javax.swing.JButton" binding="a10€Button" default-binding="true">
+                  <component id="8ed98" class="javax.swing.JButton" binding="a10">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -122,228 +117,236 @@
                       <text value="10€"/>
                     </properties>
                   </component>
-                  <component id="335f1" class="javax.swing.JButton" binding="a15€Button" default-binding="true">
-                    <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="15€"/>
-                    </properties>
-                  </component>
-                  <component id="80e9e" class="javax.swing.JButton" binding="a20€Button" default-binding="true">
-                    <constraints>
-                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="20€"/>
-                    </properties>
-                  </component>
-                  <component id="1da88" class="javax.swing.JButton" binding="a25€Button" default-binding="true">
-                    <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="25€"/>
-                    </properties>
-                  </component>
-                  <component id="bc85c" class="javax.swing.JButton" binding="a30€Button" default-binding="true">
+                  <component id="847af" class="javax.swing.JButton" binding="a40">
                     <constraints>
                       <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="30€"/>
-                    </properties>
-                  </component>
-                  <component id="847af" class="javax.swing.JButton" binding="a40€Button" default-binding="true">
-                    <constraints>
-                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="40€"/>
                     </properties>
                   </component>
-                  <component id="6cd3f" class="javax.swing.JButton" binding="a65€Button" default-binding="true">
+                  <component id="6cd3f" class="javax.swing.JButton" binding="a65">
                     <constraints>
-                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="65€"/>
                     </properties>
                   </component>
-                  <component id="27331" class="javax.swing.JButton" binding="a75€Button" default-binding="true">
-                    <constraints>
-                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="75€"/>
-                    </properties>
-                  </component>
-                  <component id="421c8" class="javax.swing.JButton" binding="a50€Button" default-binding="true">
+                  <component id="14d08" class="javax.swing.JButton" binding="a70">
                     <constraints>
                       <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="50€"/>
-                    </properties>
-                  </component>
-                  <component id="4802e" class="javax.swing.JButton" binding="a45€Button" default-binding="true">
-                    <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="45€"/>
-                    </properties>
-                  </component>
-                  <component id="9587e" class="javax.swing.JButton" binding="a60€Button" default-binding="true">
-                    <constraints>
-                      <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="60€"/>
-                    </properties>
-                  </component>
-                  <component id="4fb18" class="javax.swing.JButton" binding="a55€Button" default-binding="true">
-                    <constraints>
-                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="55€"/>
-                    </properties>
-                  </component>
-                  <component id="14d08" class="javax.swing.JButton" binding="a70€Button" default-binding="true">
-                    <constraints>
-                      <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="70€"/>
                     </properties>
                   </component>
-                  <component id="9fd38" class="javax.swing.JButton" binding="a80€Button" default-binding="true">
+                  <component id="48ae9" class="javax.swing.JButton" binding="a35">
                     <constraints>
-                      <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="80€"/>
-                    </properties>
-                  </component>
-                  <component id="48ae9" class="javax.swing.JButton" binding="a35€Button" default-binding="true">
-                    <constraints>
-                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="35€"/>
                     </properties>
                   </component>
-                  <component id="57ca" class="javax.swing.JButton" binding="a85€Button" default-binding="true">
+                  <component id="bc145" class="javax.swing.JButton" binding="a95">
                     <constraints>
-                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="85€"/>
-                    </properties>
-                  </component>
-                  <component id="bc145" class="javax.swing.JButton" binding="a95€Button" default-binding="true">
-                    <constraints>
-                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="95€"/>
                     </properties>
                   </component>
-                  <component id="813d3" class="javax.swing.JButton" binding="a90€Button" default-binding="true">
+                  <component id="335f1" class="javax.swing.JButton" binding="a15">
                     <constraints>
-                      <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="15€"/>
+                    </properties>
+                  </component>
+                  <component id="80e9e" class="javax.swing.JButton" binding="a20">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="20€"/>
+                    </properties>
+                  </component>
+                  <component id="1da88" class="javax.swing.JButton" binding="a25">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="25€"/>
+                    </properties>
+                  </component>
+                  <component id="bc85c" class="javax.swing.JButton" binding="a30">
+                    <constraints>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="30€"/>
+                    </properties>
+                  </component>
+                  <component id="4802e" class="javax.swing.JButton" binding="a45">
+                    <constraints>
+                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="45€"/>
+                    </properties>
+                  </component>
+                  <component id="421c8" class="javax.swing.JButton" binding="a50">
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="50€"/>
+                    </properties>
+                  </component>
+                  <component id="4fb18" class="javax.swing.JButton" binding="a55">
+                    <constraints>
+                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="55€"/>
+                    </properties>
+                  </component>
+                  <component id="9587e" class="javax.swing.JButton" binding="a60">
+                    <constraints>
+                      <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="60€"/>
+                    </properties>
+                  </component>
+                  <component id="27331" class="javax.swing.JButton" binding="a75">
+                    <constraints>
+                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="75€"/>
+                    </properties>
+                  </component>
+                  <component id="9fd38" class="javax.swing.JButton" binding="a80">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="80€"/>
+                    </properties>
+                  </component>
+                  <component id="57ca" class="javax.swing.JButton" binding="a85">
+                    <constraints>
+                      <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="85€"/>
+                    </properties>
+                  </component>
+                  <component id="813d3" class="javax.swing.JButton" binding="a90">
+                    <constraints>
+                      <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="90€"/>
                     </properties>
                   </component>
-                  <component id="42fd2" class="javax.swing.JButton" binding="a100€Button" default-binding="true">
+                  <component id="49cef" class="javax.swing.JButton" binding="a125">
                     <constraints>
-                      <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="125€"/>
+                    </properties>
+                  </component>
+                  <component id="42fd2" class="javax.swing.JButton" binding="a100">
+                    <constraints>
+                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="100€"/>
                     </properties>
                   </component>
-                  <component id="7f58e" class="javax.swing.JButton" binding="a200€Button" default-binding="true">
+                  <component id="e79c8" class="javax.swing.JButton" binding="a150">
                     <constraints>
-                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="150€"/>
+                    </properties>
+                  </component>
+                  <component id="d731f" class="javax.swing.JButton" binding="a175">
+                    <constraints>
+                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="175€"/>
+                    </properties>
+                  </component>
+                  <component id="64af7" class="javax.swing.JButton" binding="a200">
+                    <constraints>
+                      <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="200€"/>
                     </properties>
                   </component>
-                  <component id="d1220" class="javax.swing.JButton" binding="a100€Button1" default-binding="true">
+                  <component id="e6104" class="javax.swing.JButton" binding="a225">
                     <constraints>
-                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="100€"/>
+                      <text value="225€"/>
                     </properties>
                   </component>
-                  <component id="28891" class="javax.swing.JButton" binding="a300€Button" default-binding="true">
+                  <component id="5fb33" class="javax.swing.JButton" binding="a250">
                     <constraints>
-                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="250€"/>
+                    </properties>
+                  </component>
+                  <component id="6ca3d" class="javax.swing.JButton" binding="a300">
+                    <constraints>
+                      <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="300€"/>
                     </properties>
                   </component>
-                  <component id="8712d" class="javax.swing.JButton" binding="a400€Button" default-binding="true">
+                  <component id="d924" class="javax.swing.JButton" binding="a350">
                     <constraints>
-                      <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="9" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="350€"/>
+                    </properties>
+                  </component>
+                  <component id="e8db4" class="javax.swing.JButton" binding="a400">
+                    <constraints>
+                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="400€"/>
                     </properties>
                   </component>
-                  <component id="ea041" class="javax.swing.JButton" binding="a500€Button" default-binding="true">
+                  <component id="7c9d9" class="javax.swing.JButton" binding="a450">
                     <constraints>
-                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="450€"/>
+                    </properties>
+                  </component>
+                  <component id="c93d8" class="javax.swing.JButton" binding="a500">
+                    <constraints>
+                      <grid row="10" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="500€"/>
-                    </properties>
-                  </component>
-                  <component id="2bf1d" class="javax.swing.JButton" binding="a600€Button" default-binding="true">
-                    <constraints>
-                      <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="600€"/>
-                    </properties>
-                  </component>
-                  <component id="d3c3e" class="javax.swing.JButton" binding="a700€Button" default-binding="true">
-                    <constraints>
-                      <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="700€"/>
-                    </properties>
-                  </component>
-                  <component id="a6738" class="javax.swing.JButton" binding="a800€Button" default-binding="true">
-                    <constraints>
-                      <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="800€"/>
-                    </properties>
-                  </component>
-                  <component id="b0d15" class="javax.swing.JButton" binding="a900€Button" default-binding="true">
-                    <constraints>
-                      <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="900€"/>
-                    </properties>
-                  </component>
-                  <component id="bb6a9" class="javax.swing.JButton" binding="a1000€Button" default-binding="true">
-                    <constraints>
-                      <grid row="9" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="1000€"/>
                     </properties>
                   </component>
                 </children>
