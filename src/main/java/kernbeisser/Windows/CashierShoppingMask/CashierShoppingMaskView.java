@@ -45,6 +45,9 @@ public class CashierShoppingMaskView extends Window{
 
     void addShoppingMaskView(String title,ShoppingMaskUIView view){
         this.tabbedPane.addTab(title,view);
+        pack();
+        setLocationRelativeTo(null);
+        tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
     }
 
     public void setStartFor(String username) {
