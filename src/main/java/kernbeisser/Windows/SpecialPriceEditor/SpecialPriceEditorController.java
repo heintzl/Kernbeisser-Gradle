@@ -7,6 +7,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
+import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Main;
 import kernbeisser.Windows.Window;
 import org.apache.commons.collections.CollectionUtils;
@@ -76,12 +77,16 @@ public class SpecialPriceEditorController {
 
 
     public void add() {
-        model.addOffer(model.getSelectedArticle(), collect());
-        model.refreshItem();
-        view.setOffers(model.getSelectedArticle().getSpecialPriceMonths());
+        try {
+            model.addOffer(model.getSelectedArticle(), collect());
+            model.refreshItem();
+            view.setOffers(model.getSelectedArticle().getSpecialPriceMonths());
+        } catch (IncorrectInput incorrectInput) {
+            view.cannotParseDateFormat();
+        }
     }
 
-    private Offer collect(){
+    private Offer collect() throws IncorrectInput {
         Offer out = new Offer();
         out.setFromDate(view.getFrom());
         out.setToDate(view.getTo());
@@ -91,9 +96,13 @@ public class SpecialPriceEditorController {
     }
 
     public void edit() {
-        model.refreshItem();
-        view.setOffers(model.getSelectedArticle().getSpecialPriceMonths());
-        model.edit(model.getSelectedOffer().getOid(),collect());
+        try {
+            model.refreshItem();
+            view.setOffers(model.getSelectedArticle().getSpecialPriceMonths());
+            model.edit(model.getSelectedOffer().getOid(),collect());
+        } catch (IncorrectInput incorrectInput) {
+            view.cannotParseDateFormat();
+        }
     }
 
     public void remove() {

@@ -11,12 +11,10 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
 
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.text.DecimalFormat;
 
 public class ShoppingMaskUIView extends JPanel implements View {
     //TODO: create Enum
@@ -260,7 +258,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
             return 50;
         }
         if (priceVariablePercentage.isSelected()) {
-            return variablePercentage.getValue();
+            return variablePercentage.getSafeValue();
         }
         if (pricePreordered.isSelected()) {
             return PriceCalculator.CONTAINER_DISCOUNT;
@@ -279,7 +277,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
     }
 
     double getPriceVATIncluded() {
-        return price.getValue();
+        return price.getSafeValue();
     }
 
     public void setPrice(String value) {
@@ -288,11 +286,11 @@ public class ShoppingMaskUIView extends JPanel implements View {
     }
 
     int getKBArticleNumber() {
-        return kbNumber.getValue();
+        return kbNumber.getSafeValue();
     }
 
     int getSuppliersNumber() {
-        return suppliersItemNumber.getValue();
+        return suppliersItemNumber.getSafeValue();
     }
 
     void noArticleFound() {
@@ -301,7 +299,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
     }
 
     public double getAmount() {
-        return amount.getValue();
+        return amount.getSafeValue();
     }
 
     public void setAmount(String value) {
@@ -341,7 +339,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
     }
 
     int getArticleAmount() {
-        return articleAmount.getValue();
+        return articleAmount.getSafeValue();
     }
 
     public void setArticleAmount(String value) {
@@ -354,7 +352,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
     }
 
     public int getDeposit() {
-        return (int) (deposit.getValue() * 100);
+        return (int) (deposit.getSafeValue() * 100);
     }
 
     public void setDeposit(String value) {

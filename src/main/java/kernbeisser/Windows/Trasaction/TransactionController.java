@@ -47,16 +47,24 @@ public class TransactionController implements Controller {
         if (!view.confirm()) {
             return;
         }
+        unsafeTransfer();
+    }
+
+    void unsafeTransfer(){
         model.transfer();
         view.success();
         model.getTransactions().clear();
         view.setTransactions(model.getTransactions());
+        refreshTable();
     }
 
     void addTransaction() {
         Transaction transaction = new Transaction();
-        if(view.getValue()<0.01){
+        if(view.getValue()==0){
             view.invalidValue();
+            return;
+        }
+        if(view.getValue()<0&&!view.requestUserTransactionCommit()){
             return;
         }
         if (view.isFromKB()) {
@@ -73,11 +81,12 @@ public class TransactionController implements Controller {
             transaction.setTo(model.findUser(view.getTo()));
         }catch (NoResultException e){
             view.invalidTo();
+            return;
         }
         transaction.setValue(view.getValue());
         model.addTransaction(transaction);
         refreshTable();
-        view.setValue("0.00");
+        view.setValue("");
     }
 
     void remove() {
@@ -89,6 +98,8 @@ public class TransactionController implements Controller {
         view.setTransactions(model.getTransactions());
         view.setCount(model.getCount());
         view.setSum(model.getSum());
+        view.setTo("");
+        userSearchBoxController.refreshLoadSolutions();
     }
 
     void loadUser(User user) {
@@ -97,5 +108,22 @@ public class TransactionController implements Controller {
 
     public SearchBoxView<User> getSearchBoxView() {
         return userSearchBoxController.getView();
+    }
+
+    public boolean isCloseable() {
+        if (model.getTransactions().size() > 0) {
+            switch (view.commitUnsavedTransactions()){
+                case 0:
+                    unsafeTransfer();
+                    return true;
+                case 1:
+                    view.transactionsDeleted();
+                    return true;
+                case 2:
+                    return false;
+                default:
+                    return true;
+            }
+        }else return true;
     }
 }

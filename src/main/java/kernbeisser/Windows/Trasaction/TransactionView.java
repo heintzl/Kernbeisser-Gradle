@@ -4,11 +4,9 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
@@ -83,6 +81,7 @@ class TransactionView extends Window implements View {
         addTransaction.addActionListener(e -> controller.addTransaction());
         addTransaction.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, Color.GREEN));
         back.addActionListener(e -> back());
+        back.setIcon(IconFontSwing.buildIcon(FontAwesome.ARROW_LEFT,20,Color.ORANGE));
         delete.addActionListener(e -> controller.remove());
         delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED));
         transactions.addKeyListener(new KeyAdapter() {
@@ -242,6 +241,11 @@ class TransactionView extends Window implements View {
         }
     }
 
+    @Override
+    protected boolean isCloseable() {
+        return controller.isCloseable();
+    }
+
     void setTransactions(Collection<Transaction> transactions) {
         this.transactions.setObjects(transactions);
     }
@@ -281,9 +285,9 @@ class TransactionView extends Window implements View {
 
     private void createUIComponents() {
         transactions = new ObjectTable<>(
-                Column.create("Von", e -> e.getFrom() == null ? "Kernbeisser" : e.getFrom()),
-                Column.create("Zu", Transaction::getTo),
-                Column.create("Überweissungsbetrag", e -> e.getValue()  + "€")
+                Column.create("Von", e -> e.getFrom() == null ? "Kernbeisser" : (e.getFrom().getSurname()+", "+e.getFrom().getFirstName())),
+                Column.create("An", e -> e.getTo().getSurname()+", "+e.getTo().getFirstName()),
+                Column.create("Überweissungsbetrag", e -> String.format("%.2f€",e.getValue()))
         );
         searchBoxView = controller.getSearchBoxView();
     }
@@ -305,7 +309,7 @@ class TransactionView extends Window implements View {
     }
 
     public double getValue() {
-        return value.getValue();
+        return value.getSafeValue();
     }
 
     Transaction getSelectedTransaction() {
@@ -325,6 +329,18 @@ class TransactionView extends Window implements View {
     }
 
     public void invalidValue() {
-        JOptionPane.showMessageDialog(this,"Der eingegebene Betrag is zu klein er muss mindestens 0.01€ groß sein");
+        JOptionPane.showMessageDialog(this,"Der eingegebene Betrag darf nicht 0.00€ betragen");
+    }
+
+    public boolean requestUserTransactionCommit() {
+        return JOptionPane.showConfirmDialog(this, "Der angegebene Preis ist negativ, das entspricht einer Auszahlung.\nIst das korrekt?") == 0;
+    }
+
+    public int commitUnsavedTransactions() {
+        return JOptionPane.showConfirmDialog(this,"Sollen die eingegebenen Überweisungen getätigt werden?","Achtung: Überweisungen wurden noch nicht übernommen",JOptionPane.YES_NO_CANCEL_OPTION);
+    }
+
+    public void transactionsDeleted() {
+        JOptionPane.showMessageDialog(this,"Die eingegeben Überweisungen wurden nicht übernommen");
     }
 }

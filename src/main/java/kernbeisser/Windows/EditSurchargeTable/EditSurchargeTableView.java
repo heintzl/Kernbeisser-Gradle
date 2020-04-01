@@ -45,9 +45,9 @@ class EditSurchargeTableView extends Window {
 
     SurchargeTable collect(SurchargeTable table) {
         table.setSupplier((Supplier) supplier.getSelectedItem());
-        table.setSurcharge(surcharge.getValue());
-        table.setFrom(from.getValue());
-        table.setTo(to.getValue());
+        table.setSurcharge(surcharge.getSafeValue());
+        table.setFrom(from.getSafeValue());
+        table.setTo(to.getSafeValue());
         table.setName(name.getText());
         return table;
     }

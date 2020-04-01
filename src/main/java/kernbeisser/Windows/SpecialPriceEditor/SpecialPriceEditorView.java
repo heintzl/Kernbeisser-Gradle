@@ -5,7 +5,6 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.PermissionCheckBox;
-import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DateParseField;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
@@ -13,6 +12,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Repeat;
+import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -119,16 +119,16 @@ public class SpecialPriceEditorView extends Window implements View {
         return offers.getSelectedObject();
     }
 
-    public Date getFrom() {
-        return Date.valueOf(from.getValue());
+    public Date getFrom() throws IncorrectInput {
+        return Date.valueOf(from.getUncheckedValue());
     }
 
-    public Date getTo() {
-        return Date.valueOf(to.getValue());
+    public Date getTo() throws IncorrectInput {
+        return Date.valueOf(to.getUncheckedValue());
     }
 
     int getSpecialPrice() {
-        return (int) (specialNetPrice.getValue() * 100);
+        return (int) (specialNetPrice.getSafeValue() * 100);
     }
 
     Repeat getRepeatMode() {
@@ -137,5 +137,9 @@ public class SpecialPriceEditorView extends Window implements View {
 
     public void setAddEnable(boolean b) {
         add.setEnabled(b);
+    }
+
+    public void cannotParseDateFormat() {
+        JOptionPane.showMessageDialog(this,"Das angegebene Datum kann nicht eingelesen werden,\n bitte überprüfen sie ob das folgende Format eingehalten wurde:\n dd:mm:yyyy");
     }
 }
