@@ -11,6 +11,8 @@ import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Main;
 import kernbeisser.Windows.Window;
 import org.apache.commons.collections.CollectionUtils;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -47,7 +49,6 @@ public class SpecialPriceEditorController {
         this.view = new SpecialPriceEditorView(this,current);
         view.fillRepeat(Repeat.values());
     }
-
     void load(Article article) {
         if(article==null){
             view.setOffers(CollectionUtils.EMPTY_COLLECTION);
@@ -86,6 +87,7 @@ public class SpecialPriceEditorController {
         }
     }
 
+    @NotNull
     private Offer collect() throws IncorrectInput {
         Offer out = new Offer();
         out.setFromDate(view.getFrom());
