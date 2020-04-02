@@ -18,7 +18,6 @@ repositories {
 dependencies {
     compile 'org.hibernate:hibernate-agroal:5.3.12.Final'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
-    compile group: 'org.hibernate', name: 'hibernate-testing', version: '5.3.6.Final'
     compile 'at.favre.lib:bcrypt:0.8.0'
     compile "com.github.jiconfont:jiconfont-font_awesome:4.7.0.1"
     compile "com.github.jiconfont:jiconfont-swing:1.0.0"

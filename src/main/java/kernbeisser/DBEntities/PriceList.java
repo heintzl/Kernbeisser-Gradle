@@ -4,7 +4,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.testing.transaction.TransactionUtil;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -43,18 +42,11 @@ public class PriceList implements Serializable {
         PriceList p = new PriceList();
         p.setName(priceListName);
         p.setSuperPriceList(superPriceList);
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        em.persist(p);
-        em.flush();
-        et.commit();
-        em.close();
+        Tools.persistInDB(em ->  em.persist(p));
     }
 
     public static void deletePriceList(PriceList toDelete) {
-        TransactionUtil.doInJPA(DBConnection::getEntityManagerFactory,
-                                em -> {em.remove(em.contains(toDelete) ? toDelete : em.merge(toDelete));});
+        Tools.persistInDB(em -> em.remove(em.contains(toDelete) ? toDelete : em.merge(toDelete)));
     }
 
     private static PriceList getPriceList(String name) throws NoResultException {
