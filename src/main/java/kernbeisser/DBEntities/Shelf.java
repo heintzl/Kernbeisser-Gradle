@@ -1,42 +1,44 @@
 package kernbeisser.DBEntities;
 
-import kernbeisser.Useful.Tools;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.util.List;
-
+@Entity
+@Table
 public class Shelf {
-
+    @GeneratedValue
+    @Id
     private int id;
 
-    private Integer[] priceLists = new Integer[20];
+    @Column
+    private String location;
 
-    private String note;
-
-    public static List<Shelf> getAll(String condition) {
-        return Tools.getAll(Shelf.class, condition);
-    }
+    @JoinColumn
+    @ManyToMany
+    private Set<Article> articles = new HashSet<>();
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void addArticle(Article a){
+        articles.add(a);
     }
 
-    public Integer[] getPriceLists() {
-        return priceLists;
+    public void removePriceList(PriceList p){
+        articles.remove(p);
     }
 
-    public void setPriceLists(Integer[] priceLists) {
-        this.priceLists = priceLists;
+    public Set<Article> getArticles() {
+        return articles;
     }
 
-    public String getNote() {
-        return note;
+    public String getLocation() {
+        return location;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

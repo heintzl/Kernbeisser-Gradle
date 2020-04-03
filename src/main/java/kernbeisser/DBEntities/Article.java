@@ -106,17 +106,6 @@ public class Article {
     private int delivered;
 
     @Column
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<Integer> invShelf = new ArrayList<>(5);
-
-    @Column
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<Integer> invStock = new ArrayList<>(5);
-
-    @Column
-    private double invPrice;
-
-    @Column
     private Date intake;
 
     @Column
@@ -382,29 +371,6 @@ public class Article {
         this.delivered = delivered;
     }
 
-    public List<Integer> getInvShelf() {
-        return invShelf;
-    }
-
-    public void setInvShelf(List<Integer> invShelf) {
-        this.invShelf = invShelf;
-    }
-
-    public List<Integer> getInvStock() {
-        return invStock;
-    }
-
-    public void setInvStock(List<Integer> invStock) {
-        this.invStock = invStock;
-    }
-
-    public double getInvPrice() {
-        return invPrice;
-    }
-
-    public void setInvPrice(double invPrice) {
-        this.invPrice = invPrice;
-    }
 
     public Date getIntake() {
         return intake;
