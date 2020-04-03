@@ -1,9 +1,12 @@
 package kernbeisser.CustomComponents.TextFields;
 
+import com.sun.istack.NotNull;
 import kernbeisser.Enums.Key;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -18,7 +21,7 @@ import java.util.function.Function;
 
 public class FilterField<T> extends PermissionField {
     private final Transformable<T> transformer;
-    FilterField(Transformable<T> transformer,boolean allowWrongInput) {
+    FilterField(@NotNull Transformable<T> transformer, boolean allowWrongInput) {
         this.transformer = transformer;
         ((AbstractDocument) getDocument()).setDocumentFilter(new DocumentFilter() {
             @Override
@@ -53,6 +56,8 @@ public class FilterField<T> extends PermissionField {
         }
     }
 
+
+    @Nullable
     public T getSafeValue() {
         try {
             return transformer.toObject(getText());
