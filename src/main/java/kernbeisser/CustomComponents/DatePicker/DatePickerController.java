@@ -30,6 +30,7 @@ public class DatePickerController implements Controller {
     public DatePickerController(Window current){
         view = new DatePickerView(current,this);
         model = new DatePickerModel();
+        view.setMoths(Month.values());
         loadMonth();
         view.repaint();
     }

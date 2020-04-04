@@ -19,12 +19,12 @@ public class ShoppingMaskUIController implements Controller {
     private ShoppingMaskModel model;
     private ShoppingCartController shoppingCartController;
 
-    public ShoppingMaskUIController(Window current, SaleSession saleSession) {
+    public ShoppingMaskUIController(SaleSession saleSession) {
         model = new ShoppingMaskModel(saleSession);
         this.shoppingCartController = new ShoppingCartController(model.getValue(), model.getSaleSession()
                                                                                         .getCustomer()
                                                                                         .getSolidaritySurcharge());
-        this.view = new ShoppingMaskUIView(current, this, shoppingCartController);
+        this.view = new ShoppingMaskUIView(this, shoppingCartController);
         view.loadUserInfo(saleSession);
     }
 
@@ -121,13 +121,13 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void startPay() {
-        new PayController(view, model.getSaleSession(), model.getShoppingCart(), () -> {
+        new PayController(null, model.getSaleSession(), model.getShoppingCart(), () -> {
 
         });
     }
 
     void openSearchWindow() {
-        new ArticleSelectorController(view,view::loadItemStats);
+        new ArticleSelectorController(null,view::loadItemStats);
     }
 
     void editUserAction() {

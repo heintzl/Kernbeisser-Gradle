@@ -19,14 +19,17 @@ public class ObjectTable<T> extends JTable {
     private ArrayList<Column<T>> columns = new ArrayList<>();
     private boolean complex = false;
 
+
     public ObjectTable(Collection<Column<T>> columns) {
         this(null, columns);
     }
 
+    @SafeVarargs
     public ObjectTable(Collection<T> fill, Column<T>... columns) {
         this(fill, Arrays.asList(columns));
     }
 
+    @SafeVarargs
     public ObjectTable(Column<T>... columns) {
         this(Arrays.asList(columns));
     }

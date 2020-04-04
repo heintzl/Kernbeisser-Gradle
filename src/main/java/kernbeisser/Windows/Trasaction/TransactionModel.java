@@ -4,6 +4,7 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Model;
 
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,9 +16,8 @@ class TransactionModel implements Model {
         transactions.add(t);
     }
 
-    User findUser(String username) {
-        List<User> users = User.getAll("where username like '" + username + "'");
-        return users != null ? users.get(0) : null;
+    User findUser(String username) throws NoResultException {
+        return User.getByUsername(username);
     }
 
     Collection<Transaction> getTransactions() {
@@ -28,6 +28,14 @@ class TransactionModel implements Model {
         for (Transaction transaction : transactions) {
             Transaction.doTransaction(transaction.getFrom(), transaction.getTo(), transaction.getValue());
         }
+    }
+
+    double getSum(){
+        return transactions.stream().mapToDouble(Transaction::getValue).sum();
+    }
+
+    int getCount(){
+        return transactions.size();
     }
 
     public void remove(Transaction selectedTransaction) {

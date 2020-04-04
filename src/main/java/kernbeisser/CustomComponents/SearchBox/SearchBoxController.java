@@ -27,7 +27,7 @@ public class SearchBoxController<T> implements Controller {
         return view.getSelectedObject();
     }
 
-    void search(){
+    public void search(){
         view.setObjects(model.getValues(view.getSearch()));
     }
 

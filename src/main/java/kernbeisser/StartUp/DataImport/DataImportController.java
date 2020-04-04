@@ -160,6 +160,7 @@ public class DataImportController implements Controller {
 
     private void parseUsers(File f) {
         try {
+            HashSet<String> usernames = new HashSet<>();
             HashMap<String, Job> jobs = new HashMap<>();
             Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
@@ -169,8 +170,6 @@ public class DataImportController implements Controller {
                 User user = new User();
                 User secondary = new User();
                 UserGroup userGroup = new UserGroup();
-                user.setSalesThisYear((int) (Float.parseFloat(columns[0].replace(",", "."))));
-                user.setSalesLastYear((int) (Float.parseFloat(columns[1].replace(",", "."))));
                 userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", "."))));
                 user.setShares(Integer.parseInt(columns[3]));
                 user.setSolidaritySurcharge(Integer.parseInt(columns[4]));
@@ -179,7 +178,6 @@ public class DataImportController implements Controller {
                 user.setExtraJobs(columns[7]);
                 user.setJobs(Tools.extract(HashSet::new, columns[8], "§", jobs::get));
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-                user.setLastBuy(Date.valueOf(LocalDate.parse(columns[9].replace("Noch nie", "11.03.4000"), df)));
                 user.setKernbeisserKey(Boolean.parseBoolean(columns[10]));
                 user.setEmployee(Boolean.parseBoolean(columns[11]));
                 //IdentityCode: Unused, column 12
@@ -209,14 +207,28 @@ public class DataImportController implements Controller {
                 user.setUserGroup(userGroup);
                 user.setPassword(defaultPassword);
                 secondary.setPassword(defaultPassword);
-                user.setUsername(user.getFirstName() + "." + user.getSurname() + user.getTownCode());
-                secondary.setUsername(secondary.getFirstName() + "." + secondary.getSurname() + secondary.getTownCode());
+                generateUsername(usernames, user);
+                generateUsername(usernames, secondary);
                 secondary.setUserGroup(userGroup);
                 model.saveUser(user, secondary.getFirstName().equals("") ? null : secondary, userGroup);
             }
             view.setUserProgress(4);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void generateUsername(HashSet<String> usernames, User user) {
+        for (int i = 1; i < user.getSurname().length(); i++) {
+            String generatedUsername = (user.getFirstName().split(" ")[0]+"."+user.getSurname().substring(0,i)).toLowerCase();
+            if (!usernames.contains(generatedUsername)) {
+                user.setUsername(generatedUsername);
+                usernames.add(generatedUsername);
+                break;
+            }
+        }
+        if(user.getUsername()==null){
+            user.setUsername(user.getFirstName()+"."+user.getSurname()+new Random().nextLong());
         }
     }
 
@@ -311,9 +323,9 @@ public class DataImportController implements Controller {
                 article.setSold(Integer.parseInt(columns[25]));
                 article.setSpecialPriceMonth(extractOffers(Tools.extract(Boolean.class, columns[26], "_", Boolean::parseBoolean), Integer.parseInt(columns[7])));
                 article.setDelivered(Integer.parseInt(columns[27]));
-                article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
-                article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
-                article.setInvPrice(Integer.parseInt(columns[30])/100.);
+                //TODO: article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
+                //TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
+                //TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
                 article.setIntake(java.sql.Date.valueOf(LocalDate.now()));
                 article.setLastBuy(null);
                 article.setLastDelivery(Date.valueOf(LocalDate.now()));

@@ -6,11 +6,9 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
-import kernbeisser.Enums.Setting;
 import kernbeisser.StartUp.DataImport.DataImportController;
-import kernbeisser.StartUp.DataImport.DataImportView;
-import kernbeisser.Windows.LogIn.LogInController;
-import kernbeisser.Windows.LogIn.LogInView;
+import kernbeisser.Windows.LogIn.OldLogIn.LogInController;
+import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -29,10 +27,10 @@ public class Main {
      */
     public static void main(String[] args)
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
-                   IllegalAccessException, IOException, URISyntaxException {
+                   IllegalAccessException {
         buildEnvironment();
         if (!ConfigManager.isDbInitialized()) {
-            SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));
+            SwingUtilities.invokeLater(() -> new DataImportController(new SimpleLogInController(null).getView()));
         } else {
             openLogIn();
         }
@@ -49,7 +47,7 @@ public class Main {
     }
 
     private static void openLogIn() {
-        SwingUtilities.invokeLater(() -> new LogInController(null));
+        SwingUtilities.invokeLater(() -> new SimpleLogInController(null));
     }
 
     private static void createTestJobs(int count) {

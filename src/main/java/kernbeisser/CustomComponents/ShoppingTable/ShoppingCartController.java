@@ -28,7 +28,7 @@ public class ShoppingCartController implements Controller {
     @Override
     public void refresh() {
         view.clearNodes();
-        int sum = 0;
+        double sum = 0;
         view.setObjects(model.getItems());
         for (ShoppingItem item : model.getItems()) {
             sum += PriceCalculator.getShoppingItemPrice(item, model.getUserSurcharge());

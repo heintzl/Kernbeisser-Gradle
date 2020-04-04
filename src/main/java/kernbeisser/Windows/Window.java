@@ -21,6 +21,7 @@ public class Window extends JFrame {
 
     public Window(Window currentWindow, Key... required) {
         this.current = currentWindow;
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         if (required.length != 0 && !LogInModel.getLoggedIn().hasPermission(required)) {
             access = false;
             JOptionPane.showMessageDialog(currentWindow, "Sie haben keine Berechtigung dieses Fenster zu öffnen");
@@ -55,14 +56,17 @@ public class Window extends JFrame {
     }
 
     public final void back() {
-        if (current == null) {
-            finish();
-            kill();
-        } else {
-            current.open();
-            finish();
-            kill();
+        if(!isCloseable()){
+            return;
         }
+        if (current != null) {
+            current.open();
+        }
+        finish();
+        kill();
+    }
+    protected boolean isCloseable(){
+        return true;
     }
 
     protected void open() {
