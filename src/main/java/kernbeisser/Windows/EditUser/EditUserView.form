@@ -342,14 +342,14 @@
           <text value="Solidarzuschlag:"/>
         </properties>
       </component>
-      <component id="eaa66" class="javax.swing.JSpinner" binding="shares">
+      <component id="1cb7e" class="kernbeisser.CustomComponents.PermissionSpinner" binding="shares">
         <constraints>
           <grid row="19" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
-      <component id="7a4af" class="javax.swing.JSpinner" binding="solidarySupplement">
+      <component id="1ec43" class="kernbeisser.CustomComponents.PermissionSpinner" binding="solidarySupplement">
         <constraints>
           <grid row="20" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>

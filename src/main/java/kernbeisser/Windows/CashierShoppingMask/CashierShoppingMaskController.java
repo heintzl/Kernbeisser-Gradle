@@ -1,43 +1,36 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
 import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
+import kernbeisser.Windows.Window;
 
-class CashierShoppingMaskController implements Controller {
+import java.awt.event.ActionListener;
+
+public class CashierShoppingMaskController{
     private CashierShoppingMaskModel model;
     private CashierShoppingMaskView view;
-
-    CashierShoppingMaskController(User seller, CashierShoppingMaskView view) {
-        this.view = view;
-        this.model = new CashierShoppingMaskModel(seller);
-        view.setUsers(model.getAllUser());
+    public CashierShoppingMaskController(Window view) {
+        this.view = new CashierShoppingMaskView(this,view);
+        model = new CashierShoppingMaskModel();
+        refresh();
     }
 
-    void startShoppingFor(User customer) throws NullPointerException {
-        if (customer == null) {
-            throw new NullPointerException("No selected Object");
-        }
-        SaleSession saleSession = new SaleSession();
-        saleSession.setCustomer(customer);
-        saleSession.setSeller(model.getSeller());
-        ShoppingMaskUIController shoppingMask = new ShoppingMaskUIController(view, saleSession);
-        view.openShoppingMask(shoppingMask);
-    }
-
-    @Override
     public void refresh() {
-
+        view.setEnable(false);
+        view.setUsers(model.getUsers(view.getSearch()));
     }
 
-    @Override
-    public CashierShoppingMaskView getView() {
-        return view;
+    public void openMaskWindow() {
+        SaleSession saleSession = new SaleSession();
+        saleSession.setCustomer(view.getSelectedUser());
+        saleSession.setSeller(LogInModel.getLoggedIn());
+        new ShoppingMaskUIController(null,saleSession);
+        view.setEnable(false);
     }
 
-    @Override
-    public CashierShoppingMaskModel getModel() {
-        return model;
+    public void select() {
+        view.setEnable(true);
+        view.setTarget(view.getSelectedUser().getUsername());
     }
 }

@@ -1,7 +1,7 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "catalog")
-public class ItemKK implements Serializable {
+public class ArticleKornkraft implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,16 +23,16 @@ public class ItemKK implements Serializable {
     private String producer;
 
     @Column
-    private int netPrice;
+    private double netPrice;
 
     @Column
-    private Unit unit;
+    private MetricUnits metricUnits;
 
     @Column
     private int kkNumber;
 
     @Column
-    private boolean vatLow;
+    private double vatLow;
 
     @Column
     private int amount;
@@ -44,10 +44,43 @@ public class ItemKK implements Serializable {
     private double containerSize;
 
     @Column
-    private int singleDeposit;
+    private double singleDeposit;
 
     @Column
-    private int crateDeposit;
+    private double crateDeposit;
+
+    public static List<ArticleKornkraft> getAll(String condition) {
+        return Tools.getAll(ArticleKornkraft.class, condition);
+    }
+
+    public static ArticleKornkraft getByKkNumber(int kkNumber) {
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            return em.createQuery("select k from ArticleKornkraft k where kkNumber = :n", ArticleKornkraft.class)
+                     .setParameter("n", kkNumber)
+                     .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public static ArticleKornkraft getByKbNumber(int kbNumber) {
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            return em.createQuery(
+                    "select ik from ArticleKornkraft ik where ik.kkNumber = (select i.suppliersItemNumber from Article i where i.kbNumber = :n and i.supplier.shortName = 'KK')",
+                    ArticleKornkraft.class)
+                     .setParameter("n", kbNumber)
+                     .setMaxResults(1)
+                     .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 
     public int getId() {
         return id;
@@ -61,12 +94,12 @@ public class ItemKK implements Serializable {
         this.name = name;
     }
 
-    public Unit getUnit() {
-        return unit;
+    public MetricUnits getMetricUnits() {
+        return metricUnits;
     }
 
-    public void setUnit(Unit unit) {
-        this.unit = unit;
+    public void setMetricUnits(MetricUnits metricUnits) {
+        this.metricUnits = metricUnits;
     }
 
     public int getKkNumber() {
@@ -77,11 +110,11 @@ public class ItemKK implements Serializable {
         this.kkNumber = kkNumber;
     }
 
-    public boolean isVatLow() {
+    public double isVatLow() {
         return vatLow;
     }
 
-    public void setVatLow(boolean vatLow) {
+    public void setVatLow(double vatLow) {
         this.vatLow = vatLow;
     }
 
@@ -109,27 +142,27 @@ public class ItemKK implements Serializable {
         this.containerSize = containerSize;
     }
 
-    public int getSingleDeposit() {
+    public double getSingleDeposit() {
         return singleDeposit;
     }
 
-    public void setSingleDeposit(int singleDeposit) {
+    public void setSingleDeposit(double singleDeposit) {
         this.singleDeposit = singleDeposit;
     }
 
-    public int getCrateDeposit() {
+    public double getCrateDeposit() {
         return crateDeposit;
     }
 
-    public void setCrateDeposit(int crateDeposit) {
+    public void setCrateDeposit(double crateDeposit) {
         this.crateDeposit = crateDeposit;
     }
 
-    public int getNetPrice() {
+    public double getNetPrice() {
         return netPrice;
     }
 
-    public void setNetPrice(int netPrice) {
+    public void setNetPrice(double netPrice) {
         this.netPrice = netPrice;
     }
 
@@ -139,10 +172,6 @@ public class ItemKK implements Serializable {
 
     public void setProducer(String producer) {
         this.producer = producer;
-    }
-
-    public static List<ItemKK> getAll(String condition) {
-        return Tools.getAll(ItemKK.class, condition);
     }
 
     public SurchargeTable getSurcharge() {
@@ -158,43 +187,6 @@ public class ItemKK implements Serializable {
                      .getSingleResult();
         } catch (NoResultException e) {
             return SurchargeTable.DEFAULT;
-        }
-    }
-
-    public int getContainerPrice() {
-        return (int) ((netPrice * ((getSurcharge().getSurcharge() / 200f) + 1)) + 0.5);
-    }
-
-    public int calculatePrice() {
-        return (int) ((netPrice * ((getSurcharge().getSurcharge() / 100f) + 1)) + 0.5);
-    }
-
-    public static ItemKK getByKkNumber(int kkNumber) {
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery("select k from ItemKK k where kkNumber = :n", ItemKK.class)
-                     .setParameter("n", kkNumber)
-                     .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    public static ItemKK getByKbNumber(int kbNumber) {
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery(
-                    "select ik from ItemKK ik where kkNumber = (select suppliersItemNumber from Item i where i.kbNumber = :n and i.supplier.shortName = 'KK')",
-                    ItemKK.class)
-                     .setParameter("n", kbNumber)
-                     .setMaxResults(1)
-                     .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
         }
     }
 }

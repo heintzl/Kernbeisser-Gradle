@@ -1,7 +1,8 @@
 package kernbeisser.DBEntities;
-
+// TODO HEI Review bakery/organic VAT
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -27,99 +28,86 @@ public class ShoppingItem implements Serializable {
     @Column
     private int kbNumber;
     @Column
-    private int itemAmount;
+    private int itemMultiplier = 1;
     @Column
-    private int itemNetPrice;
+    private double itemNetPrice;
     @Column
-    private boolean vatLow;
+    private double vat;
     @Column
-    private Unit unit;
+    private MetricUnits metricUnits;
     @Column
     private boolean weighAble;
     @Column
     private int suppliersItemNumber;
     @Column(length = 5)
     private String shortName;
-
     @Column
-    private int surcharge;
+    private double surcharge;
 
     public ShoppingItem() {
     }
 
-    public ShoppingItem(Item item) {
-        this.name = item.getName();
-        this.kbNumber = item.getKbNumber();
-        this.amount = item.getAmount();
-        this.itemNetPrice = item.getNetPrice();
-        //TODO this.rawPrice = item.getSurcharge();
-        this.unit = item.getUnit();
-        this.vatLow = item.isVatLow();
-        this.weighAble = item.isWeighAble();
-        this.surcharge = item.getSurcharge();
-        if (item.getSupplier() != null) {
-            this.shortName = item.getSupplier().getShortName();
+    public ShoppingItem(Article article) {
+        this.name = article.getName();
+        this.kbNumber = article.getKbNumber();
+        this.amount = article.getAmount();
+        this.itemNetPrice = article.getNetPrice();
+        this.metricUnits = article.getMetricUnits();
+        this.vat = article.getVAT().getValue();
+        this.weighAble = article.isWeighAble();
+        this.surcharge = article.getSurcharge();
+        if (article.getSupplier() != null) {
+            this.shortName = article.getSupplier().getShortName();
         }
-        this.suppliersItemNumber = item.getSuppliersItemNumber();
+        this.suppliersItemNumber = article.getSuppliersItemNumber();
     }
 
-    public ShoppingItem(Item item, int discount, int price) {
-        this(item);
+    public ShoppingItem(Article article, int discount, int price) {
+        this(article);
         this.discount = discount;
     }
 
-    public Item extractItem() {
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery("SELECT i from Item i where kbNumber = " + kbNumber, Item.class).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    public static ShoppingItem getOrganic(int price) {
+    public static ShoppingItem createOrganic(double price) {
         ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             out = new ShoppingItem(
-                    em.createQuery("select i from Item i where name like 'Obst und Gem\u00fcse'", Item.class)
+                    em.createQuery("select i from Article i where name like 'Obst und Gem\u00fcse'", Article.class)
                       .getSingleResult());
         } catch (NoResultException e) {
             et.begin();
-            Item organic = new Item();
+            Article organic = new Article();
             organic.setName("Obst und Gem\u00fcse");
             organic.setDeleteAllowed(false);
             organic.setKbNumber(-1);
             organic.setVatLow(true);
-            organic.setUnit(Unit.STACK);
+            organic.setMetricUnits(MetricUnits.STACK);
             em.persist(organic);
             em.flush();
             et.commit();
             out = new ShoppingItem(
-                    em.createQuery("select  i from Item i where name like 'Obst und Gem\u00fcse'", Item.class)
+                    em.createQuery("select  i from Article i where name like 'Obst und Gem\u00fcse'", Article.class)
                       .getSingleResult());
         }
-        out.setItemAmount(1);
+        out.setItemMultiplier(1);
         out.setItemNetPrice(price);
         em.close();
         return out;
     }
 
-    public static ShoppingItem getBakeryProduct(int price) {
+    public static ShoppingItem createBakeryProduct(double price) {
         ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             out = new ShoppingItem(
-                    em.createQuery("select  i from Item i where name like 'Backware'", Item.class).getSingleResult());
+                    em.createQuery("select  i from Article i where name like 'Backware'", Article.class).getSingleResult());
         } catch (NoResultException e) {
             et.begin();
-            Item bakeryProduct = new Item();
+            Article bakeryProduct = new Article();
             bakeryProduct.setName("Backware");
-            bakeryProduct.setUnit(Unit.STACK);
+            bakeryProduct.setMetricUnits(MetricUnits.STACK);
             bakeryProduct.setDeleteAllowed(false);
             bakeryProduct.setKbNumber(-2);
             bakeryProduct.setVatLow(true);
@@ -127,38 +115,53 @@ public class ShoppingItem implements Serializable {
             em.flush();
             et.commit();
             out = new ShoppingItem(
-                    em.createQuery("select  i from Item i where name like 'Backware'", Item.class).getSingleResult());
+                    em.createQuery("select  i from Article i where name like 'Backware'", Article.class).getSingleResult());
         }
-        out.setItemAmount(1);
+        out.setItemMultiplier(1);
         out.setItemNetPrice(price);
         em.close();
         return out;
     }
 
-    public static ShoppingItem getDeposit(int price) {
+    public static ShoppingItem createDeposit(double price) {
         ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             out = new ShoppingItem(
-                    em.createQuery("select  i from Item i where name like 'Pfand'", Item.class).getSingleResult());
+                    em.createQuery("select  i from Article i where name like 'Pfand'", Article.class).getSingleResult());
         } catch (NoResultException e) {
             et.begin();
-            Item deposit = new Item();
+            Article deposit = new Article();
             deposit.setName("Pfand");
             deposit.setKbNumber(-3);
-            deposit.setUnit(Unit.STACK);
+            deposit.setMetricUnits(MetricUnits.STACK);
             deposit.setDeleteAllowed(false);
             em.persist(deposit);
             em.flush();
             et.commit();
             out = new ShoppingItem(
-                    em.createQuery("select  i from Item i where name like 'Pfand'", Item.class).getSingleResult());
+                    em.createQuery("select  i from Article i where name like 'Pfand'", Article.class).getSingleResult());
         }
-        out.setItemAmount(1);
+        out.setItemMultiplier(1);
         out.setItemNetPrice(price);
         em.close();
         return out;
+    }
+
+    public static List<ShoppingItem> getAll(String condition) {
+        return Tools.getAll(ShoppingItem.class, condition);
+    }
+
+    public Article extractItem() {
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            return em.createQuery("SELECT i from Article i where kbNumber = " + kbNumber, Article.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
     }
 
     public String getName() {
@@ -185,23 +188,23 @@ public class ShoppingItem implements Serializable {
         this.amount = amount;
     }
 
-    public int getItemNetPrice() {
+    public double getItemNetPrice() {
         return itemNetPrice;
     }
 
-    public void setItemNetPrice(int netPrice) {
+    public void setItemNetPrice(double netPrice) {
         this.itemNetPrice = netPrice;
     }
 
-    public boolean isVatLow() {
-        return vatLow;
+    public double getVat() {
+        return vat;
     }
 
-    public void setVatLow(boolean vatLow) {
-        this.vatLow = vatLow;
+    public void setVat(double vatLow) {
+        this.vat = vatLow;
     }
 
-    public boolean isWeighAble() {
+    public boolean isWeighable() {
         return weighAble;
     }
 
@@ -209,26 +212,25 @@ public class ShoppingItem implements Serializable {
         this.weighAble = weighAble;
     }
 
-    public Unit getUnit() {
-        return unit != null ? unit : Unit.NONE;
+    public MetricUnits getMetricUnits() {
+        return metricUnits != null ? metricUnits : MetricUnits.NONE;
     }
 
-    public void setUnit(Unit unit) {
-        this.unit = unit;
+    public void setMetricUnits(MetricUnits metricUnits) {
+        this.metricUnits = metricUnits;
     }
 
     public int getSiid() {
         return siid;
     }
 
-    public int getItemAmount() {
-        return itemAmount;
+    public int getItemMultiplier() {
+        return itemMultiplier;
     }
 
-    public void setItemAmount(int amount) {
-        this.itemAmount = amount;
+    public void setItemMultiplier(int amount) {
+        this.itemMultiplier = amount;
     }
-
 
     public Purchase getPurchase() {
         return purchase;
@@ -282,15 +284,11 @@ public class ShoppingItem implements Serializable {
         this.shortName = shortName;
     }
 
-    public static List<ShoppingItem> getAll(String condition) {
-        return Tools.getAll(ShoppingItem.class, condition);
-    }
-
-    public int getSurcharge() {
+    public double getSurcharge() {
         return surcharge;
     }
 
-    public void setSurcharge(int surcharge) {
+    public void setSurcharge(double surcharge) {
         this.surcharge = surcharge;
     }
 }

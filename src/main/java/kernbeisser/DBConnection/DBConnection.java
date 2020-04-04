@@ -11,11 +11,7 @@ import java.util.HashMap;
 
 public class DBConnection {
 
-    private static EntityManagerFactory entityManagerFactory;
-
-    static {
-        logInWithConfig();
-    }
+    private static EntityManagerFactory entityManagerFactory = null;
 
     public static boolean tryLogIn(String url, String username, String password) {
         HashMap<String,String> properties = new HashMap<>(3);
@@ -32,9 +28,23 @@ public class DBConnection {
     }
 
     public static void logInWithConfig() {
-        String[] conf = ConfigManager.getDBAccessData();
-        if (!tryLogIn(conf[0], conf[1], conf[2])) {
-            new DBLogIn(null);
+        Object lock = new Object();
+        synchronized (lock) {
+            String[] conf = ConfigManager.getDBAccessData();
+            if (!tryLogIn(conf[0], conf[1], conf[2])) {
+                new DBLogIn(null) {
+                    @Override
+                    public void finish() {
+                        lock.notify();
+                    }
+                };
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 
@@ -43,13 +53,7 @@ public class DBConnection {
     }
 
     public static EntityManager getEntityManager() {
-        while (entityManagerFactory == null) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        if(entityManagerFactory==null)logInWithConfig();
         return entityManagerFactory.createEntityManager();
     }
 

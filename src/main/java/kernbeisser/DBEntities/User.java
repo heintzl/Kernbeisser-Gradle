@@ -10,10 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table
@@ -95,6 +92,28 @@ public class User implements Serializable {
     @JoinColumn(nullable = false)
     private UserGroup userGroup;
 
+    public static List<User> getAll(String condition) {
+        return Tools.getAll(User.class, condition);
+    }
+
+    public static User getById(int id) {
+        EntityManager em = DBConnection.getEntityManager();
+        User out = em.createQuery("select u from User u where u.id = " + id, User.class).getSingleResult();
+        em.close();
+        return out;
+    }
+
+    public static Collection<User> defaultSearch(String s, int max) {
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<User> out = em.createQuery(
+                "select u from User u where u.firstName like :search or u.surname like :search or u.username like :search order by u.firstName ASC",
+                User.class)
+                                 .setParameter("search", s + "%")
+                                 .setMaxResults(max)
+                                 .getResultList();
+        em.close();
+        return out;
+    }
 
     public int getSalesThisYear() {
         return salesThisYear;
@@ -241,7 +260,6 @@ public class User implements Serializable {
         return createDate;
     }
 
-
     public UserGroup getUserGroup() {
         return userGroup;
     }
@@ -252,17 +270,6 @@ public class User implements Serializable {
 
     public Date getUpdateDate() {
         return updateDate;
-    }
-
-    public static List<User> getAll(String condition) {
-        return Tools.getAll(User.class, condition);
-    }
-
-    public static User getById(int id) {
-        EntityManager em = DBConnection.getEntityManager();
-        User out = em.createQuery("select u from User u where u.id = " + id, User.class).getSingleResult();
-        em.close();
-        return out;
     }
 
     public String getTown() {
@@ -287,18 +294,6 @@ public class User implements Serializable {
 
     public Collection<Purchase> getAllPurchases() {
         return Purchase.getAll("where session.customer.id = " + id);
-    }
-
-    public static Collection<User> defaultSearch(String s, int max) {
-        EntityManager em = DBConnection.getEntityManager();
-        Collection<User> out = em.createQuery(
-                "select u from User u where u.firstName like :search or u.surname like :search or u.username like :search order by u.firstName ASC",
-                User.class)
-                                 .setParameter("search", s + "%")
-                                 .setMaxResults(max)
-                                 .getResultList();
-        em.close();
-        return out;
     }
 
     @Override

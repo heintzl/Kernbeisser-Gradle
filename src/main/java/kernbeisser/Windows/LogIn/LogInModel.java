@@ -3,6 +3,7 @@ package kernbeisser.Windows.LogIn;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Main;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -15,12 +16,12 @@ public class LogInModel implements Model {
 
     public static User loggedIn;
 
-    public static User getLoggedIn() {
-        return loggedIn;
-    }
-
     LogInModel() {
         loggedIn = null;
+    }
+
+    public static User getLoggedIn() {
+        return loggedIn;
     }
 
     int logIn(String username, char[] password) {

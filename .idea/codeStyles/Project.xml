@@ -3,7 +3,6 @@
     <JavaCodeStyleSettings>
       <option name="ANNOTATION_PARAMETER_WRAP" value="5" />
       <option name="ALIGN_MULTILINE_ANNOTATION_PARAMETERS" value="true" />
-      <option name="ALIGN_MULTILINE_TEXT_BLOCKS" value="true" />
     </JavaCodeStyleSettings>
     <codeStyleSettings language="JAVA">
       <option name="KEEP_CONTROL_STATEMENT_IN_ONE_LINE" value="false" />

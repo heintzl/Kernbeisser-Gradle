@@ -1,9 +1,7 @@
 package kernbeisser.Windows.Container;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Container;
-import kernbeisser.DBEntities.ItemKK;
-import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -49,12 +47,12 @@ public class ContainerModel implements Model {
         em.close();
     }
 
-    ItemKK getItemByKbNumber(int kbNumber) {
-        return ItemKK.getByKbNumber(kbNumber);
+    ArticleKornkraft getItemByKbNumber(int kbNumber) {
+        return ArticleKornkraft.getByKbNumber(kbNumber);
     }
 
-    ItemKK getItemByKkNumber(int kkNumber) {
-        return ItemKK.getByKkNumber(kkNumber);
+    ArticleKornkraft getItemByKkNumber(int kkNumber) {
+        return ArticleKornkraft.getByKkNumber(kkNumber);
     }
 
     public User getUser() {

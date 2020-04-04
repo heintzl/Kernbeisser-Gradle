@@ -20,6 +20,7 @@ public class InventoryMenuView extends Window implements View {
     public InventoryMenuView(Window current, InventoryMenuController controller) {
         super(current);
         initComponents();
+        windowInitialized();
     }
 
 

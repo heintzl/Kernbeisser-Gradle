@@ -16,13 +16,13 @@ public class EditSurchargeTableModel implements Model {
     private final SurchargeTable surchargeTable;
     private final Mode mode;
 
-    Collection<Supplier> getAllSuppliers() {
-        return Supplier.getAll(null);
-    }
-
     public EditSurchargeTableModel(SurchargeTable surchargeTable, Mode mode) {
         this.surchargeTable = surchargeTable;
         this.mode = mode;
+    }
+
+    Collection<Supplier> getAllSuppliers() {
+        return Supplier.getAll(null);
     }
 
     boolean doAction(SurchargeTable table) {

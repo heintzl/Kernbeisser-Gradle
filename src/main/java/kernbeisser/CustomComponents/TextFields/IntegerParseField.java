@@ -1,5 +1,7 @@
 package kernbeisser.CustomComponents.TextFields;
 
+import java.util.function.Function;
+
 public class IntegerParseField extends FilterField {
     IntegerParseField(int max, int min) {
         super(e -> {

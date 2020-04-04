@@ -1,15 +1,16 @@
 package kernbeisser.Windows.ShoppingMask;
 
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.VAT;
+import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.Pay.PayController;
+import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.Window;
 
 public class ShoppingMaskUIController implements Controller {
@@ -23,21 +24,20 @@ public class ShoppingMaskUIController implements Controller {
                                                                                         .getCustomer()
                                                                                         .getSolidaritySurcharge());
         this.view = new ShoppingMaskUIView(current, this, shoppingCartController);
-        view.loadUserInfo(saleSession.getCustomer());
-        view.maximize();
-        //view.fillWithoutBarcode(model.getAllItemsWithoutBarcode());
+        view.loadUserInfo(saleSession);
     }
 
     void addToShoppingCart() {
-        ShoppingItem item = extract();
-        if (item != null) {
-            shoppingCartController.addShoppingItem(item);
+        try {
+            shoppingCartController.addShoppingItem(extractShoppingItemFromUI());
+        } catch (UndefinedInputException undefinedInputException) {
+            view.noArticleFound();
         }
     }
 
     void searchByKbNumber() {
         view.defaultSettings();
-        Item found = model.getByKbNumber(view.getArticleNumber());
+        Article found = model.getByKbNumber(view.getKBArticleNumber());
         if (found != null) {
             view.loadItemStats(found);
         }
@@ -45,156 +45,69 @@ public class ShoppingMaskUIController implements Controller {
 
     void searchBySupplierItemsNumber() {
         view.defaultSettings();
-        Item found = model.getBySupplierItemNumber(view.getSuppliersNumber());
+        Article found = model.getBySupplierItemNumber(view.getSuppliersNumber());
         if (found != null) {
             view.loadItemStats(found);
         }
     }
 
-    int getPrice(Item item) {
-        return PriceCalculator.getItemPrice(item, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
+    double getPrice(Article article) {
+        return PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
     }
 
-    private ShoppingItem extract() {
-        int nettoizedPrice = PriceCalculator.getNetFromGross(view.getPrice(),view.isVatLow());
-        switch (view.getOption()) {
+    private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
+        // TODO HEI Review nettopricing
+        int nettoizedPrice = PriceCalculator.getNetFromGross(view.getPrice(),view.isVatLow());    switch (view.getOption()) {
             case ShoppingMaskUIView.ARTICLE_NUMBER:
-                Item i = null;
-                int kb = view.getArticleNumber();
-                if (kb != 0) {
-                    i = model.getByKbNumber(kb);
+                Article extractedArticle = null;
+                int kbArticleNumber = view.getKBArticleNumber();
+                if (kbArticleNumber != 0) {
+                    extractedArticle = model.getByKbNumber(kbArticleNumber);
                 }
-                if (i == null) {
+                if (extractedArticle == null) {
                     int supplier = view.getSuppliersNumber();
                     if (supplier != 0) {
-                        i = model.getBySupplierItemNumber(supplier);
+                        extractedArticle = model.getBySupplierItemNumber(supplier);
                     }
-                    if (i == null) {
-                        view.noArticleFound();
-                        return null;
-                    }
+                    if (extractedArticle == null) throw new UndefinedInputException();
+
                 }
-                ShoppingItem out = new ShoppingItem(i);
-                out.setDiscount(view.getDiscount());
+                ShoppingItem shoppingItem = new ShoppingItem(extractedArticle);
+                shoppingItem.setDiscount(view.getDiscount());
                 view.setDiscount();
-                if (out.isWeighAble()) {
-                    out.setAmount(i.getUnit().toUnit(view.getAmount()));
-                    out.setItemAmount(1);
+                if (shoppingItem.isWeighable()) {
+                    shoppingItem.setAmount(extractedArticle.getMetricUnits().toUnit(view.getAmount()));
+                    shoppingItem.setItemMultiplier(1);
                 } else {
-                    out.setItemAmount((int) view.getAmount());
+                    shoppingItem.setItemMultiplier((int) view.getAmount());
                 }
-                return out;
+                return shoppingItem;
             case ShoppingMaskUIView.BAKED_GOODS:
-                return ShoppingItem.getBakeryProduct(nettoizedPrice);
+                //TODO HEI review price nettoization
+                return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded());
             case ShoppingMaskUIView.DEPOSIT:
-                return ShoppingItem.getDeposit(view.getDeposit());
+                return ShoppingItem.createDeposit(view.getDeposit());
             case ShoppingMaskUIView.CUSTOM_PRODUCT:
-                ShoppingItem o = new ShoppingItem();
-                o.setItemAmount((int) view.getAmount());
-                o.setItemNetPrice(nettoizedPrice);
-                o.setName(view.getItemName());
-                o.setAmount(o.getUnit().toUnit(view.getAmount()));
-                o.setVatLow(view.isVatLow());
-                return o;
+                ShoppingItem customItem = new ShoppingItem();
+                customItem.setItemMultiplier((int) view.getAmount());
+                //TODO HEI review price nettoization
+                customItem.setItemNetPrice(view.getPriceVATIncluded());
+                customItem.setName(view.getItemName());
+                customItem.setVat(view.getSelectedVAT().getValue());
+                customItem.setMetricUnits(MetricUnits.STACK);
+                customItem.setAmount(customItem.getMetricUnits().toUnit(view.getAmount()));
+                customItem.setItemMultiplier(view.getArticleAmount());
+                return customItem;
             case ShoppingMaskUIView.PRODUCE:
-                return ShoppingItem.getOrganic(nettoizedPrice);
+                return ShoppingItem.createOrganic(view.getPriceVATIncluded());
             case ShoppingMaskUIView.RETURN_DEPOSIT:
-                return ShoppingItem.getDeposit(-view.getDeposit());
+                return ShoppingItem.createDeposit(view.getDeposit()*(-1));
             default:
                 return null;
         }
     }
 
-    /*
-        if(i.getItemAmount()==0||i.getAmount()==0)return;
-        i.setDiscount(view.getDiscount());
-        if(!view.isDiscountLocked())view.setDefaultDiscount();
-        i.setRawPrice((int) (i.getRawPrice()*(1-(i.getDiscount()/100f))));
-        if(i.getRawPrice() > 2000 && !view.isPriceCorrect(i.getRawPrice())) return;
-        ShoppingItem inside = shoppingCartContains(i);
-        if(inside!=null){
-            inside.setRawPrice(i.getRawPrice()+inside.getRawPrice());
-            inside.setItemAmount(i.getItemAmount()+inside.getItemAmount());
-            view.shoppingCartDataChanged();
-        }else {
-            model.getShoppingCart().add(i);
-            view.setShoppingCartItems(model.getShoppingCart());
-        }
-        repaintValues();
-        view.resetInput();
-    }
 
-    void addToShoppingCart(RawPrice rawPrice){
-        switch (rawPrice){
-            case BACKER:
-                addToShoppingCart(ShoppingItem.getOrganic(view.getBackerPrice()));
-                return;
-            case DEPOSIT:
-                int deposit = view.getDepositPrice();
-                addToShoppingCart(ShoppingItem.getDeposit(view.isPositiveDeposit()?-deposit:deposit));
-                return;
-            case ORGANIC:
-                addToShoppingCart(ShoppingItem.getBakeryProduct(view.getOrganicPrice()));
-        }
-        view.resetInput();
-    }
-
-    void addToShoppingCart(){
-        Item search = model.searchItem(view.getInputItemNumber());
-        if(search==null)return;
-        ShoppingItem item = new ShoppingItem(search);
-        item.setItemAmount(view.getInputItemAmount());
-        item.setRawPrice(search.calculatePrice()*item.getItemAmount());
-        //TODO if(view.isContainerDiscount())search.setSurcharge(search.getSurcharge().getSurcharge()/2);
-        addToShoppingCart(item);
-    }
-
-    void addHiddenItemToShoppingCart(){
-        ShoppingItem shoppingItem = new ShoppingItem();
-        shoppingItem.setItemAmount(1);
-        shoppingItem.setName(view.getHiddenItemName());
-        shoppingItem.setVatLow(view.isHiddenItemVATLow());
-        shoppingItem.setAmount(view.getInputItemAmount());
-        shoppingItem.setRawPrice((int)((view.getHiddenItemPrice()+view.getHiddenItemDeposit())*(1+(shoppingItem.isVatLow()? VAT.LOW.getValue()/100f:VAT.HIGH.getValue()/100f))));
-    }
-
-    void clearShoppingCart(){
-        model.getShoppingCart().clear();
-        view.setShoppingCartItems(model.getShoppingCart());
-    }
-
-    void loadSelectedItem(){
-        Item i = model.searchItem(view.getInputItemNumber());
-        view.loadItemStats(i);
-    }
-
-
-    void removeSelected() {
-        model.getShoppingCart().remove(shoppingCartContains(view.getSelected()));
-        view.setShoppingCartItems(model.getShoppingCart());
-    }
-
-    void repaintValues(){
-        view.repaintValues(model.calculateTotalPrice(),model.getValue());
-    }
-
-    void searchItems(){
-        view.fillSearchSolutions(
-                model.searchItems(
-                        view.getSearch(),
-                        view.isSearchInName(),
-                        view.isSearchInPriceList(),
-                        view.isSearchInKBNumber(),
-                        view.isSearchInBarcode()
-                )
-        );
-    }
-
-    boolean editBarcode(){
-        Item item = view.getSelected().extractItem();
-        return item != null && model.editBarcode(item.getIid(), view.getBarcode());
-    }
-*/
     @Override
     public ShoppingMaskUIView getView() {
         return view;
@@ -207,10 +120,11 @@ public class ShoppingMaskUIController implements Controller {
 
     void startPay() {
         new PayController(view, model.getSaleSession(), model.getShoppingCart(), () -> {
+
         });
     }
 
-    public void editUserAction() {
-        new EditUserController(view, model.getSaleSession().getCustomer(), Mode.EDIT);
+    void openSearchWindow() {
+        new ArticleSelectorController(view,view::loadItemStats);
     }
 }
