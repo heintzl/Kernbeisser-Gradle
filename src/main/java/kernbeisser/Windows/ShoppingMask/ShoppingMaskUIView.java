@@ -15,6 +15,7 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
@@ -34,7 +35,7 @@ public class ShoppingMaskUIView extends Window implements View {
     private JLabel customerName;
     private JPanel MainPanel;
     private JPanel westUpperPanel;
-    private JPanel ShoppingItemPanel;
+    private JPanel shoppingItemPanel;
     private JRadioButton optProduce;
     private JRadioButton optBakedGoods;
     private JRadioButton optArticleNo;

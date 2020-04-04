@@ -7,12 +7,12 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class ShoppingCartModel implements Model {
-    private final int userValue;
+    private final double userValue;
     private final int userSurcharge;
     private HashMap<ShoppingItem,ShoppingItem> shoppingItems = new HashMap<>();
 
 
-    ShoppingCartModel(int userValue, int userSurcharge) {
+    ShoppingCartModel(double userValue, int userSurcharge) {
         this.userValue = userValue;
         this.userSurcharge = userSurcharge;
     }
@@ -26,7 +26,7 @@ public class ShoppingCartModel implements Model {
         }
     }
 
-    public int getUserValue() {
+    public double getUserValue() {
         return userValue;
     }
 

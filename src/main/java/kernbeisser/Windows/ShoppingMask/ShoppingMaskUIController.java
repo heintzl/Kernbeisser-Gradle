@@ -5,6 +5,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
@@ -57,7 +58,8 @@ public class ShoppingMaskUIController implements Controller {
 
     private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
         // TODO HEI Review nettopricing
-        int nettoizedPrice = PriceCalculator.getNetFromGross(view.getPrice(),view.isVatLow());    switch (view.getOption()) {
+        // int nettoizedPrice = PriceCalculator.getNetFromGross(view.getPrice(),view.isVatLow());
+        switch (view.getOption()) {
             case ShoppingMaskUIView.ARTICLE_NUMBER:
                 Article extractedArticle = null;
                 int kbArticleNumber = view.getKBArticleNumber();
@@ -126,5 +128,9 @@ public class ShoppingMaskUIController implements Controller {
 
     void openSearchWindow() {
         new ArticleSelectorController(view,view::loadItemStats);
+    }
+
+    void editUserAction() {
+        new EditUserController(view, model.getSaleSession().getCustomer(), Mode.EDIT);
     }
 }
