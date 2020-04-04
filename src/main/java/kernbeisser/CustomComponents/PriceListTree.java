@@ -8,8 +8,6 @@ import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
 
 import java.util.Collection;
 
-import static com.sun.deploy.uitoolkit.ToolkitStore.dispose;
-
 /**
  * A JTree filled with all SuperGroups and Groups from the PriceLists include the PriceLists from the Database
  */

@@ -251,15 +251,6 @@
           <text value="Rolle:"/>
         </properties>
       </component>
-      <component id="1d0be" class="kernbeisser.CustomComponents.PermissionComboBox" binding="roles">
-        <constraints>
-          <grid row="13" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <background color="-328193"/>
-        </properties>
-      </component>
       <component id="fef57" class="javax.swing.JLabel" binding="lblHasKey">
         <constraints>
           <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -456,6 +447,15 @@
         <properties>
           <font/>
           <foreground color="-16752083"/>
+        </properties>
+      </component>
+      <component id="e5a1e" class="kernbeisser.CustomComponents.PermissionButton" binding="editPermission">
+        <constraints>
+          <grid row="13" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Rollen bearbeiten"/>
         </properties>
       </component>
     </children>

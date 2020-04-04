@@ -21,7 +21,7 @@ public class User implements Serializable {
     private int id;
 
     @JoinColumn
-    @OneToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Permission> permissions = new HashSet<>();
 
     @Column
@@ -34,7 +34,7 @@ public class User implements Serializable {
     private String extraJobs;
 
     @JoinColumn
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Job> jobs = new HashSet<>();
 
     @Column
