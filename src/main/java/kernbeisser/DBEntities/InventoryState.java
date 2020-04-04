@@ -9,7 +9,7 @@ public class InventoryState {
     @GeneratedValue
     private int id;
 
-    @Column
+    @JoinColumn
     @ManyToOne
     private Article article;
 
