@@ -170,8 +170,6 @@ public class DataImportController implements Controller {
                 User user = new User();
                 User secondary = new User();
                 UserGroup userGroup = new UserGroup();
-                user.setSalesThisYear((int) (Float.parseFloat(columns[0].replace(",", "."))));
-                user.setSalesLastYear((int) (Float.parseFloat(columns[1].replace(",", "."))));
                 userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", "."))));
                 user.setShares(Integer.parseInt(columns[3]));
                 user.setSolidaritySurcharge(Integer.parseInt(columns[4]));
@@ -180,7 +178,6 @@ public class DataImportController implements Controller {
                 user.setExtraJobs(columns[7]);
                 user.setJobs(Tools.extract(HashSet::new, columns[8], "§", jobs::get));
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-                user.setLastBuy(Date.valueOf(LocalDate.parse(columns[9].replace("Noch nie", "11.03.4000"), df)));
                 user.setKernbeisserKey(Boolean.parseBoolean(columns[10]));
                 user.setEmployee(Boolean.parseBoolean(columns[11]));
                 //IdentityCode: Unused, column 12

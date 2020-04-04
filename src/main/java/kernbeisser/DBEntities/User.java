@@ -20,15 +20,9 @@ public class User implements Serializable {
     @Column(updatable = false, insertable = false, nullable = false)
     private int id;
 
-    @Column
-    private int salesThisYear;
-
     @JoinColumn
     @OneToMany
     private Set<Permission> permissions = new HashSet<>();
-
-    @Column
-    private int salesLastYear;
 
     @Column
     private int shares;
@@ -42,9 +36,6 @@ public class User implements Serializable {
     @JoinColumn
     @OneToMany(fetch = FetchType.EAGER)
     private Set<Job> jobs = new HashSet<>();
-
-    @Column
-    private Date lastBuy;
 
     @Column
     private boolean kernbeisserKey;
@@ -119,22 +110,6 @@ public class User implements Serializable {
         return out;
     }
 
-    public int getSalesThisYear() {
-        return salesThisYear;
-    }
-
-    public void setSalesThisYear(int salesThisYear) {
-        this.salesThisYear = salesThisYear;
-    }
-
-    public int getSalesLastYear() {
-        return salesLastYear;
-    }
-
-    public void setSalesLastYear(int salesLastYear) {
-        this.salesLastYear = salesLastYear;
-    }
-
     public int getShares() {
         return shares;
     }
@@ -166,14 +141,6 @@ public class User implements Serializable {
     public void setJobs(Set<Job> jobs) {
         this.jobs.clear();
         this.jobs.addAll(jobs);
-    }
-
-    public Date getLastBuy() {
-        return lastBuy;
-    }
-
-    public void setLastBuy(Date lastBuy) {
-        this.lastBuy = lastBuy;
     }
 
     public boolean isKernbeisserKey() {
