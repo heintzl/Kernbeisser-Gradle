@@ -2,13 +2,19 @@ package kernbeisser.Windows.ManagePriceLists;
 
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
+import kernbeisser.Windows.Window;
 
 public class ManagePriceListsController implements Controller {
     private ManagePriceListsModel model;
     private ManagePriceListsView view;
 
-    ManagePriceListsController(ManagePriceListsView view) {
-        this.view = view;
+    public ManagePriceListsController(Window current) {
+        this.view = new ManagePriceListsView(current,this){
+            @Override
+            public void finish() {
+                ManagePriceListsController.this.finish();
+            }
+        };
         this.model = new ManagePriceListsModel();
     }
 
@@ -16,6 +22,9 @@ public class ManagePriceListsController implements Controller {
     public void refresh() {
 
     }
+
+    //Only to override
+    public void finish(){}
 
     @Override
     public ManagePriceListsView getView() {
@@ -25,5 +34,18 @@ public class ManagePriceListsController implements Controller {
     @Override
     public Model getModel() {
         return model;
+    }
+
+    public void addTriggered() {
+    }
+
+    public void editTriggered() {
+    }
+
+    public void deleteTriggered() {
+    }
+
+    public void priceListSelected() {
+
     }
 }

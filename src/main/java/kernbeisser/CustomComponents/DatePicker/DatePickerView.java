@@ -8,11 +8,14 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class DatePickerView extends Window implements View {
     private JButton chooseButton;
     private JPanel main;
-    private JComboBox monthSelection;
+    private JComboBox<String> monthSelection;
     private JTable monthDays;
 
     public DatePickerView(Window current, DatePickerController datePickerController) {
@@ -31,6 +34,15 @@ public class DatePickerView extends Window implements View {
         monthDays.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         monthDays.setColumnSelectionAllowed(true);
         monthDays.setRowSelectionAllowed(true);
+        windowInitialized();
+    }
+
+    void setMoths(Month[] months){
+        monthSelection.removeAllItems();
+        for (Month month : months) {
+            this.monthSelection.addItem(month.getDisplayName(TextStyle.FULL, Locale.GERMANY));
+        }
+        monthSelection.setSelectedIndex(0);
     }
 
     int getSelectedDay(){

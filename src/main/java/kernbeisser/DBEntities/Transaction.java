@@ -16,8 +16,7 @@ public class Transaction {
     private int id;
 
     @Column
-    //TODO save as double
-    private int value;
+    private double value;
 
     @JoinColumn
     @ManyToOne
@@ -48,7 +47,7 @@ public class Transaction {
         return Tools.getAll(Transaction.class, condition);
     }
 
-    public static void doTransaction(User from, User to, int value) {
+    public static void doTransaction(User from, User to, double value) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -70,11 +69,11 @@ public class Transaction {
         em.close();
     }
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(double value) {
         this.value = value;
     }
 

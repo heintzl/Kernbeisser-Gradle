@@ -5,6 +5,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
+import kernbeisser.Main;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
@@ -56,7 +57,7 @@ public class ObjectViewView<T> extends Window {
     }
 
     int getMax() {
-        return maxResults.getValue();
+        return maxResults.getSafeValue();
     }
 
     String getSearch() {

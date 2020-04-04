@@ -17,5 +17,5 @@ public enum KeyCategory {
     SURCHARGE_TABLE,
     TRANSACTION,
     USER_GROUP,
-    ARTICLE_KK
+    WINDOW, ARTICLE_KK
 }

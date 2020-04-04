@@ -56,7 +56,7 @@ public class ContainerView extends Window {
     }
 
     int getAmount() {
-        return amount.getValue();
+        return amount.getSafeValue();
     }
 
     void setAmount(String s) {
@@ -64,7 +64,7 @@ public class ContainerView extends Window {
     }
 
     int getKkNumber() {
-        return kkNumber.getValue();
+        return kkNumber.getSafeValue();
     }
 
     void setKkNumber(String s) {
@@ -72,7 +72,7 @@ public class ContainerView extends Window {
     }
 
     int getNetPrice() {
-        return (int) (netPrice.getValue() * 100);
+        return (int) (netPrice.getSafeValue() * 100);
     }
 
     void setNetPrice(String s) {
@@ -141,7 +141,7 @@ public class ContainerView extends Window {
     }
 
     public int getKbNumber() {
-        return kbNumber.getValue();
+        return kbNumber.getSafeValue();
     }
 
     void setKbNumber(String s) {

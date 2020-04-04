@@ -1,13 +1,16 @@
-package kernbeisser.Windows.LogIn;
+package kernbeisser.Windows.LogIn.OldLogIn;
 
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.LogIn.OldLogIn.LogInView;
 import kernbeisser.Windows.UserMenu.UserMenuController;
 import kernbeisser.Windows.Window;
 
 public class LogInController implements Controller {
-    static final int INCORRECT_USERNAME = 0;
-    static final int INCORRECT_PASSWORD = 1;
-    static final int SUCCESS = 2;
+    public static final int INCORRECT_USERNAME = 0;
+    public static final int INCORRECT_PASSWORD = 1;
+    public static final int SUCCESS = 2;
     private LogInView view;
     private LogInModel model;
     public LogInController(Window current) {
@@ -18,10 +21,11 @@ public class LogInController implements Controller {
     }
 
     void logIn() {
-        int feedback = model.logIn(view.getUsername(), view.getPassword());
-        view.applyFeedback(feedback);
-        if (feedback == SUCCESS) {
+        try {
+            model.logIn(view.getUsername(), view.getPassword());
             openUserMenu();
+        } catch (AccessDeniedException e) {
+            view.accessDenied();
         }
     }
 
@@ -37,7 +41,7 @@ public class LogInController implements Controller {
     }
 
     private void openUserMenu() {
-        new UserMenuController(view, LogInModel.getLoggedIn());
+        new UserMenuController(view);
     }
 
     @Override
