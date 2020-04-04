@@ -29,8 +29,9 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void addToShoppingCart() {
+        boolean stack = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER);
         try {
-            shoppingCartController.addShoppingItem(extractShoppingItemFromUI());
+            shoppingCartController.addShoppingItem(extractShoppingItemFromUI(), stack);
         } catch (UndefinedInputException undefinedInputException) {
             view.noArticleFound();
         }
@@ -57,8 +58,8 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
-        // TODO HEI Review nettopricing
-        // int nettoizedPrice = PriceCalculator.getNetFromGross(view.getPrice(),view.isVatLow());
+        double netPrice = PriceCalculator.getNetFromGross(view.getPriceVATIncluded(),view.getSelectedVAT().getValue());
+        double netDeposit = PriceCalculator.getNetFromGross(view.getDeposit(),view.getSelectedVAT().getValue());
         switch (view.getOption()) {
             case ShoppingMaskUIView.ARTICLE_NUMBER:
                 Article extractedArticle = null;
@@ -72,7 +73,6 @@ public class ShoppingMaskUIController implements Controller {
                         extractedArticle = model.getBySupplierItemNumber(supplier);
                     }
                     if (extractedArticle == null) throw new UndefinedInputException();
-
                 }
                 ShoppingItem shoppingItem = new ShoppingItem(extractedArticle);
                 shoppingItem.setDiscount(view.getDiscount());
@@ -85,25 +85,23 @@ public class ShoppingMaskUIController implements Controller {
                 }
                 return shoppingItem;
             case ShoppingMaskUIView.BAKED_GOODS:
-                //TODO HEI review price nettoization
-                return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded());
+                return ShoppingItem.createBakeryProduct(netPrice);
             case ShoppingMaskUIView.DEPOSIT:
-                return ShoppingItem.createDeposit(view.getDeposit());
+                return ShoppingItem.createDeposit(netDeposit);
             case ShoppingMaskUIView.CUSTOM_PRODUCT:
+                //TODO wie soll Pfand bei freien Artikeln behandelt werden, evtl gar nicht?
                 ShoppingItem customItem = new ShoppingItem();
                 customItem.setItemMultiplier((int) view.getAmount());
-                //TODO HEI review price nettoization
-                customItem.setItemNetPrice(view.getPriceVATIncluded());
+                customItem.setItemNetPrice(netPrice);
                 customItem.setName(view.getItemName());
                 customItem.setVat(view.getSelectedVAT().getValue());
                 customItem.setMetricUnits(MetricUnits.STACK);
-                customItem.setAmount(customItem.getMetricUnits().toUnit(view.getAmount()));
-                customItem.setItemMultiplier(view.getArticleAmount());
+                customItem.setAmount(1);
                 return customItem;
             case ShoppingMaskUIView.PRODUCE:
-                return ShoppingItem.createOrganic(view.getPriceVATIncluded());
+                return ShoppingItem.createOrganic(netPrice);
             case ShoppingMaskUIView.RETURN_DEPOSIT:
-                return ShoppingItem.createDeposit(view.getDeposit()*(-1));
+                return ShoppingItem.createDeposit(netDeposit * (-1));
             default:
                 return null;
         }
@@ -130,7 +128,7 @@ public class ShoppingMaskUIController implements Controller {
         new ArticleSelectorController(null,view::loadItemStats);
     }
 
-    void editUserAction() {
-        new EditUserController(view, model.getSaleSession().getCustomer(), Mode.EDIT);
-    }
+//    void editUserAction() {
+//        new EditUserController(view, model.getSaleSession().getCustomer(), Mode.EDIT);
+//    }
 }

@@ -47,7 +47,7 @@ public class Article {
     private Long barcode;
 
     @Column
-    private VAT vat;
+    private VAT vat = VAT.LOW;
 
     @Column
     private double singleDeposit;

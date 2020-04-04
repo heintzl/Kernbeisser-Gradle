@@ -16,8 +16,8 @@ public class ShoppingCartController implements Controller {
         refresh();
     }
 
-    public void addShoppingItem(ShoppingItem item) {
-        model.addItem(item);
+    public void addShoppingItem(ShoppingItem item, boolean stack) {
+        model.addItem(item, stack);
         refresh();
     }
 

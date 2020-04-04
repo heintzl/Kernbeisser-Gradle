@@ -3,11 +3,11 @@
   <grid id="27dc6" binding="MainPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1284" height="842"/>
+      <xy x="20" y="20" width="1284" height="900"/>
     </constraints>
     <properties>
-      <minimumSize width="1024" height="707"/>
-      <preferredSize width="1280" height="689"/>
+      <minimumSize width="1280" height="900"/>
+      <preferredSize width="1280" height="900"/>
     </properties>
     <border type="none"/>
     <children>
@@ -26,6 +26,8 @@
             </constraints>
             <properties>
               <background color="-1"/>
+              <minimumSize width="530" height="900"/>
+              <preferredSize width="530" height="900"/>
             </properties>
             <border type="none"/>
             <children>
@@ -55,7 +57,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="f551f" binding="shoppingItemPanel" layout-manager="GridBagLayout">
+              <grid id="f551f" binding="ShoppingItemPanel" layout-manager="GridBagLayout">
                 <constraints border-constraint="Center"/>
                 <properties>
                   <autoscrolls value="true"/>
@@ -243,6 +245,7 @@
                     </constraints>
                     <properties>
                       <background color="-1"/>
+                      <enabled value="false"/>
                       <font size="16" style="0"/>
                     </properties>
                   </component>
@@ -529,7 +532,9 @@
             <constraints>
               <splitpane position="right"/>
             </constraints>
-            <properties/>
+            <properties>
+              <preferredSize width="500" height="900"/>
+            </properties>
             <border type="none"/>
             <children>
               <grid id="7919b" binding="eastUpperPanel" layout-manager="GridBagLayout">

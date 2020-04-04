@@ -33,7 +33,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
     private JLabel customerName;
     private JPanel MainPanel;
     private JPanel westUpperPanel;
-    private JPanel shoppingItemPanel;
+    private JPanel ShoppingItemPanel;
     private JRadioButton optProduce;
     private JRadioButton optBakedGoods;
     private JRadioButton optArticleNo;
@@ -95,8 +95,11 @@ public class ShoppingMaskUIView extends JPanel implements View {
         addDeposit.addActionListener(e -> addToCart());
         addAmount.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addAmount.addActionListener(e -> addToCart());
+        price.addActionListener( e -> addToCart());
+        deposit.addActionListener( e -> addToCart());
+        amount.addActionListener( e -> addToCart());
         editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
-        editUser.addActionListener(e -> editUserAction());
+//        editUser.addActionListener(e -> editUserAction());
         optProduce.addItemListener(e -> articleTypeChange('p'));
         optBakedGoods.addItemListener(e -> articleTypeChange('b'));
         optArticleNo.addItemListener(e -> articleTypeChange('a'));
@@ -137,7 +140,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
     private void addToCart() {
         controller.addToShoppingCart();
     }
-    private void editUserAction() {controller.editUserAction();}
+//    private void editUserAction() {controller.editUserAction();}
 
     public void setKbNumber(String value) {
         this.kbNumber.setText(value);
@@ -209,33 +212,31 @@ public class ShoppingMaskUIView extends JPanel implements View {
             deposit.setEnabled("cdr".indexOf(type) != -1);
             deposit.setVisible("acdr".indexOf(type) != -1);
             depositUnit.setVisible("acdr".indexOf(type) != -1);
-            setOptTaxLow();
+            if ("dr".indexOf(type) != -1) {
+                setOptTaxStandard();
+            } else {
+                setOptTaxLow();
+            }
             optTaxLow.setEnabled(type == 'c');
             optTaxStandard.setEnabled(type == 'c');
             if (type == 'p') {
                 setArticleName("Obst & Gemüse");
                 price.requestFocusInWindow();
-                shoppingItemPanel.getRootPane().setDefaultButton(addPrice);
             } else if (type == 'b') {
                 setArticleName("Backwaren");
                 price.requestFocusInWindow();
-                shoppingItemPanel.getRootPane().setDefaultButton(addPrice);
             } else if (type == 'd') {
                 setArticleName("Pfand-Behälter");
                 deposit.requestFocusInWindow();
-                shoppingItemPanel.getRootPane().setDefaultButton(addDeposit);
             } else if (type == 'r') {
                 setArticleName("Pfand zurück");
                 deposit.requestFocusInWindow();
-                shoppingItemPanel.getRootPane().setDefaultButton(addDeposit);
             } else if (type == 'a') {
                 setArticleName("");
                 kbNumber.requestFocusInWindow();
-                shoppingItemPanel.getRootPane().setDefaultButton(addAmount);
             } else if (type == 'c') {
                 setArticleName("");
                 articleName.requestFocusInWindow();
-                shoppingItemPanel.getRootPane().setDefaultButton(addPrice);
             }
             articleName.setEnabled(type == 'c');
         }
@@ -364,8 +365,8 @@ public class ShoppingMaskUIView extends JPanel implements View {
         return articleName.getText();
     }
 
-    public int getDeposit() {
-        return (int) (deposit.getSafeValue() * 100);
+    public double getDeposit() {
+        return deposit.getSafeValue();
     }
 
     public void setDeposit(String value) {

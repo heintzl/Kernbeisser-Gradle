@@ -83,6 +83,7 @@ public class ShoppingItem implements Serializable {
             organic.setKbNumber(-1);
             // TODO HEI what about VAT? organic.setVatLow(true);
             organic.setMetricUnits(MetricUnits.STACK);
+            organic.setVAT(VAT.LOW);
             em.persist(organic);
             em.flush();
             et.commit();
@@ -110,6 +111,7 @@ public class ShoppingItem implements Serializable {
             bakeryProduct.setMetricUnits(MetricUnits.STACK);
             bakeryProduct.setDeleteAllowed(false);
             bakeryProduct.setKbNumber(-2);
+            bakeryProduct.setVAT(VAT.LOW);
             // TODO HEI what about VAT? bakeryProduct.setVatLow(true);
             em.persist(bakeryProduct);
             em.flush();
@@ -137,12 +139,14 @@ public class ShoppingItem implements Serializable {
             deposit.setKbNumber(-3);
             deposit.setMetricUnits(MetricUnits.STACK);
             deposit.setDeleteAllowed(false);
+            deposit.setVAT(VAT.HIGH);
             em.persist(deposit);
             em.flush();
             et.commit();
             out = new ShoppingItem(
                     em.createQuery("select  i from Article i where name like 'Pfand'", Article.class).getSingleResult());
         }
+        // TODO wie wird der Pfand verbucht? Als NetPrice oder irgendwie anders?
         out.setItemMultiplier(1);
         out.setItemNetPrice(price);
         em.close();
