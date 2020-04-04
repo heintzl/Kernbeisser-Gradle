@@ -140,6 +140,7 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     private void doCheckout() {
+        controller.startPay();
     }
 
     private void openSearchWindow() {
