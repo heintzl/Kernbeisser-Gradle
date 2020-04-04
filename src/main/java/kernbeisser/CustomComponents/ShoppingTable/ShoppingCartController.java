@@ -10,14 +10,14 @@ public class ShoppingCartController implements Controller {
     private ShoppingCartModel model;
 
 
-    public ShoppingCartController(int userValue, int userSurcharge) {
+    public ShoppingCartController(double userValue, int userSurcharge) {
         model = new ShoppingCartModel(userValue, userSurcharge);
         view = new ShoppingCartView(this);
         refresh();
     }
 
-    public void addShoppingItem(ShoppingItem item) {
-        model.addItem(item);
+    public void addShoppingItem(ShoppingItem item, boolean stack) {
+        model.addItem(item, stack);
         refresh();
     }
 

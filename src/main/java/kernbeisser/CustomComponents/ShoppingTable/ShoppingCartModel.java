@@ -17,10 +17,14 @@ public class ShoppingCartModel implements Model {
         this.userSurcharge = userSurcharge;
     }
 
-    void addItem(ShoppingItem item) {
+    void addItem(ShoppingItem item, boolean stack) {
         ShoppingItem current = shoppingItems.get(item);
         if (current != null) {
-            current.setItemMultiplier(item.getItemMultiplier() + current.getItemMultiplier());
+            if (stack) {
+                current.setItemMultiplier(item.getItemMultiplier() + current.getItemMultiplier());
+            } else {
+                current.setItemNetPrice(current.getItemNetPrice() + item.getItemNetPrice());
+            }
         } else {
             shoppingItems.put(item, item);
         }

@@ -15,12 +15,13 @@ import java.util.Collection;
 
 public class ShoppingMaskModel implements Model {
     private Article selected = null;
-    private int value;
+    private double value;
     private Collection<ShoppingItem> shoppingCart = new ArrayList<>();
     private SaleSession saleSession;
 
     ShoppingMaskModel(SaleSession saleSession) {
         this.saleSession = saleSession;
+        this.value = saleSession.getCustomer().getUserGroup().getValue();
     }
 
     Article searchItem(String itemNumber) {
@@ -104,7 +105,7 @@ public class ShoppingMaskModel implements Model {
         this.selected = selected;
     }
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 
