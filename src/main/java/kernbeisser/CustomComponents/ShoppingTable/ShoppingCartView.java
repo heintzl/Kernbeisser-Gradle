@@ -34,12 +34,12 @@ public class ShoppingCartView extends JPanel implements View {
         shoppingItems.removeAll();
     }
 
-    void setSum(int s) {
+    void setSum(double s) {
         sum.setText(s  + "€");
     }
 
-    void setValue(int s) {
-        value.setText(s  + "€");
+    void setValue(double s) {
+        value.setText(String.format("%.2f€",s));
     }
 
     private void createUIComponents() {
