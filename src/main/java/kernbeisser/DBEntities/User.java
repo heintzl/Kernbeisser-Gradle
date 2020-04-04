@@ -21,7 +21,7 @@ public class User implements Serializable {
     private int id;
 
     @JoinColumn
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Permission> permissions = new HashSet<>();
 
     @Column
