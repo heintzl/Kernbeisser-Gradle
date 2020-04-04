@@ -1,5 +1,6 @@
 package kernbeisser.Windows.UserInfo;
 
+import kernbeisser.CustomComponents.Charts.BuyChart;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -14,6 +15,7 @@ public class UserInfoView {
     private JTabbedPane tabbedPane;
     private ObjectTable shoppingHistory;
     private ObjectTable valueHistory;
+    private BuyChart buyChart1;
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
