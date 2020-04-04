@@ -1,10 +1,14 @@
 package kernbeisser.Windows.EditUser;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.DBEntities.Job;
+import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JobSelector.JobSelectorController;
+import kernbeisser.Windows.Selector.SelectorController;
 import kernbeisser.Windows.Window;
 
 public class EditUserController implements Controller {
@@ -19,7 +23,6 @@ public class EditUserController implements Controller {
         } else {
             this.view = new EditUserView(this, current);
         }
-        view.setPermissions(model.getAllPermission());
         view.setData(model.getUser());
     }
 
@@ -76,6 +79,14 @@ public class EditUserController implements Controller {
     }
 
     void openJobSelector() {
-        new JobSelectorController(this.view, model.getUser().getJobs());
+        new SelectorController<>(null, "Ausgewählte Jobs",model.getUser().getJobs(), Job::defaultSearch,
+                                 Column.create("Name", Job::getName, Key.JOB_NAME_READ),
+                                 Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ));
+    }
+
+    void openPermissionSelector(){
+        new SelectorController<>(null, "Ausgewählte Berechtigungen",model.getUser().getPermissions(), Permission::defaultSearch,
+                                 Column.create("Name", Permission::getName, Key.PERMISSION_NAME_READ)
+                             );
     }
 }

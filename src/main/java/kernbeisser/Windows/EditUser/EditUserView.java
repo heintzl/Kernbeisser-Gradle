@@ -1,5 +1,6 @@
 package kernbeisser.Windows.EditUser;
 
+import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.User;
@@ -33,7 +34,6 @@ class EditUserView extends Window implements View {
     private kernbeisser.CustomComponents.TextFields.PermissionField username;
     private kernbeisser.CustomComponents.PermissionButton chgPassword;
     private JLabel lblRolle;
-    private kernbeisser.CustomComponents.PermissionComboBox<Permission> roles;
     private JLabel lblHasKey;
     private JLabel lblIsEmployee;
     private kernbeisser.CustomComponents.PermissionCheckBox hasKey;
@@ -50,6 +50,7 @@ class EditUserView extends Window implements View {
     private JButton cancel;
     private JButton submit;
     private JPanel buttonPanel;
+    private PermissionButton editPermission;
 
     public EditUserView(EditUserController controller, Window current) {
         super(current/*, Key.ACTION_EDIT_USER*/);
@@ -64,8 +65,8 @@ class EditUserView extends Window implements View {
         submit.addActionListener(e -> {
             controller.doAction();
         });
+        editPermission.addActionListener(e -> controller.openPermissionSelector());
         cancel.addActionListener(e -> back());
-
         postalCode.setRequiredKeys(Key.USER_TOWN_CODE_READ, Key.USER_TOWN_CODE_WRITE);
         town.setRequiredKeys(Key.USER_TOWN_READ, Key.USER_TOWN_WRITE);
         phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ, Key.USER_PHONE_NUMBER1_WRITE);
@@ -75,7 +76,7 @@ class EditUserView extends Window implements View {
         firstName.setRequiredKeys(Key.USER_FIRST_NAME_READ,Key.USER_FIRST_NAME_WRITE);
         lastName.setRequiredKeys(Key.USER_SURNAME_READ,Key.USER_SURNAME_WRITE);
         chgPassword.setRequiredWriteKeys(Key.USER_PASSWORD_WRITE);
-        roles.setRequiredKeys(Key.USER_PERMISSION_READ,Key.USER_PERMISSION_WRITE);
+        editPermission.setRequiredWriteKeys(Key.USER_PERMISSION_WRITE);
         hasKey.setReadWrite(Key.USER_KERNBEISSER_KEY_READ);
         isEmployee.setReadWrite(Key.USER_EMPLOYEE_READ);
         extraJobs.setReadWrite(Key.USER_EXTRA_JOBS_READ);
@@ -129,11 +130,5 @@ class EditUserView extends Window implements View {
         JOptionPane.showMessageDialog(this, "Der Benutzername ist bereits vergeben");
     }
 
-    void setPermissions(Collection<Permission> permission) {
-        this.roles.removeAllItems();
-        for (Permission p : permission) {
-            roles.addItem(p);
-        }
-    }
 
 }
