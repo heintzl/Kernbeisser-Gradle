@@ -8,6 +8,7 @@ import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Model;
 import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRSaver;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -18,9 +19,9 @@ import javax.persistence.PersistenceException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import java.nio.file.Paths;
-import java.util.*;
-
-import static net.sf.jasperreports.engine.JasperCompileManager.compileReport;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 class PayModel implements Model {
     private final SaleSession saleSession;
@@ -43,8 +44,9 @@ class PayModel implements Model {
 
     double shoppingCartSum() {
         return shoppingCart.stream()
-                           .mapToDouble(e -> PriceCalculator.getShoppingItemPrice(e, saleSession.getCustomer()
-                                                                                             .getSolidaritySurcharge()))
+                           .mapToDouble(e -> PriceCalculator
+                                   .getShoppingItemPrice(e, saleSession.getCustomer()
+                                                                       .getSolidaritySurcharge()))
                            .sum();
     }
 
@@ -113,14 +115,18 @@ class PayModel implements Model {
             String basePath = "/home/timos/JaspersoftWorkspace/MyReports";
             JasperDesign jspDesign = JRXmlLoader.load(
                     Paths.get(basePath, "Blank_A4.jrxml").toFile());
-            JasperReport jspReport = compileReport(jspDesign);
+            JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
+
             Map<String,Object> reportParamMap = new HashMap<>();
             reportParamMap.put("BonNo", 47);
-            List<String> amounts = new ArrayList<String>();
-            amounts.add("1x");
-            amounts.add("2x");
-            reportParamMap.put("ItemAmount", amounts);
-            JasperPrint jspPrint = JasperFillManager.fillReport(jspReport, reportParamMap);
+//            List<String> amounts = new ArrayList<String>();
+//            amounts.add("1x");
+//            amounts.add("2x");
+//            reportParamMap.put("ItemAmount", amounts);
+
+            JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
+
+            JasperPrint jspPrint = JasperFillManager.fillReport(jspReport, reportParamMap, dataSource);
             JRSaver.saveObject(jspPrint, Paths.get(basePath, "Blank_A4.jrprint").toFile());
 //            JasperPrintManager.printReport(jspPrint, false);
 //            JRPdfExporter pdfExporter = new JRPdfExporter();

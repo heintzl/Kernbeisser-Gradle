@@ -30,16 +30,6 @@ public class PayController implements Controller {
         }
     }
 
-    private boolean checkBon() {
-        model.print(model.getDefaultPrinter());
-        return false;
-    }
-
-    void commit() {
-        commitPayment();
-        checkBon();
-    }
-
     double getPrice(ShoppingItem item) {
         return PriceCalculator.getShoppingItemPrice(item,
                                                     model.getSaleSession().getCustomer().getSolidaritySurcharge());

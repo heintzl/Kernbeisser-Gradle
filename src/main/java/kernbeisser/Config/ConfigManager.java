@@ -12,7 +12,7 @@ import java.nio.file.Files;
 public class ConfigManager {
 
     public static final int CONFIG_FILE_INDENT_FACTOR = 2;
-    
+
     private static final File file = new File("config.json");
     private static final JSONObject config = new JSONObject(fileToString(StandardCharsets.UTF_8));
 
