@@ -2,12 +2,12 @@ package kernbeisser.Windows.EditItem;
 
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
-import kernbeisser.DBEntities.Item;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Key;
-import kernbeisser.Enums.Unit;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
@@ -19,23 +19,23 @@ public class EditItemView extends Window implements View {
     private JButton commit;
     private JButton cancel;
     private kernbeisser.CustomComponents.TextFields.PermissionField itemName;
-    private JComboBox<Supplier> supplier;
+    private kernbeisser.CustomComponents.PermissionComboBox supplier;
     private DoubleParseField netPrice;
     private DoubleParseField deposit;
     private IntegerParseField kbItemNumber;
     private IntegerParseField supplierItemNumber;
     private DoubleParseField crateDeposit;
-    private JButton search;
-    private JComboBox<PriceList> priceList;
+    private kernbeisser.CustomComponents.PermissionButton search;
+    private kernbeisser.CustomComponents.PermissionComboBox priceList;
     private IntegerParseField amount;
     private DoubleParseField containerSize;
-    private JComboBox<Unit> unit;
-    private JComboBox<ContainerDefinition> containerDefinition;
+    private kernbeisser.CustomComponents.PermissionComboBox metricUnits;
+    private kernbeisser.CustomComponents.PermissionComboBox containerDefinition;
     private kernbeisser.CustomComponents.TextFields.PermissionField barcode;
-    private JCheckBox showInShoppingMask;
-    private JCheckBox weighable;
+    private kernbeisser.CustomComponents.PermissionCheckBox showInShoppingMask;
+    private kernbeisser.CustomComponents.PermissionCheckBox weighable;
     private JTextArea extraInfo;
-    private JComboBox<VAT> vat;
+    private kernbeisser.CustomComponents.PermissionComboBox vat;
     private JPanel main;
 
     public EditItemView(EditItemController controller, Window current) {
@@ -45,12 +45,27 @@ public class EditItemView extends Window implements View {
         add(main);
         pack();
         setLocationRelativeTo(null);
-        amount.setRequiredKeys(Key.ITEM_AMOUNT_READ, Key.ITEM_AMOUNT_WRITE);
-        netPrice.setRequiredKeys(Key.ITEM_NET_PRICE_READ, Key.ITEM_NET_PRICE_WRITE);
-        deposit.setRequiredKeys(Key.ITEM_SINGLE_DEPOSIT_READ, Key.ITEM_SINGLE_DEPOSIT_WRITE);
-        kbItemNumber.setRequiredKeys(Key.ITEM_KB_NUMBER_READ, Key.ITEM_KB_NUMBER_READ);
-        supplierItemNumber.setRequiredKeys(Key.ITEM_SUPPLIERS_ITEM_NUMBER_READ, Key.ITEM_SUPPLIERS_ITEM_NUMBER_WRITE);
-        crateDeposit.setRequiredKeys(Key.ITEM_CRATE_DEPOSIT_READ, Key.ITEM_CRATE_DEPOSIT_WRITE);
+        itemName.setRequiredKeys(Key.ARTICLE_NAME_READ,Key.ARTICLE_NAME_WRITE);
+        amount.setRequiredKeys(Key.ARTICLE_AMOUNT_READ, Key.ARTICLE_AMOUNT_WRITE);
+        netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ, Key.ARTICLE_NET_PRICE_WRITE);
+        supplier.setRequiredReadKeys(Key.ARTICLE_SUPPLIER_READ,Key.SUPPLIER_NAME_READ);
+        supplier.setRequiredWriteKeys(Key.ARTICLE_SUPPLIER_WRITE);
+        netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ,Key.ARTICLE_NET_PRICE_WRITE);
+        deposit.setRequiredKeys(Key.ARTICLE_SINGLE_DEPOSIT_READ, Key.ARTICLE_SINGLE_DEPOSIT_WRITE);
+        kbItemNumber.setRequiredKeys(Key.ARTICLE_KB_NUMBER_READ, Key.ARTICLE_KB_NUMBER_READ);
+        supplierItemNumber.setRequiredKeys(Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE);
+        crateDeposit.setRequiredKeys(Key.ARTICLE_CRATE_DEPOSIT_READ, Key.ARTICLE_CRATE_DEPOSIT_WRITE);
+        priceList.setRequiredReadKeys(Key.ARTICLE_PRICE_LIST_READ,Key.PRICELIST_NAME_READ);
+        priceList.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
+        search.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
+        vat.setRequiredKeys(Key.ARTICLE_VAT_READ,Key.ARTICLE_VAT_WRITE);
+        metricUnits.setRequiredKeys(Key.ARTICLE_METRIC_UNITS_READ, Key.ARTICLE_METRIC_UNITS_WRITE);
+        barcode.setRequiredKeys(Key.ARTICLE_BARCODE_READ,Key.ARTICLE_BARCODE_WRITE);
+        containerDefinition.setRequiredKeys(Key.ARTICLE_CONTAINER_DEF_READ,Key.ARTICLE_CONTAINER_DEF_WRITE);
+        containerSize.setRequiredKeys(Key.ARTICLE_CONTAINER_SIZE_READ,Key.ARTICLE_CONTAINER_SIZE_WRITE);
+        showInShoppingMask.setRequiredReadKeys(Key.ARTICLE_SHOW_IN_SHOP_READ,Key.ARTICLE_SHOW_IN_SHOP_WRITE);
+        weighable.setRequiredReadKeys(Key.ARTICLE_WEIGHABLE_READ,Key.ARTICLE_WEIGHABLE_WRITE);
+        windowInitialized();
     }
 
 
@@ -64,10 +79,10 @@ public class EditItemView extends Window implements View {
         containerSize = new DoubleParseField();
     }
 
-    void setUnits(Unit[] units) {
-        unit.removeAllItems();
-        for (Unit u : units) {
-            unit.addItem(u);
+    void setUnits(MetricUnits[] metricUnits) {
+        this.metricUnits.removeAllItems();
+        for (MetricUnits u : metricUnits) {
+            this.metricUnits.addItem(u);
         }
     }
 
@@ -95,36 +110,36 @@ public class EditItemView extends Window implements View {
         }
     }
 
-    void pasteItem(Item item) {
-        itemName.setText(item.getName());
-        netPrice.setText(String.valueOf(item.getNetPrice() / 100f));
-        deposit.setText(String.valueOf(item.getSingleDeposit() / 100f));
-        kbItemNumber.setText(String.valueOf(item.getKbNumber()));
-        vat.setSelectedItem(item.isVatLow() ? VAT.LOW : VAT.HIGH);
-        supplierItemNumber.setText(String.valueOf(item.getSuppliersItemNumber()));
-        crateDeposit.setText(String.valueOf(item.getCrateDeposit() / 100f));
-        containerSize.setText(String.valueOf(item.getContainerSize()));
-        amount.setText(String.valueOf(item.getAmount()));
-        barcode.setText(String.valueOf(item.getBarcode()));
-        showInShoppingMask.setSelected(item.isShowInShop());
-        weighable.setSelected(item.isWeighAble());
-        extraInfo.setText(item.getInfo());
-        priceList.setSelectedItem(item.getPriceList());
-        supplier.setSelectedItem(item.getSupplier());
-        containerDefinition.setSelectedItem(item.getContainerDef());
+    void pasteItem(Article article) {
+        itemName.setText(article.getName());
+        netPrice.setText(String.valueOf(article.getNetPrice()));
+        deposit.setText(String.valueOf(article.getSingleDeposit()));
+        kbItemNumber.setText(String.valueOf(article.getKbNumber()));
+        vat.setSelectedItem(article.getVAT());
+        supplierItemNumber.setText(String.valueOf(article.getSuppliersItemNumber()));
+        crateDeposit.setText(String.valueOf(article.getCrateDeposit() ));
+        containerSize.setText(String.valueOf(article.getContainerSize()));
+        amount.setText(String.valueOf(article.getAmount()));
+        barcode.setText(String.valueOf(article.getBarcode()));
+        showInShoppingMask.setSelected(article.isShowInShop());
+        weighable.setSelected(article.isWeighAble());
+        extraInfo.setText(article.getInfo());
+        priceList.setSelectedItem(article.getPriceList());
+        supplier.setSelectedItem(article.getSupplier());
+        containerDefinition.setSelectedItem(article.getContainerDef());
     }
 
-    Item collectItem(Item out) {
+    Article collectItem(Article out) {
         out.setName(itemName.getText());
-        out.setNetPrice((int) (netPrice.getValue() * 100));
-        out.setSingleDeposit((int) (deposit.getValue() * 100));
-        out.setKbNumber(kbItemNumber.getValue());
-        out.setVatLow(vat.getSelectedItem() == VAT.LOW);
-        out.setSuppliersItemNumber(supplierItemNumber.getValue());
-        out.setSuppliersItemNumber(supplierItemNumber.getValue());
-        out.setCrateDeposit((int) (crateDeposit.getValue() * 100));
-        out.setContainerSize(containerSize.getValue());
-        out.setAmount(amount.getValue());
+        out.setNetPrice((int) (netPrice.getSafeValue() * 100));
+        out.setSingleDeposit((int) (deposit.getSafeValue() * 100));
+        out.setKbNumber(kbItemNumber.getSafeValue());
+        out.setVAT((VAT) vat.getSelectedItem());
+        out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
+        out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
+        out.setCrateDeposit((int) (crateDeposit.getSafeValue() * 100));
+        out.setContainerSize(containerSize.getSafeValue());
+        out.setAmount(amount.getSafeValue());
         try {
             out.setBarcode(Long.parseLong(barcode.getText()));
         } catch (NumberFormatException e) {

@@ -1,11 +1,13 @@
 package kernbeisser.DBEntities;
 
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -26,6 +28,10 @@ public class Job {
 
     @UpdateTimestamp
     private Date updateDate;
+
+    public static List<Job> getAll(String condition) {
+        return Tools.getAll(Job.class, condition);
+    }
 
     public Date getCreateDate() {
         return createDate;
@@ -55,12 +61,22 @@ public class Job {
         this.description = description;
     }
 
-    public static List<Job> getAll(String condition) {
-        return Tools.getAll(Job.class, condition);
-    }
-
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Job && ((Job) obj).getId() == this.getId();
+    }
+
+    public static Collection<Job> defaultSearch(String s, int max) {
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Job> out = em.createQuery(
+                "select j from Job j where j.name like :s or description like :sn",
+                Job.class
+        )
+                                    .setParameter("s", s + "%")
+                                    .setParameter("sn", "%"+s + "%")
+                                    .setMaxResults(max)
+                                    .getResultList();
+        em.close();
+        return out;
     }
 }

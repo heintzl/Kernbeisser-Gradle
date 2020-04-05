@@ -1,43 +1,53 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Enums.Key;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
+import kernbeisser.Windows.Window;
 
-class CashierShoppingMaskController implements Controller {
+public class CashierShoppingMaskController{
     private CashierShoppingMaskModel model;
     private CashierShoppingMaskView view;
 
-    CashierShoppingMaskController(User seller, CashierShoppingMaskView view) {
-        this.view = view;
-        this.model = new CashierShoppingMaskModel(seller);
-        view.setUsers(model.getAllUser());
+    private SearchBoxController<User> searchBoxController;
+
+    public CashierShoppingMaskController(Window current) {
+        this.searchBoxController = new SearchBoxController<User>(User::defaultSearch, this::selectUser,
+                                                             Column.create("Vorname", User::getFirstName, Key.USER_FIRST_NAME_READ),
+                                                             Column.create("Nachname", User::getSurname, Key.USER_SURNAME_READ),
+                                                             Column.create("Benutzername", User::getUsername, Key.USER_USERNAME_READ)
+        ){
+            @Override
+            public void refreshLoadSolutions() {
+                CashierShoppingMaskController.this.selectUser(null);
+                super.refreshLoadSolutions();
+            }
+        };
+        model = new CashierShoppingMaskModel();
+        this.view = new CashierShoppingMaskView(this,current);
     }
 
-    void startShoppingFor(User customer) throws NullPointerException {
-        if (customer == null) {
-            throw new NullPointerException("No selected Object");
-        }
+    private void selectUser(User user){
+        if(user!=null){
+            view.setOpenShoppingMaskEnabled(true);
+            view.setStartFor(user.getUsername());
+        }else
+        view.setOpenShoppingMaskEnabled(false);
+    }
+
+    public void openMaskWindow() {
         SaleSession saleSession = new SaleSession();
-        saleSession.setCustomer(customer);
-        saleSession.setSeller(model.getSeller());
-        ShoppingMaskUIController shoppingMask = new ShoppingMaskUIController(view, saleSession);
-        view.openShoppingMask(shoppingMask);
+        saleSession.setCustomer(searchBoxController.getSelectedObject());
+        saleSession.setSeller(LogInModel.getLoggedIn());
+        view.addShoppingMaskView("Einkauf für "+saleSession.getCustomer().getUsername(),new ShoppingMaskUIController(saleSession).getView());
     }
 
-    @Override
-    public void refresh() {
-
-    }
-
-    @Override
-    public CashierShoppingMaskView getView() {
-        return view;
-    }
-
-    @Override
-    public CashierShoppingMaskModel getModel() {
-        return model;
+    public SearchBoxView<User> getSearchBoxView(){
+        return searchBoxController.getView();
     }
 }

@@ -20,6 +20,10 @@ public class SaleSession {
     @JoinColumn
     private User seller;
 
+    public static List<SaleSession> getAll(String condition) {
+        return Tools.getAll(SaleSession.class, condition);
+    }
+
     public User getCustomer() {
         return customer;
     }
@@ -38,9 +42,5 @@ public class SaleSession {
 
     public int getId() {
         return sSid;
-    }
-
-    public static List<SaleSession> getAll(String condition) {
-        return Tools.getAll(SaleSession.class, condition);
     }
 }

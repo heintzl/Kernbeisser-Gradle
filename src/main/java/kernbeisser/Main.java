@@ -5,12 +5,10 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Job;
-import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.*;
 import kernbeisser.StartUp.DataImport.DataImportController;
-import kernbeisser.Windows.LogIn.LogInController;
+import kernbeisser.Windows.LogIn.OldLogIn.LogInController;
+import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -29,14 +27,15 @@ public class Main {
      */
     public static void main(String[] args)
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
-                   IllegalAccessException, IOException, URISyntaxException {
-        doA(SaleSession.class);
+                   IllegalAccessException {
         buildEnvironment();
-        if (!ConfigManager.getHeader().getBoolean("Init")) {
-            SwingUtilities.invokeLater(() -> new DataImportController(new LogInController(null).getView()));
+        if (!ConfigManager.isDbInitialized()) {
+            SwingUtilities.invokeLater(() -> new DataImportController(new SimpleLogInController(null).getView()));
         } else {
             openLogIn();
         }
+
+
     }
 
     public static void buildEnvironment()
@@ -48,7 +47,7 @@ public class Main {
     }
 
     private static void openLogIn() {
-        SwingUtilities.invokeLater(() -> new LogInController(null));
+        SwingUtilities.invokeLater(() -> new SimpleLogInController(null));
     }
 
     private static void createTestJobs(int count) {
@@ -86,19 +85,4 @@ public class Main {
         }
     }
 
-    private static void doA(Class c) {
-        printClass(c, e -> doB(c.getSimpleName()) + "_" + doB(e.getName()) + "_READ,\n" + doB(
-                c.getSimpleName()) + "_" + doB(e.getName()) + "_WRITE,");
-    }
-
-    public static String doB(String s) {
-        int pos = 0;
-        for (char c : s.toCharArray()) {
-            if (Character.isUpperCase(c) && pos != 0) {
-                s = s.replaceFirst(c + "", "_" + c);
-            }
-            pos += 2;
-        }
-        return s.toUpperCase();
-    }
 }

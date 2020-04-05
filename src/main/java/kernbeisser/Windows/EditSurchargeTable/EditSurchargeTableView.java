@@ -16,7 +16,7 @@ class EditSurchargeTableView extends Window {
     private JTextField name;
     private IntegerParseField from;
     private IntegerParseField to;
-    private IntegerParseField surcharge;
+    private kernbeisser.CustomComponents.TextFields.DoubleParseField surcharge;
     private JPanel main;
 
     EditSurchargeTableView(EditSurchargeTableController controller, Window current) {
@@ -27,6 +27,7 @@ class EditSurchargeTableView extends Window {
         add(main);
         pack();
         setLocationRelativeTo(null);
+        windowInitialized();
     }
 
     void setSuppliers(Collection<Supplier> suppliers) {
@@ -44,9 +45,9 @@ class EditSurchargeTableView extends Window {
 
     SurchargeTable collect(SurchargeTable table) {
         table.setSupplier((Supplier) supplier.getSelectedItem());
-        table.setSurcharge(surcharge.getValue());
-        table.setFrom(from.getValue());
-        table.setTo(to.getValue());
+        table.setSurcharge(surcharge.getSafeValue());
+        table.setFrom(from.getSafeValue());
+        table.setTo(to.getSafeValue());
         table.setName(name.getText());
         return table;
     }

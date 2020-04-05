@@ -5,6 +5,7 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Container;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
@@ -14,7 +15,7 @@ import java.util.Collection;
 
 public class ContainerView extends Window {
     private ObjectTable<Container> unpaidContainers;
-    private JButton commit;
+    private kernbeisser.CustomComponents.PermissionButton commit;
     private ObjectTable<Container> lastContainers;
     private IntegerParseField amount;
     private IntegerParseField kbNumber;
@@ -24,6 +25,8 @@ public class ContainerView extends Window {
     private DoubleParseField netPrice;
     private JLabel sellingPrice;
     private JPanel main;
+    private JPanel insertSection;
+    private JLabel insertSectionLabel;
 
     private ContainerController controller;
 
@@ -44,36 +47,54 @@ public class ContainerView extends Window {
             }
         });
         add(main);
+        windowInitialized();
+    }
+
+    void setInsertSectionEnabled(boolean b){
+        insertSection.setVisible(b);
+        insertSectionLabel.setVisible(b);
     }
 
     int getAmount() {
-        return amount.getValue();
+        return amount.getSafeValue();
+    }
+
+    void setAmount(String s) {
+        amount.setText(s);
     }
 
     int getKkNumber() {
-        return kkNumber.getValue();
+        return kkNumber.getSafeValue();
+    }
+
+    void setKkNumber(String s) {
+        kkNumber.setText(s);
     }
 
     int getNetPrice() {
-        return (int) (netPrice.getValue() * 100);
+        return (int) (netPrice.getSafeValue() * 100);
+    }
+
+    void setNetPrice(String s) {
+        netPrice.setText(s);
     }
 
     private void createUIComponents() {
         lastContainers = new ObjectTable<>(
-                Column.create("Anzahl", Container::getAmount),
-                Column.create("Ladennummer", Container::getKBNumber),
-                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber()),
-                Column.create("Produktname", e -> e.getItem().getName()),
-                Column.create("Netto-Preis", e -> e.getNetPrice() / 100f + "€"),
-                Column.create("Verkaufspreis", e -> e.getPrice() / 100f + "€")
+                Column.create("Anzahl", Container::getAmount, Key.CONTAINER_AMOUNT_READ),
+                Column.create("Ladennummer", Container::getKBNumber,Key.CONTAINER_ITEM_READ,Key.ARTICLE_KB_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Produktname", e -> e.getItem().getName(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_NAME_READ),
+                Column.create("Netto-Preis", e -> e.getNetPrice() + "€",Key.CONTAINER_ITEM_READ,Key.ARTICLE_NET_PRICE_READ),
+                Column.create("Verkaufspreis", e -> "notDefined" + "€")
         );
         unpaidContainers = new ObjectTable<>(
-                Column.create("Anzahl", Container::getAmount),
-                Column.create("Ladennummer", Container::getKBNumber),
-                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber()),
-                Column.create("Produktname", e -> e.getItem().getName()),
-                Column.create("Netto-Preis", e -> e.getNetPrice() / 100f + "€"),
-                Column.create("Verkaufspreis", e -> e.getPrice() / 100f + "€"),
+                Column.create("Anzahl", Container::getAmount,Key.CONTAINER_AMOUNT_READ),
+                Column.create("Ladennummer", Container::getKBNumber,Key.CONTAINER_ITEM_READ,Key.ARTICLE_KB_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Produktname", e -> e.getItem().getName(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_NAME_READ),
+                Column.create("Netto-Preis", e -> e.getNetPrice() + "€",Key.CONTAINER_ITEM_READ,Key.ARTICLE_NET_PRICE_READ),
+                Column.create("Verkaufspreis", e -> "notDefined" + "€"),
                 new Column<Container>() {
                     @Override
                     public String getName() {
@@ -107,22 +128,6 @@ public class ContainerView extends Window {
         sellingPrice.setText(s);
     }
 
-    void setKbNumber(String s) {
-        kbNumber.setText(s);
-    }
-
-    void setKkNumber(String s) {
-        kkNumber.setText(s);
-    }
-
-    void setNetPrice(String s) {
-        netPrice.setText(s);
-    }
-
-    void setAmount(String s) {
-        amount.setText(s);
-    }
-
     Container getSelectedUnpaidOrder() {
         return unpaidContainers.getSelectedObject();
     }
@@ -136,7 +141,11 @@ public class ContainerView extends Window {
     }
 
     public int getKbNumber() {
-        return kbNumber.getValue();
+        return kbNumber.getSafeValue();
+    }
+
+    void setKbNumber(String s) {
+        kbNumber.setText(s);
     }
 
     @Override

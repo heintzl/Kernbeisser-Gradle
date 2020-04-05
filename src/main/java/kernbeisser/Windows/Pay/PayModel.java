@@ -41,14 +41,14 @@ class PayModel implements Model {
         return saleSession;
     }
 
-    int shoppingCartSum() {
+    double shoppingCartSum() {
         return shoppingCart.stream()
-                           .mapToInt(e -> PriceCalculator.getShoppingItemPrice(e, saleSession.getCustomer()
+                           .mapToDouble(e -> PriceCalculator.getShoppingItemPrice(e, saleSession.getCustomer()
                                                                                              .getSolidaritySurcharge()))
                            .sum();
     }
 
-    boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, int sum) {
+    boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) {
         //Build connection by default
         EntityManager em = DBConnection.getEntityManager();
 

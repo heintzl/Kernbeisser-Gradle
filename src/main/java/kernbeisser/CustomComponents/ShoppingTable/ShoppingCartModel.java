@@ -7,26 +7,30 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class ShoppingCartModel implements Model {
+    private final double userValue;
+    private final double userSurcharge;
     private HashMap<ShoppingItem,ShoppingItem> shoppingItems = new HashMap<>();
-    private final int userValue;
-    private final int userSurcharge;
 
 
-    ShoppingCartModel(int userValue,int userSurcharge) {
+    ShoppingCartModel(double userValue, double userSurcharge) {
         this.userValue = userValue;
         this.userSurcharge = userSurcharge;
     }
 
-    void addItem(ShoppingItem item) {
+    void addItem(ShoppingItem item, boolean stack) {
         ShoppingItem current = shoppingItems.get(item);
         if (current != null) {
-            current.setItemAmount(item.getItemAmount() + current.getItemAmount());
+            if (stack) {
+                current.setItemMultiplier(item.getItemMultiplier() + current.getItemMultiplier());
+            } else {
+                current.setItemNetPrice(current.getItemNetPrice() + item.getItemNetPrice());
+            }
         } else {
-            shoppingItems.put(item,item);
+            shoppingItems.put(item, item);
         }
     }
 
-    public int getUserValue() {
+    public double getUserValue() {
         return userValue;
     }
 
@@ -34,7 +38,7 @@ public class ShoppingCartModel implements Model {
         return shoppingItems.values();
     }
 
-    public int getUserSurcharge() {
+    public double getUserSurcharge() {
         return userSurcharge;
     }
 }

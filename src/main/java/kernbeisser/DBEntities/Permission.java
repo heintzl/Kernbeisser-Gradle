@@ -1,9 +1,11 @@
 package kernbeisser.DBEntities;
 
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Key;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +23,10 @@ public class Permission {
     @JoinColumn
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Key> keySet = new HashSet<>();
+
+    public static List<Permission> getAll(String condition) {
+        return Tools.getAll(Permission.class, condition);
+    }
 
     public int getId() {
         return id;
@@ -51,7 +57,44 @@ public class Permission {
         return name;
     }
 
-    public static List<Permission> getAll(String condition) {
-        return Tools.getAll(Permission.class, condition);
+    public static Collection<Permission> defaultSearch(String s, int max) {
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Permission> out = em.createQuery(
+                "select p from Permission p where p.name like :s",
+                Permission.class
+        )
+                                .setParameter("s", s + "%")
+                                .setMaxResults(max)
+                                .getResultList();
+        em.close();
+        return out;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Permission)) {
+            return false;
+        }
+
+        Permission that = (Permission) o;
+
+        if (getId() != that.getId()) {
+            return false;
+        }
+        if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) {
+            return false;
+        }
+        return getKeySet() != null ? getKeySet().equals(that.getKeySet()) : that.getKeySet() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId();
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        result = 31 * result + (getKeySet() != null ? getKeySet().hashCode() : 0);
+        return result;
     }
 }

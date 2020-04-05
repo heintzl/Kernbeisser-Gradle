@@ -3,10 +3,13 @@ package kernbeisser.Windows.UserMenu;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Purchase;
+import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.Collection;
 
 public class UserMenuView extends Window implements View {
@@ -36,6 +39,7 @@ public class UserMenuView extends Window implements View {
         add(main);
         setSize(900, 600);
         setLocationRelativeTo(null);
+        windowInitialized();
     }
 
     Purchase getSelected() {
@@ -53,7 +57,7 @@ public class UserMenuView extends Window implements View {
     private void createUIComponents() {
         buyHistory = new ObjectTable<>(
                 Column.create("Datum", Purchase::getCreateDate),
-                Column.create("Betrag", e -> e.getSum() / 100f + "€"),
+                Column.create("Betrag", e -> e.getSum() + "€"),
                 Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession()
                                                                                                      .getSeller()
                                                                                                      .getSurname()),

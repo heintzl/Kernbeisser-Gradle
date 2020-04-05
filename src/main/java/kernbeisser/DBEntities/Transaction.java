@@ -16,7 +16,7 @@ public class Transaction {
     private int id;
 
     @Column
-    private int value;
+    private double value;
 
     @JoinColumn
     @ManyToOne
@@ -43,11 +43,37 @@ public class Transaction {
         em.close();
     }
 
-    public int getValue() {
+    public static List<Transaction> getAll(String condition) {
+        return Tools.getAll(Transaction.class, condition);
+    }
+
+    public static void doTransaction(User from, User to, double value) {
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        if (from != null) {
+            UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
+            fromUG.setValue(fromUG.getValue() - value);
+            em.persist(fromUG);
+        }
+        UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
+        toUG.setValue(toUG.getValue() + value);
+        em.persist(toUG);
+        Transaction transaction = new Transaction();
+        transaction.setValue(value);
+        transaction.setTo(to);
+        transaction.setFrom(from);
+        em.persist(transaction);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+
+    public double getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
@@ -69,31 +95,5 @@ public class Transaction {
 
     public Date getDate() {
         return date;
-    }
-
-    public static List<Transaction> getAll(String condition) {
-        return Tools.getAll(Transaction.class, condition);
-    }
-
-    public static void doTransaction(User from, User to, int value) {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        if (from != null) {
-            UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
-            fromUG.setValue(fromUG.getValue() - value);
-            em.persist(fromUG);
-        }
-        UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
-        toUG.setValue(toUG.getValue() + value);
-        em.persist(toUG);
-        Transaction transaction = new Transaction();
-        transaction.setValue(value);
-        transaction.setTo(to);
-        transaction.setFrom(from);
-        em.persist(transaction);
-        em.flush();
-        et.commit();
-        em.close();
     }
 }

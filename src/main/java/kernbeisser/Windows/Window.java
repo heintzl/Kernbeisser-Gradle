@@ -9,35 +9,46 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Window extends JFrame {
-    private final Window current;
-    private static Window lastOpened;
     private static final Image STANDARD_IMAGE;
+    private static Window lastOpened;
+    private boolean access = true;
 
     static {
         STANDARD_IMAGE = Images.getImage("Icon.png");
     }
 
+    private final Window current;
+
     public Window(Window currentWindow, Key... required) {
         this.current = currentWindow;
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         if (required.length != 0 && !LogInModel.getLoggedIn().hasPermission(required)) {
+            access = false;
             JOptionPane.showMessageDialog(currentWindow, "Sie haben keine Berechtigung dieses Fenster zu öffnen");
+            windowInitialized();
             back();
             return;
         }
         setIconImage(STANDARD_IMAGE);
-        pack();
-        if (currentWindow != null) {
-            setSize(currentWindow.getSize());
+        lastOpened = this;
+    }
+
+    public final void windowInitialized(){
+        if(!access)return;
+        if(getSize().height == 0 && getSize().width == 0) {
+            pack();
+            if (current != null) {
+                setSize(current.getSize());
+            }
         }
         setLocationRelativeTo(null);
         addWindowListener((WindowCloseEvent) e -> {
             back();
         });
-        if (currentWindow != null) {
-            currentWindow.close();
+        if (current != null) {
+            current.close();
         }
         this.open();
-        lastOpened = this;
     }
 
     public static Window getLastOpened() {
@@ -45,14 +56,17 @@ public class Window extends JFrame {
     }
 
     public final void back() {
-        if (current == null) {
-            finish();
-            kill();
-        } else {
-            current.open();
-            finish();
-            kill();
+        if(!isCloseable()){
+            return;
         }
+        if (current != null) {
+            current.open();
+        }
+        finish();
+        kill();
+    }
+    protected boolean isCloseable(){
+        return true;
     }
 
     protected void open() {
@@ -63,6 +77,7 @@ public class Window extends JFrame {
         setVisible(false);
     }
 
+    public void maximize() {this.setState(MAXIMIZED_BOTH);}
     /**
      * Custom action after the window become cosed
      **/

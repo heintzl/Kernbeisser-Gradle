@@ -3,6 +3,7 @@ package kernbeisser.CustomComponents;
 import kernbeisser.CustomComponents.ObjectTree.ChildFactory;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
 
 import java.util.Collection;
@@ -33,7 +34,7 @@ public class PriceListTree extends ObjectTree<PriceList> {
                       return priceList.getName();
                   }
               },
-              "Preislisten",PriceList.getAllHeadPriceLists());
+              "Preislisten", PriceList.getAllHeadPriceLists());
         if (optionToEdit) {
             PriceList p = new PriceList() {
                 @Override
@@ -46,10 +47,9 @@ public class PriceListTree extends ObjectTree<PriceList> {
             refresh();
             addSelectionListener(e -> {
                 if (e.getId() == Integer.MIN_VALUE) {
-                    new ManagePriceListsView(null) {
+                    new ManagePriceListsController(null) {
                         @Override
                         public void finish() {
-                            dispose();
                             PriceListTree.this.setModel(new PriceListTree().getModel());
                         }
                     };

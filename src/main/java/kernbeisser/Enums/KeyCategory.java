@@ -4,7 +4,7 @@ public enum KeyCategory {
     ACTION,
     SPECIAL,
     USERS,
-    ITEMS,
+    ARTICLE,
     SHOPPING_ITEMS,
     CONTAINERS,
     JOBS,
@@ -17,5 +17,5 @@ public enum KeyCategory {
     SURCHARGE_TABLE,
     TRANSACTION,
     USER_GROUP,
-    ITEM_KK
+    WINDOW, ARTICLE_KK
 }

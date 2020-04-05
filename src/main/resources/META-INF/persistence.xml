@@ -6,12 +6,12 @@
              version="2.1">
     <persistence-unit name="Kernbeisser">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>kernbeisser.DBEntities.Offer</class>
         <class>kernbeisser.DBEntities.Supplier</class>
         <class>kernbeisser.DBEntities.PriceList</class>
-        <class>kernbeisser.DBEntities.Item</class>
+        <class>kernbeisser.DBEntities.Article</class>
         <class>kernbeisser.DBEntities.User</class>
-        <class>kernbeisser.DBEntities.Shelf</class>
-        <class>kernbeisser.DBEntities.ItemKK</class>
+        <class>kernbeisser.DBEntities.ArticleKornkraft</class>
         <class>kernbeisser.DBEntities.UserGroup</class>
         <class>kernbeisser.DBEntities.ShoppingItem</class>
         <class>kernbeisser.DBEntities.SaleSession</class>
@@ -21,6 +21,11 @@
         <class>kernbeisser.DBEntities.SurchargeTable</class>
         <class>kernbeisser.DBEntities.Container</class>
         <class>kernbeisser.DBEntities.Permission</class>
+        <class>kernbeisser.DBEntities.Offer</class>
+        <class>kernbeisser.DBEntities.SettingValue</class>
+        <class>kernbeisser.DBEntities.UserSettingValue</class>
+        <class>kernbeisser.DBEntities.Inventory</class>
+        <class>kernbeisser.DBEntities.InventoryState</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>

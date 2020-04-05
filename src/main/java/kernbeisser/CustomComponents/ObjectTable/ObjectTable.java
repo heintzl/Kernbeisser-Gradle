@@ -2,12 +2,15 @@ package kernbeisser.CustomComponents.ObjectTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ObjectTable<T> extends JTable {
@@ -16,24 +19,22 @@ public class ObjectTable<T> extends JTable {
     private ArrayList<Column<T>> columns = new ArrayList<>();
     private boolean complex = false;
 
+
     public ObjectTable(Collection<Column<T>> columns) {
-        this(null,columns);
+        this(null, columns);
     }
 
-    public ObjectTable(Collection<T> fill,Column<T>... columns) {
-        this(fill,Arrays.asList(columns));
+    @SafeVarargs
+    public ObjectTable(Collection<T> fill, Column<T>... columns) {
+        this(fill, Arrays.asList(columns));
     }
 
+    @SafeVarargs
     public ObjectTable(Column<T>... columns) {
         this(Arrays.asList(columns));
     }
 
-    public void setComplex(boolean v) {
-        complex = v;
-        repaintUI();
-    }
-
-    ObjectTable(Collection<T> fill,Collection<Column<T>> columns) {
+    ObjectTable(Collection<T> fill, Collection<Column<T>> columns) {
         this.columns.addAll(columns);
         if (fill != null) {
             objects.addAll(fill);
@@ -55,11 +56,16 @@ public class ObjectTable<T> extends JTable {
         repaintUI();
     }
 
+    public void setComplex(boolean v) {
+        complex = v;
+        repaintUI();
+    }
+
     private void handleCellComponentEvents() {
         if (!complex) {
             return;
         }
-        Object cell = getValueAt(getSelectedRow(),getSelectedColumn());
+        Object cell = getValueAt(getSelectedRow(), getSelectedColumn());
         if (!(cell instanceof Component)) {
             return;
         }
@@ -146,15 +152,15 @@ public class ObjectTable<T> extends JTable {
         for (int i = 0; i < columns.size(); i++) {
             names[i] = columns.get(i).getName();
         }
-        setModel(new DefaultTableModel(values,names) {
+        setModel(new DefaultTableModel(values, names) {
             @Override
-            public boolean isCellEditable(int row,int column) {
+            public boolean isCellEditable(int row, int column) {
                 return false;
             }
         });
         if (complex) {
             for (String name : names) {
-                getColumn(name).setCellRenderer((table,value,isSelected,hasFocus,row,column) -> {
+                getColumn(name).setCellRenderer((table, value, isSelected, hasFocus, row, column) -> {
                     if (value instanceof Component) {
                         return (Component) value;
                     } else {

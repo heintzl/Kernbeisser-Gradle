@@ -20,39 +20,50 @@ public class SurchargeTable implements Serializable, Cloneable {
         standard.to = -1;
         standard.name = "DEFAULT";
         standard.supplier = null;
-        standard.surcharge = 7;
+        standard.surcharge = 0.07;
         DEFAULT = standard;
-    }
-
-    public SurchargeTable() {
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
     private int stid;
-
     @Column
-    private int surcharge;
-
+    private double surcharge;
     @Column(name = "\"from\"")
     private int from;
-
     @Column(name = "\"to\"")
     private int to;
-
     @Column
     private String name;
-
     @JoinColumn
     @ManyToOne
     private Supplier supplier;
 
-    public int getSurcharge() {
+    public SurchargeTable() {
+    }
+
+    public static List<SurchargeTable> getAll(String condition) {
+        return Tools.getAll(SurchargeTable.class, condition);
+    }
+
+    public static Collection<SurchargeTable> defaultSearch(String s, int max) {
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<SurchargeTable> out = em.createQuery(
+                "select s from SurchargeTable s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",
+                SurchargeTable.class)
+                                           .setParameter("search", s + "%")
+                                           .setMaxResults(max)
+                                           .getResultList();
+        em.close();
+        return out;
+    }
+
+    public double getSurcharge() {
         return surcharge;
     }
 
-    public void setSurcharge(int surcharge) {
+    public void setSurcharge(double surcharge) {
         this.surcharge = surcharge;
     }
 
@@ -90,22 +101,6 @@ public class SurchargeTable implements Serializable, Cloneable {
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
-    }
-
-    public static List<SurchargeTable> getAll(String condition) {
-        return Tools.getAll(SurchargeTable.class, condition);
-    }
-
-    public static Collection<SurchargeTable> defaultSearch(String s, int max) {
-        EntityManager em = DBConnection.getEntityManager();
-        Collection<SurchargeTable> out = em.createQuery(
-                "select s from SurchargeTable s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",
-                SurchargeTable.class)
-                                           .setParameter("search", s + "%")
-                                           .setMaxResults(max)
-                                           .getResultList();
-        em.close();
-        return out;
     }
 
 }

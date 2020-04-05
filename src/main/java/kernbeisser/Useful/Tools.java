@@ -1,6 +1,8 @@
 package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.User;
+import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -10,10 +12,13 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -277,11 +282,11 @@ public class Tools {
         }
     }
 
-    public static <T> void delete(T t, Object key) {
+    public static <T> void delete(Class<T> t, Object key) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.remove(em.find(t.getClass(), key));
+        em.remove(em.find(t, key));
         em.flush();
         et.commit();
         em.close();

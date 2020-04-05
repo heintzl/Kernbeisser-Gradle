@@ -67,6 +67,10 @@ public class Supplier implements Serializable {
         }
     }
 
+    public static List<Supplier> getAll(String condition) {
+        return Tools.getAll(Supplier.class, condition);
+    }
+
     @Override
     public String toString() {
         return name;
@@ -138,9 +142,5 @@ public class Supplier implements Serializable {
 
     public void setKeeper(String keeper) {
         this.keeper = keeper;
-    }
-
-    public static List<Supplier> getAll(String condition) {
-        return Tools.getAll(Supplier.class, condition);
     }
 }
