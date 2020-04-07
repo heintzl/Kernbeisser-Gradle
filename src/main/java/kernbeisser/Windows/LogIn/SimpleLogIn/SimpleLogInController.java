@@ -1,6 +1,7 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Model;
@@ -37,6 +38,8 @@ public class SimpleLogInController implements Controller {
             new UserMenuController(view);
         } catch (AccessDeniedException e) {
             view.accessDenied();
+        } catch (PermissionRequired permissionRequired) {
+            view.permissionRequired();
         }
     }
 }

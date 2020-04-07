@@ -1,6 +1,7 @@
 package kernbeisser.Windows.LogIn.OldLogIn;
 
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.LogIn.OldLogIn.LogInView;
@@ -26,6 +27,8 @@ public class LogInController implements Controller {
             openUserMenu();
         } catch (AccessDeniedException e) {
             view.accessDenied();
+        } catch (PermissionRequired permissionRequired) {
+            view.permissionRequired();
         }
     }
 

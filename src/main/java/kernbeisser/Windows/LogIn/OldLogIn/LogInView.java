@@ -68,6 +68,10 @@ public class LogInView extends Window implements View {
     }
 
     public void accessDenied() {
-        JOptionPane.showMessageDialog(this,"Zugriff verweigert.\nBitte überprüfen sie ihre Anmeldedaten,\n sollte das Problem weiter bestehen,\n melden sie sich bitte bei einem Admin\n");
+        JOptionPane.showMessageDialog(this,"Zugriff verweigert. Anmeldedaten sind inkorrect!");
+    }
+
+    public void permissionRequired() {
+        JOptionPane.showMessageDialog(this,"Zugriff verweigert.\nIhr Benutzerkonto hat Leider nicht die Berechtigung sich anzumelden.\nSie können es bei einem Admin freischalten lassen.");
     }
 }

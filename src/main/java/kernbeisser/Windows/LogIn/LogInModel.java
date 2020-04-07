@@ -5,6 +5,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -25,14 +26,15 @@ public class LogInModel implements Model {
         return loggedIn;
     }
 
-    public void logIn(String username, char[] password) throws AccessDeniedException {
+    public void logIn(String username, char[] password) throws AccessDeniedException, PermissionRequired {
         EntityManager em = DBConnection.getEntityManager();
         try {
             User user = em.createQuery(
                     "select u from User u where u.username like :username", User.class)
                           .setParameter("username", username).
                                   getSingleResult();
-            if ( BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified && user.hasPermission(Key.ACTION_LOGIN)) {
+            if ( BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
+                if(!user.hasPermission(Key.ACTION_LOGIN))throw new PermissionRequired();
                 loggedIn = user;
             } else {
                 throw new AccessDeniedException();
