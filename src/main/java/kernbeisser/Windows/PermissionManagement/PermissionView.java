@@ -14,7 +14,6 @@ public class PermissionView extends Window {
     private ObjectTable<Permission> permission;
     private JPanel main;
     private JComboBox<KeyCategory> category;
-    private JComboBox<Security> security;
     private JButton back;
     private JButton add;
     private JButton delete;
@@ -25,7 +24,6 @@ public class PermissionView extends Window {
         add.addActionListener(e -> controller.addPermission());
         delete.addActionListener(e -> controller.deletePermission());
         category.addActionListener(e -> controller.loadSolutions());
-        security.addActionListener(e -> controller.loadSolutions());
         back.addActionListener(e -> back());
         windowInitialized();
     }
@@ -69,22 +67,12 @@ public class PermissionView extends Window {
         this.permission.setObjects(permissions);
     }
 
-    void setSecurities(Security[] securities) {
-        security.removeAllItems();
-        for (Security security : securities) {
-            this.security.addItem(security);
-        }
-    }
 
     void setCategories(KeyCategory[] categories) {
         category.removeAllItems();
         for (KeyCategory keyCategory : categories) {
             category.addItem(keyCategory);
         }
-    }
-
-    public Security getSecurity() {
-        return (Security) security.getSelectedItem();
     }
 
     public KeyCategory getCategory() {
