@@ -327,7 +327,6 @@ public class DataImportController implements Controller {
                 //TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
                 //TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
                 article.setIntake(java.sql.Date.valueOf(LocalDate.now()));
-                article.setLastBuy(null);
                 article.setLastDelivery(Date.valueOf(LocalDate.now()));
                 article.setDeletedDate(null);
                 article.setCooling(Cooling.valueOf(columns[35]));

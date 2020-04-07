@@ -1,8 +1,6 @@
 package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.User;
-import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -12,13 +10,10 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -297,6 +292,51 @@ public class Tools {
         EntityTransaction et = em.getTransaction();
         et.begin();
         em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key)));
+        em.flush();
+        et.commit();
+        em.close();
+    }
+
+    public static <O, V> void addToCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier, V value){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        O db = em.find(c, key);
+        collectionSupplier.apply(db).add(value);
+        em.persist(db);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+    public static <O, V> void addMultipleToCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier, Collection<V> value){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        O db = em.find(c, key);
+        collectionSupplier.apply(db).addAll(value);
+        em.persist(db);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+    public static <O, V> void removeMultipleFromCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier, Collection<V> value){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        O db = em.find(c, key);
+        collectionSupplier.apply(db).removeAll(value);
+        em.persist(db);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+    public static <O, V> void removeFromCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier, V value){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        O db = em.find(c, key);
+        collectionSupplier.apply(db).remove(value);
+        em.persist(db);
         em.flush();
         et.commit();
         em.close();
