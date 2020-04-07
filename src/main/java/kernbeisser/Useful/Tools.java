@@ -278,20 +278,18 @@ public class Tools {
     }
 
     public static <T> void delete(Class<T> t, Object key) {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        em.remove(em.find(t, key));
-        em.flush();
-        et.commit();
-        em.close();
-    }
+        persistInDB(em -> em.remove(em.find(t, key)));
+     }
 
     public static <T> void edit(Object key, T to) {
+      persistInDB(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
+    }
+
+    public static void persistInDB(Consumer<EntityManager> dbAction) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key)));
+        dbAction.accept(em);
         em.flush();
         et.commit();
         em.close();
