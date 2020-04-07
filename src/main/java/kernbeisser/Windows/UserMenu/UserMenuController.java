@@ -9,6 +9,8 @@ import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
+import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
+import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskView;
 import kernbeisser.Windows.Window;
 
 public class UserMenuController implements Controller {
@@ -38,12 +40,7 @@ public class UserMenuController implements Controller {
     }
 
     public void beginSelfShopping() {
-        SaleSession saleSession = new SaleSession();
-        saleSession.setCustomer(model.getOwner());
-        saleSession.setSeller(model.getOwner());
-        Window w = new Window(view);
-        w.add(new ShoppingMaskUIController(saleSession).getView());
-        w.windowInitialized();
+        new SoloShoppingMaskController(view);
     }
 
     public void logOut() {
