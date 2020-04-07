@@ -4,7 +4,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
+import kernbeisser.CustomComponents.PermissionCheckBox;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DateParseField;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
@@ -12,6 +12,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Repeat;
+import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -36,6 +37,8 @@ public class SpecialPriceEditorView extends Window implements View {
     private JButton finishButton;
     private JButton searchFrom;
     private JButton searchTo;
+    private JLabel selectedArticle;
+    private PermissionCheckBox filterActionArticle;
 
     private final SpecialPriceEditorController controller;
 
@@ -56,6 +59,7 @@ public class SpecialPriceEditorView extends Window implements View {
         searchTo.addActionListener(e -> controller.searchTo());
         searchTo.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR,ICON_SIZE,Color.GRAY));
         searchFrom.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR,ICON_SIZE,Color.GRAY));
+        filterActionArticle.addActionListener(e -> controller.refreshSearchSolutions());
         setSize(670,600);
         windowInitialized();
     }
@@ -96,16 +100,16 @@ public class SpecialPriceEditorView extends Window implements View {
         remove.setEnabled(b);
     }
 
+    void setSelectedArticleIdentifier(String name){
+        selectedArticle.setText(name == null ? "Kein Artikel ausgewählt" : name);
+    }
+
+    boolean filterOnlyActionArticle(){
+        return filterActionArticle.isSelected();
+    }
+
     private void createUIComponents() {
-        SearchBoxController<Article> searchBoxController = new SearchBoxController<>(Article::defaultSearch, controller::load,
-                                                                                     Column.create("Name", Article::getName),
-                                                                                     Column.create("Barcode", Article::getBarcode),
-                                                                                     Column.create("Lieferant",
-                                                                                                   Article::getSupplier),
-                                                                                     Column.create("Kernbeissernummer",
-                                                                                                   Article::getKbNumber)
-        );
-        searchBox = searchBoxController.getView();
+        searchBox = controller.getSearchBoxView();
         offers = new ObjectTable<>(Column.create("Von",Offer::getFromDate),Column.create("Bis",Offer::getToDate),Column.create("Aktionsnettopreis",Offer::getSpecialNetPrice),Column.create("Wiederholung",Offer::getRepeatMode));
         from = new DateParseField();
         to = new DateParseField();
@@ -115,20 +119,27 @@ public class SpecialPriceEditorView extends Window implements View {
         return offers.getSelectedObject();
     }
 
-    public Date getFrom() {
-        return Date.valueOf(from.getValue());
+    public Date getFrom() throws IncorrectInput {
+        return Date.valueOf(from.getUncheckedValue());
     }
 
-    public Date getTo() {
-        return Date.valueOf(to.getValue());
+    public Date getTo() throws IncorrectInput {
+        return Date.valueOf(to.getUncheckedValue());
     }
 
     int getSpecialPrice() {
-        return (int) (specialNetPrice.getValue() * 100);
+        return (int) (specialNetPrice.getSafeValue() * 100);
     }
 
     Repeat getRepeatMode() {
         return (Repeat) repeat.getSelectedItem();
     }
 
+    public void setAddEnable(boolean b) {
+        add.setEnabled(b);
+    }
+
+    public void cannotParseDateFormat() {
+        JOptionPane.showMessageDialog(this,"Das angegebene Datum kann nicht eingelesen werden,\n bitte überprüfen sie ob das folgende Format eingehalten wurde:\n dd:mm:yyyy");
+    }
 }

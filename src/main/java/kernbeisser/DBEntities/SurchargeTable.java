@@ -20,7 +20,7 @@ public class SurchargeTable implements Serializable, Cloneable {
         standard.to = -1;
         standard.name = "DEFAULT";
         standard.supplier = null;
-        standard.surcharge = 7;
+        standard.surcharge = 0.07;
         DEFAULT = standard;
     }
 
@@ -29,8 +29,7 @@ public class SurchargeTable implements Serializable, Cloneable {
     @Column
     private int stid;
     @Column
-    //TODO save as double
-    private int surcharge;
+    private double surcharge;
     @Column(name = "\"from\"")
     private int from;
     @Column(name = "\"to\"")
@@ -60,11 +59,11 @@ public class SurchargeTable implements Serializable, Cloneable {
         return out;
     }
 
-    public int getSurcharge() {
+    public double getSurcharge() {
         return surcharge;
     }
 
-    public void setSurcharge(int surcharge) {
+    public void setSurcharge(double surcharge) {
         this.surcharge = surcharge;
     }
 

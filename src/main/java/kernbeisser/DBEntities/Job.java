@@ -1,11 +1,13 @@
 package kernbeisser.DBEntities;
 
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -62,5 +64,19 @@ public class Job {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Job && ((Job) obj).getId() == this.getId();
+    }
+
+    public static Collection<Job> defaultSearch(String s, int max) {
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Job> out = em.createQuery(
+                "select j from Job j where j.name like :s or description like :sn",
+                Job.class
+        )
+                                    .setParameter("s", s + "%")
+                                    .setParameter("sn", "%"+s + "%")
+                                    .setMaxResults(max)
+                                    .getResultList();
+        em.close();
+        return out;
     }
 }

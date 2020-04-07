@@ -63,7 +63,7 @@
               <focusable value="true"/>
               <font name="Arial" size="16"/>
               <foreground color="-4473925"/>
-              <text value="Anzahl"/>
+              <text value="Menge"/>
             </properties>
           </component>
           <component id="32327" class="javax.swing.JLabel">

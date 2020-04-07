@@ -20,15 +20,9 @@ public class User implements Serializable {
     @Column(updatable = false, insertable = false, nullable = false)
     private int id;
 
-    @Column
-    private int salesThisYear;
-
     @JoinColumn
-    @OneToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Permission> permissions = new HashSet<>();
-
-    @Column
-    private int salesLastYear;
 
     @Column
     private int shares;
@@ -40,11 +34,8 @@ public class User implements Serializable {
     private String extraJobs;
 
     @JoinColumn
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Job> jobs = new HashSet<>();
-
-    @Column
-    private Date lastBuy;
 
     @Column
     private boolean kernbeisserKey;
@@ -96,11 +87,15 @@ public class User implements Serializable {
         return Tools.getAll(User.class, condition);
     }
 
-    public static User getById(int id) {
+    public static User getByUsername(String username) throws NoResultException{
         EntityManager em = DBConnection.getEntityManager();
-        User out = em.createQuery("select u from User u where u.id = " + id, User.class).getSingleResult();
-        em.close();
-        return out;
+        try{
+            return em.createQuery("select u from User u where u.username = :username", User.class).setParameter("username",username).getSingleResult();
+        }catch (NoResultException e){
+            throw e;
+        }finally {
+            em.close();
+        }
     }
 
     public static Collection<User> defaultSearch(String s, int max) {
@@ -113,22 +108,6 @@ public class User implements Serializable {
                                  .getResultList();
         em.close();
         return out;
-    }
-
-    public int getSalesThisYear() {
-        return salesThisYear;
-    }
-
-    public void setSalesThisYear(int salesThisYear) {
-        this.salesThisYear = salesThisYear;
-    }
-
-    public int getSalesLastYear() {
-        return salesLastYear;
-    }
-
-    public void setSalesLastYear(int salesLastYear) {
-        this.salesLastYear = salesLastYear;
     }
 
     public int getShares() {
@@ -162,14 +141,6 @@ public class User implements Serializable {
     public void setJobs(Set<Job> jobs) {
         this.jobs.clear();
         this.jobs.addAll(jobs);
-    }
-
-    public Date getLastBuy() {
-        return lastBuy;
-    }
-
-    public void setLastBuy(Date lastBuy) {
-        this.lastBuy = lastBuy;
     }
 
     public boolean isKernbeisserKey() {

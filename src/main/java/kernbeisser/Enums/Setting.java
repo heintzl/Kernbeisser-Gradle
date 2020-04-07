@@ -5,7 +5,8 @@ import kernbeisser.DBEntities.SettingValue;
 public enum Setting {
     VAT_LOW("0.07"),
     VAT_HIGH("0.19"),
-    DEFAULT_MAX_SEARCH("500")
+    DEFAULT_MAX_SEARCH("500"),
+    CONTAINER_SURCHARGE_REDUCTION ("0.5")
     ;
 
     private final String defaultValue;

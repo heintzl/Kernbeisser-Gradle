@@ -1,37 +1,26 @@
 package kernbeisser.CustomComponents.TextFields;
 
+import kernbeisser.Exeptions.IncorrectInput;
+
 import java.util.function.Function;
 
-public class IntegerParseField extends FilterField {
-    IntegerParseField(int max, int min) {
+public class IntegerParseField extends FilterField<Integer> {
+    IntegerParseField(int min, int max) {
         super(e -> {
             try {
-                if (e.equals("")) {
-                    return true;
+                if (e.equals("")||e.equals("-")) {
+                    return 0;
                 }
-                int v = Integer.parseInt(e);
-                return v >= min && v <= max;
+                int v = Integer.parseInt(e.replace(",","."));
+                if(v <= min || v >= max)throw new IncorrectInput("integer "+v+" is not between min: "+min+" and max: "+max);
+                return v;
             } catch (NumberFormatException ex) {
-                return false;
+                throw new IncorrectInput("cannot parse integer from "+e);
             }
         });
     }
 
     public IntegerParseField() {
-        super(e -> {
-            try {
-                if (e.equals("")) {
-                    return true;
-                }
-                Integer.parseInt(e);
-                return true;
-            } catch (NumberFormatException ex) {
-                return false;
-            }
-        });
-    }
-
-    public int getValue() {
-        return getText().equals("") ? 0 : Integer.parseInt(getText());
+        this(Integer.MIN_VALUE,Integer.MAX_VALUE);
     }
 }

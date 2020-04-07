@@ -2,6 +2,7 @@ package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
+import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;

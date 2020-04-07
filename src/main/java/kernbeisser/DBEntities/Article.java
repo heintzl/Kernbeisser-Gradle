@@ -47,7 +47,7 @@ public class Article {
     private Long barcode;
 
     @Column
-    private VAT vat;
+    private VAT vat = VAT.LOW;
 
     @Column
     private double singleDeposit;
@@ -106,17 +106,6 @@ public class Article {
     private int delivered;
 
     @Column
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<Integer> invShelf = new ArrayList<>(5);
-
-    @Column
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<Integer> invStock = new ArrayList<>(5);
-
-    @Column
-    private double invPrice;
-
-    @Column
     private Date intake;
 
     @Column
@@ -138,15 +127,15 @@ public class Article {
         return Tools.getAll(Article.class, condition);
     }
 
-    public static Collection<Article> defaultSearch(String s, int max) {
+    public static Collection<Article> defaultSearch(String search, int maxResults) {
         EntityManager em = DBConnection.getEntityManager();
         Collection<Article> out = em.createQuery(
-                "select i from Article i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or barcode like '%" + s + "'",
+                "select i from Article i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n",
                 Article.class
         )
-                                    .setParameter("n", Tools.tryParseInteger(s))
-                                    .setParameter("s", s + "%")
-                                    .setMaxResults(max)
+                                    .setParameter("n", Tools.tryParseInteger(search))
+                                    .setParameter("s", search + "%")
+                                    .setMaxResults(maxResults)
                                     .getResultList();
         em.close();
         return out;
@@ -382,29 +371,6 @@ public class Article {
         this.delivered = delivered;
     }
 
-    public List<Integer> getInvShelf() {
-        return invShelf;
-    }
-
-    public void setInvShelf(List<Integer> invShelf) {
-        this.invShelf = invShelf;
-    }
-
-    public List<Integer> getInvStock() {
-        return invStock;
-    }
-
-    public void setInvStock(List<Integer> invStock) {
-        this.invStock = invStock;
-    }
-
-    public double getInvPrice() {
-        return invPrice;
-    }
-
-    public void setInvPrice(double invPrice) {
-        this.invPrice = invPrice;
-    }
 
     public Date getIntake() {
         return intake;

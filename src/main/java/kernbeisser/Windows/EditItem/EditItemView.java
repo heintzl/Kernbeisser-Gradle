@@ -131,15 +131,15 @@ public class EditItemView extends Window implements View {
 
     Article collectItem(Article out) {
         out.setName(itemName.getText());
-        out.setNetPrice((int) (netPrice.getValue() * 100));
-        out.setSingleDeposit((int) (deposit.getValue() * 100));
-        out.setKbNumber(kbItemNumber.getValue());
+        out.setNetPrice((int) (netPrice.getSafeValue() * 100));
+        out.setSingleDeposit((int) (deposit.getSafeValue() * 100));
+        out.setKbNumber(kbItemNumber.getSafeValue());
         out.setVAT((VAT) vat.getSelectedItem());
-        out.setSuppliersItemNumber(supplierItemNumber.getValue());
-        out.setSuppliersItemNumber(supplierItemNumber.getValue());
-        out.setCrateDeposit((int) (crateDeposit.getValue() * 100));
-        out.setContainerSize(containerSize.getValue());
-        out.setAmount(amount.getValue());
+        out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
+        out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
+        out.setCrateDeposit((int) (crateDeposit.getSafeValue() * 100));
+        out.setContainerSize(containerSize.getSafeValue());
+        out.setAmount(amount.getSafeValue());
         try {
             out.setBarcode(Long.parseLong(barcode.getText()));
         } catch (NumberFormatException e) {

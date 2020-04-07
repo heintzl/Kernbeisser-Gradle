@@ -1,8 +1,12 @@
 package kernbeisser.CustomComponents.TextFields;
 
+import com.sun.istack.NotNull;
 import kernbeisser.Enums.Key;
+import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -15,46 +19,54 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.util.function.Function;
 
-public class FilterField extends PermissionField {
-    private String lastCorrect = "";
-    FilterField(Function<String,Boolean> check) {
+public class FilterField<T> extends PermissionField {
+    private final Transformable<T> transformer;
+    FilterField(@NotNull Transformable<T> transformer, boolean allowWrongInput) {
+        this.transformer = transformer;
         ((AbstractDocument) getDocument()).setDocumentFilter(new DocumentFilter() {
             @Override
             public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                     throws BadLocationException {
+                String before = getText();
                 fb.replace(offset, length, text, attrs);
-                check(check);
+                if(!allowWrongInput)
+                if(!isValidInput())setText(before);
+
             }
 
             @Override
             public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+                String before = getText();
                 fb.remove(offset, length);
-                check(check);
-            }
-        });
-        addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                if(!check.apply(FilterField.this.getText())){
-                    Tools.ping(FilterField.this);
-                    requestFocus();
-                }
+                if(!allowWrongInput)
+                if(!isValidInput())setText(before);
             }
         });
     }
-
-    @Override
-    public String getText() {
-        return lastCorrect;
+    FilterField(Transformable<T> transformer){
+        this(transformer,false);
     }
 
-    private void check(Function<String,Boolean> check){
-        if(check.apply(FilterField.super.getText())){
-            lastCorrect = FilterField.super.getText();
-            setForeground(Color.DARK_GRAY);
-        }else {
-            setForeground(Color.RED);
+    private boolean isValidInput(){
+        try {
+            transformer.toObject(getText());
+            return true;
+        } catch (IncorrectInput incorrectInput) {
+            return false;
         }
     }
 
+
+    @Nullable
+    public T getSafeValue() {
+        try {
+            return transformer.toObject(getText());
+        } catch (IncorrectInput incorrectInput) {
+            return null;
+        }
+    }
+
+    public T getUncheckedValue() throws IncorrectInput{
+        return transformer.toObject(getText());
+    }
 }

@@ -1,35 +1,24 @@
 package kernbeisser.CustomComponents.TextFields;
 
-public class LongParseField extends FilterField {
+import kernbeisser.Exeptions.IncorrectInput;
+
+public class LongParseField extends FilterField<Long> {
     LongParseField(long min, long max) {
         super(e -> {
             try {
-                if (e.equals("")) {
-                    return true;
+                if (e.equals("") || e.equals("-")) {
+                    return 0L;
                 }
                 long v = Long.parseLong(e);
-                return v >= min && v <= max;
+                if(v <= min || v >= max)throw new IncorrectInput("long "+v+" is not between min: "+min+" and max:"+max);
+                return v;
             } catch (NumberFormatException ex) {
-                return false;
+                throw new IncorrectInput("cannot parse "+e+" to long");
             }
         });
     }
 
     public LongParseField() {
-        super(e -> {
-            try {
-                if (e.equals("")) {
-                    return true;
-                }
-                Long.parseLong(e);
-                return true;
-            } catch (NumberFormatException ex) {
-                return false;
-            }
-        });
-    }
-
-    public long getValue() {
-        return getText().equals("") ? 0 : Long.parseLong(getText());
+        this(Long.MIN_VALUE,Long.MAX_VALUE);
     }
 }

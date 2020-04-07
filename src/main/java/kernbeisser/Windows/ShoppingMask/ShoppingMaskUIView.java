@@ -2,6 +2,8 @@ package kernbeisser.Windows.ShoppingMask;
 
 import javax.swing.*;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
@@ -11,13 +13,12 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
 
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.text.DecimalFormat;
 
-public class ShoppingMaskUIView extends Window implements View {
+public class ShoppingMaskUIView extends JPanel implements View {
     //TODO: create Enum
     static final int ARTICLE_NUMBER = 0;
     static final int BAKED_GOODS = 1;
@@ -80,17 +81,25 @@ public class ShoppingMaskUIView extends Window implements View {
     private ButtonGroup optGrpArticleType;
     private char currentArticleType;
 
-    public ShoppingMaskUIView(Window window, ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
-        super(window);
+    public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
         this.controller = controller;
         add(MainPanel);
         checkout.addActionListener(e -> doCheckout());
         cancelSalesSession.addActionListener(e -> doCancel());
+        searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
         searchArticle.addActionListener(e -> openSearchWindow());
+        addPrice.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addPrice.addActionListener(e -> addToCart());
+        addDeposit.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addDeposit.addActionListener(e -> addToCart());
+        addAmount.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addAmount.addActionListener(e -> addToCart());
+        price.addActionListener( e -> addToCart());
+        deposit.addActionListener( e -> addToCart());
+        amount.addActionListener( e -> addToCart());
+        editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
+//        editUser.addActionListener(e -> editUserAction());
         optProduce.addItemListener(e -> articleTypeChange('p'));
         optBakedGoods.addItemListener(e -> articleTypeChange('b'));
         optArticleNo.addItemListener(e -> articleTypeChange('a'));
@@ -113,11 +122,8 @@ public class ShoppingMaskUIView extends Window implements View {
         });
         checkout.addActionListener(e -> controller.startPay());
         articleTypeChange('a');
-        pack();
-        setLocationRelativeTo(window);
         optTaxLow.setText(VAT.LOW.getName());
         optTaxStandard.setText(VAT.HIGH.getName());
-        windowInitialized();
     }
 
     private void doCancel() {
@@ -134,6 +140,7 @@ public class ShoppingMaskUIView extends Window implements View {
     private void addToCart() {
         controller.addToShoppingCart();
     }
+//    private void editUserAction() {controller.editUserAction();}
 
     public void setKbNumber(String value) {
         this.kbNumber.setText(value);
@@ -196,16 +203,20 @@ public class ShoppingMaskUIView extends Window implements View {
             setPrice("");
             priceUnit.setVisible("pbac".indexOf(type) != -1);
             setPriceUnit("€");
-            amount.setVisible(type == 'a');
+            amount.setVisible("ac".indexOf(type) != -1);
+            amount.setText("1");
             setAmountUnit("");
             articleAmount.setVisible(type == 'a');
-            articleAmount.setEnabled(type == 'c');
             setArticleUnit("");
             articleUnit.setVisible(type == 'a');
             deposit.setEnabled("cdr".indexOf(type) != -1);
             deposit.setVisible("acdr".indexOf(type) != -1);
             depositUnit.setVisible("acdr".indexOf(type) != -1);
-            setOptTaxLow();
+            if ("dr".indexOf(type) != -1) {
+                setOptTaxStandard();
+            } else {
+                setOptTaxLow();
+            }
             optTaxLow.setEnabled(type == 'c');
             optTaxStandard.setEnabled(type == 'c');
             if (type == 'p') {
@@ -253,8 +264,6 @@ public class ShoppingMaskUIView extends Window implements View {
         return -1;
     }
 
-
-
     public int getDiscount() {
         if (priceStandard.isSelected()) {
             return 0;
@@ -263,7 +272,7 @@ public class ShoppingMaskUIView extends Window implements View {
             return 50;
         }
         if (priceVariablePercentage.isSelected()) {
-            return variablePercentage.getValue();
+            return variablePercentage.getSafeValue();
         }
         if (pricePreordered.isSelected()) {
             return PriceCalculator.CONTAINER_DISCOUNT;
@@ -282,7 +291,7 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     double getPriceVATIncluded() {
-        return price.getValue();
+        return price.getSafeValue();
     }
 
     public void setPrice(String value) {
@@ -291,11 +300,11 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     int getKBArticleNumber() {
-        return kbNumber.getValue();
+        return kbNumber.getSafeValue();
     }
 
     int getSuppliersNumber() {
-        return suppliersItemNumber.getValue();
+        return suppliersItemNumber.getSafeValue();
     }
 
     void noArticleFound() {
@@ -304,7 +313,7 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     public double getAmount() {
-        return amount.getValue();
+        return amount.getSafeValue();
     }
 
     public void setAmount(String value) {
@@ -326,8 +335,8 @@ public class ShoppingMaskUIView extends Window implements View {
         priceUnit.setText(article.isWeighAble() ? "€/kg" : "€");
         amountUnit.setText(article.isWeighAble() ? "g" : "stk.");
         articleAmount.setVisible(!article.isWeighAble());
+        articleAmountLabel.setForeground(article.isWeighAble() ? Color.WHITE : Color.BLACK);
         articleUnit.setVisible(!article.isWeighAble());
-        articleAmountLabel.setVisible(!article.isWeighAble());
         optTaxLow.setSelected(article.getVAT().getValue()==0.07);
         optTaxStandard.setSelected(article.getVAT().getValue()!=0.07);
     }
@@ -344,7 +353,7 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     int getArticleAmount() {
-        return articleAmount.getValue();
+        return articleAmount.getSafeValue();
     }
 
     public void setArticleAmount(String value) {
@@ -353,11 +362,11 @@ public class ShoppingMaskUIView extends Window implements View {
     }
 
     public String getItemName() {
-        return articleName.getName();
+        return articleName.getText();
     }
 
-    public int getDeposit() {
-        return (int) (deposit.getValue() * 100);
+    public double getDeposit() {
+        return deposit.getSafeValue();
     }
 
     public void setDeposit(String value) {
