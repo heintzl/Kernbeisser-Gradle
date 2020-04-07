@@ -34,16 +34,19 @@ public class PriceList implements Serializable {
     @CreationTimestamp
     private Date createDate;
 
-    private static void savePriceList(String name) {
+    public static void savePriceList(String name) {
+        savePriceList(name, null);
+    }
+
+    public static void savePriceList(String priceListName, PriceList superPriceList) {
         PriceList p = new PriceList();
-        p.setName(name);
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        em.persist(p);
-        em.flush();
-        et.commit();
-        em.close();
+        p.setName(priceListName);
+        p.setSuperPriceList(superPriceList);
+        Tools.persistInDB(em ->  em.persist(p));
+    }
+
+    public static void deletePriceList(PriceList toDelete) {
+        Tools.persistInDB(em -> em.remove(em.contains(toDelete) ? toDelete : em.merge(toDelete)));
     }
 
     private static PriceList getPriceList(String name) throws NoResultException {
