@@ -119,10 +119,6 @@ class PayModel implements Model {
 
             Map<String,Object> reportParamMap = new HashMap<>();
             reportParamMap.put("BonNo", 47);
-//            List<String> amounts = new ArrayList<String>();
-//            amounts.add("1x");
-//            amounts.add("2x");
-//            reportParamMap.put("ItemAmount", amounts);
 
             JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
 
