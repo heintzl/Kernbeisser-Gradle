@@ -5,6 +5,8 @@ import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 
+import java.util.Collection;
+
 public class ShoppingCartController implements Controller {
     private ShoppingCartView view;
     private ShoppingCartModel model;
@@ -51,6 +53,10 @@ public class ShoppingCartController implements Controller {
     @Override
     public Model getModel() {
         return model;
+    }
+
+    public Collection<ShoppingItem> getItems() {
+        return model.getItems();
     }
 
 }

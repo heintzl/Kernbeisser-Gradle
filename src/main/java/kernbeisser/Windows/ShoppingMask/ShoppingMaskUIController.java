@@ -5,14 +5,11 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
-import kernbeisser.Windows.Window;
 
 public class ShoppingMaskUIController implements Controller {
     private ShoppingMaskUIView view;
@@ -58,8 +55,8 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
-        double netPrice = PriceCalculator.getNetFromGross(view.getPriceVATIncluded(),view.getSelectedVAT().getValue());
-        double netDeposit = PriceCalculator.getNetFromGross(view.getDeposit(),view.getSelectedVAT().getValue());
+        double netPrice = PriceCalculator.getNetFromGross(view.getPriceVATIncluded(), view.getSelectedVAT().getValue());
+        double netDeposit = PriceCalculator.getNetFromGross(view.getDeposit(), view.getSelectedVAT().getValue());
         switch (view.getOption()) {
             case ShoppingMaskUIView.ARTICLE_NUMBER:
                 Article extractedArticle = null;
@@ -72,7 +69,9 @@ public class ShoppingMaskUIController implements Controller {
                     if (supplier != 0) {
                         extractedArticle = model.getBySupplierItemNumber(supplier);
                     }
-                    if (extractedArticle == null) throw new UndefinedInputException();
+                    if (extractedArticle == null) {
+                        throw new UndefinedInputException();
+                    }
                 }
                 ShoppingItem shoppingItem = new ShoppingItem(extractedArticle);
                 shoppingItem.setDiscount(view.getDiscount());
@@ -119,13 +118,13 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void startPay() {
-        new PayController(null, model.getSaleSession(), model.getShoppingCart(), () -> {
+        new PayController(null, model.getSaleSession(), shoppingCartController.getItems(), () -> {
 
         });
     }
 
     void openSearchWindow() {
-        new ArticleSelectorController(null,view::loadItemStats);
+        new ArticleSelectorController(null, view::loadItemStats);
     }
 
 //    void editUserAction() {

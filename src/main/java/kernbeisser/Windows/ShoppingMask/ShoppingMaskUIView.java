@@ -1,7 +1,5 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import javax.swing.*;
-
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
@@ -14,6 +12,7 @@ import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -95,9 +94,9 @@ public class ShoppingMaskUIView extends JPanel implements View {
         addDeposit.addActionListener(e -> addToCart());
         addAmount.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addAmount.addActionListener(e -> addToCart());
-        price.addActionListener( e -> addToCart());
-        deposit.addActionListener( e -> addToCart());
-        amount.addActionListener( e -> addToCart());
+        price.addActionListener(e -> addToCart());
+        deposit.addActionListener(e -> addToCart());
+        amount.addActionListener(e -> addToCart());
         editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
 //        editUser.addActionListener(e -> editUserAction());
         optProduce.addItemListener(e -> articleTypeChange('p'));
@@ -120,7 +119,6 @@ public class ShoppingMaskUIView extends JPanel implements View {
                 controller.searchBySupplierItemsNumber();
             }
         });
-        checkout.addActionListener(e -> controller.startPay());
         articleTypeChange('a');
         optTaxLow.setText(VAT.LOW.getName());
         optTaxStandard.setText(VAT.HIGH.getName());
@@ -131,6 +129,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
     }
 
     private void doCheckout() {
+        controller.startPay();
     }
 
     private void openSearchWindow() {
@@ -337,8 +336,8 @@ public class ShoppingMaskUIView extends JPanel implements View {
         articleAmount.setVisible(!article.isWeighAble());
         articleAmountLabel.setForeground(article.isWeighAble() ? Color.WHITE : Color.BLACK);
         articleUnit.setVisible(!article.isWeighAble());
-        optTaxLow.setSelected(article.getVAT().getValue()==0.07);
-        optTaxStandard.setSelected(article.getVAT().getValue()!=0.07);
+        optTaxLow.setSelected(article.getVAT().getValue() == 0.07);
+        optTaxStandard.setSelected(article.getVAT().getValue() != 0.07);
     }
 
     void defaultSettings() {

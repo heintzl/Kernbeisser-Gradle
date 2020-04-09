@@ -36,7 +36,9 @@ public class DataImportController implements Controller {
         jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jFileChooser.setFileFilter(new FileNameExtensionFilter("Config-File", "JSON", "json"));
         jFileChooser.addActionListener(e -> {
-            if (jFileChooser.getSelectedFile() == null) return;
+            if (jFileChooser.getSelectedFile() == null) {
+                return;
+            }
             view.setFilePath(jFileChooser.getSelectedFile().getAbsolutePath());
             checkDataSource();
         });
@@ -60,7 +62,8 @@ public class DataImportController implements Controller {
             }
             if (dataConfig.has("ItemData")) {
                 JSONObject jsonObject = dataConfig.getJSONObject("ItemData");
-                view.itemSourceFound(jsonObject.has("Suppliers") && jsonObject.has("Items") && jsonObject.has("PriceLists"));
+                view.itemSourceFound(
+                        jsonObject.has("Suppliers") && jsonObject.has("Items") && jsonObject.has("PriceLists"));
             } else {
                 view.itemSourceFound(false);
             }
@@ -161,7 +164,7 @@ public class DataImportController implements Controller {
     private void parseUsers(File f) {
         try {
             HashSet<String> usernames = new HashSet<>();
-            HashMap<String, Job> jobs = new HashMap<>();
+            HashMap<String,Job> jobs = new HashMap<>();
             Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
             String defaultPassword = BCrypt.withDefaults().hashToString(12, "start".toCharArray());
@@ -188,7 +191,9 @@ public class DataImportController implements Controller {
                 user.setPhoneNumber1(columns[17]);
                 user.setPhoneNumber2(columns[18]);
                 for (String s : columns[19].split(" ")) {
-                    if (s.equals("")) continue;
+                    if (s.equals("")) {
+                        continue;
+                    }
                     try {
                         user.setTownCode(Integer.parseInt(s));
                     } catch (NumberFormatException e) {
@@ -220,22 +225,23 @@ public class DataImportController implements Controller {
 
     private void generateUsername(HashSet<String> usernames, User user) {
         for (int i = 1; i < user.getSurname().length(); i++) {
-            String generatedUsername = (user.getFirstName().split(" ")[0]+"."+user.getSurname().substring(0,i)).toLowerCase();
+            String generatedUsername = (user.getFirstName().split(" ")[0] + "." + user.getSurname()
+                                                                                      .substring(0, i)).toLowerCase();
             if (!usernames.contains(generatedUsername)) {
                 user.setUsername(generatedUsername);
                 usernames.add(generatedUsername);
                 break;
             }
         }
-        if(user.getUsername()==null){
-            user.setUsername(user.getFirstName()+"."+user.getSurname()+new Random().nextLong());
+        if (user.getUsername() == null) {
+            user.setUsername(user.getFirstName() + "." + user.getSurname() + new Random().nextLong());
         }
     }
 
     private void parsePriceLists(File f) {
         try {
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            HashMap<String, PriceList> priceLists = new HashMap<>();
+            HashMap<String,PriceList> priceLists = new HashMap<>();
             for (String l : lines) {
                 String[] columns = l.split(";");
                 PriceList pl = new PriceList();
@@ -278,8 +284,8 @@ public class DataImportController implements Controller {
         try {
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
             HashSet<Long> barcode = new HashSet<>(lines.size());
-            HashMap<String, PriceList> priceListHashMap = new HashMap<>();
-            HashMap<String, Supplier> suppliers = new HashMap<>();
+            HashMap<String,PriceList> priceListHashMap = new HashMap<>();
+            HashMap<String,Supplier> suppliers = new HashMap<>();
             Collection<Article> articles = new ArrayList<>(lines.size());
             Supplier.getAll(null).forEach(e -> suppliers.put(e.getShortName(), e));
             PriceList.getAll(null).forEach(e -> priceListHashMap.put(e.getName(), e));
@@ -289,7 +295,7 @@ public class DataImportController implements Controller {
                 article.setName(columns[1]);
                 article.setKbNumber(Integer.parseInt(columns[2]));
                 article.setAmount(Integer.parseInt(columns[3]));
-                article.setNetPrice(Integer.parseInt(columns[4])/100.);
+                article.setNetPrice(Integer.parseInt(columns[4]) / 100.);
                 article.setSupplier(suppliers.get(columns[5].replace("GRE", "GR")));
                 try {
                     Long ib = Long.parseLong(columns[6]);
@@ -304,9 +310,9 @@ public class DataImportController implements Controller {
                 }
                 //columns[7] look at line 311
                 article.setVAT(Boolean.parseBoolean(columns[8]) ? VAT.LOW : VAT.HIGH);
-                article.setSurcharge(Integer.parseInt(columns[9])/100.);
-                article.setSingleDeposit(Integer.parseInt(columns[10])/100.);
-                article.setCrateDeposit(Integer.parseInt(columns[11])/100.);
+                article.setSurcharge(Integer.parseInt(columns[9]) / 100.);
+                article.setSingleDeposit(Integer.parseInt(columns[10]) / 100.);
+                article.setCrateDeposit(Integer.parseInt(columns[11]) / 100.);
                 article.setMetricUnits(MetricUnits.valueOf(columns[12].replace("WEIGHT", "GRAM")));
                 article.setPriceList(priceListHashMap.get(columns[13]));
                 article.setContainerDef(ContainerDefinition.valueOf(columns[14]));
@@ -321,7 +327,9 @@ public class DataImportController implements Controller {
                 article.setLoss(Integer.parseInt(columns[23]));
                 article.setInfo(columns[24]);
                 article.setSold(Integer.parseInt(columns[25]));
-                article.setSpecialPriceMonth(extractOffers(Tools.extract(Boolean.class, columns[26], "_", Boolean::parseBoolean), Integer.parseInt(columns[7])));
+                article.setSpecialPriceMonth(
+                        extractOffers(Tools.extract(Boolean.class, columns[26], "_", Boolean::parseBoolean),
+                                      Integer.parseInt(columns[7])));
                 article.setDelivered(Integer.parseInt(columns[27]));
                 //TODO: article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
                 //TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
@@ -354,14 +362,19 @@ public class DataImportController implements Controller {
         LocalDate today = LocalDate.now();
         for (int i = 1; i < months.length + 1; i++) {
             if (months[i - 1]) {
-                if (from == -1) from = i;
+                if (from == -1) {
+                    from = i;
+                }
                 continue;
             }
-            if (from == -1) continue;
+            if (from == -1) {
+                continue;
+            }
             Offer offer = new Offer();
             offer.setSpecialNetPrice(price);
             offer.setFromDate(Date.valueOf(LocalDate.of(today.getYear(), from, 1)));
-            offer.setToDate(Date.valueOf(LocalDate.of(today.getYear(), from + (i - 1 - from), 1).with(TemporalAdjusters.lastDayOfMonth())));
+            offer.setToDate(Date.valueOf(
+                    LocalDate.of(today.getYear(), from + (i - 1 - from), 1).with(TemporalAdjusters.lastDayOfMonth())));
             offer.setRepeatMode(Repeat.EVERY_YEAR);
             out.add(offer);
             from = -1;
