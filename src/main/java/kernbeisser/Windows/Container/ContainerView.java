@@ -55,7 +55,7 @@ public class ContainerView extends Window {
         insertSectionLabel.setVisible(b);
     }
 
-    int getAmount() {
+    Integer getAmount() {
         return amount.getSafeValue();
     }
 

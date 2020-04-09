@@ -12,6 +12,7 @@ import java.util.Collection;
 public class ContainerModel implements Model {
     private final Collection<Container> newContainers = new ArrayList<>();
     private final User user;
+    private Container currentContainer = new Container();
 
     ContainerModel(User user) {
         this.user = user;
@@ -57,6 +58,10 @@ public class ContainerModel implements Model {
 
     public User getUser() {
         return user;
+    }
+
+    public Container getCurrentContainer() {
+        return currentContainer;
     }
 
     void removeNew(Container unpaidOrder) {

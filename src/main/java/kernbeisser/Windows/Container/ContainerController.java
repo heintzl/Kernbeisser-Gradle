@@ -31,25 +31,16 @@ public class ContainerController {
     }
 
     public void commit() {
-        Container newContainer = new Container();
-        newContainer.setAmount(view.getAmount());
-        ArticleKornkraft item = model.getItemByKbNumber(view.getKbNumber());
-        if (item == null) {
-            item = model.getItemByKkNumber(view.getKkNumber());
-            if (item == null) {
-                view.noItemFound();
-                return;
-            }
-        }
-        newContainer.setItem(item);
-        newContainer.setPayed(false);
-        newContainer.setNetPrice(view.getNetPrice());
-        newContainer.setAmount(view.getAmount());
-        newContainer.setUser(model.getUser());
-        newContainer.setNetPrice(view.getNetPrice());
-        model.addContainer(newContainer);
+        Container toSave = new Container();
+        Container currentContainer = model.getCurrentContainer();
+        toSave.setAmount(view.getAmount());
+        toSave.setUser(model.getUser());
+        toSave.setNetPrice(currentContainer.getNetPrice());
+        toSave.setItem(currentContainer.getItem());
+        toSave.setPayed(false);
+        model.addContainer(toSave);
         refreshUnpaidContainers();
-        clear();
+        //clear();
     }
 
     public void remove() {
@@ -60,45 +51,48 @@ public class ContainerController {
     public void searchKK() {
         clear();
         view.setKbNumber("");
-        pasteData(model.getItemByKkNumber(view.getKkNumber()));
+        editCurrentContainer(model.getItemByKkNumber(view.getKkNumber()));
     }
 
     public void searchKB() {
         clear();
         view.setKkNumber("");
-        pasteData(model.getItemByKbNumber(view.getKbNumber()));
+        editCurrentContainer(model.getItemByKbNumber(view.getKbNumber()));
     }
 
-    private void pasteData(ArticleKornkraft item) {
+    private void editCurrentContainer(ArticleKornkraft item) {
         if (item != null) {
-            Container c = new Container();
+            Container c = model.getCurrentContainer();
             c.setItem(item);
-            c.setAmount(1);
-            c.setNetPrice(0);
-            c.setPayed(false);
-            pasteData(c);
+            if (view.getAmount() == null || view.getAmount() == 0) {
+                c.setAmount(1);
+            } else {
+                c.setAmount(view.getAmount());
+            }
+            c.setNetPrice(item.getNetPrice());
+            insertDataInView(c);
         }
     }
 
     private void clear() {
         view.setNetPrice("");
         view.setItemSize("1");
-        view.setAmount("");
+        //view.setAmount("");
         view.setItemName("Kein Artikel ausgewählt");
         view.setSellingPrice("");
         //view.setKkNumber("");
         //view.setKbNumber("");
     }
 
-    private void pasteData(Container c) {
+    private void insertDataInView(Container c) {
         view.setItemSize(c.getItem().getContainerSize() + " x " + c.getItem().getAmount() + c.getItem()
                                                                                              .getMetricUnits().getShortName());
         view.setKbNumber(String.valueOf(c.getKBNumber()));
         view.setKkNumber(String.valueOf(c.getItem().getKkNumber()));
-        view.setSellingPrice(0  + "€");
+        view.setSellingPrice(0  + "€");             //TODO: Calculation of Selling Price
         view.setItemName(c.getItem().getName());
         view.setAmount(String.valueOf(c.getAmount()));
-        view.setNetPrice(c.getNetPrice()  + "€");
+        view.setNetPrice(String.valueOf(c.getNetPrice())); // TODO: Find out, in which unit NetPrice is given, the table must also be adapted
     }
 
     void exit() {
