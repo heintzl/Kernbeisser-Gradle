@@ -8,6 +8,7 @@ import kernbeisser.Windows.Window;
 import javax.swing.*;
 
 public class SoloShoppingMaskView extends Window implements View {
+
     private JPanel main;
 
     private ShoppingMaskUIView shoppingMaskUIView;

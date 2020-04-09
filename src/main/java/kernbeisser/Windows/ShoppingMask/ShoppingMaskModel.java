@@ -16,7 +16,6 @@ import java.util.Collection;
 public class ShoppingMaskModel implements Model {
     private Article selected = null;
     private double value;
-    private Collection<ShoppingItem> shoppingCart = new ArrayList<>();
     private SaleSession saleSession;
 
     ShoppingMaskModel(SaleSession saleSession) {
@@ -40,17 +39,6 @@ public class ShoppingMaskModel implements Model {
         }
     }
 
-    Collection<ShoppingItem> getShoppingCart() {
-        return shoppingCart;
-    }
-
-    int calculateTotalPrice() {
-        int out = 0;
-        for (ShoppingItem item : shoppingCart) {
-            out += PriceCalculator.getShoppingItemPrice(item, saleSession.getCustomer().getSolidaritySurcharge());
-        }
-        return out;
-    }
 
     Collection<Article> searchItems(String search, boolean searchName, boolean searchPriceList, boolean searchKBNumber,
                                     boolean searchBarcode) {
