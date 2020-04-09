@@ -9,7 +9,6 @@ import kernbeisser.Windows.EditItems.EditItems;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
-import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.Window;
 
@@ -50,7 +49,7 @@ public class CashierMenuController implements Controller {
     }
 
     public void openManagePriceLists() {
-        new ManagePriceListsController(view);
+        new ManagePriceListsController(getView());
     }
 
     public void openCashierMask() {

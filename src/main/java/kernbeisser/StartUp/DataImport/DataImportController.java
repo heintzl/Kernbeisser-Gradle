@@ -8,7 +8,6 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Window;
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -17,8 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -90,38 +87,35 @@ public class DataImportController implements Controller {
 
     void importData() {
         if (isValidDataSource()) {
-            Path jsonPath = Paths.get(view.getFilePath());
+            String jsonPath = view.getFilePath();
+            String relativePath = jsonPath.substring(0, jsonPath.lastIndexOf("\\")) + "/";
             JSONObject path = extractJSON();
-
             if (view.importItems()) {
                 JSONObject itemPath = path.getJSONObject("ItemData");
-
-                Path suppliers = jsonPath.resolveSibling(itemPath.getString("Suppliers"));
-                Path priceLists = jsonPath.resolveSibling(itemPath.getString("PriceLists"));
-                Path items = jsonPath.resolveSibling(itemPath.getString("Items"));
-
-                if (Files.exists(suppliers) && Files.exists(priceLists) && Files.exists(items)) {
+                File suppliers = new File(relativePath + itemPath.getString("Suppliers"));
+                File priceLists = new File(relativePath + itemPath.getString("PriceLists"));
+                File items = new File(relativePath + itemPath.getString("Items"));
+                if (suppliers.exists() && priceLists.exists() && items.exists()) {
                     new Thread(() -> {
                         view.setItemProgress(0);
-                        parseSuppliers(suppliers.toFile());
-                        parsePriceLists(priceLists.toFile());
-                        parseItems(items.toFile());
+                        parseSuppliers(suppliers);
+                        parsePriceLists(priceLists);
+                        parseItems(items);
                     }).start();
                 } else {
                     view.itemSourceFound(false);
                     view.itemSourcesNotExists();
                 }
             }
-
             if (view.importUser()) {
                 JSONObject userPath = path.getJSONObject("UserData");
-                Path users = jsonPath.resolveSibling(userPath.getString("Users"));
-                Path jobs = jsonPath.resolveSibling(userPath.getString("Jobs"));
-                if (Files.exists(jobs) && Files.exists(users)) {
+                File users = new File(relativePath + userPath.getString("Users"));
+                File jobs = new File(relativePath + userPath.getString("Jobs"));
+                if (jobs.exists() && users.exists()) {
                     new Thread(() -> {
                         view.setUserProgress(0);
-                        parseJobs(jobs.toFile());
-                        parseUsers(users.toFile());
+                        parseJobs(jobs);
+                        parseUsers(users);
                     }).start();
                 } else {
                     view.userSourceFound(false);
@@ -130,7 +124,6 @@ public class DataImportController implements Controller {
             }
             ConfigManager.getHeader().put("dbIsInitialized", true);
             ConfigManager.updateFile();
-
             if (view.createStandardAdmin()) {
                 Permission admin = new Permission();
                 admin.getKeySet().addAll(Arrays.asList(Key.values()));
@@ -142,7 +135,7 @@ public class DataImportController implements Controller {
                 String password;
                 do {
                     password = view.requestPassword();
-                } while (StringUtils.isBlank(password));
+                } while (password.equals(""));
                 user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
                 model.saveWithPermission(user, admin);
             }

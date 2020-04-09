@@ -58,7 +58,7 @@ public class ConfigManager {
         try {
             if (file.createNewFile()) {
                 FileWriter fw = new FileWriter(file);
-                fw.write(config.toString(CONFIG_FILE_INDENT_FACTOR));
+                fw.write(config.toString());
                 fw.close();
             }
         } catch (IOException e) {
