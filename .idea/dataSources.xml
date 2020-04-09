@@ -8,6 +8,12 @@
       <jdbc-url>jdbc:mysql://localhost:3306/kernbeisser</jdbc-url>
       <driver-properties>
         <property name="serverTimezone" value="UTC" />
+        <property name="autoReconnect" value="true" />
+        <property name="zeroDateTimeBehavior" value="CONVERT_TO_NULL" />
+        <property name="tinyInt1isBit" value="false" />
+        <property name="characterEncoding" value="utf8" />
+        <property name="characterSetResults" value="utf8" />
+        <property name="yearIsDateType" value="false" />
       </driver-properties>
       <time-zone>CET</time-zone>
     </data-source>

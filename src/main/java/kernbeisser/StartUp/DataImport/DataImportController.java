@@ -85,7 +85,7 @@ public class DataImportController implements Controller {
     void importData() {
         if (isValidDataSource()) {
             String jsonPath = view.getFilePath();
-            String relativePath = jsonPath.substring(0, jsonPath.lastIndexOf("\\")) + "/";
+            String relativePath = jsonPath.substring(0, jsonPath.lastIndexOf("/")) + "/"; // Bei Windows muss es lastIndexOf("\\") heißen.
             JSONObject path = extractJSON();
             if (view.importItems()) {
                 JSONObject itemPath = path.getJSONObject("ItemData");
