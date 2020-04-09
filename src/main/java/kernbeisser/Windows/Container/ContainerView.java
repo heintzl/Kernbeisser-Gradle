@@ -86,7 +86,24 @@ public class ContainerView extends Window {
                 Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
                 Column.create("Produktname", e -> e.getItem().getName(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_NAME_READ),
                 Column.create("Netto-Preis", e -> e.getNetPrice() + "€",Key.CONTAINER_ITEM_READ,Key.ARTICLE_NET_PRICE_READ),
-                Column.create("Verkaufspreis", e -> "notDefined" + "€")
+                Column.create("Verkaufspreis", e -> "notDefined" + "€"),
+                new Column<Container>() {
+                    @Override
+                    public String getName() {
+                        return "Kopieren";
+                    }
+
+                    @Override
+                    public Object getValue(Container container) {
+                        return "Kopieren";
+                    }
+
+                    @Override
+                    public void onAction(Container container) {
+                        controller.copy(container);
+                    }
+                }
+
         );
         unpaidContainers = new ObjectTable<>(
                 Column.create("Anzahl", Container::getAmount,Key.CONTAINER_AMOUNT_READ),

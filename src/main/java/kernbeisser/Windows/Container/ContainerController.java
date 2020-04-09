@@ -98,4 +98,9 @@ public class ContainerController {
     void exit() {
         model.saveChanges();
     }
+
+    public void copy(Container container) {
+        model.setCurrentContainer(container);
+        insertDataInView(model.getCurrentContainer());
+    }
 }

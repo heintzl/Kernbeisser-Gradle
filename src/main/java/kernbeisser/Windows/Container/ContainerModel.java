@@ -12,6 +12,7 @@ import java.util.Collection;
 public class ContainerModel implements Model {
     private final Collection<Container> newContainers = new ArrayList<>();
     private final User user;
+
     private Container currentContainer = new Container();
 
     ContainerModel(User user) {
@@ -19,13 +20,23 @@ public class ContainerModel implements Model {
     }
 
     Collection<Container> getOldContainers() {
-        return Container.getAll("where payed = false");
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Container> out = em.createQuery("select c from Container c where user = :user " +
+                                                   "and payed = false",
+                                                   Container.class)
+                                      .setParameter("user", user)
+                                      .getResultList();
+        em.close();
+        return out;
     }
 
     Collection<Container> getLastContainers() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<Container> out = em.createQuery("select c from Container c order by createDate desc",
-                                                   Container.class).getResultList();
+        Collection<Container> out = em.createQuery("select c from Container c where user = :user" +
+                                                   " order by createDate desc",
+                                                   Container.class)
+                                                .setParameter("user", user)
+                                                .getResultList();
         em.close();
         return out;
     }
@@ -62,6 +73,10 @@ public class ContainerModel implements Model {
 
     public Container getCurrentContainer() {
         return currentContainer;
+    }
+
+    public void setCurrentContainer(Container currentContainer) {
+        this.currentContainer = currentContainer;
     }
 
     void removeNew(Container unpaidOrder) {

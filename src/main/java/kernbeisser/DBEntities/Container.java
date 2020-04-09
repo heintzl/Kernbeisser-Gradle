@@ -39,7 +39,7 @@ public class Container implements Serializable {
     private boolean payed;
 
     @Column
-    private boolean ordered;
+    private boolean ordered = false;
 
     @Column
     private Date delivery;
