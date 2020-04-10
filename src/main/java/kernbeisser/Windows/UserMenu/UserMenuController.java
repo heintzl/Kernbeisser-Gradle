@@ -11,6 +11,8 @@ import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskView;
+import kernbeisser.Windows.UserInfo.UserInfoController;
+import kernbeisser.Windows.UserInfo.UserInfoView;
 import kernbeisser.Windows.Window;
 
 public class UserMenuController implements Controller {
@@ -18,16 +20,12 @@ public class UserMenuController implements Controller {
     private UserMenuModel model;
 
     public UserMenuController(Window current) {
-        this.view = new UserMenuView(this, current);
         this.model = new UserMenuModel();
-        view.setUsername(LogInModel.getLoggedIn().getUsername());
-        view.setBuyHistory(model.getAllPurchase());
+        this.view = new UserMenuView(this, current);
+        view.setUsername(LogInModel.getLoggedIn().getFirstName()+" "+LogInModel.getLoggedIn().getSurname());
     }
 
 
-    public void showPurchase() {
-        new PurchaseController(view, view.getSelected());
-    }
 
     @Override
     public UserMenuView getView() {
@@ -63,5 +61,9 @@ public class UserMenuController implements Controller {
 
     public void orderContainers() {
         new ContainerController(view, model.getOwner());
+    }
+
+    public UserInfoView getUserInfoView(Window view) {
+        return new UserInfoController(view, model.getOwner()).getView();
     }
 }

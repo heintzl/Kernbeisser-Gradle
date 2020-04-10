@@ -4,6 +4,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.UserInfo.UserInfoView;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
 
@@ -13,16 +14,16 @@ import java.awt.event.ActionEvent;
 import java.util.Collection;
 
 public class UserMenuView extends Window implements View {
-    private ObjectTable<Purchase> buyHistory;
     private JButton beginSelfShopping;
     private JButton logOut;
     private JButton beginCashierJob;
     private JButton showProfile;
     private JButton showValueHistory;
     private JButton startInventory;
-    private JLabel welcome;
     private JPanel main;
     private JButton orderContainer;
+    private UserInfoView userInfoView;
+    private JLabel username;
 
     private UserMenuController controller;
 
@@ -42,28 +43,12 @@ public class UserMenuView extends Window implements View {
         windowInitialized();
     }
 
-    Purchase getSelected() {
-        return buyHistory.getSelectedObject();
-    }
-
-    void setBuyHistory(Collection<Purchase> purchases) {
-        buyHistory.setObjects(purchases);
-    }
-
     void setUsername(String s) {
-        welcome.setText("Willkommen " + s);
+        username.setText(s);
     }
 
     private void createUIComponents() {
-        buyHistory = new ObjectTable<>(
-                Column.create("Datum", Purchase::getCreateDate),
-                Column.create("Betrag", e -> e.getSum() + "€"),
-                Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession()
-                                                                                                     .getSeller()
-                                                                                                     .getSurname()),
-                Column.create("Anschauen", (e) -> "Anschauen", (e) -> controller.showPurchase())
-        );
-        //buyHistory.setComplex(true);
+        userInfoView = controller.getUserInfoView(this);
     }
 
 }
