@@ -4,13 +4,16 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.KeyCategory;
-import kernbeisser.Enums.Security;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
 
-public class PermissionView extends Window {
+public class PermissionView implements View<PermissionController> {
     private ObjectTable<Permission> permission;
     private JPanel main;
     private JComboBox<KeyCategory> category;
@@ -18,14 +21,10 @@ public class PermissionView extends Window {
     private JButton add;
     private JButton delete;
 
-    PermissionView(PermissionController controller, Window window) {
-        super(window/*,Key.PERMISSION_KEY_SET_READ,Key.PERMISSION_NAME_READ*/);
-        add(main);
-        add.addActionListener(e -> controller.addPermission());
-        delete.addActionListener(e -> controller.deletePermission());
-        category.addActionListener(e -> controller.loadSolutions());
-        back.addActionListener(e -> back());
-        windowInitialized();
+    private PermissionController controller;
+
+    PermissionView(PermissionController controller) {
+        this.controller = controller;
     }
 
     Permission getSelectedObject() {
@@ -78,4 +77,18 @@ public class PermissionView extends Window {
     public KeyCategory getCategory() {
         return (KeyCategory) category.getSelectedItem();
     }
+
+    @Override
+    public void initialize(PermissionController controller) {
+        add.addActionListener(e -> controller.addPermission());
+        delete.addActionListener(e -> controller.deletePermission());
+        category.addActionListener(e -> controller.loadSolutions());
+        back.addActionListener(e -> back());
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
+
 }

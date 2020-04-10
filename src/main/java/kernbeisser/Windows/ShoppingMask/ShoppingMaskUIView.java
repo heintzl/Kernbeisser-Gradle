@@ -1,7 +1,5 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import javax.swing.*;
-
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
@@ -12,13 +10,16 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class ShoppingMaskUIView extends JPanel implements View {
+public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     //TODO: create Enum
     static final int ARTICLE_NUMBER = 0;
     static final int BAKED_GOODS = 1;
@@ -31,7 +32,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
     private ShoppingCartController cartController;
 
     private JLabel customerName;
-    private JPanel MainPanel;
+    private JPanel mainPanel;
     private JPanel westUpperPanel;
     private JPanel ShoppingItemPanel;
     private JRadioButton optProduce;
@@ -84,46 +85,6 @@ public class ShoppingMaskUIView extends JPanel implements View {
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
         this.controller = controller;
-        add(MainPanel);
-        checkout.addActionListener(e -> doCheckout());
-        cancelSalesSession.addActionListener(e -> doCancel());
-        searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
-        searchArticle.addActionListener(e -> openSearchWindow());
-        addPrice.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
-        addPrice.addActionListener(e -> addToCart());
-        addDeposit.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
-        addDeposit.addActionListener(e -> addToCart());
-        addAmount.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
-        addAmount.addActionListener(e -> addToCart());
-        price.addActionListener( e -> addToCart());
-        deposit.addActionListener( e -> addToCart());
-        amount.addActionListener( e -> addToCart());
-        editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
-//        editUser.addActionListener(e -> editUserAction());
-        optProduce.addItemListener(e -> articleTypeChange('p'));
-        optBakedGoods.addItemListener(e -> articleTypeChange('b'));
-        optArticleNo.addItemListener(e -> articleTypeChange('a'));
-        optCustomProduct.addItemListener(e -> articleTypeChange('c'));
-        optDeposit.addItemListener(e -> articleTypeChange('d'));
-        optDepositReturn.addItemListener(e -> articleTypeChange('r'));
-        kbNumber.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                controller.searchByKbNumber();
-            }
-        });
-        kbNumber.addActionListener(e -> controller.addToShoppingCart());
-        suppliersItemNumber.addActionListener(e -> controller.addToShoppingCart());
-        suppliersItemNumber.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                controller.searchBySupplierItemsNumber();
-            }
-        });
-        checkout.addActionListener(e -> controller.startPay());
-        articleTypeChange('a');
-        optTaxLow.setText(VAT.LOW.getName());
-        optTaxStandard.setText(VAT.HIGH.getName());
     }
 
     private void doCancel() {
@@ -308,7 +269,7 @@ public class ShoppingMaskUIView extends JPanel implements View {
     }
 
     void noArticleFound() {
-        JOptionPane.showConfirmDialog(this,
+        JOptionPane.showConfirmDialog(mainPanel,
                                       "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
     }
 
@@ -375,5 +336,53 @@ public class ShoppingMaskUIView extends JPanel implements View {
 
     VAT getSelectedVAT() {
         return optTaxLow.isSelected() ? VAT.LOW : VAT.HIGH;
+    }
+
+    @Override
+    public void initialize(ShoppingMaskUIController controller) {
+        checkout.addActionListener(e -> doCheckout());
+        cancelSalesSession.addActionListener(e -> doCancel());
+        searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
+        searchArticle.addActionListener(e -> openSearchWindow());
+        addPrice.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
+        addPrice.addActionListener(e -> addToCart());
+        addDeposit.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
+        addDeposit.addActionListener(e -> addToCart());
+        addAmount.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
+        addAmount.addActionListener(e -> addToCart());
+        price.addActionListener( e -> addToCart());
+        deposit.addActionListener( e -> addToCart());
+        amount.addActionListener( e -> addToCart());
+        editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
+//        editUser.addActionListener(e -> editUserAction());
+        optProduce.addItemListener(e -> articleTypeChange('p'));
+        optBakedGoods.addItemListener(e -> articleTypeChange('b'));
+        optArticleNo.addItemListener(e -> articleTypeChange('a'));
+        optCustomProduct.addItemListener(e -> articleTypeChange('c'));
+        optDeposit.addItemListener(e -> articleTypeChange('d'));
+        optDepositReturn.addItemListener(e -> articleTypeChange('r'));
+        kbNumber.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                controller.searchByKbNumber();
+            }
+        });
+        kbNumber.addActionListener(e -> controller.addToShoppingCart());
+        suppliersItemNumber.addActionListener(e -> controller.addToShoppingCart());
+        suppliersItemNumber.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                controller.searchBySupplierItemsNumber();
+            }
+        });
+        checkout.addActionListener(e -> controller.startPay());
+        articleTypeChange('a');
+        optTaxLow.setText(VAT.LOW.getName());
+        optTaxStandard.setText(VAT.HIGH.getName());
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return mainPanel;
     }
 }

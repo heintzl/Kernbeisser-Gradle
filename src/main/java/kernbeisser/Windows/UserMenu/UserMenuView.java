@@ -1,19 +1,15 @@
 package kernbeisser.Windows.UserMenu;
 
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.Purchase;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
+import kernbeisser.Windows.Window;
 import kernbeisser.Windows.UserInfo.UserInfoView;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.Collection;
 
-public class UserMenuView extends Window implements View {
+public class UserMenuView implements View<UserMenuController> {
     private JButton beginSelfShopping;
     private JButton logOut;
     private JButton beginCashierJob;
@@ -25,22 +21,10 @@ public class UserMenuView extends Window implements View {
     private UserInfoView userInfoView;
     private JLabel username;
 
-    private UserMenuController controller;
+    private final UserMenuController controller;
 
-    UserMenuView(UserMenuController controller, Window current) {
-        super(current);
+    public UserMenuView(UserMenuController controller) {
         this.controller = controller;
-        startInventory.addActionListener(e -> controller.startInventory());
-        showValueHistory.addActionListener(e -> controller.showValueHistory());
-        showProfile.addActionListener(e -> controller.showProfile());
-        beginCashierJob.addActionListener(e -> controller.beginCashierJob());
-        logOut.addActionListener(e -> controller.logOut());
-        beginSelfShopping.addActionListener(e -> controller.beginSelfShopping());
-        orderContainer.addActionListener(e -> controller.orderContainers());
-        add(main);
-        setSize(900, 600);
-        setLocationRelativeTo(null);
-        windowInitialized();
     }
 
     void setUsername(String s) {
@@ -51,4 +35,24 @@ public class UserMenuView extends Window implements View {
         userInfoView = controller.getUserInfoView(this);
     }
 
+    @Override
+    public void initialize(UserMenuController controller) {
+        startInventory.addActionListener(e -> controller.startInventory());
+        showValueHistory.addActionListener(e -> controller.showValueHistory());
+        showProfile.addActionListener(e -> controller.showProfile());
+        beginCashierJob.addActionListener(e -> controller.beginCashierJob());
+        logOut.addActionListener(e -> controller.logOut());
+        beginSelfShopping.addActionListener(e -> controller.beginSelfShopping());
+        orderContainer.addActionListener(e -> controller.orderContainers());
+    }
+
+    @Override
+    public @NotNull Dimension getSize() {
+        return new Dimension(900,600);
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
 }

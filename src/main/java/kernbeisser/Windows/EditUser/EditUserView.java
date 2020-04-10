@@ -1,17 +1,17 @@
 package kernbeisser.Windows.EditUser;
 
 import kernbeisser.CustomComponents.PermissionButton;
-import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collection;
 
-class EditUserView extends Window implements View {
+class EditUserView implements View<EditUserController> {
     private JLabel lblVorname;
     private JLabel lblNachname;
     private kernbeisser.CustomComponents.TextFields.PermissionField firstName;
@@ -52,38 +52,10 @@ class EditUserView extends Window implements View {
     private JPanel buttonPanel;
     private PermissionButton editPermission;
 
-    public EditUserView(EditUserController controller, Window current) {
-        super(current/*, Key.ACTION_EDIT_USER*/);
-        add(userDataPanel);
-        setSize(500, 580);
-        setLocationRelativeTo(current);
-        chgPassword.addActionListener(e -> {
-            controller.requestChangePassword();
+    private final EditUserController controller;
 
-        });
-        chgJobs.addActionListener(e -> controller.openJobSelector());
-        submit.addActionListener(e -> {
-            controller.doAction();
-        });
-        editPermission.addActionListener(e -> controller.openPermissionSelector());
-        cancel.addActionListener(e -> back());
-        postalCode.setRequiredKeys(Key.USER_TOWN_CODE_READ, Key.USER_TOWN_CODE_WRITE);
-        town.setRequiredKeys(Key.USER_TOWN_READ, Key.USER_TOWN_WRITE);
-        phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ, Key.USER_PHONE_NUMBER1_WRITE);
-        phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ, Key.USER_PHONE_NUMBER2_WRITE);
-        username.setRequiredKeys(Key.USER_USERNAME_READ, Key.USER_USERNAME_WRITE);
-        street.setRequiredKeys(Key.USER_STREET_READ, Key.USER_STREET_WRITE);
-        firstName.setRequiredKeys(Key.USER_FIRST_NAME_READ,Key.USER_FIRST_NAME_WRITE);
-        lastName.setRequiredKeys(Key.USER_SURNAME_READ,Key.USER_SURNAME_WRITE);
-        chgPassword.setRequiredWriteKeys(Key.USER_PASSWORD_WRITE);
-        editPermission.setRequiredWriteKeys(Key.USER_PERMISSION_WRITE);
-        hasKey.setReadWrite(Key.USER_KERNBEISSER_KEY_READ);
-        isEmployee.setReadWrite(Key.USER_EMPLOYEE_READ);
-        extraJobs.setReadWrite(Key.USER_EXTRA_JOBS_READ);
-        solidarySupplement.setReadWrite(Key.USER_SOLIDARITY_SURCHARGE_READ);
-        chgJobs.setRequiredWriteKeys(Key.USER_JOBS_WRITE,Key.USER_JOBS_READ);
-        shares.setReadWrite(Key.USER_SHARES_READ);
-        windowInitialized();
+    public EditUserView(EditUserController controller, Window current) {
+        this.controller = controller;
     }
 
 
@@ -127,8 +99,42 @@ class EditUserView extends Window implements View {
     }
 
     void usernameAlreadyExists() {
-        JOptionPane.showMessageDialog(this, "Der Benutzername ist bereits vergeben");
+        JOptionPane.showMessageDialog(getTopComponent(), "Der Benutzername ist bereits vergeben");
     }
 
 
+    @Override
+    public void initialize(EditUserController controller) {
+        chgPassword.addActionListener(e -> {
+            controller.requestChangePassword();
+
+        });
+        chgJobs.addActionListener(e -> controller.openJobSelector());
+        submit.addActionListener(e -> {
+            controller.doAction();
+        });
+        editPermission.addActionListener(e -> controller.openPermissionSelector());
+        cancel.addActionListener(e -> back());
+        postalCode.setRequiredKeys(Key.USER_TOWN_CODE_READ, Key.USER_TOWN_CODE_WRITE);
+        town.setRequiredKeys(Key.USER_TOWN_READ, Key.USER_TOWN_WRITE);
+        phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ, Key.USER_PHONE_NUMBER1_WRITE);
+        phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ, Key.USER_PHONE_NUMBER2_WRITE);
+        username.setRequiredKeys(Key.USER_USERNAME_READ, Key.USER_USERNAME_WRITE);
+        street.setRequiredKeys(Key.USER_STREET_READ, Key.USER_STREET_WRITE);
+        firstName.setRequiredKeys(Key.USER_FIRST_NAME_READ,Key.USER_FIRST_NAME_WRITE);
+        lastName.setRequiredKeys(Key.USER_SURNAME_READ,Key.USER_SURNAME_WRITE);
+        chgPassword.setRequiredWriteKeys(Key.USER_PASSWORD_WRITE);
+        editPermission.setRequiredWriteKeys(Key.USER_PERMISSION_WRITE);
+        hasKey.setReadWrite(Key.USER_KERNBEISSER_KEY_READ);
+        isEmployee.setReadWrite(Key.USER_EMPLOYEE_READ);
+        extraJobs.setReadWrite(Key.USER_EXTRA_JOBS_READ);
+        solidarySupplement.setReadWrite(Key.USER_SOLIDARITY_SURCHARGE_READ);
+        chgJobs.setRequiredWriteKeys(Key.USER_JOBS_WRITE,Key.USER_JOBS_READ);
+        shares.setReadWrite(Key.USER_SHARES_READ);
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return userDataPanel;
+    }
 }

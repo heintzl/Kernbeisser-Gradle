@@ -1,13 +1,14 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.Key;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class ShoppingCartController implements Controller {
+public class ShoppingCartController implements Controller<ShoppingCartView,ShoppingCartModel> {
     private ShoppingCartView view;
     private ShoppingCartModel model;
 
@@ -15,7 +16,6 @@ public class ShoppingCartController implements Controller {
     public ShoppingCartController(double userValue, int userSurcharge) {
         model = new ShoppingCartModel(userValue, userSurcharge);
         view = new ShoppingCartView(this);
-        refresh();
     }
 
     public void addShoppingItem(ShoppingItem item, boolean stack) {
@@ -27,7 +27,6 @@ public class ShoppingCartController implements Controller {
         return PriceCalculator.getShoppingItemPrice(item, model.getUserSurcharge());
     }
 
-    @Override
     public void refresh() {
         view.clearNodes();
         double sum = 0;
@@ -50,13 +49,23 @@ public class ShoppingCartController implements Controller {
     }
 
     @Override
-    public ShoppingCartView getView() {
+    public @NotNull ShoppingCartView getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull ShoppingCartModel getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+        refresh();
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
 }

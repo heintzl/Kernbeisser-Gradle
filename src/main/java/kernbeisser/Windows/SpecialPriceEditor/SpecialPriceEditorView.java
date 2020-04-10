@@ -10,11 +10,13 @@ import kernbeisser.CustomComponents.TextFields.DateParseField;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
-import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +24,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Collection;
 
-public class SpecialPriceEditorView extends Window implements View {
+public class SpecialPriceEditorView implements View<SpecialPriceEditorController> {
     private ObjectTable<Offer> offers;
 
     private kernbeisser.CustomComponents.TextFields.DateParseField from;
@@ -42,26 +44,8 @@ public class SpecialPriceEditorView extends Window implements View {
 
     private final SpecialPriceEditorController controller;
 
-    public SpecialPriceEditorView(SpecialPriceEditorController controller, Window currentWindow, Key... required) {
-        super(currentWindow, required);
+    public SpecialPriceEditorView(SpecialPriceEditorController controller) {
         this.controller = controller;
-        add(main);
-        int ICON_SIZE = 15;
-        add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, ICON_SIZE, Color.GREEN));
-        remove.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH,ICON_SIZE,Color.RED));
-        edit.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL,ICON_SIZE,new Color(0x757EFF)));
-        offers.addSelectionListener(e -> controller.selectOffer());
-        add.addActionListener(e -> controller.add());
-        edit.addActionListener(e -> controller.edit());
-        remove.addActionListener(e -> controller.remove());
-        finishButton.addActionListener(e -> back());
-        searchFrom.addActionListener(e -> controller.searchFrom());
-        searchTo.addActionListener(e -> controller.searchTo());
-        searchTo.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR,ICON_SIZE,Color.GRAY));
-        searchFrom.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR,ICON_SIZE,Color.GRAY));
-        filterActionArticle.addActionListener(e -> controller.refreshSearchSolutions());
-        setSize(670,600);
-        windowInitialized();
     }
 
     void fillRepeat(Repeat[] repeats){
@@ -140,6 +124,35 @@ public class SpecialPriceEditorView extends Window implements View {
     }
 
     public void cannotParseDateFormat() {
-        JOptionPane.showMessageDialog(this,"Das angegebene Datum kann nicht eingelesen werden,\n bitte überprüfen sie ob das folgende Format eingehalten wurde:\n dd:mm:yyyy");
+        JOptionPane.showMessageDialog(getTopComponent(),"Das angegebene Datum kann nicht eingelesen werden,\n bitte überprüfen sie ob das folgende Format eingehalten wurde:\n dd:mm:yyyy");
     }
+
+    @Override
+    public void initialize(SpecialPriceEditorController controller) {
+        int ICON_SIZE = 15;
+        add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, ICON_SIZE, Color.GREEN));
+        remove.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH,ICON_SIZE,Color.RED));
+        edit.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL,ICON_SIZE,new Color(0x757EFF)));
+        offers.addSelectionListener(e -> controller.selectOffer());
+        add.addActionListener(e -> controller.add());
+        edit.addActionListener(e -> controller.edit());
+        remove.addActionListener(e -> controller.remove());
+        finishButton.addActionListener(e -> back());
+        searchFrom.addActionListener(e -> controller.searchFrom());
+        searchTo.addActionListener(e -> controller.searchTo());
+        searchTo.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR,ICON_SIZE,Color.GRAY));
+        searchFrom.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR,ICON_SIZE,Color.GRAY));
+        filterActionArticle.addActionListener(e -> controller.refreshSearchSolutions());
+    }
+
+    @Override
+    public @NotNull Dimension getSize() {
+        return new Dimension(670,600);
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
+
 }

@@ -8,13 +8,14 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Collection;
 
-public class ShoppingCartView extends JPanel implements View {
+public class ShoppingCartView extends JPanel implements View<ShoppingCartController> {
     private final ShoppingCartController controller;
     private JLabel sum;
     private JLabel value;
@@ -23,7 +24,6 @@ public class ShoppingCartView extends JPanel implements View {
 
     ShoppingCartView(ShoppingCartController controller) {
         this.controller = controller;
-        add(main);
     }
 
     void setObjects(Collection<ShoppingItem> items) {
@@ -89,5 +89,15 @@ public class ShoppingCartView extends JPanel implements View {
         shoppingItems.setGridColor(Color.WHITE);
         shoppingItems.setComplex(true);
         shoppingItems.setTableHeader(null);
+    }
+
+    @Override
+    public void initialize(ShoppingCartController controller) {
+        add(main);
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
     }
 }

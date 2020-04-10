@@ -1,8 +1,6 @@
 package kernbeisser.CustomComponents.TextFields;
 
 import kernbeisser.CustomComponents.RequiresPermission;
-import kernbeisser.Enums.Key;
-import kernbeisser.Windows.LogIn.LogInModel;
 
 import javax.swing.*;
 

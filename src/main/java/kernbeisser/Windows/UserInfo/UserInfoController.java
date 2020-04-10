@@ -6,36 +6,45 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.ValueChange;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.Purchase.PurchaseController;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class UserInfoController implements Controller {
+public class UserInfoController implements Controller<UserInfoView,UserInfoModel> {
 
-    private UserInfoView view;
-    private UserInfoModel model;
+    private final UserInfoView view;
+    private final UserInfoModel model;
 
-    public UserInfoController(Window current, User user){
+    public UserInfoController(User user){
         this.model = new UserInfoModel(user);
-        this.view = new UserInfoView(current,this);
-        if(user.getId() == LogInModel.getLoggedIn().getId())
+        this.view = new UserInfoView(this);
+    }
+
+    @Override
+    public @NotNull UserInfoView getView() {
+        return view;
+    }
+
+    @Override
+    public @NotNull UserInfoModel getModel() {
+        return model;
+    }
+
+    @Override
+    public void fillUI() {
+        if(model.getUser().getId() == LogInModel.getLoggedIn().getId())
             view.pasteWithoutPermissionCheck(model.getUser());
         else view.pasteUser(model.getUser());
     }
 
     @Override
-    public UserInfoView getView() {
-        return view;
-    }
-
-    @Override
-    public Model getModel() {
-        return model;
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
     public void loadCurrentSite() {
@@ -112,6 +121,6 @@ public class UserInfoController implements Controller {
     }
 
     public void openPurchase() {
-        new PurchaseController(view.getParentWindow(), view.getSelectedPurchase());
+        new PurchaseController(view.getSelectedPurchase());
     }
 }

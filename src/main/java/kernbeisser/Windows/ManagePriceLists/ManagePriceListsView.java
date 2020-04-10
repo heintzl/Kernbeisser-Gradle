@@ -8,19 +8,17 @@ package kernbeisser.Windows.ManagePriceLists;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.Key;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
-import org.hibernate.Session;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 
-public class ManagePriceListsView extends Window implements View {
+public class ManagePriceListsView implements View<ManagePriceListsController> {
 
     //TODO back or commit button can be deleted, they should have the same function
     private PermissionField priceListName;
@@ -35,23 +33,8 @@ public class ManagePriceListsView extends Window implements View {
 
     private ManagePriceListsController controller;
 
-    public ManagePriceListsView(Window current, ManagePriceListsController controller) {
-        //TODO Benjamin is working currently on this project
-        super(current /*,Key.ACTION_OPEN_MANAGE_PRICELISTS*/);
+    public ManagePriceListsView(ManagePriceListsController controller) {
         this.controller = controller;
-        add.setRequiredWriteKeys(Key.ACTION_ADD_PRICELIST, Key.PRICELIST_NAME_WRITE);
-        delete.setRequiredWriteKeys(Key.ACTION_DELETE_PRICELIST);
-        edit.setRequiredWriteKeys(Key.ACTION_EDIT_PRICELIST, Key.PRICELIST_NAME_WRITE,
-                                  Key.PRICELIST_SUPER_PRICE_LIST_WRITE);
-        priceListName.setRequiredWriteKeys(Key.PRICELIST_NAME_WRITE);
-        priceListTree.addSelectionListener(e -> controller.displayCurrentSuperPriceList());
-        add(main);
-        add.addActionListener(e -> controller.saveAction());
-        edit.addActionListener(e -> controller.renameAction());
-        delete.addActionListener(e -> controller.deleteAction());
-        back.addActionListener(e -> controller.back());
-        commit.addActionListener((e -> controller.back()));
-        windowInitialized();
     }
 
     PriceList getSelectedPriceList() {
@@ -87,6 +70,26 @@ public class ManagePriceListsView extends Window implements View {
 
     public PriceListTree getPriceListTree() {
         return priceListTree;
+    }
+
+    @Override
+    public void initialize(ManagePriceListsController controller) {
+        add.setRequiredWriteKeys(Key.ACTION_ADD_PRICELIST, Key.PRICELIST_NAME_WRITE);
+        delete.setRequiredWriteKeys(Key.ACTION_DELETE_PRICELIST);
+        edit.setRequiredWriteKeys(Key.ACTION_EDIT_PRICELIST, Key.PRICELIST_NAME_WRITE,
+                                  Key.PRICELIST_SUPER_PRICE_LIST_WRITE);
+        priceListName.setRequiredWriteKeys(Key.PRICELIST_NAME_WRITE);
+        priceListTree.addSelectionListener(e -> controller.displayCurrentSuperPriceList());
+        add.addActionListener(e -> controller.saveAction());
+        edit.addActionListener(e -> controller.renameAction());
+        delete.addActionListener(e -> controller.deleteAction());
+        back.addActionListener(e -> controller.back());
+        commit.addActionListener((e -> controller.back()));
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
     }
 
 }

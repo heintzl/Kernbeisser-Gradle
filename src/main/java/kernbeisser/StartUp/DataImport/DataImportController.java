@@ -6,8 +6,8 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -22,12 +22,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
-public class DataImportController implements Controller {
+public class DataImportController implements Controller<DataImportView,DataImportModel> {
     private DataImportView view;
     private DataImportModel model;
 
-    public DataImportController(Window current) {
-        this.view = new DataImportView(current, this);
+    public DataImportController() {
+        this.view = new DataImportView(this);
         model = new DataImportModel();
     }
 
@@ -40,7 +40,7 @@ public class DataImportController implements Controller {
             view.setFilePath(jFileChooser.getSelectedFile().getAbsolutePath());
             checkDataSource();
         });
-        jFileChooser.showOpenDialog(view);
+        jFileChooser.showOpenDialog(getView().getTopComponent());
     }
 
     private boolean isValidDataSource() {
@@ -369,12 +369,22 @@ public class DataImportController implements Controller {
     }
 
     @Override
-    public DataImportView getView() {
+    public @NotNull DataImportView getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull DataImportModel getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 }

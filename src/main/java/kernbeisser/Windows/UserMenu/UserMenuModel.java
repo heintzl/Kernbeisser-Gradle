@@ -7,7 +7,7 @@ import kernbeisser.Windows.Model;
 
 import java.util.Collection;
 
-public class UserMenuModel implements Model {
+public class UserMenuModel implements Model<UserMenuController> {
 
 
     public User getOwner() {

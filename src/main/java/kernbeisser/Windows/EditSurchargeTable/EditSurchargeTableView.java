@@ -3,13 +3,16 @@ package kernbeisser.Windows.EditSurchargeTable;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeTable;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
 
-class EditSurchargeTableView extends Window {
-    private final EditSurchargeTableController controller;
+class EditSurchargeTableView implements View<EditSurchargeTableController> {
     private JButton commit;
     private JButton cancel;
     private JComboBox<Supplier> supplier;
@@ -19,15 +22,10 @@ class EditSurchargeTableView extends Window {
     private kernbeisser.CustomComponents.TextFields.DoubleParseField surcharge;
     private JPanel main;
 
-    EditSurchargeTableView(EditSurchargeTableController controller, Window current) {
-        super(current);
+    private final EditSurchargeTableController controller;
+
+    EditSurchargeTableView(EditSurchargeTableController controller) {
         this.controller = controller;
-        commit.addActionListener((e) -> controller.commit());
-        cancel.addActionListener((e) -> back());
-        add(main);
-        pack();
-        setLocationRelativeTo(null);
-        windowInitialized();
     }
 
     void setSuppliers(Collection<Supplier> suppliers) {
@@ -50,6 +48,17 @@ class EditSurchargeTableView extends Window {
         table.setTo(to.getSafeValue());
         table.setName(name.getText());
         return table;
+    }
+
+    @Override
+    public void initialize(EditSurchargeTableController controller) {
+        commit.addActionListener((e) -> controller.commit());
+        cancel.addActionListener((e) -> back());
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
     }
 
 }

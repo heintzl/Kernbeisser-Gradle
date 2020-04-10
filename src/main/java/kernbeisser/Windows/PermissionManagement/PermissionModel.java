@@ -2,10 +2,8 @@ package kernbeisser.Windows.PermissionManagement;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.KeyCategory;
-import kernbeisser.Enums.Security;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
@@ -13,7 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
-class PermissionModel implements Model {
+class PermissionModel implements Model<PermissionController> {
     void addKey(Permission permission, Key key) {
         Tools.addToCollection(Permission.class,permission.getId(),Permission::getKeySet,key);
     }

@@ -1,10 +1,6 @@
 package kernbeisser.CustomComponents;
 
-import kernbeisser.Enums.Key;
-import kernbeisser.Windows.LogIn.LogInModel;
-
 import javax.swing.*;
-import java.awt.*;
 
 public class PermissionComboBox<T> extends JComboBox<T> implements RequiresPermission {
     private boolean write = true;

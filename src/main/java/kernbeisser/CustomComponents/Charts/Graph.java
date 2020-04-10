@@ -12,8 +12,6 @@ import java.awt.geom.Point2D;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.function.Function;
 
 public interface Graph {

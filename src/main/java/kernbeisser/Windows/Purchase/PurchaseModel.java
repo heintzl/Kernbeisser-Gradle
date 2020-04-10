@@ -6,7 +6,7 @@ import kernbeisser.Windows.Model;
 
 import java.util.Collection;
 
-public class PurchaseModel implements Model {
+public class PurchaseModel implements Model<PurchaseController> {
     private final Purchase loaded;
 
     PurchaseModel(Purchase loaded) {

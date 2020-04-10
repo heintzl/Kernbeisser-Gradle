@@ -1,15 +1,15 @@
 package kernbeisser.Windows.SoloShoppingMask;
 
 import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.Model;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
-public class SoloShoppingMaskController implements Controller {
+public class SoloShoppingMaskController implements Controller<SoloShoppingMaskView,SoloShoppingMaskModel> {
 
     private SoloShoppingMaskView view;
 
@@ -17,23 +17,34 @@ public class SoloShoppingMaskController implements Controller {
 
     private ShoppingMaskUIController shoppingMaskUIController;
 
-    public SoloShoppingMaskController(Window current){
+    public SoloShoppingMaskController(){
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(LogInModel.getLoggedIn());
         saleSession.setSeller(LogInModel.getLoggedIn());
         this.shoppingMaskUIController = new ShoppingMaskUIController(saleSession);
+        shoppingMaskUIController.initView();
         this.model = new SoloShoppingMaskModel();
-        this.view = new SoloShoppingMaskView(current,this);
+        this.view = new SoloShoppingMaskView(this);
     }
 
     @Override
-    public View getView() {
+    public @NotNull SoloShoppingMaskView getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull SoloShoppingMaskModel getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
     public ShoppingMaskUIView getShoppingMaskView() {

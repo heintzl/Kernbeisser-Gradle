@@ -6,14 +6,17 @@ import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.Enums.Key;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-public class ContainerView extends Window {
+public class ContainerView implements View<ContainerController> {
     private ObjectTable<Container> unpaidContainers;
     private kernbeisser.CustomComponents.PermissionButton commit;
     private ObjectTable<Container> lastContainers;
@@ -30,24 +33,8 @@ public class ContainerView extends Window {
 
     private ContainerController controller;
 
-    ContainerView(Window window, ContainerController controller) {
-        super(window);
+    ContainerView(ContainerController controller) {
         this.controller = controller;
-        commit.addActionListener((e) -> controller.commit());
-        kkNumber.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                controller.searchKK();
-            }
-        });
-        kbNumber.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                controller.searchKB();
-            }
-        });
-        add(main);
-        windowInitialized();
     }
 
     void setInsertSectionEnabled(boolean b){
@@ -148,14 +135,34 @@ public class ContainerView extends Window {
         kbNumber.setText(s);
     }
 
-    @Override
-    public void finish() {
-        controller.exit();
-    }
 
     void noItemFound() {
-        JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(getTopComponent(),
                                       "Es konnte kein Kornkraft Artikel mit dieser Kornkraft / Kernbeisser Nummer gefunden werden");
     }
 
+    @Override
+    public void initialize(ContainerController controller) {
+        commit.addActionListener((e) -> controller.commit());
+        kkNumber.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                controller.searchKK();
+            }
+        });
+        kbNumber.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                controller.searchKB();
+            }
+        });
+        getWindow().addCloseEventListener(e -> {
+            controller.exit();
+        });
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
 }

@@ -3,8 +3,6 @@ package kernbeisser.Windows.ShoppingMask;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -13,7 +11,7 @@ import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ShoppingMaskModel implements Model {
+public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
     private Article selected = null;
     private double value;
     private SaleSession saleSession;

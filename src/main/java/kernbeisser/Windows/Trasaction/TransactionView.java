@@ -9,8 +9,11 @@ import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Enums.Key;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +21,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-class TransactionView extends Window implements View {
+public class TransactionView implements View<TransactionController> {
     private JButton transferTransactions;
     private JTextField to;
     private JTextField from;
@@ -75,9 +78,116 @@ class TransactionView extends Window implements View {
 
     private TransactionController controller;
 
-    TransactionView(Window current, TransactionController controller) {
-        super(current, Key.ACTION_TRANSACTION);
+    TransactionView(TransactionController controller) {
         this.controller = controller;
+    }
+
+
+    void setTransactions(Collection<Transaction> transactions) {
+        this.transactions.setObjects(transactions);
+    }
+
+    String getTo() {
+        return to.getText();
+    }
+
+    void setTo(String s) {
+        to.setText(s);
+    }
+
+    String getFrom() {
+        return from.getText();
+    }
+
+    void setFrom(String s) {
+        from.setText(s);
+    }
+
+    boolean isFromKB() {
+        return formKBValue.isSelected();
+    }
+
+    void setFromKBEnable(boolean b) {
+        formKBValue.setSelected(b);
+        formKBValue.setEnabled(b);
+        if(b) {
+            from.setEnabled(false);
+        }
+    }
+
+    void setFromEnabled(boolean b) {
+        from.setEnabled(b);
+        searchBoxView.setVisible(b);
+    }
+
+    private void createUIComponents() {
+        transactions = new ObjectTable<>(
+                Column.create("Von", e -> e.getFrom() == null ? "Kernbeisser" : (e.getFrom().getSurname()+", "+e.getFrom().getFirstName())),
+                Column.create("An", e -> e.getTo().getSurname()+", "+e.getTo().getFirstName()),
+                Column.create("Überweissungsbetrag", e -> String.format("%.2f€",e.getValue())),
+                Column.create("Info", Transaction::getInfo)
+        );
+        searchBoxView = controller.getSearchBoxView();
+    }
+
+    void success() {
+        JOptionPane.showMessageDialog(getTopComponent(), "Die Überweisung/en wurde/n durchgeführt");
+    }
+
+    boolean confirm() {
+        return JOptionPane.showConfirmDialog(getTopComponent(), "Sollen die eingetragenen überweisungen getätigt werden?") == 0;
+    }
+
+    void invalidFrom() {
+        JOptionPane.showMessageDialog(getTopComponent(), "Der eingetragen Absender kann nicht gefunden werden!");
+    }
+
+    void invalidTo() {
+        JOptionPane.showMessageDialog(getTopComponent(), "Der eingetragen Empfänger kann nicht gefunden werden!");
+    }
+
+    public double getValue() {
+        return value.getSafeValue();
+    }
+
+    Transaction getSelectedTransaction() {
+        return transactions.getSelectedObject();
+    }
+
+    public void setValue(String s) {
+        value.setText(s);
+    }
+
+    void setCount(int count){
+        this.count.setText(count+" Überweisungen");
+    }
+
+    void setSum(double sum){
+        this.sum.setText(String.format("%.2f€",sum));
+    }
+
+    public void invalidValue() {
+        JOptionPane.showMessageDialog(getTopComponent(),"Der eingegebene Betrag darf nicht 0.00€ betragen");
+    }
+
+    public boolean requestUserTransactionCommit() {
+        return JOptionPane.showConfirmDialog(getTopComponent(), "Der angegebene Preis ist negativ, das entspricht einer Auszahlung.\nIst das korrekt?") == 0;
+    }
+
+    public int commitUnsavedTransactions() {
+        return JOptionPane.showConfirmDialog(getTopComponent(),"Sollen die eingegebenen Überweisungen getätigt werden?","Achtung: Überweisungen wurden noch nicht übernommen",JOptionPane.YES_NO_CANCEL_OPTION);
+    }
+
+    public void transactionsDeleted() {
+        JOptionPane.showMessageDialog(getTopComponent(),"Die eingegeben Überweisungen wurden nicht übernommen");
+    }
+
+    public String getInfo() {
+        return info.getText();
+    }
+
+    @Override
+    public void initialize(TransactionController controller) {
         transferTransactions.addActionListener((e) -> controller.transfer());
         transferTransactions.setIcon(IconFontSwing.buildIcon(FontAwesome.CHECK, 20, Color.GREEN));
         addTransaction.addActionListener(e -> controller.addTransaction());
@@ -95,9 +205,7 @@ class TransactionView extends Window implements View {
             }
         });
         info.setRequiredWriteKeys(Key.TRANSACTION_INFO_WRITE);
-        add(main);
-        windowInitialized();
-        formKBValue.addActionListener(e -> from.setEnabled(!formKBValue.isSelected()));
+                formKBValue.addActionListener(e -> from.setEnabled(!formKBValue.isSelected()));
         //Sets the ActionListeners for the instant Transaction Buttons
         {
             a10.addActionListener(e -> {
@@ -245,110 +353,8 @@ class TransactionView extends Window implements View {
     }
 
     @Override
-    protected boolean isCloseable() {
-        return controller.isCloseable();
+    public @NotNull JComponent getContent() {
+        return main;
     }
 
-    void setTransactions(Collection<Transaction> transactions) {
-        this.transactions.setObjects(transactions);
-    }
-
-    String getTo() {
-        return to.getText();
-    }
-
-    void setTo(String s) {
-        to.setText(s);
-    }
-
-    String getFrom() {
-        return from.getText();
-    }
-
-    void setFrom(String s) {
-        from.setText(s);
-    }
-
-    boolean isFromKB() {
-        return formKBValue.isSelected();
-    }
-
-    void setFromKBEnable(boolean b) {
-        formKBValue.setSelected(b);
-        formKBValue.setEnabled(b);
-        if(b) {
-            from.setEnabled(false);
-        }
-    }
-
-    void setFromEnabled(boolean b) {
-        from.setEnabled(b);
-        searchBoxView.setVisible(b);
-    }
-
-    private void createUIComponents() {
-        transactions = new ObjectTable<>(
-                Column.create("Von", e -> e.getFrom() == null ? "Kernbeisser" : (e.getFrom().getSurname()+", "+e.getFrom().getFirstName())),
-                Column.create("An", e -> e.getTo().getSurname()+", "+e.getTo().getFirstName()),
-                Column.create("Überweissungsbetrag", e -> String.format("%.2f€",e.getValue())),
-                Column.create("Info", Transaction::getInfo)
-        );
-        searchBoxView = controller.getSearchBoxView();
-    }
-
-    void success() {
-        JOptionPane.showMessageDialog(this, "Die Überweisung/en wurde/n durchgeführt");
-    }
-
-    boolean confirm() {
-        return JOptionPane.showConfirmDialog(this, "Sollen die eingetragenen überweisungen getätigt werden?") == 0;
-    }
-
-    void invalidFrom() {
-        JOptionPane.showMessageDialog(this, "Der eingetragen Absender kann nicht gefunden werden!");
-    }
-
-    void invalidTo() {
-        JOptionPane.showMessageDialog(this, "Der eingetragen Empfänger kann nicht gefunden werden!");
-    }
-
-    public double getValue() {
-        return value.getSafeValue();
-    }
-
-    Transaction getSelectedTransaction() {
-        return transactions.getSelectedObject();
-    }
-
-    public void setValue(String s) {
-        value.setText(s);
-    }
-
-    void setCount(int count){
-        this.count.setText(count+" Überweisungen");
-    }
-
-    void setSum(double sum){
-        this.sum.setText(String.format("%.2f€",sum));
-    }
-
-    public void invalidValue() {
-        JOptionPane.showMessageDialog(this,"Der eingegebene Betrag darf nicht 0.00€ betragen");
-    }
-
-    public boolean requestUserTransactionCommit() {
-        return JOptionPane.showConfirmDialog(this, "Der angegebene Preis ist negativ, das entspricht einer Auszahlung.\nIst das korrekt?") == 0;
-    }
-
-    public int commitUnsavedTransactions() {
-        return JOptionPane.showConfirmDialog(this,"Sollen die eingegebenen Überweisungen getätigt werden?","Achtung: Überweisungen wurden noch nicht übernommen",JOptionPane.YES_NO_CANCEL_OPTION);
-    }
-
-    public void transactionsDeleted() {
-        JOptionPane.showMessageDialog(this,"Die eingegeben Überweisungen wurden nicht übernommen");
-    }
-
-    public String getInfo() {
-        return info.getText();
-    }
 }

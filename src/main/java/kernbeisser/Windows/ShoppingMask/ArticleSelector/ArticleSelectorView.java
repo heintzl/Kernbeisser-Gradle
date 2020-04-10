@@ -3,12 +3,16 @@ package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.Key;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 
-public class ArticleSelectorView extends Window implements View {
+public class ArticleSelectorView implements View<ArticleSelectorController> {
     private JPanel main;
     private JButton chooseButton;
     private JCheckBox onlyWithoutBarcode;
@@ -16,14 +20,8 @@ public class ArticleSelectorView extends Window implements View {
 
     private final ArticleSelectorController controller;
 
-    public ArticleSelectorView(Window currentWindow,ArticleSelectorController controller, Key... required) {
-        super(currentWindow, required);
+    public ArticleSelectorView(ArticleSelectorController controller, Key... required) {
         this.controller = controller;
-        add(main);
-        onlyWithoutBarcode.addActionListener(e -> controller.refreshLoadSolutions());
-        chooseButton.addActionListener(e -> controller.choose());
-        setSize(500,600);
-        windowInitialized();
     }
 
     boolean searchOnlyWithoutBarcode(){
@@ -33,4 +31,21 @@ public class ArticleSelectorView extends Window implements View {
     private void createUIComponents() {
         searchBox = controller.getSearchBoxView();
     }
+
+    @Override
+    public void initialize(ArticleSelectorController controller) {
+        onlyWithoutBarcode.addActionListener(e -> controller.refreshLoadSolutions());
+        chooseButton.addActionListener(e -> controller.choose());
+    }
+
+    @Override
+    public @NotNull Dimension getSize() {
+        return new Dimension(500,600);
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
+
 }

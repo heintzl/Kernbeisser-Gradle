@@ -7,7 +7,7 @@ import kernbeisser.Windows.Searchable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public class SearchBoxModel<T> implements Model {
+public class SearchBoxModel<T> implements Model<SearchBoxController<T>> {
     private final Searchable<T> searchable;
     private final Consumer<T> select;
 

@@ -6,33 +6,29 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Enums.KeyCategory;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class PermissionController {
+public class PermissionController implements Controller<PermissionView,PermissionModel> {
     private final PermissionView view;
     private final PermissionModel model;
 
-    PermissionController(Window window) {
-        this.view = new PermissionView(this, window);
+    PermissionController() {
+        this.view = new PermissionView(this);
         this.model = new PermissionModel();
-        view.setCategories(model.getAllKeyCategories());
-        //boolean p = LogInModel.getLoggedIn().hasPermission(Key.PERMISSION_KEY_SET_WRITE);
-        //view.setAddEnable(p);
-        //view.setDeleteEnable(p);
-        view.setValues(model.getAllPermissions());
-        loadSolutions();
     }
 
     public static void main(String[] args)
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException {
         Main.buildEnvironment();
-        new PermissionController(null);
+        new PermissionController();
     }
 
     private void change(Permission permission, Key key) {
@@ -134,5 +130,30 @@ public class PermissionController {
     public void deletePermission() {
         model.deletePermission(view.getSelectedObject());
         view.setValues(model.getAllPermissions());
+    }
+
+    @Override
+    public @NotNull PermissionView getView() {
+        return view;
+    }
+
+    @Override
+    public @NotNull PermissionModel getModel() {
+        return model;
+    }
+
+    @Override
+    public void fillUI() {
+        view.setCategories(model.getAllKeyCategories());
+        //boolean p = LogInModel.getLoggedIn().hasPermission(Key.PERMISSION_KEY_SET_WRITE);
+        //view.setAddEnable(p);
+        //view.setDeleteEnable(p);
+        view.setValues(model.getAllPermissions());
+        loadSolutions();
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 }

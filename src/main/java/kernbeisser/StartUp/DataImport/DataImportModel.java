@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
-class DataImportModel implements Model {
+public class DataImportModel implements Model<DataImportController> {
     <T> void batchSaveAll(Collection<T> v) {
         if (v.size() == 0) return;
         EntityManager em = DBConnection.getEntityManager();

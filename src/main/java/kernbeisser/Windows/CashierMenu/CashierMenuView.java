@@ -3,12 +3,12 @@ package kernbeisser.Windows.CashierMenu;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class CashierMenuView extends Window implements View {
+public class CashierMenuView  implements View<CashierMenuController> {
     private JButton editItems;
     private JButton editUser;
     private JButton changeSurchargeTable;
@@ -19,8 +19,15 @@ public class CashierMenuView extends Window implements View {
     private JPanel main;
     private JButton transfer;
 
-    CashierMenuView(CashierMenuController controller, Window current) {
-        super(current);
+    private final CashierMenuController cashierMenuController;
+
+    CashierMenuView(CashierMenuController controller){
+        this.cashierMenuController = controller;
+    }
+
+
+    @Override
+    public void initialize(CashierMenuController controller) {
         editItems.addActionListener(e -> controller.openManageItems());
         editUser.addActionListener(e -> controller.openManageUsers());
         editPriceList.addActionListener(e -> controller.openManagePriceLists());
@@ -36,10 +43,15 @@ public class CashierMenuView extends Window implements View {
         changeSurchargeTable.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(165, 4, 46)));
         refreshCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 20, new Color(60, 57, 255)));
         changeSurchargeTable.addActionListener(e -> controller.openManageSurchargeTables());
-        add(main);
-        setSize(900, 600);
-        setLocationRelativeTo(null);
-        windowInitialized();
     }
 
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
+
+    @Override
+    public @NotNull Dimension getSize() {
+        return new Dimension(900,600);
+    }
 }

@@ -1,10 +1,10 @@
 package kernbeisser.Windows.UserInfo;
 
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Model;
+import kernbeisser.Windows.Window;
 
-public class UserInfoModel implements Model {
+public class UserInfoModel implements Model<UserInfoController> {
 
     private final User user;
 
@@ -15,4 +15,5 @@ public class UserInfoModel implements Model {
     public User getUser() {
         return user;
     }
+
 }

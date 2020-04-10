@@ -1,7 +1,9 @@
 package kernbeisser.Windows.Container;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.ArticleKornkraft;
+import kernbeisser.DBEntities.Container;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -9,7 +11,7 @@ import javax.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ContainerModel implements Model {
+public class ContainerModel implements Model<ContainerController> {
     private final Collection<Container> newContainers = new ArrayList<>();
     private final User user;
 

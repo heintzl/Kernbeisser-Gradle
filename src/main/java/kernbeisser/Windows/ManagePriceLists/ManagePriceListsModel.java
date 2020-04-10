@@ -1,18 +1,15 @@
 package kernbeisser.Windows.ManagePriceLists;
 
 import kernbeisser.CustomComponents.PriceListTree;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 import org.hibernate.Session;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.swing.tree.TreeModel;
 
-public class ManagePriceListsModel implements Model {
+public class ManagePriceListsModel implements Model<ManagePriceListsController> {
 
     private TreeModel PriceListTreeModel;
 

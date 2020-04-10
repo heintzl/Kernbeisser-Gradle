@@ -12,8 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.util.Collection;
 
-import static kernbeisser.Windows.LogIn.OldLogIn.LogInController.*;
-
 public class LogInModel implements Model {
 
     public static User loggedIn;
@@ -26,7 +24,7 @@ public class LogInModel implements Model {
         return loggedIn;
     }
 
-    public void logIn(String username, char[] password) throws AccessDeniedException, PermissionRequired {
+    public static void logIn(String username, char[] password) throws AccessDeniedException, PermissionRequired {
         EntityManager em = DBConnection.getEntityManager();
         try {
             User user = em.createQuery(

@@ -2,8 +2,6 @@ package kernbeisser.CustomComponents.TextFields;
 
 import kernbeisser.Exeptions.IncorrectInput;
 
-import java.util.function.Function;
-
 public class IntegerParseField extends FilterField<Integer> {
     IntegerParseField(int min, int max) {
         super(e -> {

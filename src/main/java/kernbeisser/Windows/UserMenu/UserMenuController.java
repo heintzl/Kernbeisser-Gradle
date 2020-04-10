@@ -1,44 +1,48 @@
 package kernbeisser.Windows.UserMenu;
 
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.UserSetting;
-import kernbeisser.Windows.*;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
+import kernbeisser.Windows.Window;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.Purchase.PurchaseController;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
-import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskView;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
-public class UserMenuController implements Controller {
+public class UserMenuController implements Controller<UserMenuView,UserMenuModel> {
     private UserMenuView view;
     private UserMenuModel model;
 
-    public UserMenuController(Window current) {
+    public UserMenuController() {
         this.model = new UserMenuModel();
-        this.view = new UserMenuView(this, current);
-        view.setUsername(LogInModel.getLoggedIn().getFirstName()+" "+LogInModel.getLoggedIn().getSurname());
+        this.view = new UserMenuView(this);
     }
 
-
-
     @Override
-    public UserMenuView getView() {
+    public @NotNull UserMenuView getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull UserMenuModel getModel() {
         return model;
     }
 
+    @Override
+    public void fillUI() {
+        view.setUsername(LogInModel.getLoggedIn().getFirstName()+" "+LogInModel.getLoggedIn().getSurname());
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
+    }
+
     public void beginSelfShopping() {
-        new SoloShoppingMaskController(view);
+        new SoloShoppingMaskController().openAsWindow(view.getWindow(),JFrameWindow::new);
     }
 
     public void logOut() {
@@ -46,7 +50,7 @@ public class UserMenuController implements Controller {
     }
 
     public void beginCashierJob() {
-        new CashierMenuController(view, model.getOwner());
+        new CashierMenuController(model.getOwner()).openAsWindow(view.getWindow(),JFrameWindow::new);
     }
 
     public void showProfile() {
@@ -60,10 +64,10 @@ public class UserMenuController implements Controller {
     }
 
     public void orderContainers() {
-        new ContainerController(view, model.getOwner());
+        new ContainerController(model.getOwner()).openAsWindow(view.getWindow(), JFrameWindow::new);
     }
 
-    public UserInfoView getUserInfoView(Window view) {
-        return new UserInfoController(view, model.getOwner()).getView();
+    public UserInfoView getUserInfoView(UserMenuView view) {
+        return new UserInfoController(model.getOwner()).getView();
     }
 }

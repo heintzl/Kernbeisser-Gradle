@@ -4,17 +4,16 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
-public class ShoppingMaskUIController implements Controller {
+public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,ShoppingMaskModel> {
     private ShoppingMaskUIView view;
     private ShoppingMaskModel model;
     private ShoppingCartController shoppingCartController;
@@ -25,7 +24,6 @@ public class ShoppingMaskUIController implements Controller {
                                                                                         .getCustomer()
                                                                                         .getSolidaritySurcharge());
         this.view = new ShoppingMaskUIView(this, shoppingCartController);
-        view.loadUserInfo(saleSession);
     }
 
     void addToShoppingCart() {
@@ -109,13 +107,23 @@ public class ShoppingMaskUIController implements Controller {
 
 
     @Override
-    public ShoppingMaskUIView getView() {
+    public @NotNull ShoppingMaskUIView getView() {
         return view;
     }
 
     @Override
-    public ShoppingMaskModel getModel() {
+    public @NotNull ShoppingMaskModel getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+        view.loadUserInfo(model.getSaleSession());
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
     void startPay() {
@@ -125,7 +133,7 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     void openSearchWindow() {
-        new ArticleSelectorController(null,view::loadItemStats);
+        new ArticleSelectorController(view::loadItemStats);
     }
 
 //    void editUserAction() {

@@ -7,9 +7,17 @@ import kernbeisser.Windows.Model;
 import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-class TransactionModel implements Model {
+public class TransactionModel implements Model<TransactionController> {
+
+
+    private final User owner;
+
+    TransactionModel(User owner){
+
+        this.owner = owner;
+    }
+
     private Collection<Transaction> transactions = new ArrayList<>();
 
     void addTransaction(Transaction t) {
@@ -40,5 +48,9 @@ class TransactionModel implements Model {
 
     public void remove(Transaction selectedTransaction) {
         transactions.remove(selectedTransaction);
+    }
+
+    public User getOwner() {
+        return owner;
     }
 }

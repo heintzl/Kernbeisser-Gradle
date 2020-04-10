@@ -1,7 +1,10 @@
 package kernbeisser.CustomComponents.DatePicker;
 
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -12,29 +15,16 @@ import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-public class DatePickerView extends Window implements View {
+public class DatePickerView implements View<DatePickerController> {
     private JButton chooseButton;
     private JPanel main;
     private JComboBox<String> monthSelection;
     private JTable monthDays;
 
-    public DatePickerView(Window current, DatePickerController datePickerController) {
-        super(current);
-        add(main);
-        setSize(200,226);
-        monthSelection.addActionListener(e -> datePickerController.loadMonth());
-        chooseButton.addActionListener(e -> datePickerController.commit());
-        monthDays.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                datePickerController.select();
-            }
-        });
-        monthDays.setSelectionBackground(new Color(0x949595));
-        monthDays.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        monthDays.setColumnSelectionAllowed(true);
-        monthDays.setRowSelectionAllowed(true);
-        windowInitialized();
+    private final DatePickerController controller;
+
+    public DatePickerView(DatePickerController datePickerController) {
+        this.controller = datePickerController;
     }
 
     void setMoths(Month[] months){
@@ -54,7 +44,6 @@ public class DatePickerView extends Window implements View {
 
     void setMonths(TableModel model){
         monthDays.setModel(model);
-        repaint();
     }
 
     void setSelectionButtonText(String s){
@@ -65,6 +54,29 @@ public class DatePickerView extends Window implements View {
     int getSelectedMonth(){
         return monthSelection.getSelectedIndex();
     }
+
+
+    @Override
+    public void initialize(DatePickerController controller) {
+        monthSelection.addActionListener(e -> controller.loadMonth());
+        chooseButton.addActionListener(e -> controller.commit());
+        monthDays.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                controller.select();
+            }
+        });
+        monthDays.setSelectionBackground(new Color(0x949595));
+        monthDays.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        monthDays.setColumnSelectionAllowed(true);
+        monthDays.setRowSelectionAllowed(true);
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
+
 
 
 }

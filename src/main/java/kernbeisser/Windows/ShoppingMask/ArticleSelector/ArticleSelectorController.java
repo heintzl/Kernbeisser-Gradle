@@ -6,21 +6,18 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Consumer;
 
-public class ArticleSelectorController implements Controller {
+public class ArticleSelectorController implements Controller<ArticleSelectorView,ArticleSelectorModel> {
     private final ArticleSelectorModel model;
     private ArticleSelectorView view;
 
     private final SearchBoxController<Article> searchBoxController;
 
-    public ArticleSelectorController(Window current, Consumer<Article> consumer){
+    public ArticleSelectorController(Consumer<Article> consumer){
         view = null;
         searchBoxController = new SearchBoxController<>((s, m) -> {
             Collection<Article> articles = Article.defaultSearch(s, m);
@@ -36,7 +33,7 @@ public class ArticleSelectorController implements Controller {
                                                                       Key.ARTICLE_SUPPLIER_READ,
                                                                       Key.SUPPLIER_SHORT_NAME_READ));
         this.model = new ArticleSelectorModel(consumer);
-        this.view = new ArticleSelectorView(current,this);
+        this.view = new ArticleSelectorView(this);
     }
 
     public void choose() {
@@ -45,13 +42,23 @@ public class ArticleSelectorController implements Controller {
     }
 
     @Override
-    public View getView() {
+    public @NotNull ArticleSelectorView getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull ArticleSelectorModel getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
     public SearchBoxView<Article> getSearchBoxView() {

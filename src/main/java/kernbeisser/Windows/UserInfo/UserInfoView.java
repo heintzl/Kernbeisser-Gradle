@@ -7,12 +7,12 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
 
-public class UserInfoView extends JPanel implements View {
+public class UserInfoView extends JPanel implements View<UserInfoController> {
 
     private JPanel main;
     private JTabbedPane tabbedPane;
@@ -37,14 +37,8 @@ public class UserInfoView extends JPanel implements View {
 
     private UserInfoController controller;
 
-    private Window parent;
-
-    public UserInfoView(Window current, UserInfoController userInfoController) {
+    public UserInfoView(UserInfoController userInfoController) {
         this.controller = userInfoController;
-        this.parent = current;
-        add(main);
-        tabbedPane.addChangeListener(e -> userInfoController.loadCurrentSite());
-        shoppingHistory.addSelectionListener(e -> controller.openPurchase());
     }
 
     void setUserGroupMembers(Collection<User> users){
@@ -119,7 +113,15 @@ public class UserInfoView extends JPanel implements View {
         return shoppingHistory.getSelectedObject();
     }
 
-    public Window getParentWindow() {
-        return parent;
+    @Override
+    public void initialize(UserInfoController controller) {
+        add(main);
+        tabbedPane.addChangeListener(e -> controller.loadCurrentSite());
+        shoppingHistory.addSelectionListener(e -> controller.openPurchase());
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
     }
 }

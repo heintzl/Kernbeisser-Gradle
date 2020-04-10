@@ -1,28 +1,19 @@
 package kernbeisser.Windows.ObjectView;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.Key;
+import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
-public class ObjectViewController<T> {
+public class ObjectViewController<T> implements Controller<ObjectViewView<T>,ObjectViewModel<T>> {
     private ObjectViewModel<T> model;
     private ObjectViewView<T> view;
 
-    public ObjectViewController(Window current, MaskLoader<T> loader, Searchable<T> items, Column<T>... columns) {
-        model = new ObjectViewModel<>(loader, items);
-        view = new ObjectViewView<>(current, this);
-        for (Column<T> column : columns) {
-            view.addColumn(column);
-        }
-        putItems();
-        view.windowInitialized();
+    public ObjectViewController(MaskLoader<T> loader, Searchable<T> items, Column<T>... columns) {
+        model = new ObjectViewModel<>(loader, items,columns);
+        view = new ObjectViewView<>(this);
     }
 
     void select() {
@@ -37,20 +28,43 @@ public class ObjectViewController<T> {
     }
 
     void edit() {
-        model.openEdit(view, view.getSelectedObject());
+        model.openEdit(view.getWindow(), view.getSelectedObject());
     }
 
     void add() {
-        model.openAdd(view, view.getSelectedObject());
+        model.openAdd(view.getWindow(), view.getSelectedObject());
     }
 
     void delete() {
         if (view.commitDelete()) {
-            model.remove(view, view.getSelectedObject());
+            model.remove(view.getWindow(), view.getSelectedObject());
         }
     }
 
     public void refresh() {
         putItems();
+    }
+
+    @Override
+    public @NotNull ObjectViewView<T> getView() {
+        return view;
+    }
+
+    @Override
+    public @NotNull ObjectViewModel<T> getModel() {
+        return model;
+    }
+
+    @Override
+    public void fillUI() {
+        for (Column<T> column : model.getColumns()) {
+            view.addColumn(column);
+        }
+        putItems();
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 }

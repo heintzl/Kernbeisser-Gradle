@@ -1,31 +1,32 @@
 package kernbeisser.Windows.CatalogInput;
 
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class CatalogInputView extends Window implements View {
+public class CatalogInputView implements View<CatalogInputController> {
     private JButton importString;
     private JButton importFile;
     private JTextArea stringData;
     private JPanel main;
 
-    CatalogInputView(Window current, CatalogInputController controller) {
-        super(current);
-        importFile.addActionListener(e -> controller.importFromFile());
-        importString.addActionListener(e -> controller.importFromString());
-        add(main);
-        windowInitialized();
+    private CatalogInputController controller;
+
+    CatalogInputView(CatalogInputController controller) {
+        this.controller = controller;
     }
 
     void extractItemError() {
-        JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(getTopComponent(),
                                       "Es liegt ein fehler in der Quelle, ein Artikel kann nicht eingelesen werden!");
     }
 
     void cannotReadFile() {
-        JOptionPane.showMessageDialog(this, "Die angegebene Datei kann nicht gefunden werden!");
+        JOptionPane.showMessageDialog(getTopComponent(), "Die angegebene Datei kann nicht gefunden werden!");
     }
 
     void enableButtons(boolean b) {
@@ -38,7 +39,17 @@ public class CatalogInputView extends Window implements View {
     }
 
     public void success() {
-        JOptionPane.showMessageDialog(this, "Der Katalog wurde erfolgreich aktualiesert");
+        JOptionPane.showMessageDialog(getTopComponent(), "Der Katalog wurde erfolgreich aktualiesert");
     }
 
+    @Override
+    public void initialize(CatalogInputController controller) {
+        importFile.addActionListener(e -> controller.importFromFile());
+        importString.addActionListener(e -> controller.importFromString());
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
 }

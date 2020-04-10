@@ -6,7 +6,7 @@ import kernbeisser.Windows.Model;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class ShoppingCartModel implements Model {
+public class ShoppingCartModel implements Model<ShoppingCartController> {
     private final double userValue;
     private final double userSurcharge;
     private HashMap<ShoppingItem,ShoppingItem> shoppingItems = new HashMap<>();

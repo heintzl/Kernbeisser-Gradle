@@ -1,24 +1,24 @@
 package kernbeisser.Windows.Container;
 
-import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.ArticleKornkraft;
+import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
+import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ContainerController {
+public class ContainerController implements Controller<ContainerView,ContainerModel> {
     private ContainerView view;
     private ContainerModel model;
 
-    public ContainerController(Window current, User user) {
+    public ContainerController(User user) {
         model = new ContainerModel(user);
-        view = new ContainerView(current, this);
-        view.setLastContainers(model.getLastContainers());
-        view.setInsertSectionEnabled(Key.ACTION_ORDER_CONTAINER.userHas());
-        refreshUnpaidContainers();
+        view = new ContainerView(this);
+
     }
 
     private void refreshUnpaidContainers() {
@@ -103,5 +103,27 @@ public class ContainerController {
 
     void exit() {
         model.saveChanges();
+    }
+
+    @Override
+    public @NotNull ContainerView getView() {
+        return view;
+    }
+
+    @Override
+    public @NotNull ContainerModel getModel() {
+        return model;
+    }
+
+    @Override
+    public void fillUI() {
+        view.setLastContainers(model.getLastContainers());
+        view.setInsertSectionEnabled(Key.ACTION_ORDER_CONTAINER.userHas());
+        refreshUnpaidContainers();
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 }
