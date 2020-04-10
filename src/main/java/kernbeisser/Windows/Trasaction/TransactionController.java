@@ -26,7 +26,7 @@ public class TransactionController implements Controller<TransactionView,Transac
                                                             Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),
                                                             Column.create("Username", User::getUsername,Key.USER_USERNAME_READ)
                                                             );
-
+        userSearchBoxController.initView();
     }
 
     @Override

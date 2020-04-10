@@ -47,6 +47,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
                 load(null);
             }
         };
+        searchBoxController.initView();
         this.view = new SpecialPriceEditorView(this);
     }
     void load(Article article) {

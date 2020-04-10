@@ -14,15 +14,16 @@ import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorControlle
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,ShoppingMaskModel> {
-    private ShoppingMaskUIView view;
-    private ShoppingMaskModel model;
-    private ShoppingCartController shoppingCartController;
+    private final ShoppingMaskUIView view;
+    private final ShoppingMaskModel model;
+    private final ShoppingCartController shoppingCartController;
 
     public ShoppingMaskUIController(SaleSession saleSession) {
         model = new ShoppingMaskModel(saleSession);
         this.shoppingCartController = new ShoppingCartController(model.getValue(), model.getSaleSession()
                                                                                         .getCustomer()
                                                                                         .getSolidaritySurcharge());
+        shoppingCartController.initView();
         this.view = new ShoppingMaskUIView(this, shoppingCartController);
     }
 
