@@ -26,7 +26,7 @@ class TransactionModel implements Model {
 
     void transfer() {
         for (Transaction transaction : transactions) {
-            Transaction.doTransaction(transaction.getFrom(), transaction.getTo(), transaction.getValue());
+            Transaction.doTransaction(transaction.getFrom(), transaction.getTo(), transaction.getValue(),transaction.getInfo());
         }
     }
 

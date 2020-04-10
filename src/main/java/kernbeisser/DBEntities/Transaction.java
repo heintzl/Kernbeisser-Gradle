@@ -30,6 +30,9 @@ public class Transaction implements ValueChange{
     @CreationTimestamp
     private Date date;
 
+    @Column
+    private String info;
+
     private static void transfer(User from, User to, int value) {
         Transaction transaction = new Transaction();
         transaction.value = value;
@@ -48,7 +51,7 @@ public class Transaction implements ValueChange{
         return Tools.getAll(Transaction.class, condition);
     }
 
-    public static void doTransaction(User from, User to, double value) {
+    public static void doTransaction(User from, User to, double value,String info) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -64,6 +67,7 @@ public class Transaction implements ValueChange{
         transaction.setValue(value);
         transaction.setTo(to);
         transaction.setFrom(from);
+        transaction.setInfo(info);
         em.persist(transaction);
         em.flush();
         et.commit();
@@ -103,5 +107,14 @@ public class Transaction implements ValueChange{
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 }

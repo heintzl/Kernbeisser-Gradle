@@ -6,6 +6,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
+import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.View;
@@ -69,6 +70,7 @@ class TransactionView extends Window implements View {
     private SearchBoxView searchBoxView;
     private JLabel sum;
     private JLabel count;
+    private PermissionField info;
 
 
     private TransactionController controller;
@@ -92,6 +94,7 @@ class TransactionView extends Window implements View {
                 }
             }
         });
+        info.setRequiredWriteKeys(Key.TRANSACTION_INFO_WRITE);
         add(main);
         windowInitialized();
         formKBValue.addActionListener(e -> from.setEnabled(!formKBValue.isSelected()));
@@ -287,7 +290,8 @@ class TransactionView extends Window implements View {
         transactions = new ObjectTable<>(
                 Column.create("Von", e -> e.getFrom() == null ? "Kernbeisser" : (e.getFrom().getSurname()+", "+e.getFrom().getFirstName())),
                 Column.create("An", e -> e.getTo().getSurname()+", "+e.getTo().getFirstName()),
-                Column.create("Überweissungsbetrag", e -> String.format("%.2f€",e.getValue()))
+                Column.create("Überweissungsbetrag", e -> String.format("%.2f€",e.getValue())),
+                Column.create("Info", Transaction::getInfo)
         );
         searchBoxView = controller.getSearchBoxView();
     }
@@ -342,5 +346,9 @@ class TransactionView extends Window implements View {
 
     public void transactionsDeleted() {
         JOptionPane.showMessageDialog(this,"Die eingegeben Überweisungen wurden nicht übernommen");
+    }
+
+    public String getInfo() {
+        return info.getText();
     }
 }

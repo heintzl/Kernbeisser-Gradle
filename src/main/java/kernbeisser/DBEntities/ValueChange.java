@@ -8,4 +8,5 @@ public interface ValueChange {
     public User getTo();
     public double getValue();
     public LocalDate getDate();
+    public String getInfo();
 }

@@ -95,4 +95,9 @@ public class Purchase implements ValueChange{
     public LocalDate getDate() {
         return createDate.toLocalDate();
     }
+
+    @Override
+    public String getInfo() {
+        return "";
+    }
 }

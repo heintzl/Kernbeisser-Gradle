@@ -84,6 +84,7 @@ public class TransactionController implements Controller {
             return;
         }
         transaction.setValue(view.getValue());
+        transaction.setInfo(view.getInfo());
         model.addTransaction(transaction);
         refreshTable();
         view.setValue("");

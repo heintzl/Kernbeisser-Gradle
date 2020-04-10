@@ -52,17 +52,19 @@ public class UserInfoController implements Controller {
                 Collection<Column<ValueChange>> columns = new ArrayList<>();
                 columns.add(generateTypeColumn());
                 columns.add(Column.create("Von",e -> {
-                    if(e==null)return "Kenbeisser";
+                    if(e.getFrom()==null)return "Kenbeisser";
                     else
                     return e.getFrom().getUsername();
                 }, Key.USER_USERNAME_READ));
                 columns.add(Column.create("An",e -> {
-                    if(e==null)return "Kenbeisser";
+                    if(e.getTo()==null)return "Kenbeisser";
                     else
-                    return e.getFrom().getUsername();
+                    return e.getTo().getUsername();
                 }, Key.USER_USERNAME_READ));
                 columns.add(Column.create("Betrag",e -> String.format("%.2f€", e.getValue())));
                 columns.add(generateAfterValueChangeColumn());
+                columns.add(Column.create("Info",ValueChange::getInfo,Key.TRANSACTION_INFO_READ));
+                columns.add(Column.create("Datum",ValueChange::getDate));
                 view.setValueHistoryColumns(columns);
                 view.setValueHistory(model.getUser().getAllValueChanges());
                 return;
@@ -80,9 +82,10 @@ public class UserInfoController implements Controller {
 
             @Override
             public Object getValue(ValueChange valueChange) {
-                if(valueChange.getTo().getId() == LogInModel.getLoggedIn().getId())
-                    value -= valueChange.getValue();
-                else value += valueChange.getValue();
+
+                if(valueChange.getTo()!=null&&valueChange.getTo().getId() == LogInModel.getLoggedIn().getId())
+                    value += valueChange.getValue();
+                else value -= valueChange.getValue();
                 return String.format("%.2f€",value);
             }
         };
