@@ -6,11 +6,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Table
 @Entity
-public class Transaction {
+public class Transaction implements ValueChange{
     @Id
     @GeneratedValue
     private int id;
@@ -69,6 +70,7 @@ public class Transaction {
         em.close();
     }
 
+    @Override
     public double getValue() {
         return value;
     }
@@ -77,6 +79,7 @@ public class Transaction {
         this.value = value;
     }
 
+    @Override
     public User getFrom() {
         return from;
     }
@@ -85,6 +88,7 @@ public class Transaction {
         this.from = from;
     }
 
+    @Override
     public User getTo() {
         return to;
     }
@@ -93,7 +97,11 @@ public class Transaction {
         this.to = to;
     }
 
-    public Date getDate() {
-        return date;
+    public LocalDate getDate() {
+        return date.toLocalDate();
+    }
+
+    public int getId() {
+        return id;
     }
 }

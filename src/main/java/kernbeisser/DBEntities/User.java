@@ -259,14 +259,6 @@ public class User implements Serializable {
         this.townCode = townCode;
     }
 
-    public Collection<Transaction> getAllTransactions() {
-        return Transaction.getAll("where from.id = " + id + " or to.id = " + id);
-    }
-
-    public Collection<Purchase> getAllPurchases() {
-        return Purchase.getAll("where session.customer.id = " + id);
-    }
-
     @Override
     public String toString() {
         return username;
@@ -309,5 +301,29 @@ public class User implements Serializable {
             }
         }
         return true;
+    }
+
+    public Collection<ValueChange> getAllValueChanges(){
+        ArrayList<ValueChange> out = new ArrayList<>();
+        EntityManager em = DBConnection.getEntityManager();
+        out.addAll(em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid",Transaction.class).setParameter("uid",id).getResultList());
+        out.addAll(em.createQuery("select p from Purchase p where p.session.customer.id = :uid",Purchase.class).setParameter("uid",id).getResultList());
+        em.close();
+        out.sort(Comparator.comparing(ValueChange::getDate));
+        return out;
+    }
+
+    public Collection<Transaction> getAllTransactions(){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Transaction> out = em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid",Transaction.class).setParameter("uid",id).getResultList();
+        em.close();
+        return out;
+    }
+
+    public Collection<Purchase> getAllPurchases(){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Purchase> out = em.createQuery("select p from Purchase p where p.session.customer.id = :uid",Purchase.class).setParameter("uid",id).getResultList();
+        em.close();
+        return out;
     }
 }
