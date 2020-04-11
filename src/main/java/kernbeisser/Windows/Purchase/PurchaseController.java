@@ -1,29 +1,21 @@
 package kernbeisser.Windows.Purchase;
 
-import kernbeisser.CustomComponents.DatePicker.DatePickerView;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.Key;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class PurchaseController implements Controller {
+public class PurchaseController implements Controller<PurchaseView,PurchaseModel> {
     private final PurchaseModel model;
     private final PurchaseView view;
 
-    public PurchaseController(Window current, Purchase purchase) {
+    public PurchaseController(Purchase purchase) {
         model = new PurchaseModel(purchase);
-        view = new PurchaseView(current, this);
-        view.setCustomer(purchase.getSession().getCustomer().getUsername());
-        view.setSeller(purchase.getSession().getSeller().getUsername());
-        view.setDate(purchase.getCreateDate().toString());
-        Collection<ShoppingItem> items = model.getAllItems();
-        view.setItemCount(items.size());
-        view.setSum(purchase.getSum());
-        view.setItems(items);
+        view = new PurchaseView(this);
     }
 
 
@@ -35,12 +27,28 @@ public class PurchaseController implements Controller {
     }
 
     @Override
-    public PurchaseView getView() {
+    public @NotNull PurchaseView getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull PurchaseModel getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+        view.setCustomer(model.getLoaded().getSession().getCustomer().getUsername());
+        view.setSeller(model.getLoaded().getSession().getSeller().getUsername());
+        view.setDate(model.getLoaded().getCreateDate().toString());
+        Collection<ShoppingItem> items = model.getAllItems();
+        view.setItemCount(items.size());
+        view.setSum(model.getSum());
+        view.setItems(items);
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 }

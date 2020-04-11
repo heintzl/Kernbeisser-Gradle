@@ -4,7 +4,10 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.Enums.*;
+import kernbeisser.Enums.ContainerDefinition;
+import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
@@ -12,7 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
-public class EditItemModel implements Model {
+public class EditItemModel implements Model<EditItemController> {
     private final Mode mode;
     private Article article;
 

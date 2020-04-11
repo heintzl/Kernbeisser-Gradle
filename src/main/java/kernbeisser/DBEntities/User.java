@@ -83,6 +83,9 @@ public class User implements Serializable {
     @JoinColumn(nullable = false)
     private UserGroup userGroup;
 
+    @Column
+    private boolean unreadable = false;
+
     public static List<User> getAll(String condition) {
         return Tools.getAll(User.class, condition);
     }
@@ -98,10 +101,32 @@ public class User implements Serializable {
         }
     }
 
+    public static void makeUserUnreadable(User user){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        User dbContent = em.find(User.class,user.getId());
+        dbContent.unreadable = true;
+        dbContent.firstName = "deleted";
+        dbContent.surname = "deleted";
+        dbContent.username = "deleted"+dbContent.getId();
+        dbContent.phoneNumber1 = "deleted";
+        dbContent.phoneNumber2 = "deleted";
+        dbContent.email = "deleted";
+        dbContent.townCode = -1;
+        dbContent.town = "deleted";
+        dbContent.password = "";
+        dbContent.street = "deleted";
+        dbContent.permissions.clear();
+        em.persist(dbContent);
+        em.flush();
+        et.commit();
+    }
+
     public static Collection<User> defaultSearch(String s, int max) {
         EntityManager em = DBConnection.getEntityManager();
         Collection<User> out = em.createQuery(
-                "select u from User u where u.firstName like :search or u.surname like :search or u.username like :search order by u.firstName ASC",
+                "select u from User u where u.unreadable = false and (u.firstName like :search or u.surname like :search or u.username like :search) order by u.firstName ASC",
                 User.class)
                                  .setParameter("search", s + "%")
                                  .setMaxResults(max)
@@ -259,14 +284,6 @@ public class User implements Serializable {
         this.townCode = townCode;
     }
 
-    public Collection<Transaction> getAllTransactions() {
-        return Transaction.getAll("where from.id = " + id + " or to.id = " + id);
-    }
-
-    public Collection<Purchase> getAllPurchases() {
-        return Purchase.getAll("where session.customer.id = " + id);
-    }
-
     @Override
     public String toString() {
         return username;
@@ -309,5 +326,29 @@ public class User implements Serializable {
             }
         }
         return true;
+    }
+
+    public Collection<ValueChange> getAllValueChanges(){
+        ArrayList<ValueChange> out = new ArrayList<>();
+        EntityManager em = DBConnection.getEntityManager();
+        out.addAll(em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid",Transaction.class).setParameter("uid",id).getResultList());
+        out.addAll(em.createQuery("select p from Purchase p where p.session.customer.id = :uid",Purchase.class).setParameter("uid",id).getResultList());
+        em.close();
+        out.sort(Comparator.comparing(ValueChange::getDate));
+        return out;
+    }
+
+    public Collection<Transaction> getAllTransactions(){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Transaction> out = em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid",Transaction.class).setParameter("uid",id).getResultList();
+        em.close();
+        return out;
+    }
+
+    public Collection<Purchase> getAllPurchases(){
+        EntityManager em = DBConnection.getEntityManager();
+        Collection<Purchase> out = em.createQuery("select p from Purchase p where p.session.customer.id = :uid",Purchase.class).setParameter("uid",id).getResultList();
+        em.close();
+        return out;
     }
 }

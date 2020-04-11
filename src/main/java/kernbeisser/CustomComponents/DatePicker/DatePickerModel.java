@@ -4,7 +4,7 @@ import kernbeisser.Windows.Model;
 
 import java.time.LocalDate;
 
-public class DatePickerModel implements Model {
+public class DatePickerModel implements Model<DatePickerController> {
     private LocalDate selectedDate;
 
     public LocalDate getSelectedDate() {

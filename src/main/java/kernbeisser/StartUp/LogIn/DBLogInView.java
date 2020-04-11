@@ -2,12 +2,16 @@ package kernbeisser.StartUp.LogIn;
 
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import javax.swing.*;
 
-public class DBLogIn extends Window {
+public class DBLogInView implements View<DBLogInController> {
     private JButton logIn;
     private JTextField url;
     private JTextField username;
@@ -15,9 +19,15 @@ public class DBLogIn extends Window {
     private JButton cancel;
     private JPanel main;
 
-    public DBLogIn(Window current) {
-        super(current);
-        add(main);
+    private final DBLogInController controller;
+
+    public DBLogInView(DBLogInController controller) {
+        this.controller = controller;
+    }
+
+
+    @Override
+    public void initialize(DBLogInController controller) {
         JSONObject access = ConfigManager.getDBAccess();
         url.setText(access.getString("URL"));
         username.setText(access.getString("Username"));
@@ -30,17 +40,20 @@ public class DBLogIn extends Window {
                 access.put("Username", newUsername);
                 access.put("Password", newPassword);
                 ConfigManager.updateFile();
-                JOptionPane.showMessageDialog(this, "Die Verbindung wurde erfolgreich erstellt!");
+                JOptionPane.showMessageDialog(getTopComponent(), "Die Verbindung wurde erfolgreich erstellt!");
                 back();
             } else {
-                JOptionPane.showMessageDialog(this,
+                JOptionPane.showMessageDialog(getTopComponent(),
                                               "Es kann leider keine Verbindung hergestellt werden,\n bitte \u00fcberpr\u00fcfen sie die Eingaben nach Fehlern");
             }
         });
         cancel.addActionListener(e -> {
             back();
         });
-        windowInitialized();
     }
 
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
 }

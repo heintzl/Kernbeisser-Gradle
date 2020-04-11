@@ -8,39 +8,48 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.NoResultException;
 
-public class TransactionController implements Controller {
+public class TransactionController implements Controller<TransactionView,TransactionModel> {
     private TransactionModel model;
     private TransactionView view;
 
     private SearchBoxController<User> userSearchBoxController;
 
-    public TransactionController(Window current, User user) {
-        model = new TransactionModel();
+    public TransactionController(User user) {
+        model = new TransactionModel(user);
+        view = new TransactionView(this);
         userSearchBoxController = new SearchBoxController<>(User::defaultSearch, this::loadUser,
                                                             Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ),
                                                             Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),
                                                             Column.create("Username", User::getUsername,Key.USER_USERNAME_READ)
                                                             );
-        view = new TransactionView(current, this);
-        view.setFromEnabled(user.hasPermission(Key.ACTION_TRANSACTION_FROM_OTHER));
-        view.setFromKBEnable(user.hasPermission(Key.ACTION_TRANSACTION_FROM_KB));
+        userSearchBoxController.initView();
+    }
+
+    @Override
+    public @NotNull TransactionView getView() {
+        return view;
+    }
+
+    @Override
+    public @NotNull TransactionModel getModel() {
+        return model;
+    }
+
+    @Override
+    public void fillUI() {
+        view.setFromEnabled(model.getOwner().hasPermission(Key.ACTION_TRANSACTION_FROM_OTHER));
+        view.setFromKBEnable(model.getOwner().hasPermission(Key.ACTION_TRANSACTION_FROM_KB));
         view.setFrom(LogInModel.getLoggedIn().getUsername());
         refreshTable();
     }
 
     @Override
-    public TransactionView getView() {
-        return view;
-    }
-
-    @Override
-    public Model getModel() {
-        return model;
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
     void transfer() {
@@ -84,6 +93,7 @@ public class TransactionController implements Controller {
             return;
         }
         transaction.setValue(view.getValue());
+        transaction.setInfo(view.getInfo());
         model.addTransaction(transaction);
         refreshTable();
         view.setValue("");

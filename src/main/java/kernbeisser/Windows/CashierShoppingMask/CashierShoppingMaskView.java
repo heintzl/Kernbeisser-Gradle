@@ -1,38 +1,27 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import jiconfont.icons.font_awesome.FontAwesome;
-import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
-import kernbeisser.Windows.CashierMenu.CashierMenuController;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.Collection;
 
-public class CashierShoppingMaskView extends Window{
+public class CashierShoppingMaskView implements View<CashierShoppingMaskController> {
     private JPanel main;
     private JTabbedPane tabbedPane;
     private SearchBoxView<User> searchBoxView;
     private PermissionButton openShoppingMask;
 
-    private CashierShoppingMaskController controller;
+    private final CashierShoppingMaskController controller;
 
-    CashierShoppingMaskView(CashierShoppingMaskController controller, Window window){
-        super(window);
+    CashierShoppingMaskView(CashierShoppingMaskController controller){
         this.controller = controller;
-        openShoppingMask.addActionListener(e -> controller.openMaskWindow());
-        setSize(500,600);
-        add(main);
-        windowInitialized();
     }
 
     private void createUIComponents() {
@@ -44,9 +33,7 @@ public class CashierShoppingMaskView extends Window{
     }
 
     void addShoppingMaskView(String title,ShoppingMaskUIView view){
-        this.tabbedPane.addTab(title,view);
-        pack();
-        setLocationRelativeTo(null);
+        this.tabbedPane.addTab(title,view.getContent());
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
     }
 
@@ -56,5 +43,20 @@ public class CashierShoppingMaskView extends Window{
 
     public void setOpenShoppingMaskEnabled(boolean b) {
         openShoppingMask.setEnabled(b);
+    }
+
+    @Override
+    public void initialize(CashierShoppingMaskController controller) {
+        openShoppingMask.addActionListener(e -> controller.openMaskWindow());
+    }
+
+    @Override
+    public @NotNull Dimension getSize() {
+        return new Dimension(1440,950);
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
     }
 }

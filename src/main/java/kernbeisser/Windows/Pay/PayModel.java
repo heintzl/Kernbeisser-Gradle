@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-class PayModel implements Model {
+public class PayModel implements Model<PayController> {
     private final SaleSession saleSession;
     private final Collection<ShoppingItem> shoppingCart;
     private final Runnable transferCompleted;

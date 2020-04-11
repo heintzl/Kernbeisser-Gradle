@@ -1,23 +1,13 @@
 package kernbeisser.CustomComponents.TextFields;
 
 import com.sun.istack.NotNull;
-import kernbeisser.Enums.Key;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.LogIn.LogInModel;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.util.function.Function;
 
 public class FilterField<T> extends PermissionField {
     private final Transformable<T> transformer;

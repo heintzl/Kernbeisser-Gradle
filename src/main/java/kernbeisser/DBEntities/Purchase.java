@@ -7,12 +7,13 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 @Table
 @Entity
-public class Purchase {
+public class Purchase implements ValueChange{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int sid;
@@ -73,5 +74,30 @@ public class Purchase {
 
     public void setUserSurcharge(double userSurcharge) {
         this.userSurcharge = userSurcharge;
+    }
+
+    @Override
+    public User getFrom() {
+        return session.getCustomer();
+    }
+
+    @Override
+    public User getTo() {
+        return null;
+    }
+
+    @Override
+    public double getValue() {
+        return getSum();
+    }
+
+    @Override
+    public LocalDate getDate() {
+        return createDate.toLocalDate();
+    }
+
+    @Override
+    public String getInfo() {
+        return "";
     }
 }

@@ -1,34 +1,42 @@
 package kernbeisser.Windows.UserMenu;
 
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.Purchase;
-import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.UserInfo.UserInfoView;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.Collection;
 
-public class UserMenuView extends Window implements View {
-    private ObjectTable<Purchase> buyHistory;
+public class UserMenuView implements View<UserMenuController> {
     private JButton beginSelfShopping;
     private JButton logOut;
     private JButton beginCashierJob;
     private JButton showProfile;
     private JButton showValueHistory;
     private JButton startInventory;
-    private JLabel welcome;
     private JPanel main;
     private JButton orderContainer;
+    private UserInfoView userInfoView;
+    private JLabel username;
 
-    private UserMenuController controller;
+    private final UserMenuController controller;
 
-    UserMenuView(UserMenuController controller, Window current) {
-        super(current);
+    public UserMenuView(UserMenuController controller) {
         this.controller = controller;
+    }
+
+    void setUsername(String s) {
+        username.setText(s);
+    }
+
+    private void createUIComponents() {
+        userInfoView = controller.getUserInfoView();
+    }
+
+    @Override
+    public void initialize(UserMenuController controller) {
         startInventory.addActionListener(e -> controller.startInventory());
         showValueHistory.addActionListener(e -> controller.showValueHistory());
         showProfile.addActionListener(e -> controller.showProfile());
@@ -36,34 +44,15 @@ public class UserMenuView extends Window implements View {
         logOut.addActionListener(e -> controller.logOut());
         beginSelfShopping.addActionListener(e -> controller.beginSelfShopping());
         orderContainer.addActionListener(e -> controller.orderContainers());
-        add(main);
-        setSize(900, 600);
-        setLocationRelativeTo(null);
-        windowInitialized();
     }
 
-    Purchase getSelected() {
-        return buyHistory.getSelectedObject();
+    @Override
+    public @NotNull Dimension getSize() {
+        return new Dimension(900,600);
     }
 
-    void setBuyHistory(Collection<Purchase> purchases) {
-        buyHistory.setObjects(purchases);
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
     }
-
-    void setUsername(String s) {
-        welcome.setText("Willkommen " + s);
-    }
-
-    private void createUIComponents() {
-        buyHistory = new ObjectTable<>(
-                Column.create("Datum", Purchase::getCreateDate),
-                Column.create("Betrag", e -> e.getSum() + "€"),
-                Column.create("Ladendienst", e -> e.getSession().getSeller().getFirstName() + " " + e.getSession()
-                                                                                                     .getSeller()
-                                                                                                     .getSurname()),
-                Column.create("Anschauen", (e) -> "Anschauen", (e) -> controller.showPurchase())
-        );
-        //buyHistory.setComplex(true);
-    }
-
 }

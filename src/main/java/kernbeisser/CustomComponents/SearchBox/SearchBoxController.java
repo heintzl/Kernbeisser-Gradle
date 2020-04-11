@@ -1,17 +1,17 @@
 package kernbeisser.CustomComponents.SearchBox;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Searchable;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class SearchBoxController<T> implements Controller {
+public class SearchBoxController<T> implements Controller<SearchBoxView<T>,SearchBoxModel<T>> {
 
     private final SearchBoxView<T> view;
     private final SearchBoxModel<T> model;
@@ -36,13 +36,23 @@ public class SearchBoxController<T> implements Controller {
     }
 
     @Override
-    public SearchBoxView<T> getView() {
+    public @NotNull SearchBoxView<T> getView() {
         return view;
     }
 
     @Override
-    public SearchBoxModel<T> getModel() {
+    public @NotNull SearchBoxModel<T> getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
     public void refreshLoadSolutions() {

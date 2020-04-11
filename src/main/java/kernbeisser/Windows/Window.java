@@ -1,95 +1,89 @@
 package kernbeisser.Windows;
 
-
-import kernbeisser.Enums.Key;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInModel;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Window extends JFrame {
-    private static final Image STANDARD_IMAGE;
-    private static Window lastOpened;
-    private boolean access = true;
+public interface Window {
+    Image STANDARD_IMAGE = Images.getImage("Icon.png");
+    void addCloseEventListener(WindowCloseEvent runnable);
+    void simulateCloseEvent();
+    void setIcon(Image image);
+    void open();
+    void close();
+    void kill();
+    void setSize(Dimension dimension);
+    boolean noAccess();
 
-    static {
-        STANDARD_IMAGE = Images.getImage("Icon.png");
+    Controller<?,?> getController();
+    default boolean commitClose(){return true;};
+
+    default void back(){
+        simulateCloseEvent();
     }
 
-    private final Window current;
-
-    public Window(Window currentWindow, Key... required) {
-        this.current = currentWindow;
-        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        if (required.length != 0 && !LogInModel.getLoggedIn().hasPermission(required)) {
-            access = false;
-            JOptionPane.showMessageDialog(currentWindow, "Sie haben keine Berechtigung dieses Fenster zu öffnen");
-            windowInitialized();
-            back();
-            return;
+    default Window openWindow(Window window,boolean closeWindow){
+        if ((closeWindow||this.commitClose())&&(LogInModel.getLoggedIn()==null||LogInModel.getLoggedIn().hasPermission(window.getController().getRequiredKeys())||noAccess())) {
+            window.getController().initView();
+            window.setIcon(STANDARD_IMAGE);
+            window.open();
+            window.addCloseEventListener(e -> {
+                if (window.commitClose()) {
+                    window.close();
+                    window.kill();
+                    this.open();
+                    if(getController()!=null)
+                        this.getController().open();
+                }
+            });
+            if(closeWindow)
+            this.close();
         }
-        setIconImage(STANDARD_IMAGE);
-        lastOpened = this;
+        return window;
     }
+    static final Window NEW_WINDOW = new Window() {
+        @Override
+        public void addCloseEventListener(WindowCloseEvent runnable) {
 
-    public final void windowInitialized(){
-        if(!access)return;
-        if(getSize().height == 0 && getSize().width == 0) {
-            pack();
-            if (current != null) {
-                setSize(current.getSize());
-            }
         }
-        setLocationRelativeTo(null);
-        addWindowListener((WindowCloseEvent) e -> {
-            back();
-        });
-        if (current != null) {
-            current.close();
+
+        @Override
+        public void simulateCloseEvent() {
         }
-        this.open();
-    }
 
-    public static Window getLastOpened() {
-        return lastOpened;
-    }
-
-    public final void back() {
-        if(!isCloseable()){
-            return;
+        @Override
+        public void setIcon(Image image) {
         }
-        if (current != null) {
-            current.open();
+
+        @Override
+        public void open() {
         }
-        finish();
-        kill();
-    }
-    protected boolean isCloseable(){
-        return true;
-    }
 
-    protected void open() {
-        setVisible(true);
-    }
+        @Override
+        public void close() {
+        }
 
-    protected void close() {
-        setVisible(false);
-    }
+        @Override
+        public void kill() {
+        }
 
-    public void maximize() {this.setState(MAXIMIZED_BOTH);}
-    /**
-     * Custom action after the window become cosed
-     **/
-    public void finish() {
-    }
+        @Override
+        public boolean noAccess() {
+            return false;
+        }
 
-    /**
-     * the function to dispose the window can be overridden if another close option is necessary
-     **/
-    protected void kill() {
-        close();
-        dispose();
-    }
+        @Override
+        public Controller<?,?> getController() {
+            return null;
+        }
 
+        @Override
+        public void setContent(JComponent content) { }
+        @Override
+        public void setSize(Dimension dimension) { }
+    };
+
+    void setContent(JComponent content);
 }

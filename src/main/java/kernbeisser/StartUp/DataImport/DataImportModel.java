@@ -1,17 +1,14 @@
 package kernbeisser.StartUp.DataImport;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
-class DataImportModel implements Model {
+public class DataImportModel implements Model<DataImportController> {
     <T> void batchSaveAll(Collection<T> v) {
         if (v.size() == 0) return;
         EntityManager em = DBConnection.getEntityManager();
@@ -55,6 +52,12 @@ class DataImportModel implements Model {
             second.setUserGroup(userGroup);
             em.persist(second);
         }
+        Transaction startValueTransaction = new Transaction();
+        startValueTransaction.setFrom(null);
+        startValueTransaction.setTo(first);
+        startValueTransaction.setInfo("Übertrag des alten Kernbeisserprogrammes");
+        startValueTransaction.setValue(userGroup.getValue());
+        em.persist(startValueTransaction);
         em.flush();
         et.commit();
     }

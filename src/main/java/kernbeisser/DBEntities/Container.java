@@ -1,6 +1,5 @@
 package kernbeisser.DBEntities;
 
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 

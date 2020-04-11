@@ -1,11 +1,11 @@
 package kernbeisser.CustomComponents.DatePicker;
 
-import kernbeisser.Main;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.time.LocalDate;
@@ -16,23 +16,13 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class DatePickerController implements Controller {
-    private DatePickerView view;
-    private DatePickerModel model;
+public class DatePickerController implements Controller<DatePickerView,DatePickerModel> {
+    private final DatePickerView view;
+    private final DatePickerModel model;
 
-    public static void main(String[] args)
-            throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
-                   IllegalAccessException {
-        Main.buildEnvironment();
-        new DatePickerController(null);
-    }
-
-    public DatePickerController(Window current){
-        view = new DatePickerView(current,this);
+    public DatePickerController(){
+        view = new DatePickerView(this);
         model = new DatePickerModel();
-        view.setMoths(Month.values());
-        loadMonth();
-        view.repaint();
     }
 
     void loadMonth(){
@@ -76,17 +66,28 @@ public class DatePickerController implements Controller {
     public void finish(){}
 
     @Override
-    public DatePickerView getView() {
+    public @NotNull DatePickerView getView() {
         return view;
     }
 
     @Override
-    public DatePickerModel getModel() {
+    public @NotNull DatePickerModel getModel() {
         return model;
     }
 
-    public static void requestDate(Window current, Consumer<LocalDate> select){
-            new DatePickerController(null) {
+    @Override
+    public void fillUI() {
+        view.setMoths(Month.values());
+        loadMonth();
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
+    }
+
+    public static void requestDate(JFrameWindow current, Consumer<LocalDate> select){
+            new DatePickerController() {
                 @Override
                 public void finish() {
                     current.setEnabled(true);

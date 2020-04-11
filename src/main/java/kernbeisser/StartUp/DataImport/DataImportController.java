@@ -6,8 +6,8 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -22,12 +22,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
-public class DataImportController implements Controller {
+public class DataImportController implements Controller<DataImportView,DataImportModel> {
     private DataImportView view;
     private DataImportModel model;
 
-    public DataImportController(Window current) {
-        this.view = new DataImportView(current, this);
+    public DataImportController() {
+        this.view = new DataImportView(this);
         model = new DataImportModel();
     }
 
@@ -42,7 +42,7 @@ public class DataImportController implements Controller {
             view.setFilePath(jFileChooser.getSelectedFile().getAbsolutePath());
             checkDataSource();
         });
-        jFileChooser.showOpenDialog(view);
+        jFileChooser.showOpenDialog(getView().getTopComponent());
     }
 
     private boolean isValidDataSource() {
@@ -205,7 +205,7 @@ public class DataImportController implements Controller {
                 }
                 user.setEmail(columns[21]);
                 //CreateDate: is't used(create new CreateDate), column 22
-                userGroup.setValue((int) (Float.parseFloat(columns[23].replace(",", ".")) * 100));
+                userGroup.setValue(Double.parseDouble(columns[23].replace(",", ".")));
                 //TransactionDates: not used, column 24
                 //TransactionValues: not used, column 25
                 user.setStreet(columns[26]);
@@ -335,7 +335,6 @@ public class DataImportController implements Controller {
                 //TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
                 //TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
                 article.setIntake(java.sql.Date.valueOf(LocalDate.now()));
-                article.setLastBuy(null);
                 article.setLastDelivery(Date.valueOf(LocalDate.now()));
                 article.setDeletedDate(null);
                 article.setCooling(Cooling.valueOf(columns[35]));
@@ -383,12 +382,22 @@ public class DataImportController implements Controller {
     }
 
     @Override
-    public DataImportView getView() {
+    public @NotNull DataImportView getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull DataImportModel getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 }

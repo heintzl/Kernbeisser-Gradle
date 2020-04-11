@@ -3,7 +3,6 @@ package kernbeisser.Price;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.VAT;
 
 public class PriceCalculator {
     public static final int CONTAINER_DISCOUNT = Integer.MIN_VALUE;

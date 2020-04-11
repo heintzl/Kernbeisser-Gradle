@@ -3,14 +3,17 @@ package kernbeisser.Windows.Pay;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.print.PrintService;
 import javax.swing.*;
 import java.util.Collection;
 
-class PayView extends Window implements View {
+public class PayView implements View<PayController> {
     private final PayController controller;
     private JPanel main;
     private JButton commitPayment;
@@ -23,19 +26,7 @@ class PayView extends Window implements View {
 
 
     public PayView(Window current, PayController payController) {
-        super(current);
         this.controller = payController;
-
-        add(main);
-        pack();
-        setLocationRelativeTo(current);
-        commitPayment.addActionListener(e -> {
-            payController.commitPayment();
-        });
-        cancel.addActionListener(e -> {
-            this.back();
-        });
-        windowInitialized();
     }
 
     PrintService getSelectedPrintService() {
@@ -66,4 +57,18 @@ class PayView extends Window implements View {
     }
 
 
+    @Override
+    public void initialize(PayController controller) {
+        commitPayment.addActionListener(e -> {
+            controller.commitPayment();
+        });
+        cancel.addActionListener(e -> {
+            this.back();
+        });
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
 }

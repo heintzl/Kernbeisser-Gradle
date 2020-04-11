@@ -2,15 +2,12 @@ package kernbeisser.CustomComponents.ObjectTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ObjectTable<T> extends JTable {

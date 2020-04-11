@@ -5,17 +5,18 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Job;
+import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.User;
 import kernbeisser.StartUp.DataImport.DataImportController;
-import kernbeisser.Windows.LogIn.OldLogIn.LogInController;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
+import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.URISyntaxException;
 import java.util.function.Function;
 
 public class Main {
@@ -30,7 +31,7 @@ public class Main {
                    IllegalAccessException {
         buildEnvironment();
         if (!ConfigManager.isDbInitialized()) {
-            SwingUtilities.invokeLater(() -> new DataImportController(new SimpleLogInController(null).getView()));
+            SwingUtilities.invokeLater(() -> new DataImportController().openAsWindow(new SimpleLogInController().openAsWindow(Window.NEW_WINDOW, JFrameWindow::new),JFrameWindow::new));
         } else {
             openLogIn();
         }
@@ -47,7 +48,7 @@ public class Main {
     }
 
     private static void openLogIn() {
-        SwingUtilities.invokeLater(() -> new SimpleLogInController(null));
+        SwingUtilities.invokeLater(() -> new SimpleLogInController().openAsWindow(Window.NEW_WINDOW,JFrameWindow::new));
     }
 
     private static void createTestJobs(int count) {

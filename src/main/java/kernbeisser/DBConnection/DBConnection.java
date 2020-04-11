@@ -2,7 +2,7 @@ package kernbeisser.DBConnection;
 
 
 import kernbeisser.Config.ConfigManager;
-import kernbeisser.StartUp.LogIn.DBLogIn;
+import kernbeisser.StartUp.LogIn.DBLogInView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -32,12 +32,7 @@ public class DBConnection {
         synchronized (lock) {
             String[] conf = ConfigManager.getDBAccessData();
             if (!tryLogIn(conf[0], conf[1], conf[2])) {
-                new DBLogIn(null) {
-                    @Override
-                    public void finish() {
-                        lock.notify();
-                    }
-                };
+                new DBLogInView(null).getWindow().addCloseEventListener(e -> lock.notify());
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
