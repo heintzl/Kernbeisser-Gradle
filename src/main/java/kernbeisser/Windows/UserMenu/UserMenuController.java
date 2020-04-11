@@ -67,7 +67,7 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
         new ContainerController(model.getOwner()).openAsWindow(view.getWindow(), JFrameWindow::new);
     }
 
-    public UserInfoView getUserInfoView(UserMenuView view) {
-        return new UserInfoController(model.getOwner()).getView();
+    public UserInfoView getUserInfoView() {
+        return new UserInfoController(model.getOwner()).getInitializedView();
     }
 }

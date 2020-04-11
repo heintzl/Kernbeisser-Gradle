@@ -24,18 +24,21 @@ public interface Window {
         simulateCloseEvent();
     }
 
-    default Window openWindow(Window window){
-        if (this.commitClose()&&(LogInModel.getLoggedIn()==null||LogInModel.getLoggedIn().hasPermission(window.getController().getRequiredKeys())||noAccess())) {
+    default Window openWindow(Window window,boolean closeWindow){
+        if ((closeWindow||this.commitClose())&&(LogInModel.getLoggedIn()==null||LogInModel.getLoggedIn().hasPermission(window.getController().getRequiredKeys())||noAccess())) {
             window.getController().initView();
             window.setIcon(STANDARD_IMAGE);
             window.open();
             window.addCloseEventListener(e -> {
-                window.close();
-                window.kill();
-                this.open();
-                if(getController()!=null)
-                this.getController().open();
+                if (window.commitClose()) {
+                    window.close();
+                    window.kill();
+                    this.open();
+                    if(getController()!=null)
+                        this.getController().open();
+                }
             });
+            if(closeWindow)
             this.close();
         }
         return window;

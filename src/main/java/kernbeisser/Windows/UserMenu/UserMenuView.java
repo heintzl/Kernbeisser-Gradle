@@ -32,7 +32,7 @@ public class UserMenuView implements View<UserMenuController> {
     }
 
     private void createUIComponents() {
-        userInfoView = controller.getUserInfoView(this);
+        userInfoView = controller.getUserInfoView();
     }
 
     @Override

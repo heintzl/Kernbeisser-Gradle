@@ -9,8 +9,11 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
+import kernbeisser.Windows.SubWindow;
+import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,ShoppingMaskModel> {
@@ -129,8 +132,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
 
     void startPay() {
         new PayController(null, model.getSaleSession(), shoppingCartController.getItems(), () -> {
-
-        });
+            getView().back();
+        }).openAsWindow(view.getWindow(), SubWindow::new);
     }
 
     void openSearchWindow() {

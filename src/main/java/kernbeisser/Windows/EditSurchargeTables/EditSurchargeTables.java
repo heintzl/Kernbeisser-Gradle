@@ -2,12 +2,8 @@ package kernbeisser.Windows.EditSurchargeTables;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.SurchargeTable;
-import kernbeisser.Main;
 import kernbeisser.Windows.EditSurchargeTable.EditSurchargeTableController;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
-
-import javax.swing.*;
 
 public class EditSurchargeTables extends ObjectViewController<SurchargeTable> {
     public EditSurchargeTables() {

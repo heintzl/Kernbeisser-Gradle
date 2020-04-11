@@ -13,7 +13,7 @@ import javax.print.PrintService;
 import javax.swing.*;
 import java.util.Collection;
 
-class PayView implements View<PayController> {
+public class PayView implements View<PayController> {
     private final PayController controller;
     private JPanel main;
     private JButton commitPayment;

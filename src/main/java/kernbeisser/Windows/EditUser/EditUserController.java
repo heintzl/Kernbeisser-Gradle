@@ -16,13 +16,13 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     private EditUserView view;
     private EditUserModel model;
 
-    public EditUserController(Window current, User user, Mode mode) {
+    public EditUserController(User user, Mode mode) {
         model = new EditUserModel(user == null ? new User() : user, mode);
         if (mode == Mode.REMOVE) {
             model.doAction(user);
             return;
         } else {
-            this.view = new EditUserView(this, current);
+            this.view = new EditUserView(this);
         }
     }
 

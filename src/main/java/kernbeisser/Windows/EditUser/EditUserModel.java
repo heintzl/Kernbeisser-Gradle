@@ -61,7 +61,7 @@ public class EditUserModel implements Model<EditUserController> {
     }
 
     private void remove(User user) {
-        Tools.delete(User.class, user.getId());
+        User.makeUserUnreadable(user);
     }
 
     private void edit(User user) {

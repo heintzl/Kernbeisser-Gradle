@@ -10,6 +10,7 @@ import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 
 class EditUserView implements View<EditUserController> {
     private JLabel lblVorname;
@@ -54,7 +55,7 @@ class EditUserView implements View<EditUserController> {
 
     private final EditUserController controller;
 
-    public EditUserView(EditUserController controller, Window current) {
+    public EditUserView(EditUserController controller) {
         this.controller = controller;
     }
 
@@ -136,5 +137,10 @@ class EditUserView implements View<EditUserController> {
     @Override
     public @NotNull JComponent getContent() {
         return userDataPanel;
+    }
+
+    @Override
+    public @NotNull Dimension getSize() {
+        return new Dimension(500,600);
     }
 }

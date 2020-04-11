@@ -27,7 +27,7 @@ import java.util.*;
 
 import static net.sf.jasperreports.engine.JasperCompileManager.compileReport;
 
-class PayModel implements Model<PayController> {
+public class PayModel implements Model<PayController> {
     private final SaleSession saleSession;
     private final Collection<ShoppingItem> shoppingCart;
     private final Runnable transferCompleted;

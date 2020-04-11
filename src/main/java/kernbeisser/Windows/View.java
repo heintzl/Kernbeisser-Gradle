@@ -13,7 +13,7 @@ public interface View <C extends Controller<? extends View<? extends C>,? extend
         return new Dimension(500,500);
     };
 
-    default Component getTopComponent(){
+    default java.awt.Window getTopComponent(){
         return SwingUtilities.getWindowAncestor(getContent());
     }
 

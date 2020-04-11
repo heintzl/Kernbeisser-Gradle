@@ -28,7 +28,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
     }
 
     void edit() {
-        model.openEdit(view.getWindow(), view.getSelectedObject());
+        model.openEdit(view.getWindow(),view.getSelectedObject());
     }
 
     void add() {
@@ -37,8 +37,9 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
 
     void delete() {
         if (view.commitDelete()) {
-            model.remove(view.getWindow(), view.getSelectedObject());
+            model.remove(view.getSelectedObject());
         }
+        refresh();
     }
 
     public void refresh() {

@@ -12,7 +12,7 @@ public class EditSurchargeTableController implements Controller<EditSurchargeTab
     private EditSurchargeTableModel model;
     private EditSurchargeTableView view;
 
-    public EditSurchargeTableController(Window current, SurchargeTable surchargeTable, Mode mode) {
+    public EditSurchargeTableController(SurchargeTable surchargeTable, Mode mode) {
         this.model = new EditSurchargeTableModel(surchargeTable == null ? new SurchargeTable() : surchargeTable, mode);
         if (mode == Mode.REMOVE) {
             model.doAction(surchargeTable);

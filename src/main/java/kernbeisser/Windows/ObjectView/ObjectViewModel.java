@@ -2,10 +2,7 @@ package kernbeisser.Windows.ObjectView;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Windows.Window;
-import kernbeisser.Windows.MaskLoader;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.Searchable;
+import kernbeisser.Windows.*;
 
 import java.util.Collection;
 
@@ -20,20 +17,20 @@ public class ObjectViewModel<T> implements Model<ObjectViewController<T>> {
         this.columns = columns;
     }
 
-    void openEdit(Window Window, T selected) {
-        maskLoader.accept(Window, selected, Mode.EDIT);
+    void openEdit(Window window, T selected) {
+        maskLoader.accept(selected, Mode.EDIT).openAsWindow(window, JFrameWindow::new);
     }
 
     Collection<T> getItems(String search, int max) {
         return itemSupplier.search(search, max);
     }
 
-    void openAdd(Window Window, T selected) {
-        maskLoader.accept(Window, selected, Mode.ADD);
+    void openAdd(Window window,T selected) {
+        maskLoader.accept(selected, Mode.ADD).openAsWindow(window,JFrameWindow::new);
     }
 
-    void remove(Window Window, T selected) {
-        maskLoader.accept(Window, selected, Mode.REMOVE);
+    void remove(T selected) {
+        maskLoader.accept(selected, Mode.REMOVE);
     }
 
     public Column<T>[] getColumns() {

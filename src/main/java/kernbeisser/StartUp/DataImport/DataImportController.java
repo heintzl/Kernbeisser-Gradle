@@ -200,7 +200,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 }
                 user.setEmail(columns[21]);
                 //CreateDate: is't used(create new CreateDate), column 22
-                userGroup.setValue((int) (Float.parseFloat(columns[23].replace(",", ".")) * 100));
+                userGroup.setValue(Double.parseDouble(columns[23].replace(",", ".")));
                 //TransactionDates: not used, column 24
                 //TransactionValues: not used, column 25
                 user.setStreet(columns[26]);
