@@ -127,10 +127,6 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     public void fillUI() {
         view.loadUserInfo(model.getSaleSession());
     }
-    
-    void startPay() {
-        new PayController(null, model.getSaleSession(), shoppingCartController.getItems(), () -> {});
-    }
 
     @Override
     public Key[] getRequiredKeys() {
