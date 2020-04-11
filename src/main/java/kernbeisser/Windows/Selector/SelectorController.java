@@ -4,8 +4,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.Searchable;
 import org.jetbrains.annotations.NotNull;
 

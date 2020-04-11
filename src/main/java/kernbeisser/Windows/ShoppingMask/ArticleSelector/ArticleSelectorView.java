@@ -3,9 +3,6 @@ package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.Key;
-import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 

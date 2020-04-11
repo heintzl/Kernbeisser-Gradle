@@ -1,8 +1,5 @@
 package kernbeisser.Windows.SoloShoppingMask;
 
-import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;

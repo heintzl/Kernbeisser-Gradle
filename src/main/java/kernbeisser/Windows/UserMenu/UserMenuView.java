@@ -1,7 +1,5 @@
 package kernbeisser.Windows.UserMenu;
 
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.UserInfo.UserInfoView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +18,7 @@ public class UserMenuView implements View<UserMenuController> {
     private JButton orderContainer;
     private UserInfoView userInfoView;
     private JLabel username;
+    private JButton editPermissions;
 
     private final UserMenuController controller;
 
@@ -44,6 +43,7 @@ public class UserMenuView implements View<UserMenuController> {
         logOut.addActionListener(e -> controller.logOut());
         beginSelfShopping.addActionListener(e -> controller.beginSelfShopping());
         orderContainer.addActionListener(e -> controller.orderContainers());
+        editPermissions.addActionListener(e -> controller.openEditPermissionsWindow());
     }
 
     @Override

@@ -15,32 +15,45 @@ public class ShoppingItem implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int siid;
+    private long siid;
+
     @Column
     private int amount;
+
     @Column
     private int discount;
+
     @JoinColumn(nullable = false)
     @ManyToOne
     private Purchase purchase;
+
     @Column
     private String name;
+
     @Column
     private int kbNumber;
+
     @Column
     private int itemMultiplier = 1;
+
     @Column
     private double itemNetPrice;
+
     @Column
     private double vat;
+
     @Column
     private MetricUnits metricUnits;
+
     @Column
     private boolean weighAble;
+
     @Column
     private int suppliersItemNumber;
+
     @Column(length = 5)
     private String shortName;
+
     @Column
     private double surcharge;
 
@@ -224,7 +237,7 @@ public class ShoppingItem implements Serializable {
         this.metricUnits = metricUnits;
     }
 
-    public int getSiid() {
+    public long getSiid() {
         return siid;
     }
 

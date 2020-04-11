@@ -9,11 +9,9 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JFrameWindow;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
-import kernbeisser.Windows.SubWindow;
-import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 

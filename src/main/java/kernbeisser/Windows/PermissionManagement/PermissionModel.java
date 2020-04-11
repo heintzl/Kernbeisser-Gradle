@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
-class PermissionModel implements Model<PermissionController> {
+public class PermissionModel implements Model<PermissionController> {
     void addKey(Permission permission, Key key) {
         Tools.addToCollection(Permission.class,permission.getId(),Permission::getKeySet,key);
     }

@@ -3,8 +3,6 @@ package kernbeisser.Windows.CashierShoppingMask;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;

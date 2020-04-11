@@ -3,6 +3,7 @@ package kernbeisser.Windows.ObjectView;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.*;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 
 import java.util.Collection;
 

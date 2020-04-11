@@ -4,8 +4,8 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
+import kernbeisser.Windows.PermissionManagement.PermissionController;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
@@ -69,5 +69,9 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
 
     public UserInfoView getUserInfoView() {
         return new UserInfoController(model.getOwner()).getInitializedView();
+    }
+
+    public void openEditPermissionsWindow() {
+        new PermissionController().openAsWindow(view.getWindow(),JFrameWindow::new);
     }
 }

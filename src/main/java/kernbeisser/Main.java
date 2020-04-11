@@ -9,7 +9,7 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.StartUp.DataImport.DataImportController;
-import kernbeisser.Windows.JFrameWindow;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.Window;
 

@@ -19,16 +19,9 @@ public class PermissionController implements Controller<PermissionView,Permissio
     private final PermissionView view;
     private final PermissionModel model;
 
-    PermissionController() {
+    public PermissionController() {
         this.view = new PermissionView(this);
         this.model = new PermissionModel();
-    }
-
-    public static void main(String[] args)
-            throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
-                   IllegalAccessException {
-        Main.buildEnvironment();
-        new PermissionController();
     }
 
     private void change(Permission permission, Key key) {
