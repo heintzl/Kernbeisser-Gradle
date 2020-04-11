@@ -12,9 +12,6 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 

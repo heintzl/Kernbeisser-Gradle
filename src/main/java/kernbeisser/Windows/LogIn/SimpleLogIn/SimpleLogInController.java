@@ -4,8 +4,7 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.UserMenu.UserMenuController;
 import org.jetbrains.annotations.NotNull;
 

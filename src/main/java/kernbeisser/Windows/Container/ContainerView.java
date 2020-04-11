@@ -6,8 +6,6 @@ import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.Enums.Key;
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 

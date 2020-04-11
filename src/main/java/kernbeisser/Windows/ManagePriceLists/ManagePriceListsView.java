@@ -10,9 +10,6 @@ import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.Key;
-import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.JFrameWindow;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 

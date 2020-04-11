@@ -1,35 +1,37 @@
-package kernbeisser.Windows;
+package kernbeisser.Windows.WindowImpl;
 
-import kernbeisser.Windows.Pay.PayModel;
-import kernbeisser.Windows.Pay.PayView;
+
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowCloseEvent;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 
-public class SubWindow extends JDialog implements Window{
+public class JFrameWindow extends JFrame implements Window {
 
     private final Controller<?,?> controller;
 
-    public SubWindow(Controller<PayView,PayModel> controller, Window window) {
-        super(window.getController().getView().getTopComponent());
+    public JFrameWindow(Controller<?,?> controller) {
         this.controller = controller;
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
     @Override
-    public void addCloseEventListener(WindowCloseEvent runnable) {
-        addWindowListener(runnable);
+    public void setSize(Dimension d) {
+        super.setSize(d);
+        setLocationRelativeTo(null);
     }
 
     @Override
-    public void simulateCloseEvent() {
-        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    public void addCloseEventListener(WindowCloseEvent windowCloseEvent) {
+        addWindowListener(windowCloseEvent);
     }
 
     @Override
     public void setIcon(Image image) {
-        setIconImage(image);
+        super.setIconImage(image);
     }
 
     @Override
@@ -48,6 +50,11 @@ public class SubWindow extends JDialog implements Window{
     }
 
     @Override
+    public void simulateCloseEvent() {
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }
+
+    @Override
     public boolean noAccess() {
         JOptionPane.showMessageDialog(this,"Sie haben keine Berechtigung dieses Fenster zu öffen!");
         return false;
@@ -61,5 +68,10 @@ public class SubWindow extends JDialog implements Window{
     @Override
     public void setContent(JComponent content) {
         add(content);
+    }
+
+    @Override
+    public boolean commitClose() {
+        return true;
     }
 }
