@@ -10,8 +10,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class ConfigManager {
+
+    public static final int CONFIG_FILE_INDENT_FACTOR = 2;
+
     private static final File file = new File("config.json");
     private static final JSONObject config = new JSONObject(fileToString(StandardCharsets.UTF_8));
+
     //Static only class
     private ConfigManager() {
     }
@@ -32,7 +36,7 @@ public class ConfigManager {
         }
     }
 
-    public static boolean isDbInitialized(){
+    public static boolean isDbInitialized() {
         return getHeader().getBoolean("dbIsInitialized");
     }
 
@@ -77,7 +81,7 @@ public class ConfigManager {
         try {
             if (file.createNewFile()) {
                 FileWriter fw = new FileWriter(file);
-                fw.write(object.toString());
+                fw.write(object.toString(CONFIG_FILE_INDENT_FACTOR));
                 fw.close();
             }
         } catch (IOException e) {

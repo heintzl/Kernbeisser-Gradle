@@ -57,7 +57,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     public @NotNull ShoppingCartModel getModel() {
         return model;
     }
-
+  
     @Override
     public void fillUI() {
         refresh();
@@ -66,6 +66,9 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     @Override
     public Key[] getRequiredKeys() {
         return new Key[0];
+
+    public Collection<ShoppingItem> getItems() {
+        return model.getItems();
     }
 
 }

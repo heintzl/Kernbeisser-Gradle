@@ -16,6 +16,7 @@ import kernbeisser.Windows.SubWindow;
 import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
+
 public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,ShoppingMaskModel> {
     private final ShoppingMaskUIView view;
     private final ShoppingMaskModel model;
@@ -60,8 +61,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
-        double netPrice = PriceCalculator.getNetFromGross(view.getPriceVATIncluded(),view.getSelectedVAT().getValue());
-        double netDeposit = PriceCalculator.getNetFromGross(view.getDeposit(),view.getSelectedVAT().getValue());
+        double netPrice = PriceCalculator.getNetFromGross(view.getPriceVATIncluded(), view.getSelectedVAT().getValue());
+        double netDeposit = PriceCalculator.getNetFromGross(view.getDeposit(), view.getSelectedVAT().getValue());
         switch (view.getOption()) {
             case ShoppingMaskUIView.ARTICLE_NUMBER:
                 Article extractedArticle = null;
@@ -74,7 +75,9 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                     if (supplier != 0) {
                         extractedArticle = model.getBySupplierItemNumber(supplier);
                     }
-                    if (extractedArticle == null) throw new UndefinedInputException();
+                    if (extractedArticle == null) {
+                        throw new UndefinedInputException();
+                    }
                 }
                 ShoppingItem shoppingItem = new ShoppingItem(extractedArticle);
                 shoppingItem.setDiscount(view.getDiscount());
@@ -123,6 +126,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     @Override
     public void fillUI() {
         view.loadUserInfo(model.getSaleSession());
+    }
+    
+    void startPay() {
+        new PayController(null, model.getSaleSession(), shoppingCartController.getItems(), () -> {});
     }
 
     @Override
