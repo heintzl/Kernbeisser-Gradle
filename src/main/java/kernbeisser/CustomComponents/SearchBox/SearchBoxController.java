@@ -4,12 +4,10 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Searchable;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class SearchBoxController<T> implements Controller<SearchBoxView<T>,SearchBoxModel<T>> {
 

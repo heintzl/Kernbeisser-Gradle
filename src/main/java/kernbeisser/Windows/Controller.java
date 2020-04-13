@@ -28,11 +28,12 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
     }
 
     default Window openAsWindow(Window parent, Function<Controller<V,M>,Window> windowFactory, boolean closeOld){
-        Window out = windowFactory.apply(this);
-        out.setContent(getView().getContent());
-        out.setSize(getView().getSize());
-        parent.openWindow(out,closeOld);
-        return out;
+        Window createWindow = windowFactory.apply(this);
+        createWindow.getController().initView();
+        createWindow.setContent(this);
+        createWindow.setSize(getView().getSize());
+        parent.openWindow(createWindow,closeOld);
+        return createWindow;
     }
 
 
@@ -41,18 +42,13 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
     }
 
     default void initView(){
-        for (Method declaredMethod : getView().getClass().getDeclaredMethods()) {
-            if(declaredMethod.getName().equals("initialize")){
-                try {
-                    declaredMethod.setAccessible(true);
-                    declaredMethod.invoke(getView(),this);
-                    break;
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
+        try {
+            Method method = getView().getClass().getDeclaredMethod("initialize", Controller.class);
+            method.setAccessible(true);
+            method.invoke(getView(),this);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
         }
         fillUI();
-        open();
     }
 }

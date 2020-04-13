@@ -66,8 +66,8 @@ public class JFrameWindow extends JFrame implements Window {
     }
 
     @Override
-    public void setContent(JComponent content) {
-        add(content);
+    public void setContent(Controller<?,?> content) {
+        add(content.getView().getContent());
     }
 
     @Override

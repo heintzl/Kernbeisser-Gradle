@@ -6,7 +6,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 

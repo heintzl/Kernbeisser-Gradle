@@ -31,7 +31,8 @@ public class Main {
                    IllegalAccessException {
         buildEnvironment();
         if (!ConfigManager.isDbInitialized()) {
-            SwingUtilities.invokeLater(() -> new DataImportController().openAsWindow(new SimpleLogInController().openAsWindow(Window.NEW_WINDOW, JFrameWindow::new),JFrameWindow::new));
+            SwingUtilities.invokeLater(() -> new DataImportController().openAsWindow(new SimpleLogInController().openAsWindow(
+                    Window.NEW_VIEW_CONTAINER, JFrameWindow::new), JFrameWindow::new));
         } else {
             openLogIn();
         }
@@ -48,7 +49,7 @@ public class Main {
     }
 
     private static void openLogIn() {
-        SwingUtilities.invokeLater(() -> new SimpleLogInController().openAsWindow(Window.NEW_WINDOW,JFrameWindow::new));
+        SwingUtilities.invokeLater(() -> new SimpleLogInController().openAsWindow(Window.NEW_VIEW_CONTAINER, JFrameWindow::new));
     }
 
     private static void createTestJobs(int count) {

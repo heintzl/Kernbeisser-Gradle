@@ -5,7 +5,6 @@ import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

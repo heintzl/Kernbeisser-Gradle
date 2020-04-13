@@ -10,14 +10,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 
-public class SubWindow extends JDialog implements kernbeisser.Windows.Window {
+public class SubWindow extends JDialog implements Window {
 
     private final Controller<?,?> controller;
 
     public SubWindow(Controller<PayView,PayModel> controller, Window window) {
         super(window.getController().getView().getTopComponent());
         this.controller = controller;
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class SubWindow extends JDialog implements kernbeisser.Windows.Window {
     }
 
     @Override
-    public void setContent(JComponent content) {
-        add(content);
+    public void setContent(Controller<?,?> content) {
+        add(content.getView().getContent());
     }
 }

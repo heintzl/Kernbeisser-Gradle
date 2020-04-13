@@ -7,7 +7,6 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Exeptions.UndefinedInputException;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;

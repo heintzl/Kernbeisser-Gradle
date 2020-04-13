@@ -6,7 +6,6 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.ValueChange;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import org.jetbrains.annotations.NotNull;

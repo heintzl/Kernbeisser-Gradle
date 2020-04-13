@@ -3,7 +3,6 @@ package kernbeisser.Windows;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInModel;
 
-import javax.swing.*;
 import java.awt.*;
 
 public interface Window {
@@ -24,26 +23,33 @@ public interface Window {
         simulateCloseEvent();
     }
 
-    default Window openWindow(Window window,boolean closeWindow){
-        if ((closeWindow||this.commitClose())&&(LogInModel.getLoggedIn()==null||LogInModel.getLoggedIn().hasPermission(window.getController().getRequiredKeys())||noAccess())) {
-            window.getController().initView();
+    default Window openWindow(Window window, boolean closeWindow){
+        return openWindow(this, window, closeWindow);
+    }
+
+    default void closeWindow(){
+        close();
+        kill();
+    }
+
+    static Window openWindow(Window parent, Window window, boolean closeWindow){
+        if ((closeWindow||parent.commitClose())&&(LogInModel.getLoggedIn()==null || LogInModel.getLoggedIn().hasPermission(
+                window.getController().getRequiredKeys()) || parent.noAccess())) {
             window.setIcon(STANDARD_IMAGE);
             window.open();
             window.addCloseEventListener(e -> {
-                if (window.commitClose()) {
-                    window.close();
-                    window.kill();
-                    this.open();
-                    if(getController()!=null)
-                        this.getController().open();
+                if (window.commitClose()){
+                    window.closeWindow();
+                    parent.open();
                 }
             });
             if(closeWindow)
-            this.close();
+                parent.close();
         }
         return window;
     }
-    static final Window NEW_WINDOW = new Window() {
+
+    static final Window NEW_VIEW_CONTAINER = new Window() {
         @Override
         public void addCloseEventListener(WindowCloseEvent runnable) {
 
@@ -80,10 +86,10 @@ public interface Window {
         }
 
         @Override
-        public void setContent(JComponent content) { }
+        public void setContent(Controller<?,?> content) { }
         @Override
         public void setSize(Dimension dimension) { }
     };
 
-    void setContent(JComponent content);
+    void setContent(Controller<?,?> content);
 }

@@ -4,31 +4,31 @@ import kernbeisser.Useful.Named;
 
 public enum MetricUnits implements Named {
     GRAM("Gramm", "g") {},
-    KILOGRAM("Kilogramm", "kg") {
+    KILOGRAM("Kilogramm", "kg"){
         @Override
-        public int toUnit(double v) {
-            return (int) (v * 1000);
-        }
-
-        @Override
-        public double fromUnit(int amount) {
-            return amount / 1000f;
+        public double getBaseFactor() {
+            return 1;
         }
     },
-    LITER("Liter", "l") {
+    LITER("Liter", "l"){
         @Override
-        public int toUnit(double v) {
-            return (int) (v * 1000);
-        }
-
-        @Override
-        public double fromUnit(int amount) {
-            return amount / 1000f;
+        public double getBaseFactor() {
+            return 1;
         }
     },
     MILLILITER("Mililiter", "ml"),
-    STACK("Stück", "stk"),
-    NONE("Undefinierte-Einheit", "?");
+    STACK("Stück", "stk"){
+        @Override
+        public double getBaseFactor() {
+            return 1;
+        }
+    },
+    NONE("Undefinierte-Einheit", "?"){
+        @Override
+        public double getBaseFactor() {
+            return 1;
+        }
+    };
 
     private final String shortName;
 
@@ -39,17 +39,13 @@ public enum MetricUnits implements Named {
         this.shortName = shortName;
     }
 
-    public int toUnit(double v) {
-        return (int) (v + 0.5);
-    }
-
-    public double fromUnit(int amount) {
-        return amount;
+    public double getBaseFactor(){
+        return 0.001;
     }
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override

@@ -23,6 +23,7 @@ public interface View <C extends Controller<? extends View<? extends C>,? extend
 
     default void back(){
         Window window = getWindow();
-        if(window!=null)window.back();
+        if(window != null)
+            window.back();
     }
 }

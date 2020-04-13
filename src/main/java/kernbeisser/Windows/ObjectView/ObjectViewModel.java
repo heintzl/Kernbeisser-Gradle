@@ -26,8 +26,8 @@ public class ObjectViewModel<T> implements Model<ObjectViewController<T>> {
         return itemSupplier.search(search, max);
     }
 
-    void openAdd(Window window,T selected) {
-        maskLoader.accept(selected, Mode.ADD).openAsWindow(window,JFrameWindow::new);
+    void openAdd(Window window, T selected) {
+        maskLoader.accept(selected, Mode.ADD).openAsWindow(window, JFrameWindow::new);
     }
 
     void remove(T selected) {

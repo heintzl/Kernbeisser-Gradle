@@ -7,7 +7,6 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import org.jetbrains.annotations.NotNull;

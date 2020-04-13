@@ -3,7 +3,6 @@ package kernbeisser.Windows.ManagePriceLists;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.PersistenceException;

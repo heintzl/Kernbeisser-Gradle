@@ -2,7 +2,6 @@ package kernbeisser.CustomComponents.ShoppingTable;
 
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +23,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     }
 
     double getPrice(ShoppingItem item) {
-        return PriceCalculator.getShoppingItemPrice(item, model.getUserSurcharge());
+        return item.getItemRetailPrice();
     }
 
     public void refresh() {
@@ -32,7 +31,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
         double sum = 0;
         view.setObjects(model.getItems());
         for (ShoppingItem item : model.getItems()) {
-            sum += PriceCalculator.getShoppingItemPrice(item, model.getUserSurcharge());
+            sum += item.getRetailPrice();
         }
         view.setSum(sum);
         view.setValue(model.getUserValue() - sum);
