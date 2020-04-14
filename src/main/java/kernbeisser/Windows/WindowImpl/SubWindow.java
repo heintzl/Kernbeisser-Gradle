@@ -14,7 +14,7 @@ public class SubWindow extends JDialog implements Window {
 
     private final Controller<?,?> controller;
 
-    public SubWindow(Controller<PayView,PayModel> controller, Window window) {
+    public SubWindow(Controller<?,?> controller, Window window) {
         super(window.getController().getView().getTopComponent());
         this.controller = controller;
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

@@ -1,6 +1,9 @@
 package kernbeisser;
 
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
@@ -9,6 +12,8 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.StartUp.DataImport.DataImportController;
+import kernbeisser.Windows.TabbedPanel.Tab;
+import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.Window;
@@ -20,6 +25,9 @@ import java.lang.reflect.Field;
 import java.util.function.Function;
 
 public class Main {
+
+
+
     /**
      * sets the Look and Feel to Windows standard,
      * sets the Image path,
@@ -31,25 +39,23 @@ public class Main {
                    IllegalAccessException {
         buildEnvironment();
         if (!ConfigManager.isDbInitialized()) {
-            SwingUtilities.invokeLater(() -> new DataImportController().openAsWindow(new SimpleLogInController().openAsWindow(
-                    Window.NEW_VIEW_CONTAINER, JFrameWindow::new), JFrameWindow::new));
+            SwingUtilities.invokeLater(() -> new DataImportController().openAsWindow(new SimpleLogInController().openTab("Log In"),JFrameWindow::new));
         } else {
             openLogIn();
         }
-
-
     }
 
     public static void buildEnvironment()
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        UIManager.setLookAndFeel(new FlatDarkLaf());
         IconFontSwing.register(FontAwesome.getIconFont());
         DBConnection.getEntityManager();
     }
 
     private static void openLogIn() {
-        SwingUtilities.invokeLater(() -> new SimpleLogInController().openAsWindow(Window.NEW_VIEW_CONTAINER, JFrameWindow::new));
+        new SimpleLogInController().openTab("Log In");
     }
 
     private static void createTestJobs(int count) {
@@ -86,5 +92,4 @@ public class Main {
             System.out.println(transformer.apply(field));
         }
     }
-
 }

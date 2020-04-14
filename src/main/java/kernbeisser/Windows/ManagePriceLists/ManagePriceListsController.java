@@ -9,19 +9,15 @@ import javax.persistence.PersistenceException;
 import javax.swing.*;
 
 public class ManagePriceListsController implements Controller<ManagePriceListsView,ManagePriceListsModel> {
-    private ManagePriceListsModel model;
-    private ManagePriceListsView view;
+    private final ManagePriceListsModel model;
+    private final ManagePriceListsView view;
 
     //TODO When the root is selected, the displayCurrentSuperpriceList should be activated, too.
     //TODO Nice to have: At Changes in the Tree, not to reload the hole tree to keep expansion state und selected Node
 
 
     public ManagePriceListsController() {
-        this.view = new ManagePriceListsView(this){
-            public void finish() {
-                ManagePriceListsController.this.finish();
-            }
-        };
+        this.view = new ManagePriceListsView(this);
         model = new ManagePriceListsModel();
 
     }

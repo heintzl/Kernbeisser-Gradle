@@ -1,6 +1,10 @@
 package kernbeisser.Windows;
 
+import jiconfont.IconCode;
 import kernbeisser.Enums.Key;
+import kernbeisser.Windows.TabbedPanel.Tab;
+import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
+import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,14 +25,36 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
 
     Key[] getRequiredKeys();
 
+    default boolean commitClose(){return true;}
+
+
     default void open(){}
 
-    default Window openAsWindow(Window parent, Function<Controller<V,M>,Window> windowFactory) {
+    default void initView(){
+        try {
+            Method method = getView().getClass().getDeclaredMethod("initialize", Controller.class);
+            method.setAccessible(true);
+            method.invoke(getView(),this);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            System.err.println("failed to initialize view cannot find initialize("+this.getClass()+")");
+            for (Method method : getView().getClass().getDeclaredMethods()) {
+                System.err.println(method);
+            }
+        }
+        fillUI();
+    }
+
+    default Controller<V,M> withInitializedView(){
+        initView();
+        return this;
+    }
+
+    default <W extends Window> W openAsWindow(Window parent, Function<Controller<V,M>,W> windowFactory) {
         return openAsWindow(parent, windowFactory, true);
     }
 
-    default Window openAsWindow(Window parent, Function<Controller<V,M>,Window> windowFactory, boolean closeOld){
-        Window createWindow = windowFactory.apply(this);
+    default <W extends Window> W openAsWindow(Window parent, Function<Controller<V,M>,W> windowFactory, boolean closeOld){
+        W createWindow = windowFactory.apply(this);
         createWindow.getController().initView();
         createWindow.setContent(this);
         createWindow.setSize(getView().getSize());
@@ -37,18 +63,50 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
     }
 
 
-    default Window openAsWindow(Window parent, BiFunction<Controller<V,M>,Window,Window> windowFactory){
+    default <W extends Window> W openAsWindow(Window parent, BiFunction<Controller<V,M>,Window,W> windowFactory){
         return openAsWindow(parent,(controller)-> windowFactory.apply(this, parent),false);
     }
 
-    default void initView(){
-        try {
-            Method method = getView().getClass().getDeclaredMethod("initialize", Controller.class);
-            method.setAccessible(true);
-            method.invoke(getView(),this);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        fillUI();
+
+    default Tab asTab(String title){
+        initView();
+        return new Tab() {
+            @Override
+            public IconCode getIcon() {
+                return getController().getView().getTabIcon();
+            }
+
+            @Override
+            public Controller<?,?> getController() {
+                return Controller.this;
+            }
+
+            @Override
+            public String getTitle() {
+                return title;
+            }
+
+            @Override
+            public boolean commitClose() {
+                return Controller.this.commitClose();
+            }
+        };
+    }
+
+    default Window openTab(String title,TabbedPaneController tabbedPaneController){
+        tabbedPaneController.addTab(asTab(title));
+        return tabbedPaneController.getView().getWindow();
+    }
+
+    default void removeSelf(TabbedPaneController tabbedPaneController){
+        tabbedPaneController.closeTab(this.asTab(""));
+    }
+
+    default void removeSelf(){
+        removeSelf(TabbedPaneModel.DEFAULT_TABBED_PANE);
+    }
+
+    default Window openTab(String title){
+        return openTab(title, TabbedPaneModel.DEFAULT_TABBED_PANE);
     }
 }

@@ -23,7 +23,7 @@ public interface Window {
         simulateCloseEvent();
     }
 
-    default Window openWindow(Window window, boolean closeWindow){
+    default <W extends Window> W openWindow(W window, boolean closeWindow){
         return openWindow(this, window, closeWindow);
     }
 
@@ -32,7 +32,7 @@ public interface Window {
         kill();
     }
 
-    static Window openWindow(Window parent, Window window, boolean closeWindow){
+    static <W extends Window> W openWindow(Window parent, W window, boolean closeWindow){
         if ((closeWindow||parent.commitClose())&&(LogInModel.getLoggedIn()==null || LogInModel.getLoggedIn().hasPermission(
                 window.getController().getRequiredKeys()) || parent.noAccess())) {
             window.setIcon(STANDARD_IMAGE);

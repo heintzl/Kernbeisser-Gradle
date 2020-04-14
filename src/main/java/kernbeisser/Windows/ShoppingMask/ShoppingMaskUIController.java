@@ -54,10 +54,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     double getPrice(Article article) {
-        return PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
+        return 0;//PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
     }
 
-    private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
+    private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {/*
         double netPrice = PriceCalculator.getNetFromGross(view.getPriceVATIncluded(), view.getSelectedVAT().getValue());
         double netDeposit = PriceCalculator.getNetFromGross(view.getDeposit(), view.getSelectedVAT().getValue());
         switch (view.getOption()) {
@@ -76,6 +76,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                         throw new UndefinedInputException();
                     }
                 }
+                /*
                 ShoppingItem shoppingItem = new ShoppingItem(extractedArticle);
                 shoppingItem.setDiscount(view.getDiscount());
                 view.setDiscount();
@@ -85,7 +86,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 } else {
                     shoppingItem.setItemMultiplier((int) view.getAmount());
                 }
-                return shoppingItem;
+
+                return null;
             case ShoppingMaskUIView.BAKED_GOODS:
                 return ShoppingItem.createBakeryProduct(netPrice);
             case ShoppingMaskUIView.DEPOSIT:
@@ -94,7 +96,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 //TODO wie soll Pfand bei freien Artikeln behandelt werden, evtl gar nicht?
                 ShoppingItem customItem = new ShoppingItem();
                 customItem.setItemMultiplier((int) view.getAmount());
-                customItem.setItemNetPrice(netPrice);
+                /*customItem.setItemNetPrice(netPrice);
                 customItem.setName(view.getItemName());
                 customItem.setVat(view.getSelectedVAT().getValue());
                 customItem.setMetricUnits(MetricUnits.STACK);
@@ -107,6 +109,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             default:
                 return null;
         }
+        */return null;
     }
 
 

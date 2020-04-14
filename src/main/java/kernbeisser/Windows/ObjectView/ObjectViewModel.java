@@ -4,6 +4,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
+import kernbeisser.Windows.WindowImpl.SubWindow;
 
 import java.util.Collection;
 
@@ -19,7 +20,7 @@ public class ObjectViewModel<T> implements Model<ObjectViewController<T>> {
     }
 
     void openEdit(Window window, T selected) {
-        maskLoader.accept(selected, Mode.EDIT).openAsWindow(window, JFrameWindow::new);
+        maskLoader.accept(selected, Mode.EDIT).openAsWindow(window, SubWindow::new);
     }
 
     Collection<T> getItems(String search, int max) {
@@ -27,7 +28,7 @@ public class ObjectViewModel<T> implements Model<ObjectViewController<T>> {
     }
 
     void openAdd(Window window, T selected) {
-        maskLoader.accept(selected, Mode.ADD).openAsWindow(window, JFrameWindow::new);
+        maskLoader.accept(selected, Mode.ADD).openAsWindow(window, SubWindow::new);
     }
 
     void remove(T selected) {
