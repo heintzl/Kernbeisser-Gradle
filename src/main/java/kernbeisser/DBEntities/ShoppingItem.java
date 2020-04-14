@@ -57,6 +57,7 @@ public class ShoppingItem implements Serializable {
     @Column
     private double surcharge;
 
+    @Deprecated
     public ShoppingItem() {
     }
 
@@ -225,12 +226,20 @@ public class ShoppingItem implements Serializable {
         return weighAble;
     }
 
+    public boolean getWeighAble() {
+        return weighAble;
+    }
+
     public void setWeighAble(boolean weighAble) {
         this.weighAble = weighAble;
     }
 
     public MetricUnits getMetricUnits() {
         return metricUnits != null ? metricUnits : MetricUnits.NONE;
+    }
+
+    public String getUnitTxt() {
+        return metricUnits != null ? getMetricUnits().getShortName() : "";
     }
 
     public void setMetricUnits(MetricUnits metricUnits) {

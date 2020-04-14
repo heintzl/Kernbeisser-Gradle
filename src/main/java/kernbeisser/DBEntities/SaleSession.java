@@ -24,7 +24,7 @@ public class SaleSession {
         return Tools.getAll(SaleSession.class, condition);
     }
 
-    public User getCustomer() {
+    public User  getCustomer() {
         return customer;
     }
 
