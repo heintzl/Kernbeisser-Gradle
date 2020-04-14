@@ -8,6 +8,7 @@
     <properties>
       <autoscrolls value="true"/>
       <background color="-65537"/>
+      <focusable value="false"/>
       <minimumSize width="142" height="20"/>
       <preferredSize width="200" height="20"/>
     </properties>
@@ -23,7 +24,7 @@
           <defaultCapable value="true"/>
           <doubleBuffered value="true"/>
           <focusPainted value="false"/>
-          <focusable value="false"/>
+          <focusable value="true"/>
           <horizontalAlignment value="4"/>
           <opaque value="false"/>
           <text value=""/>
@@ -37,6 +38,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <focusable value="false"/>
           <text value=""/>
         </properties>
       </component>
@@ -50,6 +52,7 @@
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <focusable value="false"/>
           <font size="16"/>
           <text value="text"/>
         </properties>

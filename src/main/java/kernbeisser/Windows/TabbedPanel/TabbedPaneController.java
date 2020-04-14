@@ -51,7 +51,7 @@ public class TabbedPaneController implements Controller<TabbedPaneView,TabbedPan
 
     public void closeTab(Tab tab){
         if (tab.commitClose()) {
-            if(model.getTabCount()==1)return;
+            if(model.getTabCount()==0)return;
             view.removeTab(model.indexOf(tab));
             model.remove(tab);
         }

@@ -11,6 +11,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.Windows.TabbedPanel.Tab;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
@@ -48,10 +50,8 @@ public class Main {
     public static void buildEnvironment()
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException {
-        //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        UIManager.setLookAndFeel(new FlatDarkLaf());
+        UIManager.setLookAndFeel(Setting.DEFAULT_THEME.getEnumValue(Theme.class).getLookAndFeel());
         IconFontSwing.register(FontAwesome.getIconFont());
-        DBConnection.getEntityManager();
     }
 
     private static void openLogIn() {
@@ -71,25 +71,5 @@ public class Main {
         em.flush();
         et.commit();
         em.close();
-    }
-
-    public static void makeAdmin(User user) {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        User us = em.find(user.getClass(), user.getId());
-        us.getPermissions()
-          .add(em.createQuery("select p from Permission p where name like 'Admin'", Permission.class)
-                 .getSingleResult());
-        em.persist(us);
-        em.flush();
-        et.commit();
-        em.close();
-    }
-
-    private static void printClass(Class c, Function<Field,String> transformer) {
-        for (Field field : c.getDeclaredFields()) {
-            System.out.println(transformer.apply(field));
-        }
     }
 }

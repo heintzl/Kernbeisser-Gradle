@@ -45,7 +45,7 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
         if (JOptionPane.showConfirmDialog(getView().getTopComponent(), "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen") == 0) {
             TabbedPaneModel.DEFAULT_TABBED_PANE.clear();
             new SimpleLogInController().openTab("Log In");
-            return true;
+            return false;
         }
         return false;
     }

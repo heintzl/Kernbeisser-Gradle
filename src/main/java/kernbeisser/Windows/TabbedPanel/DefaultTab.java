@@ -19,7 +19,6 @@ public class DefaultTab {
     DefaultTab(Icon icon, String title, Runnable closeOperation, Runnable click){
         this.icon.setIcon(icon);
         this.tabTitle.setText(title);
-        System.out.println();
         main.setPreferredSize(new Dimension(tabTitle.getFontMetrics(tabTitle.getFont()).stringWidth(title)+90,20));
         close.setIcon(IconFontSwing.buildIcon(FontAwesome.TIMES,20, Color.GRAY));
         close.addMouseListener(new MouseAdapter() {

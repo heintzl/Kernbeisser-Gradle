@@ -34,8 +34,12 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
         try {
             Method method = getView().getClass().getDeclaredMethod("initialize", Controller.class);
             method.setAccessible(true);
-            method.invoke(getView(),this);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            method.invoke(getView(), this);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.getCause().printStackTrace();
+        } catch (NoSuchMethodException e) {
             System.err.println("failed to initialize view cannot find initialize("+this.getClass()+")");
             for (Method method : getView().getClass().getDeclaredMethods()) {
                 System.err.println(method);

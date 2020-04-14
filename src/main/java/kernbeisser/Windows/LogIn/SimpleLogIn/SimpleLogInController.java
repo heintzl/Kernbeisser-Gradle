@@ -1,9 +1,12 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
 import kernbeisser.Enums.Key;
+import kernbeisser.Enums.Theme;
+import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.TabbedPanel.DefaultTab;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
@@ -50,11 +53,22 @@ public class SimpleLogInController implements Controller<SimpleLogInView,SimpleL
         try {
             model.logIn(view.getUsername(),view.getPassword());
             removeSelf();
+            TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getWindow().close();
+            loadUserSettings();
+            TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getWindow().open();
             new UserMenuController().openTab("Menu");
         } catch (AccessDeniedException e) {
             view.accessDenied();
         } catch (PermissionRequired permissionRequired) {
             view.permissionRequired();
+        }
+    }
+
+    private void loadUserSettings(){
+        try {
+            UIManager.setLookAndFeel(UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
         }
     }
 }
