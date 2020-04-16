@@ -1,5 +1,7 @@
 package kernbeisser.Windows.UserMenu;
 
+import jiconfont.IconCode;
+import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Windows.UserInfo.UserInfoView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -54,5 +56,10 @@ public class UserMenuView implements View<UserMenuController> {
     @Override
     public @NotNull JComponent getContent() {
         return main;
+    }
+
+    @Override
+    public IconCode getTabIcon() {
+        return FontAwesome.HOME;
     }
 }

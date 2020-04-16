@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ShoppingMask;
 
+import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
@@ -8,7 +9,6 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -236,7 +236,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
             return variablePercentage.getSafeValue();
         }
         if (pricePreordered.isSelected()) {
-            return PriceCalculator.CONTAINER_DISCOUNT;
+            //return PriceCalculator.CONTAINER_DISCOUNT;
         }
         return 0;
     }
@@ -290,7 +290,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                 article.getName().length() > 16
                 ? new StringBuilder(article.getName()).replace(16, article.getName().length(), "...").toString()
                 : article.getName());
-        articleAmount.setText(article.getMetricUnits().fromUnit(article.getAmount()) + "");
+        //articleAmount.setText(article.getMetricUnits().fromUnit(article.getAmount()) + "");
         articleUnit.setText(article.getMetricUnits().getShortName());
         price.setText(String.format("%.2f", controller.getPrice(article)));
         priceUnit.setText(article.isWeighAble() ? "€/kg" : "€");
@@ -383,5 +383,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     @Override
     public @NotNull JComponent getContent() {
         return mainPanel;
+    }
+
+    @Override
+    public IconCode getTabIcon() {
+        return FontAwesome.SHOPPING_CART;
     }
 }

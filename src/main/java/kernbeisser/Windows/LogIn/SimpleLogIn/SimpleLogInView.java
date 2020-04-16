@@ -1,5 +1,7 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
+import jiconfont.IconCode;
+import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,4 +49,9 @@ public class SimpleLogInView implements View<SimpleLogInController> {
         return main;
     }
 
+
+    @Override
+    public IconCode getTabIcon() {
+        return FontAwesome.SIGN_IN;
+    }
 }

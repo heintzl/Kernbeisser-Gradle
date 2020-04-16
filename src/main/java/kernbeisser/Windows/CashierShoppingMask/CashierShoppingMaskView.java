@@ -1,5 +1,7 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
+import jiconfont.IconCode;
+import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
@@ -56,5 +58,10 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
     @Override
     public @NotNull JComponent getContent() {
         return main;
+    }
+
+    @Override
+    public IconCode getTabIcon() {
+        return FontAwesome.SHOPPING_CART;
     }
 }

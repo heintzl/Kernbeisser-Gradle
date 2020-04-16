@@ -8,7 +8,6 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.Selector.SelectorController;
 import org.jetbrains.annotations.NotNull;
 

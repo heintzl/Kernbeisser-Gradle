@@ -1,8 +1,10 @@
 package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.*;
-import kernbeisser.Price.PriceCalculator;
+import kernbeisser.DBEntities.Purchase;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.Model;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -41,10 +43,8 @@ public class PayModel implements Model<PayController> {
 
     double shoppingCartSum() {
         return shoppingCart.stream()
-                           .mapToDouble(e -> PriceCalculator
-                                   .getShoppingItemPrice(e, saleSession.getCustomer()
-                                                                       .getSolidaritySurcharge()))
-                           .sum();
+                           .mapToDouble(ShoppingItem::getRetailPrice)
+                           .sum() * (1+saleSession.getCustomer().getSolidaritySurcharge());
     }
 
     boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) {
@@ -109,20 +109,18 @@ public class PayModel implements Model<PayController> {
 
     void print(PrintService printService) {
         try {
-            String JRTemplate = "Kerni_Rechnung";
-            String basePath = "reports";
+            String basePath = "/home/timos/JaspersoftWorkspace/MyReports";
             JasperDesign jspDesign = JRXmlLoader.load(
-                    Paths.get(basePath, JRTemplate + ".jrxml").toFile());
+                    Paths.get(basePath, "Blank_A4.jrxml").toFile());
             JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
 
-            User customer = saleSession.getCustomer();
             Map<String,Object> reportParamMap = new HashMap<>();
             reportParamMap.put("BonNo", 47);
-            reportParamMap.put("Customer", customer.getFirstName() + " " + customer.getSurname());
+
             JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
 
             JasperPrint jspPrint = JasperFillManager.fillReport(jspReport, reportParamMap, dataSource);
-            JRSaver.saveObject(jspPrint, Paths.get(basePath, JRTemplate + ".jrprint").toFile());
+            JRSaver.saveObject(jspPrint, Paths.get(basePath, "Blank_A4.jrprint").toFile());
 //            JasperPrintManager.printReport(jspPrint, false);
 //            JRPdfExporter pdfExporter = new JRPdfExporter();
             JasperExportManager.exportReportToPdfFile(jspPrint, Paths.get(basePath, "report.pdf").toString());

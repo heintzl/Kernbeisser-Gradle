@@ -6,6 +6,7 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.Searchable;
+import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -53,6 +54,6 @@ public class SelectorController <T> implements Controller<SelectorView<T>,Select
             model.getCurrentValues().add(e);
             SelectorController.this.view.addValue(e);
             getView().back();
-        },model.getColumns()).openAsWindow(view.getWindow(),JFrameWindow::new);
+        },model.getColumns()).openAsWindow(view.getWindow(), SubWindow::new);
     }
 }

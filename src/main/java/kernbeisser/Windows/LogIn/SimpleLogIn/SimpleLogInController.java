@@ -4,9 +4,14 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.TabbedPanel.DefaultTab;
+import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.UserMenu.UserMenuController;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class SimpleLogInController implements Controller<SimpleLogInView,SimpleLogInModel> {
 
@@ -44,7 +49,8 @@ public class SimpleLogInController implements Controller<SimpleLogInView,SimpleL
     public void logIn() {
         try {
             model.logIn(view.getUsername(),view.getPassword());
-            new UserMenuController().openAsWindow(view.getWindow(), JFrameWindow::new);
+            removeSelf();
+            new UserMenuController().openTab("Menu");
         } catch (AccessDeniedException e) {
             view.accessDenied();
         } catch (PermissionRequired permissionRequired) {

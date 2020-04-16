@@ -4,13 +4,10 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.KeyCategory;
-import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;

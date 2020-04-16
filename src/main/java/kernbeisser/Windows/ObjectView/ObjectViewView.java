@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ObjectView;
 
+import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -87,5 +88,10 @@ public class ObjectViewView<T> implements View<ObjectViewController<T>> {
     @Override
     public @NotNull JComponent getContent() {
         return main;
+    }
+
+    @Override
+    public IconCode getTabIcon() {
+        return FontAwesome.PENCIL;
     }
 }
