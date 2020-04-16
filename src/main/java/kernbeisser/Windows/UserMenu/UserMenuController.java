@@ -1,6 +1,7 @@
 package kernbeisser.Windows.UserMenu;
 
 import kernbeisser.Enums.Key;
+import kernbeisser.Main;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.Controller;
@@ -43,9 +44,18 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
     @Override
     public boolean commitClose() {
         if (JOptionPane.showConfirmDialog(getView().getTopComponent(), "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen") == 0) {
-            TabbedPaneModel.DEFAULT_TABBED_PANE.clear();
-            new SimpleLogInController().openTab("Log In");
-            return false;
+            TabbedPaneModel.DEFAULT_TABBED_PANE.unsafeClose(asTab("Menu"));
+            if(TabbedPaneModel.DEFAULT_TABBED_PANE.clear()){
+                try {
+                    Main.setSettingLAF();
+                } catch (UnsupportedLookAndFeelException e) {
+                    e.printStackTrace();
+                }
+                SwingUtilities.updateComponentTreeUI(TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
+                new SimpleLogInController().openTab("Log In");
+            }else {
+                new UserMenuController().openTab("Menu");
+            }
         }
         return false;
     }

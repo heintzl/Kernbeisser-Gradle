@@ -26,7 +26,7 @@ public class TabbedPaneModel implements Model<TabbedPaneController> {
                 public boolean commitClose() {
                     if(DEFAULT_TABBED_PANE.getModel().getTabCount()>0){
                         DEFAULT_TABBED_PANE.closeCurrentTab();
-                        return false;
+                        return getModel().getTabCount()==0;
                     }
                     return true;
                 }

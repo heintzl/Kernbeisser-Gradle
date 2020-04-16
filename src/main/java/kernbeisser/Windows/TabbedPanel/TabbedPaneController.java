@@ -44,27 +44,45 @@ public class TabbedPaneController implements Controller<TabbedPaneView,TabbedPan
         }
     }
 
-    public void closeCurrentTab(){
-        int index = view.getCurrentTabIndex();
-        closeTab(model.getTab(index));
+    public boolean closeCurrentTab(){
+        return closeTab(currentTab());
     }
 
-    public void closeTab(Tab tab){
+    public Tab currentTab(){
+        int index = view.getCurrentTabIndex();
+        return model.getTab(index);
+    }
+
+    public void unsafeClose(Tab tab){
+        int index = model.getIndexOfControllerClass(tab);
+        model.remove(model.getTab(index));
+        view.removeTab(index);
+    }
+
+    public boolean closeTab(Tab tab){
         if (tab.commitClose()) {
-            if(model.getTabCount()==0)return;
+            if(model.getTabCount()==0)return false;
             view.removeTab(model.indexOf(tab));
             model.remove(tab);
+            return true;
         }
+        return false;
     }
 
     public JFrameWindow openAsWindow(){
         return openAsWindow(Window.NEW_VIEW_CONTAINER, e -> new JFrameWindow(e){
             @Override
-            public void back() {
+            public void kill() {
+                super.kill();
+            }
+
+            @Override
+            public boolean commitClose() {
                 if (getModel().getTabCount() > 0) {
                     closeCurrentTab();
-                }
-                super.back();
+                    return getModel().getTabCount()==0;
+                }else
+                return true;
             }
         });
     }
@@ -74,10 +92,11 @@ public class TabbedPaneController implements Controller<TabbedPaneView,TabbedPan
         return new Key[0];
     }
 
-    public void clear() {
-        for (int i = model.getTabCount() - 1; 0 <= i; i--) {
-            model.remove(model.getTab(i));
-            view.removeTab(i);
+    public boolean clear() {
+        boolean out = true;
+        for (int i = model.getTabCount() - 1; i >= 0; i--) {
+            out = out&&closeTab(model.getTab(i));
         }
+        return out;
     }
 }

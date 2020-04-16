@@ -53,9 +53,7 @@ public class SimpleLogInController implements Controller<SimpleLogInView,SimpleL
         try {
             model.logIn(view.getUsername(),view.getPassword());
             removeSelf();
-            TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getWindow().close();
             loadUserSettings();
-            TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getWindow().open();
             new UserMenuController().openTab("Menu");
         } catch (AccessDeniedException e) {
             view.accessDenied();
@@ -64,9 +62,11 @@ public class SimpleLogInController implements Controller<SimpleLogInView,SimpleL
         }
     }
 
+
     private void loadUserSettings(){
         try {
             UIManager.setLookAndFeel(UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
+            SwingUtilities.updateComponentTreeUI(TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }

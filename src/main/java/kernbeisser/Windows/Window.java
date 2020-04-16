@@ -4,6 +4,7 @@ import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInModel;
 
 import java.awt.*;
+import java.lang.reflect.Field;
 
 public interface Window {
     Image STANDARD_IMAGE = Images.getImage("Icon.png");
@@ -17,7 +18,7 @@ public interface Window {
     boolean noAccess();
 
     Controller<?,?> getController();
-    default boolean commitClose(){return true;};
+    default boolean commitClose(){return getController().commitAllClose();}
 
     default void back(){
         simulateCloseEvent();
@@ -48,6 +49,7 @@ public interface Window {
         }
         return window;
     }
+
 
     static final Window NEW_VIEW_CONTAINER = new Window() {
         @Override

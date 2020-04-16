@@ -47,11 +47,13 @@ public class Main {
         }
     }
 
-    public static void buildEnvironment()
-            throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
-                   IllegalAccessException {
-        UIManager.setLookAndFeel(Setting.DEFAULT_THEME.getEnumValue(Theme.class).getLookAndFeel());
+    public static void buildEnvironment() throws UnsupportedLookAndFeelException {
+        setSettingLAF();
         IconFontSwing.register(FontAwesome.getIconFont());
+    }
+
+    public static void setSettingLAF() throws UnsupportedLookAndFeelException {
+        UIManager.setLookAndFeel(Setting.DEFAULT_THEME.getEnumValue(Theme.class).getLookAndFeel());
     }
 
     private static void openLogIn() {
