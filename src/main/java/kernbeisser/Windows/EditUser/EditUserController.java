@@ -8,19 +8,18 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.Selector.SelectorController;
+import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserController implements Controller<EditUserView,EditUserModel> {
     private EditUserView view;
-    private EditUserModel model;
+    private final EditUserModel model;
 
     public EditUserController(User user, Mode mode) {
         model = new EditUserModel(user == null ? new User() : user, mode);
         if (mode == Mode.REMOVE) {
             model.doAction(user);
-            return;
         } else {
             this.view = new EditUserView(this);
         }
@@ -91,12 +90,14 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     void openJobSelector() {
         new SelectorController<Job>("Ausgewählte Jobs", model.getUser().getJobs(), Job::defaultSearch,
                                     Column.create("Name", Job::getName, Key.JOB_NAME_READ),
-                                    Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ));
+                                    Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ)).openAsWindow(getView().getWindow(),
+                                                                                                                               SubWindow::new);
     }
 
     void openPermissionSelector(){
         new SelectorController<Permission>("Ausgewählte Berechtigungen",model.getUser().getPermissions(), Permission::defaultSearch,
                                  Column.create("Name", Permission::getName, Key.PERMISSION_NAME_READ)
-                             );
+                             ).openAsWindow(getView().getWindow(),
+                                            SubWindow::new);
     }
 }

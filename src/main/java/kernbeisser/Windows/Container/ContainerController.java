@@ -5,15 +5,14 @@ import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class ContainerController implements Controller<ContainerView,ContainerModel> {
-    private ContainerView view;
-    private ContainerModel model;
+    private final ContainerView view;
+    private final ContainerModel model;
 
     public ContainerController(User user) {
         model = new ContainerModel(user);
@@ -50,6 +49,12 @@ public class ContainerController implements Controller<ContainerView,ContainerMo
         model.addContainer(newContainer);
         refreshUnpaidContainers();
         clear();
+    }
+
+    @Override
+    public boolean commitClose() {
+        model.saveChanges();
+        return true;
     }
 
     public void remove() {
@@ -99,10 +104,6 @@ public class ContainerController implements Controller<ContainerView,ContainerMo
         view.setItemName(c.getItem().getName());
         view.setAmount(String.valueOf(c.getAmount()));
         view.setNetPrice(c.getNetPrice()  + "€");
-    }
-
-    void exit() {
-        model.saveChanges();
     }
 
     @Override

@@ -23,7 +23,7 @@ public class ShoppingCartModel implements Model<ShoppingCartController> {
             if (stack) {
                 current.setItemMultiplier(item.getItemMultiplier() + current.getItemMultiplier());
             } else {
-                current.setItemNetPrice(current.getItemNetPrice() + item.getItemNetPrice());
+                //current.setItemNetPrice(current.getItemNetPrice() + item.getItemNetPrice());
             }
         } else {
             shoppingItems.put(item, item);

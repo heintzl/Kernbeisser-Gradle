@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kernbeisser.Windows.EditUser.EditUserView">
-  <grid id="27dc6" binding="userDataPanel" layout-manager="GridBagLayout">
+  <grid id="27dc6" binding="userDataPanel" custom-create="true" layout-manager="GridBagLayout">
     <constraints>
       <xy x="20" y="20" width="592" height="748"/>
     </constraints>
@@ -375,7 +375,7 @@
         </constraints>
         <properties/>
       </component>
-      <grid id="faea0" binding="buttonPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="2">
+      <grid id="faea0" binding="buttonPanel" custom-create="true" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="2">
         <constraints>
           <grid row="21" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="15" left="15" bottom="0" right="15" weightx="0.0" weighty="0.0"/>

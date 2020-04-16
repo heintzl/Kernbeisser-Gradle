@@ -5,7 +5,6 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

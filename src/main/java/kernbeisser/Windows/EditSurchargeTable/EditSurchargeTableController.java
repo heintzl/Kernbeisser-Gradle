@@ -4,7 +4,6 @@ import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 public class EditSurchargeTableController implements Controller<EditSurchargeTableView,EditSurchargeTableModel> {

@@ -3,7 +3,6 @@ package kernbeisser.Windows.Purchase;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,10 +19,7 @@ public class PurchaseController implements Controller<PurchaseView,PurchaseModel
 
 
     double getPrice(ShoppingItem item) {
-        return PriceCalculator.getShoppingItemPrice(item, model.getLoaded()
-                                                               .getSession()
-                                                               .getCustomer()
-                                                               .getSolidaritySurcharge());
+        return item.getRetailPrice();
     }
 
     @Override

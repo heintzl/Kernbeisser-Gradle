@@ -29,7 +29,7 @@ public class ContainerView implements View<ContainerController> {
     private JPanel insertSection;
     private JLabel insertSectionLabel;
 
-    private ContainerController controller;
+    private final ContainerController controller;
 
     ContainerView(ContainerController controller) {
         this.controller = controller;
@@ -153,9 +153,6 @@ public class ContainerView implements View<ContainerController> {
             public void keyReleased(KeyEvent e) {
                 controller.searchKB();
             }
-        });
-        getWindow().addCloseEventListener(e -> {
-            controller.exit();
         });
     }
 

@@ -5,7 +5,6 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.UserGroup;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Model;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -44,10 +43,8 @@ public class PayModel implements Model<PayController> {
 
     double shoppingCartSum() {
         return shoppingCart.stream()
-                           .mapToDouble(e -> PriceCalculator
-                                   .getShoppingItemPrice(e, saleSession.getCustomer()
-                                                                       .getSolidaritySurcharge()))
-                           .sum();
+                           .mapToDouble(ShoppingItem::getRetailPrice)
+                           .sum() * (1+saleSession.getCustomer().getSolidaritySurcharge());
     }
 
     boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) {

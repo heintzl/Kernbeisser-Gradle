@@ -14,8 +14,8 @@ import kernbeisser.Windows.Trasaction.TransactionController;
 import org.jetbrains.annotations.NotNull;
 
 public class CashierMenuController implements Controller<CashierMenuView,CashierMenuModel> {
-    private CashierMenuModel model;
-    private CashierMenuView view;
+    private final CashierMenuModel model;
+    private final CashierMenuView view;
 
     public CashierMenuController( User user) {
         this.view = new CashierMenuView( this);
@@ -41,30 +41,30 @@ public class CashierMenuController implements Controller<CashierMenuView,Cashier
     }
 
     public void openManageItems() {
-        new EditItems().openAsWindow(view.getWindow(), JFrameWindow::new);
+        new EditItems().openTab("Artikel bearbeiten");
     }
 
     public void openManageSurchargeTables() {
-        new EditSurchargeTables().openAsWindow(getView().getWindow(),JFrameWindow::new);
+        new EditSurchargeTables().openTab("Aufschlagstabellen bearbeiten");
     }
 
     public void openManageUsers() {
-        new EditUsers().openAsWindow(getView().getWindow(),JFrameWindow::new);
+        new EditUsers().openTab("Nutzer bearbeiten");
     }
 
     public void openManagePriceLists() {
-        new ManagePriceListsController();
+        new ManagePriceListsController().openTab("Preislisten bearbeiten");;
     }
 
     public void openCashierMask() {
-        new CashierShoppingMaskController().openAsWindow(view.getWindow(),JFrameWindow::new);
+        new CashierShoppingMaskController().openTab("Ladendienst Einkaufsmaske");
     }
 
     public void openCatalogInput() {
-        new CatalogInputController().openAsWindow(view.getWindow(),JFrameWindow::new);
+        new CatalogInputController().openTab("Katalog aktualiesieren bearbeiten");;
     }
 
     public void openTransfer() {
-        new TransactionController(model.getUser()).openAsWindow(view.getWindow(),JFrameWindow::new);
+        new TransactionController(model.getUser()).openTab("Überweissungen tätigen");;
     }
 }
