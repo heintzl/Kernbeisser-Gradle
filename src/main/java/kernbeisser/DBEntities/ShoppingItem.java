@@ -68,16 +68,20 @@ public class ShoppingItem implements Serializable {
     public ShoppingItem() {
     }
 
-    public ShoppingItem(Article article,int discount,boolean hasContainerDiscount) {
+    public boolean getContainerDiscount() {
+        return containerDiscount;
+    }
+
+    public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
         this.containerDiscount = hasContainerDiscount;
         this.name = article.getName();
         this.kbNumber = article.getKbNumber();
         this.amount = article.getAmount();
         this.itemNetPrice = article.getNetPrice();
-        this.metricUnits = article.isWeighAble() ? article.getMetricUnits() : MetricUnits.STACK;
+        this.metricUnits = article.isWeighAble() ? article.getMetricUnits() : MetricUnits.PIECE;
         this.vat = article.getVAT().getValue();
         this.weighAble = article.isWeighAble();
-        this.surcharge = hasContainerDiscount ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : article.getSurcharge();
+        this.surcharge = 0.1 * (hasContainerDiscount ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : article.getSurcharge());
         this.discount = discount;
         if (article.getSupplier() != null) {
             this.shortName = article.getSupplier().getShortName();
@@ -95,7 +99,7 @@ public class ShoppingItem implements Serializable {
     }
 
     private double calculateItemRetailPrice(){
-        return Math.round(100 * itemNetPrice * (1+vat) * (1+surcharge))/100.;
+        return Math.round(100 * itemNetPrice * (1+vat) * (1+surcharge))/100. * (1 - discount/100.);
     }
 
 
@@ -117,7 +121,7 @@ public class ShoppingItem implements Serializable {
             Article deposit = new Article();
             deposit.setName("Obst und Gem\u00fcse");
             deposit.setKbNumber(-1);
-            deposit.setMetricUnits(MetricUnits.STACK);
+            deposit.setMetricUnits(MetricUnits.PIECE);
             deposit.setDeleteAllowed(false);
             deposit.setVAT(VAT.LOW);
             em.persist(deposit);
@@ -148,7 +152,7 @@ public class ShoppingItem implements Serializable {
             Article deposit = new Article();
             deposit.setName("Backware");
             deposit.setKbNumber(-2);
-            deposit.setMetricUnits(MetricUnits.STACK);
+            deposit.setMetricUnits(MetricUnits.PIECE);
             deposit.setDeleteAllowed(false);
             deposit.setVAT(VAT.LOW);
             em.persist(deposit);
@@ -179,7 +183,7 @@ public class ShoppingItem implements Serializable {
             Article deposit = new Article();
             deposit.setName("Pfand");
             deposit.setKbNumber(-3);
-            deposit.setMetricUnits(MetricUnits.STACK);
+            deposit.setMetricUnits(MetricUnits.PIECE);
             deposit.setDeleteAllowed(false);
             deposit.setVAT(VAT.HIGH);
             em.persist(deposit);
