@@ -1,8 +1,11 @@
 package kernbeisser.Windows;
 
+import kernbeisser.Enums.Key;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInModel;
+import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Field;
 
@@ -18,7 +21,10 @@ public interface Window {
     boolean noAccess();
 
     Controller<?,?> getController();
-    default boolean commitClose(){return getController().commitAllClose();}
+
+    default boolean commitClose(){
+        return getController() == null || getController().commitAllClose();
+    }
 
     default void back(){
         simulateCloseEvent();
@@ -34,7 +40,7 @@ public interface Window {
     }
 
     static <W extends Window> W openWindow(Window parent, W window, boolean closeWindow){
-        if ((closeWindow||parent.commitClose())&&(LogInModel.getLoggedIn()==null || LogInModel.getLoggedIn().hasPermission(
+        if ((!closeWindow||parent.commitClose())&&(LogInModel.getLoggedIn()==null || LogInModel.getLoggedIn().hasPermission(
                 window.getController().getRequiredKeys()) || parent.noAccess())) {
             window.setIcon(STANDARD_IMAGE);
             window.open();
@@ -84,7 +90,7 @@ public interface Window {
 
         @Override
         public Controller<?,?> getController() {
-            return null;
+               return null;
         }
 
         @Override

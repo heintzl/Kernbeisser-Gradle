@@ -20,7 +20,7 @@ public class ObjectViewModel<T> implements Model<ObjectViewController<T>> {
     }
 
     void openEdit(Window window, T selected) {
-        maskLoader.accept(selected, Mode.EDIT).openTab("Bearbeiten");
+        maskLoader.accept(selected, Mode.EDIT).openAsWindow(window,SubWindow::new);
     }
 
     Collection<T> getItems(String search, int max) {
@@ -28,7 +28,7 @@ public class ObjectViewModel<T> implements Model<ObjectViewController<T>> {
     }
 
     void openAdd(Window window, T selected) {
-        maskLoader.accept(selected, Mode.ADD).openTab("Hinzufügen");
+        maskLoader.accept(selected, Mode.ADD).openAsWindow(window,SubWindow::new);
     }
 
     void remove(T selected) {
