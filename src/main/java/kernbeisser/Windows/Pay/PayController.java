@@ -3,7 +3,6 @@ package kernbeisser.Windows.Pay;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +28,7 @@ public class PayController implements Controller<PayView,PayModel> {
     }
 
     double getPrice(ShoppingItem item) {
-        return PriceCalculator.getShoppingItemPrice(item,
-                                                    model.getSaleSession().getCustomer().getSolidaritySurcharge());
+        return item.getItemRetailPrice();
     }
 
     @Override

@@ -1,14 +1,13 @@
 package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.*;
-import kernbeisser.Price.PriceCalculator;
+import kernbeisser.DBEntities.Purchase;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.Reporting.PrintHandler;
 import kernbeisser.Windows.Model;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.util.JRSaver;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.engine.JRException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -41,10 +40,8 @@ public class PayModel implements Model<PayController> {
 
     double shoppingCartSum() {
         return shoppingCart.stream()
-                           .mapToDouble(e -> PriceCalculator
-                                   .getShoppingItemPrice(e, saleSession.getCustomer()
-                                                                       .getSolidaritySurcharge()))
-                           .sum();
+                           .mapToDouble(ShoppingItem::getRetailPrice)
+                           .sum() * (1+saleSession.getCustomer().getSolidaritySurcharge());
     }
 
     boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) {
@@ -108,28 +105,11 @@ public class PayModel implements Model<PayController> {
     }
 
     void print(PrintService printService) {
-        try {
-            String JRTemplate = "Kerni_Rechnung";
-            String basePath = "reports";
-            JasperDesign jspDesign = JRXmlLoader.load(
-                    Paths.get(basePath, JRTemplate + ".jrxml").toFile());
-            JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
-
-            User customer = saleSession.getCustomer();
-            Map<String,Object> reportParamMap = new HashMap<>();
-            reportParamMap.put("BonNo", 47);
-            reportParamMap.put("Customer", customer.getFirstName() + " " + customer.getSurname());
-            JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
-
-            JasperPrint jspPrint = JasperFillManager.fillReport(jspReport, reportParamMap, dataSource);
-            JRSaver.saveObject(jspPrint, Paths.get(basePath, JRTemplate + ".jrprint").toFile());
-//            JasperPrintManager.printReport(jspPrint, false);
-//            JRPdfExporter pdfExporter = new JRPdfExporter();
-            JasperExportManager.exportReportToPdfFile(jspPrint, Paths.get(basePath, "report.pdf").toString());
-        } catch (JRException e) {
-            e.printStackTrace();
-        }
-//        try {
+        Map<String,Object> receiptParamMap = new HashMap<>();
+        receiptParamMap.put("BonNo", 47);
+        PrintHandler printHandler = new PrintHandler("Kerni_Rechnung", receiptParamMap, shoppingCart);
+        printHandler.exportToPdf();
+ //        try {
 //            //Creates new PrinterJob
 //            PrinterJob p = PrinterJob.getPrinterJob();
 //
