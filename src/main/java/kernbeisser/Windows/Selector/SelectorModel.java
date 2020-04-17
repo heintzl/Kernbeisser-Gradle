@@ -1,13 +1,12 @@
 package kernbeisser.Windows.Selector;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.DBEntities.Job;
 import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Searchable;
 
 import java.util.Collection;
 
-public class SelectorModel <T> implements Model {
+public class SelectorModel <T> implements Model<SelectorController<T>> {
     private final Collection<T> currentValues;
     private final Searchable<T> searchable;
     private final Column<T>[] columns;

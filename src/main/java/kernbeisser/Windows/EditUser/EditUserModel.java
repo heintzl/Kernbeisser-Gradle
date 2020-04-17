@@ -7,14 +7,13 @@ import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
-import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import java.util.Collection;
 
-public class EditUserModel implements Model {
+public class EditUserModel implements Model<EditUserController> {
 
     private final User user;
     private final Mode mode;
@@ -62,7 +61,7 @@ public class EditUserModel implements Model {
     }
 
     private void remove(User user) {
-        Tools.delete(User.class, user.getId());
+        User.makeUserUnreadable(user);
     }
 
     private void edit(User user) {

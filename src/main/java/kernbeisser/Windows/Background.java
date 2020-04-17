@@ -1,7 +1,11 @@
 package kernbeisser.Windows;
 
+import kernbeisser.Windows.Pay.PayModel;
+import kernbeisser.Windows.Pay.PayView;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 public class Background extends JPanel {
@@ -35,4 +39,5 @@ public class Background extends JPanel {
     public void autoSize(Container container) {
         this.container = container;
     }
+
 }

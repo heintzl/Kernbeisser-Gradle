@@ -1,24 +1,22 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
+import jiconfont.IconCode;
+import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class SimpleLogInView extends Window implements View {
+public class SimpleLogInView implements View<SimpleLogInController> {
     private JButton logIn;
     private JPasswordField password;
     private JTextField username;
     private JPanel main;
 
+    private final SimpleLogInController controller;
 
-    SimpleLogInView(Window current,SimpleLogInController controller){
-        super(current);
-        add(main);
-        logIn.addActionListener(e -> controller.logIn());
-        password.addActionListener(e -> controller.logIn());
-        username.addActionListener(e -> password.requestFocus());
-        windowInitialized();
+    SimpleLogInView(SimpleLogInController controller){
+        this.controller = controller;
     }
 
     char[] getPassword(){
@@ -29,8 +27,31 @@ public class SimpleLogInView extends Window implements View {
         return username.getText();
     }
 
-    void accessDenied(){
-        JOptionPane.showMessageDialog(this,"Zugriff verweigert.\nBitte überprüfen sie ihre Anmeldedaten,\n sollte das Problem weiter bestehen,\n melden sie sich bitte bei einem Admin\n");
+    public void accessDenied() {
+        JOptionPane.showMessageDialog(getTopComponent(),"Zugriff verweigert. Anmeldedaten sind inkorrect!");
     }
 
+    public void permissionRequired() {
+        JOptionPane.showMessageDialog(getTopComponent(),"Zugriff verweigert.\nIhr Benutzerkonto hat Leider nicht die Berechtigung sich anzumelden.\nSie können es bei einem Admin freischalten lassen.");
+    }
+
+    @Override
+    public void initialize(SimpleLogInController controller) {
+        logIn.addActionListener(e -> controller.logIn());
+        password.addActionListener(e -> {
+            controller.logIn();
+        });
+        username.addActionListener(e -> password.requestFocus());
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
+
+
+    @Override
+    public IconCode getTabIcon() {
+        return FontAwesome.SIGN_IN;
+    }
 }

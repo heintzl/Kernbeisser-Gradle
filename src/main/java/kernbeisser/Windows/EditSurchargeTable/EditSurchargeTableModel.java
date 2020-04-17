@@ -12,7 +12,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import java.util.Collection;
 
-public class EditSurchargeTableModel implements Model {
+public class EditSurchargeTableModel implements Model<EditSurchargeTableController> {
     private final SurchargeTable surchargeTable;
     private final Mode mode;
 

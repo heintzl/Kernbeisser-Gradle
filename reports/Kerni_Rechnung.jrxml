@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="420" pageHeight="595" columnWidth="380" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="BonNo" class="java.lang.Integer" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="amount" class="java.lang.Integer"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="vat" class="java.lang.Double"/>
+	<field name="itemNetPrice" class="java.lang.Double"/>
+	<variable name="SumTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[($F{itemNetPrice}.doubleValue()*(1+$F{vat}.doubleValue()))]]></variableExpression>
+	</variable>
+	<variable name="SumOfVat" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[($F{itemNetPrice}.doubleValue()*($F{vat}.doubleValue()))]]></variableExpression>
+	</variable>
+	<variable name="itemGrossPrice" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[($F{itemNetPrice}.doubleValue()*(1+$F{vat}.doubleValue()))]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="93" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="40" width="290" height="20" uuid="b264d29e-7d35-46a5-8fad-ef85ccfe065e"/>
+				<text><![CDATA[--->Steuer-ID<---]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="290" height="20" uuid="b66bb140-4002-4cbc-9fcd-8a481e91548f"/>
+				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="20" width="290" height="20" uuid="1c06b268-d6a5-4946-a03a-0beda52c2259"/>
+				<text><![CDATA[Bültenweg 71, 38106 Braunschweig]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="54" splitType="Stretch">
+			<textField pattern="MM.dd.yyyy">
+				<reportElement x="280" y="19" width="100" height="12" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="280" y="-1" width="100" height="20" uuid="b06d30d9-9672-4bc4-81b8-b2694936aa3b"/>
+				<text><![CDATA[Datum]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="1" width="100" height="18" uuid="cd16e1e6-5f75-4959-9246-021af1afb2c3"/>
+				<text><![CDATA[Bon-Nr.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="19" width="100" height="12" uuid="69436be7-57fc-4cd6-9411-af080fa7febf"/>
+				<textFieldExpression><![CDATA[$P{BonNo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="50" height="30" uuid="b549adea-12e1-431f-b576-7bf5f6375f23">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
+				</reportElement>
+				<text><![CDATA[Menge]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="150" height="30" uuid="c50d3001-7b1a-4a5f-a711-d90c302a8eed">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
+				</reportElement>
+				<text><![CDATA[Bezeichnung]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="0" width="40" height="30" uuid="0da019d8-f30e-418a-8af6-170665f4d781">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+				</reportElement>
+				<text><![CDATA[MWSt.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="0" width="70" height="30" uuid="72837db1-de5d-496b-9590-48801c1d00a6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="27414533-6336-4d60-992c-1aa382fdeece"/>
+				</reportElement>
+				<text><![CDATA[Preis inkl. MWSt.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="50" height="30" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="0" width="150" height="30" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="0" width="40" height="30" uuid="6efcde95-291f-43d1-b62e-72f55da53670">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{vat}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
+				<reportElement x="310" y="0" width="70" height="30" uuid="a062389a-bb41-4962-b7cf-77cc1e391a2a"/>
+				<textFieldExpression><![CDATA[$V{itemGrossPrice}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="65" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<textField>
+				<reportElement x="180" y="20" width="100" height="30" uuid="03331689-eace-4f1d-aa03-2b9e1136a6a1"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="280" y="20" width="100" height="30" uuid="97092015-afa4-4135-94b5-55ba3169e00d"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[" von " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="62" splitType="Stretch">
+			<textField evaluationTime="Report" pattern="#,##0.00¤;-#,##0.00 ¤">
+				<reportElement x="280" y="0" width="100" height="21" uuid="5483ffe9-0caa-474a-975d-3e6860a46b39"/>
+				<textFieldExpression><![CDATA[$V{SumTotal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="220" y="0" width="60" height="20" uuid="016f79ff-2dc9-4b21-a680-fb871f7fee6d"/>
+				<text><![CDATA[Summe: ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
+				<reportElement x="280" y="21" width="100" height="19" uuid="edd4b967-44b9-4ad7-92a5-8317fce81ec0"/>
+				<textFieldExpression><![CDATA[$V{SumOfVat}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="210" y="20" width="70" height="20" uuid="68e1f14a-26dc-4c62-916f-1ca86bfde6e4"/>
+				<text><![CDATA[darin MWSt.:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

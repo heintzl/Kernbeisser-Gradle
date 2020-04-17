@@ -10,12 +10,12 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
 
-public class EditItemView extends Window implements View {
+public class EditItemView implements View<EditItemController> {
     private JButton commit;
     private JButton cancel;
     private kernbeisser.CustomComponents.TextFields.PermissionField itemName;
@@ -38,34 +38,10 @@ public class EditItemView extends Window implements View {
     private kernbeisser.CustomComponents.PermissionComboBox vat;
     private JPanel main;
 
-    public EditItemView(EditItemController controller, Window current) {
-        super(current);
-        cancel.addActionListener((e) -> back());
-        commit.addActionListener((e) -> controller.doAction());
-        add(main);
-        pack();
-        setLocationRelativeTo(null);
-        itemName.setRequiredKeys(Key.ARTICLE_NAME_READ,Key.ARTICLE_NAME_WRITE);
-        amount.setRequiredKeys(Key.ARTICLE_AMOUNT_READ, Key.ARTICLE_AMOUNT_WRITE);
-        netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ, Key.ARTICLE_NET_PRICE_WRITE);
-        supplier.setRequiredReadKeys(Key.ARTICLE_SUPPLIER_READ,Key.SUPPLIER_NAME_READ);
-        supplier.setRequiredWriteKeys(Key.ARTICLE_SUPPLIER_WRITE);
-        netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ,Key.ARTICLE_NET_PRICE_WRITE);
-        deposit.setRequiredKeys(Key.ARTICLE_SINGLE_DEPOSIT_READ, Key.ARTICLE_SINGLE_DEPOSIT_WRITE);
-        kbItemNumber.setRequiredKeys(Key.ARTICLE_KB_NUMBER_READ, Key.ARTICLE_KB_NUMBER_READ);
-        supplierItemNumber.setRequiredKeys(Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE);
-        crateDeposit.setRequiredKeys(Key.ARTICLE_CRATE_DEPOSIT_READ, Key.ARTICLE_CRATE_DEPOSIT_WRITE);
-        priceList.setRequiredReadKeys(Key.ARTICLE_PRICE_LIST_READ,Key.PRICELIST_NAME_READ);
-        priceList.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
-        search.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
-        vat.setRequiredKeys(Key.ARTICLE_VAT_READ,Key.ARTICLE_VAT_WRITE);
-        metricUnits.setRequiredKeys(Key.ARTICLE_METRIC_UNITS_READ, Key.ARTICLE_METRIC_UNITS_WRITE);
-        barcode.setRequiredKeys(Key.ARTICLE_BARCODE_READ,Key.ARTICLE_BARCODE_WRITE);
-        containerDefinition.setRequiredKeys(Key.ARTICLE_CONTAINER_DEF_READ,Key.ARTICLE_CONTAINER_DEF_WRITE);
-        containerSize.setRequiredKeys(Key.ARTICLE_CONTAINER_SIZE_READ,Key.ARTICLE_CONTAINER_SIZE_WRITE);
-        showInShoppingMask.setRequiredReadKeys(Key.ARTICLE_SHOW_IN_SHOP_READ,Key.ARTICLE_SHOW_IN_SHOP_WRITE);
-        weighable.setRequiredReadKeys(Key.ARTICLE_WEIGHABLE_READ,Key.ARTICLE_WEIGHABLE_WRITE);
-        windowInitialized();
+    private final EditItemController controller;
+
+    public EditItemView(EditItemController controller) {
+        this.controller = controller;
     }
 
 
@@ -155,11 +131,42 @@ public class EditItemView extends Window implements View {
     }
 
     void kbNumberAlreadyExists() {
-        JOptionPane.showMessageDialog(this, "Die Kernbeisser-Nummer ist bereits vergeben");
+        JOptionPane.showMessageDialog(getTopComponent(), "Die Kernbeisser-Nummer ist bereits vergeben");
     }
 
     void barcodeAlreadyExists() {
-        JOptionPane.showMessageDialog(this, "Der Barcode ist bereits vergeben");
+        JOptionPane.showMessageDialog(getTopComponent(), "Der Barcode ist bereits vergeben");
+    }
+
+    @Override
+    public void initialize(EditItemController controller) {
+        cancel.addActionListener((e) -> back());
+        commit.addActionListener((e) -> controller.doAction());
+        itemName.setRequiredKeys(Key.ARTICLE_NAME_READ, Key.ARTICLE_NAME_WRITE);
+        amount.setRequiredKeys(Key.ARTICLE_AMOUNT_READ, Key.ARTICLE_AMOUNT_WRITE);
+        netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ, Key.ARTICLE_NET_PRICE_WRITE);
+        supplier.setRequiredReadKeys(Key.ARTICLE_SUPPLIER_READ,Key.SUPPLIER_NAME_READ);
+        supplier.setRequiredWriteKeys(Key.ARTICLE_SUPPLIER_WRITE);
+        netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ,Key.ARTICLE_NET_PRICE_WRITE);
+        deposit.setRequiredKeys(Key.ARTICLE_SINGLE_DEPOSIT_READ, Key.ARTICLE_SINGLE_DEPOSIT_WRITE);
+        kbItemNumber.setRequiredKeys(Key.ARTICLE_KB_NUMBER_READ, Key.ARTICLE_KB_NUMBER_READ);
+        supplierItemNumber.setRequiredKeys(Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE);
+        crateDeposit.setRequiredKeys(Key.ARTICLE_CRATE_DEPOSIT_READ, Key.ARTICLE_CRATE_DEPOSIT_WRITE);
+        priceList.setRequiredReadKeys(Key.ARTICLE_PRICE_LIST_READ,Key.PRICELIST_NAME_READ);
+        priceList.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
+        search.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
+        vat.setRequiredKeys(Key.ARTICLE_VAT_READ,Key.ARTICLE_VAT_WRITE);
+        metricUnits.setRequiredKeys(Key.ARTICLE_METRIC_UNITS_READ, Key.ARTICLE_METRIC_UNITS_WRITE);
+        barcode.setRequiredKeys(Key.ARTICLE_BARCODE_READ,Key.ARTICLE_BARCODE_WRITE);
+        containerDefinition.setRequiredKeys(Key.ARTICLE_CONTAINER_DEF_READ,Key.ARTICLE_CONTAINER_DEF_WRITE);
+        containerSize.setRequiredKeys(Key.ARTICLE_CONTAINER_SIZE_READ,Key.ARTICLE_CONTAINER_SIZE_WRITE);
+        showInShoppingMask.setRequiredReadKeys(Key.ARTICLE_SHOW_IN_SHOP_READ,Key.ARTICLE_SHOW_IN_SHOP_WRITE);
+        weighable.setRequiredReadKeys(Key.ARTICLE_WEIGHABLE_READ,Key.ARTICLE_WEIGHABLE_WRITE);
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
     }
 
 }

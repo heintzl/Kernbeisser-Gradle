@@ -4,7 +4,6 @@ import kernbeisser.CustomComponents.ObjectTree.ChildFactory;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
-import kernbeisser.Windows.ManagePriceLists.ManagePriceListsView;
 
 import java.util.Collection;
 
@@ -47,7 +46,7 @@ public class PriceListTree extends ObjectTree<PriceList> {
             refresh();
             addSelectionListener(e -> {
                 if (e.getId() == Integer.MIN_VALUE) {
-                    new ManagePriceListsController(null) {
+                    new ManagePriceListsController() {
                         @Override
                         public void finish() {
                             PriceListTree.this.setModel(new PriceListTree().getModel());

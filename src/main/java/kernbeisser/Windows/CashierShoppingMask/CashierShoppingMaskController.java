@@ -6,17 +6,18 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
+import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
-public class CashierShoppingMaskController{
+public class CashierShoppingMaskController implements Controller<CashierShoppingMaskView,CashierShoppingMaskModel> {
     private CashierShoppingMaskModel model;
     private CashierShoppingMaskView view;
 
     private SearchBoxController<User> searchBoxController;
 
-    public CashierShoppingMaskController(Window current) {
+    public CashierShoppingMaskController() {
         this.searchBoxController = new SearchBoxController<User>(User::defaultSearch, this::selectUser,
                                                              Column.create("Vorname", User::getFirstName, Key.USER_FIRST_NAME_READ),
                                                              Column.create("Nachname", User::getSurname, Key.USER_SURNAME_READ),
@@ -28,8 +29,10 @@ public class CashierShoppingMaskController{
                 super.refreshLoadSolutions();
             }
         };
+        searchBoxController.initView();
         model = new CashierShoppingMaskModel();
-        this.view = new CashierShoppingMaskView(this,current);
+        this.view = new CashierShoppingMaskView(this);
+
     }
 
     private void selectUser(User user){
@@ -44,10 +47,30 @@ public class CashierShoppingMaskController{
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(searchBoxController.getSelectedObject());
         saleSession.setSeller(LogInModel.getLoggedIn());
-        view.addShoppingMaskView("Einkauf für "+saleSession.getCustomer().getUsername(),new ShoppingMaskUIController(saleSession).getView());
+        view.addShoppingMaskView("Einkauf für "+saleSession.getCustomer().getUsername(),new ShoppingMaskUIController(saleSession).getInitializedView());
     }
 
     public SearchBoxView<User> getSearchBoxView(){
         return searchBoxController.getView();
+    }
+
+    @Override
+    public @NotNull CashierShoppingMaskView getView() {
+        return view;
+    }
+
+    @Override
+    public @NotNull CashierShoppingMaskModel getModel() {
+        return model;
+    }
+
+    @Override
+    public void fillUI() {
+
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 }

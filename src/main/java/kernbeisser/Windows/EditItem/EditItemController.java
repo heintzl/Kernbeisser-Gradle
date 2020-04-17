@@ -1,24 +1,38 @@
 package kernbeisser.Windows.EditItem;
 
 import kernbeisser.DBEntities.Article;
+import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
-public class EditItemController implements Controller {
+public class EditItemController implements Controller<EditItemView,EditItemModel> {
 
     private EditItemView view;
     private EditItemModel model;
 
-    public EditItemController(Window current, Article article, Mode mode) {
+    public EditItemController(Article article, Mode mode) {
         model = new EditItemModel(article != null ? article : new Article(), mode);
         if (mode == Mode.REMOVE) {
             model.doAction(article);
             return;
         } else {
-            this.view = new EditItemView(this, current);
+            this.view = new EditItemView(this);
         }
+    }
+
+    @Override
+    public @NotNull EditItemView getView() {
+        return view;
+    }
+
+    @Override
+    public @NotNull EditItemModel getModel() {
+        return model;
+    }
+
+    @Override
+    public void fillUI() {
         view.setPriceLists(model.getAllPriceLists());
         view.setSuppliers(model.getAllSuppliers());
         view.setUnits(model.getAllUnits());
@@ -28,13 +42,8 @@ public class EditItemController implements Controller {
     }
 
     @Override
-    public EditItemView getView() {
-        return view;
-    }
-
-    @Override
-    public Model getModel() {
-        return model;
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
     void doAction() {

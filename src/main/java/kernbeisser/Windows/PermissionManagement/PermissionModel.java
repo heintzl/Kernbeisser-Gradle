@@ -2,10 +2,8 @@ package kernbeisser.Windows.PermissionManagement;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.KeyCategory;
-import kernbeisser.Enums.Security;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
@@ -13,37 +11,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
-class PermissionModel implements Model {
+public class PermissionModel implements Model<PermissionController> {
     void addKey(Permission permission, Key key) {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        Permission db = em.find(Permission.class, permission.getId());
-        db.getKeySet().add(key);
-        em.persist(db);
-        em.flush();
-        et.commit();
-        em.close();
+        Tools.addToCollection(Permission.class,permission.getId(),Permission::getKeySet,key);
     }
 
     void removeKey(Permission permission, Key key) {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        Permission db = em.find(Permission.class, permission.getId());
-        db.getKeySet().remove(key);
-        em.persist(db);
-        em.flush();
-        et.commit();
-        em.close();
+        Tools.removeFromCollection(Permission.class,permission.getId(),Permission::getKeySet,key);
     }
 
     Collection<Permission> getAllPermissions() {
         return Permission.getAll(null);
-    }
-
-    Security[] getAllSecurities() {
-        return Security.values();
     }
 
     KeyCategory[] getAllKeyCategories() {
@@ -64,5 +42,13 @@ class PermissionModel implements Model {
         em.flush();
         et.commit();
         em.close();
+    }
+
+    void removeKeys(Permission permission,Collection<Key> keys) {
+        Tools.removeMultipleFromCollection(Permission.class,permission.getId(),Permission::getKeySet,keys);
+    }
+
+    void addKeys(Permission permission,Collection<Key> keys){
+        Tools.addMultipleToCollection(Permission.class,permission.getId(),Permission::getKeySet,keys);
     }
 }

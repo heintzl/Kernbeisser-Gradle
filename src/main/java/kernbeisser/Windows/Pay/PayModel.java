@@ -5,12 +5,9 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.UserGroup;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Model;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRSaver;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -20,14 +17,12 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import static net.sf.jasperreports.engine.JasperCompileManager.compileReport;
-
-class PayModel implements Model {
+public class PayModel implements Model<PayController> {
     private final SaleSession saleSession;
     private final Collection<ShoppingItem> shoppingCart;
     private final Runnable transferCompleted;
@@ -48,9 +43,8 @@ class PayModel implements Model {
 
     double shoppingCartSum() {
         return shoppingCart.stream()
-                           .mapToDouble(e -> PriceCalculator.getShoppingItemPrice(e, saleSession.getCustomer()
-                                                                                             .getSolidaritySurcharge()))
-                           .sum();
+                           .mapToDouble(ShoppingItem::getRetailPrice)
+                           .sum() * (1+saleSession.getCustomer().getSolidaritySurcharge());
     }
 
     boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) {
@@ -115,33 +109,35 @@ class PayModel implements Model {
 
     void print(PrintService printService) {
         try {
-            String basePath = "/home/timo/JaspersoftWorkspace/MyReports";
+            String basePath = "/home/timos/JaspersoftWorkspace/MyReports";
             JasperDesign jspDesign = JRXmlLoader.load(
                     Paths.get(basePath, "Blank_A4.jrxml").toFile());
-            JasperReport jspReport = compileReport(jspDesign);
+            JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
+
             Map<String,Object> reportParamMap = new HashMap<>();
             reportParamMap.put("BonNo", 47);
-            List<String> amounts = new ArrayList<String>();
-            amounts.add("1x");
-            amounts.add("2x");
-            reportParamMap.put("ItemAmount", amounts);
-            JasperPrint jspPrint = JasperFillManager.fillReport(jspReport, reportParamMap);
+
+            JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
+
+            JasperPrint jspPrint = JasperFillManager.fillReport(jspReport, reportParamMap, dataSource);
             JRSaver.saveObject(jspPrint, Paths.get(basePath, "Blank_A4.jrprint").toFile());
 //            JasperPrintManager.printReport(jspPrint, false);
+//            JRPdfExporter pdfExporter = new JRPdfExporter();
+            JasperExportManager.exportReportToPdfFile(jspPrint, Paths.get(basePath, "report.pdf").toString());
         } catch (JRException e) {
             e.printStackTrace();
         }
-        try {
-            //Creates new PrinterJob
-            PrinterJob p = PrinterJob.getPrinterJob();
-
-            //Sets selected PrintService
-            p.setPrintService(printService);
-
-
-        } catch (PrinterException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //Creates new PrinterJob
+//            PrinterJob p = PrinterJob.getPrinterJob();
+//
+//            //Sets selected PrintService
+//            p.setPrintService(printService);
+//
+//
+//        } catch (PrinterException e) {
+//            e.printStackTrace();
+//        }
     }
 
     PrintService getDefaultPrinter() {

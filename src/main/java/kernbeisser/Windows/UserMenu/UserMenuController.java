@@ -1,49 +1,72 @@
 package kernbeisser.Windows.UserMenu;
 
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.UserSetting;
-import kernbeisser.Windows.*;
+import kernbeisser.Enums.Key;
+import kernbeisser.Main;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
+import kernbeisser.Windows.PermissionManagement.PermissionController;
+import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.Purchase.PurchaseController;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
-import kernbeisser.Windows.Window;
+import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
+import kernbeisser.Windows.UserInfo.UserInfoController;
+import kernbeisser.Windows.UserInfo.UserInfoView;
+import org.jetbrains.annotations.NotNull;
 
-public class UserMenuController implements Controller {
+import javax.swing.*;
+
+public class UserMenuController implements Controller<UserMenuView,UserMenuModel> {
     private UserMenuView view;
     private UserMenuModel model;
 
-    public UserMenuController(Window current) {
-        this.view = new UserMenuView(this, current);
+    public UserMenuController() {
         this.model = new UserMenuModel();
-        view.setUsername(LogInModel.getLoggedIn().getUsername());
-        view.setBuyHistory(model.getAllPurchase());
-    }
-
-
-    public void showPurchase() {
-        new PurchaseController(view, view.getSelected());
+        this.view = new UserMenuView(this);
     }
 
     @Override
-    public UserMenuView getView() {
+    public @NotNull UserMenuView getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull UserMenuModel getModel() {
         return model;
     }
 
+    @Override
+    public void fillUI() {
+        view.setUsername(LogInModel.getLoggedIn().getFirstName()+" "+LogInModel.getLoggedIn().getSurname());
+    }
+
+    @Override
+    public boolean commitClose() {
+        if (JOptionPane.showConfirmDialog(getView().getTopComponent(), "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen") == 0) {
+            TabbedPaneModel.DEFAULT_TABBED_PANE.unsafeClose(asTab("Menu"));
+            if(TabbedPaneModel.DEFAULT_TABBED_PANE.clear()){
+                try {
+                    Main.setSettingLAF();
+                } catch (UnsupportedLookAndFeelException e) {
+                    e.printStackTrace();
+                }
+                SwingUtilities.updateComponentTreeUI(TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
+                new SimpleLogInController().openTab("Log In");
+            }else {
+                new UserMenuController().openTab("Menu");
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
+    }
+
     public void beginSelfShopping() {
-        SaleSession saleSession = new SaleSession();
-        saleSession.setCustomer(model.getOwner());
-        saleSession.setSeller(model.getOwner());
-        Window w = new Window(view);
-        w.add(new ShoppingMaskUIController(saleSession).getView());
-        w.windowInitialized();
+        new SoloShoppingMaskController().openTab("Einkaufsmaske");
     }
 
     public void logOut() {
@@ -51,7 +74,7 @@ public class UserMenuController implements Controller {
     }
 
     public void beginCashierJob() {
-        new CashierMenuController(view, model.getOwner());
+        new CashierMenuController(model.getOwner()).openTab("Ladendienst Menu");
     }
 
     public void showProfile() {
@@ -65,6 +88,14 @@ public class UserMenuController implements Controller {
     }
 
     public void orderContainers() {
-        new ContainerController(view, model.getOwner());
+        new ContainerController(model.getOwner()).openTab("Gebinde bestellen");
+    }
+
+    public UserInfoView getUserInfoView() {
+        return new UserInfoController(model.getOwner()).getInitializedView();
+    }
+
+    public void openEditPermissionsWindow() {
+        new PermissionController().openTab("Berechtigungen bearbeiten");
     }
 }

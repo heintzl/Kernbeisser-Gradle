@@ -6,15 +6,15 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Collection;
 
-public class ShoppingCartView extends JPanel implements View {
+public class ShoppingCartView extends JPanel implements View<ShoppingCartController> {
     private final ShoppingCartController controller;
     private JLabel sum;
     private JLabel value;
@@ -23,7 +23,6 @@ public class ShoppingCartView extends JPanel implements View {
 
     ShoppingCartView(ShoppingCartController controller) {
         this.controller = controller;
-        add(main);
     }
 
     void setObjects(Collection<ShoppingItem> items) {
@@ -54,12 +53,12 @@ public class ShoppingCartView extends JPanel implements View {
                     return name;
                 }),
                 Column.create("2", e -> {
-                    JLabel discount = new JLabel(e.getDiscount() == PriceCalculator.CONTAINER_DISCOUNT
-                                                 ? "Vorbestellt"
-                                                 : e.getDiscount() + "%");
-                    discount.setFont(gridFont);
-                    discount.setHorizontalAlignment(SwingConstants.RIGHT);
-                    return discount;
+                    //JLabel discount = new JLabel(e.getDiscount() == PriceCalculator.CONTAINER_DISCOUNT
+                    //                             ? "Vorbestellt"
+                     //                            : e.getDiscount() + "%");
+                    //discount.setFont(gridFont);
+                    //discount.setHorizontalAlignment(SwingConstants.RIGHT);
+                    return null;//discount;
                 }),
                 Column.create("3", e -> {
                     JLabel price = new JLabel(String.format("%.2f€",controller.getPrice(e)));
@@ -67,8 +66,8 @@ public class ShoppingCartView extends JPanel implements View {
                     price.setHorizontalAlignment(SwingConstants.RIGHT);
                     return price;
                 }),
-                Column.create("4", e -> {
-                    JLabel amount = new JLabel(
+                /*Column.create("4", e -> {
+                    /*JLabel amount = new JLabel(
                             e.isWeighable()
                             ? (e.getMetricUnits().toUnit(e.getAmount() * e.getItemMultiplier()) + e.getMetricUnits()
                                                                                                    .getShortName())
@@ -76,7 +75,7 @@ public class ShoppingCartView extends JPanel implements View {
                     amount.setFont(gridFont);
                     amount.setHorizontalAlignment(SwingConstants.RIGHT);
                     return amount;
-                }),
+                }),*/
                 Column.create("delete", (e) -> new JPanel() {
                     @Override
                     public void paint(Graphics g) {
@@ -89,5 +88,15 @@ public class ShoppingCartView extends JPanel implements View {
         shoppingItems.setGridColor(Color.WHITE);
         shoppingItems.setComplex(true);
         shoppingItems.setTableHeader(null);
+    }
+
+    @Override
+    public void initialize(ShoppingCartController controller) {
+        add(main);
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
     }
 }

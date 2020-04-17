@@ -4,12 +4,13 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
-public class SpecialPriceEditorModel {
+public class SpecialPriceEditorModel implements Model<SpecialPriceEditorController> {
     private Offer selected;
     private Article selectedArticle;
 

@@ -3,8 +3,6 @@ package kernbeisser.Windows.ShoppingMask;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -13,10 +11,9 @@ import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ShoppingMaskModel implements Model {
+public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
     private Article selected = null;
     private double value;
-    private Collection<ShoppingItem> shoppingCart = new ArrayList<>();
     private SaleSession saleSession;
 
     ShoppingMaskModel(SaleSession saleSession) {
@@ -40,17 +37,6 @@ public class ShoppingMaskModel implements Model {
         }
     }
 
-    Collection<ShoppingItem> getShoppingCart() {
-        return shoppingCart;
-    }
-
-    int calculateTotalPrice() {
-        int out = 0;
-        for (ShoppingItem item : shoppingCart) {
-            out += PriceCalculator.getShoppingItemPrice(item, saleSession.getCustomer().getSolidaritySurcharge());
-        }
-        return out;
-    }
 
     Collection<Article> searchItems(String search, boolean searchName, boolean searchPriceList, boolean searchKBNumber,
                                     boolean searchBarcode) {

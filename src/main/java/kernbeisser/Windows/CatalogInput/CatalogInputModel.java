@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Collection;
 
-class CatalogInputModel implements Model {
+public class CatalogInputModel implements Model<CatalogInputController>{
     void saveAll(Collection<ArticleKornkraft> items) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -17,7 +17,6 @@ class CatalogInputModel implements Model {
         em.flush();
         et.commit();
         em.close();
-        //FINISH
     }
 
     void clearCatalog() {

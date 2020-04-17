@@ -4,33 +4,25 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.Job;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class SelectorView <T> extends Window implements View {
+public class SelectorView <T> implements View<SelectorController<T>> {
     private JPanel mainPanel;
     private ObjectTable<T> selected;
     private JButton add;
     private JButton remove;
     private JLabel title;
 
+    private final SelectorController<T> controller;
 
-    public SelectorView(Window current, SelectorController<T> controller) {
-        super(current);
-        add(mainPanel);
-        setSize(500, 500);
-        setLocationRelativeTo(current);
-        add.addActionListener(e -> controller.add());
-        add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, Color.GREEN));
-        remove.addActionListener(e -> controller.remove());
-        remove.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED));
-        windowInitialized();
+    public SelectorView(SelectorController<T> controller) {
+        this.controller = controller;
     }
 
     private void createUIComponents() {
@@ -61,5 +53,18 @@ public class SelectorView <T> extends Window implements View {
 
     public void setTitle(String title) {
         this.title.setText(title);
+    }
+
+    @Override
+    public void initialize(SelectorController<T> controller) {
+        add.addActionListener(e -> controller.add());
+        add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, Color.GREEN));
+        remove.addActionListener(e -> controller.remove());
+        remove.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED));
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return mainPanel;
     }
 }

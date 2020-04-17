@@ -6,18 +6,19 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
+import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Main;
+import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.Window;
 import org.apache.commons.collections.CollectionUtils;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collection;
 
-public class SpecialPriceEditorController {
+public class SpecialPriceEditorController implements Controller<SpecialPriceEditorView,SpecialPriceEditorModel> {
     public static void main(String[] args)
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException {
@@ -46,8 +47,8 @@ public class SpecialPriceEditorController {
                 load(null);
             }
         };
-        this.view = new SpecialPriceEditorView(this,current);
-        view.fillRepeat(Repeat.values());
+        searchBoxController.initView();
+        this.view = new SpecialPriceEditorView(this);
     }
     void load(Article article) {
         if(article==null){
@@ -114,7 +115,7 @@ public class SpecialPriceEditorController {
     }
 
     void searchFrom() {
-        DatePickerController.requestDate(view,view::setFrom);
+        DatePickerController.requestDate((JFrameWindow) view.getWindow(), view::setFrom);
     }
 
     SearchBoxView<Article> getSearchBoxView(){
@@ -122,10 +123,30 @@ public class SpecialPriceEditorController {
     }
 
     void searchTo() {
-        DatePickerController.requestDate(view,view::setTo);
+        DatePickerController.requestDate((JFrameWindow) view.getWindow(), view::setTo);
     }
 
     void refreshSearchSolutions(){
         searchBoxController.refreshLoadSolutions();
+    }
+
+    @Override
+    public @NotNull SpecialPriceEditorView getView() {
+        return view;
+    }
+
+    @Override
+    public @NotNull SpecialPriceEditorModel getModel() {
+        return model;
+    }
+
+    @Override
+    public void fillUI() {
+        view.fillRepeat(Repeat.values());
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 }

@@ -109,9 +109,6 @@ public class Article {
     private Date intake;
 
     @Column
-    private Date lastBuy;
-
-    @Column
     private Date lastDelivery;
 
     @Column
@@ -378,14 +375,6 @@ public class Article {
 
     public void setIntake(Date intake) {
         this.intake = intake;
-    }
-
-    public Date getLastBuy() {
-        return lastBuy;
-    }
-
-    public void setLastBuy(Date lastBuy) {
-        this.lastBuy = lastBuy;
     }
 
     public Date getLastDelivery() {

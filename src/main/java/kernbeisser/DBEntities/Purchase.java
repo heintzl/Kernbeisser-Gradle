@@ -1,18 +1,18 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 @Table
 @Entity
-public class Purchase {
+public class Purchase implements ValueChange{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int sid;
@@ -61,10 +61,10 @@ public class Purchase {
                        .setParameter("id", sid)
                        .getResultList()
                        .stream()
-                       .mapToDouble(e -> PriceCalculator.getShoppingItemPrice(e, userSurcharge))
+                       .mapToDouble(ShoppingItem::getItemRetailPrice)
                        .sum();
         em.close();
-        return sum;
+        return sum * (1+userSurcharge);
     }
 
     public double getUserSurcharge() {
@@ -73,5 +73,30 @@ public class Purchase {
 
     public void setUserSurcharge(double userSurcharge) {
         this.userSurcharge = userSurcharge;
+    }
+
+    @Override
+    public User getFrom() {
+        return session.getCustomer();
+    }
+
+    @Override
+    public User getTo() {
+        return null;
+    }
+
+    @Override
+    public double getValue() {
+        return getSum();
+    }
+
+    @Override
+    public LocalDate getDate() {
+        return createDate.toLocalDate();
+    }
+
+    @Override
+    public String getInfo() {
+        return "";
     }
 }

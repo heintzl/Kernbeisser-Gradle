@@ -2,14 +2,14 @@ package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Price.PriceCalculator;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
 import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class PayController implements Controller {
+public class PayController implements Controller<PayView,PayModel> {
 
     private PayModel model;
     private PayView view;
@@ -18,9 +18,6 @@ public class PayController implements Controller {
                          Runnable transferCompleted) {
         model = new PayModel(saleSession, shoppingCart, transferCompleted);
         view = new PayView(current, this);
-        view.fillShoppingCart(model.getShoppingCart());
-        view.setPrintServices(model.getAllPrinters());
-        view.setSelectedPrintService(model.getDefaultPrinter());
     }
 
     void commitPayment() {
@@ -31,17 +28,28 @@ public class PayController implements Controller {
     }
 
     double getPrice(ShoppingItem item) {
-        return PriceCalculator.getShoppingItemPrice(item,
-                                                    model.getSaleSession().getCustomer().getSolidaritySurcharge());
+        return item.getItemRetailPrice();
     }
 
     @Override
-    public PayView getView() {
+    public @NotNull PayView getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull PayModel getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+        view.fillShoppingCart(model.getShoppingCart());
+        view.setPrintServices(model.getAllPrinters());
+        view.setSelectedPrintService(model.getDefaultPrinter());
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 }

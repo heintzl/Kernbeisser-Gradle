@@ -6,7 +6,8 @@ public enum Setting {
     VAT_LOW("0.07"),
     VAT_HIGH("0.19"),
     DEFAULT_MAX_SEARCH("500"),
-    CONTAINER_SURCHARGE_REDUCTION ("0.5")
+    CONTAINER_SURCHARGE_REDUCTION ("0.5"),
+    DEFAULT_THEME(Theme.LIGHT.name())
     ;
 
     private final String defaultValue;
@@ -30,6 +31,7 @@ public enum Setting {
     public float getFloatValue(){
         return Float.parseFloat(SettingValue.getValue(this));
     }
+    public <T extends Enum<T>> T getEnumValue(Class<T> c){return Enum.valueOf(c,SettingValue.getValue(this));}
 
     public String getDefaultValue() {
         return defaultValue;

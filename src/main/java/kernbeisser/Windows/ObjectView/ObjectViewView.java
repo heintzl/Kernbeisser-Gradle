@@ -1,18 +1,19 @@
 package kernbeisser.Windows.ObjectView;
 
+import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
-import kernbeisser.Main;
-import kernbeisser.Windows.Window;
+import kernbeisser.Windows.View;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class ObjectViewView<T> extends Window {
+public class ObjectViewView<T> implements View<ObjectViewController<T>> {
     private ObjectTable<T> objectTable;
     private JButton add;
     private JButton edit;
@@ -25,23 +26,8 @@ public class ObjectViewView<T> extends Window {
 
     private ObjectViewController<T> controller;
 
-    ObjectViewView(Window current, ObjectViewController<T> controller) {
-        super(current);
+    ObjectViewView(ObjectViewController<T> controller) {
         this.controller = controller;
-        add(main);
-        objectTable.addSelectionListener((e) -> controller.select());
-        add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(71, 189, 23)));
-        edit.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(69, 189, 174)));
-        delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, new Color(189, 101, 85)));
-        search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(117, 126, 255)));
-        add.addActionListener(e -> controller.add());
-        edit.addActionListener(e -> controller.edit());
-        delete.addActionListener(e -> controller.delete());
-        back.addActionListener(e -> back());
-        search.addActionListener(e -> controller.refresh());
-        searchBar.addActionListener(e -> controller.refresh());
-        pack();
-        setLocationRelativeTo(null);
     }
 
     void setEditAvailable(boolean s) {
@@ -64,14 +50,6 @@ public class ObjectViewView<T> extends Window {
         return searchBar.getText();
     }
 
-    @Override
-    protected void open() {
-        if (controller != null) {
-            controller.refresh();
-        }
-        super.open();
-    }
-
     T getSelectedObject() {
         return objectTable.getSelectedObject();
     }
@@ -89,7 +67,31 @@ public class ObjectViewView<T> extends Window {
     }
 
     boolean commitDelete() {
-        return JOptionPane.showConfirmDialog(this, "Soll dieses Object wirklich gelöschst werden?") == 0;
+        return JOptionPane.showConfirmDialog(getTopComponent(), "Soll dieses Object wirklich gelöschst werden?") == 0;
     }
 
+    @Override
+    public void initialize(ObjectViewController<T> controller) {
+        objectTable.addSelectionListener((e) -> controller.select());
+        add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(71, 189, 23)));
+        edit.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(69, 189, 174)));
+        delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, new Color(189, 101, 85)));
+        search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(117, 126, 255)));
+        add.addActionListener(e -> controller.add());
+        edit.addActionListener(e -> controller.edit());
+        delete.addActionListener(e -> controller.delete());
+        back.addActionListener(e -> back());
+        search.addActionListener(e -> controller.refresh());
+        searchBar.addActionListener(e -> controller.refresh());
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
+
+    @Override
+    public IconCode getTabIcon() {
+        return FontAwesome.PENCIL;
+    }
 }

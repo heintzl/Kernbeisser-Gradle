@@ -21,6 +21,7 @@ public class Permission {
     private String name;
 
     @JoinColumn
+    @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Key> keySet = new HashSet<>();
 

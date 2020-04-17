@@ -1,15 +1,12 @@
 package kernbeisser.StartUp.DataImport;
 
-import kernbeisser.Enums.Key;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
-public class DataImportView extends Window implements View {
+public class DataImportView implements View<DataImportController> {
     private JPanel main;
     private JButton importData;
     private JButton cancel;
@@ -23,22 +20,10 @@ public class DataImportView extends Window implements View {
     private JLabel currentActionUser;
     private JCheckBox importStandardAdmin;
 
-    DataImportView(Window currentWindow, DataImportController controller) {
-        super(currentWindow);
-        add(main);
-        pack();
-        setSize(500,500);
-        setLocationRelativeTo(currentWindow);
-        importData.addActionListener(e -> controller.importData());
-        /*dataPath.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                controller.checkDataSource();
-            }
-        });*/
-        search.addActionListener(e -> controller.openFileExplorer());
-        cancel.addActionListener(e -> controller.cancel());
-        windowInitialized();
+    private DataImportController controller;
+
+    DataImportView(DataImportController controller) {
+        this.controller = controller;
     }
 
     boolean createStandardAdmin() {
@@ -126,14 +111,33 @@ public class DataImportView extends Window implements View {
 
 
     void itemSourcesNotExists() {
-        JOptionPane.showMessageDialog(this, "Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Artikeldatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getTopComponent(), "Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Artikeldatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
     }
 
     void userSourcesNotExists() {
-        JOptionPane.showMessageDialog(this, "Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Nutzerdatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getTopComponent(), "Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Nutzerdatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
     }
 
     String requestPassword() {
-        return JOptionPane.showInputDialog(this, "Bitte geben sie ein Password für den automatisch erzeugten Admin ein");
+        return JOptionPane.showInputDialog(getTopComponent(), "Bitte geben sie ein Password für den automatisch erzeugten Admin ein");
     }
+
+    @Override
+    public void initialize(DataImportController controller) {
+        importData.addActionListener(e -> controller.importData());
+        /*dataPath.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                controller.checkDataSource();
+            }
+        });*/
+        search.addActionListener(e -> controller.openFileExplorer());
+        cancel.addActionListener(e -> controller.cancel());
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
+
 }

@@ -5,7 +5,7 @@ import kernbeisser.Windows.Model;
 
 import java.util.function.Consumer;
 
-public class ArticleSelectorModel implements Model {
+public class ArticleSelectorModel implements Model<ArticleSelectorController> {
     private final Consumer<Article> consumer;
 
     ArticleSelectorModel(Consumer<Article> consumer){

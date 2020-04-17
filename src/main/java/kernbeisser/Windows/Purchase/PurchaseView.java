@@ -4,12 +4,12 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
 
-public class PurchaseView extends Window implements View {
+public class PurchaseView implements View<PurchaseController> {
     private final PurchaseController controller;
     private JButton finish;
     private ObjectTable<ShoppingItem> items;
@@ -21,14 +21,8 @@ public class PurchaseView extends Window implements View {
     private JPanel main;
 
 
-    PurchaseView(Window current, PurchaseController controller) {
-        super(current);
+    PurchaseView(PurchaseController controller) {
         this.controller = controller;
-        add(main);
-        finish.addActionListener((e) -> back());
-        setSize(current.getSize());
-        setLocationRelativeTo(current);
-        windowInitialized();
     }
 
     void setDate(String date) {
@@ -62,6 +56,16 @@ public class PurchaseView extends Window implements View {
                 Column.create("Verkaufs Preis", e -> controller.getPrice(e)  + "€"),
                 Column.create("Netto Preis", e -> controller.getPrice(e)  + "€")
         );
+    }
+
+    @Override
+    public void initialize(PurchaseController controller) {
+        finish.addActionListener((e) -> back());
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
     }
 
 }

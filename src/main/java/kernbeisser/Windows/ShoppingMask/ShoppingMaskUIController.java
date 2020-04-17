@@ -4,28 +4,28 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.UndefinedInputException;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
-import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.SubWindow;
+import org.jetbrains.annotations.NotNull;
 
-public class ShoppingMaskUIController implements Controller {
-    private ShoppingMaskUIView view;
-    private ShoppingMaskModel model;
-    private ShoppingCartController shoppingCartController;
+
+public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,ShoppingMaskModel> {
+    private final ShoppingMaskUIView view;
+    private final ShoppingMaskModel model;
+    private final ShoppingCartController shoppingCartController;
 
     public ShoppingMaskUIController(SaleSession saleSession) {
         model = new ShoppingMaskModel(saleSession);
         this.shoppingCartController = new ShoppingCartController(model.getValue(), model.getSaleSession()
                                                                                         .getCustomer()
                                                                                         .getSolidaritySurcharge());
+        shoppingCartController.initView();
         this.view = new ShoppingMaskUIView(this, shoppingCartController);
-        view.loadUserInfo(saleSession);
     }
 
     void addToShoppingCart() {
@@ -54,12 +54,12 @@ public class ShoppingMaskUIController implements Controller {
     }
 
     double getPrice(Article article) {
-        return PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
+        return 0;//PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
     }
 
-    private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
-        double netPrice = PriceCalculator.getNetFromGross(view.getPriceVATIncluded(),view.getSelectedVAT().getValue());
-        double netDeposit = PriceCalculator.getNetFromGross(view.getDeposit(),view.getSelectedVAT().getValue());
+    private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {/*
+        double netPrice = PriceCalculator.getNetFromGross(view.getPriceVATIncluded(), view.getSelectedVAT().getValue());
+        double netDeposit = PriceCalculator.getNetFromGross(view.getDeposit(), view.getSelectedVAT().getValue());
         switch (view.getOption()) {
             case ShoppingMaskUIView.ARTICLE_NUMBER:
                 Article extractedArticle = null;
@@ -72,8 +72,11 @@ public class ShoppingMaskUIController implements Controller {
                     if (supplier != 0) {
                         extractedArticle = model.getBySupplierItemNumber(supplier);
                     }
-                    if (extractedArticle == null) throw new UndefinedInputException();
+                    if (extractedArticle == null) {
+                        throw new UndefinedInputException();
+                    }
                 }
+                /*
                 ShoppingItem shoppingItem = new ShoppingItem(extractedArticle);
                 shoppingItem.setDiscount(view.getDiscount());
                 view.setDiscount();
@@ -83,7 +86,8 @@ public class ShoppingMaskUIController implements Controller {
                 } else {
                     shoppingItem.setItemMultiplier((int) view.getAmount());
                 }
-                return shoppingItem;
+
+                return null;
             case ShoppingMaskUIView.BAKED_GOODS:
                 return ShoppingItem.createBakeryProduct(netPrice);
             case ShoppingMaskUIView.DEPOSIT:
@@ -92,7 +96,7 @@ public class ShoppingMaskUIController implements Controller {
                 //TODO wie soll Pfand bei freien Artikeln behandelt werden, evtl gar nicht?
                 ShoppingItem customItem = new ShoppingItem();
                 customItem.setItemMultiplier((int) view.getAmount());
-                customItem.setItemNetPrice(netPrice);
+                /*customItem.setItemNetPrice(netPrice);
                 customItem.setName(view.getItemName());
                 customItem.setVat(view.getSelectedVAT().getValue());
                 customItem.setMetricUnits(MetricUnits.STACK);
@@ -105,27 +109,38 @@ public class ShoppingMaskUIController implements Controller {
             default:
                 return null;
         }
+        */return null;
     }
 
 
     @Override
-    public ShoppingMaskUIView getView() {
+    public @NotNull ShoppingMaskUIView getView() {
         return view;
     }
 
     @Override
-    public ShoppingMaskModel getModel() {
+    public @NotNull ShoppingMaskModel getModel() {
         return model;
     }
 
-    void startPay() {
-        new PayController(null, model.getSaleSession(), model.getShoppingCart(), () -> {
+    @Override
+    public void fillUI() {
+        view.loadUserInfo(model.getSaleSession());
+    }
 
-        });
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
+    }
+
+    void startPay() {
+        new PayController(null, model.getSaleSession(), shoppingCartController.getItems(), () -> {
+            getView().back();
+        }).openAsWindow(view.getWindow(), SubWindow::new);
     }
 
     void openSearchWindow() {
-        new ArticleSelectorController(null,view::loadItemStats);
+        new ArticleSelectorController(view::loadItemStats);
     }
 
 //    void editUserAction() {

@@ -1,10 +1,11 @@
 package kernbeisser.Windows.CatalogInput;
 
 import kernbeisser.DBEntities.ArticleKornkraft;
+import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -15,13 +16,13 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class CatalogInputController implements Controller {
-    private CatalogInputModel model;
-    private CatalogInputView view;
+public class CatalogInputController implements Controller<CatalogInputView,CatalogInputModel> {
+    private final CatalogInputModel model;
+    private final CatalogInputView view;
 
-    public CatalogInputController(Window current) {
+    public CatalogInputController() {
         this.model = new CatalogInputModel();
-        view = new CatalogInputView(current, this);
+        view = new CatalogInputView(this);
     }
 
     private void importData(File f) {
@@ -129,13 +130,23 @@ public class CatalogInputController implements Controller {
     }
 
     @Override
-    public CatalogInputView getView() {
+    public @NotNull CatalogInputView getView() {
         return view;
     }
 
     @Override
-    public CatalogInputModel getModel() {
+    public @NotNull CatalogInputModel getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
     void importFromString() {
@@ -155,7 +166,7 @@ public class CatalogInputController implements Controller {
                 importData(f);
             }
         });
-        fileChooser.showOpenDialog(view);
+        fileChooser.showOpenDialog(view.getTopComponent());
 
     }
 }

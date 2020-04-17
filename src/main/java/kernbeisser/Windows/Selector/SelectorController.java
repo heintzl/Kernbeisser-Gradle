@@ -2,34 +2,45 @@ package kernbeisser.Windows.Selector;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
+import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.Searchable;
-import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.SubWindow;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class SelectorController <T> implements Controller {
-    private SelectorModel<T> model;
-    private SelectorView<T> view;
+public class SelectorController <T> implements Controller<SelectorView<T>,SelectorModel<T>> {
+    private final SelectorModel<T> model;
+    private final SelectorView<T> view;
 
-    public SelectorController(Window current,String title, Collection<T> currentValues, Searchable<T> searchable, Column<T> ... columns) {
-        this.view = new SelectorView<T>(current, this);
+    public SelectorController(String title, Collection<T> currentValues, Searchable<T> searchable, Column<T> ... columns) {
+        this.view = new SelectorView<T>(this);
         this.model = new SelectorModel<T>(currentValues,title,searchable,columns);
-        view.setObjects(currentValues);
-        view.setColumns(columns);
-        view.setTitle(model.getTitle());
     }
 
 
     @Override
-    public SelectorView<T> getView() {
+    public @NotNull SelectorView<T> getView() {
         return view;
     }
 
     @Override
-    public Model getModel() {
+    public @NotNull SelectorModel<T> getModel() {
         return model;
+    }
+
+    @Override
+    public void fillUI() {
+        view.setObjects(model.getCurrentValues());
+        view.setColumns(model.getColumns());
+        view.setTitle(model.getTitle());
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
     }
 
 
@@ -39,14 +50,10 @@ public class SelectorController <T> implements Controller {
     }
 
     public void add() {
-        Window window = new Window(null);
-        SearchBoxController<T> controller = new SearchBoxController<T>(model.getSearchable(),e -> {
+        new SearchBoxController<T>(model.getSearchable(),e -> {
             model.getCurrentValues().add(e);
             SelectorController.this.view.addValue(e);
-            window.back();
-        },model.getColumns());
-        window.setTitle(model.getTitle());
-        window.add(controller.getView());
-        window.windowInitialized();
+            getView().back();
+        },model.getColumns()).openAsWindow(view.getWindow(), SubWindow::new);
     }
 }

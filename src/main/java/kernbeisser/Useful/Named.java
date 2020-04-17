@@ -1,7 +1,5 @@
 package kernbeisser.Useful;
 
-import kernbeisser.Enums.VAT;
-
 public interface Named {
     static <T extends Named> T toEnum(Class<T> c, String s) {
         if (!c.isEnum()) {

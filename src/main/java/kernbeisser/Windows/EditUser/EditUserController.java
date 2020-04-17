@@ -9,21 +9,20 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Selector.SelectorController;
-import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.SubWindow;
+import org.jetbrains.annotations.NotNull;
 
-public class EditUserController implements Controller {
+public class EditUserController implements Controller<EditUserView,EditUserModel> {
     private EditUserView view;
-    private EditUserModel model;
+    private final EditUserModel model;
 
-    public EditUserController(Window current, User user, Mode mode) {
+    public EditUserController(User user, Mode mode) {
         model = new EditUserModel(user == null ? new User() : user, mode);
         if (mode == Mode.REMOVE) {
             model.doAction(user);
-            return;
         } else {
-            this.view = new EditUserView(this, current);
+            this.view = new EditUserView(this);
         }
-        view.setData(model.getUser());
     }
 
     private void changePassword(String to) {
@@ -43,12 +42,22 @@ public class EditUserController implements Controller {
 
 
     @Override
-    public EditUserModel getModel() {
+    public @NotNull EditUserModel getModel() {
         return model;
     }
 
     @Override
-    public EditUserView getView() {
+    public void fillUI() {
+        view.setData(model.getUser());
+    }
+
+    @Override
+    public Key[] getRequiredKeys() {
+        return new Key[0];
+    }
+
+    @Override
+    public @NotNull EditUserView getView() {
         return view;
     }
 
@@ -79,14 +88,16 @@ public class EditUserController implements Controller {
     }
 
     void openJobSelector() {
-        new SelectorController<>(null, "Ausgewählte Jobs",model.getUser().getJobs(), Job::defaultSearch,
-                                 Column.create("Name", Job::getName, Key.JOB_NAME_READ),
-                                 Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ));
+        new SelectorController<Job>("Ausgewählte Jobs", model.getUser().getJobs(), Job::defaultSearch,
+                                    Column.create("Name", Job::getName, Key.JOB_NAME_READ),
+                                    Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ)).openAsWindow(getView().getWindow(),
+                                                                                                                               SubWindow::new);
     }
 
     void openPermissionSelector(){
-        new SelectorController<>(null, "Ausgewählte Berechtigungen",model.getUser().getPermissions(), Permission::defaultSearch,
+        new SelectorController<Permission>("Ausgewählte Berechtigungen",model.getUser().getPermissions(), Permission::defaultSearch,
                                  Column.create("Name", Permission::getName, Key.PERMISSION_NAME_READ)
-                             );
+                             ).openAsWindow(getView().getWindow(),
+                                            SubWindow::new);
     }
 }
