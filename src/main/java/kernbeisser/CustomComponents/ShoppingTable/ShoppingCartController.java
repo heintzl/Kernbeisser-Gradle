@@ -17,13 +17,13 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
         view = new ShoppingCartView(this);
     }
 
-    public void addShoppingItem(ShoppingItem item, boolean stack) {
-        model.addItem(item, stack);
+    public void addShoppingItem(ShoppingItem item, boolean piece) {
+        model.addItem(item, piece);
         refresh();
     }
 
     double getPrice(ShoppingItem item) {
-        return item.getItemRetailPrice();
+        return item.getRetailPrice();
     }
 
     public void refresh() {

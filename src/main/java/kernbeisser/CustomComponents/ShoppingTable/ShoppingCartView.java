@@ -53,12 +53,14 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
                     return name;
                 }),
                 Column.create("2", e -> {
-                    //JLabel discount = new JLabel(e.getDiscount() == PriceCalculator.CONTAINER_DISCOUNT
-                    //                             ? "Vorbestellt"
-                     //                            : e.getDiscount() + "%");
-                    //discount.setFont(gridFont);
-                    //discount.setHorizontalAlignment(SwingConstants.RIGHT);
-                    return null;//discount;
+                    JLabel discount = new JLabel(e.getContainerDiscount()
+                                                 ? "Vorbestellt"
+                                                 : (e.getDiscount() != 0
+                                                    ? e.getDiscount() + "%"
+                                                    : ""));
+                    discount.setFont(gridFont);
+                    discount.setHorizontalAlignment(SwingConstants.RIGHT);
+                    return discount;
                 }),
                 Column.create("3", e -> {
                     JLabel price = new JLabel(String.format("%.2f€",controller.getPrice(e)));
@@ -66,16 +68,12 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
                     price.setHorizontalAlignment(SwingConstants.RIGHT);
                     return price;
                 }),
-                /*Column.create("4", e -> {
-                    /*JLabel amount = new JLabel(
-                            e.isWeighable()
-                            ? (e.getMetricUnits().toUnit(e.getAmount() * e.getItemMultiplier()) + e.getMetricUnits()
-                                                                                                   .getShortName())
-                            : e.getItemMultiplier() + MetricUnits.STACK.getShortName());
+                Column.create("4", e -> {
+                    JLabel amount = new JLabel(e.getItemMultiplier() + e.getMetricUnits().getShortName());
                     amount.setFont(gridFont);
                     amount.setHorizontalAlignment(SwingConstants.RIGHT);
                     return amount;
-                }),*/
+                }),
                 Column.create("delete", (e) -> new JPanel() {
                     @Override
                     public void paint(Graphics g) {
