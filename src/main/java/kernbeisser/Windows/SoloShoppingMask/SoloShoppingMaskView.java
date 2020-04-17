@@ -1,5 +1,7 @@
 package kernbeisser.Windows.SoloShoppingMask;
 
+import jiconfont.IconCode;
+import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -36,5 +38,10 @@ public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
     @Override
     public @NotNull JComponent getContent() {
         return main;
+    }
+
+    @Override
+    public IconCode getTabIcon() {
+        return FontAwesome.SHOPPING_CART;
     }
 }

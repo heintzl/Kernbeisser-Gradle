@@ -140,4 +140,18 @@ class EditUserView implements View<EditUserController> {
     public @NotNull Dimension getSize() {
         return new Dimension(500,600);
     }
+
+    private void createUIComponents() {
+        //remove background
+        userDataPanel = new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) { }
+        };
+        buttonPanel = new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+
+            }
+        };
+    }
 }

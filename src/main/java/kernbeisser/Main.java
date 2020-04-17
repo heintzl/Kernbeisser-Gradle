@@ -1,6 +1,9 @@
 package kernbeisser;
 
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
@@ -8,7 +11,11 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
+import kernbeisser.Windows.TabbedPanel.Tab;
+import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.Window;
@@ -20,6 +27,9 @@ import java.lang.reflect.Field;
 import java.util.function.Function;
 
 public class Main {
+
+
+
     /**
      * sets the Look and Feel to Windows standard,
      * sets the Image path,
@@ -31,24 +41,23 @@ public class Main {
                    IllegalAccessException {
         buildEnvironment();
         if (!ConfigManager.isDbInitialized()) {
-            SwingUtilities.invokeLater(() -> new DataImportController().openAsWindow(new SimpleLogInController().openAsWindow(Window.NEW_WINDOW, JFrameWindow::new),JFrameWindow::new));
+            SwingUtilities.invokeLater(() -> new DataImportController().openAsWindow(new SimpleLogInController().openTab("Log In"),JFrameWindow::new));
         } else {
             openLogIn();
         }
-
-
     }
 
-    public static void buildEnvironment()
-            throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
-                   IllegalAccessException {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    public static void buildEnvironment() throws UnsupportedLookAndFeelException {
+        setSettingLAF();
         IconFontSwing.register(FontAwesome.getIconFont());
-        DBConnection.getEntityManager();
+    }
+
+    public static void setSettingLAF() throws UnsupportedLookAndFeelException {
+        UIManager.setLookAndFeel(Setting.DEFAULT_THEME.getEnumValue(Theme.class).getLookAndFeel());
     }
 
     private static void openLogIn() {
-        SwingUtilities.invokeLater(() -> new SimpleLogInController().openAsWindow(Window.NEW_WINDOW,JFrameWindow::new));
+        new SimpleLogInController().openTab("Log In");
     }
 
     private static void createTestJobs(int count) {
@@ -65,25 +74,4 @@ public class Main {
         et.commit();
         em.close();
     }
-
-    public static void makeAdmin(User user) {
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        User us = em.find(user.getClass(), user.getId());
-        us.getPermissions()
-          .add(em.createQuery("select p from Permission p where name like 'Admin'", Permission.class)
-                 .getSingleResult());
-        em.persist(us);
-        em.flush();
-        et.commit();
-        em.close();
-    }
-
-    private static void printClass(Class c, Function<Field,String> transformer) {
-        for (Field field : c.getDeclaredFields()) {
-            System.out.println(transformer.apply(field));
-        }
-    }
-
 }

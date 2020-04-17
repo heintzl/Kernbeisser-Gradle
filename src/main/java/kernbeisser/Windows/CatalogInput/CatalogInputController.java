@@ -5,7 +5,6 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -108,7 +107,7 @@ public class CatalogInputController implements Controller<CatalogInputView,Catal
         } else if (s.toUpperCase().contains("G")) {
             return MetricUnits.GRAM;
         } else {
-            return MetricUnits.STACK;
+            return MetricUnits.PIECE;
         }
     }
 
@@ -119,7 +118,7 @@ public class CatalogInputController implements Controller<CatalogInputView,Catal
                 case LITER:
                 case KILOGRAM:
                     return (int) (d * 1000);
-                case STACK:
+                case PIECE:
                 case GRAM:
                 case MILLILITER:
                 default:

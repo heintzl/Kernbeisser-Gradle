@@ -6,7 +6,6 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 public class SoloShoppingMaskController implements Controller<SoloShoppingMaskView,SoloShoppingMaskModel> {

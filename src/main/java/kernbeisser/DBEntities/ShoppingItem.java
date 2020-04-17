@@ -2,10 +2,12 @@ package kernbeisser.DBEntities;
 // TODO HEI Review bakery/organic VAT
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
+import javax.transaction.NotSupportedException;
 import java.io.Serializable;
 import java.util.List;
 
@@ -37,9 +39,6 @@ public class ShoppingItem implements Serializable {
     private int itemMultiplier = 1;
 
     @Column
-    private double itemNetPrice;
-
-    @Column
     private double vat;
 
     @Column
@@ -57,121 +56,152 @@ public class ShoppingItem implements Serializable {
     @Column
     private double surcharge;
 
-    @Deprecated
+    @Column
+    private boolean containerDiscount;
+
+    @Column
+    private double itemRetailPrice;
+
+    @Column
+    private double itemNetPrice;
+
     public ShoppingItem() {
     }
 
-    public ShoppingItem(Article article) {
+    public boolean getContainerDiscount() {
+        return containerDiscount;
+    }
+
+    public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
+        this.containerDiscount = hasContainerDiscount;
         this.name = article.getName();
         this.kbNumber = article.getKbNumber();
         this.amount = article.getAmount();
         this.itemNetPrice = article.getNetPrice();
-        this.metricUnits = article.getMetricUnits();
+        this.metricUnits = article.isWeighAble() ? article.getMetricUnits() : MetricUnits.PIECE;
         this.vat = article.getVAT().getValue();
         this.weighAble = article.isWeighAble();
-        this.surcharge = article.getSurcharge();
+        this.surcharge = 0.1 * (hasContainerDiscount ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : article.getSurcharge());
+        this.discount = discount;
         if (article.getSupplier() != null) {
             this.shortName = article.getSupplier().getShortName();
         }
         this.suppliersItemNumber = article.getSuppliersItemNumber();
+        this.itemRetailPrice = calculateItemRetailPrice();
     }
 
-    public ShoppingItem(Article article, int discount, int price) {
-        this(article);
-        this.discount = discount;
+    public double getRetailPrice() {
+        return itemRetailPrice * metricUnits.getBaseFactor() * itemMultiplier;
     }
+
+    public double getItemRetailPrice() {
+        return itemRetailPrice;
+    }
+
+    private double calculateItemRetailPrice(){
+        return Math.round(100 * itemNetPrice * (1+vat) * (1+surcharge))/100. * (1 - discount/100.);
+    }
+
 
     public static ShoppingItem createOrganic(double price) {
-        ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
-            out = new ShoppingItem(
-                    em.createQuery("select i from Article i where name like 'Obst und Gem\u00fcse'", Article.class)
-                      .getSingleResult());
+            ShoppingItem out = new ShoppingItem(
+                    em.createQuery("select  i from Article i where name like 'Obst und Gem\u00fcse'", Article.class).getSingleResult(),0,false){
+                @Override
+                public void addToRetailPrice(double addedRetailPrice) {
+                    ShoppingItem.addToRetailPrice(this,addedRetailPrice);
+                }
+            };
+            out.addToRetailPrice(price);
+            return out;
         } catch (NoResultException e) {
             et.begin();
-            Article organic = new Article();
-            organic.setName("Obst und Gem\u00fcse");
-            organic.setDeleteAllowed(false);
-            organic.setKbNumber(-1);
-            // TODO HEI what about VAT? organic.setVatLow(true);
-            organic.setMetricUnits(MetricUnits.STACK);
-            organic.setVAT(VAT.LOW);
-            em.persist(organic);
+            Article deposit = new Article();
+            deposit.setName("Obst und Gem\u00fcse");
+            deposit.setKbNumber(-1);
+            deposit.setMetricUnits(MetricUnits.PIECE);
+            deposit.setDeleteAllowed(false);
+            deposit.setVAT(VAT.LOW);
+            em.persist(deposit);
             em.flush();
             et.commit();
-            out = new ShoppingItem(
-                    em.createQuery("select  i from Article i where name like 'Obst und Gem\u00fcse'", Article.class)
-                      .getSingleResult());
+            return createDeposit(price);
+        } catch (NotSupportedException e) {
+            e.printStackTrace();
+            return null;
         }
-        out.setItemMultiplier(1);
-        out.setItemNetPrice(price);
-        em.close();
-        return out;
     }
 
     public static ShoppingItem createBakeryProduct(double price) {
-        ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
-            out = new ShoppingItem(
-                    em.createQuery("select  i from Article i where name like 'Backware'", Article.class).getSingleResult());
+            ShoppingItem out = new ShoppingItem(
+                    em.createQuery("select  i from Article i where name like 'Backware'", Article.class).getSingleResult(),0,false){
+                @Override
+                public void addToRetailPrice(double addedRetailPrice) {
+                    ShoppingItem.addToRetailPrice(this,addedRetailPrice);
+                }
+            };
+            out.addToRetailPrice(price);
+            return out;
         } catch (NoResultException e) {
             et.begin();
-            Article bakeryProduct = new Article();
-            bakeryProduct.setName("Backware");
-            bakeryProduct.setMetricUnits(MetricUnits.STACK);
-            bakeryProduct.setDeleteAllowed(false);
-            bakeryProduct.setKbNumber(-2);
-            bakeryProduct.setVAT(VAT.LOW);
-            // TODO HEI what about VAT? bakeryProduct.setVatLow(true);
-            em.persist(bakeryProduct);
+            Article deposit = new Article();
+            deposit.setName("Backware");
+            deposit.setKbNumber(-2);
+            deposit.setMetricUnits(MetricUnits.PIECE);
+            deposit.setDeleteAllowed(false);
+            deposit.setVAT(VAT.LOW);
+            em.persist(deposit);
             em.flush();
             et.commit();
-            out = new ShoppingItem(
-                    em.createQuery("select  i from Article i where name like 'Backware'", Article.class).getSingleResult());
+            return createDeposit(price);
+        } catch (NotSupportedException e) {
+            e.printStackTrace();
+            return null;
         }
-        out.setItemMultiplier(1);
-        out.setItemNetPrice(price);
-        em.close();
-        return out;
     }
 
     public static ShoppingItem createDeposit(double price) {
-        ShoppingItem out;
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
-            out = new ShoppingItem(
-                    em.createQuery("select  i from Article i where name like 'Pfand'", Article.class).getSingleResult());
+            ShoppingItem out = new ShoppingItem(
+                    em.createQuery("select  i from Article i where name like 'Pfand'", Article.class).getSingleResult(),0,false){
+                @Override
+                public void addToRetailPrice(double addedRetailPrice) {
+                    ShoppingItem.addToRetailPrice(this,addedRetailPrice);
+                }
+            };
+            out.addToRetailPrice(price);
+            return out;
         } catch (NoResultException e) {
             et.begin();
             Article deposit = new Article();
             deposit.setName("Pfand");
             deposit.setKbNumber(-3);
-            deposit.setMetricUnits(MetricUnits.STACK);
+            deposit.setMetricUnits(MetricUnits.PIECE);
             deposit.setDeleteAllowed(false);
             deposit.setVAT(VAT.HIGH);
             em.persist(deposit);
             em.flush();
             et.commit();
-            out = new ShoppingItem(
-                    em.createQuery("select  i from Article i where name like 'Pfand'", Article.class).getSingleResult());
+            return createDeposit(price);
+        } catch (NotSupportedException e) {
+            e.printStackTrace();
+            return null;
         }
         // TODO wie wird der Pfand verbucht? Als NetPrice oder irgendwie anders?
-        out.setItemMultiplier(1);
-        out.setItemNetPrice(price);
-        em.close();
-        return out;
     }
 
     public static List<ShoppingItem> getAll(String condition) {
         return Tools.getAll(ShoppingItem.class, condition);
     }
 
-    public Article extractItem() {
+    public Article extractArticle() {
         EntityManager em = DBConnection.getEntityManager();
         try {
             return em.createQuery("SELECT i from Article i where kbNumber = " + kbNumber, Article.class).getSingleResult();
@@ -182,68 +212,41 @@ public class ShoppingItem implements Serializable {
         }
     }
 
-    public String getName() {
-        return name;
+    public void addToRetailPrice(double addedRetailPrice) throws NotSupportedException{
+        throw new NotSupportedException();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    private static void addToRetailPrice(ShoppingItem item,double addRetailPrice){
+        item.itemRetailPrice += Math.round(addRetailPrice*100)/100.;
+        item.itemNetPrice = item.itemRetailPrice / (1+item.surcharge) / (1+item.vat);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getKbNumber() {
         return kbNumber;
     }
 
-    public void setKbNumber(int kbNumber) {
-        this.kbNumber = kbNumber;
-    }
-
     public int getAmount() {
         return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
     }
 
     public double getItemNetPrice() {
         return itemNetPrice;
     }
 
-    public void setItemNetPrice(double netPrice) {
-        this.itemNetPrice = netPrice;
-    }
-
     public double getVat() {
         return vat;
-    }
-
-    public void setVat(double vatLow) {
-        this.vat = vatLow;
     }
 
     public boolean isWeighable() {
         return weighAble;
     }
 
-    public boolean getWeighAble() {
-        return weighAble;
-    }
-
-    public void setWeighAble(boolean weighAble) {
-        this.weighAble = weighAble;
-    }
-
     public MetricUnits getMetricUnits() {
         return metricUnits != null ? metricUnits : MetricUnits.NONE;
-    }
-
-    public String getUnitTxt() {
-        return metricUnits != null ? getMetricUnits().getShortName() : "";
-    }
-
-    public void setMetricUnits(MetricUnits metricUnits) {
-        this.metricUnits = metricUnits;
     }
 
     public long getSiid() {
@@ -266,6 +269,22 @@ public class ShoppingItem implements Serializable {
         this.purchase = purchase;
     }
 
+    public int getDiscount() {
+        return discount;
+    }
+
+    public int getSuppliersItemNumber() {
+        return suppliersItemNumber;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public double getSurcharge() {
+        return surcharge;
+    }
+
     @Override
     public int hashCode() {
         return kbNumber * ((discount % 100) + 1) * amount;
@@ -284,37 +303,5 @@ public class ShoppingItem implements Serializable {
     @Override
     public String toString() {
         return name;
-    }
-
-    public int getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(int discount) {
-        this.discount = discount;
-    }
-
-    public int getSuppliersItemNumber() {
-        return suppliersItemNumber;
-    }
-
-    public void setSuppliersItemNumber(int suppliersItemNumber) {
-        this.suppliersItemNumber = suppliersItemNumber;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    public double getSurcharge() {
-        return surcharge;
-    }
-
-    public void setSurcharge(double surcharge) {
-        this.surcharge = surcharge;
     }
 }

@@ -13,20 +13,20 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.NoResultException;
 
 public class TransactionController implements Controller<TransactionView,TransactionModel> {
-    private TransactionModel model;
-    private TransactionView view;
+    private final TransactionModel model;
+    private final TransactionView view;
 
-    private SearchBoxController<User> userSearchBoxController;
+    private final SearchBoxController<User> userSearchBoxController;
 
     public TransactionController(User user) {
         model = new TransactionModel(user);
-        view = new TransactionView(this);
-        userSearchBoxController = new SearchBoxController<>(User::defaultSearch, this::loadUser,
+        userSearchBoxController = new SearchBoxController<User>(User::defaultSearch, this::loadUser,
                                                             Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ),
                                                             Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),
                                                             Column.create("Username", User::getUsername,Key.USER_USERNAME_READ)
                                                             );
         userSearchBoxController.initView();
+        view = new TransactionView(this);
     }
 
     @Override
@@ -120,7 +120,8 @@ public class TransactionController implements Controller<TransactionView,Transac
         return userSearchBoxController.getView();
     }
 
-    public boolean isCloseable() {
+    @Override
+    public boolean commitClose() {
         if (model.getTransactions().size() > 0) {
             switch (view.commitUnsavedTransactions()){
                 case 0:

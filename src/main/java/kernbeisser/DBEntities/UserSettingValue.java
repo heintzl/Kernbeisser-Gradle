@@ -16,6 +16,7 @@ public class UserSettingValue {
     private static HashMap<UserSetting,String> values;
 
     @Id
+    @GeneratedValue
     private int id;
 
     @JoinColumn

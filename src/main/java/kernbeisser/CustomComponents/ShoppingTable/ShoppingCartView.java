@@ -6,7 +6,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,9 +53,11 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
                     return name;
                 }),
                 Column.create("2", e -> {
-                    JLabel discount = new JLabel(e.getDiscount() == PriceCalculator.CONTAINER_DISCOUNT
+                    JLabel discount = new JLabel(e.getContainerDiscount()
                                                  ? "Vorbestellt"
-                                                 : e.getDiscount() + "%");
+                                                 : (e.getDiscount() != 0
+                                                    ? e.getDiscount() + "%"
+                                                    : ""));
                     discount.setFont(gridFont);
                     discount.setHorizontalAlignment(SwingConstants.RIGHT);
                     return discount;
@@ -68,11 +69,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
                     return price;
                 }),
                 Column.create("4", e -> {
-                    JLabel amount = new JLabel(
-                            e.isWeighable()
-                            ? (e.getMetricUnits().toUnit(e.getAmount() * e.getItemMultiplier()) + e.getMetricUnits()
-                                                                                                   .getShortName())
-                            : e.getItemMultiplier() + MetricUnits.STACK.getShortName());
+                    JLabel amount = new JLabel(e.getItemMultiplier() + e.getMetricUnits().getShortName());
                     amount.setFont(gridFont);
                     amount.setHorizontalAlignment(SwingConstants.RIGHT);
                     return amount;

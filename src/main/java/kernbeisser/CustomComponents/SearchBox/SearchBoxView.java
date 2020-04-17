@@ -64,4 +64,9 @@ public class SearchBoxView <T> extends JPanel implements View<SearchBoxControlle
     public @NotNull JComponent getContent() {
         return main;
     }
+
+    @Override
+    public @NotNull Dimension getSize() {
+        return super.getSize();
+    }
 }

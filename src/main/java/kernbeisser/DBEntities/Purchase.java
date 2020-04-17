@@ -1,7 +1,6 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -62,10 +61,10 @@ public class Purchase implements ValueChange{
                        .setParameter("id", sid)
                        .getResultList()
                        .stream()
-                       .mapToDouble(e -> PriceCalculator.getShoppingItemPrice(e, userSurcharge))
+                       .mapToDouble(ShoppingItem::getItemRetailPrice)
                        .sum();
         em.close();
-        return sum;
+        return sum * (1+userSurcharge);
     }
 
     public double getUserSurcharge() {

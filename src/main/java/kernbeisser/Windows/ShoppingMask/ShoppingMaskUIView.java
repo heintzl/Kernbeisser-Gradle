@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ShoppingMask;
 
+import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
@@ -8,7 +9,6 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Price.PriceCalculator;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -101,7 +101,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private void addToCart() {
         controller.addToShoppingCart();
     }
-//    private void editUserAction() {controller.editUserAction();}
+    private void editUserAction() {controller.editUserAction();}
 
     public void setKbNumber(String value) {
         this.kbNumber.setText(value);
@@ -236,7 +236,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
             return variablePercentage.getSafeValue();
         }
         if (pricePreordered.isSelected()) {
-            return PriceCalculator.CONTAINER_DISCOUNT;
+            // TODO
         }
         return 0;
     }
@@ -283,14 +283,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     void loadItemStats(Article article) {
-        articleUnit.setText(MetricUnits.STACK.getShortName());
+        articleUnit.setText(MetricUnits.PIECE.getShortName());
         kbNumber.setText(article.getKbNumber() + "");
         suppliersItemNumber.setText(article.getSuppliersItemNumber() + "");
         articleName.setText(
-                article.getName().length() > 16
+                article.getName().length() > 40
                 ? new StringBuilder(article.getName()).replace(16, article.getName().length(), "...").toString()
                 : article.getName());
-        articleAmount.setText(article.getMetricUnits().fromUnit(article.getAmount()) + "");
+        articleAmount.setText(article.getAmount() + "");
         articleUnit.setText(article.getMetricUnits().getShortName());
         price.setText(String.format("%.2f", controller.getPrice(article)));
         priceUnit.setText(article.isWeighAble() ? "€/kg" : "€");
@@ -354,7 +354,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         deposit.addActionListener(e -> addToCart());
         amount.addActionListener(e -> addToCart());
         editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
-//        editUser.addActionListener(e -> editUserAction());
+        editUser.addActionListener(e -> editUserAction());
         optProduce.addItemListener(e -> articleTypeChange('p'));
         optBakedGoods.addItemListener(e -> articleTypeChange('b'));
         optArticleNo.addItemListener(e -> articleTypeChange('a'));
@@ -383,5 +383,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     @Override
     public @NotNull JComponent getContent() {
         return mainPanel;
+    }
+
+    @Override
+    public IconCode getTabIcon() {
+        return FontAwesome.SHOPPING_CART;
     }
 }
