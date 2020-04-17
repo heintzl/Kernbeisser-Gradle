@@ -312,7 +312,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 article.setSurcharge(Integer.parseInt(columns[9]) / 1000.);
                 article.setSingleDeposit(Integer.parseInt(columns[10]) / 100.);
                 article.setCrateDeposit(Integer.parseInt(columns[11]) / 100.);
-                article.setMetricUnits(MetricUnits.valueOf(columns[12].replace("WEIGHT", "GRAM")));
+                article.setMetricUnits(MetricUnits.valueOf(columns[12].replace("WEIGHT", "GRAM").replace("STACK", "PIECE")));
                 article.setPriceList(priceListHashMap.get(columns[13]));
                 article.setContainerDef(ContainerDefinition.valueOf(columns[14]));
                 article.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
