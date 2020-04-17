@@ -3,6 +3,7 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.Model;
 
+import javax.transaction.NotSupportedException;
 import java.util.Collection;
 import java.util.HashMap;
 
