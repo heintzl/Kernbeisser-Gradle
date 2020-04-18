@@ -194,14 +194,14 @@ public class Tools {
     }
 
     public static <I, O> O overwrite(O out, I in) {
-        Class oc = out.getClass();
+        Class<?> oc = out.getClass();
         for (Field declaredField : in.getClass().getDeclaredFields()) {
             try {
                 Field target = oc.getDeclaredField(declaredField.getName());
                 target.setAccessible(true);
                 declaredField.setAccessible(true);
                 target.set(out, declaredField.get(in));
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {
             }
         }
         return out;
@@ -338,5 +338,9 @@ public class Tools {
         em.flush();
         et.commit();
         em.close();
+    }
+
+    public static <T> T removeLambda(T from,Supplier<T> original){
+        return Tools.overwrite(original.get(),from);
     }
 }
