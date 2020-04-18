@@ -6,13 +6,13 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
 @Table
 @Entity
-public class Purchase implements ValueChange{
+public class Purchase implements ValueChange {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int sid;
@@ -64,7 +64,7 @@ public class Purchase implements ValueChange{
                        .mapToDouble(ShoppingItem::getItemRetailPrice)
                        .sum();
         em.close();
-        return sum * (1+userSurcharge);
+        return sum * (1 + userSurcharge);
     }
 
     public double getUserSurcharge() {
@@ -91,8 +91,8 @@ public class Purchase implements ValueChange{
     }
 
     @Override
-    public LocalDate getDate() {
-        return createDate.toLocalDate();
+    public Instant getDate() {
+        return createDate.toInstant();
     }
 
     @Override

@@ -90,26 +90,28 @@ public class User implements Serializable {
         return Tools.getAll(User.class, condition);
     }
 
-    public static User getByUsername(String username) throws NoResultException{
+    public static User getByUsername(String username) throws NoResultException {
         EntityManager em = DBConnection.getEntityManager();
-        try{
-            return em.createQuery("select u from User u where u.username = :username", User.class).setParameter("username",username).getSingleResult();
-        }catch (NoResultException e){
+        try {
+            return em.createQuery("select u from User u where u.username = :username", User.class)
+                     .setParameter("username", username)
+                     .getSingleResult();
+        } catch (NoResultException e) {
             throw e;
-        }finally {
+        } finally {
             em.close();
         }
     }
 
-    public static void makeUserUnreadable(User user){
+    public static void makeUserUnreadable(User user) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        User dbContent = em.find(User.class,user.getId());
+        User dbContent = em.find(User.class, user.getId());
         dbContent.unreadable = true;
         dbContent.firstName = "deleted";
         dbContent.surname = "deleted";
-        dbContent.username = "deleted"+dbContent.getId();
+        dbContent.username = "deleted" + dbContent.getId();
         dbContent.phoneNumber1 = "deleted";
         dbContent.phoneNumber2 = "deleted";
         dbContent.email = "deleted";
@@ -284,6 +286,10 @@ public class User implements Serializable {
         this.townCode = townCode;
     }
 
+    public String getFullName() {
+        return this.firstName + " " + this.getSurname();
+    }
+
     @Override
     public String toString() {
         return username;
@@ -328,26 +334,33 @@ public class User implements Serializable {
         return true;
     }
 
-    public Collection<ValueChange> getAllValueChanges(){
+    public Collection<ValueChange> getAllValueChanges() {
         ArrayList<ValueChange> out = new ArrayList<>();
         EntityManager em = DBConnection.getEntityManager();
-        out.addAll(em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid",Transaction.class).setParameter("uid",id).getResultList());
-        out.addAll(em.createQuery("select p from Purchase p where p.session.customer.id = :uid",Purchase.class).setParameter("uid",id).getResultList());
+        out.addAll(em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid",
+                                  Transaction.class).setParameter("uid", id).getResultList());
+        out.addAll(em.createQuery("select p from Purchase p where p.session.customer.id = :uid", Purchase.class)
+                     .setParameter("uid", id)
+                     .getResultList());
         em.close();
         out.sort(Comparator.comparing(ValueChange::getDate));
         return out;
     }
 
-    public Collection<Transaction> getAllTransactions(){
+    public Collection<Transaction> getAllTransactions() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<Transaction> out = em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid",Transaction.class).setParameter("uid",id).getResultList();
+        Collection<Transaction> out = em.createQuery(
+                "select t from Transaction t where t.from.id = :uid or t.to.id = :uid", Transaction.class)
+                                        .setParameter("uid", id)
+                                        .getResultList();
         em.close();
         return out;
     }
 
-    public Collection<Purchase> getAllPurchases(){
+    public Collection<Purchase> getAllPurchases() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<Purchase> out = em.createQuery("select p from Purchase p where p.session.customer.id = :uid",Purchase.class).setParameter("uid",id).getResultList();
+        Collection<Purchase> out = em.createQuery("select p from Purchase p where p.session.customer.id = :uid",
+                                                  Purchase.class).setParameter("uid", id).getResultList();
         em.close();
         return out;
     }

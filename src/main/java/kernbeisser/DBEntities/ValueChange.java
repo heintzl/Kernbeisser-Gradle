@@ -1,11 +1,15 @@
 package kernbeisser.DBEntities;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 public interface ValueChange {
     public User getFrom();
+
     public User getTo();
+
     public double getValue();
-    public LocalDate getDate();
+
+    public Instant getDate();
+
     public String getInfo();
 }

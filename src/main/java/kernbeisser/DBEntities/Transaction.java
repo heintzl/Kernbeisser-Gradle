@@ -6,12 +6,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 @Table
 @Entity
-public class Transaction implements ValueChange{
+public class Transaction implements ValueChange {
     @Id
     @GeneratedValue
     private int id;
@@ -51,7 +51,7 @@ public class Transaction implements ValueChange{
         return Tools.getAll(Transaction.class, condition);
     }
 
-    public static void doTransaction(User from, User to, double value,String info) {
+    public static void doTransaction(User from, User to, double value, String info) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -101,8 +101,8 @@ public class Transaction implements ValueChange{
         this.to = to;
     }
 
-    public LocalDate getDate() {
-        return date.toLocalDate();
+    public Instant getDate() {
+        return Instant.from(date.toLocalDate());
     }
 
     public int getId() {
