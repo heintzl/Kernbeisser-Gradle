@@ -181,7 +181,7 @@
 			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
 				<reportElement x="310" y="14" width="70" height="13" uuid="edd4b967-44b9-4ad7-92a5-8317fce81ec0"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{SumOfVatHi}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{SumOfVatLow}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="220" y="14" width="90" height="13" uuid="68e1f14a-26dc-4c62-916f-1ca86bfde6e4"/>
@@ -196,7 +196,7 @@
 			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
 				<reportElement x="310" y="27" width="70" height="13" uuid="0104bd2f-17a3-48e4-9dd8-2e0dc5f1cdc0"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{SumOfVatLow}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{SumOfVatHigh}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
