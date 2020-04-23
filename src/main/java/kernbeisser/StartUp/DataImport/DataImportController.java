@@ -309,7 +309,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 }
                 //columns[7] look at line 311
                 article.setVAT(Boolean.parseBoolean(columns[8]) ? VAT.LOW : VAT.HIGH);
-                article.setSurcharge(Integer.parseInt(columns[9]) / 100.);
+                article.setSurcharge(Integer.parseInt(columns[9]) / 1000.);
                 article.setSingleDeposit(Integer.parseInt(columns[10]) / 100.);
                 article.setCrateDeposit(Integer.parseInt(columns[11]) / 100.);
                 article.setMetricUnits(MetricUnits.valueOf(columns[12].replace("WEIGHT", "GRAM").replace("STACK", "PIECE")));

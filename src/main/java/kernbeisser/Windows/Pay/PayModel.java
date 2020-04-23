@@ -5,9 +5,14 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Reporting.PrintHandler;
 import kernbeisser.Windows.Model;
-import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.util.JRSaver;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -65,8 +70,9 @@ public class PayModel implements Model<PayController> {
             purchase.setSession(db);
             em.persist(purchase);
             items.forEach(e -> {
-                e.setPurchase(purchase);
-                em.persist(e);
+                ShoppingItem shoppingItem = Tools.removeLambda(e,ShoppingItem::new);
+                shoppingItem.setPurchase(purchase);
+                em.persist(shoppingItem);
             });
 
             //Change value from UserGroup
