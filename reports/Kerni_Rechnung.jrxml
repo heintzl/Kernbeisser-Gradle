@@ -196,7 +196,7 @@
 			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
 				<reportElement x="310" y="27" width="70" height="13" uuid="0104bd2f-17a3-48e4-9dd8-2e0dc5f1cdc0"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{SumOfVatHigh}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{SumOfVatHi}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
