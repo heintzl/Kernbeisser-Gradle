@@ -6,7 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class Purchase implements ValueChange{
     private SaleSession session;
 
     @CreationTimestamp
-    private Date createDate;
+    private Instant createDate;
 
     private double userSurcharge;
 
@@ -30,7 +30,7 @@ public class Purchase implements ValueChange{
         return Tools.getAll(Purchase.class, condition);
     }
 
-    public Date getCreateDate() {
+    public Instant getCreateDate() {
         return createDate;
     }
 
@@ -91,8 +91,8 @@ public class Purchase implements ValueChange{
     }
 
     @Override
-    public LocalDate getDate() {
-        return createDate.toLocalDate();
+    public Instant getDate() {
+        return createDate;
     }
 
     @Override

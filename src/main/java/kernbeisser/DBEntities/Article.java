@@ -10,6 +10,7 @@ import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -106,13 +107,13 @@ public class Article {
     private int delivered;
 
     @Column
-    private Date intake;
+    private Instant intake;
 
     @Column
-    private Date lastDelivery;
+    private Instant lastDelivery;
 
     @Column
-    private Date deletedDate;
+    private Instant deletedDate;
 
     @Column
     private Cooling cooling;
@@ -369,27 +370,27 @@ public class Article {
     }
 
 
-    public Date getIntake() {
+    public Instant getIntake() {
         return intake;
     }
 
-    public void setIntake(Date intake) {
+    public void setIntake(Instant intake) {
         this.intake = intake;
     }
 
-    public Date getLastDelivery() {
+    public Instant getLastDelivery() {
         return lastDelivery;
     }
 
-    public void setLastDelivery(Date lastDelivery) {
+    public void setLastDelivery(Instant lastDelivery) {
         this.lastDelivery = lastDelivery;
     }
 
-    public Date getDeletedDate() {
+    public Instant getDeletedDate() {
         return deletedDate;
     }
 
-    public void setDeletedDate(Date deletedDate) {
+    public void setDeletedDate(Instant deletedDate) {
         this.deletedDate = deletedDate;
     }
 

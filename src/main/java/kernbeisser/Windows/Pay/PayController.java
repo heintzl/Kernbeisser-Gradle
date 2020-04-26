@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Pay;
 
+import kernbeisser.DBEntities.Action;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
@@ -24,6 +25,7 @@ public class PayController implements Controller<PayView,PayModel> {
         boolean paymentSuccessful = model.pay(model.getSaleSession(), model.getShoppingCart(), model.shoppingCartSum());
         if (paymentSuccessful) {
             model.print(view.getSelectedPrintService());
+            Action.logCurrentFunctionCall();
         }
     }
 
