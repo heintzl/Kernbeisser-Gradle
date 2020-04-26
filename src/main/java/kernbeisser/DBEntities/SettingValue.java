@@ -37,7 +37,7 @@ public class SettingValue {
         return value;
     }
 
-    public void setValue(String value) {
+    private void setValue(String value) {
         this.value = value;
 
     }
@@ -78,6 +78,18 @@ public class SettingValue {
         finally {
             em.close();
         }
+    }
+
+    public static void setValue(Setting setting,String value){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        SettingValue settingValue = em.createQuery("select s from SettingValue s where s.setting = :setting",SettingValue.class).setParameter("setting",setting).getSingleResult();
+        settingValue.setValue(value);
+        em.persist(settingValue);
+        et.commit();
+        em.close();
+        settingValueHashMap.replace(setting,value);
     }
 
     public static List<SettingValue> getAll(String condition){
