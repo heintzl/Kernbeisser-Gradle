@@ -6,6 +6,8 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -138,6 +140,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 model.saveWithPermission(user, admin);
             }
             Setting.DB_INITIALIZED.setValue(true);
+            view.back();
         }
     }
 
@@ -381,7 +384,8 @@ public class DataImportController implements Controller<DataImportView,DataImpor
 
     @Override
     public boolean commitClose() {
-        return false;
+        new SimpleLogInController().openTab("Log In");
+        return true;
     }
 
     @Override
