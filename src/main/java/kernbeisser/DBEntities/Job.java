@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,20 +25,20 @@ public class Job {
     private String description;
 
     @CreationTimestamp
-    private Date createDate;
+    private Instant createDate;
 
     @UpdateTimestamp
-    private Date updateDate;
+    private Instant updateDate;
 
     public static List<Job> getAll(String condition) {
         return Tools.getAll(Job.class, condition);
     }
 
-    public Date getCreateDate() {
+    public Instant getCreateDate() {
         return createDate;
     }
 
-    public Date getUpdateDate() {
+    public Instant getUpdateDate() {
         return updateDate;
     }
 

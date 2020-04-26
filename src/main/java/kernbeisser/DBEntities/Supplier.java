@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -44,10 +45,10 @@ public class Supplier implements Serializable {
     private String keeper;
 
     @CreationTimestamp
-    private Date createDate;
+    private Instant createDate;
 
     @UpdateTimestamp
-    private Date updateDate;
+    private Instant updateDate;
 
     public static Supplier getKKSupplier() {
         EntityManager em = DBConnection.getEntityManager();
