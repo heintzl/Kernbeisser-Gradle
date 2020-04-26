@@ -2,6 +2,7 @@ package kernbeisser.Config;
 
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,18 +27,13 @@ public class ConfigManager {
 
     private static String fileToString(Charset charset) {
         try {
-            createFileIfNotExists();
             StringBuilder sb = new StringBuilder();
             Files.readAllLines(file.toPath(), charset).forEach(sb.append("\n")::append);
             return sb.toString();
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            createFileIfNotExists();
+            return fileToString(charset);
         }
-    }
-
-    public static boolean isDbInitialized() {
-        return getHeader().getBoolean("dbIsInitialized");
     }
 
 
@@ -51,18 +47,13 @@ public class ConfigManager {
     }
 
     public static void updateFile() {
-        createFileIfNotExists();
-        if (!file.delete()) {
-            return;
-        }
         try {
-            if (file.createNewFile()) {
-                FileWriter fw = new FileWriter(file);
-                fw.write(config.toString());
-                fw.close();
-            }
+            FileWriter fw = new FileWriter(file);
+            fw.write(config.toString());
+            fw.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            createFileIfNotExists();
+            updateFile();
         }
     }
 
@@ -76,18 +67,27 @@ public class ConfigManager {
         dbAccess.put("Username", "");
         dbAccess.put("Password", "");
         object.put("DBAccess", dbAccess);
-        object.put("dbIsInitialized", false);
         object.put("ImagePath", "");
         try {
             if (file.createNewFile()) {
                 FileWriter fw = new FileWriter(file);
                 fw.write(object.toString(CONFIG_FILE_INDENT_FACTOR));
                 fw.close();
+            }else {
+                throw new IOException("ConfigManager cannot create config file at File");
             }
         } catch (IOException e) {
-            file.delete();
+            JOptionPane.showMessageDialog(null,"Das Programm kann keine Config-Datei erstellen:\n"+e);
             e.printStackTrace();
         }
 
+    }
+
+    public static String getUsername() {
+        return getDBAccess().getString("Username");
+    }
+
+    public static String getPassword() {
+        return getDBAccess().getString("Password");
     }
 }
