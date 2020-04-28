@@ -2,10 +2,15 @@ package kernbeisser.DBConnection;
 
 
 import kernbeisser.Config.ConfigManager;
+import kernbeisser.Enums.Setting;
+import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.StartUp.LogIn.DBLogInView;
+import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.HashMap;
 
@@ -32,7 +37,7 @@ public class DBConnection {
         synchronized (lock) {
             String[] conf = ConfigManager.getDBAccessData();
             if (!tryLogIn(conf[0], conf[1], conf[2])) {
-                new DBLogInView(null).getWindow().addCloseEventListener(e -> lock.notify());
+                new DBLogInController().openAsWindow(Window.NEW_VIEW_CONTAINER, JFrameWindow::new).addCloseEventListener(e -> lock.notify());
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
@@ -41,6 +46,11 @@ public class DBConnection {
             }
 
         }
+    }
+
+    public static void reload(){
+        entityManagerFactory.close();
+        logInWithConfig();
     }
 
     public static EntityManagerFactory getEntityManagerFactory() {
@@ -52,5 +62,23 @@ public class DBConnection {
         return entityManagerFactory.createEntityManager();
     }
 
+    public static void updateDatabase(){
+        EntityManager em = getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        for (Object o : em.createNativeQuery("select TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA = 'kernbeisser'").getResultList()) {
+            System.out.println("dropping "+o);
+            if(o.equals("settingvalue"))continue;
+            em.createNativeQuery("drop table "+o).executeUpdate();
+        }
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+        em.flush();
+        et.commit();
+        em.close();
+        reload();
+        Setting.DB_VERSION.setValue(Setting.DB_VERSION.getDefaultValue());
+        Setting.DB_INITIALIZED.setValue(false);
+    }
 }
 

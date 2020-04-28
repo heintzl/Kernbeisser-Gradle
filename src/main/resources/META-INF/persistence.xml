@@ -26,6 +26,7 @@
         <class>kernbeisser.DBEntities.UserSettingValue</class>
         <class>kernbeisser.DBEntities.Inventory</class>
         <class>kernbeisser.DBEntities.InventoryState</class>
+        <class>kernbeisser.DBEntities.Action</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>

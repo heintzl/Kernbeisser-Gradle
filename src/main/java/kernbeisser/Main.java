@@ -1,30 +1,19 @@
 package kernbeisser;
 
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
-import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
-import kernbeisser.Windows.TabbedPanel.Tab;
-import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
-import kernbeisser.Windows.Window;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
-import java.lang.reflect.Field;
-import java.util.function.Function;
 
 public class Main {
 
@@ -40,11 +29,24 @@ public class Main {
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException {
         buildEnvironment();
-        if (!ConfigManager.isDbInitialized()) {
+        checkVersion();
+        if (!Setting.DB_INITIALIZED.getBooleanValue()) {
             SwingUtilities.invokeLater(() -> new DataImportController().openAsWindow(new SimpleLogInController().openTab("Log In"),JFrameWindow::new));
         } else {
             openLogIn();
         }
+    }
+
+    public static void checkVersion(){
+        if (!Setting.DB_VERSION.getStringValue().equals(Setting.DB_VERSION.getDefaultValue())&&JOptionPane.showConfirmDialog(null,
+                                                                                                                             "Ihre Datenbankversion entspricht nicht der aktuellsten Version.\nAktuelle Version: "+
+                                                                                                                             Setting.DB_VERSION.getStringValue()+"\nNeuste Verstion: "+Setting.DB_VERSION.getDefaultValue()+ "\nWollen sie die Datenbank leeren und eine neue Datenbank instanz\nerstellen?"
+        )==0) updateDBVersion();
+
+    }
+
+    public static void updateDBVersion(){
+        DBConnection.updateDatabase();
     }
 
     public static void buildEnvironment() throws UnsupportedLookAndFeelException {

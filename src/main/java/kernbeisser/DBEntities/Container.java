@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -39,10 +40,10 @@ public class Container implements Serializable {
     private boolean payed;
 
     @Column
-    private Date delivery;
+    private Instant delivery;
 
     @CreationTimestamp
-    private Date createDate;
+    private Instant createDate;
 
     public static List<Container> getAll(String condition) {
         return Tools.getAll(Container.class, condition);
@@ -88,15 +89,15 @@ public class Container implements Serializable {
         this.payed = payed;
     }
 
-    public Date getDelivery() {
+    public Instant getDelivery() {
         return delivery;
     }
 
-    public void setDelivery(Date delivery) {
+    public void setDelivery(Instant delivery) {
         this.delivery = delivery;
     }
 
-    public Date getCreateDate() {
+    public Instant getCreateDate() {
         return createDate;
     }
 

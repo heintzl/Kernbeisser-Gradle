@@ -16,14 +16,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.Date;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 public class DataImportController implements Controller<DataImportView,DataImportModel> {
-    private DataImportView view;
-    private DataImportModel model;
+    private final DataImportView view;
+    private final DataImportModel model;
 
     public DataImportController() {
         this.view = new DataImportView(this);
@@ -31,7 +32,17 @@ public class DataImportController implements Controller<DataImportView,DataImpor
     }
 
     void openFileExplorer() {
-        JFileChooser jFileChooser = new JFileChooser();
+        File file = new File("importPath.txt");
+        String importPath = ".";
+        if (file.exists()) {
+            try {
+                List<String> fileLines = Files.readAllLines(file.toPath());
+                importPath = fileLines.get(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        JFileChooser jFileChooser = new JFileChooser(importPath);
         jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jFileChooser.setFileFilter(new FileNameExtensionFilter("Config-File", "JSON", "json"));
         jFileChooser.addActionListener(e -> {
@@ -121,8 +132,6 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                     view.userSourcesNotExists();
                 }
             }
-            ConfigManager.getHeader().put("dbIsInitialized", true);
-            ConfigManager.updateFile();
             if (view.createStandardAdmin()) {
                 Permission admin = new Permission();
                 admin.getKeySet().addAll(Arrays.asList(Key.values()));
@@ -138,6 +147,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
                 model.saveWithPermission(user, admin);
             }
+            Setting.DB_INITIALIZED.setValue(true);
         }
     }
 
@@ -333,8 +343,8 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 //TODO: article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
                 //TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
                 //TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
-                article.setIntake(java.sql.Date.valueOf(LocalDate.now()));
-                article.setLastDelivery(Date.valueOf(LocalDate.now()));
+                article.setIntake(Instant.now());
+                article.setLastDelivery(Instant.now());
                 article.setDeletedDate(null);
                 article.setCooling(Cooling.valueOf(columns[35]));
                 article.setCoveredIntake(Boolean.parseBoolean(columns[36]));
@@ -350,8 +360,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
 
     void cancel() {
         view.back();
-        ConfigManager.getHeader().put("dbIsInitialized", true);
-        ConfigManager.updateFile();
+        Setting.DB_INITIALIZED.setValue(true);
     }
 
     private List<Offer> extractOffers(Boolean[] months, int price) {
@@ -378,6 +387,11 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             from = -1;
         }
         return out;
+    }
+
+    @Override
+    public boolean commitClose() {
+        return false;
     }
 
     @Override
