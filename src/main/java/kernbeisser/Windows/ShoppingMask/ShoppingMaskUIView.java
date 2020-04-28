@@ -17,6 +17,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.MessageFormat;
+
+import static java.text.MessageFormat.format;
 
 public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     //TODO: create Enum
@@ -84,6 +87,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
         this.controller = controller;
+        articleTypeChange('a');
     }
 
     private void doCancel() {
@@ -144,9 +148,9 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     void loadUserInfo(SaleSession saleSession) {
         customerName.setText(saleSession.getCustomer().getFirstName() + " " + saleSession.getCustomer().getSurname());
         customerLoginName.setText(saleSession.getCustomer().getUsername());
-        customerCredit.setText(saleSession.getCustomer().getUserGroup().getValue() + "\u20AC");
+        customerCredit.setText(format("{0, number, 0.00}\u20AC", saleSession.getCustomer().getUserGroup().getValue()));
         salesPerson1.setText(saleSession.getSeller().getUsername());
-        salesPerson2.setText("saleSession.getSeller().getUsername()");
+        salesPerson2.setText("not implemented");
     }
 
     private void articleTypeChange(char type) {
@@ -170,9 +174,9 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
             articleAmount.setVisible(type == 'a');
             setArticleUnit("");
             articleUnit.setVisible(type == 'a');
-            deposit.setEnabled("cdr".indexOf(type) != -1);
-            deposit.setVisible("acdr".indexOf(type) != -1);
-            depositUnit.setVisible("acdr".indexOf(type) != -1);
+            deposit.setEnabled("dr".indexOf(type) != -1);
+            deposit.setVisible("adr".indexOf(type) != -1);
+            depositUnit.setVisible("adr".indexOf(type) != -1);
             if ("dr".indexOf(type) != -1) {
                 setOptTaxStandard();
             } else {
@@ -306,7 +310,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         price.setText("0.00");
         depositUnit.setText("€");
         priceUnit.setText("€");
-        amount.setText("");
+        amount.setText("1");
         amount.setEnabled(true);
         articleName.setText("Kein Artikel gefunden!");
         amountUnit.setText("");

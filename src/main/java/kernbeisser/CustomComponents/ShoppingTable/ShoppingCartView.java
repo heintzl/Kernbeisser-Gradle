@@ -14,6 +14,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Collection;
 
+import static java.text.MessageFormat.format;
+
 public class ShoppingCartView extends JPanel implements View<ShoppingCartController> {
     private final ShoppingCartController controller;
     private JLabel sum;
@@ -34,7 +36,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     }
 
     void setSum(double s) {
-        sum.setText(s  + "€");
+        sum.setText(format("{0, number, 0,00}€", s));
     }
 
     void setValue(double s) {

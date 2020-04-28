@@ -90,7 +90,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             case ShoppingMaskUIView.CUSTOM_PRODUCT:
                 Article customArticle = new Article();
                 customArticle.setName( // add price to name so that same name but different price results in different hash
-                                      MessageFormat.format("{0} à {1, number,#0.00}€", view.getItemName(), view.getPriceVATIncluded()));
+                                      MessageFormat.format("{0} à {1, number,#0.00}\u20AC", view.getItemName(), view.getPriceVATIncluded(), view.getSelectedVAT().getValue() *100));
                 customArticle.setVAT(view.getSelectedVAT());
                 customArticle.setNetPrice(view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
                 customArticle.setMetricUnits(MetricUnits.PIECE);
