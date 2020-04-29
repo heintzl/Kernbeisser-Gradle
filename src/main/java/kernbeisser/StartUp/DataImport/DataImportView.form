@@ -54,14 +54,6 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="b2c8a" class="javax.swing.JLabel">
-            <constraints border-constraint="North"/>
-            <properties>
-              <font name="Arial Black" size="12" style="1"/>
-              <horizontalAlignment value="0"/>
-              <text value="Datensatz importieren"/>
-            </properties>
-          </component>
           <grid id="f8595" layout-manager="GridLayoutManager" row-count="9" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="10" left="10" bottom="10" right="10"/>
             <constraints border-constraint="Center"/>
