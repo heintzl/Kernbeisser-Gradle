@@ -190,3 +190,4 @@ gradle-app.setting
 /reports/*.jrprint
 /reports/*.pdf
 /importPath.txt
+/testUser.txt

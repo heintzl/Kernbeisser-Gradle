@@ -6,6 +6,10 @@ import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
 
 public class SimpleLogInView implements View<SimpleLogInController> {
     private JButton logIn;
@@ -16,6 +20,18 @@ public class SimpleLogInView implements View<SimpleLogInController> {
     private final SimpleLogInController controller;
 
     SimpleLogInView(SimpleLogInController controller){
+        // TODO the following linesare for testing only! Remove from production code
+        File file = new File("testUser.txt");
+        if (file.exists()) {
+            try {
+                List<String> fileLines = Files.readAllLines(file.toPath());
+                username.setText(fileLines.get(0));
+                password.setText(fileLines.get(1));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // TODO test code; remove  up to here
         this.controller = controller;
     }
 
