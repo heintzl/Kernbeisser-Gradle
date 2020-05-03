@@ -28,6 +28,7 @@
 	<field name="itemMultiplier" class="java.lang.Integer"/>
 	<field name="itemRetailPrice" class="java.lang.Double"/>
 	<field name="discount" class="java.lang.Integer"/>
+	<field name="containerDiscount" class="java.lang.Boolean"/>
 	<variable name="SumTotal" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{retailPrice}]]></variableExpression>
 	</variable>
@@ -195,7 +196,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{discount} == 0?"":$F{discount} + "%"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{containerDiscount}?"VB":$F{discount} == 0?"":$F{discount} + "%"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
