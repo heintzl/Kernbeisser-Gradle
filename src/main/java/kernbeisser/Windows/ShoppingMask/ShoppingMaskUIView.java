@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
+import java.util.Enumeration;
 
 import static java.text.MessageFormat.format;
 
@@ -82,6 +83,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private ShoppingCartView shoppingCartView;
     private JLabel articleAmountLabel;
     private ButtonGroup optGrpArticleType;
+    private ButtonGroup optGrpReduction;
     private char currentArticleType;
 
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
@@ -184,6 +186,18 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
             }
             optTaxLow.setEnabled(type == 'c');
             optTaxStandard.setEnabled(type == 'c');
+            if("apb".indexOf(type) == -1) {
+                priceStandard.setSelected(true);
+                priceStandard.setEnabled(false);
+                price50Percent.setEnabled(false);
+                priceVariablePercentage.setEnabled(false);
+                pricePreordered.setEnabled(false);
+            } else {
+                priceStandard.setEnabled(true);
+                price50Percent.setEnabled(true);
+                priceVariablePercentage.setEnabled(true);
+                pricePreordered.setEnabled(true);
+            }
             if (type == 'p') {
                 setArticleName("Obst & Gemüse");
                 price.requestFocusInWindow();

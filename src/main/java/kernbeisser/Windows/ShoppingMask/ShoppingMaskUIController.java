@@ -89,9 +89,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 return ShoppingItem.createOrganic(view.getPriceVATIncluded());
             case ShoppingMaskUIView.CUSTOM_PRODUCT:
                 Article customArticle = new Article();
-                customArticle.setName( // add price to name so that same name but different price results in different hash
-                                       view.getItemName());
-                                       //MessageFormat.format("{0} à {1, number,#0.00}\u20AC", view.getItemName(), view.getPriceVATIncluded(), view.getSelectedVAT().getValue() *100));
+                customArticle.setName(view.getItemName());
                 customArticle.setVAT(view.getSelectedVAT());
                 customArticle.setNetPrice(view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
                 customArticle.setMetricUnits(MetricUnits.PIECE);
