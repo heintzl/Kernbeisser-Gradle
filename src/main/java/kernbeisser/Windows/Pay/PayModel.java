@@ -6,25 +6,17 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Reporting.PrintHandler;
 import kernbeisser.Windows.Model;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.util.JRSaver;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.engine.JRException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
-import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
-import static java.text.MessageFormat.format;
+import static kernbeisser.Reports.ReportUtil.exportInvoicePDF;
 
 public class PayModel implements Model<PayController> {
     private final SaleSession saleSession;
@@ -48,10 +40,10 @@ public class PayModel implements Model<PayController> {
     double shoppingCartSum() {
         return shoppingCart.stream()
                            .mapToDouble(ShoppingItem::getRetailPrice)
-                           .sum() * (1+saleSession.getCustomer().getSolidaritySurcharge());
+                           .sum() * (1 + saleSession.getCustomer().getSolidaritySurcharge());
     }
 
-    boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) {
+    Purchase pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) throws PersistenceException {
         //Build connection by default
         EntityManager em = DBConnection.getEntityManager();
 
@@ -85,22 +77,16 @@ public class PayModel implements Model<PayController> {
             //Persist changes
             et.commit();
 
-            //Close EntityManager
-            em.close();
-
             //Success
-            return true;
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-
+            return purchase;
+        } finally {
             //Undo transaction
-            et.rollback();
+            if (et.isActive()) {
+                et.rollback();
+            }
 
             //Close EntityManager
             em.close();
-
-            //Failed
-            return false;
         }
     }
 
@@ -112,14 +98,13 @@ public class PayModel implements Model<PayController> {
         return PrintServiceLookup.lookupPrintServices(null, null);
     }
 
-    void print(PrintService printService) {
-        Map<String,Object> receiptParamMap = new HashMap<>();
-        receiptParamMap.put("BonNo", 47);
-        receiptParamMap.put("Customer", format("{0} {1}", saleSession.getCustomer().getFirstName(), saleSession.getCustomer().getSurname()));
-        receiptParamMap.put("Credit", saleSession.getCustomer().getUserGroup().getValue());
-        PrintHandler printHandler = new PrintHandler("Kerni_Rechnung", receiptParamMap, shoppingCart);
-        printHandler.exportToPdf();
- //        try {
+    void print(Purchase purchase, PrintService printService) {
+        try {
+            exportInvoicePDF(shoppingCart, purchase);
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+//        try {
 //            //Creates new PrinterJob
 //            PrinterJob p = PrinterJob.getPrinterJob();
 //

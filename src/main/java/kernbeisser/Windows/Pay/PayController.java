@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Pay;
 
+import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.Action;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -8,6 +9,7 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.PersistenceException;
 import java.util.Collection;
 
 public class PayController implements Controller<PayView,PayModel> {
@@ -22,10 +24,14 @@ public class PayController implements Controller<PayView,PayModel> {
     }
 
     void commitPayment() {
-        boolean paymentSuccessful = model.pay(model.getSaleSession(), model.getShoppingCart(), model.shoppingCartSum());
-        if (paymentSuccessful) {
-            model.print(view.getSelectedPrintService());
+        Purchase purchase = null;
+        try {
+            purchase = model.pay(model.getSaleSession(), model.getShoppingCart(),
+                                 model.shoppingCartSum());
+            model.print(purchase, view.getSelectedPrintService());
             Action.logCurrentFunctionCall();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
         }
     }
 
