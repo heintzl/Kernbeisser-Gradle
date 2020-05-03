@@ -36,7 +36,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     }
 
     void setSum(double s) {
-        sum.setText(format("{0, number, 0,00}€", s));
+        sum.setText(format("{0, number, 0.00}€", s));
     }
 
     void setValue(double s) {

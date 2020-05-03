@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.text.MessageFormat.format;
+
 public class PayModel implements Model<PayController> {
     private final SaleSession saleSession;
     private final Collection<ShoppingItem> shoppingCart;
@@ -113,6 +115,8 @@ public class PayModel implements Model<PayController> {
     void print(PrintService printService) {
         Map<String,Object> receiptParamMap = new HashMap<>();
         receiptParamMap.put("BonNo", 47);
+        receiptParamMap.put("Customer", format("{0} {1}", saleSession.getCustomer().getFirstName(), saleSession.getCustomer().getSurname()));
+        receiptParamMap.put("Credit", saleSession.getCustomer().getUserGroup().getValue());
         PrintHandler printHandler = new PrintHandler("Kerni_Rechnung", receiptParamMap, shoppingCart);
         printHandler.exportToPdf();
  //        try {

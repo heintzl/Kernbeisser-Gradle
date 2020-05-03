@@ -11,8 +11,10 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Bold" markup="none" isBold="true"/>
 	<parameter name="BonNo" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="Customer" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="Credit" class="java.lang.Double"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -31,32 +33,23 @@
 	<variable name="SumOfVatLow" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{vat} == 0.07 ? ($F{retailPrice}-$F{retailPrice}/(1 +$F{vat})) :0]]></variableExpression>
 	</variable>
+	<variable name="Credit" class="java.lang.Double">
+		<variableExpression><![CDATA[$P{Credit} - $V{SumTotal}]]></variableExpression>
+	</variable>
 	<background>
-		<band height="7" splitType="Stretch"/>
+		<band height="21" splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="84" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="40" width="290" height="20" uuid="b264d29e-7d35-46a5-8fad-ef85ccfe065e"/>
-				<text><![CDATA[Steuer-Nr.:  14 // 088 13201]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="0" width="290" height="20" uuid="b66bb140-4002-4cbc-9fcd-8a481e91548f"/>
-				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="20" width="290" height="20" uuid="1c06b268-d6a5-4946-a03a-0beda52c2259"/>
-				<text><![CDATA[Bültenweg 71, 38106 Braunschweig]]></text>
-			</staticText>
+		<band height="28" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="60" width="280" height="20" uuid="d8c253f8-c688-4f18-9e83-d0ba298d7c5a"/>
-				<textElement>
+				<reportElement x="0" y="0" width="280" height="20" uuid="d8c253f8-c688-4f18-9e83-d0ba298d7c5a"/>
+				<textElement markup="html">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Customer}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd.MM.yy hh:mm">
-				<reportElement x="250" y="60" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
+			<textField pattern="dd.MM.yy HH:mm">
+				<reportElement style="Bold" x="250" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
 				<textElement textAlignment="Right">
 					<font size="13" isBold="true"/>
 				</textElement>
@@ -65,21 +58,31 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="39" splitType="Stretch">
+		<band height="14" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="1" width="100" height="14" uuid="cd16e1e6-5f75-4959-9246-021af1afb2c3"/>
+				<reportElement x="0" y="0" width="40" height="14" uuid="cd16e1e6-5f75-4959-9246-021af1afb2c3"/>
 				<text><![CDATA[Bon-Nr.]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="90" y="1" width="60" height="14" uuid="69436be7-57fc-4cd6-9411-af080fa7febf"/>
+				<reportElement x="40" y="0" width="60" height="14" uuid="69436be7-57fc-4cd6-9411-af080fa7febf"/>
 				<textFieldExpression><![CDATA[$P{BonNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="0" width="60" height="14" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="330" y="0" width="50" height="14" uuid="24631cf1-5277-48a1-a10f-f758907adcdf"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="16" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="50" height="14" uuid="b549adea-12e1-431f-b576-7bf5f6375f23">
+				<reportElement x="0" y="2" width="50" height="14" uuid="b3fc7b17-c0f3-4671-a263-aa2145158817">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement>
@@ -88,7 +91,7 @@
 				<text><![CDATA[Menge]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="50" y="0" width="180" height="14" uuid="c50d3001-7b1a-4a5f-a711-d90c302a8eed">
+				<reportElement x="50" y="2" width="180" height="14" uuid="1eccd8a6-a075-4134-90a3-b975bbd40705">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
 				</reportElement>
 				<textElement>
@@ -97,7 +100,7 @@
 				<text><![CDATA[Artikel]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="280" y="0" width="30" height="14" uuid="0da019d8-f30e-418a-8af6-170665f4d781">
+				<reportElement x="280" y="2" width="30" height="14" uuid="d31a89c0-de4a-49aa-a684-db382a2c6ed4">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -106,7 +109,7 @@
 				<text><![CDATA[MWSt.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="310" y="0" width="70" height="14" uuid="72837db1-de5d-496b-9590-48801c1d00a6">
+				<reportElement x="310" y="2" width="70" height="14" uuid="6e78b0c5-01eb-41f3-958a-37bba3c43f31">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="27414533-6336-4d60-992c-1aa382fdeece"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -153,29 +156,31 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="54" splitType="Stretch">
-			<textField>
-				<reportElement x="80" y="20" width="100" height="20" uuid="03331689-eace-4f1d-aa03-2b9e1136a6a1"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="180" y="20" width="100" height="20" uuid="97092015-afa4-4135-94b5-55ba3169e00d"/>
-				<textElement textAlignment="Left"/>
-				<textFieldExpression><![CDATA[" von " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
+				<textElement>
+					<font size="7"/>
+					<paragraph lineSpacingSize="1.0"/>
+				</textElement>
+				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>
+			</staticText>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="43" splitType="Stretch">
+		<band height="76" splitType="Stretch">
 			<textField evaluationTime="Report" pattern="#,##0.00¤;-#,##0.00 ¤">
 				<reportElement x="310" y="0" width="70" height="14" uuid="5483ffe9-0caa-474a-975d-3e6860a46b39"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{SumTotal}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="250" y="0" width="60" height="14" uuid="016f79ff-2dc9-4b21-a680-fb871f7fee6d"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Summe: ]]></text>
 			</staticText>
 			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
@@ -197,6 +202,25 @@
 				<reportElement x="310" y="27" width="70" height="13" uuid="0104bd2f-17a3-48e4-9dd8-2e0dc5f1cdc0"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{SumOfVatHi}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="110" y="45" width="200" height="13" uuid="1d8505d7-b1a4-4d12-ba6c-c1d07ce7cceb"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[verbleibendes Guthaben nach dem Einkauf:]]></text>
+			</staticText>
+			<textField evaluationTime="Report" pattern="#,##0.##¤;-#,##0.## ¤">
+				<reportElement x="310" y="45" width="70" height="13" uuid="e8655fa3-32f0-4eeb-8816-c5ac94eecad4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Credit}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="160" y="57" width="220" height="16" uuid="be65bb8b-4b64-456f-8739-93e431107163"/>
+				<textElement textAlignment="Right">
+					<font isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($V{Credit} < 10?"Bitte auf das Guthaben einzahlen!":"")]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
