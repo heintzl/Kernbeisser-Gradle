@@ -269,26 +269,6 @@ public class ShoppingItem implements Serializable {
         this.purchase = purchase;
     }
 
-    @Override
-    public int hashCode() {
-        return kbNumber * ((discount % 100) + 1) * amount;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof ShoppingItem) {
-            ShoppingItem item = (ShoppingItem) obj;
-            return item.discount == discount && item.name.equals(name) && item.kbNumber == kbNumber;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-
     public int getDiscount() {
         return discount;
     }
@@ -303,5 +283,25 @@ public class ShoppingItem implements Serializable {
 
     public double getSurcharge() {
         return surcharge;
+    }
+
+    @Override
+    public int hashCode() {
+        return kbNumber * ((discount % 100) + 1) * amount;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ShoppingItem) {
+            ShoppingItem item = (ShoppingItem) obj;
+            return item.discount == discount && item.name.equals(name) && item.kbNumber == kbNumber && item.vat == vat && item.itemRetailPrice == itemRetailPrice && item.containerDiscount == containerDiscount;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

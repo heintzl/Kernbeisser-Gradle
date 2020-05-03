@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ConfigManager {
 
@@ -43,7 +45,11 @@ public class ConfigManager {
     }
 
     public static JSONObject getDBAccess() {
-        return getHeader().getJSONObject("DBAccess");
+        return getConfigSub("DBAccess");
+    }
+
+    public static JSONObject getConfigSub(String subcategoryName) {
+        return getHeader().getJSONObject(subcategoryName);
     }
 
     public static void updateFile() {
@@ -66,7 +72,13 @@ public class ConfigManager {
         dbAccess.put("URL", "");
         dbAccess.put("Username", "");
         dbAccess.put("Password", "");
+        JSONObject reports = new JSONObject();
+        reports.put("reportDirectory", "");
+        reports.put("outputDirectory", "");
+        reports.put("invoiceFileName", "");
         object.put("DBAccess", dbAccess);
+        object.put("Reports", reports);
+        object.put("dbIsInitialized", false);
         object.put("ImagePath", "");
         try {
             if (file.createNewFile()) {
@@ -89,5 +101,18 @@ public class ConfigManager {
 
     public static String getPassword() {
         return getDBAccess().getString("Password");
+    }
+
+    public static Path getPath(String subCategory, String key) {
+        return Paths.get(getConfigSub(subCategory).getString(key));
+    }
+
+    public static Path getDirectory(String subCategory, String key) {
+        Path path = getPath(subCategory, key);
+        if (Files.isDirectory(path)) {
+            return path;
+        } else {
+            throw new IllegalArgumentException(String.format("%s is not a directory", path.toString()));
+        }
     }
 }

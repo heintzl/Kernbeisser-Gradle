@@ -7,21 +7,16 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.util.JRSaver;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.engine.JRException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
-import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
+import static kernbeisser.Reports.ReportUtil.exportInvoicePDF;
 
 public class PayModel implements Model<PayController> {
     private final SaleSession saleSession;
@@ -45,10 +40,10 @@ public class PayModel implements Model<PayController> {
     double shoppingCartSum() {
         return shoppingCart.stream()
                            .mapToDouble(ShoppingItem::getRetailPrice)
-                           .sum() * (1+saleSession.getCustomer().getSolidaritySurcharge());
+                           .sum() * (1 + saleSession.getCustomer().getSolidaritySurcharge());
     }
 
-    boolean pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) {
+    Purchase pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) throws PersistenceException {
         //Build connection by default
         EntityManager em = DBConnection.getEntityManager();
 
@@ -82,22 +77,16 @@ public class PayModel implements Model<PayController> {
             //Persist changes
             et.commit();
 
-            //Close EntityManager
-            em.close();
-
             //Success
-            return true;
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-
+            return purchase;
+        } finally {
             //Undo transaction
-            et.rollback();
+            if (et.isActive()) {
+                et.rollback();
+            }
 
             //Close EntityManager
             em.close();
-
-            //Failed
-            return false;
         }
     }
 
@@ -109,23 +98,9 @@ public class PayModel implements Model<PayController> {
         return PrintServiceLookup.lookupPrintServices(null, null);
     }
 
-    void print(PrintService printService) {
+    void print(Purchase purchase, PrintService printService) {
         try {
-            String basePath = "/home/timos/JaspersoftWorkspace/MyReports";
-            JasperDesign jspDesign = JRXmlLoader.load(
-                    Paths.get(basePath, "Blank_A4.jrxml").toFile());
-            JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
-
-            Map<String,Object> reportParamMap = new HashMap<>();
-            reportParamMap.put("BonNo", 47);
-
-            JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
-
-            JasperPrint jspPrint = JasperFillManager.fillReport(jspReport, reportParamMap, dataSource);
-            JRSaver.saveObject(jspPrint, Paths.get(basePath, "Blank_A4.jrprint").toFile());
-//            JasperPrintManager.printReport(jspPrint, false);
-//            JRPdfExporter pdfExporter = new JRPdfExporter();
-            JasperExportManager.exportReportToPdfFile(jspPrint, Paths.get(basePath, "report.pdf").toString());
+            exportInvoicePDF(shoppingCart, purchase);
         } catch (JRException e) {
             e.printStackTrace();
         }

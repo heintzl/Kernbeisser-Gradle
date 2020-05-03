@@ -187,6 +187,7 @@ gradle-app.setting
 **/build/
 
 # End of https://www.gitignore.io/api/java,linux,gradle,windows,intellij
-/reports/Kerni_Rechnung.jrprint
-/reports/report.pdf
+/reports/*.jrprint
+/reports/*.pdf
 /importPath.txt
+/testUser.txt

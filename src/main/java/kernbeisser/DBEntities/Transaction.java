@@ -10,7 +10,7 @@ import java.util.List;
 
 @Table
 @Entity
-public class Transaction implements ValueChange{
+public class Transaction implements ValueChange {
     @Id
     @GeneratedValue
     private int id;
@@ -50,7 +50,7 @@ public class Transaction implements ValueChange{
         return Tools.getAll(Transaction.class, condition);
     }
 
-    public static void doTransaction(User from, User to, double value,String info) {
+    public static void doTransaction(User from, User to, double value, String info) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
