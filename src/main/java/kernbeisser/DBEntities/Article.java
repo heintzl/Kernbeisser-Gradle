@@ -436,7 +436,7 @@ public class Article {
 
     @Override
     public int hashCode() {
-        return (iid==0?vat.hashCode():iid) + name.hashCode();
+        return iid + name.hashCode();
     }
 
     @Override

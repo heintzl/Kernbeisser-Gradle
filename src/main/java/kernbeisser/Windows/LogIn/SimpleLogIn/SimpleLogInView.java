@@ -20,7 +20,7 @@ public class SimpleLogInView implements View<SimpleLogInController> {
     private final SimpleLogInController controller;
 
     SimpleLogInView(SimpleLogInController controller){
-        // TODO the following linesare for testing only! Remove from production code
+        // TODO the following lines are for testing only! Remove from production code
         File file = new File("testUser.txt");
         if (file.exists()) {
             try {

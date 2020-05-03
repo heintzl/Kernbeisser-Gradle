@@ -294,7 +294,7 @@ public class ShoppingItem implements Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof ShoppingItem) {
             ShoppingItem item = (ShoppingItem) obj;
-            return item.discount == discount && item.name.equals(name) && item.kbNumber == kbNumber;
+            return item.discount == discount && item.name.equals(name) && item.kbNumber == kbNumber && item.vat == vat && item.itemRetailPrice == itemRetailPrice && item.containerDiscount == containerDiscount;
         } else {
             return false;
         }

@@ -31,7 +31,7 @@ public class ReportUtil {
         String outFileName = String.format("%d_%s_%s_%s.pdf", purchase.getId(),
                                            purchase.getSession().getCustomer().getFirstName(),
                                            purchase.getSession().getCustomer().getSurname(),
-                                           purchase.getDate().toString());
+                                           purchase.getDate().toString()).replaceAll("[\\\\/:*?\"<>|]", "_");
         JasperDesign jspDesign = JRXmlLoader.load(
                 getReportsFolder().resolve(getPath(CONFIG_CATEGORY, "invoiceFileName")).toAbsolutePath().toFile());
         JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
@@ -45,10 +45,11 @@ public class ReportUtil {
     @NotNull
     private static Map<String,Object> getInvoiceParams(Purchase purchase) {
         Map<String,Object> reportParams = new HashMap<>();
-        reportParams.put("bonNo", purchase.getId());
-        reportParams.put("customer", purchase.getSession().getCustomer().getFullName());
-        reportParams.put("seller", purchase.getSession().getSeller().getFullName());
-        reportParams.put("purchaseDate", purchase.getDate());
+        reportParams.put("BonNo", purchase.getId());
+        reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
+        reportParams.put("Seller", purchase.getSession().getSeller().getFullName());
+        reportParams.put("Credit", purchase.getSession().getCustomer().getUserGroup().getValue());
+        reportParams.put("PurchaseDate", purchase.getDate());
         return reportParams;
     }
 }
