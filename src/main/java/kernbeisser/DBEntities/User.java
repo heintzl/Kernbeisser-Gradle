@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.Instant;
 import java.util.*;
 
 @Entity
@@ -74,10 +75,10 @@ public class User implements Serializable {
     private String email;
 
     @CreationTimestamp
-    private Date createDate;
+    private Instant createDate;
 
     @UpdateTimestamp
-    private Date updateDate;
+    private Instant updateDate;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -254,7 +255,7 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public Date getCreateDate() {
+    public Instant getCreateDate() {
         return createDate;
     }
 
@@ -266,7 +267,7 @@ public class User implements Serializable {
         this.userGroup = userGroup;
     }
 
-    public Date getUpdateDate() {
+    public Instant getUpdateDate() {
         return updateDate;
     }
 

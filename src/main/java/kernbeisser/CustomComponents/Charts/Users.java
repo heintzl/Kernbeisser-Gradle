@@ -11,6 +11,7 @@ import org.jfree.chart.plot.XYPlot;
 import javax.persistence.EntityManager;
 import javax.swing.*;
 import java.sql.Date;
+import java.time.Instant;
 import java.time.YearMonth;
 import java.util.HashMap;
 
@@ -35,13 +36,12 @@ public class Users {
         EntityManager em = DBConnection.getEntityManager();
         HashMap<YearMonth,Integer> result = new HashMap<>();
         for (Purchase purchase : em.createQuery(
-                "select p from Purchase p where p.session.customer.id = :uid and p.createDate between :from and :to",
+                "select p from Purchase p where p.session.customer.id = :uid and p.createDate between "+from+" and "+to,
                 Purchase.class)
                                    .setParameter("uid", user.getId())
-                                   .setParameter("from", Date.valueOf(from.atDay(1)))
-                                   .setParameter("to", Date.valueOf(to.atEndOfMonth())).getResultList()) {
+                                   .getResultList()) {
 
-            YearMonth month = YearMonth.from(purchase.getCreateDate().toLocalDate());
+            YearMonth month = YearMonth.from(purchase.getCreateDate());
             if (result.containsKey(month)) {
                 result.replace(month,result.get(month)+1);
             }else {

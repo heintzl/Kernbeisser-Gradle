@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,10 +30,10 @@ public class PriceList implements Serializable {
     private PriceList superPriceList;
 
     @UpdateTimestamp
-    private Date updateDate;
+    private Instant updateDate;
 
     @CreationTimestamp
-    private Date createDate;
+    private Instant createDate;
 
     public static void savePriceList(String name) {
         savePriceList(name, null);
@@ -42,11 +43,11 @@ public class PriceList implements Serializable {
         PriceList p = new PriceList();
         p.setName(priceListName);
         p.setSuperPriceList(superPriceList);
-        Tools.persistInDB(em ->  em.persist(p));
+        Tools.runInSession(em ->  em.persist(p));
     }
 
     public static void deletePriceList(PriceList toDelete) {
-        Tools.persistInDB(em -> em.remove(em.contains(toDelete) ? toDelete : em.merge(toDelete)));
+        Tools.runInSession(em -> em.remove(em.contains(toDelete) ? toDelete : em.merge(toDelete)));
     }
 
     private static PriceList getPriceList(String name) throws NoResultException {
@@ -91,11 +92,11 @@ public class PriceList implements Serializable {
         return out;
     }
 
-    public Date getUpdateDate() {
+    public Instant getUpdateDate() {
         return updateDate;
     }
 
-    public Date getCreateDate() {
+    public Instant getCreateDate() {
         return createDate;
     }
 

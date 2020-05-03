@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.sql.Date;
+import java.time.Instant;
 
 public class Inventory {
     @Id
@@ -14,14 +15,14 @@ public class Inventory {
 
     @CreationTimestamp
     @Column
-    private Date creationTimeStamp;
+    private Instant creationTimeStamp;
 
 
-    public Date getCreationTimeStamp() {
+    public Instant getCreationTimeStamp() {
         return creationTimeStamp;
     }
 
-    public void setCreationTimeStamp(Date creationTimeStamp) {
+    public void setCreationTimeStamp(Instant creationTimeStamp) {
         this.creationTimeStamp = creationTimeStamp;
     }
 

@@ -31,6 +31,6 @@ public class ManagePriceListsModel implements Model<ManagePriceListsController> 
 
     public void renamePriceList(PriceList toRename, String newName) {
         toRename.setName(newName);
-        Tools.persistInDB(em -> em.unwrap(Session.class).update(toRename));
+        Tools.runInSession(em -> em.unwrap(Session.class).update(toRename));
     }
 }

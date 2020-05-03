@@ -22,7 +22,7 @@ public class Purchase implements ValueChange {
     private SaleSession session;
 
     @CreationTimestamp
-    private Date createDate;
+    private Instant createDate;
 
     private double userSurcharge;
 
@@ -30,7 +30,7 @@ public class Purchase implements ValueChange {
         return Tools.getAll(Purchase.class, condition);
     }
 
-    public Date getCreateDate() {
+    public Instant getCreateDate() {
         return createDate;
     }
 
@@ -92,7 +92,7 @@ public class Purchase implements ValueChange {
 
     @Override
     public Instant getDate() {
-        return createDate.toInstant();
+        return createDate;
     }
 
     @Override

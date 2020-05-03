@@ -1,10 +1,11 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 @Table
@@ -17,49 +18,16 @@ public class Action {
     @JoinColumn
     private User user;
     @Column
-    private Date date;
-    @Column
     private String location;
     @Column
     private String action;
-
-    public Action() {
-    }
-
-    public Action(User user, Date date, String location, String action) {
-        this.user = user;
-        this.date = date;
-        this.location = location;
-        this.action = action;
-    }
-
-    Action(User user, String location, String action) {
-        this(user, Date.valueOf(LocalDate.now()), location, action);
-    }
-
-    Action(User user, String action) {
-        this(user, null, action);
-    }
+    @CreationTimestamp
+    private Instant createTime;
 
     public static List<Action> getAll(String condition) {
         return Tools.getAll(Action.class, condition);
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
 
     public String getAction() {
         return action;
@@ -75,5 +43,30 @@ public class Action {
 
     public User getUser() {
         return user;
+    }
+
+    public static void doAction(String location,String action,User user){
+        Action a = new Action();
+        a.location = location;
+        a.action = action;
+        a.user = user;
+        Tools.runInSession(e -> e.persist(a));
+    }
+
+    public static void logCurrentFunctionCall(User user){
+        StackTraceElement superFunction = Thread.currentThread().getStackTrace()[3];
+        doAction(superFunction.getClassName(),superFunction.getMethodName(),user);
+    }
+
+    public static void logCurrentFunctionCall(){
+        logCurrentFunctionCall(LogInModel.getLoggedIn());
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public Instant getCreateTime() {
+        return createTime;
     }
 }

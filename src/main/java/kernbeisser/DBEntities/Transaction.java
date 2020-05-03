@@ -5,7 +5,6 @@ import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class Transaction implements ValueChange {
     private User to;
 
     @CreationTimestamp
-    private Date date;
+    private Instant date;
 
     @Column
     private String info;
@@ -102,7 +101,7 @@ public class Transaction implements ValueChange {
     }
 
     public Instant getDate() {
-        return Instant.from(date.toLocalDate());
+        return date;
     }
 
     public int getId() {

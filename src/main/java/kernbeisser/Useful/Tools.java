@@ -194,14 +194,14 @@ public class Tools {
     }
 
     public static <I, O> O overwrite(O out, I in) {
-        Class oc = out.getClass();
+        Class<?> oc = out.getClass();
         for (Field declaredField : in.getClass().getDeclaredFields()) {
             try {
                 Field target = oc.getDeclaredField(declaredField.getName());
                 target.setAccessible(true);
                 declaredField.setAccessible(true);
                 target.set(out, declaredField.get(in));
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {
             }
         }
         return out;
@@ -278,14 +278,14 @@ public class Tools {
     }
 
     public static <T> void delete(Class<T> t, Object key) {
-        persistInDB(em -> em.remove(em.find(t, key)));
+        runInSession(em -> em.remove(em.find(t, key)));
      }
 
     public static <T> void edit(Object key, T to) {
-      persistInDB(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
+      runInSession(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
     }
 
-    public static void persistInDB(Consumer<EntityManager> dbAction) {
+    public static void runInSession(Consumer<EntityManager> dbAction) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -338,5 +338,9 @@ public class Tools {
         em.flush();
         et.commit();
         em.close();
+    }
+
+    public static <T> T removeLambda(T from,Supplier<T> original){
+        return Tools.overwrite(original.get(),from);
     }
 }

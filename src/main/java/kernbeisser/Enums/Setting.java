@@ -3,6 +3,8 @@ package kernbeisser.Enums;
 import kernbeisser.DBEntities.SettingValue;
 
 public enum Setting {
+    DB_VERSION("1.0"),
+    DB_INITIALIZED("false"),
     VAT_LOW("0.07"),
     VAT_HIGH("0.19"),
     DEFAULT_MAX_SEARCH("500"),
@@ -35,5 +37,13 @@ public enum Setting {
 
     public String getDefaultValue() {
         return defaultValue;
+    }
+
+    public boolean getBooleanValue() {
+        return Boolean.parseBoolean(SettingValue.getValue(this));
+    }
+
+    public void setValue(Object s) {
+        SettingValue.setValue(this,String.valueOf(s));
     }
 }
