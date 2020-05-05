@@ -133,10 +133,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     void openSearchWindow() {
-        new ArticleSelectorController(view::loadItemStats);
+        new ArticleSelectorController(view::loadItemStats).openAsWindow(view.getWindow(),SubWindow::new);
     }
 
     void editUserAction() {
-        new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT);
+        new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT).openAsWindow(view.getWindow(),SubWindow::new);
     }
 }
