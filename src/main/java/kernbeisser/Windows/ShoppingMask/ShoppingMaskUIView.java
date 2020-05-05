@@ -3,6 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
@@ -19,6 +20,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import static java.text.MessageFormat.format;
 
@@ -84,12 +86,35 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private JLabel articleAmountLabel;
     private ButtonGroup optGrpArticleType;
     private ButtonGroup optGrpReduction;
+
     private char currentArticleType;
+    private boolean isWeighable;
+    static Vector<Component> traversalOrder = new Vector<Component>(15);
+    static FocusTraversal traversalPolicy;
 
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
         this.controller = controller;
         articleTypeChange('a');
+        traversalOrder.add(optProduce);
+        traversalOrder.add(optBakedGoods);
+        traversalOrder.add(optArticleNo);
+        traversalOrder.add(optCustomProduct);
+        traversalOrder.add(optDeposit);
+        traversalOrder.add(optDepositReturn);
+        traversalOrder.add(kbNumber);
+        traversalOrder.add(suppliersItemNumber);
+        traversalOrder.add(articleName);
+        traversalOrder.add(price);
+        traversalOrder.add(amount);
+        traversalOrder.add(optTaxLow);
+        traversalOrder.add(optTaxStandard);
+        traversalOrder.add(priceStandard);
+        traversalOrder.add(price50Percent);
+        traversalOrder.add(priceVariablePercentage);
+        traversalOrder.add(variablePercentage);
+        traversalPolicy = new FocusTraversal(traversalOrder);
+        westPanel.setFocusTraversalPolicy(traversalPolicy);
     }
 
     private void doCancel() {
@@ -158,6 +183,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private void articleTypeChange(char type) {
         if (currentArticleType != type) {
             currentArticleType = type;
+            isWeighable = false;
             addAmount.setVisible(type == 'a');
             addPrice.setVisible("pbc".indexOf(type) != -1);
             addDeposit.setVisible("dr".indexOf(type) != -1);
@@ -165,8 +191,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
             setKbNumber("");
             suppliersItemNumber.setVisible(type == 'a');
             setSuppliersItemNumber("");
-            price.setVisible("pbac".indexOf(type) != -1);
-            price.setEnabled("pbc".indexOf(type) != -1);
+            price.setEnabled(type !='a');
             setPrice("");
             priceUnit.setVisible("pbac".indexOf(type) != -1);
             setPriceUnit("€");
@@ -198,6 +223,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                 priceVariablePercentage.setEnabled(true);
                 pricePreordered.setEnabled(true);
             }
+            variablePercentage.setEnabled(priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
             if (type == 'p') {
                 setArticleName("Obst & Gemüse");
                 price.requestFocusInWindow();
@@ -313,6 +339,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         price.setText(String.format("%.2f", controller.getPrice(article)));
         priceUnit.setText(article.isWeighAble() ? "€/kg" : "€");
         amountUnit.setText(article.isWeighAble() ? "g" : "stk.");
+        isWeighable = article.isWeighAble();
         articleAmount.setVisible(!article.isWeighAble());
         articleAmountLabel.setForeground(article.isWeighAble() ? Color.WHITE : Color.BLACK);
         articleUnit.setVisible(!article.isWeighAble());
@@ -379,13 +406,16 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         optCustomProduct.addItemListener(e -> articleTypeChange('c'));
         optDeposit.addItemListener(e -> articleTypeChange('d'));
         optDepositReturn.addItemListener(e -> articleTypeChange('r'));
+        priceStandard.addItemListener(e -> variablePercentage.setEnabled(false));
+        price50Percent.addItemListener(e -> variablePercentage.setEnabled(false));
+        priceVariablePercentage.addItemListener(e -> variablePercentage.setEnabled(true));
         kbNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 controller.searchByKbNumber();
             }
         });
-        kbNumber.addActionListener(e -> controller.addToShoppingCart());
+        kbNumber.addActionListener(e -> {if(isWeighable) {amount.requestFocusInWindow();} else {controller.addToShoppingCart();}});
         suppliersItemNumber.addActionListener(e -> controller.addToShoppingCart());
         suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override
