@@ -33,9 +33,7 @@
             <children>
               <grid id="f9529" binding="westUpperPanel" layout-manager="FlowLayout" hgap="5" vgap="22" flow-align="1">
                 <constraints border-constraint="North"/>
-                <properties>
-                  <background color="-1"/>
-                </properties>
+                <properties/>
                 <border type="none">
                   <font size="16"/>
                   <title-color color="-4473925"/>
@@ -61,7 +59,6 @@
                 <constraints border-constraint="Center"/>
                 <properties>
                   <autoscrolls value="true"/>
-                  <background color="-1"/>
                   <enabled value="true"/>
                   <foreground color="-1"/>
                   <visible value="true"/>
@@ -77,7 +74,6 @@
                       <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value="Obst &amp; Gemüse"/>
                     </properties>
@@ -88,7 +84,6 @@
                       <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value="Backwaren"/>
                     </properties>
@@ -99,7 +94,6 @@
                       <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <selected value="true"/>
                       <text value="Artikelnr./Barcode"/>
@@ -111,7 +105,6 @@
                       <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value="Freier Artikel"/>
                     </properties>
@@ -122,7 +115,6 @@
                       <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value="Pfand ausleihen"/>
                     </properties>
@@ -133,7 +125,6 @@
                       <gridbag top="0" left="10" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value="Pfand zurück"/>
                     </properties>
@@ -141,7 +132,7 @@
                   <component id="e6328" class="javax.swing.JLabel">
                     <constraints>
                       <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="30" left="10" bottom="3" right="0" weightx="0.0" weighty="0.0"/>
+                      <gridbag top="30" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
@@ -151,7 +142,7 @@
                   <component id="c156f" class="javax.swing.JLabel">
                     <constraints>
                       <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="3" left="10" bottom="3" right="0" weightx="0.0" weighty="0.0"/>
+                      <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
@@ -160,27 +151,24 @@
                   </component>
                   <component id="11129" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="kbNumber">
                     <constraints>
-                      <grid row="6" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                      <grid row="6" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
                       </grid>
-                      <gridbag top="30" left="0" bottom="0" right="5" weightx="0.5" weighty="0.0"/>
+                      <gridbag top="30" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
-                      <foreground color="-16777216"/>
                       <text value=""/>
                     </properties>
                   </component>
                   <component id="3aebf" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="suppliersItemNumber">
                     <constraints>
-                      <grid row="7" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                      <grid row="7" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
                       </grid>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value=""/>
                     </properties>
@@ -188,7 +176,7 @@
                   <component id="21207" class="javax.swing.JLabel">
                     <constraints>
                       <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="3" left="10" bottom="3" right="0" weightx="0.0" weighty="0.0"/>
+                      <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
@@ -197,13 +185,12 @@
                   </component>
                   <component id="bede7" class="javax.swing.JTextField" binding="articleName">
                     <constraints>
-                      <grid row="8" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                      <grid row="8" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
                       </grid>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value=""/>
                     </properties>
@@ -224,7 +211,6 @@
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.3" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                     </properties>
                   </component>
@@ -244,7 +230,6 @@
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <enabled value="false"/>
                       <font size="16" style="0"/>
                     </properties>
@@ -255,7 +240,6 @@
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                     </properties>
                   </component>
@@ -285,7 +269,6 @@
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                     </properties>
                   </component>
@@ -302,10 +285,9 @@
                   <component id="d358f" class="javax.swing.JRadioButton" binding="optTaxLow">
                     <constraints>
                       <grid row="13" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="0.0"/>
+                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value="7%"/>
                     </properties>
@@ -316,7 +298,6 @@
                       <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <selected value="true"/>
                       <text value="Normalpreis"/>
@@ -328,7 +309,6 @@
                       <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <selected value="false"/>
                       <text value="Vorbestellung"/>
@@ -340,7 +320,6 @@
                       <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value="50 %"/>
                     </properties>
@@ -351,7 +330,6 @@
                       <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value="Rabatt:"/>
                     </properties>
@@ -362,10 +340,8 @@
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <enabled value="true"/>
                       <font size="16" style="0"/>
-                      <foreground color="-16777216"/>
                       <text value="€/kg"/>
                     </properties>
                   </component>
@@ -382,12 +358,12 @@
                   </component>
                   <component id="dcce4" class="javax.swing.JLabel" binding="articleUnit">
                     <constraints>
-                      <grid row="11" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="11" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <background color="-1"/>
-                      <font size="14" style="0"/>
+                      <font size="16" style="0"/>
                       <text value="Stk"/>
                     </properties>
                   </component>
@@ -398,7 +374,7 @@
                     </constraints>
                     <properties>
                       <background color="-1"/>
-                      <font size="14" style="0"/>
+                      <font size="16" style="0"/>
                       <text value="€"/>
                     </properties>
                   </component>
@@ -418,9 +394,9 @@
                       <gridbag top="30" left="0" bottom="5" right="15" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
+                      <enabled value="true"/>
                       <font size="16" style="0"/>
-                      <selected value="true"/>
+                      <selected value="false"/>
                       <text value="Einstellung merken"/>
                     </properties>
                   </component>
@@ -502,10 +478,9 @@
                   <component id="8eb83" class="javax.swing.JRadioButton" binding="optTaxStandard">
                     <constraints>
                       <grid row="13" column="4" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="0.0"/>
+                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <background color="-1"/>
                       <font size="16" style="0"/>
                       <text value="19%"/>
                     </properties>
@@ -524,6 +499,17 @@
                       <toolTipText value="Artikel suchen"/>
                     </properties>
                   </component>
+                  <component id="74fbd" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="6" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <enabled value="true"/>
+                      <font size="16" style="0"/>
+                      <text value=" "/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
             </children>
@@ -539,9 +525,7 @@
             <children>
               <grid id="7919b" binding="eastUpperPanel" layout-manager="GridBagLayout">
                 <constraints border-constraint="North"/>
-                <properties>
-                  <background color="-1"/>
-                </properties>
+                <properties/>
                 <border type="none"/>
                 <children>
                   <component id="a17f1" class="javax.swing.JLabel">
@@ -665,7 +649,6 @@
                 <constraints border-constraint="Center"/>
                 <properties>
                   <autoscrolls value="true"/>
-                  <background color="-1"/>
                   <enabled value="true"/>
                 </properties>
                 <border type="none" title="Einkauf" title-position="1">
@@ -689,7 +672,6 @@
                     <constraints border-constraint="South"/>
                     <properties>
                       <autoscrolls value="true"/>
-                      <background color="-1"/>
                     </properties>
                     <border type="none"/>
                     <children>

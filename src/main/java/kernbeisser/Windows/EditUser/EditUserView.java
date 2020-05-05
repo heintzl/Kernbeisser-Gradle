@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-class EditUserView implements View<EditUserController> {
+public class EditUserView implements View<EditUserController> {
     private JLabel lblVorname;
     private JLabel lblNachname;
     private kernbeisser.CustomComponents.TextFields.PermissionField firstName;
