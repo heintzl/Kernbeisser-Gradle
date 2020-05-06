@@ -89,8 +89,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 return ShoppingItem.createOrganic(view.getPriceVATIncluded());
             case ShoppingMaskUIView.CUSTOM_PRODUCT:
                 Article customArticle = new Article();
-                customArticle.setName( // add price to name so that same name but different price results in different hash
-                                      MessageFormat.format("{0} à {1, number,#0.00}€", view.getItemName(), view.getPriceVATIncluded()));
+                customArticle.setName(view.getItemName());
                 customArticle.setVAT(view.getSelectedVAT());
                 customArticle.setNetPrice(view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
                 customArticle.setMetricUnits(MetricUnits.PIECE);
@@ -134,10 +133,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     void openSearchWindow() {
-        new ArticleSelectorController(view::loadItemStats);
+        new ArticleSelectorController(view::loadItemStats).openAsWindow(view.getWindow(),SubWindow::new);
     }
 
     void editUserAction() {
-        new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT);
+        new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT).openAsWindow(view.getWindow(),SubWindow::new);
     }
 }

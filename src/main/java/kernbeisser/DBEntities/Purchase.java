@@ -12,7 +12,7 @@ import java.util.List;
 
 @Table
 @Entity
-public class Purchase implements ValueChange{
+public class Purchase implements ValueChange {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int sid;
@@ -64,7 +64,7 @@ public class Purchase implements ValueChange{
                        .mapToDouble(ShoppingItem::getItemRetailPrice)
                        .sum();
         em.close();
-        return sum * (1+userSurcharge);
+        return sum * (1 + userSurcharge);
     }
 
     public double getUserSurcharge() {

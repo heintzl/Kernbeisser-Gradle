@@ -34,7 +34,17 @@ public class DataImportController implements Controller<DataImportView,DataImpor
     }
 
     void openFileExplorer() {
-        JFileChooser jFileChooser = new JFileChooser();
+        File file = new File("importPath.txt");
+        String importPath = ".";
+        if (file.exists()) {
+            try {
+                List<String> fileLines = Files.readAllLines(file.toPath());
+                importPath = fileLines.get(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        JFileChooser jFileChooser = new JFileChooser(importPath);
         jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jFileChooser.setFileFilter(new FileNameExtensionFilter("Config-File", "JSON", "json"));
         jFileChooser.addActionListener(e -> {
