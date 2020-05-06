@@ -107,13 +107,13 @@ public class EditItemView implements View<EditItemController> {
 
     Article collectItem(Article out) {
         out.setName(itemName.getText());
-        out.setNetPrice((int) (netPrice.getSafeValue() * 100));
-        out.setSingleDeposit((int) (deposit.getSafeValue() * 100));
+        out.setNetPrice(netPrice.getSafeValue());
+        out.setSingleDeposit(deposit.getSafeValue());
         out.setKbNumber(kbItemNumber.getSafeValue());
         out.setVAT((VAT) vat.getSelectedItem());
         out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
         out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
-        out.setCrateDeposit((int) (crateDeposit.getSafeValue() * 100));
+        out.setCrateDeposit(crateDeposit.getSafeValue());
         out.setContainerSize(containerSize.getSafeValue());
         out.setAmount(amount.getSafeValue());
         try {
@@ -162,6 +162,14 @@ public class EditItemView implements View<EditItemController> {
         containerSize.setRequiredKeys(Key.ARTICLE_CONTAINER_SIZE_READ,Key.ARTICLE_CONTAINER_SIZE_WRITE);
         showInShoppingMask.setRequiredReadKeys(Key.ARTICLE_SHOW_IN_SHOP_READ,Key.ARTICLE_SHOW_IN_SHOP_WRITE);
         weighable.setRequiredReadKeys(Key.ARTICLE_WEIGHABLE_READ,Key.ARTICLE_WEIGHABLE_WRITE);
+    }
+
+    void setActionTitle(String s){
+        commit.setText(s);
+    }
+
+    void setActionIcon(Icon i){
+        commit.setIcon(i);
     }
 
     @Override

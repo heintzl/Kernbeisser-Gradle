@@ -1,10 +1,14 @@
 package kernbeisser.Windows.EditItem;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 public class EditItemController implements Controller<EditItemView,EditItemModel> {
 
@@ -18,6 +22,16 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
             return;
         } else {
             this.view = new EditItemView(this);
+        }
+        switch (mode){
+            case ADD:
+                view.setActionTitle("Als neuen Artikel aufnehmen");
+                view.setActionIcon(IconFontSwing.buildIcon(FontAwesome.PLUS,20,new Color(0x00EE00)));
+                break;
+            case EDIT:
+                view.setActionTitle("Änderungen übernehmen");
+                view.setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL,20,new Color(0x0000BB)));
+                break;
         }
     }
 

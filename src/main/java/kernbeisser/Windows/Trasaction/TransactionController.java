@@ -20,8 +20,8 @@ public class TransactionController implements Controller<TransactionView,Transac
 
     public TransactionController(User user) {
         model = new TransactionModel(user);
-        userSearchBoxController = new SearchBoxController<User>(User::defaultSearch, this::loadUser,
-                                                            Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ),
+        userSearchBoxController = new SearchBoxController<User>(User::defaultSearch,
+                                                                Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ),
                                                             Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),
                                                             Column.create("Username", User::getUsername,Key.USER_USERNAME_READ)
                                                             );

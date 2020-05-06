@@ -69,4 +69,8 @@ public class SearchBoxView <T> extends JPanel implements View<SearchBoxControlle
     public @NotNull Dimension getSize() {
         return super.getSize();
     }
+
+    public void setSearch(String s) {
+        searchInput.setText(s);
+    }
 }

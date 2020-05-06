@@ -32,7 +32,6 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
     SpecialPriceEditorController(Window current){
         this.model = new SpecialPriceEditorModel();
         this.searchBoxController = new SearchBoxController<Article>((s,m) -> model.searchArticle(s, m, view != null && view.filterOnlyActionArticle()),
-                                                                    this::load,
                                                                     Column.create("Name", Article::getName),
                                                                     Column.create("Barcode", Article::getBarcode),
                                                                     Column.create("Lieferant",

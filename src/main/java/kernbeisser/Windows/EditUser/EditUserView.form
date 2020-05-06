@@ -274,7 +274,7 @@
       </component>
       <component id="94d6f" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="isEmployee">
         <constraints>
-          <grid row="16" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="17" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -284,7 +284,7 @@
       </component>
       <component id="216de" class="javax.swing.JLabel" binding="lblIsEmployee">
         <constraints>
-          <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -305,7 +305,7 @@
       </component>
       <component id="5bdd0" class="javax.swing.JLabel" binding="lblZusatzdienste">
         <constraints>
-          <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -315,7 +315,7 @@
       </component>
       <component id="380ab" class="javax.swing.JLabel" binding="lblAnteile">
         <constraints>
-          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -325,7 +325,7 @@
       </component>
       <component id="27171" class="javax.swing.JLabel">
         <constraints>
-          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -335,21 +335,21 @@
       </component>
       <component id="1cb7e" class="kernbeisser.CustomComponents.PermissionSpinner" binding="shares">
         <constraints>
-          <grid row="19" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="20" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
       <component id="1ec43" class="kernbeisser.CustomComponents.PermissionSpinner" binding="solidarySupplement">
         <constraints>
-          <grid row="20" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="21" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
       <component id="29362" class="kernbeisser.CustomComponents.PermissionButton" binding="chgJobs">
         <constraints>
-          <grid row="17" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="18" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -358,7 +358,7 @@
       </component>
       <component id="25b2f" class="javax.swing.JLabel" binding="lblDienste">
         <constraints>
-          <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -368,7 +368,7 @@
       </component>
       <component id="16577" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="extraJobs">
         <constraints>
-          <grid row="18" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="19" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
@@ -377,7 +377,7 @@
       </component>
       <grid id="faea0" binding="buttonPanel" custom-create="true" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="2">
         <constraints>
-          <grid row="21" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="22" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="15" left="15" bottom="0" right="15" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -456,6 +456,24 @@
         </constraints>
         <properties>
           <text value="Rollen bearbeiten"/>
+        </properties>
+      </component>
+      <component id="ed24e" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Schlüsselnummer:"/>
+        </properties>
+      </component>
+      <component id="74c39" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="keyNumber">
+        <constraints>
+          <grid row="16" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value=""/>
         </properties>
       </component>
     </children>

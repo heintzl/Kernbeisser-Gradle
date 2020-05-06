@@ -76,7 +76,7 @@ public class EditItemModel implements Model<EditItemController> {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.persist(Tools.mergeWithoutId(article));
+        em.persist(Tools.createNewPersistenceInstance(article,Article::new));
         em.flush();
         et.commit();
         em.close();

@@ -5,10 +5,10 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.CatalogInput.CatalogInputController;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.EditItems.EditItems;
+import kernbeisser.Windows.EditItem.EditItemController;
+import kernbeisser.Windows.EditItems.EditItemsController;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUsers.EditUsers;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class CashierMenuController implements Controller<CashierMenuView,Cashier
     }
 
     public void openManageItems() {
-        new EditItems().openTab("Artikel bearbeiten");
+        new EditItemsController().openTab("Artikel bearbeiten");
     }
 
     public void openManageSurchargeTables() {
