@@ -84,37 +84,36 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private JLabel depositUnit;
     private ShoppingCartView shoppingCartView;
     private JLabel articleAmountLabel;
+    private JPanel productTypePanel;
+    private JPanel reductionPanel;
     private ButtonGroup optGrpArticleType;
     private ButtonGroup optGrpReduction;
 
     private char currentArticleType;
     private boolean isWeighable;
-    static Vector<Component> traversalOrder = new Vector<Component>(15);
+    static Vector<Component> traversalOrder = new Vector<Component>(1);
     static FocusTraversal traversalPolicy;
 
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
         this.controller = controller;
         articleTypeChange('a');
-        traversalOrder.add(optProduce);
-        traversalOrder.add(optBakedGoods);
-        traversalOrder.add(optArticleNo);
-        traversalOrder.add(optCustomProduct);
-        traversalOrder.add(optDeposit);
-        traversalOrder.add(optDepositReturn);
         traversalOrder.add(kbNumber);
         traversalOrder.add(suppliersItemNumber);
         traversalOrder.add(articleName);
         traversalOrder.add(price);
         traversalOrder.add(amount);
+        traversalOrder.add(deposit);
         traversalOrder.add(optTaxLow);
         traversalOrder.add(optTaxStandard);
         traversalOrder.add(priceStandard);
+        traversalOrder.add(pricePreordered);
         traversalOrder.add(price50Percent);
         traversalOrder.add(priceVariablePercentage);
         traversalOrder.add(variablePercentage);
         traversalPolicy = new FocusTraversal(traversalOrder);
         westPanel.setFocusTraversalPolicy(traversalPolicy);
+        reductionPanel.setFocusTraversalPolicy(traversalPolicy);
     }
 
     private void doCancel() {
@@ -211,18 +210,19 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
             }
             optTaxLow.setEnabled(type == 'c');
             optTaxStandard.setEnabled(type == 'c');
-            if("apb".indexOf(type) == -1) {
+            if(type== 'a') {
+                priceStandard.setEnabled(true);
+                price50Percent.setEnabled(true);
+                priceVariablePercentage.setEnabled(true);
+                pricePreordered.setEnabled(true);
+            } else {
                 priceStandard.setSelected(true);
                 priceStandard.setEnabled(false);
                 price50Percent.setEnabled(false);
                 priceVariablePercentage.setEnabled(false);
                 pricePreordered.setEnabled(false);
-            } else {
-                priceStandard.setEnabled(true);
-                price50Percent.setEnabled(true);
-                priceVariablePercentage.setEnabled(true);
-                pricePreordered.setEnabled(true);
             }
+
             variablePercentage.setEnabled(priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
             if (type == 'p') {
                 setArticleName("Obst & Gemüse");
@@ -408,14 +408,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         optDepositReturn.addItemListener(e -> articleTypeChange('r'));
         priceStandard.addItemListener(e -> variablePercentage.setEnabled(false));
         price50Percent.addItemListener(e -> variablePercentage.setEnabled(false));
-        priceVariablePercentage.addItemListener(e -> variablePercentage.setEnabled(true));
+        priceVariablePercentage.addItemListener(e -> {variablePercentage.setEnabled(true); variablePercentage.requestFocusInWindow();});
         kbNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 controller.searchByKbNumber();
             }
         });
-        kbNumber.addActionListener(e -> {if(isWeighable) {amount.requestFocusInWindow();} else {controller.addToShoppingCart();}});
+        kbNumber.addActionListener(e -> {if(isWeighable) {amount.setText(""); amount.requestFocusInWindow();} else {controller.addToShoppingCart();}});
         suppliersItemNumber.addActionListener(e -> controller.addToShoppingCart());
         suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override
