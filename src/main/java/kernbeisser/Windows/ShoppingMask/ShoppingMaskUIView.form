@@ -3,11 +3,11 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1284" height="900"/>
+      <xy x="20" y="20" width="1284" height="800"/>
     </constraints>
     <properties>
-      <minimumSize width="1280" height="900"/>
-      <preferredSize width="1280" height="900"/>
+      <minimumSize width="1280" height="800"/>
+      <preferredSize width="1280" height="800"/>
     </properties>
     <border type="none"/>
     <children>
@@ -17,7 +17,11 @@
             <preferred-size width="200" height="200"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <continuousLayout value="false"/>
+          <dividerLocation value="400"/>
+          <dividerSize value="5"/>
+        </properties>
         <border type="none"/>
         <children>
           <grid id="f99ac" binding="westPanel" layout-manager="BorderLayout" hgap="5" vgap="0">
@@ -26,8 +30,10 @@
             </constraints>
             <properties>
               <background color="-1"/>
-              <minimumSize width="530" height="900"/>
-              <preferredSize width="530" height="900"/>
+              <focusCycleRoot value="false"/>
+              <focusTraversalPolicyProvider value="true"/>
+              <minimumSize width="530" height="760"/>
+              <preferredSize width="400" height="900"/>
             </properties>
             <border type="none"/>
             <children>
@@ -61,6 +67,7 @@
                   <autoscrolls value="true"/>
                   <enabled value="true"/>
                   <foreground color="-1"/>
+                  <minimumSize width="515" height="656"/>
                   <visible value="true"/>
                 </properties>
                 <border type="none" title="Einkaufs-Artikel" title-position="1">
@@ -68,80 +75,9 @@
                   <title-color color="-16752083"/>
                 </border>
                 <children>
-                  <component id="f3ff7" class="javax.swing.JRadioButton" binding="optProduce">
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Obst &amp; Gemüse"/>
-                    </properties>
-                  </component>
-                  <component id="6ba6e" class="javax.swing.JRadioButton" binding="optBakedGoods">
-                    <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Backwaren"/>
-                    </properties>
-                  </component>
-                  <component id="b03ba" class="javax.swing.JRadioButton" binding="optArticleNo">
-                    <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <selected value="true"/>
-                      <text value="Artikelnr./Barcode"/>
-                    </properties>
-                  </component>
-                  <component id="13206" class="javax.swing.JRadioButton" binding="optCustomProduct">
-                    <constraints>
-                      <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Freier Artikel"/>
-                    </properties>
-                  </component>
-                  <component id="5ed2c" class="javax.swing.JRadioButton" binding="optDeposit">
-                    <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Pfand ausleihen"/>
-                    </properties>
-                  </component>
-                  <component id="cb9dc" class="javax.swing.JRadioButton" binding="optDepositReturn">
-                    <constraints>
-                      <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Pfand zurück"/>
-                    </properties>
-                  </component>
-                  <component id="e6328" class="javax.swing.JLabel">
-                    <constraints>
-                      <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="30" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="KB-Artikelnr.:"/>
-                    </properties>
-                  </component>
                   <component id="c156f" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -149,24 +85,12 @@
                       <text value="Lief.-Artikelnr.:"/>
                     </properties>
                   </component>
-                  <component id="11129" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="kbNumber">
-                    <constraints>
-                      <grid row="6" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <gridbag top="30" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value=""/>
-                    </properties>
-                  </component>
                   <component id="3aebf" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="suppliersItemNumber">
                     <constraints>
-                      <grid row="7" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                      <grid row="2" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
                       </grid>
-                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
@@ -175,7 +99,7 @@
                   </component>
                   <component id="21207" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -185,10 +109,10 @@
                   </component>
                   <component id="bede7" class="javax.swing.JTextField" binding="articleName">
                     <constraints>
-                      <grid row="8" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                      <grid row="3" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
                       </grid>
-                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
@@ -197,7 +121,7 @@
                   </component>
                   <component id="525ff" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -207,8 +131,8 @@
                   </component>
                   <component id="bc220" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="price">
                     <constraints>
-                      <grid row="9" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.3" weighty="0.0"/>
+                      <grid row="4" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.3" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
@@ -216,7 +140,7 @@
                   </component>
                   <component id="9f2ac" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="10" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -226,8 +150,8 @@
                   </component>
                   <component id="834e0" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="articleAmount">
                     <constraints>
-                      <grid row="11" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                      <grid row="6" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <enabled value="false"/>
@@ -236,8 +160,8 @@
                   </component>
                   <component id="f8f5d" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="amount">
                     <constraints>
-                      <grid row="10" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                      <grid row="5" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
@@ -245,7 +169,7 @@
                   </component>
                   <component id="881a3" class="javax.swing.JLabel" binding="articleAmountLabel">
                     <constraints>
-                      <grid row="11" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -255,7 +179,7 @@
                   </component>
                   <component id="f325b" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="12" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -265,8 +189,8 @@
                   </component>
                   <component id="72f4" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="deposit">
                     <constraints>
-                      <grid row="12" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                      <grid row="7" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
@@ -274,7 +198,7 @@
                   </component>
                   <component id="68c15" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="13" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="3" left="10" bottom="3" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -284,59 +208,18 @@
                   </component>
                   <component id="d358f" class="javax.swing.JRadioButton" binding="optTaxLow">
                     <constraints>
-                      <grid row="13" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                      <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
+                      <focusCycleRoot value="false"/>
                       <font size="16" style="0"/>
                       <text value="7%"/>
                     </properties>
                   </component>
-                  <component id="d710f" class="javax.swing.JRadioButton" binding="priceStandard">
-                    <constraints>
-                      <grid row="15" column="0" row-span="1" col-span="8" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <selected value="true"/>
-                      <text value="Normalpreis"/>
-                    </properties>
-                  </component>
-                  <component id="bcabd" class="javax.swing.JRadioButton" binding="pricePreordered">
-                    <constraints>
-                      <grid row="16" column="0" row-span="1" col-span="8" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <selected value="false"/>
-                      <text value="Vorbestellung"/>
-                    </properties>
-                  </component>
-                  <component id="ff578" class="javax.swing.JRadioButton" binding="price50Percent">
-                    <constraints>
-                      <grid row="17" column="0" row-span="1" col-span="8" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="50 %"/>
-                    </properties>
-                  </component>
-                  <component id="b6074" class="javax.swing.JRadioButton" binding="priceVariablePercentage">
-                    <constraints>
-                      <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Rabatt:"/>
-                    </properties>
-                  </component>
                   <component id="be8aa" class="javax.swing.JLabel" binding="priceUnit">
                     <constraints>
-                      <grid row="9" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -347,7 +230,7 @@
                   </component>
                   <component id="6c207" class="javax.swing.JLabel" binding="amountUnit">
                     <constraints>
-                      <grid row="10" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="5" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -358,7 +241,7 @@
                   </component>
                   <component id="dcce4" class="javax.swing.JLabel" binding="articleUnit">
                     <constraints>
-                      <grid row="11" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="6" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -369,7 +252,7 @@
                   </component>
                   <component id="68c66" class="javax.swing.JLabel" binding="depositUnit">
                     <constraints>
-                      <grid row="12" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -378,31 +261,9 @@
                       <text value="€"/>
                     </properties>
                   </component>
-                  <component id="91b44" class="javax.swing.JLabel">
-                    <constraints>
-                      <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="30" left="10" bottom="5" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Rabatt"/>
-                    </properties>
-                  </component>
-                  <component id="4f186" class="javax.swing.JCheckBox" binding="rememberReductionSetting">
-                    <constraints>
-                      <grid row="14" column="4" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="30" left="0" bottom="5" right="15" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <enabled value="true"/>
-                      <font size="16" style="0"/>
-                      <selected value="false"/>
-                      <text value="Einstellung merken"/>
-                    </properties>
-                  </component>
                   <component id="f59b1" class="javax.swing.JButton" binding="addDeposit">
                     <constraints>
-                      <grid row="12" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="7" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -418,7 +279,7 @@
                   </component>
                   <component id="42846" class="javax.swing.JButton" binding="addAmount">
                     <constraints>
-                      <grid row="10" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="5" column="7" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -434,7 +295,7 @@
                   </component>
                   <component id="a747f" class="javax.swing.JButton" binding="addPrice">
                     <constraints>
-                      <grid row="9" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="7" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -446,38 +307,9 @@
                       <toolTipText value="Artikel einkaufen"/>
                     </properties>
                   </component>
-                  <component id="69840" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="variablePercentage">
-                    <constraints>
-                      <grid row="18" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                    </properties>
-                  </component>
-                  <component id="6c703" class="javax.swing.JLabel">
-                    <constraints>
-                      <grid row="18" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="%"/>
-                    </properties>
-                  </component>
-                  <component id="66f40" class="javax.swing.JSeparator">
-                    <constraints>
-                      <grid row="14" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="30" left="0" bottom="5" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font/>
-                      <foreground color="-16752083"/>
-                    </properties>
-                  </component>
                   <component id="8eb83" class="javax.swing.JRadioButton" binding="optTaxStandard">
                     <constraints>
-                      <grid row="13" column="4" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="8" column="4" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -487,7 +319,7 @@
                   </component>
                   <component id="9e000" class="javax.swing.JButton" binding="searchArticle">
                     <constraints>
-                      <grid row="8" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="7" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -499,17 +331,233 @@
                       <toolTipText value="Artikel suchen"/>
                     </properties>
                   </component>
-                  <component id="74fbd" class="javax.swing.JLabel">
+                  <grid id="8868c" binding="productTypePanel" layout-manager="GridBagLayout">
                     <constraints>
-                      <grid row="6" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                      <grid row="0" column="0" row-span="1" col-span="9" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+                      <gridbag top="5" left="5" bottom="15" right="0" weightx="0.3" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <autoscrolls value="false"/>
+                      <focusCycleRoot value="false"/>
+                      <focusTraversalPolicyProvider value="true"/>
+                      <focusable value="true"/>
+                      <maximumSize width="2147483647" height="185"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="f3ff7" class="javax.swing.JRadioButton" binding="optProduce">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <focusCycleRoot value="true"/>
+                          <focusTraversalPolicyProvider value="true"/>
+                          <font size="16" style="0"/>
+                          <inheritsPopupMenu value="true"/>
+                          <label value="Obst &amp; Gemüse"/>
+                          <text value="&amp;Obst &amp;&amp; Gemüse"/>
+                        </properties>
+                      </component>
+                      <component id="6ba6e" class="javax.swing.JRadioButton" binding="optBakedGoods">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <focusTraversalPolicyProvider value="true"/>
+                          <font size="16" style="0"/>
+                          <label value="Backwaren"/>
+                          <text value="&amp;Backwaren"/>
+                        </properties>
+                      </component>
+                      <component id="b03ba" class="javax.swing.JRadioButton" binding="optArticleNo">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <focusCycleRoot value="true"/>
+                          <font size="16" style="0"/>
+                          <label value="Artikelnr./Barcode"/>
+                          <selected value="true"/>
+                          <text value="&amp;Artikelnr./Barcode"/>
+                        </properties>
+                      </component>
+                      <component id="13206" class="javax.swing.JRadioButton" binding="optCustomProduct">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <focusTraversalPolicyProvider value="false"/>
+                          <font size="16" style="0"/>
+                          <label value="Freier Artikel"/>
+                          <text value="&amp;Freier Artikel"/>
+                        </properties>
+                      </component>
+                      <component id="5ed2c" class="javax.swing.JRadioButton" binding="optDeposit">
+                        <constraints>
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <focusTraversalPolicyProvider value="false"/>
+                          <font size="16" style="0"/>
+                          <label value="Pfand ausleihen"/>
+                          <text value="&amp;Pfand ausleihen"/>
+                        </properties>
+                      </component>
+                      <component id="cb9dc" class="javax.swing.JRadioButton" binding="optDepositReturn">
+                        <constraints>
+                          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <focusTraversalPolicyProvider value="false"/>
+                          <font size="16" style="0"/>
+                          <label value="Pfand zurück"/>
+                          <text value="Pfand &amp;zurück"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <component id="e6328" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <font size="16" style="0"/>
+                      <text value="KB-Artikelnr.:"/>
+                    </properties>
+                  </component>
+                  <component id="11129" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="kbNumber">
+                    <constraints>
+                      <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <font size="16" style="0"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <vspacer id="bfb00">
+                    <constraints>
+                      <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.1"/>
+                    </constraints>
+                  </vspacer>
+                  <grid id="7f71f" binding="reductionPanel" layout-manager="GridBagLayout">
+                    <constraints>
+                      <grid row="9" column="0" row-span="1" col-span="9" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag top="15" left="5" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <enabled value="true"/>
-                      <font size="16" style="0"/>
-                      <text value=" "/>
+                      <focusCycleRoot value="false"/>
+                      <focusTraversalPolicyProvider value="false"/>
+                      <focusable value="false"/>
                     </properties>
-                  </component>
+                    <border type="none"/>
+                    <children>
+                      <component id="d710f" class="javax.swing.JRadioButton" binding="priceStandard">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <focusCycleRoot value="false"/>
+                          <focusable value="true"/>
+                          <font size="16" style="0"/>
+                          <selected value="true"/>
+                          <text value="&amp;Normalpreis"/>
+                        </properties>
+                      </component>
+                      <component id="bcabd" class="javax.swing.JRadioButton" binding="pricePreordered">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font size="16" style="0"/>
+                          <selected value="false"/>
+                          <text value="&amp;Vorbestellung"/>
+                        </properties>
+                      </component>
+                      <component id="ff578" class="javax.swing.JRadioButton" binding="price50Percent">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font size="16" style="0"/>
+                          <text value="&amp;50 %"/>
+                        </properties>
+                      </component>
+                      <component id="b6074" class="javax.swing.JRadioButton" binding="priceVariablePercentage">
+                        <constraints>
+                          <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font size="16" style="0"/>
+                          <text value="&amp;Rabatt:"/>
+                        </properties>
+                      </component>
+                      <component id="91b44" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font size="16" style="0"/>
+                          <text value="Rabatt"/>
+                        </properties>
+                      </component>
+                      <component id="4f186" class="javax.swing.JCheckBox" binding="rememberReductionSetting">
+                        <constraints>
+                          <grid row="0" column="5" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <enabled value="true"/>
+                          <font size="16" style="0"/>
+                          <horizontalAlignment value="4"/>
+                          <selected value="false"/>
+                          <text value="Einstellung merken"/>
+                        </properties>
+                      </component>
+                      <component id="69840" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="variablePercentage">
+                        <constraints>
+                          <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="0" bottom="0" right="5" weightx="0.1" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font size="16" style="0"/>
+                          <preferredSize width="20" height="32"/>
+                        </properties>
+                      </component>
+                      <component id="6c703" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="0" bottom="0" right="3" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font size="16" style="0"/>
+                          <text value="%"/>
+                        </properties>
+                      </component>
+                      <hspacer id="f6f70">
+                        <constraints>
+                          <grid row="4" column="7" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.1"/>
+                        </constraints>
+                      </hspacer>
+                    </children>
+                  </grid>
                 </children>
               </grid>
             </children>
@@ -519,13 +567,17 @@
               <splitpane position="right"/>
             </constraints>
             <properties>
+              <minimumSize width="500" height="760"/>
               <preferredSize width="500" height="900"/>
             </properties>
             <border type="none"/>
             <children>
               <grid id="7919b" binding="eastUpperPanel" layout-manager="GridBagLayout">
                 <constraints border-constraint="North"/>
-                <properties/>
+                <properties>
+                  <minimumSize width="500" height="74"/>
+                  <preferredSize width="500" height="74"/>
+                </properties>
                 <border type="none"/>
                 <children>
                   <component id="a17f1" class="javax.swing.JLabel">
@@ -616,21 +668,23 @@
                   <component id="62553" class="javax.swing.JSeparator">
                     <constraints>
                       <grid row="0" column="1" row-span="4" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
+                      <gridbag top="0" left="5" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties>
                       <font/>
                       <foreground color="-16752083"/>
+                      <minimumSize width="1" height="2"/>
                     </properties>
                   </component>
                   <component id="b936b" class="javax.swing.JSeparator">
                     <constraints>
                       <grid row="0" column="4" row-span="4" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="0" right="15" weightx="1.0" weighty="1.0"/>
+                      <gridbag top="0" left="5" bottom="0" right="15" weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties>
                       <font/>
                       <foreground color="-16752083"/>
+                      <minimumSize width="1" height="2"/>
                     </properties>
                   </component>
                   <component id="eb4ff" class="javax.swing.JLabel">
@@ -650,6 +704,8 @@
                 <properties>
                   <autoscrolls value="true"/>
                   <enabled value="true"/>
+                  <minimumSize width="373" height="201"/>
+                  <preferredSize width="467" height="201"/>
                 </properties>
                 <border type="none" title="Einkauf" title-position="1">
                   <font style="3"/>
