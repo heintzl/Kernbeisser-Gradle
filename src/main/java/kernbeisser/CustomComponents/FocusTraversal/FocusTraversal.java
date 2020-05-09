@@ -8,6 +8,11 @@ public class FocusTraversal
 {
     Vector<Component> order;
 
+    private boolean getTabability(Component component) {
+        return (component.isEnabled()
+                && component.isVisible());
+    }
+
     public FocusTraversal(Vector<Component> order) {
         this.order = new Vector<Component>(order.size());
         this.order.addAll(order);
@@ -20,7 +25,7 @@ public class FocusTraversal
         do {
             idx = (order.indexOf(component) + 1) % order.size();
             component = order.get(idx);
-        } while(! (component.isEnabled() && component.isVisible()) && idx <= order.size());
+        } while(! getTabability(component) && idx <= order.size());
         return component;
     }
 
@@ -34,7 +39,7 @@ public class FocusTraversal
                 idx = order.size() - 1;
             }
             component = order.get(idx);
-        } while(! (component.isEnabled() && component.isVisible()) && idx >= 0);
+        } while(! getTabability(component) && idx >= 0);
         return component;
     }
 

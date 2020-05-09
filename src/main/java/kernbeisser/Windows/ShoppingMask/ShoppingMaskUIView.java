@@ -99,21 +99,13 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         this.controller = controller;
         articleTypeChange('a');
         traversalOrder.add(kbNumber);
-        traversalOrder.add(suppliersItemNumber);
         traversalOrder.add(articleName);
         traversalOrder.add(price);
         traversalOrder.add(amount);
+        traversalOrder.add(suppliersItemNumber);
         traversalOrder.add(deposit);
-        traversalOrder.add(optTaxLow);
-        traversalOrder.add(optTaxStandard);
-        traversalOrder.add(priceStandard);
-        traversalOrder.add(pricePreordered);
-        traversalOrder.add(price50Percent);
-        traversalOrder.add(priceVariablePercentage);
-        traversalOrder.add(variablePercentage);
         traversalPolicy = new FocusTraversal(traversalOrder);
         westPanel.setFocusTraversalPolicy(traversalPolicy);
-        reductionPanel.setFocusTraversalPolicy(traversalPolicy);
     }
 
     private void doCancel() {
@@ -415,7 +407,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                 controller.searchByKbNumber();
             }
         });
-        kbNumber.addActionListener(e -> {if(isWeighable) {amount.setText(""); amount.requestFocusInWindow();} else {controller.addToShoppingCart();}});
+        kbNumber.addActionListener(e -> {if(isWeighable) {amount.setText("");}; amount.requestFocusInWindow();});
         suppliersItemNumber.addActionListener(e -> controller.addToShoppingCart());
         suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override

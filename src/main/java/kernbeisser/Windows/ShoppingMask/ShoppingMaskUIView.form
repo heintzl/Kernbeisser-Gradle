@@ -126,7 +126,7 @@
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
-                      <text value="Preis:"/>
+                      <text value="Verkaufspreis:"/>
                     </properties>
                   </component>
                   <component id="bc220" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="price">
