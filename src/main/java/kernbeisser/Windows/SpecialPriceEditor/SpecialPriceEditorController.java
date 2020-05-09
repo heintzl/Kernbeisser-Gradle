@@ -23,7 +23,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException {
         Main.buildEnvironment();
-        new SpecialPriceEditorController(null);
+        new SpecialPriceEditorController(null).openTab("IDK");
     }
     private SpecialPriceEditorView view;
     private final SpecialPriceEditorModel model;
@@ -48,6 +48,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
         };
         searchBoxController.initView();
         this.view = new SpecialPriceEditorView(this);
+        searchBoxController.addSelectionListener(this::load);
     }
     void load(Article article) {
         if(article==null){

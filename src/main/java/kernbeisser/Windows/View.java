@@ -13,6 +13,7 @@ public interface View <C extends Controller<? extends View<? extends C>,? extend
     void initialize(C controller);
 
     @NotNull JComponent getContent();
+
     @NotNull default Dimension getSize(){
         return new Dimension(500,500);
     };

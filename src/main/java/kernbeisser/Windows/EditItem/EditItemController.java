@@ -63,13 +63,38 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
     void doAction() {
         Article data = view.collectItem(model.getSource());
         if (model.getMode() == Mode.ADD) {
+            if(model.nameExists(data.getName())){
+                view.nameAlreadyExists();
+                return;
+            }
             if (model.kbNumberExists(data.getKbNumber())) {
-                view.kbNumberAlreadyExists();
+                if(view.kbNumberAlreadyExists()){
+                    view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
+                }
                 return;
             }
             if (data.getBarcode() != null) {
                 if (model.barcodeExists(data.getBarcode())) {
                     view.barcodeAlreadyExists();
+                    return;
+                }
+            }
+        }
+        if(model.getMode()== Mode.EDIT){
+            if((!data.getName().equals(model.getSource().getName()))&&model.nameExists(data.getName())){
+                view.nameAlreadyExists();
+                return;
+            }
+            if (data.getKbNumber()!=(model.getSource().getKbNumber())&&model.kbNumberExists(data.getKbNumber())) {
+                if(view.kbNumberAlreadyExists()){
+                    view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
+                }
+                return;
+            }
+            if ((!data.getBarcode().equals(model.getSource().getBarcode()))&&data.getBarcode() != null) {
+                if (model.barcodeExists(data.getBarcode())) {
+                    view.barcodeAlreadyExists();
+                    return;
                 }
             }
         }

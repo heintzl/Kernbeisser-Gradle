@@ -307,6 +307,10 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 Article article = new Article();
                 //TODO:
                 article.setName(columns[1]);
+                if(article.getName().contains("%")){
+                    System.out.println("Ignored "+article.getName()+" because it contains %");
+                    continue;
+                }
                 if (names.contains(article.getName().toUpperCase().replace(" ",""))) {
                     System.out.println("Ignored "+article.getName()+" because the name is already taken");
                     continue;

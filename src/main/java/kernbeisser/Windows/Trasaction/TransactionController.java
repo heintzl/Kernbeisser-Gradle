@@ -27,6 +27,7 @@ public class TransactionController implements Controller<TransactionView,Transac
                                                             );
         userSearchBoxController.initView();
         view = new TransactionView(this);
+        userSearchBoxController.addSelectionListener(e -> view.setTo(e.getUsername()));
     }
 
     @Override
