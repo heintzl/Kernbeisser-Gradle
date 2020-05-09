@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class ShoppingCartModel implements Model<ShoppingCartController> {
     private final double userValue;
     private final double userSurcharge;
-    private HashMap<ShoppingItem,ShoppingItem> shoppingItems = new HashMap<>();
+    private final HashMap<ShoppingItem,ShoppingItem> shoppingItems = new HashMap<>();
 
 
     ShoppingCartModel(double userValue, double userSurcharge) {

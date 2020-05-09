@@ -23,6 +23,10 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
         } else {
             this.view = new EditUserView(this);
         }
+        if(mode==Mode.EDIT)
+        view.setUniqueVerifier(user);
+        if(mode==Mode.ADD)
+            view.setUniqueVerifier();
     }
 
     private void changePassword(String to) {

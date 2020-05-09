@@ -4,7 +4,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
@@ -50,10 +49,9 @@ public class SelectorController <T> implements Controller<SelectorView<T>,Select
     }
 
     public void add() {
-        new SearchBoxController<T>(model.getSearchable(),e -> {
-            model.getCurrentValues().add(e);
-            SelectorController.this.view.addValue(e);
-            getView().back();
-        },model.getColumns()).openAsWindow(view.getWindow(), SubWindow::new);
+        SearchBoxController<T> controller = new SearchBoxController<T>(model.getSearchable(), model.getColumns());
+        controller.addDoubleClickListener(view::addValue);
+        controller.addSelectionListener(view::addValue);
+        controller.openAsWindow(view.getWindow(), SubWindow::new);
     }
 }

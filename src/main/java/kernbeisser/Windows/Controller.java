@@ -7,6 +7,7 @@ import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -226,5 +227,63 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
             }
         }
         return  b && controller.commitClose();
+    }
+
+    public static Controller<?,?> createFakeController(JComponent content){
+        return new FakeController(content);
+    }
+
+    class FakeController implements Controller<FakeView,FakeModel>{
+
+
+        private final FakeView fakeView;
+        private final FakeModel model;
+
+        FakeController(JComponent component){
+            this.fakeView = new FakeView(component);
+            this.model = new FakeModel();
+        }
+
+        @NotNull
+        @Override
+        public FakeView getView() {
+            return fakeView;
+        }
+
+        @NotNull
+        @Override
+        public FakeModel getModel() {
+            return new FakeModel();
+        }
+
+        @Override
+        public void fillUI() {
+
+        }
+
+        @Override
+        public Key[] getRequiredKeys() {
+            return new Key[0];
+        }
+    }
+
+    class FakeView implements View<FakeController>{
+        private final JComponent content;
+        FakeView(JComponent content){
+            this.content = content;
+        }
+        @Override
+        public void initialize(FakeController controller) {
+
+        }
+
+        @Override
+        public @NotNull JComponent getContent() {
+            return content;
+        }
+    }
+
+    class FakeModel implements Model<FakeController> {
+
     }
 }

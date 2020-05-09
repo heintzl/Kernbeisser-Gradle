@@ -50,7 +50,7 @@ public class UserMenuView implements View<UserMenuController> {
 
     @Override
     public @NotNull Dimension getSize() {
-        return new Dimension(900,600);
+        return new Dimension(1200,900);
     }
 
     @Override

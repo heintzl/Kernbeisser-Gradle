@@ -29,7 +29,7 @@ public class User implements Serializable {
     private int shares;
 
     @Column
-    private int solidaritySurcharge;
+    private double solidaritySurcharge;
 
     @Column
     private String extraJobs;
@@ -39,7 +39,7 @@ public class User implements Serializable {
     private Set<Job> jobs = new HashSet<>();
 
     @Column
-    private boolean kernbeisserKey;
+    private int kernbeisserKey;
 
     @Column
     private boolean employee;
@@ -146,11 +146,11 @@ public class User implements Serializable {
         this.shares = shares;
     }
 
-    public int getSolidaritySurcharge() {
+    public double getSolidaritySurcharge() {
         return solidaritySurcharge;
     }
 
-    public void setSolidaritySurcharge(int solidaritySurcharge) {
+    public void setSolidaritySurcharge(double solidaritySurcharge) {
         this.solidaritySurcharge = solidaritySurcharge;
     }
 
@@ -171,11 +171,11 @@ public class User implements Serializable {
         this.jobs.addAll(jobs);
     }
 
-    public boolean isKernbeisserKey() {
+    public int getKernbeisserKeyNumber() {
         return kernbeisserKey;
     }
 
-    public void setKernbeisserKey(boolean kernbeisserKey) {
+    public void setKernbeisserKey(int kernbeisserKey) {
         this.kernbeisserKey = kernbeisserKey;
     }
 

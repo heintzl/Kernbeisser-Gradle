@@ -26,12 +26,11 @@ public class Main {
      * and as least shows the LogIn Window
      */
     public static void main(String[] args)
-            throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
-                   IllegalAccessException {
+            throws UnsupportedLookAndFeelException {
         buildEnvironment();
         checkVersion();
         if (!Setting.DB_INITIALIZED.getBooleanValue()) {
-            SwingUtilities.invokeLater(() -> new DataImportController().openAsWindow(new SimpleLogInController().openTab("Log In"),JFrameWindow::new));
+            SwingUtilities.invokeLater(() -> new DataImportController().openTab("Daten importieren"));
         } else {
             openLogIn();
         }
