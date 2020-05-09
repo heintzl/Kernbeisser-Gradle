@@ -1,10 +1,7 @@
 package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Purchase;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 import net.sf.jasperreports.engine.JRException;
@@ -58,6 +55,9 @@ public class PayModel implements Model<PayController> {
                 em.persist(saleSession);
                 db = saleSession;
             }
+
+            //Do money exchange
+            Transaction.doPurchaseTransaction(saleSession.getCustomer(),shoppingCartSum());
 
             //Save ShoppingItems in Purchase
             Purchase purchase = new Purchase();

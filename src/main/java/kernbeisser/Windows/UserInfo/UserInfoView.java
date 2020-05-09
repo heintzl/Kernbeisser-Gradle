@@ -19,7 +19,7 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
     private JPanel main;
     private JTabbedPane tabbedPane;
     private ObjectTable<Purchase> shoppingHistory;
-    private ObjectTable<ValueChange> valueHistory;
+    private ObjectTable<Transaction> valueHistory;
     private BuyChart buyChart;
     private JLabel phoneNumber1;
     private JLabel username;
@@ -53,7 +53,7 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
         this.shoppingHistory.setObjects(purchases);
     }
 
-    void setValueHistory(Collection<ValueChange> valueChanges){
+    void setValueHistory(Collection<Transaction> valueChanges){
         this.valueHistory.setObjects(valueChanges);
     }
 
@@ -65,17 +65,17 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
         this.permissions.setObjects(permissions);
     }
 
-    void setValueHistoryColumns(Collection<Column<ValueChange>> columns){
+    void setValueHistoryColumns(Collection<Column<Transaction>> columns){
         valueHistory.setColumns(columns);
     }
 
     public void createUIComponents(){
-        valueHistory = new ObjectTable<ValueChange>();
+        valueHistory = new ObjectTable<Transaction>();
         buyChart = controller.createBuyChart();
         permissions = new ObjectTable<>(Column.create("Name",Permission::getName,Key.PERMISSION_NAME_READ));
         userGroup = new ObjectTable<User>(Column.create("Benutzername",User::getUsername,Key.USER_USERNAME_READ),Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ));
         jobs = new ObjectTable<Job>(Column.create("Name",Job::getName,Key.JOB_NAME_READ),Column.create("Beschreibung",Job::getDescription,Key.JOB_DESCRIPTION_READ));
-        shoppingHistory = new ObjectTable<Purchase>(Column.create("Datum",e -> e.getDate().toString()),Column.create("Verkäufer",e -> e.getSession().getSeller()),Column.create("Käufer",e -> e.getSession().getCustomer()),Column.create("Summe",e -> String.format("%.2f€",e.getSum())));
+        shoppingHistory = new ObjectTable<Purchase>(Column.create("Datum",e -> e.getCreateDate().toString()),Column.create("Verkäufer",e -> e.getSession().getSeller()),Column.create("Käufer",e -> e.getSession().getCustomer()),Column.create("Summe",e -> String.format("%.2f€",e.getSum())));
     }
 
     void pasteUser(User user){
@@ -131,6 +131,7 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
         }
         tabbedPane.addChangeListener(e -> controller.loadCurrentSite());
         shoppingHistory.addSelectionListener(e -> controller.openPurchase());
+
     }
 
     @Override

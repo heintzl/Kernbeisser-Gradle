@@ -14,8 +14,8 @@ import java.util.Collection;
 
 public class PayController implements Controller<PayView,PayModel> {
 
-    private PayModel model;
-    private PayView view;
+    private final PayModel model;
+    private final PayView view;
 
     public PayController(Window current, SaleSession saleSession, Collection<ShoppingItem> shoppingCart,
                          Runnable transferCompleted) {

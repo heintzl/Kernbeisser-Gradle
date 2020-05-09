@@ -4,6 +4,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.TransactionType;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
@@ -78,7 +79,8 @@ public class TransactionController implements Controller<TransactionView,Transac
             return;
         }
         if (view.isFromKB()) {
-            transaction.setFrom(null);
+            transaction.setTransactionType(TransactionType.KB_TO_USER);
+            transaction.setFrom(User.getKernbeisserUser());
         } else {
             try {
                 transaction.setFrom(model.findUser(view.getFrom()));

@@ -335,16 +335,11 @@ public class User implements Serializable {
         return true;
     }
 
-    public Collection<ValueChange> getAllValueChanges() {
-        ArrayList<ValueChange> out = new ArrayList<>();
+    public Collection<Transaction> getAllValueChanges() {
         EntityManager em = DBConnection.getEntityManager();
-        out.addAll(em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid",
-                                  Transaction.class).setParameter("uid", id).getResultList());
-        out.addAll(em.createQuery("select p from Purchase p where p.session.customer.id = :uid", Purchase.class)
-                     .setParameter("uid", id)
-                     .getResultList());
+        Collection<Transaction> out = em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid order by date",
+                                  Transaction.class).setParameter("uid", id).getResultList();
         em.close();
-        out.sort(Comparator.comparing(ValueChange::getDate));
         return out;
     }
 
@@ -364,5 +359,31 @@ public class User implements Serializable {
                                                   Purchase.class).setParameter("uid", id).getResultList();
         em.close();
         return out;
+    }
+
+    public static User getKernbeisserUser(){
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            return em.createQuery("select u from User u where u.username like 'kernbeisser'",User.class)
+                                 .setMaxResults(1)
+                                 .getSingleResult();
+        }catch (NoResultException e){
+            EntityTransaction et = em.getTransaction();
+            et.begin();
+            User kernbeisser = new User();
+            kernbeisser.setPassword("CANNOT LOG IN");
+            kernbeisser.setFirstName("Konto");
+            kernbeisser.setSurname("Kernbeisser");
+            kernbeisser.setUsername("kernbeisser");
+            UserGroup kernbeisserValue = new UserGroup();
+            em.persist(kernbeisserValue);
+            kernbeisser.setUserGroup(kernbeisserValue);
+            em.persist(kernbeisser);
+            em.flush();
+            et.commit();
+            return getKernbeisserUser();
+        }finally {
+            em.close();
+        }
     }
 }

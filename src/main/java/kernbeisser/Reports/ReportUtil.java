@@ -31,7 +31,7 @@ public class ReportUtil {
         String outFileName = String.format("%d_%s_%s_%s.pdf", purchase.getId(),
                                            purchase.getSession().getCustomer().getFirstName(),
                                            purchase.getSession().getCustomer().getSurname(),
-                                           purchase.getDate().toString()).replaceAll("[\\\\/:*?\"<>|]", "_");
+                                           purchase.getCreateDate().toString()).replaceAll("[\\\\/:*?\"<>|]", "_");
         JasperDesign jspDesign = JRXmlLoader.load(
                 getReportsFolder().resolve(getPath(CONFIG_CATEGORY, "invoiceFileName")).toAbsolutePath().toFile());
         JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
@@ -49,7 +49,7 @@ public class ReportUtil {
         reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
         reportParams.put("Seller", purchase.getSession().getSeller().getFullName());
         reportParams.put("Credit", purchase.getSession().getCustomer().getUserGroup().getValue());
-        reportParams.put("PurchaseDate", purchase.getDate());
+        reportParams.put("PurchaseDate", purchase.getCreateDate());
         return reportParams;
     }
 }

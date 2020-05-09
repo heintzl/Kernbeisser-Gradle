@@ -11,7 +11,11 @@ import java.util.Collection;
 import java.util.function.Function;
 
 public class ObjectTable<T> extends JTable {
-    private ArrayList<ObjectSelectionListener<T>> selectionListeners = new ArrayList<>();
+    private final ArrayList<ObjectSelectionListener<T>> selectionListeners = new ArrayList<>();
+    private final ArrayList<ObjectSelectionListener<T>> doubleClickListeners = new ArrayList<>();
+
+    private T lastSelected = null;
+
     private ArrayList<T> objects = new ArrayList<>();
     private ArrayList<Column<T>> columns = new ArrayList<>();
     private boolean complex = false;
@@ -45,12 +49,24 @@ public class ObjectTable<T> extends JTable {
                 }
                 T selected = objects.get(getSelectedRow());
                 ObjectTable.this.columns.get(getSelectedColumn()).onAction(selected);
-                for (ObjectSelectionListener<T> listener : selectionListeners) {
-                    listener.selected(selected);
-                }
+                invokeSelectionListeners(selected);
+                if(lastSelected!=null && lastSelected.equals(selected))
+                    invokeDoubleClickSelectionListeners(selected);
+                lastSelected = selected;
             }
         });
         repaintUI();
+    }
+
+    private void invokeSelectionListeners(T t){
+        for (ObjectSelectionListener<T> listener : selectionListeners) {
+            listener.selected(t);
+        }
+    }
+    private void invokeDoubleClickSelectionListeners(T t){
+        for (ObjectSelectionListener<T> listener : doubleClickListeners) {
+            listener.selected(t);
+        }
     }
 
     public void setComplex(boolean v) {

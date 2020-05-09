@@ -15,8 +15,10 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -99,14 +101,13 @@ public class DataImportController implements Controller<DataImportView,DataImpor
 
     void importData() {
         if (isValidDataSource()) {
-            String jsonPath = view.getFilePath();
-            String relativePath = jsonPath.substring(0, jsonPath.lastIndexOf("\\")) + "/";
+            File jsonPath = new File(view.getFilePath()).getParentFile();
             JSONObject path = extractJSON();
             if (view.importItems()) {
                 JSONObject itemPath = path.getJSONObject("ItemData");
-                File suppliers = new File(relativePath + itemPath.getString("Suppliers"));
-                File priceLists = new File(relativePath + itemPath.getString("PriceLists"));
-                File items = new File(relativePath + itemPath.getString("Items"));
+                File suppliers = new File(jsonPath,itemPath.getString("Suppliers"));
+                File priceLists = new File(jsonPath,itemPath.getString("PriceLists"));
+                File items = new File(jsonPath,itemPath.getString("Items"));
                 if (suppliers.exists() && priceLists.exists() && items.exists()) {
                     new Thread(() -> {
                         view.setItemProgress(0);
@@ -121,8 +122,8 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             }
             if (view.importUser()) {
                 JSONObject userPath = path.getJSONObject("UserData");
-                File users = new File(relativePath + userPath.getString("Users"));
-                File jobs = new File(relativePath + userPath.getString("Jobs"));
+                File users = new File(jsonPath,userPath.getString("Users"));
+                File jobs = new File(jsonPath,userPath.getString("Jobs"));
                 if (jobs.exists() && users.exists()) {
                     new Thread(() -> {
                         view.setUserProgress(0);

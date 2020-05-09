@@ -12,7 +12,7 @@ import java.util.List;
 
 @Table
 @Entity
-public class Purchase implements ValueChange {
+public class Purchase {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int sid;
@@ -75,28 +75,4 @@ public class Purchase implements ValueChange {
         this.userSurcharge = userSurcharge;
     }
 
-    @Override
-    public User getFrom() {
-        return session.getCustomer();
-    }
-
-    @Override
-    public User getTo() {
-        return null;
-    }
-
-    @Override
-    public double getValue() {
-        return getSum();
-    }
-
-    @Override
-    public Instant getDate() {
-        return createDate;
-    }
-
-    @Override
-    public String getInfo() {
-        return "";
-    }
 }
