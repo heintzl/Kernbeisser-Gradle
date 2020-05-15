@@ -3,7 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
+import kernbeisser.CustomComponents.FocusTraversalPolicy.FocusTraversalPolicy;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
@@ -91,8 +91,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     private char currentArticleType;
     private boolean isWeighable;
-    static Vector<Component> traversalOrder = new Vector<Component>(1);
-    static FocusTraversal traversalPolicy;
+    static Vector<Component> traversalOrder = new Vector<>(15);
+    static kernbeisser.CustomComponents.FocusTraversalPolicy.FocusTraversalPolicy traversalPolicy;
 
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
@@ -111,7 +111,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         traversalOrder.add(price50Percent);
         traversalOrder.add(priceVariablePercentage);
         traversalOrder.add(variablePercentage);
-        traversalPolicy = new FocusTraversal(traversalOrder);
+        traversalPolicy = new FocusTraversalPolicy(traversalOrder);
         westPanel.setFocusTraversalPolicy(traversalPolicy);
         reductionPanel.setFocusTraversalPolicy(traversalPolicy);
     }

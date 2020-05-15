@@ -132,9 +132,22 @@ public class PriceList implements Serializable {
 
     public Collection<PriceList> getAllPriceLists() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = " + getId(),
+        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = " + getId()+" order by p.name asc",
                                                    PriceList.class).getResultList();
         em.close();
         return out;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PriceList priceList = (PriceList) o;
+        return pid == priceList.pid;
     }
 }

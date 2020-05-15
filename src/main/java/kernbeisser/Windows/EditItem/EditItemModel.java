@@ -13,6 +13,7 @@ import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import java.util.Collection;
 
 public class EditItemModel implements Model<EditItemController> {
@@ -76,7 +77,7 @@ public class EditItemModel implements Model<EditItemController> {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.persist(Tools.mergeWithoutId(article));
+        em.persist(Tools.createNewPersistenceInstance(article,Article::new));
         em.flush();
         et.commit();
         em.close();
@@ -104,5 +105,30 @@ public class EditItemModel implements Model<EditItemController> {
 
     public Mode getMode() {
         return mode;
+    }
+
+    public int nextUnusedArticleNumber(int kbNumber) {
+        EntityManager em = DBConnection.getEntityManager();
+        int out = em.createQuery("select i.kbNumber from Article i where i.kbNumber > :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",Integer.class)
+                    .setMaxResults(1)
+                    .setParameter("last",kbNumber)
+                    .getSingleResult()+1;
+        em.close();
+        return out;
+    }
+
+    public boolean nameExists(String name) {
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            em.createQuery("select i from Article i where i.name like :name")
+              .setMaxResults(1)
+              .setParameter("name", name)
+              .getSingleResult();
+            em.close();
+            return false;
+        }catch (NoResultException e){
+            em.close();
+            return true;
+        }
     }
 }

@@ -2,6 +2,7 @@ package kernbeisser.Windows.EditItem;
 
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
+import kernbeisser.CustomComponents.Verifier.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
@@ -107,13 +108,13 @@ public class EditItemView implements View<EditItemController> {
 
     Article collectItem(Article out) {
         out.setName(itemName.getText());
-        out.setNetPrice((int) (netPrice.getSafeValue() * 100));
-        out.setSingleDeposit((int) (deposit.getSafeValue() * 100));
+        out.setNetPrice(netPrice.getSafeValue());
+        out.setSingleDeposit(deposit.getSafeValue());
         out.setKbNumber(kbItemNumber.getSafeValue());
         out.setVAT((VAT) vat.getSelectedItem());
         out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
         out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
-        out.setCrateDeposit((int) (crateDeposit.getSafeValue() * 100));
+        out.setCrateDeposit(crateDeposit.getSafeValue());
         out.setContainerSize(containerSize.getSafeValue());
         out.setAmount(amount.getSafeValue());
         try {
@@ -130,8 +131,8 @@ public class EditItemView implements View<EditItemController> {
         return out;
     }
 
-    void kbNumberAlreadyExists() {
-        JOptionPane.showMessageDialog(getTopComponent(), "Die Kernbeisser-Nummer ist bereits vergeben");
+    boolean kbNumberAlreadyExists() {
+        return 0 == JOptionPane.showConfirmDialog(getTopComponent(), "Die Artikelnummer ist bereits vergeben soll die nächste freie Ausgewählt werden?");
     }
 
     void barcodeAlreadyExists() {
@@ -143,25 +144,41 @@ public class EditItemView implements View<EditItemController> {
         cancel.addActionListener((e) -> back());
         commit.addActionListener((e) -> controller.doAction());
         itemName.setRequiredKeys(Key.ARTICLE_NAME_READ, Key.ARTICLE_NAME_WRITE);
+        itemName.setInputVerifier(new NotNullVerifier());
         amount.setRequiredKeys(Key.ARTICLE_AMOUNT_READ, Key.ARTICLE_AMOUNT_WRITE);
+        amount.setInputVerifier(IntegerVerifier.from(0,Integer.MAX_VALUE));
         netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ, Key.ARTICLE_NET_PRICE_WRITE);
+        netPrice.setInputVerifier(DoubleVerifier.from(0.,999999));
         supplier.setRequiredReadKeys(Key.ARTICLE_SUPPLIER_READ,Key.SUPPLIER_NAME_READ);
         supplier.setRequiredWriteKeys(Key.ARTICLE_SUPPLIER_WRITE);
-        netPrice.setRequiredKeys(Key.ARTICLE_NET_PRICE_READ,Key.ARTICLE_NET_PRICE_WRITE);
         deposit.setRequiredKeys(Key.ARTICLE_SINGLE_DEPOSIT_READ, Key.ARTICLE_SINGLE_DEPOSIT_WRITE);
+        deposit.setInputVerifier(DoubleVerifier.from(0,0.1,5,300));
         kbItemNumber.setRequiredKeys(Key.ARTICLE_KB_NUMBER_READ, Key.ARTICLE_KB_NUMBER_READ);
+        kbItemNumber.setInputVerifier(new KBNumberVerifier());
         supplierItemNumber.setRequiredKeys(Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE);
+        supplierItemNumber.setInputVerifier(IntegerVerifier.from(0,999999));
         crateDeposit.setRequiredKeys(Key.ARTICLE_CRATE_DEPOSIT_READ, Key.ARTICLE_CRATE_DEPOSIT_WRITE);
+        crateDeposit.setInputVerifier(DoubleVerifier.from(0.,0.99,5,20));
         priceList.setRequiredReadKeys(Key.ARTICLE_PRICE_LIST_READ,Key.PRICELIST_NAME_READ);
         priceList.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
         search.setRequiredWriteKeys(Key.ARTICLE_PRICE_LIST_WRITE);
         vat.setRequiredKeys(Key.ARTICLE_VAT_READ,Key.ARTICLE_VAT_WRITE);
         metricUnits.setRequiredKeys(Key.ARTICLE_METRIC_UNITS_READ, Key.ARTICLE_METRIC_UNITS_WRITE);
         barcode.setRequiredKeys(Key.ARTICLE_BARCODE_READ,Key.ARTICLE_BARCODE_WRITE);
+        barcode.setInputVerifier(new LongVerifier());
         containerDefinition.setRequiredKeys(Key.ARTICLE_CONTAINER_DEF_READ,Key.ARTICLE_CONTAINER_DEF_WRITE);
         containerSize.setRequiredKeys(Key.ARTICLE_CONTAINER_SIZE_READ,Key.ARTICLE_CONTAINER_SIZE_WRITE);
+        containerSize.setInputVerifier(DoubleVerifier.from(0,0.1,40,1000));
         showInShoppingMask.setRequiredReadKeys(Key.ARTICLE_SHOW_IN_SHOP_READ,Key.ARTICLE_SHOW_IN_SHOP_WRITE);
         weighable.setRequiredReadKeys(Key.ARTICLE_WEIGHABLE_READ,Key.ARTICLE_WEIGHABLE_WRITE);
+    }
+
+    void setActionTitle(String s){
+        commit.setText(s);
+    }
+
+    void setActionIcon(Icon i){
+        commit.setIcon(i);
     }
 
     @Override
@@ -169,4 +186,11 @@ public class EditItemView implements View<EditItemController> {
         return main;
     }
 
+    public void setKbNumber(int nextUnusedArticleNumber) {
+        kbItemNumber.setText(nextUnusedArticleNumber+"");
+    }
+
+    public void nameAlreadyExists() {
+        JOptionPane.showMessageDialog(getTopComponent(), "Der gewählte Name ist bereits vergeben!\nBitte wählen sie einen anderen");
+    }
 }

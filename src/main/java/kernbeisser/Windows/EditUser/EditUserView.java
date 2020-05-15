@@ -1,6 +1,11 @@
 package kernbeisser.Windows.EditUser;
 
 import kernbeisser.CustomComponents.PermissionButton;
+import kernbeisser.CustomComponents.TextFields.PermissionField;
+import kernbeisser.CustomComponents.Verifier.EmailVerifier;
+import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
+import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
+import kernbeisser.CustomComponents.Verifier.UsernameVerifier;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.View;
@@ -49,6 +54,8 @@ public class EditUserView implements View<EditUserController> {
     private JButton submit;
     private JPanel buttonPanel;
     private PermissionButton editPermission;
+    private kernbeisser.CustomComponents.TextFields.IntegerParseField keyNumber;
+    private PermissionField email;
 
     private final EditUserController controller;
 
@@ -65,7 +72,9 @@ public class EditUserView implements View<EditUserController> {
         phone1.setText(data.getPhoneNumber1());
         phone2.setText(data.getPhoneNumber2());
         username.setText(data.getUsername());
-        hasKey.setSelected(data.isKernbeisserKey());
+        hasKey.setSelected(data.getKernbeisserKeyNumber()>0);
+        keyNumber.setEnabled(hasKey.isSelected());
+        keyNumber.setText(data.getKernbeisserKeyNumber()+"");
         isEmployee.setSelected(data.isEmployee());
         extraJobs.setText(data.getExtraJobs());
     }
@@ -78,7 +87,7 @@ public class EditUserView implements View<EditUserController> {
         data.setPhoneNumber1(phone1.getText());
         data.setPhoneNumber2(phone2.getText());
         data.setUsername(username.getText());
-        data.setKernbeisserKey(hasKey.isSelected());
+        data.setKernbeisserKey(hasKey.isSelected() ? keyNumber.getSafeValue() : -1);
         data.setEmployee(isEmployee.isSelected());
         data.setExtraJobs(extraJobs.getText());
         return data;
@@ -101,6 +110,18 @@ public class EditUserView implements View<EditUserController> {
     }
 
 
+    void setUniqueVerifier(User selected){
+        if(selected==null){
+            setUniqueVerifier();
+            return;
+        }
+        username.setInputVerifier(UsernameVerifier.checkUsernameUnused(selected.getUsername()));
+    }
+
+    void setUniqueVerifier(){
+        username.setInputVerifier(UsernameVerifier.checkUsernameUnused());
+    }
+
     @Override
     public void initialize(EditUserController controller) {
         chgPassword.addActionListener(e -> {
@@ -111,16 +132,23 @@ public class EditUserView implements View<EditUserController> {
         submit.addActionListener(e -> {
             controller.doAction();
         });
+        hasKey.addActionListener(e -> keyNumber.setEnabled(!keyNumber.isEnabled()));
         editPermission.addActionListener(e -> controller.openPermissionSelector());
         cancel.addActionListener(e -> back());
         postalCode.setRequiredKeys(Key.USER_TOWN_CODE_READ, Key.USER_TOWN_CODE_WRITE);
         town.setRequiredKeys(Key.USER_TOWN_READ, Key.USER_TOWN_WRITE);
+        email.setReadWrite(Key.USER_EMAIL_READ);
+        email.setInputVerifier(new EmailVerifier());
         phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ, Key.USER_PHONE_NUMBER1_WRITE);
+        phone1.setInputVerifier(new NotNullVerifier());
         phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ, Key.USER_PHONE_NUMBER2_WRITE);
         username.setRequiredKeys(Key.USER_USERNAME_READ, Key.USER_USERNAME_WRITE);
         street.setRequiredKeys(Key.USER_STREET_READ, Key.USER_STREET_WRITE);
+        street.setInputVerifier(new NotNullVerifier());
         firstName.setRequiredKeys(Key.USER_FIRST_NAME_READ,Key.USER_FIRST_NAME_WRITE);
+        firstName.setInputVerifier(new NotNullVerifier());
         lastName.setRequiredKeys(Key.USER_SURNAME_READ,Key.USER_SURNAME_WRITE);
+        lastName.setInputVerifier(new NotNullVerifier());
         chgPassword.setRequiredWriteKeys(Key.USER_PASSWORD_WRITE);
         editPermission.setRequiredWriteKeys(Key.USER_PERMISSION_WRITE);
         hasKey.setReadWrite(Key.USER_KERNBEISSER_KEY_READ);
@@ -128,7 +156,10 @@ public class EditUserView implements View<EditUserController> {
         extraJobs.setReadWrite(Key.USER_EXTRA_JOBS_READ);
         solidarySupplement.setReadWrite(Key.USER_SOLIDARITY_SURCHARGE_READ);
         chgJobs.setRequiredWriteKeys(Key.USER_JOBS_WRITE,Key.USER_JOBS_READ);
+        hasKey.setRequiredWriteKeys(Key.USER_KERNBEISSER_KEY_WRITE);
+        keyNumber.setRequiredKeys(Key.USER_KERNBEISSER_KEY_READ,Key.USER_KERNBEISSER_KEY_WRITE);
         shares.setReadWrite(Key.USER_SHARES_READ);
+        shares.setInputVerifier(IntegerVerifier.from(1,1,3,10));
     }
 
     @Override

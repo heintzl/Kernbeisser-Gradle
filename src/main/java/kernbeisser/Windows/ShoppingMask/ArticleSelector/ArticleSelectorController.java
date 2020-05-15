@@ -25,7 +25,7 @@ public class ArticleSelectorController implements Controller<ArticleSelectorView
                 articles.removeIf(e -> e.getBarcode() != null);
             }
             return articles;
-        }, consumer,
+        },
                                                         Column.create("Name", Article::getName, Key.ARTICLE_NAME_READ),
                                                         Column.create("Barcode", Article::getBarcode,
                                                                       Key.ARTICLE_BARCODE_READ),

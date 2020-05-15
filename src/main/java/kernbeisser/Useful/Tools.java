@@ -14,10 +14,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -229,6 +227,46 @@ public class Tools {
         }
     }
 
+    public static <T> T createNewPersistenceInstance(T t,Supplier<T> newInstancePattern){
+        T newInstance = newInstancePattern.get();
+        for (Field field : newInstance.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            if (Collection.class.isAssignableFrom(field.getType())) {
+                try {
+                    ((Collection<?>)field.get(newInstance)).addAll((Collection) field.get(t));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }else {
+                try {
+                    field.set(newInstance,field.get(t));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        setId(newInstance,0);
+        return newInstance;
+    }
+
+
+    public static <T> T setId(T t,long id){
+        for (Field field : t.getClass().getDeclaredFields()) {
+            if(field.getAnnotation(Id.class)!=null){
+                field.setAccessible(true);
+                try {
+                    if (field.getType().equals(Integer.TYPE) || field.getType().equals(int.class))
+                        field.set(t, (int) id);
+                    else
+                        field.set(t, id);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return t;
+    }
+
     public static <T> T mergeWithoutId(T in, T toOverride) {
         for (Field field : toOverride.getClass().getDeclaredFields()) {
             if (field.getAnnotation(Id.class) == null) {
@@ -273,7 +311,7 @@ public class Tools {
         try {
             return Integer.parseInt(s);
         } catch (NumberFormatException e) {
-            return 0;
+            return Integer.MIN_VALUE;
         }
     }
 

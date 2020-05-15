@@ -4,12 +4,14 @@ import kernbeisser.CustomComponents.Charts.BuyChart;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class UserInfoView extends JPanel implements View<UserInfoController> {
@@ -34,6 +36,8 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
     private ObjectTable<Permission> permissions;
     private ObjectTable<Job> jobs;
     private ObjectTable<User> userGroup;
+    private JLabel key;
+    private JLabel city;
 
     private UserInfoController controller;
 
@@ -87,6 +91,8 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
         solidarySurcharge.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_SOLIDARITY_SURCHARGE_READ) ? user.getSolidaritySurcharge()+"" : "Kein zugriff");
         createDate.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_CREATE_DATE_READ) ? user.getCreateDate().toString() : "Kein zugriff");
         updateDate.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_UPDATE_DATE_READ) ? user.getUpdateDate().toString() : "Kein zugriff");
+        key.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_KERNBEISSER_KEY_READ) ? user.getKernbeisserKeyNumber() == -1 ? "Kein Schlüssel" : user.getKernbeisserKeyNumber()+"" : "Kein zugriff");
+        city.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_TOWN_READ) ? user.getTown() : "Kein Zugriff");
     }
 
     void pasteWithoutPermissionCheck(User user){
@@ -102,6 +108,8 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
         solidarySurcharge.setText(user.getSolidaritySurcharge()+"");
         createDate.setText(user.getCreateDate().toString());
         updateDate.setText(user.getUpdateDate().toString());
+        key.setText(user.getKernbeisserKeyNumber() == -1 ? "Kein Schlüssel" : user.getKernbeisserKeyNumber()+"");
+        city.setText(user.getTown());
     }
 
     int getSelectedTabIndex(){
@@ -116,6 +124,11 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
     @Override
     public void initialize(UserInfoController controller) {
         add(main);
+        for (Component component : firstName.getParent().getComponents()){
+            if(component instanceof JLabel){
+                component.setForeground(Colors.LABEL_FOREGROUND.getColor());
+            }
+        }
         tabbedPane.addChangeListener(e -> controller.loadCurrentSite());
         shoppingHistory.addSelectionListener(e -> controller.openPurchase());
     }

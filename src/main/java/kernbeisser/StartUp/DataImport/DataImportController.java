@@ -6,6 +6,8 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -148,6 +150,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 model.saveWithPermission(user, admin);
             }
             Setting.DB_INITIALIZED.setValue(true);
+            view.back();
         }
     }
 
@@ -184,13 +187,13 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 UserGroup userGroup = new UserGroup();
                 userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", "."))));
                 user.setShares(Integer.parseInt(columns[3]));
-                user.setSolidaritySurcharge(Integer.parseInt(columns[4]));
+                user.setSolidaritySurcharge(Integer.parseInt(columns[4])/100.);
                 secondary.setFirstName(columns[5]);
                 secondary.setSurname(columns[6]);
                 user.setExtraJobs(columns[7]);
                 user.setJobs(Tools.extract(HashSet::new, columns[8], "§", jobs::get));
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-                user.setKernbeisserKey(Boolean.parseBoolean(columns[10]));
+                user.setKernbeisserKey(Boolean.parseBoolean(columns[10]) ? 0 : -1);
                 user.setEmployee(Boolean.parseBoolean(columns[11]));
                 //IdentityCode: Unused, column 12
                 //Username: Unknown, column 13
@@ -293,6 +296,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
         try {
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
             HashSet<Long> barcode = new HashSet<>(lines.size());
+            HashSet<String> names = new HashSet<>();
             HashMap<String,PriceList> priceListHashMap = new HashMap<>();
             HashMap<String,Supplier> suppliers = new HashMap<>();
             Collection<Article> articles = new ArrayList<>(lines.size());
@@ -301,7 +305,18 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             for (String l : lines) {
                 String[] columns = l.split(";");
                 Article article = new Article();
+                //TODO:
                 article.setName(columns[1]);
+                if(article.getName().contains("%")){
+                    System.out.println("Ignored "+article.getName()+" because it contains %");
+                    continue;
+                }
+                if (names.contains(article.getName().toUpperCase().replace(" ",""))) {
+                    System.out.println("Ignored "+article.getName()+" because the name is already taken");
+                    continue;
+                }else {
+                    names.add(article.getName().toUpperCase().replace(" ",""));
+                }
                 article.setKbNumber(Integer.parseInt(columns[2]));
                 article.setAmount(Integer.parseInt(columns[3]));
                 article.setNetPrice(Integer.parseInt(columns[4]) / 100.);
@@ -391,7 +406,8 @@ public class DataImportController implements Controller<DataImportView,DataImpor
 
     @Override
     public boolean commitClose() {
-        return false;
+        new SimpleLogInController().openTab("Log In");
+        return true;
     }
 
     @Override

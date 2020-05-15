@@ -9,6 +9,7 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.TabbedPanel.DefaultTab;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
+import kernbeisser.Windows.View;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.UserMenu.UserMenuController;
 import org.jetbrains.annotations.NotNull;

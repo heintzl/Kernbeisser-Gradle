@@ -39,6 +39,7 @@ public class UserInfoController implements Controller<UserInfoView,UserInfoModel
         if(model.getUser().getId() == LogInModel.getLoggedIn().getId())
             view.pasteWithoutPermissionCheck(model.getUser());
         else view.pasteUser(model.getUser());
+        loadCurrentSite();
     }
 
     @Override
