@@ -3,6 +3,7 @@ package kernbeisser.CustomComponents.DatePicker;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
+import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.table.DefaultTableModel;
@@ -89,11 +90,8 @@ public class DatePickerController implements Controller<DatePickerView,DatePicke
             new DatePickerController() {
                 @Override
                 public void finish() {
-                    current.setEnabled(true);
-                    current.requestFocus();
                     select.accept(getModel().getSelectedDate());
                 }
-            };
-            current.setEnabled(false);
+            }.openAsWindow(current, SubWindow::new);
     }
 }

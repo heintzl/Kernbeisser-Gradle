@@ -14,8 +14,8 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>,Searc
     private final SearchBoxView<T> view;
     private final SearchBoxModel<T> model;
 
-    public SearchBoxController(Searchable<T> searchFunction, Consumer<T> select, Column<T>... columns){
-        this.model = new SearchBoxModel<>(searchFunction,select);
+    public SearchBoxController(Searchable<T> searchFunction, Column<T>... columns){
+        this.model = new SearchBoxModel<>(searchFunction);
         this.view = new SearchBoxView<>(this);
         view.setColumns(Arrays.asList(columns));
         search();
@@ -27,10 +27,34 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>,Searc
 
     public void search(){
         view.setObjects(model.getValues(view.getSearch()));
+        runLostSelectionListener();
     }
 
     void select() {
-        model.select(view.getSelectedObject());
+        if(view.getSelectedObject()==null)return;
+        if (model.getLastSelectedObject() != null && view.getSelectedObject().equals(model.getLastSelectedObject())) {
+            runDoubleClickListener(view.getSelectedObject());
+        }
+        runSelectionListener(view.getSelectedObject());
+        model.setLastSelectedObject(view.getSelectedObject());
+    }
+
+    private void runDoubleClickListener(T t){
+        for (Consumer<T> consumer : model.getDoubleClickListener()) {
+            consumer.accept(t);
+        }
+    }
+
+    private void runSelectionListener(T t){
+        for (Consumer<T> consumer : model.getSelectionListener()) {
+            consumer.accept(t);
+        }
+    }
+
+    private void runLostSelectionListener(){
+        for (Runnable runnable : model.getLostSelectionListener()) {
+            runnable.run();
+        }
     }
 
     @Override
@@ -48,6 +72,18 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>,Searc
 
     }
 
+    public void addDoubleClickListener(Consumer<T> action){
+        model.getDoubleClickListener().add(action);
+    }
+
+    public void addSelectionListener(Consumer<T> action){
+        model.getSelectionListener().add(action);
+    }
+
+    public void addLostSelectionListener(Runnable r){
+        model.getLostSelectionListener().add(r);
+    }
+
     @Override
     public Key[] getRequiredKeys() {
         return new Key[0];
@@ -55,5 +91,9 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>,Searc
 
     public void refreshLoadSolutions() {
         search();
+    }
+
+    public void setSearch(String s) {
+        view.setSearch(s);
     }
 }

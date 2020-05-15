@@ -23,7 +23,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
             throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
                    IllegalAccessException {
         Main.buildEnvironment();
-        new SpecialPriceEditorController(null);
+        new SpecialPriceEditorController(null).openTab("IDK");
     }
     private SpecialPriceEditorView view;
     private final SpecialPriceEditorModel model;
@@ -32,7 +32,6 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
     SpecialPriceEditorController(Window current){
         this.model = new SpecialPriceEditorModel();
         this.searchBoxController = new SearchBoxController<Article>((s,m) -> model.searchArticle(s, m, view != null && view.filterOnlyActionArticle()),
-                                                                    this::load,
                                                                     Column.create("Name", Article::getName),
                                                                     Column.create("Barcode", Article::getBarcode),
                                                                     Column.create("Lieferant",
@@ -49,6 +48,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
         };
         searchBoxController.initView();
         this.view = new SpecialPriceEditorView(this);
+        searchBoxController.addSelectionListener(this::load);
     }
     void load(Article article) {
         if(article==null){

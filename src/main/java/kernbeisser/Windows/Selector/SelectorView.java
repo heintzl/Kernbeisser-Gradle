@@ -44,7 +44,6 @@ public class SelectorView <T> implements View<SelectorController<T>> {
     public void addValue(T e) {
         if(!selected.contains(e))
         selected.add(e);
-
     }
 
     public void removeValue(T e) {

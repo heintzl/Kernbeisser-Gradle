@@ -25,7 +25,7 @@ public class Article {
     @Column(updatable = false, insertable = false, nullable = false)
     private int iid;
 
-    @Column
+    @Column(unique = true)
     private String name;
 
     @Column(unique = true)
@@ -128,11 +128,13 @@ public class Article {
     public static Collection<Article> defaultSearch(String search, int maxResults) {
         EntityManager em = DBConnection.getEntityManager();
         Collection<Article> out = em.createQuery(
-                "select i from Article i where kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n",
+                "select i from Article i where kbNumber = :n or suppliersItemNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or UPPER(i.name) like :ds or mod(barcode, 10000) = :n or UPPER( i.priceList.name) like :u order by i.name asc",
                 Article.class
         )
                                     .setParameter("n", Tools.tryParseInteger(search))
                                     .setParameter("s", search + "%")
+                                    .setParameter("ds",(search.length()>3 ? "%"+search+"%" : search+"%").toUpperCase())
+                                    .setParameter("u",search.toUpperCase()+"%")
                                     .setMaxResults(maxResults)
                                     .getResultList();
         em.close();
