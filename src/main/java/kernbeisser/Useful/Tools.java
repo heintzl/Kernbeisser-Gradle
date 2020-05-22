@@ -213,11 +213,6 @@ public class Tools {
         return out;
     }
 
-    public static <T extends Collection> T filterNull(T in) {
-        in.removeIf(Objects::isNull);
-        return in;
-    }
-
     public static <T> T mergeWithoutId(T in) {
         try {
             return mergeWithoutId(in, (T) in.getClass().getDeclaredConstructor().newInstance());
@@ -378,7 +373,35 @@ public class Tools {
         em.close();
     }
 
+    public static void showUnexpectedErrorWarning(Exception e){
+        JOptionPane.showMessageDialog(null,"Ein Unerwarteter Fehler ist aufgetreten, bitte melden\nsie den Fehler beim Entwiklerteam oder auf\nGithub: https://github.com/julikiller98/Kernbeisser-Gradle/\nFehler:\n"+e.toString(),"Es ist ein unerwarteter Fehler aufgetreten",JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
+
     public static <T> T removeLambda(T from,Supplier<T> original){
         return Tools.overwrite(original.get(),from);
+    }
+
+
+    public static <T> void persist(T value){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.persist(value);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+
+    public static <T> void persist(T[] value){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        for (T t : value) {
+            em.persist(t);
+        }
+        em.flush();
+        et.commit();
+        em.close();
     }
 }

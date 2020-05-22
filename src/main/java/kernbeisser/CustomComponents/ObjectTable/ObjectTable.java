@@ -188,4 +188,9 @@ public class ObjectTable<T> extends JTable {
         objects = new ArrayList<>(collection);
         repaintUI();
     }
+
+    public void setSelectedObject(T value) {
+        int index = objects.indexOf(value);
+        if(index!=-1)setRowSelectionInterval(index,index);
+    }
 }

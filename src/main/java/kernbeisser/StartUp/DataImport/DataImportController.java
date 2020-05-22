@@ -1,9 +1,10 @@
 package kernbeisser.StartUp.DataImport;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
+import kernbeisser.Main;
+import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
@@ -101,8 +102,10 @@ public class DataImportController implements Controller<DataImportView,DataImpor
 
     void importData() {
         if (isValidDataSource()) {
+            Main.logger.info("Starting importing data");
             File jsonPath = new File(view.getFilePath()).getParentFile();
             JSONObject path = extractJSON();
+            Setting.DB_INITIALIZED.setValue(true);
             if (view.importItems()) {
                 JSONObject itemPath = path.getJSONObject("ItemData");
                 File suppliers = new File(jsonPath,itemPath.getString("Suppliers"));
@@ -114,6 +117,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                         parseSuppliers(suppliers);
                         parsePriceLists(priceLists);
                         parseItems(items);
+                        Main.logger.info("Item thread finished");
                     }).start();
                 } else {
                     view.itemSourceFound(false);
@@ -121,6 +125,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 }
             }
             if (view.importUser()) {
+
                 JSONObject userPath = path.getJSONObject("UserData");
                 File users = new File(jsonPath,userPath.getString("Users"));
                 File jobs = new File(jsonPath,userPath.getString("Jobs"));
@@ -129,6 +134,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                         view.setUserProgress(0);
                         parseJobs(jobs);
                         parseUsers(users);
+                        Main.logger.info("User thread finished");
                     }).start();
                 } else {
                     view.userSourceFound(false);
@@ -148,9 +154,12 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                     password = view.requestPassword();
                 } while (password.equals(""));
                 user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
-                model.saveWithPermission(user, admin);
+                user.getPermissions().add(admin);
+                user.setUserGroup(new UserGroup());
+                Tools.persist(user.getUserGroup());
+                Tools.persist(admin);
+                Tools.persist(user);
             }
-            Setting.DB_INITIALIZED.setValue(true);
             view.back();
         }
     }
@@ -182,53 +191,18 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
             String defaultPassword = BCrypt.withDefaults().hashToString(12, "start".toCharArray());
             for (String l : lines) {
-                String[] columns = l.split(";");
-                User user = new User();
-                User secondary = new User();
-                UserGroup userGroup = new UserGroup();
-                userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", "."))));
-                user.setShares(Integer.parseInt(columns[3]));
-                user.setSolidaritySurcharge(Integer.parseInt(columns[4])/100.);
-                secondary.setFirstName(columns[5]);
-                secondary.setSurname(columns[6]);
-                user.setExtraJobs(columns[7]);
-                user.setJobs(Tools.extract(HashSet::new, columns[8], "§", jobs::get));
-                DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-                user.setKernbeisserKey(Boolean.parseBoolean(columns[10]) ? 0 : -1);
-                user.setEmployee(Boolean.parseBoolean(columns[11]));
-                //IdentityCode: Unused, column 12
-                //Username: Unknown, column 13
-                //Password: Start, column 14
-                user.setFirstName(columns[15]);
-                user.setSurname(columns[16]);
-                user.setPhoneNumber1(columns[17]);
-                user.setPhoneNumber2(columns[18]);
-                for (String s : columns[19].split(" ")) {
-                    if (s.equals("")) {
-                        continue;
-                    }
-                    try {
-                        user.setTownCode(Integer.parseInt(s));
-                    } catch (NumberFormatException e) {
-                        user.setTown(s);
-                    }
-                }
-                switch (Integer.parseInt(columns[20])) {
-                    //TODO
-                }
-                user.setEmail(columns[21]);
-                //CreateDate: is't used(create new CreateDate), column 22
-                userGroup.setValue(Double.parseDouble(columns[23].replace(",", ".")));
-                //TransactionDates: not used, column 24
-                //TransactionValues: not used, column 25
-                user.setStreet(columns[26]);
-                user.setUserGroup(userGroup);
-                user.setPassword(defaultPassword);
-                secondary.setPassword(defaultPassword);
-                generateUsername(usernames, user);
-                generateUsername(usernames, secondary);
-                secondary.setUserGroup(userGroup);
-                model.saveUser(user, secondary.getFirstName().equals("") ? null : secondary, userGroup);
+                String[] rawUserData = l.split(";");
+                User[] users = Users.parse(rawUserData,usernames,jobs);
+                UserGroup userGroup = Users.getUserGroup(rawUserData);
+                users[0].setUserGroup(userGroup);
+                users[1].setUserGroup(userGroup);
+                users[0].setPassword(defaultPassword);
+                users[1].setPassword(defaultPassword);
+                Tools.persist(userGroup);
+                Tools.persist(users[0]);
+                if(!users[1].getFirstName().equals(""))
+                Tools.persist(users[1]);
+                Transaction.doTransaction(User.getKernbeisserUser(),users[0],Users.getValue(rawUserData),TransactionType.KB_TO_USER,"Übertrag des Guthaben des alten Kernbeisser Programmes");
             }
             view.setUserProgress(4);
         } catch (IOException e) {
@@ -309,11 +283,11 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 //TODO:
                 article.setName(columns[1]);
                 if(article.getName().contains("%")){
-                    System.out.println("Ignored "+article.getName()+" because it contains %");
+                    Main.logger.warn("Ignored " + article.getName() + " because it contains %");
                     continue;
                 }
                 if (names.contains(article.getName().toUpperCase().replace(" ",""))) {
-                    System.out.println("Ignored "+article.getName()+" because the name is already taken");
+                    Main.logger.warn("Ignored "+article.getName()+" because the name is already taken");
                     continue;
                 }else {
                     names.add(article.getName().toUpperCase().replace(" ",""));

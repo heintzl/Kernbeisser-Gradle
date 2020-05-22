@@ -15,6 +15,8 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
 
     private final SearchBoxController<T> searchBoxController;
 
+    private boolean openWindow = false;
+
     public ObjectViewController(MaskLoader<T> loader, Searchable<T> items, Column<T>... columns) {
         searchBoxController = new SearchBoxController<T>(items, columns);
         searchBoxController.initView();
@@ -27,6 +29,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
     }
 
     void select() {
+        if(openWindow)return;
         view.setEditAvailable(true);
         view.setRemoveAvailable(true);
     }
@@ -37,13 +40,25 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
     }
 
     void edit() {
-        model.openEdit(view.getWindow(),searchBoxController.getSelectedObject()).addCloseEventListener(e -> search());
+        model.openEdit(view.getWindow(),searchBoxController.getSelectedObject()).addCloseEventListener(e -> {
+            search();
+            openWindow = false;
+            view.setAddAvailable(true);
+        });
+        view.setAddAvailable(false);
         putItems();
+        openWindow = true;
     }
 
     void add() {
-        model.openAdd(view.getWindow(),searchBoxController.getSelectedObject()).addCloseEventListener(e -> search());
+        model.openAdd(view.getWindow(),searchBoxController.getSelectedObject()).addCloseEventListener(e -> {
+            search();
+            openWindow = false;
+            view.setAddAvailable(true);
+        });
         putItems();
+        view.setAddAvailable(false);
+        openWindow = true;
     }
 
     void delete() {

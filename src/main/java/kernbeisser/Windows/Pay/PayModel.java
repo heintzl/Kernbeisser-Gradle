@@ -69,11 +69,6 @@ public class PayModel implements Model<PayController> {
                 em.persist(shoppingItem);
             });
 
-            //Change value from UserGroup
-            UserGroup userGroup = em.find(UserGroup.class, db.getCustomer().getUserGroup().getId());
-            userGroup.setValue(userGroup.getValue() - sum);
-            em.persist(userGroup);
-
             //Persist changes
             et.commit();
 

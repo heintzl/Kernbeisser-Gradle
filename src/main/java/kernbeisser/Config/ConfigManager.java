@@ -1,11 +1,11 @@
 package kernbeisser.Config;
 
+import kernbeisser.Useful.Tools;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -63,6 +63,24 @@ public class ConfigManager {
         }
     }
 
+    public static File getCatalogFile(){
+        return getFile(getHeader(),"CatalogSource");
+    }
+
+    public static String getCatalogInfoLine(){
+        try {
+            FileInputStream fis = new FileInputStream(getCatalogFile());
+            BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
+            String infoLine = dis.readLine();
+            fis.close();
+            dis.close();
+            return infoLine;
+        } catch (IOException e) {
+            Tools.showUnexpectedErrorWarning(e);
+        }
+        return null;
+    }
+
     private static void createFileIfNotExists() {
         if (file.exists()) {
             return;
@@ -78,6 +96,7 @@ public class ConfigManager {
         reports.put("invoiceFileName", "");
         object.put("DBAccess", dbAccess);
         object.put("Reports", reports);
+        object.put("CatalogSource","");
         object.put("dbIsInitialized", false);
         object.put("ImagePath", "");
         try {
@@ -105,6 +124,21 @@ public class ConfigManager {
 
     public static Path getPath(String subCategory, String key) {
         return Paths.get(getConfigSub(subCategory).getString(key));
+    }
+
+    public static File getFile(JSONObject parent,String key){
+        String fileData = parent.getString(key);
+        File relative = new File(file.getAbsoluteFile().getParentFile(),fileData);
+        if(relative.exists())return relative;
+        File absolute = new File(fileData);
+        if(absolute.exists()) return absolute;
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setDialogTitle(key+" Dateipfad auswählen");
+        jFileChooser.showOpenDialog(null);
+        File out = jFileChooser.getSelectedFile().getAbsoluteFile();
+        parent.put(key,out.getAbsolutePath());
+        updateFile();
+        return out;
     }
 
     public static Path getDirectory(String subCategory, String key) {

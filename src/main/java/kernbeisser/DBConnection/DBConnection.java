@@ -3,8 +3,8 @@ package kernbeisser.DBConnection;
 
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Main;
 import kernbeisser.StartUp.LogIn.DBLogInController;
-import kernbeisser.StartUp.LogIn.DBLogInView;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 
@@ -19,15 +19,18 @@ public class DBConnection {
     private static EntityManagerFactory entityManagerFactory = null;
 
     public static boolean tryLogIn(String url, String username, String password) {
+        Main.logger.info("Try to Login in with Username: \""+username+"\" Password: ***********");
         HashMap<String,String> properties = new HashMap<>(3);
         properties.put("javax.persistence.jdbc.user", username);
         properties.put("javax.persistence.jdbc.url", url);
         properties.put("javax.persistence.jdbc.password", password);
         try {
             entityManagerFactory = Persistence.createEntityManagerFactory("Kernbeisser", properties);
+            Main.logger.info("Login successful");
             return true;
         } catch (Exception e) {
             e.printStackTrace();
+            Main.logger.warn("Log in failed");
             return false;
         }
     }
@@ -49,12 +52,9 @@ public class DBConnection {
     }
 
     public static void reload(){
+        Main.logger.info("reconnecting to DB");
         entityManagerFactory.close();
         logInWithConfig();
-    }
-
-    public static EntityManagerFactory getEntityManagerFactory() {
-        return entityManagerFactory;
     }
 
     public static EntityManager getEntityManager() {
@@ -63,12 +63,13 @@ public class DBConnection {
     }
 
     public static void updateDatabase(){
+        Main.logger.info("updating Database");
         EntityManager em = getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
         em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
         for (Object o : em.createNativeQuery("select TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA = 'kernbeisser'").getResultList()) {
-            System.out.println("dropping "+o);
+            Main.logger.info("dropping DB Table "+o);
             if(o.equals("settingvalue"))continue;
             em.createNativeQuery("drop table "+o).executeUpdate();
         }
@@ -79,6 +80,7 @@ public class DBConnection {
         reload();
         Setting.DB_VERSION.setValue(Setting.DB_VERSION.getDefaultValue());
         Setting.DB_INITIALIZED.setValue(false);
+        Main.logger.info("DB update complete");
     }
 }
 

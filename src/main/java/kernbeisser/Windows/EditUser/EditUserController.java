@@ -24,7 +24,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
             this.view = new EditUserView(this);
         }
         if(mode==Mode.EDIT)
-        view.setUniqueVerifier(user);
+            view.setUniqueVerifier(user);
         if(mode==Mode.ADD)
             view.setUniqueVerifier();
     }
@@ -35,6 +35,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
 
     void requestChangePassword() {
         String password = view.requestPassword();
+        if(password==null)return;
         if (password.length() < 4) {
             view.passwordToShort();
             requestChangePassword();
@@ -92,16 +93,18 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     }
 
     void openJobSelector() {
-        new SelectorController<Job>("Ausgewählte Jobs", model.getUser().getJobs(), Job::defaultSearch,
-                                    Column.create("Name", Job::getName, Key.JOB_NAME_READ),
-                                    Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ)).openAsWindow(getView().getWindow(),
-                                                                                                                               SubWindow::new);
+        new SelectorController<>("Ausgewählte Jobs", model.getUser().getJobs(), Job::defaultSearch,
+                                 Column.create("Name", Job::getName, Key.JOB_NAME_READ),
+                                 Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ)
+        ).openAsWindow(getView().getWindow(),
+                              SubWindow::new);
     }
 
     void openPermissionSelector(){
-        new SelectorController<Permission>("Ausgewählte Berechtigungen",model.getUser().getPermissions(), Permission::defaultSearch,
+        new SelectorController<>("Ausgewählte Berechtigungen", model.getUser().getPermissions(),
+                                 Permission::defaultSearch,
                                  Column.create("Name", Permission::getName, Key.PERMISSION_NAME_READ)
-                             ).openAsWindow(getView().getWindow(),
-                                            SubWindow::new);
+        ).openAsWindow(getView().getWindow(),
+                       SubWindow::new);
     }
 }

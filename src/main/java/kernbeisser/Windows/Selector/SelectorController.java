@@ -5,15 +5,18 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Searchable;
+import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public class SelectorController <T> implements Controller<SelectorView<T>,SelectorModel<T>> {
     private final SelectorModel<T> model;
     private final SelectorView<T> view;
 
+    @SafeVarargs
     public SelectorController(String title, Collection<T> currentValues, Searchable<T> searchable, Column<T> ... columns) {
         this.view = new SelectorView<T>(this);
         this.model = new SelectorModel<T>(currentValues,title,searchable,columns);
@@ -48,10 +51,18 @@ public class SelectorController <T> implements Controller<SelectorView<T>,Select
         view.removeValue(view.getSelectedValue());
     }
 
+    private Window selectionWindow;
     public void add() {
+        if(selectionWindow!=null)return;
         SearchBoxController<T> controller = new SearchBoxController<T>(model.getSearchable(), model.getColumns());
-        controller.addDoubleClickListener(view::addValue);
-        controller.addSelectionListener(view::addValue);
-        controller.openAsWindow(view.getWindow(), SubWindow::new);
+        Consumer<T> selection = e -> {
+            view.addValue(e);
+            model.getCurrentValues().add(e);
+            selectionWindow.back();
+            selectionWindow = null;
+        };
+        controller.addDoubleClickListener(selection);
+        controller.addSelectionListener(selection);
+        selectionWindow = controller.openAsWindow(view.getWindow(), SubWindow::new);
     }
 }

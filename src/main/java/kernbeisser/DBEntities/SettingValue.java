@@ -2,6 +2,7 @@ package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -50,6 +51,7 @@ public class SettingValue {
         if(settingValueHashMap==null){
             settingValueHashMap = new HashMap<>();
             getAll(null).forEach(e  -> settingValueHashMap.put(e.setting,e.value));
+            logSettings();
         }
         String out = settingValueHashMap.get(s);
         if(out == null){
@@ -57,6 +59,12 @@ public class SettingValue {
             settingValueHashMap.put(s,out);
         }
         return out;
+    }
+
+    private static void logSettings(){
+        StringBuilder sb = new StringBuilder("Setting Values:");
+        settingValueHashMap.forEach((a,b) -> sb.append("\n").append(a).append(" = '").append(b).append("'"));
+        Main.logger.info(sb);
     }
 
 

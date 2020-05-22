@@ -1,5 +1,6 @@
 package kernbeisser.Enums;
 
+import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Named;
 
 public enum MetricUnits implements Named {
@@ -55,6 +56,24 @@ public enum MetricUnits implements Named {
 
     public String getShortName() {
         return shortName;
+    }
+
+
+    public static MetricUnits fromString(String source) throws CannotParseException {
+        if (source.toUpperCase().contains("L")) {
+            return MetricUnits.LITER;
+        } else if (source.toUpperCase().contains("ML")) {
+            return MetricUnits.MILLILITER;
+        } else if (source.toUpperCase().contains("KG")) {
+            return MetricUnits.KILOGRAM;
+        } else if (source.toUpperCase().contains("G")) {
+            return MetricUnits.GRAM;
+        }
+        if(source.toUpperCase().contains("ST"))return MetricUnits.PIECE;
+        for (MetricUnits value : MetricUnits.values()) {
+            if(value.getShortName().equals(source)|| value.getName().equals(source))return value;
+        }
+        throw new CannotParseException("No Unit found for "+source);
     }
 }
 
