@@ -206,7 +206,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 Tools.persist(users[0]);
                 if(!users[1].getFirstName().equals(""))
                 Tools.persist(users[1]);
-                Transaction.doTransaction(User.getKernbeisserUser(),users[0],Users.getValue(rawUserData),TransactionType.KB_TO_USER,"Übertrag des Guthaben des alten Kernbeisser Programmes");
+                Transaction.doTransaction(User.getKernbeisserUser(),users[0],Users.getValue(rawUserData),TransactionType.INITIALIZE,"Übertrag des Guthaben des alten Kernbeisser Programmes");
             }
             view.setUserProgress(4);
         } catch (IOException e) {
@@ -305,31 +305,6 @@ public class DataImportController implements Controller<DataImportView,DataImpor
         Setting.DB_INITIALIZED.setValue(true);
     }
 
-    private List<Offer> extractOffers(Boolean[] months, int price) {
-        int from = -1;
-        ArrayList<Offer> out = new ArrayList<>();
-        LocalDate today = LocalDate.now();
-        for (int i = 1; i < months.length + 1; i++) {
-            if (months[i - 1]) {
-                if (from == -1) {
-                    from = i;
-                }
-                continue;
-            }
-            if (from == -1) {
-                continue;
-            }
-            Offer offer = new Offer();
-            offer.setSpecialNetPrice(price);
-            offer.setFromDate(Date.valueOf(LocalDate.of(today.getYear(), from, 1)));
-            offer.setToDate(Date.valueOf(
-                    LocalDate.of(today.getYear(), from + (i - 1 - from), 1).with(TemporalAdjusters.lastDayOfMonth())));
-            offer.setRepeatMode(Repeat.EVERY_YEAR);
-            out.add(offer);
-            from = -1;
-        }
-        return out;
-    }
 
     @Override
     public boolean commitClose() {

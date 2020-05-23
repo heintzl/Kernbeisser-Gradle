@@ -6,6 +6,7 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.Key;
+import kernbeisser.Useful.Date;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +76,7 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
         permissions = new ObjectTable<>(Column.create("Name",Permission::getName,Key.PERMISSION_NAME_READ));
         userGroup = new ObjectTable<User>(Column.create("Benutzername",User::getUsername,Key.USER_USERNAME_READ),Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ));
         jobs = new ObjectTable<Job>(Column.create("Name",Job::getName,Key.JOB_NAME_READ),Column.create("Beschreibung",Job::getDescription,Key.JOB_DESCRIPTION_READ));
-        shoppingHistory = new ObjectTable<Purchase>(Column.create("Datum",e -> e.getCreateDate().toString()),Column.create("Verkäufer",e -> e.getSession().getSeller()),Column.create("Käufer",e -> e.getSession().getCustomer()),Column.create("Summe",e -> String.format("%.2f€",e.getSum())));
+        shoppingHistory = new ObjectTable<Purchase>(Column.create("Datum",e -> Date.INSTANT_FORMAT.format(e.getCreateDate())),Column.create("Verkäufer", e -> e.getSession().getSeller()),Column.create("Käufer", e -> e.getSession().getCustomer()),Column.create("Summe", e -> String.format("%.2f€", e.getSum())));
     }
 
     void pasteUser(User user){
@@ -89,8 +90,10 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
         street.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_STREET_READ) ? user.getStreet() : "Kein zugriff");
         shares.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_SHARES_READ) ? String.valueOf(user.getShares()) : "Kein zugriff");
         solidarySurcharge.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_SOLIDARITY_SURCHARGE_READ) ? user.getSolidaritySurcharge()+"" : "Kein zugriff");
-        createDate.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_CREATE_DATE_READ) ? user.getCreateDate().toString() : "Kein zugriff");
-        updateDate.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_UPDATE_DATE_READ) ? user.getUpdateDate().toString() : "Kein zugriff");
+        createDate.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_CREATE_DATE_READ) ? Date.INSTANT_FORMAT.format(user.getCreateDate())
+                                                                                             : "Kein zugriff");
+        updateDate.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_UPDATE_DATE_READ) ? Date.INSTANT_FORMAT.format(user.getUpdateDate())
+                                                                                             : "Kein zugriff");
         key.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_KERNBEISSER_KEY_READ) ? user.getKernbeisserKeyNumber() == -1 ? "Kein Schlüssel" : user.getKernbeisserKeyNumber()+"" : "Kein zugriff");
         city.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_TOWN_READ) ? user.getTown() : "Kein Zugriff");
     }
@@ -106,8 +109,8 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
         street.setText(user.getStreet());
         shares.setText(String.valueOf(user.getShares()));
         solidarySurcharge.setText(user.getSolidaritySurcharge()+"");
-        createDate.setText(user.getCreateDate().toString());
-        updateDate.setText(user.getUpdateDate().toString());
+        createDate.setText(Date.INSTANT_FORMAT.format(user.getCreateDate()));
+        updateDate.setText(Date.INSTANT_FORMAT.format(user.getUpdateDate()));
         key.setText(user.getKernbeisserKeyNumber() == -1 ? "Kein Schlüssel" : user.getKernbeisserKeyNumber()+"");
         city.setText(user.getTown());
     }

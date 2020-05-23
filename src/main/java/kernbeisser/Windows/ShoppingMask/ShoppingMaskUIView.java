@@ -343,8 +343,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         articleAmount.setVisible(!article.isWeighAble());
         articleAmountLabel.setForeground(article.isWeighAble() ? Color.WHITE : Color.BLACK);
         articleUnit.setVisible(!article.isWeighAble());
-        optTaxLow.setSelected(article.getVAT().getValue() == 0.07);
-        optTaxStandard.setSelected(article.getVAT().getValue() != 0.07);
+        optTaxLow.setSelected(article.getVat().getValue() == 0.07);
+        optTaxStandard.setSelected(article.getVat().getValue() != 0.07);
     }
 
     void defaultSettings() {

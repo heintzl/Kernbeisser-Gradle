@@ -1,5 +1,6 @@
 package kernbeisser.Tasks;
 
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.DBEntities.PriceList;
@@ -9,6 +10,8 @@ import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -50,7 +53,7 @@ public class Articles {
                 article.setBarcode(null);
             }
             //columns[7] look at line 311
-            article.setVAT(Boolean.parseBoolean(rawArticleValues[8]) ? VAT.LOW : VAT.HIGH);
+            article.setVat(Boolean.parseBoolean(rawArticleValues[8]) ? VAT.LOW : VAT.HIGH);
             article.setSurcharge(Integer.parseInt(rawArticleValues[9]) / 1000.);
             article.setSingleDeposit(Integer.parseInt(rawArticleValues[10]) / 100.);
             article.setCrateDeposit(Integer.parseInt(rawArticleValues[11]) / 100.);
@@ -71,7 +74,7 @@ public class Articles {
             article.setSold(Integer.parseInt(rawArticleValues[25]));
             article.setSpecialPriceMonth(
                     extractOffers(Tools.extract(Boolean.class, rawArticleValues[26], "_", Boolean::parseBoolean),
-                                  Integer.parseInt(rawArticleValues[7])));
+                                  Integer.parseInt(rawArticleValues[7])/100f));
             article.setDelivered(Integer.parseInt(rawArticleValues[27]));
             //TODO: article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
             //TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
@@ -84,7 +87,7 @@ public class Articles {
             return article;
     }
 
-    private static List<Offer> extractOffers(Boolean[] months, int price) {
+    private static List<Offer> extractOffers(Boolean[] months, double price) {
         int from = -1;
         ArrayList<Offer> out = new ArrayList<>();
         LocalDate today = LocalDate.now();

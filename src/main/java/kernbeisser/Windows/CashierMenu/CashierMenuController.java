@@ -3,7 +3,6 @@ package kernbeisser.Windows.CashierMenu;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
-import kernbeisser.Windows.CatalogInput.CatalogInputController;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditItem.EditItemController;
 import kernbeisser.Windows.EditItems.EditItemsController;
@@ -58,10 +57,6 @@ public class CashierMenuController implements Controller<CashierMenuView,Cashier
 
     public void openCashierMask() {
         new CashierShoppingMaskController().openTab("Ladendienst Einkaufsmaske");
-    }
-
-    public void openCatalogInput() {
-        new CatalogInputController().openTab("Katalog aktualiesieren bearbeiten");;
     }
 
     public void openTransfer() {

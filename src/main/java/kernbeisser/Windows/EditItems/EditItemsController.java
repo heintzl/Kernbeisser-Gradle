@@ -28,7 +28,7 @@ public class EditItemsController implements Controller<EditItemsView,EditItemsMo
                 Column.create("Auswiegware", e -> e.isWeighAble() ?  "Ja" : "Nein",Key.ARTICLE_WEIGHABLE_READ),
                 Column.create("Nettopreis",e -> String.format("%.2f€",e.getNetPrice()),Key.ARTICLE_NET_PRICE_READ),
                 Column.create("Einzelpfand",e -> String.format("%.2f€",e.getSingleDeposit()),Key.ARTICLE_SINGLE_DEPOSIT_READ),
-                Column.create("MwSt.",e -> e.getVAT().getName(),Key.ARTICLE_VAT_READ),
+                Column.create("MwSt.",e -> e.getVat().getName(),Key.ARTICLE_VAT_READ),
                 Column.create("Gebindegrösse.", Article::getContainerSize),
                 Column.create("Preisliste", Article::getPriceList,Key.ARTICLE_PRICE_LIST_READ),
                 Column.create("Barcode",Article::getBarcode,Key.ARTICLE_BARCODE_READ)

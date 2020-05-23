@@ -91,7 +91,7 @@ public class ContainerController implements Controller<ContainerView,ContainerMo
         view.setAmount("");
         view.setItemName("Kein Artikel ausgewählt");
         view.setSellingPrice("");
-        //view.setKkNumber("");
+        //view.setSuppliersItemNumber("");
         //view.setKbNumber("");
     }
 
@@ -99,7 +99,7 @@ public class ContainerController implements Controller<ContainerView,ContainerMo
         view.setItemSize(c.getItem().getContainerSize() + " x " + c.getItem().getAmount() + c.getItem()
                                                                                              .getMetricUnits().getShortName());
         view.setKbNumber(String.valueOf(c.getKBNumber()));
-        view.setKkNumber(String.valueOf(c.getItem().getKkNumber()));
+        view.setKkNumber(String.valueOf(c.getItem().getSuppliersItemNumber()));
         view.setSellingPrice(0  + "€");
         view.setItemName(c.getItem().getName());
         view.setAmount(String.valueOf(c.getAmount()));

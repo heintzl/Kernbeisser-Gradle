@@ -14,7 +14,7 @@ public class Offer implements Serializable {
     private int oid;
 
     @Column
-    private int specialNetPrice;
+    private double specialNetPrice;
 
     @Column()
     //dangerous SQL keyword from do not rename to 'from'
@@ -48,11 +48,11 @@ public class Offer implements Serializable {
         return oid;
     }
 
-    public int getSpecialNetPrice() {
+    public double getSpecialNetPrice() {
         return specialNetPrice;
     }
 
-    public void setSpecialNetPrice(int specialNetPrice) {
+    public void setSpecialNetPrice(double specialNetPrice) {
         this.specialNetPrice = specialNetPrice;
     }
 

@@ -86,14 +86,14 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
                 return;
             }
             int idOfKBNumber = model.kbNumberExists(data.getKbNumber());
-            if (idOfKBNumber != -1 && idOfKBNumber != model.getSource().getIid()) {
+            if (idOfKBNumber != -1 && idOfKBNumber != model.getSource().getId()) {
                 if(view.kbNumberAlreadyExists()){
                     view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
                 }
                 return;
             }
             int idOfBarcode = model.barcodeExists(data.getBarcode());
-            if (idOfBarcode != -1 && idOfBarcode != model.getSource().getIid()) {
+            if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
                 view.barcodeAlreadyExists();
                 return;
             }

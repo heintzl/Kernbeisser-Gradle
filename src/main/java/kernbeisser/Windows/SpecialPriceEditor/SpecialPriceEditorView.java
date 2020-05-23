@@ -38,6 +38,7 @@ public class SpecialPriceEditorView implements View<SpecialPriceEditorController
     private JButton searchTo;
     private JLabel selectedArticle;
     private PermissionCheckBox filterActionArticle;
+    private JLabel selectedArticleNetPrice;
 
     private final SpecialPriceEditorController controller;
 
@@ -69,8 +70,8 @@ public class SpecialPriceEditorView implements View<SpecialPriceEditorController
         repeat.setSelectedItem(r);
     }
 
-    void setSpecialNetPrice(int p){
-        specialNetPrice.setText(p  + "");
+    void setSpecialNetPrice(double p){
+        specialNetPrice.setText(String.format("%.2f",p));
     }
 
     void setEditEnable(boolean b){
@@ -85,13 +86,21 @@ public class SpecialPriceEditorView implements View<SpecialPriceEditorController
         selectedArticle.setText(name == null ? "Kein Artikel ausgewählt" : name);
     }
 
+    void setSelectedArticleNetPrice(double d){
+        selectedArticleNetPrice.setText(String.format("Normalpreis: %.2f€",d));
+    }
+
     boolean filterOnlyActionArticle(){
         return filterActionArticle.isSelected();
     }
 
     private void createUIComponents() {
         searchBox = controller.getSearchBoxView();
-        offers = new ObjectTable<>(Column.create("Von",Offer::getFromDate),Column.create("Bis",Offer::getToDate),Column.create("Aktionsnettopreis",Offer::getSpecialNetPrice),Column.create("Wiederholung",Offer::getRepeatMode));
+        offers = new ObjectTable<>(
+                Column.create("Von",Offer::getFromDate),
+                Column.create("Bis",Offer::getToDate),
+                Column.create("Aktionsnettopreis",Offer::getSpecialNetPrice),
+                Column.create("Wiederholung",Offer::getRepeatMode));
         from = new DateParseField();
         to = new DateParseField();
     }
@@ -108,8 +117,8 @@ public class SpecialPriceEditorView implements View<SpecialPriceEditorController
         return Date.valueOf(to.getUncheckedValue());
     }
 
-    int getSpecialPrice() {
-        return (int) (specialNetPrice.getSafeValue() * 100);
+    double getSpecialPrice() {
+        return specialNetPrice.getSafeValue();
     }
 
     Repeat getRepeatMode() {

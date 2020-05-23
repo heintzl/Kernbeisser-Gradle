@@ -51,11 +51,11 @@ public class EditItemModel implements Model<EditItemController> {
     }
 
     private void removeItem(Article article) {
-        Tools.delete(Article.class, article.getIid());
+        Tools.delete(Article.class, article.getId());
     }
 
     private void editItem(Article article) {
-        Tools.edit(article.getIid(), article);
+        Tools.edit(article.getId(), article);
     }
 
     int kbNumberExists(int kbNumber) {

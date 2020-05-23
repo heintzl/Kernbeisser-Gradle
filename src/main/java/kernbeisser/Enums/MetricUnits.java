@@ -59,7 +59,7 @@ public enum MetricUnits implements Named {
     }
 
 
-    public static MetricUnits fromString(String source) throws CannotParseException {
+    public static MetricUnits fromString(String source) {
         if (source.toUpperCase().contains("L")) {
             return MetricUnits.LITER;
         } else if (source.toUpperCase().contains("ML")) {
@@ -73,7 +73,7 @@ public enum MetricUnits implements Named {
         for (MetricUnits value : MetricUnits.values()) {
             if(value.getShortName().equals(source)|| value.getName().equals(source))return value;
         }
-        throw new CannotParseException("No Unit found for "+source);
+        return MetricUnits.NONE;
     }
 }
 

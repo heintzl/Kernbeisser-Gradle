@@ -11,10 +11,8 @@ import kernbeisser.Useful.Tools;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.io.*;
-import java.lang.reflect.Field;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -55,13 +53,14 @@ public class Catalog {
         }
         clearCatalog();
         persistCatalog(newCatalog);
+        setDepositByReference();
     }
 
     public static void updateCatalogFromKornKraftDefault(File file){
         Collection<ArticleKornkraft> newCatalog = new ArrayList<>(1000);
         boolean infoLineSkipped = false;
         try {
-            for (String line : Files.readAllLines(Paths.get(file.getPath()),StandardCharsets.ISO_8859_1)) {
+            for (String line : Files.readAllLines(Paths.get(file.getPath()), Charset.forName("IBM850"))) {
                 if(!infoLineSkipped){
                     infoLineSkipped = true;
                     continue;
@@ -78,6 +77,7 @@ public class Catalog {
         }
         clearCatalog();
         persistCatalog(newCatalog);
+        setDepositByReference();
     }
 
     public static void persistCatalog(Iterable<ArticleKornkraft> articles){
@@ -109,22 +109,22 @@ public class Catalog {
     public static ArticleKornkraft parseArticle(String[] source) throws CannotParseException {
         ArticleKornkraft item = new ArticleKornkraft();
         try {
-            if (source.length < 42 || source[23].equals("Display") || source[23].equals("Sets")) {
-                throw new CannotParseException("Article has strange values like Display or Sets or doesn't has at least 42 columns:\n" + Arrays
+            if (source.length < 42) {
+                throw new CannotParseException("Article doesn't has at least 42 columns:\n" + Arrays
                         .toString(source));
             }
-            item.setKkNumber(Integer.parseInt(source[0]));
-            item.setBarcode(source[4]);
+            item.setSuppliersItemNumber(Integer.parseInt(source[0]));
+            try {
+                item.setBarcode(Long.parseLong(source[4]));
+            }catch (NumberFormatException e){
+                item.setBarcode(null);
+            }
             item.setName(source[6]);
             item.setProducer(source[10]);
             item.setContainerSize(Double.parseDouble(source[22].replaceAll(",", ".")));
-            try {
-                item.setMetricUnits(MetricUnits.fromString(source[23].replaceAll("\\d","")));
-            }catch (CannotParseException e){
-                throw new CannotParseException("Cannot parse Article because " + e.getMessage() + "\n" + Arrays.toString(source));
-            }
+            item.setMetricUnits(MetricUnits.fromString(source[23].replaceAll("\\d","")));
             item.setAmount(extractAmount(source[22].replaceAll("\\D", ""), item.getMetricUnits()));
-            item.setVatLow(source[33].equals("1") ? VAT.LOW.getValue() : VAT.HIGH.getValue());
+            item.setVat(source[33].equals("1") ? VAT.LOW : VAT.HIGH);
             item.setNetPrice((int) Math.round(Double.parseDouble(source[37].replace(",", ".")) * 100));
             if (!source[26].equals("")) {
                 item.setSingleDeposit(Integer.parseInt(source[26]));
@@ -154,5 +154,16 @@ public class Catalog {
         } catch (NumberFormatException n) {
             throw new CannotParseException("Can't parse amount from "+u+s);
         }
+    }
+
+    public static void setDepositByReference(){
+        if(true)return;
+        //TODO
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.createQuery("update ArticleKornkraft c set c.singleDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.singleDeposit), c.crateDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.crateDeposit)").executeUpdate();
+        et.commit();
+        em.close();
     }
 }
