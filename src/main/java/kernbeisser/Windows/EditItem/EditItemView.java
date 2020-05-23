@@ -27,24 +27,17 @@ public class EditItemView implements View<EditItemController> {
     private IntegerParseField supplierItemNumber;
     private DoubleParseField crateDeposit;
     private kernbeisser.CustomComponents.PermissionButton search;
-    private kernbeisser.CustomComponents.PermissionComboBox priceList;
+    private kernbeisser.CustomComponents.PermissionComboBox<PriceList> priceList;
     private IntegerParseField amount;
     private DoubleParseField containerSize;
-    private kernbeisser.CustomComponents.PermissionComboBox metricUnits;
-    private kernbeisser.CustomComponents.PermissionComboBox containerDefinition;
+    private kernbeisser.CustomComponents.PermissionComboBox<MetricUnits> metricUnits;
+    private kernbeisser.CustomComponents.PermissionComboBox<ContainerDefinition> containerDefinition;
     private kernbeisser.CustomComponents.TextFields.PermissionField barcode;
     private kernbeisser.CustomComponents.PermissionCheckBox showInShoppingMask;
     private kernbeisser.CustomComponents.PermissionCheckBox weighable;
     private JTextArea extraInfo;
-    private kernbeisser.CustomComponents.PermissionComboBox vat;
+    private kernbeisser.CustomComponents.PermissionComboBox<VAT> vat;
     private JPanel main;
-
-    private final EditItemController controller;
-
-    public EditItemView(EditItemController controller) {
-        this.controller = controller;
-    }
-
 
     private void createUIComponents() {
         amount = new IntegerParseField();
@@ -165,7 +158,6 @@ public class EditItemView implements View<EditItemController> {
         vat.setRequiredKeys(Key.ARTICLE_VAT_READ,Key.ARTICLE_VAT_WRITE);
         metricUnits.setRequiredKeys(Key.ARTICLE_METRIC_UNITS_READ, Key.ARTICLE_METRIC_UNITS_WRITE);
         barcode.setRequiredKeys(Key.ARTICLE_BARCODE_READ,Key.ARTICLE_BARCODE_WRITE);
-        barcode.setInputVerifier(new LongVerifier());
         containerDefinition.setRequiredKeys(Key.ARTICLE_CONTAINER_DEF_READ,Key.ARTICLE_CONTAINER_DEF_WRITE);
         containerSize.setRequiredKeys(Key.ARTICLE_CONTAINER_SIZE_READ,Key.ARTICLE_CONTAINER_SIZE_WRITE);
         containerSize.setInputVerifier(DoubleVerifier.from(0,0.1,40,1000));

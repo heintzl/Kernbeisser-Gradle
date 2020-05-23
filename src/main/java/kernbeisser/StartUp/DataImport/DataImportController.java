@@ -3,8 +3,11 @@ package kernbeisser.StartUp.DataImport;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
+import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
+import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Users;
+import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
@@ -125,7 +128,6 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 }
             }
             if (view.importUser()) {
-
                 JSONObject userPath = path.getJSONObject("UserData");
                 File users = new File(jsonPath,userPath.getString("Users"));
                 File jobs = new File(jsonPath,userPath.getString("Jobs"));
@@ -141,27 +143,29 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                     view.userSourcesNotExists();
                 }
             }
-            if (view.createStandardAdmin()) {
-                Permission admin = new Permission();
-                admin.getKeySet().addAll(Arrays.asList(Key.values()));
-                admin.setName("Admin(System Created)");
-                User user = new User();
-                user.setFirstName("System");
-                user.setSurname("Admin");
-                user.setUsername("Admin");
-                String password;
-                do {
-                    password = view.requestPassword();
-                } while (password.equals(""));
-                user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
-                user.getPermissions().add(admin);
-                user.setUserGroup(new UserGroup());
-                Tools.persist(user.getUserGroup());
-                Tools.persist(admin);
-                Tools.persist(user);
-            }
+            if (view.createStandardAdmin()) createAdmin();
             view.back();
         }
+    }
+
+    private void createAdmin(){
+        Permission admin = new Permission();
+        admin.getKeySet().addAll(Arrays.asList(Key.values()));
+        admin.setName("Admin(System Created)");
+        User user = new User();
+        user.setFirstName("System");
+        user.setSurname("Admin");
+        user.setUsername("Admin");
+        String password;
+        do {
+            password = view.requestPassword();
+        } while (password.equals(""));
+        user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
+        user.getPermissions().add(admin);
+        user.setUserGroup(new UserGroup());
+        Tools.persist(user.getUserGroup());
+        Tools.persist(admin);
+        Tools.persist(user);
     }
 
     private void parseJobs(File f) {
@@ -277,69 +281,17 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             Collection<Article> articles = new ArrayList<>(lines.size());
             Supplier.getAll(null).forEach(e -> suppliers.put(e.getShortName(), e));
             PriceList.getAll(null).forEach(e -> priceListHashMap.put(e.getName(), e));
+            ErrorCollector errorCollector = new ErrorCollector();
             for (String l : lines) {
                 String[] columns = l.split(";");
-                Article article = new Article();
-                //TODO:
-                article.setName(columns[1]);
-                if(article.getName().contains("%")){
-                    Main.logger.warn("Ignored " + article.getName() + " because it contains %");
-                    continue;
-                }
-                if (names.contains(article.getName().toUpperCase().replace(" ",""))) {
-                    Main.logger.warn("Ignored "+article.getName()+" because the name is already taken");
-                    continue;
-                }else {
-                    names.add(article.getName().toUpperCase().replace(" ",""));
-                }
-                article.setKbNumber(Integer.parseInt(columns[2]));
-                article.setAmount(Integer.parseInt(columns[3]));
-                article.setNetPrice(Integer.parseInt(columns[4]) / 100.);
-                article.setSupplier(suppliers.get(columns[5].replace("GRE", "GR")));
                 try {
-                    Long ib = Long.parseLong(columns[6]);
-                    if (!barcode.contains(ib)) {
-                        article.setBarcode(ib);
-                        barcode.add(ib);
-                    } else {
-                        article.setBarcode(null);
-                    }
-                } catch (NumberFormatException e) {
-                    article.setBarcode(null);
+                    articles.add(Articles.parse(columns,barcode,names,suppliers,priceListHashMap));
+                } catch (CannotParseException e) {
+                    errorCollector.collect(e);
                 }
-                //columns[7] look at line 311
-                article.setVAT(Boolean.parseBoolean(columns[8]) ? VAT.LOW : VAT.HIGH);
-                article.setSurcharge(Integer.parseInt(columns[9]) / 1000.);
-                article.setSingleDeposit(Integer.parseInt(columns[10]) / 100.);
-                article.setCrateDeposit(Integer.parseInt(columns[11]) / 100.);
-                article.setMetricUnits(MetricUnits.valueOf(columns[12].replace("WEIGHT", "GRAM").replace("STACK", "PIECE")));
-                article.setPriceList(priceListHashMap.get(columns[13]));
-                article.setContainerDef(ContainerDefinition.valueOf(columns[14]));
-                article.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
-                article.setSuppliersItemNumber(Integer.parseInt(columns[16]));
-                article.setWeighAble(!Boolean.parseBoolean(columns[17]));
-                article.setListed(Boolean.parseBoolean(columns[18]));
-                article.setShowInShop(Boolean.parseBoolean(columns[19]));
-                article.setDeleted(Boolean.parseBoolean(columns[20]));
-                article.setPrintAgain(Boolean.parseBoolean(columns[21]));
-                article.setDeleteAllowed(Boolean.parseBoolean(columns[22]));
-                article.setLoss(Integer.parseInt(columns[23]));
-                article.setInfo(columns[24]);
-                article.setSold(Integer.parseInt(columns[25]));
-                article.setSpecialPriceMonth(
-                        extractOffers(Tools.extract(Boolean.class, columns[26], "_", Boolean::parseBoolean),
-                                      Integer.parseInt(columns[7])));
-                article.setDelivered(Integer.parseInt(columns[27]));
-                //TODO: article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
-                //TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
-                //TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
-                article.setIntake(Instant.now());
-                article.setLastDelivery(Instant.now());
-                article.setDeletedDate(null);
-                article.setCooling(Cooling.valueOf(columns[35]));
-                article.setCoveredIntake(Boolean.parseBoolean(columns[36]));
-                articles.add(article);
             }
+            Main.logger.warn("Ignored "+errorCollector.count()+" articles errors:");
+            errorCollector.log();
             view.setItemProgress(5);
             model.saveAllItems(articles);
             view.setItemProgress(6);

@@ -1,6 +1,7 @@
 package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Main;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -374,8 +375,8 @@ public class Tools {
     }
 
     public static void showUnexpectedErrorWarning(Exception e){
+        Main.logger.error(e.getMessage(),e);
         JOptionPane.showMessageDialog(null,"Ein Unerwarteter Fehler ist aufgetreten, bitte melden\nsie den Fehler beim Entwiklerteam oder auf\nGithub: https://github.com/julikiller98/Kernbeisser-Gradle/\nFehler:\n"+e.toString(),"Es ist ein unerwarteter Fehler aufgetreten",JOptionPane.ERROR_MESSAGE);
-        Tools.showUnexpectedErrorWarning(e);
     }
 
     public static <T> T removeLambda(T from,Supplier<T> original){
