@@ -44,7 +44,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 List<String> fileLines = Files.readAllLines(file.toPath());
                 importPath = fileLines.get(0);
             } catch (IOException e) {
-                e.printStackTrace();
+                Tools.showUnexpectedErrorWarning(e);
             }
         }
         JFileChooser jFileChooser = new JFileChooser(importPath);
@@ -95,7 +95,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
         try {
             Files.readAllLines(new File(view.getFilePath()).toPath()).forEach(sb::append);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
         return new JSONObject(sb.toString());
     }
@@ -179,7 +179,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             model.batchSaveAll(jobs);
             view.setUserProgress(2);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
@@ -206,7 +206,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             }
             view.setUserProgress(4);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
@@ -240,7 +240,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             model.saveAll(priceLists.values());
             view.setItemProgress(4);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
@@ -263,7 +263,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             model.batchSaveAll(suppliers);
             view.setItemProgress(2);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
@@ -344,7 +344,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             model.saveAllItems(articles);
             view.setItemProgress(6);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 

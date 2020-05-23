@@ -44,7 +44,7 @@ public class EditItemModel implements Model<EditItemController> {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return false;
         }
 

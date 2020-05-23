@@ -5,6 +5,7 @@ import kernbeisser.DBEntities.Action;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class PayController implements Controller<PayView,PayModel> {
             model.print(purchase, view.getSelectedPrintService());
             Action.logCurrentFunctionCall();
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 

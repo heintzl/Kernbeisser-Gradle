@@ -97,7 +97,7 @@ public class PayModel implements Model<PayController> {
         try {
             exportInvoicePDF(shoppingCart, purchase);
         } catch (JRException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
 //        try {
 //            //Creates new PrinterJob
@@ -108,7 +108,7 @@ public class PayModel implements Model<PayController> {
 //
 //
 //        } catch (PrinterException e) {
-//            e.printStackTrace();
+//            Tools.showUnexpectedErrorWarning(e);
 //        }
     }
 

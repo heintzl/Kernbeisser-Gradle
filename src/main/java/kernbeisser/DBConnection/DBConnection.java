@@ -5,6 +5,7 @@ import kernbeisser.Config.ConfigManager;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.StartUp.LogIn.DBLogInController;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 
@@ -29,7 +30,7 @@ public class DBConnection {
             Main.logger.info("Login successful");
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             Main.logger.warn("Log in failed");
             return false;
         }
@@ -44,7 +45,7 @@ public class DBConnection {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }
 

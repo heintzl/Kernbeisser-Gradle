@@ -47,7 +47,7 @@ public class Images {
         if (images.containsKey(name)) {
             return images.get(name);
         }
-        System.err.println("Image not found");
+        Main.logger.warn("requested Image '"+name+"' not found");
         return null;
     }
 
@@ -70,7 +70,7 @@ public class Images {
                     images.put(file.getName(), ImageIO.read(file));
                     img++;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
 
             }

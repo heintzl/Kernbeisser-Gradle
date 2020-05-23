@@ -129,7 +129,7 @@ public class ShoppingItem implements Serializable {
             et.commit();
             return createDeposit(price);
         } catch (NotSupportedException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return null;
         }
     }
@@ -160,7 +160,7 @@ public class ShoppingItem implements Serializable {
             et.commit();
             return createDeposit(price);
         } catch (NotSupportedException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return null;
         }
     }
@@ -191,7 +191,7 @@ public class ShoppingItem implements Serializable {
             et.commit();
             return createDeposit(price);
         } catch (NotSupportedException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return null;
         }
         // TODO wie wird der Pfand verbucht? Als NetPrice oder irgendwie anders?

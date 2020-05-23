@@ -126,7 +126,7 @@ public class Tools {
                         component.setBackground(new Color(255, i, i));
                     }
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
 
             }
@@ -217,7 +217,7 @@ public class Tools {
         try {
             return mergeWithoutId(in, (T) in.getClass().getDeclaredConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return null;
         }
     }
@@ -230,13 +230,13 @@ public class Tools {
                 try {
                     ((Collection<?>)field.get(newInstance)).addAll((Collection) field.get(t));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }else {
                 try {
                     field.set(newInstance,field.get(t));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }
         }
@@ -255,7 +255,7 @@ public class Tools {
                     else
                         field.set(t, id);
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }
         }
@@ -269,7 +269,7 @@ public class Tools {
                 try {
                     field.set(toOverride, field.get(in));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }
         }
@@ -375,7 +375,7 @@ public class Tools {
 
     public static void showUnexpectedErrorWarning(Exception e){
         JOptionPane.showMessageDialog(null,"Ein Unerwarteter Fehler ist aufgetreten, bitte melden\nsie den Fehler beim Entwiklerteam oder auf\nGithub: https://github.com/julikiller98/Kernbeisser-Gradle/\nFehler:\n"+e.toString(),"Es ist ein unerwarteter Fehler aufgetreten",JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
+        Tools.showUnexpectedErrorWarning(e);
     }
 
     public static <T> T removeLambda(T from,Supplier<T> original){

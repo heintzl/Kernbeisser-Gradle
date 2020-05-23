@@ -1,5 +1,6 @@
 package kernbeisser.Config;
 
+import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import org.json.JSONObject;
 
@@ -108,8 +109,9 @@ public class ConfigManager {
                 throw new IOException("ConfigManager cannot create config file at File");
             }
         } catch (IOException e) {
+            Main.logger.error("Cannot create config file at "+file.getAbsolutePath());
             JOptionPane.showMessageDialog(null,"Das Programm kann keine Config-Datei erstellen:\n"+e);
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
 
     }

@@ -4,6 +4,7 @@ import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +63,7 @@ public class CatalogInputController implements Controller<CatalogInputView,Catal
         try {
             t.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
         view.success();
         view.enableButtons(true);

@@ -74,7 +74,7 @@ public class Transaction  {
             method.setAccessible(true);
             method.invoke(transaction, value);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
