@@ -305,7 +305,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     void noArticleFound() {
-        JOptionPane.showConfirmDialog(mainPanel,
+        JOptionPane.showMessageDialog(mainPanel,
                                       "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
     }
 
@@ -324,7 +324,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         suppliersItemNumber.setText(article.getSuppliersItemNumber() + "");
         articleName.setText(
                 article.getName().length() > 40
-                ? new StringBuilder(article.getName()).replace(16, article.getName().length(), "...").toString()
+                ? new StringBuilder(article.getName()).replace(36, article.getName().length(), "...").toString()
                 : article.getName());
         articleAmount.setText(article.getAmount() + "");
         articleUnit.setText(article.getMetricUnits().getShortName());
@@ -407,7 +407,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                 controller.searchByKbNumber();
             }
         });
-        kbNumber.addActionListener(e -> {if(isWeighable) {amount.setText("");}; amount.requestFocusInWindow();});
+        kbNumber.addActionListener(e -> {if(isWeighable) {amount.setText("");}; amount.selectAll(); amount.requestFocusInWindow();});
         suppliersItemNumber.addActionListener(e -> controller.addToShoppingCart());
         suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override
