@@ -30,7 +30,6 @@ public class DBConnection {
             Main.logger.info("Login successful");
             return true;
         } catch (Exception e) {
-            Tools.showUnexpectedErrorWarning(e);
             Main.logger.warn("Log in failed");
             return false;
         }
