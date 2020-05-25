@@ -121,6 +121,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                         parsePriceLists(priceLists);
                         parseItems(items);
                         Main.logger.info("Item thread finished");
+                        view.back();
                     }).start();
                 } else {
                     view.itemSourceFound(false);
@@ -144,7 +145,6 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 }
             }
             if (view.createStandardAdmin()) createAdmin();
-            view.back();
         }
     }
 
