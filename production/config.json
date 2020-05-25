@@ -1,4 +1,7 @@
-{"dbIsInitialized":true,
+{
+  "dbIsInitialized": false,
+  "CatalogSource": "",
   "DBAccess":{"Username":"Application","URL":"jdbc:mysql://localhost/kernbeisser","Password":"KB29.06.2019CreateDate"},
-  "Reports": {"reportFolder": "reports", "outputFolder": "reports","invoiceFileName": "Kerni_Rechnung.jrxml"},
-  "ImagePath":""}
+  "ImagePath": "",
+  "Reports": {"reportFolder": "reports", "outputFolder": "reports","invoiceFileName": "Kerni_Rechnung.jrxml"}
+}
