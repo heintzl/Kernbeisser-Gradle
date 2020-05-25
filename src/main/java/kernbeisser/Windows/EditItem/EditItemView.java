@@ -87,7 +87,7 @@ public class EditItemView implements View<EditItemController> {
         kbItemNumber.setText(String.valueOf(article.getKbNumber()));
         vat.setSelectedItem(article.getVat());
         supplierItemNumber.setText(String.valueOf(article.getSuppliersItemNumber()));
-        crateDeposit.setText(String.valueOf(article.getCrateDeposit() ));
+        crateDeposit.setText(String.valueOf(article.getContainerDeposit() ));
         containerSize.setText(String.valueOf(article.getContainerSize()));
         amount.setText(String.valueOf(article.getAmount()));
         barcode.setText(String.valueOf(article.getBarcode()));
@@ -107,7 +107,7 @@ public class EditItemView implements View<EditItemController> {
         out.setVat((VAT) vat.getSelectedItem());
         out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
         out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
-        out.setCrateDeposit(crateDeposit.getSafeValue());
+        out.setContainerDeposit(crateDeposit.getSafeValue());
         out.setContainerSize(containerSize.getSafeValue());
         out.setAmount(amount.getSafeValue());
         try {

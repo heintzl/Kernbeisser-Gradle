@@ -3,7 +3,7 @@ package kernbeisser.Enums;
 import kernbeisser.DBEntities.SettingValue;
 
 public enum Setting {
-    DB_VERSION("1.0f"),
+    DB_VERSION("1.0jk"),
     DB_INITIALIZED("false"),
     VAT_LOW("0.07"),
     VAT_HIGH("0.19"),

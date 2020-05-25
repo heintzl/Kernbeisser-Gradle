@@ -21,8 +21,7 @@ public class ConfigManager {
     private static final JSONObject config = new JSONObject(fileToString(StandardCharsets.UTF_8));
 
     //Static only class
-    private ConfigManager() {
-    }
+    private ConfigManager() {}
 
     public static JSONObject getHeader() {
         return config;
@@ -38,7 +37,6 @@ public class ConfigManager {
             return fileToString(charset);
         }
     }
-
 
     public static String[] getDBAccessData() {
         JSONObject obj = getDBAccess();
@@ -86,6 +84,23 @@ public class ConfigManager {
         if (file.exists()) {
             return;
         }
+        try {
+            if (file.createNewFile()) {
+                FileWriter fw = new FileWriter(file);
+                fw.write(getPattern().toString(CONFIG_FILE_INDENT_FACTOR));
+                fw.close();
+            }else {
+                throw new IOException("ConfigManager cannot create config file at File");
+            }
+        } catch (IOException e) {
+            Main.logger.error("Cannot create config file at "+file.getAbsolutePath());
+            JOptionPane.showMessageDialog(null,"Das Programm kann keine Config-Datei erstellen:\n"+e);
+            Tools.showUnexpectedErrorWarning(e);
+        }
+
+    }
+
+    public static JSONObject getPattern(){
         JSONObject object = new JSONObject();
         JSONObject dbAccess = new JSONObject();
         dbAccess.put("URL", "");
@@ -100,20 +115,7 @@ public class ConfigManager {
         object.put("CatalogSource","");
         object.put("dbIsInitialized", false);
         object.put("ImagePath", "");
-        try {
-            if (file.createNewFile()) {
-                FileWriter fw = new FileWriter(file);
-                fw.write(object.toString(CONFIG_FILE_INDENT_FACTOR));
-                fw.close();
-            }else {
-                throw new IOException("ConfigManager cannot create config file at File");
-            }
-        } catch (IOException e) {
-            Main.logger.error("Cannot create config file at "+file.getAbsolutePath());
-            JOptionPane.showMessageDialog(null,"Das Programm kann keine Config-Datei erstellen:\n"+e);
-            Tools.showUnexpectedErrorWarning(e);
-        }
-
+        return object;
     }
 
     public static String getUsername() {
