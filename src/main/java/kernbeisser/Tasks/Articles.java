@@ -25,12 +25,7 @@ public class Articles {
 
     public static Article parse(String[] rawArticleValues, HashSet<Long> barcodes, HashSet<String> names, HashMap<String,Supplier> suppliers, HashMap<String,PriceList> priceLists) throws CannotParseException {
             Article article = new Article();
-            //TODO:
-            article.setName(rawArticleValues[1]);
-            if (article.getName().contains("%")) {
-                Main.logger.warn("Ignored " + article.getName() + " because it contains %");
-                throw new CannotParseException("Article contains % database operator");
-            }
+            article.setName(rawArticleValues[1].replace("%","Prozent"));
             if (names.contains(article.getName().toUpperCase().replace(" ", ""))) {
                 Main.logger.warn("Ignored " + article.getName() + " because the name is already taken");
                 throw new CannotParseException("Article name is already taken");

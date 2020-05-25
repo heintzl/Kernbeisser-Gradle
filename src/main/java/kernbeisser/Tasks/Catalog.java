@@ -7,6 +7,7 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 
 public class Catalog {
 
@@ -52,8 +54,9 @@ public class Catalog {
             }
         }
         clearCatalog();
+        setDeposit(newCatalog);
         persistCatalog(newCatalog);
-        setDepositByReference();
+        //setDepositByReference();
     }
 
     public static void updateCatalogFromKornKraftDefault(File file){
@@ -76,16 +79,23 @@ public class Catalog {
             Tools.showUnexpectedErrorWarning(e);
         }
         clearCatalog();
+        setDeposit(newCatalog);
         persistCatalog(newCatalog);
-        setDepositByReference();
+        //setDepositByReference();
     }
 
     public static void persistCatalog(Iterable<ArticleKornkraft> articles){
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
+        int c = 0;
         for (ArticleKornkraft article : articles) {
             em.persist(article);
+            c++;
+            if(c % 20 == 0){
+                System.out.println(c);
+                em.flush();
+            }
         }
         em.flush();
         et.commit();
@@ -125,7 +135,7 @@ public class Catalog {
             item.setMetricUnits(MetricUnits.fromString(source[23].replaceAll("\\d","")));
             item.setAmount(extractAmount(source[22].replaceAll("\\D", ""), item.getMetricUnits()));
             item.setVat(source[33].equals("1") ? VAT.LOW : VAT.HIGH);
-            item.setNetPrice((int) Math.round(Double.parseDouble(source[37].replace(",", ".")) * 100));
+            item.setNetPrice(Double.parseDouble(source[37].replace(",", ".")));
             if (!source[26].equals("")) {
                 item.setSingleDeposit(Integer.parseInt(source[26]));
             }
@@ -156,9 +166,8 @@ public class Catalog {
         }
     }
 
+    /**
     public static void setDepositByReference(){
-        if(true)return;
-        //TODO
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -166,4 +175,18 @@ public class Catalog {
         et.commit();
         em.close();
     }
+     */
+
+    public static void setDeposit(Collection<ArticleKornkraft> catalog){
+        HashMap<Integer,Double> priceBySuppliersNumber = new HashMap<>();
+        catalog.forEach((a) -> priceBySuppliersNumber.put(a.getSuppliersItemNumber(),a.getNetPrice()));
+        catalog.forEach(e -> {
+            Double singleDeposit = priceBySuppliersNumber.get((int)e.getSingleDeposit());
+            e.setSingleDeposit(singleDeposit == null ? 0 : singleDeposit);
+            Double crateDeposit = priceBySuppliersNumber.get((int)e.getCrateDeposit());
+            e.setCrateDeposit(crateDeposit == null ? 0 : crateDeposit);
+        });
+    }
+
+
 }

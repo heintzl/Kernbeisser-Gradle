@@ -11,7 +11,7 @@ public enum Setting {
     CONTAINER_SURCHARGE_REDUCTION ("0.5"),
     DEFAULT_THEME(Theme.LIGHT.name()),
     INFO_LINE_LAST_CATALOG("notDefined"),
-    UPDATE_CATALOG_FROM_INTERNET("true"),
+    UPDATE_CATALOG_FROM_INTERNET("false"),
     ;
 
     private final String defaultValue;

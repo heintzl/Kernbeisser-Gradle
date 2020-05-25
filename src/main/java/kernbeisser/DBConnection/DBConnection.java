@@ -81,6 +81,7 @@ public class DBConnection {
         reload();
         Setting.DB_VERSION.setValue(Setting.DB_VERSION.getDefaultValue());
         Setting.DB_INITIALIZED.setValue(false);
+        Setting.INFO_LINE_LAST_CATALOG.setValue(Setting.INFO_LINE_LAST_CATALOG.getDefaultValue());
         Main.logger.info("DB update complete");
     }
 }

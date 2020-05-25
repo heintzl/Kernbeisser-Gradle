@@ -96,6 +96,11 @@ public class ObjectTable<T> extends JTable {
         repaintUI();
     }
 
+    @SafeVarargs
+    public final void setColumns(Column<T>... columns){
+        this.columns = new ArrayList<>(Arrays.asList(columns));
+    }
+
     public void addColumn(Column<T> column) {
         columns.add(column);
     }

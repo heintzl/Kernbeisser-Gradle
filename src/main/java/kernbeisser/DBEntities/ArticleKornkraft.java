@@ -66,11 +66,11 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
         }
     }
 
-    public boolean isSynchronised() {
+    public boolean isSynchronized() {
         return synchronised;
     }
 
-    public void setSynchronised(boolean synchronised) {
-        this.synchronised = synchronised;
+    public void setSynchronized(boolean b) {
+        this.synchronised = b;
     }
 }

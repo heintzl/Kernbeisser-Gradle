@@ -13,18 +13,19 @@ import java.util.List;
 import java.util.Random;
 
 public class Users {
+
+    private static final String defaultPassword = BCrypt.withDefaults().hashToString(12, "start".toCharArray());
+
     public static User[] parse(String[] stringRaw, HashSet<String> usernames, HashMap<String,Job> jobHashMap){
-        String defaultPassword = BCrypt.withDefaults().hashToString(12, "start".toCharArray());
+
             User user = new User();
             User secondary = new User();
-
             user.setShares(Integer.parseInt(stringRaw[3]));
             user.setSolidaritySurcharge(Integer.parseInt(stringRaw[4])/100.);
             secondary.setFirstName(stringRaw[5]);
             secondary.setSurname(stringRaw[6]);
             user.setExtraJobs(stringRaw[7]);
             user.setJobs(Tools.extract(HashSet::new, stringRaw[8], "§", jobHashMap::get));
-            DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy");
             user.setKernbeisserKey(Boolean.parseBoolean(stringRaw[10]) ? 0 : -1);
             user.setEmployee(Boolean.parseBoolean(stringRaw[11]));
             //IdentityCode: Unused, column 12
