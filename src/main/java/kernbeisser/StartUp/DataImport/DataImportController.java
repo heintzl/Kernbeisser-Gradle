@@ -134,9 +134,12 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 File jobs = new File(jsonPath,userPath.getString("Jobs"));
                 if (jobs.exists() && users.exists()) {
                     new Thread(() -> {
+                        Permission keyPermission = new Permission();
+                        keyPermission.getKeySet().add(Key.ACTION_LOGIN);
+                        Tools.persist(keyPermission);
                         view.setUserProgress(0);
                         parseJobs(jobs);
-                        parseUsers(users);
+                        parseUsers(users, keyPermission);
                         Main.logger.info("User thread finished");
                     }).start();
                 } else {
@@ -187,7 +190,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
         }
     }
 
-    private void parseUsers(File f) {
+    private void parseUsers(File f, Permission keyPermission) {
         try {
             HashSet<String> usernames = new HashSet<>();
             HashMap<String,Job> jobs = new HashMap<>();
@@ -203,6 +206,9 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 users[0].setPassword(defaultPassword);
                 users[1].setPassword(defaultPassword);
                 Tools.persist(userGroup);
+                if (users[0].getKernbeisserKeyNumber()!=-1) {
+                    users[0].getPermissions().add(keyPermission);
+                }
                 Tools.persist(users[0]);
                 if(!users[1].getFirstName().equals(""))
                 Tools.persist(users[1]);
