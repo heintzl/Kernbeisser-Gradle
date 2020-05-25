@@ -7,7 +7,6 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -140,7 +139,7 @@ public class Catalog {
                 item.setSingleDeposit(Integer.parseInt(source[26]));
             }
             if (!source[27].equals("")) {
-                item.setCrateDeposit(Integer.parseInt(source[27]));
+                item.setContainerDeposit(Integer.parseInt(source[27]));
             }
         } catch (NumberFormatException e) {
             throw new CannotParseException(e.getMessage());
@@ -166,16 +165,16 @@ public class Catalog {
         }
     }
 
-    /**
+
     public static void setDepositByReference(){
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.createQuery("update ArticleKornkraft c set c.singleDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.singleDeposit), c.crateDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.crateDeposit)").executeUpdate();
+        em.createQuery("update ArticleKornkraft c set c.singleDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.singleDeposit), c.containerDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.containerDeposit)").executeUpdate();
         et.commit();
         em.close();
     }
-     */
+
 
     public static void setDeposit(Collection<ArticleKornkraft> catalog){
         HashMap<Integer,Double> priceBySuppliersNumber = new HashMap<>();
@@ -183,8 +182,8 @@ public class Catalog {
         catalog.forEach(e -> {
             Double singleDeposit = priceBySuppliersNumber.get((int)e.getSingleDeposit());
             e.setSingleDeposit(singleDeposit == null ? 0 : singleDeposit);
-            Double crateDeposit = priceBySuppliersNumber.get((int)e.getCrateDeposit());
-            e.setCrateDeposit(crateDeposit == null ? 0 : crateDeposit);
+            Double crateDeposit = priceBySuppliersNumber.get((int)e.getContainerDeposit());
+            e.setContainerDeposit(crateDeposit == null ? 0 : crateDeposit);
         });
     }
 

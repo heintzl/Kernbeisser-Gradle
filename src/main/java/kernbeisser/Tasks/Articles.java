@@ -1,6 +1,5 @@
 package kernbeisser.Tasks;
 
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.DBEntities.PriceList;
@@ -10,8 +9,6 @@ import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -51,7 +48,7 @@ public class Articles {
             article.setVat(Boolean.parseBoolean(rawArticleValues[8]) ? VAT.LOW : VAT.HIGH);
             article.setSurcharge(Integer.parseInt(rawArticleValues[9]) / 1000.);
             article.setSingleDeposit(Integer.parseInt(rawArticleValues[10]) / 100.);
-            article.setCrateDeposit(Integer.parseInt(rawArticleValues[11]) / 100.);
+            article.setContainerDeposit(Integer.parseInt(rawArticleValues[11]) / 100.);
             article.setMetricUnits(
                     MetricUnits.valueOf(rawArticleValues[12].replace("WEIGHT", "GRAM").replace("STACK", "PIECE")));
             article.setPriceList(priceLists.get(rawArticleValues[13]));

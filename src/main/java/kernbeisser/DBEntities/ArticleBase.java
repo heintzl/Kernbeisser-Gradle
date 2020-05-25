@@ -49,7 +49,7 @@ public class ArticleBase {
     private double singleDeposit;
 
     @Column
-    private double crateDeposit;
+    private double containerDeposit;
 
     public int getId() {
         return id;
@@ -135,12 +135,12 @@ public class ArticleBase {
         this.singleDeposit = singleDeposit;
     }
 
-    public double getCrateDeposit() {
-        return crateDeposit;
+    public double getContainerDeposit() {
+        return containerDeposit;
     }
 
-    public void setCrateDeposit(double crateDeposit) {
-        this.crateDeposit = crateDeposit;
+    public void setContainerDeposit(double crateDeposit) {
+        this.containerDeposit = crateDeposit;
     }
 
     public Supplier getSupplier() {

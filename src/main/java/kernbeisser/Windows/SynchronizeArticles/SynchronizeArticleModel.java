@@ -39,7 +39,7 @@ public class SynchronizeArticleModel implements Model<SynchronizeArticleControll
         out.addAll(createDifference("Preis",ArticleBase::getNetPrice,ArticleBase::setNetPrice,a,b));
         out.addAll(createDifference("Gebindegröße",ArticleBase::getContainerSize,ArticleBase::setContainerSize,a,b));
         out.addAll(createDifference("Einzelpfand",ArticleBase::getSingleDeposit,ArticleBase::setSingleDeposit,a,b));
-        out.addAll(createDifference("Kistenpfand",ArticleBase::getCrateDeposit,ArticleBase::setCrateDeposit,a,b));
+        out.addAll(createDifference("Kistenpfand", ArticleBase::getContainerDeposit, ArticleBase::setContainerDeposit, a, b));
         out.addAll(createDifference("Packungsmenge",ArticleBase::getAmount,ArticleBase::setAmount,a,b));
         return out;
     }
