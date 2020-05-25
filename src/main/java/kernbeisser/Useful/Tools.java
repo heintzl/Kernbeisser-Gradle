@@ -1,6 +1,7 @@
 package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Main;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -126,7 +127,7 @@ public class Tools {
                         component.setBackground(new Color(255, i, i));
                     }
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
 
             }
@@ -213,16 +214,11 @@ public class Tools {
         return out;
     }
 
-    public static <T extends Collection> T filterNull(T in) {
-        in.removeIf(Objects::isNull);
-        return in;
-    }
-
     public static <T> T mergeWithoutId(T in) {
         try {
             return mergeWithoutId(in, (T) in.getClass().getDeclaredConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return null;
         }
     }
@@ -235,13 +231,13 @@ public class Tools {
                 try {
                     ((Collection<?>)field.get(newInstance)).addAll((Collection) field.get(t));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }else {
                 try {
                     field.set(newInstance,field.get(t));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }
         }
@@ -260,7 +256,7 @@ public class Tools {
                     else
                         field.set(t, id);
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }
         }
@@ -274,7 +270,7 @@ public class Tools {
                 try {
                     field.set(toOverride, field.get(in));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }
         }
@@ -378,7 +374,35 @@ public class Tools {
         em.close();
     }
 
+    public static void showUnexpectedErrorWarning(Exception e){
+        Main.logger.error(e.getMessage(),e);
+        JOptionPane.showMessageDialog(null,"Ein Unerwarteter Fehler ist aufgetreten, bitte melden\nsie den Fehler beim Entwiklerteam oder auf\nGithub: https://github.com/julikiller98/Kernbeisser-Gradle/\nFehler:\n"+e.toString(),"Es ist ein unerwarteter Fehler aufgetreten",JOptionPane.ERROR_MESSAGE);
+    }
+
     public static <T> T removeLambda(T from,Supplier<T> original){
         return Tools.overwrite(original.get(),from);
+    }
+
+
+    public static <T> void persist(T value){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.persist(value);
+        em.flush();
+        et.commit();
+        em.close();
+    }
+
+    public static <T> void persist(T[] value){
+        EntityManager em = DBConnection.getEntityManager();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        for (T t : value) {
+            em.persist(t);
+        }
+        em.flush();
+        et.commit();
+        em.close();
     }
 }

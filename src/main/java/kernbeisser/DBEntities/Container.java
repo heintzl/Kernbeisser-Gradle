@@ -5,7 +5,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 
@@ -107,7 +106,7 @@ public class Container implements Serializable {
     }
 
     public int getKBNumber() {
-        List<Article> articles = Article.getAll("where suppliersItemNumber = " + item.getKkNumber());
+        List<Article> articles = Article.getAll("where suppliersItemNumber = " + item.getSuppliersItemNumber());
         if (articles == null || articles.size() == 0) {
             return -1;
         } else {

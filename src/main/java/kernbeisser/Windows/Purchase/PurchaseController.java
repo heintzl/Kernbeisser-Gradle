@@ -3,6 +3,7 @@ package kernbeisser.Windows.Purchase;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
+import kernbeisser.Useful.Date;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +37,7 @@ public class PurchaseController implements Controller<PurchaseView,PurchaseModel
     public void fillUI() {
         view.setCustomer(model.getLoaded().getSession().getCustomer().getUsername());
         view.setSeller(model.getLoaded().getSession().getSeller().getUsername());
-        view.setDate(model.getLoaded().getCreateDate().toString());
+        view.setDate(Date.INSTANT_FORMAT.format(model.getLoaded().getCreateDate()));
         Collection<ShoppingItem> items = model.getAllItems();
         view.setItemCount(items.size());
         view.setSum(model.getSum());

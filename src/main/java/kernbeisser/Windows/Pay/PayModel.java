@@ -1,10 +1,7 @@
 package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Purchase;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 import net.sf.jasperreports.engine.JRException;
@@ -59,6 +56,9 @@ public class PayModel implements Model<PayController> {
                 db = saleSession;
             }
 
+            //Do money exchange
+            Transaction.doPurchaseTransaction(saleSession.getCustomer(),shoppingCartSum());
+
             //Save ShoppingItems in Purchase
             Purchase purchase = new Purchase();
             purchase.setSession(db);
@@ -68,11 +68,6 @@ public class PayModel implements Model<PayController> {
                 shoppingItem.setPurchase(purchase);
                 em.persist(shoppingItem);
             });
-
-            //Change value from UserGroup
-            UserGroup userGroup = em.find(UserGroup.class, db.getCustomer().getUserGroup().getId());
-            userGroup.setValue(userGroup.getValue() - sum);
-            em.persist(userGroup);
 
             //Persist changes
             et.commit();
@@ -102,7 +97,7 @@ public class PayModel implements Model<PayController> {
         try {
             exportInvoicePDF(shoppingCart, purchase);
         } catch (JRException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
 //        try {
 //            //Creates new PrinterJob
@@ -113,7 +108,7 @@ public class PayModel implements Model<PayController> {
 //
 //
 //        } catch (PrinterException e) {
-//            e.printStackTrace();
+//            Tools.showUnexpectedErrorWarning(e);
 //        }
     }
 

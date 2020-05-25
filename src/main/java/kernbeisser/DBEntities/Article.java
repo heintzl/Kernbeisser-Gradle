@@ -17,47 +17,12 @@ import java.util.List;
 
 @Entity
 @Table
-
-public class Article {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(updatable = false, insertable = false, nullable = false)
-    private int iid;
-
-    @Column(unique = true)
-    private String name;
-
+public class Article extends ArticleBase{
     @Column(unique = true)
     private int kbNumber;
 
     @Column
-    private int amount;
-
-    @Column
     private double surcharge;
-
-    @Column
-    private double netPrice;
-
-    @ManyToOne
-    @JoinColumn(name = "supplierId")
-    private Supplier supplier;
-
-    @Column(unique = true)
-    private Long barcode;
-
-    @Column
-    private VAT vat = VAT.LOW;
-
-    @Column
-    private double singleDeposit;
-
-    @Column
-    private double crateDeposit;
-
-    @Column
-    private MetricUnits metricUnits;
 
     @ManyToOne
     @JoinColumn(name = "priceListId")
@@ -66,8 +31,6 @@ public class Article {
     @Column
     private ContainerDefinition containerDef;
 
-    @Column
-    private double containerSize;
 
     @Column
     private int suppliersItemNumber;
@@ -167,17 +130,6 @@ public class Article {
         }
     }
 
-    public int getIid() {
-        return iid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public int getKbNumber() {
         return kbNumber;
@@ -187,45 +139,7 @@ public class Article {
         this.kbNumber = kbNumber;
     }
 
-    public int getAmount() {
-        return amount;
-    }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public double getNetPrice() {
-        return netPrice;
-    }
-
-    public void setNetPrice(double netPrice) {
-        this.netPrice = netPrice;
-    }
-
-    public Supplier getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
-
-    public Long getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(Long barcode) {
-        this.barcode = barcode;
-    }
-
-    public VAT getVAT() {
-        return vat;
-    }
-
-    public void setVAT(VAT vatLow) {
-        this.vat = vatLow;
-    }
 
     public SurchargeTable getSurchargeTable() {
         //TODO really expensive!
@@ -234,7 +148,7 @@ public class Article {
             return em.createQuery(
                     "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
                     SurchargeTable.class)
-                     .setParameter("supplier", supplier != null ? supplier.getId() : -1)
+                     .setParameter("supplier", getSupplier() != null ? getSupplier().getId() : -1)
                      .setParameter("number", getSuppliersItemNumber())
                      .setMaxResults(1)
                      .getSingleResult();
@@ -251,30 +165,6 @@ public class Article {
         this.surcharge = surcharge;
     }
 
-    public double getSingleDeposit() {
-        return singleDeposit;
-    }
-
-    public void setSingleDeposit(double singleDeposit) {
-        this.singleDeposit = singleDeposit;
-    }
-
-    public double getCrateDeposit() {
-        return crateDeposit;
-    }
-
-    public void setCrateDeposit(double crateDeposit) {
-        this.crateDeposit = crateDeposit;
-    }
-
-    public MetricUnits getMetricUnits() {
-        return metricUnits;
-    }
-
-    public void setMetricUnits(MetricUnits metricUnits) {
-        this.metricUnits = metricUnits;
-    }
-
     public PriceList getPriceList() {
         return priceList;
     }
@@ -289,14 +179,6 @@ public class Article {
 
     public void setContainerDef(ContainerDefinition containerDef) {
         this.containerDef = containerDef;
-    }
-
-    public double getContainerSize() {
-        return containerSize;
-    }
-
-    public void setContainerSize(double containerSize) {
-        this.containerSize = containerSize;
     }
 
     public int getSuppliersItemNumber() {
@@ -438,11 +320,13 @@ public class Article {
 
     @Override
     public int hashCode() {
-        return iid + name.hashCode();
+        return getId() + getName().hashCode();
     }
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
+
+
 }

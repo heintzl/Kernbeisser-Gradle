@@ -93,7 +93,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             case ShoppingMaskUIView.CUSTOM_PRODUCT:
                 Article customArticle = new Article();
                 customArticle.setName(view.getItemName());
-                customArticle.setVAT(view.getSelectedVAT());
+                customArticle.setVat(view.getSelectedVAT());
                 customArticle.setNetPrice(view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
                 customArticle.setMetricUnits(MetricUnits.PIECE);
                 ShoppingItem customItem = new ShoppingItem(customArticle,0,false);

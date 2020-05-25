@@ -2,8 +2,8 @@ package kernbeisser.Windows.UserInfo;
 
 import kernbeisser.CustomComponents.Charts.BuyChart;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.ValueChange;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -58,7 +58,7 @@ public class UserInfoController implements Controller<UserInfoView,UserInfoModel
                 view.setShoppingHistory(model.getUser().getAllPurchases());
                 return;
             case 2:
-                Collection<Column<ValueChange>> columns = new ArrayList<>();
+                Collection<Column<Transaction>> columns = new ArrayList<>();
                 columns.add(generateTypeColumn());
                 columns.add(Column.create("Von",e -> {
                     if(e.getFrom()==null)return "Kenbeisser";
@@ -72,16 +72,16 @@ public class UserInfoController implements Controller<UserInfoView,UserInfoModel
                 }, Key.USER_USERNAME_READ));
                 columns.add(Column.create("Betrag",e -> String.format("%.2f€", e.getValue())));
                 columns.add(generateAfterValueChangeColumn());
-                columns.add(Column.create("Info",ValueChange::getInfo,Key.TRANSACTION_INFO_READ));
-                columns.add(Column.create("Datum",ValueChange::getDate));
+                columns.add(Column.create("Info",Transaction::getInfo,Key.TRANSACTION_INFO_READ));
+                columns.add(Column.create("Datum",Transaction::getDate));
                 view.setValueHistoryColumns(columns);
                 view.setValueHistory(model.getUser().getAllValueChanges());
                 return;
         }
     }
 
-    public Column<ValueChange> generateAfterValueChangeColumn(){
-        return new Column<ValueChange>() {
+    public Column<Transaction> generateAfterValueChangeColumn(){
+        return new Column<Transaction>() {
             double value = 0;
             @Override
             public String getName() {
@@ -89,8 +89,10 @@ public class UserInfoController implements Controller<UserInfoView,UserInfoModel
                 return "Dannach";
             }
 
+
+
             @Override
-            public Object getValue(ValueChange valueChange) {
+            public Object getValue(Transaction valueChange) {
 
                 if(valueChange.getTo()!=null&&valueChange.getTo().getId() == LogInModel.getLoggedIn().getId())
                     value += valueChange.getValue();
@@ -100,15 +102,15 @@ public class UserInfoController implements Controller<UserInfoView,UserInfoModel
         };
     }
 
-    private Column<ValueChange> generateTypeColumn(){
-        return new Column<ValueChange>() {
+    private Column<Transaction> generateTypeColumn(){
+        return new Column<Transaction>() {
             @Override
             public String getName() {
                 return "Type";
             }
 
             @Override
-            public Object getValue(ValueChange valueChange) {
+            public Object getValue(Transaction valueChange) {
                 if(valueChange.getFrom()==null)return "Guthabenaufladung";
                 if(valueChange.getTo()==null)return "Einkauf";
                 return "Überweissung";

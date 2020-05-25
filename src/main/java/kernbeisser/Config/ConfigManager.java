@@ -1,11 +1,12 @@
 package kernbeisser.Config;
 
+import kernbeisser.Main;
+import kernbeisser.Useful.Tools;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -20,8 +21,7 @@ public class ConfigManager {
     private static final JSONObject config = new JSONObject(fileToString(StandardCharsets.UTF_8));
 
     //Static only class
-    private ConfigManager() {
-    }
+    private ConfigManager() {}
 
     public static JSONObject getHeader() {
         return config;
@@ -37,7 +37,6 @@ public class ConfigManager {
             return fileToString(charset);
         }
     }
-
 
     public static String[] getDBAccessData() {
         JSONObject obj = getDBAccess();
@@ -63,10 +62,48 @@ public class ConfigManager {
         }
     }
 
+    public static File getCatalogFile(){
+        return getFile(getHeader(),"CatalogSource");
+    }
+
+    public static String getCatalogInfoLine(){
+        try {
+            File catFile = getCatalogFile();
+            if (catFile.exists() && ! catFile.isDirectory()) {
+                FileInputStream fis = new FileInputStream(getCatalogFile());
+                BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
+                String infoLine = dis.readLine();
+                fis.close();
+                dis.close();
+                return infoLine;
+            }
+        } catch (IOException e) {
+            Tools.showUnexpectedErrorWarning(e);
+        }
+        return null;
+    }
+
     private static void createFileIfNotExists() {
         if (file.exists()) {
             return;
         }
+        try {
+            if (file.createNewFile()) {
+                FileWriter fw = new FileWriter(file);
+                fw.write(getPattern().toString(CONFIG_FILE_INDENT_FACTOR));
+                fw.close();
+            }else {
+                throw new IOException("ConfigManager cannot create config file at File");
+            }
+        } catch (IOException e) {
+            Main.logger.error("Cannot create config file at "+file.getAbsolutePath());
+            JOptionPane.showMessageDialog(null,"Das Programm kann keine Config-Datei erstellen:\n"+e);
+            Tools.showUnexpectedErrorWarning(e);
+        }
+
+    }
+
+    public static JSONObject getPattern(){
         JSONObject object = new JSONObject();
         JSONObject dbAccess = new JSONObject();
         dbAccess.put("URL", "");
@@ -78,21 +115,10 @@ public class ConfigManager {
         reports.put("invoiceFileName", "");
         object.put("DBAccess", dbAccess);
         object.put("Reports", reports);
+        object.put("CatalogSource","");
         object.put("dbIsInitialized", false);
         object.put("ImagePath", "");
-        try {
-            if (file.createNewFile()) {
-                FileWriter fw = new FileWriter(file);
-                fw.write(object.toString(CONFIG_FILE_INDENT_FACTOR));
-                fw.close();
-            }else {
-                throw new IOException("ConfigManager cannot create config file at File");
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null,"Das Programm kann keine Config-Datei erstellen:\n"+e);
-            e.printStackTrace();
-        }
-
+        return object;
     }
 
     public static String getUsername() {
@@ -105,6 +131,21 @@ public class ConfigManager {
 
     public static Path getPath(String subCategory, String key) {
         return Paths.get(getConfigSub(subCategory).getString(key));
+    }
+
+    public static File getFile(JSONObject parent,String key){
+        String fileData = parent.getString(key);
+        File relative = new File(file.getAbsoluteFile().getParentFile(),fileData);
+        if(relative.exists())return relative;
+        File absolute = new File(fileData);
+        if(absolute.exists()) return absolute;
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setDialogTitle(key+" Dateipfad auswählen");
+        jFileChooser.showOpenDialog(null);
+        File out = jFileChooser.getSelectedFile().getAbsoluteFile();
+        parent.put(key,out.getAbsolutePath());
+        updateFile();
+        return out;
     }
 
     public static Path getDirectory(String subCategory, String key) {

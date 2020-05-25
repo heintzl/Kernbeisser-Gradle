@@ -45,7 +45,7 @@ public class EditUserModel implements Model<EditUserController> {
             }
             return true;
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return false;
         }
     }

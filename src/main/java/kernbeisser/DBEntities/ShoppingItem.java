@@ -79,7 +79,7 @@ public class ShoppingItem implements Serializable {
         this.amount = article.getAmount();
         this.itemNetPrice = article.getNetPrice();
         this.metricUnits = article.isWeighAble() ? article.getMetricUnits() : MetricUnits.PIECE;
-        this.vat = article.getVAT().getValue();
+        this.vat = article.getVat().getValue();
         this.weighAble = article.isWeighAble();
         this.surcharge = (hasContainerDiscount ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : article.getSurcharge());
         this.discount = discount;
@@ -123,13 +123,13 @@ public class ShoppingItem implements Serializable {
             deposit.setKbNumber(-1);
             deposit.setMetricUnits(MetricUnits.PIECE);
             deposit.setDeleteAllowed(false);
-            deposit.setVAT(VAT.LOW);
+            deposit.setVat(VAT.LOW);
             em.persist(deposit);
             em.flush();
             et.commit();
             return createDeposit(price);
         } catch (NotSupportedException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return null;
         }
     }
@@ -154,13 +154,13 @@ public class ShoppingItem implements Serializable {
             deposit.setKbNumber(-2);
             deposit.setMetricUnits(MetricUnits.PIECE);
             deposit.setDeleteAllowed(false);
-            deposit.setVAT(VAT.LOW);
+            deposit.setVat(VAT.LOW);
             em.persist(deposit);
             em.flush();
             et.commit();
             return createDeposit(price);
         } catch (NotSupportedException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return null;
         }
     }
@@ -185,13 +185,13 @@ public class ShoppingItem implements Serializable {
             deposit.setKbNumber(-3);
             deposit.setMetricUnits(MetricUnits.PIECE);
             deposit.setDeleteAllowed(false);
-            deposit.setVAT(VAT.HIGH);
+            deposit.setVat(VAT.HIGH);
             em.persist(deposit);
             em.flush();
             et.commit();
             return createDeposit(price);
         } catch (NotSupportedException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return null;
         }
         // TODO wie wird der Pfand verbucht? Als NetPrice oder irgendwie anders?

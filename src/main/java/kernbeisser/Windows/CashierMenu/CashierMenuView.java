@@ -15,7 +15,6 @@ public class CashierMenuView  implements View<CashierMenuController> {
     private JButton editPriceList;
     private JButton quitCashierJob;
     private JButton startCashier;
-    private JButton refreshCatalog;
     private JPanel main;
     private JButton transfer;
 
@@ -31,7 +30,6 @@ public class CashierMenuView  implements View<CashierMenuController> {
         editItems.addActionListener(e -> controller.openManageItems());
         editUser.addActionListener(e -> controller.openManageUsers());
         editPriceList.addActionListener(e -> controller.openManagePriceLists());
-        refreshCatalog.addActionListener(e -> controller.openCatalogInput());
         startCashier.addActionListener(e -> controller.openCashierMask());
         quitCashierJob.addActionListener(e -> back());
         transfer.addActionListener(e -> controller.openTransfer());
@@ -41,7 +39,6 @@ public class CashierMenuView  implements View<CashierMenuController> {
         editPriceList.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(165, 4, 46)));
         editItems.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(165, 4, 46)));
         changeSurchargeTable.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(165, 4, 46)));
-        refreshCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 20, new Color(60, 57, 255)));
         changeSurchargeTable.addActionListener(e -> controller.openManageSurchargeTables());
     }
 

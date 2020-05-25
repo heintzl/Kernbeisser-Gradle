@@ -33,9 +33,10 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
         this.model = new SpecialPriceEditorModel();
         this.searchBoxController = new SearchBoxController<Article>((s,m) -> model.searchArticle(s, m, view != null && view.filterOnlyActionArticle()),
                                                                     Column.create("Name", Article::getName),
-                                                                    Column.create("Barcode", Article::getBarcode),
+                                                                    Column.create("Packungsmenge",Article::getAmount),
                                                                     Column.create("Lieferant",
                                                                            Article::getSupplier),
+                                                                    Column.create("Lieferanten Nr.",Article::getSuppliersItemNumber),
                                                                     Column.create("Kernbeissernummer",
                                                                            Article::getKbNumber)
         ){
@@ -55,11 +56,12 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
             view.setOffers(CollectionUtils.EMPTY_COLLECTION);
             view.setAddEnable(false);
             view.setSelectedArticleIdentifier(null);
+            view.setSelectedArticleNetPrice(0);
         }else {
             view.setOffers(article.getSpecialPriceMonths());
             view.setAddEnable(true);
             view.setSelectedArticleIdentifier(article.getName());
-
+            view.setSelectedArticleNetPrice(article.getNetPrice());
         }
         model.setSelectedArticle(article);
         view.setRemoveEnable(false);

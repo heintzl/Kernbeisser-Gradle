@@ -2,6 +2,7 @@ package kernbeisser.Windows.UserMenu;
 
 import kernbeisser.Enums.Key;
 import kernbeisser.Main;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.Controller;
@@ -49,7 +50,7 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
                 try {
                     Main.setSettingLAF();
                 } catch (UnsupportedLookAndFeelException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
                 SwingUtilities.updateComponentTreeUI(TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
                 new SimpleLogInController().openTab("Log In");

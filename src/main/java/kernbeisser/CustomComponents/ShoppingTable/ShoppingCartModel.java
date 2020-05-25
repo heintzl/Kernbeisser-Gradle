@@ -1,6 +1,7 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
 import javax.transaction.NotSupportedException;
@@ -27,7 +28,7 @@ public class ShoppingCartModel implements Model<ShoppingCartController> {
                 try {
                     current.addToRetailPrice(item.getRetailPrice());
                 } catch (NotSupportedException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
             }
         } else {

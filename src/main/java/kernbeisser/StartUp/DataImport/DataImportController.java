@@ -1,9 +1,13 @@
 package kernbeisser.StartUp.DataImport;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
+import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Main;
+import kernbeisser.Tasks.Articles;
+import kernbeisser.Tasks.Users;
+import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
@@ -15,8 +19,10 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -41,7 +47,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 List<String> fileLines = Files.readAllLines(file.toPath());
                 importPath = fileLines.get(0);
             } catch (IOException e) {
-                e.printStackTrace();
+                Tools.showUnexpectedErrorWarning(e);
             }
         }
         JFileChooser jFileChooser = new JFileChooser(importPath);
@@ -92,27 +98,30 @@ public class DataImportController implements Controller<DataImportView,DataImpor
         try {
             Files.readAllLines(new File(view.getFilePath()).toPath()).forEach(sb::append);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
         return new JSONObject(sb.toString());
     }
 
     void importData() {
         if (isValidDataSource()) {
-            String jsonPath = view.getFilePath();
-            String relativePath = jsonPath.substring(0, jsonPath.lastIndexOf("\\")) + "/";
+            Main.logger.info("Starting importing data");
+            File jsonPath = new File(view.getFilePath()).getParentFile();
             JSONObject path = extractJSON();
+            Setting.DB_INITIALIZED.setValue(true);
             if (view.importItems()) {
                 JSONObject itemPath = path.getJSONObject("ItemData");
-                File suppliers = new File(relativePath + itemPath.getString("Suppliers"));
-                File priceLists = new File(relativePath + itemPath.getString("PriceLists"));
-                File items = new File(relativePath + itemPath.getString("Items"));
+                File suppliers = new File(jsonPath,itemPath.getString("Suppliers"));
+                File priceLists = new File(jsonPath,itemPath.getString("PriceLists"));
+                File items = new File(jsonPath,itemPath.getString("Items"));
                 if (suppliers.exists() && priceLists.exists() && items.exists()) {
                     new Thread(() -> {
                         view.setItemProgress(0);
                         parseSuppliers(suppliers);
                         parsePriceLists(priceLists);
                         parseItems(items);
+                        Main.logger.info("Item thread finished");
+                        view.back();
                     }).start();
                 } else {
                     view.itemSourceFound(false);
@@ -121,37 +130,45 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             }
             if (view.importUser()) {
                 JSONObject userPath = path.getJSONObject("UserData");
-                File users = new File(relativePath + userPath.getString("Users"));
-                File jobs = new File(relativePath + userPath.getString("Jobs"));
+                File users = new File(jsonPath,userPath.getString("Users"));
+                File jobs = new File(jsonPath,userPath.getString("Jobs"));
                 if (jobs.exists() && users.exists()) {
                     new Thread(() -> {
+                        Permission keyPermission = new Permission();
+                        keyPermission.getKeySet().add(Key.ACTION_LOGIN);
+                        Tools.persist(keyPermission);
                         view.setUserProgress(0);
                         parseJobs(jobs);
-                        parseUsers(users);
+                        parseUsers(users, keyPermission);
+                        Main.logger.info("User thread finished");
                     }).start();
                 } else {
                     view.userSourceFound(false);
                     view.userSourcesNotExists();
                 }
             }
-            if (view.createStandardAdmin()) {
-                Permission admin = new Permission();
-                admin.getKeySet().addAll(Arrays.asList(Key.values()));
-                admin.setName("Admin(System Created)");
-                User user = new User();
-                user.setFirstName("System");
-                user.setSurname("Admin");
-                user.setUsername("Admin");
-                String password;
-                do {
-                    password = view.requestPassword();
-                } while (password.equals(""));
-                user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
-                model.saveWithPermission(user, admin);
-            }
-            Setting.DB_INITIALIZED.setValue(true);
-            view.back();
+            if (view.createStandardAdmin()) createAdmin();
         }
+    }
+
+    private void createAdmin(){
+        Permission admin = new Permission();
+        admin.getKeySet().addAll(Arrays.asList(Key.values()));
+        admin.setName("Admin(System Created)");
+        User user = new User();
+        user.setFirstName("System");
+        user.setSurname("Admin");
+        user.setUsername("Admin");
+        String password;
+        do {
+            password = view.requestPassword();
+        } while (password.equals(""));
+        user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
+        user.getPermissions().add(admin);
+        user.setUserGroup(new UserGroup());
+        Tools.persist(user.getUserGroup());
+        Tools.persist(admin);
+        Tools.persist(user);
     }
 
     private void parseJobs(File f) {
@@ -169,11 +186,11 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             model.batchSaveAll(jobs);
             view.setUserProgress(2);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
-    private void parseUsers(File f) {
+    private void parseUsers(File f, Permission keyPermission) {
         try {
             HashSet<String> usernames = new HashSet<>();
             HashMap<String,Job> jobs = new HashMap<>();
@@ -181,57 +198,25 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
             String defaultPassword = BCrypt.withDefaults().hashToString(12, "start".toCharArray());
             for (String l : lines) {
-                String[] columns = l.split(";");
-                User user = new User();
-                User secondary = new User();
-                UserGroup userGroup = new UserGroup();
-                userGroup.setInterestThisYear((int) (Float.parseFloat(columns[2].replace(",", "."))));
-                user.setShares(Integer.parseInt(columns[3]));
-                user.setSolidaritySurcharge(Integer.parseInt(columns[4])/100.);
-                secondary.setFirstName(columns[5]);
-                secondary.setSurname(columns[6]);
-                user.setExtraJobs(columns[7]);
-                user.setJobs(Tools.extract(HashSet::new, columns[8], "§", jobs::get));
-                DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-                user.setKernbeisserKey(Boolean.parseBoolean(columns[10]) ? 0 : -1);
-                user.setEmployee(Boolean.parseBoolean(columns[11]));
-                //IdentityCode: Unused, column 12
-                //Username: Unknown, column 13
-                //Password: Start, column 14
-                user.setFirstName(columns[15]);
-                user.setSurname(columns[16]);
-                user.setPhoneNumber1(columns[17]);
-                user.setPhoneNumber2(columns[18]);
-                for (String s : columns[19].split(" ")) {
-                    if (s.equals("")) {
-                        continue;
-                    }
-                    try {
-                        user.setTownCode(Integer.parseInt(s));
-                    } catch (NumberFormatException e) {
-                        user.setTown(s);
-                    }
+                String[] rawUserData = l.split(";");
+                User[] users = Users.parse(rawUserData,usernames,jobs);
+                UserGroup userGroup = Users.getUserGroup(rawUserData);
+                users[0].setUserGroup(userGroup);
+                users[1].setUserGroup(userGroup);
+                users[0].setPassword(defaultPassword);
+                users[1].setPassword(defaultPassword);
+                Tools.persist(userGroup);
+                if (users[0].getKernbeisserKeyNumber()!=-1) {
+                    users[0].getPermissions().add(keyPermission);
                 }
-                switch (Integer.parseInt(columns[20])) {
-                    //TODO
-                }
-                user.setEmail(columns[21]);
-                //CreateDate: is't used(create new CreateDate), column 22
-                userGroup.setValue(Double.parseDouble(columns[23].replace(",", ".")));
-                //TransactionDates: not used, column 24
-                //TransactionValues: not used, column 25
-                user.setStreet(columns[26]);
-                user.setUserGroup(userGroup);
-                user.setPassword(defaultPassword);
-                secondary.setPassword(defaultPassword);
-                generateUsername(usernames, user);
-                generateUsername(usernames, secondary);
-                secondary.setUserGroup(userGroup);
-                model.saveUser(user, secondary.getFirstName().equals("") ? null : secondary, userGroup);
+                Tools.persist(users[0]);
+                if(!users[1].getFirstName().equals(""))
+                Tools.persist(users[1]);
+                Transaction.doTransaction(User.getKernbeisserUser(),users[0],Users.getValue(rawUserData),TransactionType.INITIALIZE,"Übertrag des Guthaben des alten Kernbeisser Programmes");
             }
             view.setUserProgress(4);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
@@ -265,7 +250,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             model.saveAll(priceLists.values());
             view.setItemProgress(4);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
@@ -288,7 +273,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             model.batchSaveAll(suppliers);
             view.setItemProgress(2);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
@@ -302,74 +287,22 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             Collection<Article> articles = new ArrayList<>(lines.size());
             Supplier.getAll(null).forEach(e -> suppliers.put(e.getShortName(), e));
             PriceList.getAll(null).forEach(e -> priceListHashMap.put(e.getName(), e));
+            ErrorCollector errorCollector = new ErrorCollector();
             for (String l : lines) {
                 String[] columns = l.split(";");
-                Article article = new Article();
-                //TODO:
-                article.setName(columns[1]);
-                if(article.getName().contains("%")){
-                    System.out.println("Ignored "+article.getName()+" because it contains %");
-                    continue;
-                }
-                if (names.contains(article.getName().toUpperCase().replace(" ",""))) {
-                    System.out.println("Ignored "+article.getName()+" because the name is already taken");
-                    continue;
-                }else {
-                    names.add(article.getName().toUpperCase().replace(" ",""));
-                }
-                article.setKbNumber(Integer.parseInt(columns[2]));
-                article.setAmount(Integer.parseInt(columns[3]));
-                article.setNetPrice(Integer.parseInt(columns[4]) / 100.);
-                article.setSupplier(suppliers.get(columns[5].replace("GRE", "GR")));
                 try {
-                    Long ib = Long.parseLong(columns[6]);
-                    if (!barcode.contains(ib)) {
-                        article.setBarcode(ib);
-                        barcode.add(ib);
-                    } else {
-                        article.setBarcode(null);
-                    }
-                } catch (NumberFormatException e) {
-                    article.setBarcode(null);
+                    articles.add(Articles.parse(columns,barcode,names,suppliers,priceListHashMap));
+                } catch (CannotParseException e) {
+                    errorCollector.collect(e);
                 }
-                //columns[7] look at line 311
-                article.setVAT(Boolean.parseBoolean(columns[8]) ? VAT.LOW : VAT.HIGH);
-                article.setSurcharge(Integer.parseInt(columns[9]) / 1000.);
-                article.setSingleDeposit(Integer.parseInt(columns[10]) / 100.);
-                article.setCrateDeposit(Integer.parseInt(columns[11]) / 100.);
-                article.setMetricUnits(MetricUnits.valueOf(columns[12].replace("WEIGHT", "GRAM").replace("STACK", "PIECE")));
-                article.setPriceList(priceListHashMap.get(columns[13]));
-                article.setContainerDef(ContainerDefinition.valueOf(columns[14]));
-                article.setContainerSize(Double.parseDouble(columns[15].replaceAll(",", ".")));
-                article.setSuppliersItemNumber(Integer.parseInt(columns[16]));
-                article.setWeighAble(!Boolean.parseBoolean(columns[17]));
-                article.setListed(Boolean.parseBoolean(columns[18]));
-                article.setShowInShop(Boolean.parseBoolean(columns[19]));
-                article.setDeleted(Boolean.parseBoolean(columns[20]));
-                article.setPrintAgain(Boolean.parseBoolean(columns[21]));
-                article.setDeleteAllowed(Boolean.parseBoolean(columns[22]));
-                article.setLoss(Integer.parseInt(columns[23]));
-                article.setInfo(columns[24]);
-                article.setSold(Integer.parseInt(columns[25]));
-                article.setSpecialPriceMonth(
-                        extractOffers(Tools.extract(Boolean.class, columns[26], "_", Boolean::parseBoolean),
-                                      Integer.parseInt(columns[7])));
-                article.setDelivered(Integer.parseInt(columns[27]));
-                //TODO: article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_", Integer::parseInt));
-                //TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_", Integer::parseInt));
-                //TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
-                article.setIntake(Instant.now());
-                article.setLastDelivery(Instant.now());
-                article.setDeletedDate(null);
-                article.setCooling(Cooling.valueOf(columns[35]));
-                article.setCoveredIntake(Boolean.parseBoolean(columns[36]));
-                articles.add(article);
             }
+            Main.logger.warn("Ignored "+errorCollector.count()+" articles errors:");
+            errorCollector.log();
             view.setItemProgress(5);
             model.saveAllItems(articles);
             view.setItemProgress(6);
         } catch (IOException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 
@@ -378,31 +311,6 @@ public class DataImportController implements Controller<DataImportView,DataImpor
         Setting.DB_INITIALIZED.setValue(true);
     }
 
-    private List<Offer> extractOffers(Boolean[] months, int price) {
-        int from = -1;
-        ArrayList<Offer> out = new ArrayList<>();
-        LocalDate today = LocalDate.now();
-        for (int i = 1; i < months.length + 1; i++) {
-            if (months[i - 1]) {
-                if (from == -1) {
-                    from = i;
-                }
-                continue;
-            }
-            if (from == -1) {
-                continue;
-            }
-            Offer offer = new Offer();
-            offer.setSpecialNetPrice(price);
-            offer.setFromDate(Date.valueOf(LocalDate.of(today.getYear(), from, 1)));
-            offer.setToDate(Date.valueOf(
-                    LocalDate.of(today.getYear(), from + (i - 1 - from), 1).with(TemporalAdjusters.lastDayOfMonth())));
-            offer.setRepeatMode(Repeat.EVERY_YEAR);
-            out.add(offer);
-            from = -1;
-        }
-        return out;
-    }
 
     @Override
     public boolean commitClose() {

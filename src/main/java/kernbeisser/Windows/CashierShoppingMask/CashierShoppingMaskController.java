@@ -30,6 +30,7 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
             }
         };
         searchBoxController.initView();
+        searchBoxController.addSelectionListener(this::selectUser);
         model = new CashierShoppingMaskModel();
         this.view = new CashierShoppingMaskView(this);
 
