@@ -2,6 +2,7 @@ package kernbeisser.Windows.SynchronizeArticles;
 
 import kernbeisser.Enums.Key;
 import kernbeisser.Main;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,12 +42,47 @@ public class SynchronizeArticleController implements Controller<SynchronizeArtic
 
     public void acceptKernbeisser(ArticleDifference<?> articleDifference) {
         articleDifference.applyKernbeisser();
+        model.getAllDifferences().remove(articleDifference);
         view.remove(articleDifference);
     }
 
     public void acceptCatalog(ArticleDifference<?> articleDifference) {
         articleDifference.applyCatalog();
+        model.getAllDifferences().remove(articleDifference);
         view.remove(articleDifference);
+    }
+
+    void resolveConflicts(){
+        new Thread(() -> {
+            view.setResolveConflictsEnabled(false);
+            double allowedDifference = view.getAllowedDifference()/100;
+            String name = view.getDiffName();
+            String source = view.getSource();
+            model.getAllDifferences().removeIf(e -> {
+                if(e.getDifferenceName().equals(name)){
+                    try {
+                        ArticleDifference<Number> numberDifference = (ArticleDifference<Number>) e;
+                        if (Math.abs(numberDifference.getKernbeisserVersion().doubleValue() - numberDifference.getCatalogVersion().doubleValue()) < numberDifference.getKernbeisserVersion().doubleValue() * allowedDifference) {
+                            switch (source){
+                                case "Kernbeisser":
+                                    numberDifference.applyKernbeisser();
+                                    return true;
+                                case "Katalog":
+                                    numberDifference.applyCatalog();
+                                    return true;
+                                default:
+                                    return false;
+                            }
+                        }else return false;
+                    }catch (ClassCastException exception){
+                        Tools.showUnexpectedErrorWarning(exception);
+                        return false;
+                    }
+                }else return false;
+            });
+            fillUI();
+            view.setResolveConflictsEnabled(true);
+        }).start();
     }
 
     public static void main(String[] args) throws UnsupportedLookAndFeelException {

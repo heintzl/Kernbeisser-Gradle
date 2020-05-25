@@ -18,12 +18,9 @@ import java.util.function.Function;
 public class SynchronizeArticleModel implements Model<SynchronizeArticleController> {
 
 
-    void setSynchronized(ArticleBase articleBase){
+    private final Collection<ArticleDifference<?>> allDifferences = loadAllDifferences();
 
-    }
-
-
-    Collection<ArticleDifference<?>> getAllDifferences(){
+    private Collection<ArticleDifference<?>> loadAllDifferences(){
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -39,22 +36,24 @@ public class SynchronizeArticleModel implements Model<SynchronizeArticleControll
             }
         });
         ArrayList<ArticleDifference<?>> out = new ArrayList<>();
-        out.addAll(createDifference("Preis",ArticleBase::getNetPrice,ArticleBase::setNetPrice,a,b,15));
-        out.addAll(createDifference("Gebindegröße",ArticleBase::getContainerSize,ArticleBase::setContainerSize,a,b,0));
-        out.addAll(createDifference("Einzelpfand",ArticleBase::getSingleDeposit,ArticleBase::setSingleDeposit,a,b,0));
-        out.addAll(createDifference("Kistenpfand",ArticleBase::getCrateDeposit,ArticleBase::setCrateDeposit,a,b,0));
-        out.addAll(createDifference("Packungsmenge",e -> e.getAmount()*1.,(e,n) -> e.setAmount((int)Math.round(n)),a,b,0));
+        out.addAll(createDifference("Preis",ArticleBase::getNetPrice,ArticleBase::setNetPrice,a,b));
+        out.addAll(createDifference("Gebindegröße",ArticleBase::getContainerSize,ArticleBase::setContainerSize,a,b));
+        out.addAll(createDifference("Einzelpfand",ArticleBase::getSingleDeposit,ArticleBase::setSingleDeposit,a,b));
+        out.addAll(createDifference("Kistenpfand",ArticleBase::getCrateDeposit,ArticleBase::setCrateDeposit,a,b));
+        out.addAll(createDifference("Packungsmenge",ArticleBase::getAmount,ArticleBase::setAmount,a,b));
         return out;
     }
 
-    private Collection<ArticleDifference<Double>> createDifference(String name, Function<ArticleBase,Double> getValue,
-                                                                  BiConsumer<ArticleBase,Double> setValue, List<ArticleBase> a, List<ArticleBase> b,double allowedDiv){
-        ArrayList<ArticleDifference<Double>> out = new ArrayList<>();
+    Collection<ArticleDifference<?>> getAllDifferences(){
+        return allDifferences;
+    }
+
+    private <T> Collection<ArticleDifference<T>> createDifference(String name, Function<ArticleBase,T> getValue,
+                                                                   BiConsumer<ArticleBase,T> setValue, List<ArticleBase> a, List<ArticleBase> b){
+        ArrayList<ArticleDifference<T>> out = new ArrayList<>();
         for (int i = 0; i < a.size(); i++) {
             if(!getValue.apply(a.get(i)).equals(getValue.apply(b.get(i)))){
-                if (Math.abs(getValue.apply(a.get(i)) - getValue.apply(b.get(i))) > (getValue.apply(a.get(i)) * allowedDiv)) {
-                    out.add(new ArticleDifference<>(a.get(i),b.get(i),getValue,setValue,name));
-                }
+                out.add(new ArticleDifference<>(a.get(i),b.get(i),getValue,setValue,name));
             }
         }
         return out;
