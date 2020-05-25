@@ -27,6 +27,9 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>,Searc
 
     public void search(){
         view.setObjects(model.getValues(view.getSearch()));
+        if(model.getLastSelectedObject()==null){
+            view.setSelectedObject(model.getLastSelectedObject());
+        }
         runLostSelectionListener();
     }
 

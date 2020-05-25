@@ -21,7 +21,7 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
             model.doAction(article);
             return;
         } else {
-            this.view = new EditItemView(this);
+            this.view = new EditItemView();
         }
         switch (mode){
             case ADD:
@@ -67,14 +67,14 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
                 view.nameAlreadyExists();
                 return;
             }
-            if (model.kbNumberExists(data.getKbNumber())) {
+            if (model.kbNumberExists(data.getKbNumber())>-1) {
                 if(view.kbNumberAlreadyExists()){
                     view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
                 }
                 return;
             }
             if (data.getBarcode() != null) {
-                if (model.barcodeExists(data.getBarcode())) {
+                if (model.barcodeExists(data.getBarcode())>-1) {
                     view.barcodeAlreadyExists();
                     return;
                 }
@@ -85,17 +85,17 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
                 view.nameAlreadyExists();
                 return;
             }
-            if (data.getKbNumber()!=(model.getSource().getKbNumber())&&model.kbNumberExists(data.getKbNumber())) {
+            int idOfKBNumber = model.kbNumberExists(data.getKbNumber());
+            if (idOfKBNumber != -1 && idOfKBNumber != model.getSource().getId()) {
                 if(view.kbNumberAlreadyExists()){
                     view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
                 }
                 return;
             }
-            if ((!data.getBarcode().equals(model.getSource().getBarcode()))&&data.getBarcode() != null) {
-                if (model.barcodeExists(data.getBarcode())) {
-                    view.barcodeAlreadyExists();
-                    return;
-                }
+            int idOfBarcode = model.barcodeExists(data.getBarcode());
+            if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
+                view.barcodeAlreadyExists();
+                return;
             }
         }
         if (model.doAction(view.collectItem(model.getSource()))) {

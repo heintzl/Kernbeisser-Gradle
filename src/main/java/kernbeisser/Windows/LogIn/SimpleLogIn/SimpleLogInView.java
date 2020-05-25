@@ -2,6 +2,7 @@ package kernbeisser.Windows.LogIn.SimpleLogIn;
 
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +55,7 @@ public class SimpleLogInView implements View<SimpleLogInController> {
                 username.setText(fileLines.get(0));
                 password.setText(fileLines.get(1));
             } catch (IOException e) {
-                e.printStackTrace();
+                Tools.showUnexpectedErrorWarning(e);
             }
         }
         // TODO test code; remove  up to here

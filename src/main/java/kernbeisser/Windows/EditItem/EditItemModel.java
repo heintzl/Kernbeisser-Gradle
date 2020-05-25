@@ -44,32 +44,41 @@ public class EditItemModel implements Model<EditItemController> {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return false;
         }
 
     }
 
     private void removeItem(Article article) {
-        Tools.delete(Article.class, article.getIid());
+        Tools.delete(Article.class, article.getId());
     }
 
     private void editItem(Article article) {
-        Tools.edit(article.getIid(), article);
+        Tools.edit(article.getId(), article);
     }
 
-    boolean kbNumberExists(int kbNumber) {
+    int kbNumberExists(int kbNumber) {
         EntityManager em = DBConnection.getEntityManager();
-        boolean exists = em.createQuery("select id from Article where kbNumber = " + kbNumber).getResultList().size() > 0;
-        em.close();
-        return exists;
+        try {
+            return em.createQuery("select id from Article where kbNumber = " + kbNumber, Integer.class)
+                              .getSingleResult();
+        }catch (NoResultException e){
+            return -1;
+        }finally {
+            em.close();
+        }
     }
 
-    boolean barcodeExists(long barcode) {
+    int barcodeExists(long barcode) {
         EntityManager em = DBConnection.getEntityManager();
-        boolean exists = em.createQuery("select id from Article where barcode = " + barcode).getResultList().size() > 0;
-        em.close();
-        return exists;
+        try{
+            return em.createQuery("select id from Article where barcode = " + barcode,Integer.class).getSingleResult();
+        }catch (NoResultException e){
+            return -1;
+        }finally {
+            em.close();
+        }
     }
 
     private void addItem(Article article) {

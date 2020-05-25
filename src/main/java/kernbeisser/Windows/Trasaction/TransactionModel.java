@@ -1,6 +1,7 @@
 package kernbeisser.Windows.Trasaction;
 
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.TransactionType;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Model;
 
@@ -34,7 +35,8 @@ public class TransactionModel implements Model<TransactionController> {
 
     void transfer() {
         for (Transaction transaction : transactions) {
-            Transaction.doTransaction(transaction.getFrom(), transaction.getTo(), transaction.getValue(),transaction.getInfo());
+            Transaction.doTransaction(transaction.getFrom(), transaction.getTo(), transaction.getValue(),
+                                      transaction.getTransactionType(), transaction.getInfo());
         }
     }
 

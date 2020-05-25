@@ -6,6 +6,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
+import kernbeisser.Main;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -34,19 +35,12 @@ public class LogInModel implements Model {
             if ( BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
                 if(!user.hasPermission(Key.ACTION_LOGIN))throw new PermissionRequired();
                 loggedIn = user;
+                Main.logger.info("User with user id ["+user.getId()+"] has logged in");
             } else {
                 throw new AccessDeniedException();
             }
         } catch (NoResultException e) {
             throw new AccessDeniedException();
         }
-    }
-
-    public Collection<User> getAllUserWitchBeginsWith(char c) {
-        return User.getAll("where username like '" + c + "%' Order by username asc");
-    }
-
-    public Collection<User> getAllUser() {
-        return User.getAll("Order by username asc");
     }
 }

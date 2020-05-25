@@ -20,7 +20,6 @@ public class ContainerView implements View<ContainerController> {
     private ObjectTable<Container> lastContainers;
     private IntegerParseField amount;
     private IntegerParseField kbNumber;
-    private IntegerParseField kkNumber;
     private JLabel name;
     private JLabel size;
     private DoubleParseField netPrice;
@@ -28,6 +27,7 @@ public class ContainerView implements View<ContainerController> {
     private JPanel main;
     private JPanel insertSection;
     private JLabel insertSectionLabel;
+    private IntegerParseField suppliersItemNumber;
 
     private final ContainerController controller;
 
@@ -49,11 +49,11 @@ public class ContainerView implements View<ContainerController> {
     }
 
     int getKkNumber() {
-        return kkNumber.getSafeValue();
+        return suppliersItemNumber.getSafeValue();
     }
 
     void setKkNumber(String s) {
-        kkNumber.setText(s);
+        suppliersItemNumber.setText(s);
     }
 
     int getNetPrice() {
@@ -68,7 +68,7 @@ public class ContainerView implements View<ContainerController> {
         lastContainers = new ObjectTable<>(
                 Column.create("Anzahl", Container::getAmount, Key.CONTAINER_AMOUNT_READ),
                 Column.create("Ladennummer", Container::getKBNumber,Key.CONTAINER_ITEM_READ,Key.ARTICLE_KB_NUMBER_READ),
-                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), Key.CONTAINER_ITEM_READ, Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
                 Column.create("Produktname", e -> e.getItem().getName(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_NAME_READ),
                 Column.create("Netto-Preis", e -> e.getNetPrice() + "€",Key.CONTAINER_ITEM_READ,Key.ARTICLE_NET_PRICE_READ),
                 Column.create("Verkaufspreis", e -> "notDefined" + "€")
@@ -76,7 +76,7 @@ public class ContainerView implements View<ContainerController> {
         unpaidContainers = new ObjectTable<>(
                 Column.create("Anzahl", Container::getAmount,Key.CONTAINER_AMOUNT_READ),
                 Column.create("Ladennummer", Container::getKBNumber,Key.CONTAINER_ITEM_READ,Key.ARTICLE_KB_NUMBER_READ),
-                Column.create("Kornkraftnummer", e -> e.getItem().getKkNumber(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), Key.CONTAINER_ITEM_READ, Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
                 Column.create("Produktname", e -> e.getItem().getName(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_NAME_READ),
                 Column.create("Netto-Preis", e -> e.getNetPrice() + "€",Key.CONTAINER_ITEM_READ,Key.ARTICLE_NET_PRICE_READ),
                 Column.create("Verkaufspreis", e -> "notDefined" + "€"),
@@ -142,7 +142,7 @@ public class ContainerView implements View<ContainerController> {
     @Override
     public void initialize(ContainerController controller) {
         commit.addActionListener((e) -> controller.commit());
-        kkNumber.addKeyListener(new KeyAdapter() {
+        suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 controller.searchKK();

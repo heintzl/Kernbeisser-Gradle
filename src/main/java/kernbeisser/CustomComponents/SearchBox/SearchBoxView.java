@@ -73,4 +73,8 @@ public class SearchBoxView <T> extends JPanel implements View<SearchBoxControlle
     public void setSearch(String s) {
         searchInput.setText(s);
     }
+
+    public void setSelectedObject(T value) {
+        objects.setSelectedObject(value);
+    }
 }

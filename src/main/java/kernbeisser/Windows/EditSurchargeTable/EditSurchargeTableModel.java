@@ -40,7 +40,7 @@ public class EditSurchargeTableModel implements Model<EditSurchargeTableControll
             }
             return true;
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
             return false;
         }
     }

@@ -21,6 +21,8 @@ dependencies {
     compile 'at.favre.lib:bcrypt:0.8.0'
     compile "com.github.jiconfont:jiconfont-font_awesome:4.7.0.1"
     compile "com.github.jiconfont:jiconfont-swing:1.0.0"
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.3'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
     compile group: 'net.sf.jasperreports', name: 'jasperreports', version: '6.12.1'
     compile group: 'org.jfree', name: 'jfreechart', version: '1.5.0'
     compile group: 'com.formdev', name: 'flatlaf', version: '0.30'

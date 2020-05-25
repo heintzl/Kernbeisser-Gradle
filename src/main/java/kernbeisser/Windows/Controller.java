@@ -2,6 +2,8 @@ package kernbeisser.Windows;
 
 import jiconfont.IconCode;
 import kernbeisser.Enums.Key;
+import kernbeisser.Main;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.TabbedPanel.Tab;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
@@ -58,14 +60,11 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
             method.setAccessible(true);
             method.invoke(getView(), this);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         } catch (InvocationTargetException e) {
             e.getCause().printStackTrace();
         } catch (NoSuchMethodException e) {
-            System.err.println("failed to initialize view cannot find initialize("+this.getClass()+")");
-            for (Method method : getView().getClass().getDeclaredMethods()) {
-                System.err.println(method);
-            }
+            Main.logger.error("failed to initialize view cannot find initialize(" + this.getClass() + ")");
         }
         fillUI();
     }
@@ -219,7 +218,7 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
                     try {
                         b = b&&commitCloseTree((Controller<?,?>) field.get(controller));
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        Tools.showUnexpectedErrorWarning(e);
                         return false;
                     }
                     break;

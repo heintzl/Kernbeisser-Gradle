@@ -31,7 +31,6 @@ public class CashierMenuView  implements View<CashierMenuController> {
         editItems.addActionListener(e -> controller.openManageItems());
         editUser.addActionListener(e -> controller.openManageUsers());
         editPriceList.addActionListener(e -> controller.openManagePriceLists());
-        refreshCatalog.addActionListener(e -> controller.openCatalogInput());
         startCashier.addActionListener(e -> controller.openCashierMask());
         quitCashierJob.addActionListener(e -> back());
         transfer.addActionListener(e -> controller.openTransfer());

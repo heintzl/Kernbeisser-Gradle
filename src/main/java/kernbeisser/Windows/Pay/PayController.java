@@ -1,10 +1,10 @@
 package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBEntities.Purchase;
-import kernbeisser.DBEntities.Action;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
@@ -14,8 +14,8 @@ import java.util.Collection;
 
 public class PayController implements Controller<PayView,PayModel> {
 
-    private PayModel model;
-    private PayView view;
+    private final PayModel model;
+    private final PayView view;
 
     public PayController(Window current, SaleSession saleSession, Collection<ShoppingItem> shoppingCart,
                          Runnable transferCompleted) {
@@ -24,14 +24,13 @@ public class PayController implements Controller<PayView,PayModel> {
     }
 
     void commitPayment() {
-        Purchase purchase = null;
+        Purchase purchase;
         try {
             purchase = model.pay(model.getSaleSession(), model.getShoppingCart(),
                                  model.shoppingCartSum());
             model.print(purchase, view.getSelectedPrintService());
-            Action.logCurrentFunctionCall();
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            Tools.showUnexpectedErrorWarning(e);
         }
     }
 

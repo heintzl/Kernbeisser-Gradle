@@ -28,7 +28,7 @@ public class UserGroup {
         return value;
     }
 
-    public void setValue(double value) {
+    private void setValue(double value) {
         this.value = value;
     }
 

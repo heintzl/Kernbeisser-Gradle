@@ -1,6 +1,7 @@
 package kernbeisser.Useful;
 
 import kernbeisser.Config.ConfigManager;
+import kernbeisser.Main;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -17,7 +18,7 @@ public class Images {
      *
      * @see HashMap
      */
-    private static HashMap<String,BufferedImage> images = new HashMap<>();
+    private static final HashMap<String,BufferedImage> images = new HashMap<>();
 
     static {
         collectImages(new File(ConfigManager.getHeader().getString("ImagePath")));
@@ -30,7 +31,7 @@ public class Images {
      */
     public static void setPath(File f) {
         if (!f.exists()) {
-            System.out.println("path does not exsits");
+            Main.logger.error("path does not exists");
         }
         images.clear();
         collectImages(f);
@@ -42,11 +43,11 @@ public class Images {
      * @param name the Image name with extension
      * @return return the right image with the given name
      */
-    public static BufferedImage getImage(String name) {
+    public static BufferedImage getImage(String name){
         if (images.containsKey(name)) {
             return images.get(name);
         }
-        System.err.println("Image not found");
+        Main.logger.warn("requested Image '"+name+"' not found");
         return null;
     }
 
@@ -57,20 +58,24 @@ public class Images {
      */
     private static void collectImages(File dir) {
         if (!dir.isDirectory()) {
+            Main.logger.warn("invalid image dir found in config.json");
             return;
         }
+        int img = 0;
         for (File file : dir.listFiles()) {
             if (file.isDirectory()) {
                 collectImages(file);
             } else {
                 try {
                     images.put(file.getName(), ImageIO.read(file));
-                    System.out.println(file.getName());
+                    img++;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Tools.showUnexpectedErrorWarning(e);
                 }
 
             }
         }
+        if(img!=0)
+        Main.logger.info("loaded "+img+ " images from "+dir.getAbsolutePath());
     }
 }

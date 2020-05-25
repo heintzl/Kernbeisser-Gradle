@@ -3,13 +3,15 @@ package kernbeisser.Enums;
 import kernbeisser.DBEntities.SettingValue;
 
 public enum Setting {
-    DB_VERSION("1.00"),
+    DB_VERSION("1.0f"),
     DB_INITIALIZED("false"),
     VAT_LOW("0.07"),
     VAT_HIGH("0.19"),
     DEFAULT_MAX_SEARCH("500"),
     CONTAINER_SURCHARGE_REDUCTION ("0.5"),
-    DEFAULT_THEME(Theme.LIGHT.name())
+    DEFAULT_THEME(Theme.LIGHT.name()),
+    INFO_LINE_LAST_CATALOG("notDefined"),
+    UPDATE_CATALOG_FROM_INTERNET("false"),
     ;
 
     private final String defaultValue;
