@@ -68,12 +68,15 @@ public class ConfigManager {
 
     public static String getCatalogInfoLine(){
         try {
-            FileInputStream fis = new FileInputStream(getCatalogFile());
-            BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
-            String infoLine = dis.readLine();
-            fis.close();
-            dis.close();
-            return infoLine;
+            File catFile = getCatalogFile();
+            if (catFile.exists() && ! catFile.isDirectory()) {
+                FileInputStream fis = new FileInputStream(getCatalogFile());
+                BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
+                String infoLine = dis.readLine();
+                fis.close();
+                dis.close();
+                return infoLine;
+            }
         } catch (IOException e) {
             Tools.showUnexpectedErrorWarning(e);
         }
