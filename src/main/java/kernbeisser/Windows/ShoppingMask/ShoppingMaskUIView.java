@@ -121,7 +121,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     private void addToCart() {
-        controller.addToShoppingCart();
+        if (controller.addToShoppingCart()) {articleTypeChange(Character.toUpperCase(currentArticleType));};
     }
     private void editUserAction() {controller.editUserAction();}
 
@@ -173,6 +173,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     private void articleTypeChange(char type) {
         if (currentArticleType != type) {
+            type = Character.toLowerCase(type);
             currentArticleType = type;
             isWeighable = false;
             addAmount.setVisible(type == 'a');
@@ -408,7 +409,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
             }
         });
         kbNumber.addActionListener(e -> {if(isWeighable) {amount.setText("");}; amount.selectAll(); amount.requestFocusInWindow();});
-        suppliersItemNumber.addActionListener(e -> controller.addToShoppingCart());
+        suppliersItemNumber.addActionListener(e -> addToCart());
         suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
