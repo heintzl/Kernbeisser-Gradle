@@ -3,15 +3,16 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
+import org.jetbrains.annotations.Nullable;
 
 import javax.transaction.NotSupportedException;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShoppingCartModel implements Model<ShoppingCartController> {
     private final double userValue;
     private final double userSurcharge;
-    private final HashMap<ShoppingItem,ShoppingItem> shoppingItems = new HashMap<>();
+    private final ArrayList<ShoppingItem> shoppingItems = new ArrayList<>();
 
 
     ShoppingCartModel(double userValue, double userSurcharge) {
@@ -19,29 +20,42 @@ public class ShoppingCartModel implements Model<ShoppingCartController> {
         this.userSurcharge = userSurcharge;
     }
 
-    void addItem(ShoppingItem item, boolean piece) {
-        ShoppingItem current = shoppingItems.get(item);
-        if (current != null) {
+    void addItem(ShoppingItem newItem, boolean piece) {
+        ShoppingItem existingItem = getShoppingItem(newItem);
+        if (existingItem != null) {
             if (piece) {
-                current.setItemMultiplier(item.getItemMultiplier() + current.getItemMultiplier());
+                existingItem.setItemMultiplier(newItem.getItemMultiplier() + existingItem.getItemMultiplier());
             } else {
                 try {
-                    current.addToRetailPrice(item.getRetailPrice());
+                    existingItem.addToRetailPrice(newItem.getRetailPrice());
                 } catch (NotSupportedException e) {
                     Tools.showUnexpectedErrorWarning(e);
                 }
             }
         } else {
-            shoppingItems.put(item, item);
+            shoppingItems.add(newItem);
+            newItem.setShoppingCartIndex(shoppingItems.size() - 1);
         }
+    }
+
+    @Nullable
+    private ShoppingItem getShoppingItem(ShoppingItem newItem) {
+        ShoppingItem current = null;
+        int hashCode = newItem.hashCode();
+        for (ShoppingItem item : shoppingItems) {
+            if (newItem.equals(item)) {
+                current = item;
+            }
+        }
+        return current;
     }
 
     public double getUserValue() {
         return userValue;
     }
 
-    Collection<ShoppingItem> getItems() {
-        return shoppingItems.values();
+    List<ShoppingItem> getItems() {
+        return shoppingItems;
     }
 
     public double getUserSurcharge() {

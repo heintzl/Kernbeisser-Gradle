@@ -1,16 +1,13 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
-import jdk.nashorn.internal.scripts.JO;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
-import org.apache.commons.beanutils.ConversionException;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.text.MessageFormat;
-import java.util.Collection;
+import java.util.List;
 
 public class ShoppingCartController implements Controller<ShoppingCartView,ShoppingCartModel> {
     private ShoppingCartView view;
@@ -25,34 +22,39 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     public void addShoppingItem(ShoppingItem item, boolean piece) {
         model.addItem(item, piece);
         if (item.getSingleDeposit() != 0) {
-            model.addItem(item.createItemDeposit(),true);
+            model.addItem(item.createItemDeposit(), true);
         }
         if (item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
             if (item.getItemMultiplier() >= item.getContainerSize()) {
                 int containers = 0;
                 boolean exit = false;
-                String initValue = MessageFormat.format("{0, number, 0}", Math.floor(item.getItemMultiplier() / item.getContainerSize())).trim();
+                String initValue = MessageFormat.format("{0, number, 0}",
+                                                        Math.floor(item.getItemMultiplier() / item.getContainerSize()))
+                                                .trim();
 
                 String response = JOptionPane.showInputDialog(
                         view,
-                        MessageFormat.format("Die eingegebene Menge passt in ein oder mehrere {0, number, 0}er Pfand-Gebinde. Für wie viele Gebinde soll Pfand berechnet werden?", item.getContainerSize()),
+                        MessageFormat.format(
+                                "Die eingegebene Menge passt in ein oder mehrere {0, number, 0}er Pfand-Gebinde. Für wie viele Gebinde soll Pfand berechnet werden?",
+                                item.getContainerSize()),
                         initValue
                 );
-                if (response != null) {response = response.trim();}
+                if (response != null) {
+                    response = response.trim();
+                }
                 do {
                     if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
                         exit = true;
-                    } else{
+                    } else {
                         try {
                             containers = Integer.parseInt(response);
                             if (containers > 0) {
-                                model.addItem(item.createContainerDeposit(containers),true);
+                                model.addItem(item.createContainerDeposit(containers), true);
                                 exit = true;
-                            }
-                            else {
+                            } else {
                                 throw (new NumberFormatException());
                             }
-                        } catch (NumberFormatException exception){
+                        } catch (NumberFormatException exception) {
                             response = JOptionPane.showInputDialog(
                                     view,
                                     "Eingabe kann nicht verarbeitet werden, bitte noch einmal versuchen. Für wie viele Gebinde soll Pfand berechnet werden?",
@@ -87,7 +89,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
         refresh();
     }
 
-    public Collection<ShoppingItem> getItems(){
+    public List<ShoppingItem> getItems() {
         return model.getItems();
     }
 
@@ -100,7 +102,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     public @NotNull ShoppingCartModel getModel() {
         return model;
     }
-  
+
     @Override
     public void fillUI() {
         refresh();
