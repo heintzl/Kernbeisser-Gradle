@@ -3,7 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.FocusTraversalPolicy.FocusTraversalPolicy;
+import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
@@ -91,29 +91,21 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     private char currentArticleType;
     private boolean isWeighable;
-    static Vector<Component> traversalOrder = new Vector<>(15);
-    static kernbeisser.CustomComponents.FocusTraversalPolicy.FocusTraversalPolicy traversalPolicy;
+    static Vector<Component> traversalOrder = new Vector<Component>(1);
+    static FocusTraversal traversalPolicy;
 
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
         this.controller = controller;
         articleTypeChange('a');
         traversalOrder.add(kbNumber);
-        traversalOrder.add(suppliersItemNumber);
         traversalOrder.add(articleName);
         traversalOrder.add(price);
         traversalOrder.add(amount);
+        traversalOrder.add(suppliersItemNumber);
         traversalOrder.add(deposit);
-        traversalOrder.add(optTaxLow);
-        traversalOrder.add(optTaxStandard);
-        traversalOrder.add(priceStandard);
-        traversalOrder.add(pricePreordered);
-        traversalOrder.add(price50Percent);
-        traversalOrder.add(priceVariablePercentage);
-        traversalOrder.add(variablePercentage);
-        traversalPolicy = new FocusTraversalPolicy(traversalOrder);
+        traversalPolicy = new FocusTraversal(traversalOrder);
         westPanel.setFocusTraversalPolicy(traversalPolicy);
-        reductionPanel.setFocusTraversalPolicy(traversalPolicy);
     }
 
     private void doCancel() {
@@ -129,7 +121,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     private void addToCart() {
-        controller.addToShoppingCart();
+        if (controller.addToShoppingCart()) {articleTypeChange(Character.toUpperCase(currentArticleType));};
     }
     private void editUserAction() {controller.editUserAction();}
 
@@ -181,6 +173,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     private void articleTypeChange(char type) {
         if (currentArticleType != type) {
+            type = Character.toLowerCase(type);
             currentArticleType = type;
             isWeighable = false;
             addAmount.setVisible(type == 'a');
@@ -313,7 +306,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     void noArticleFound() {
-        JOptionPane.showConfirmDialog(mainPanel,
+        JOptionPane.showMessageDialog(mainPanel,
                                       "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
     }
 
@@ -332,7 +325,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         suppliersItemNumber.setText(article.getSuppliersItemNumber() + "");
         articleName.setText(
                 article.getName().length() > 40
-                ? new StringBuilder(article.getName()).replace(16, article.getName().length(), "...").toString()
+                ? new StringBuilder(article.getName()).replace(36, article.getName().length(), "...").toString()
                 : article.getName());
         articleAmount.setText(article.getAmount() + "");
         articleUnit.setText(article.getMetricUnits().getShortName());
@@ -415,8 +408,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                 controller.searchByKbNumber();
             }
         });
-        kbNumber.addActionListener(e -> {if(isWeighable) {amount.setText(""); amount.requestFocusInWindow();} else {controller.addToShoppingCart();}});
-        suppliersItemNumber.addActionListener(e -> controller.addToShoppingCart());
+        kbNumber.addActionListener(e -> {if(isWeighable) {amount.setText("");}; amount.selectAll(); amount.requestFocusInWindow();});
+        suppliersItemNumber.addActionListener(e -> addToCart());
         suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {

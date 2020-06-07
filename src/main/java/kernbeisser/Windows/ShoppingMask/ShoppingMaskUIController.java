@@ -32,12 +32,20 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         this.view = new ShoppingMaskUIView(this, shoppingCartController);
     }
 
-    void addToShoppingCart() {
+    boolean addToShoppingCart() {
         boolean piece = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
+        boolean success = false;
         try {
-            shoppingCartController.addShoppingItem(extractShoppingItemFromUI(), piece);
+            ShoppingItem item = extractShoppingItemFromUI();
+            if (item.getItemMultiplier() != 0) {
+                shoppingCartController.addShoppingItem(extractShoppingItemFromUI(), piece);
+                success = true;
+            }
         } catch (UndefinedInputException undefinedInputException) {
             view.noArticleFound();
+            return false;
+        } finally {
+            return success;
         }
     }
 
@@ -46,7 +54,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         Article found = model.getByKbNumber(view.getKBArticleNumber());
         if (found != null) {
             view.loadItemStats(found);
-        }
+        } else  {view.setSuppliersItemNumber("");}
     }
 
     void searchBySupplierItemsNumber() {
@@ -54,7 +62,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         Article found = model.getBySupplierItemNumber(view.getSuppliersNumber());
         if (found != null) {
             view.loadItemStats(found);
-        }
+        } else { view.setKbNumber("");}
     }
 
     double getPrice(Article article) {

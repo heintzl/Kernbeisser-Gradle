@@ -1,5 +1,5 @@
 package kernbeisser.DBEntities;
-// TODO HEI Review bakery/organic VAT
+
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
@@ -65,6 +65,18 @@ public class ShoppingItem implements Serializable {
     @Column
     private double itemNetPrice;
 
+    @Transient
+    private double singleDeposit;
+
+    @Transient
+    private double containerDeposit;
+
+    @Transient
+    private double containerSize;
+
+    @Transient
+    private int superHash;
+
     public ShoppingItem() {
     }
 
@@ -87,6 +99,9 @@ public class ShoppingItem implements Serializable {
             this.shortName = article.getSupplier().getShortName();
         }
         this.suppliersItemNumber = article.getSuppliersItemNumber();
+        this.singleDeposit = article.getSingleDeposit();
+        this.containerDeposit = article.getContainerDeposit();
+        this.containerSize = article.getContainerSize();
         this.itemRetailPrice = calculateItemRetailPrice();
     }
 
@@ -197,6 +212,22 @@ public class ShoppingItem implements Serializable {
         // TODO wie wird der Pfand verbucht? Als NetPrice oder irgendwie anders?
     }
 
+    public ShoppingItem createItemDeposit() {
+        ShoppingItem deposit = createDeposit(this.singleDeposit);
+        deposit.name = "    > Einzelpfand";
+        deposit.superHash = this.hashCode();
+        deposit.itemMultiplier = this.itemMultiplier;
+        return deposit;
+    }
+
+    public ShoppingItem createContainerDeposit(int number) {
+        ShoppingItem deposit = createDeposit(this.containerDeposit);
+        deposit.name = "    > Gebindepfand";
+        deposit.superHash = this.hashCode();
+        deposit.itemMultiplier = number;
+        return deposit;
+    }
+
     public static List<ShoppingItem> getAll(String condition) {
         return Tools.getAll(ShoppingItem.class, condition);
     }
@@ -285,6 +316,16 @@ public class ShoppingItem implements Serializable {
         return surcharge;
     }
 
+    public double getSingleDeposit() {return singleDeposit; }
+
+    public double getContainerDeposit() {return containerDeposit; }
+
+    public double getContainerSize() {return containerSize; }
+
+    public long getSuperHash() {
+        return superHash;
+    }
+
     @Override
     public int hashCode() {
         return kbNumber * ((discount % 100) + 1) * amount;
@@ -294,7 +335,7 @@ public class ShoppingItem implements Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof ShoppingItem) {
             ShoppingItem item = (ShoppingItem) obj;
-            return item.discount == discount && item.name.equals(name) && item.kbNumber == kbNumber && item.vat == vat && item.itemRetailPrice == itemRetailPrice && item.containerDiscount == containerDiscount;
+            return item.discount == discount && item.name.equals(name) && item.kbNumber == kbNumber && item.vat == vat && item.itemRetailPrice == itemRetailPrice && item.containerDiscount == containerDiscount && item.superHash == superHash;
         } else {
             return false;
         }
@@ -304,4 +345,5 @@ public class ShoppingItem implements Serializable {
     public String toString() {
         return name;
     }
+
 }
