@@ -1,7 +1,10 @@
 package kernbeisser.Windows.Pay;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Purchase;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 import net.sf.jasperreports.engine.JRException;
@@ -11,22 +14,22 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
-import java.util.Collection;
+import java.util.List;
 
 import static kernbeisser.Reports.ReportUtil.exportInvoicePDF;
 
 public class PayModel implements Model<PayController> {
     private final SaleSession saleSession;
-    private final Collection<ShoppingItem> shoppingCart;
+    private final List<ShoppingItem> shoppingCart;
     private final Runnable transferCompleted;
 
-    PayModel(SaleSession saleSession, Collection<ShoppingItem> shoppingCart, Runnable transferCompleted) {
+    PayModel(SaleSession saleSession, List<ShoppingItem> shoppingCart, Runnable transferCompleted) {
         this.shoppingCart = shoppingCart;
         this.saleSession = saleSession;
         this.transferCompleted = transferCompleted;
     }
 
-    Collection<ShoppingItem> getShoppingCart() {
+    List<ShoppingItem> getShoppingCart() {
         return shoppingCart;
     }
 
@@ -40,7 +43,7 @@ public class PayModel implements Model<PayController> {
                            .sum() * (1 + saleSession.getCustomer().getSolidaritySurcharge());
     }
 
-    Purchase pay(SaleSession saleSession, Collection<ShoppingItem> items, double sum) throws PersistenceException {
+    Purchase pay(SaleSession saleSession, List<ShoppingItem> items, double sum) throws PersistenceException {
         //Build connection by default
         EntityManager em = DBConnection.getEntityManager();
 
@@ -57,17 +60,16 @@ public class PayModel implements Model<PayController> {
             }
 
             //Do money exchange
-            Transaction.doPurchaseTransaction(saleSession.getCustomer(),shoppingCartSum());
+            Transaction.doPurchaseTransaction(saleSession.getCustomer(), shoppingCartSum());
 
             //Save ShoppingItems in Purchase
             Purchase purchase = new Purchase();
             purchase.setSession(db);
             em.persist(purchase);
-            items.forEach(e -> {
-                ShoppingItem shoppingItem = Tools.removeLambda(e,ShoppingItem::new);
-                shoppingItem.setPurchase(purchase);
-                em.persist(shoppingItem);
-            });
+            for (ShoppingItem item : items) {
+                item.setPurchase(purchase);
+                em.persist(item);
+            }
 
             //Persist changes
             et.commit();
