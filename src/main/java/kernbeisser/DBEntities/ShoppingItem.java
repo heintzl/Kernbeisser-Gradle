@@ -5,6 +5,10 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.transaction.NotSupportedException;
@@ -13,6 +17,8 @@ import java.util.List;
 
 @Entity
 @Table
+@NoArgsConstructor
+@Getter
 public class ShoppingItem implements Serializable {
 
     @Id
@@ -27,6 +33,7 @@ public class ShoppingItem implements Serializable {
 
     @JoinColumn(nullable = false)
     @ManyToOne
+    @Setter
     private Purchase purchase;
 
     @Column
@@ -36,12 +43,14 @@ public class ShoppingItem implements Serializable {
     private int kbNumber;
 
     @Column
+    @Setter
     private int itemMultiplier = 1;
 
     @Column
     private double vat;
 
     @Column
+    @Getter(AccessLevel.NONE)
     private MetricUnits metricUnits;
 
     @Column
@@ -66,6 +75,7 @@ public class ShoppingItem implements Serializable {
     private double itemNetPrice;
 
     @Column
+    @Setter
     private int shoppingCartIndex;
 
     @Transient
@@ -79,9 +89,6 @@ public class ShoppingItem implements Serializable {
 
     @Transient
     private int superHash;
-
-    public ShoppingItem() {
-    }
 
     public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
         this.containerDiscount = hasContainerDiscount;
@@ -212,16 +219,8 @@ public class ShoppingItem implements Serializable {
         item.itemNetPrice = item.itemRetailPrice / (1 + item.surcharge) / (1 + item.vat);
     }
 
-    public boolean getContainerDiscount() {
-        return containerDiscount;
-    }
-
     public double getRetailPrice() {
         return itemRetailPrice * metricUnits.getBaseFactor() * itemMultiplier;
-    }
-
-    public double getItemRetailPrice() {
-        return itemRetailPrice;
     }
 
     private double calculateItemRetailPrice() {
@@ -260,92 +259,8 @@ public class ShoppingItem implements Serializable {
         throw new NotSupportedException();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getKbNumber() {
-        return kbNumber;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public double getItemNetPrice() {
-        return itemNetPrice;
-    }
-
-    public double getVat() {
-        return vat;
-    }
-
-    public boolean isWeighable() {
-        return weighAble;
-    }
-
     public MetricUnits getMetricUnits() {
         return metricUnits != null ? metricUnits : MetricUnits.NONE;
-    }
-
-    public long getSiid() {
-        return siid;
-    }
-
-    public int getItemMultiplier() {
-        return itemMultiplier;
-    }
-
-    public void setItemMultiplier(int amount) {
-        this.itemMultiplier = amount;
-    }
-
-    public Purchase getPurchase() {
-        return purchase;
-    }
-
-    public void setPurchase(Purchase purchase) {
-        this.purchase = purchase;
-    }
-
-    public int getDiscount() {
-        return discount;
-    }
-
-    public int getSuppliersItemNumber() {
-        return suppliersItemNumber;
-    }
-
-    public int getShoppingCartIndex() {
-        return shoppingCartIndex;
-    }
-
-    public void setShoppingCartIndex(int shoppingCartIndex) {
-        this.shoppingCartIndex = shoppingCartIndex;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public double getSurcharge() {
-        return surcharge;
-    }
-
-    public double getSingleDeposit() {
-        return singleDeposit;
-    }
-
-    public double getContainerDeposit() {
-        return containerDeposit;
-    }
-
-    public double getContainerSize() {
-        return containerSize;
-    }
-
-    public long getSuperHash() {
-        return superHash;
     }
 
     @Override
