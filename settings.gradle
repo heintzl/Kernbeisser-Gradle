@@ -1,2 +1,3 @@
 rootProject.name = 'kernbeisser'
+include(':kernbeisser', ':app', ':tn', ':lib', ':dmz')
 

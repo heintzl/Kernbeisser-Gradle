@@ -78,6 +78,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                 }
                 break;
             case ADD:
+                System.out.println(view.validate());
                 if (model.usernameExists(data.getUsername())) {
                     view.usernameAlreadyExists();
                     return;

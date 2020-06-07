@@ -8,6 +8,7 @@ import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
 import kernbeisser.CustomComponents.Verifier.UsernameVerifier;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -160,6 +161,11 @@ public class EditUserView implements View<EditUserController> {
         keyNumber.setRequiredKeys(Key.USER_KERNBEISSER_KEY_READ,Key.USER_KERNBEISSER_KEY_WRITE);
         shares.setReadWrite(Key.USER_SHARES_READ);
         shares.setInputVerifier(IntegerVerifier.from(1,1,3,10));
+        submit.setVerifyInputWhenFocusTarget(true);
+    }
+
+    boolean validate(){
+        return Tools.validate(userDataPanel);
     }
 
     @Override
