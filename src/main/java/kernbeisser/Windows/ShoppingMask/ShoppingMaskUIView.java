@@ -121,7 +121,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     private void addToCart() {
-        if (controller.addToShoppingCart()) {articleTypeChange(Character.toUpperCase(currentArticleType));};
+        if (controller.addToShoppingCart()) {articleTypeInitialize(currentArticleType);};
     }
     private void editUserAction() {controller.editUserAction();}
 
@@ -173,71 +173,74 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     private void articleTypeChange(char type) {
         if (currentArticleType != type) {
-            type = Character.toLowerCase(type);
-            currentArticleType = type;
-            isWeighable = false;
-            addAmount.setVisible(type == 'a');
-            addPrice.setVisible("pbc".indexOf(type) != -1);
-            addDeposit.setVisible("dr".indexOf(type) != -1);
-            kbNumber.setVisible(type == 'a');
-            setKbNumber("");
-            suppliersItemNumber.setVisible(type == 'a');
-            setSuppliersItemNumber("");
-            price.setEnabled(type !='a');
-            setPrice("");
-            priceUnit.setVisible("pbac".indexOf(type) != -1);
-            setPriceUnit("€");
-            amount.setVisible("ac".indexOf(type) != -1);
-            amount.setText("1");
-            setAmountUnit("");
-            articleAmount.setVisible(type == 'a');
-            setArticleUnit("");
-            articleUnit.setVisible(type == 'a');
-            deposit.setEnabled("dr".indexOf(type) != -1);
-            deposit.setVisible("adr".indexOf(type) != -1);
-            depositUnit.setVisible("adr".indexOf(type) != -1);
-            if ("dr".indexOf(type) != -1) {
-                setOptTaxStandard();
-            } else {
-                setOptTaxLow();
-            }
-            optTaxLow.setEnabled(type == 'c');
-            optTaxStandard.setEnabled(type == 'c');
-            if(type== 'a') {
-                priceStandard.setEnabled(true);
-                price50Percent.setEnabled(true);
-                priceVariablePercentage.setEnabled(true);
-                pricePreordered.setEnabled(true);
-            } else {
-                priceStandard.setSelected(true);
-                priceStandard.setEnabled(false);
-                price50Percent.setEnabled(false);
-                priceVariablePercentage.setEnabled(false);
-                pricePreordered.setEnabled(false);
-            }
-
-            variablePercentage.setEnabled(priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
-            if (type == 'p') {
-                setArticleName("Obst & Gemüse");
-                price.requestFocusInWindow();
-            } else if (type == 'b') {
-                setArticleName("Backwaren");
-                price.requestFocusInWindow();
-            } else if (type == 'd') {
-                setArticleName("Pfand-Behälter");
-                deposit.requestFocusInWindow();
-            } else if (type == 'r') {
-                setArticleName("Pfand zurück");
-                deposit.requestFocusInWindow();
-            } else if (type == 'a') {
-                setArticleName("");
-                kbNumber.requestFocusInWindow();
-            } else if (type == 'c') {
-                setArticleName("");
-                articleName.requestFocusInWindow();
-            }
-            articleName.setEnabled(type == 'c');
+            articleTypeInitialize(type);
         }
+    }
+
+    private void articleTypeInitialize(char type) {
+        currentArticleType = type;
+        isWeighable = false;
+        addAmount.setVisible(type == 'a');
+        addPrice.setVisible("pbc".indexOf(type) != -1);
+        addDeposit.setVisible("dr".indexOf(type) != -1);
+        kbNumber.setVisible(type == 'a');
+        setKbNumber("");
+        suppliersItemNumber.setVisible(type == 'a');
+        setSuppliersItemNumber("");
+        price.setEnabled(type !='a');
+        setPrice("");
+        priceUnit.setVisible("pbac".indexOf(type) != -1);
+        setPriceUnit("€");
+        amount.setVisible("ac".indexOf(type) != -1);
+        amount.setText("1");
+        setAmountUnit("");
+        articleAmount.setVisible(type == 'a');
+        setArticleUnit("");
+        articleUnit.setVisible(type == 'a');
+        deposit.setEnabled("dr".indexOf(type) != -1);
+        deposit.setVisible("adr".indexOf(type) != -1);
+        depositUnit.setVisible("adr".indexOf(type) != -1);
+        if ("dr".indexOf(type) != -1) {
+            setOptTaxStandard();
+        } else {
+            setOptTaxLow();
+        }
+        optTaxLow.setEnabled(type == 'c');
+        optTaxStandard.setEnabled(type == 'c');
+        if(type== 'a') {
+            priceStandard.setEnabled(true);
+            price50Percent.setEnabled(true);
+            priceVariablePercentage.setEnabled(true);
+            pricePreordered.setEnabled(true);
+        } else {
+            priceStandard.setSelected(true);
+            priceStandard.setEnabled(false);
+            price50Percent.setEnabled(false);
+            priceVariablePercentage.setEnabled(false);
+            pricePreordered.setEnabled(false);
+        }
+
+        variablePercentage.setEnabled(priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
+        if (type == 'p') {
+            setArticleName("Obst & Gemüse");
+            price.requestFocusInWindow();
+        } else if (type == 'b') {
+            setArticleName("Backwaren");
+            price.requestFocusInWindow();
+        } else if (type == 'd') {
+            setArticleName("Pfand-Behälter");
+            deposit.requestFocusInWindow();
+        } else if (type == 'r') {
+            setArticleName("Pfand zurück");
+            deposit.requestFocusInWindow();
+        } else if (type == 'a') {
+            setArticleName("");
+            kbNumber.requestFocusInWindow();
+        } else if (type == 'c') {
+            setArticleName("");
+            articleName.requestFocusInWindow();
+        }
+        articleName.setEnabled(type == 'c');
     }
 
     public int getOption() {

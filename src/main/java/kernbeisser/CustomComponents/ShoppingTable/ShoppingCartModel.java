@@ -20,9 +20,19 @@ public class ShoppingCartModel implements Model<ShoppingCartController> {
         this.userSurcharge = userSurcharge;
     }
 
-    void addItem(ShoppingItem newItem, boolean piece) {
+    int addItem(ShoppingItem newItem, boolean piece) {
+        return addItemAtIndex(newItem, piece, shoppingItems.size());
+    }
+
+    int addItemBehind(ShoppingItem newItem, ShoppingItem behindItem, boolean piece) {
+        return addItemAtIndex(newItem, piece, shoppingItems.indexOf(getShoppingItem(behindItem)) + 1);
+    }
+
+    int addItemAtIndex(ShoppingItem newItem, boolean piece, int atIndex) {
+        int index = atIndex;
         ShoppingItem existingItem = getShoppingItem(newItem);
         if (existingItem != null) {
+            index = existingItem.getShoppingCartIndex();
             if (piece) {
                 existingItem.setItemMultiplier(newItem.getItemMultiplier() + existingItem.getItemMultiplier());
             } else {
@@ -33,15 +43,18 @@ public class ShoppingCartModel implements Model<ShoppingCartController> {
                 }
             }
         } else {
-            shoppingItems.add(newItem);
-            newItem.setShoppingCartIndex(shoppingItems.size() - 1);
+            newItem.setShoppingCartIndex(atIndex);
+            shoppingItems.add(atIndex, newItem);
         }
+        return index;
     }
 
+    public void increaseItemSpace() {
+        this.shoppingItems.ensureCapacity(shoppingItems.size() + 2);
+    }
     @Nullable
     private ShoppingItem getShoppingItem(ShoppingItem newItem) {
         ShoppingItem current = null;
-        int hashCode = newItem.hashCode();
         for (ShoppingItem item : shoppingItems) {
             if (newItem.equals(item)) {
                 current = item;

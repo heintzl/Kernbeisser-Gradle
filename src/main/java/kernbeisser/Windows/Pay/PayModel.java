@@ -24,13 +24,20 @@ public class PayModel implements Model<PayController> {
     private final Runnable transferCompleted;
 
     PayModel(SaleSession saleSession, List<ShoppingItem> shoppingCart, Runnable transferCompleted) {
-        this.shoppingCart = shoppingCart;
+        this.shoppingCart = rebuildIndex(shoppingCart);
         this.saleSession = saleSession;
         this.transferCompleted = transferCompleted;
     }
 
     List<ShoppingItem> getShoppingCart() {
         return shoppingCart;
+    }
+
+    List<ShoppingItem> rebuildIndex(List<ShoppingItem> cart) {
+        cart.forEach((item) -> {
+            item.setShoppingCartIndex(cart.indexOf(item));
+        });
+        return cart;
     }
 
     SaleSession getSaleSession() {
@@ -67,8 +74,9 @@ public class PayModel implements Model<PayController> {
             purchase.setSession(db);
             em.persist(purchase);
             for (ShoppingItem item : items) {
-                item.setPurchase(purchase);
-                em.persist(item);
+                ShoppingItem shoppingItem = Tools.removeLambda(item, ShoppingItem::new);
+                shoppingItem.setPurchase(purchase);
+                em.persist(shoppingItem);
             }
 
             //Persist changes
