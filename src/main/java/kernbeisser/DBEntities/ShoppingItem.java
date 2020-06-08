@@ -88,7 +88,7 @@ public class ShoppingItem implements Serializable {
     private double containerSize;
 
     @Transient
-    private int superHash;
+    private int superIndex;
 
     public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
         this.containerDiscount = hasContainerDiscount;
@@ -230,7 +230,7 @@ public class ShoppingItem implements Serializable {
     public ShoppingItem createItemDeposit() {
         ShoppingItem deposit = createDeposit(this.singleDeposit);
         deposit.name = "    > Einzelpfand";
-        deposit.superHash = this.hashCode();
+        deposit.superIndex = this.getShoppingCartIndex();
         deposit.itemMultiplier = this.itemMultiplier;
         return deposit;
     }
@@ -238,7 +238,7 @@ public class ShoppingItem implements Serializable {
     public ShoppingItem createContainerDeposit(int number) {
         ShoppingItem deposit = createDeposit(this.containerDeposit);
         deposit.name = "    > Gebindepfand";
-        deposit.superHash = this.hashCode();
+        deposit.superIndex = this.getShoppingCartIndex();
         deposit.itemMultiplier = number;
         return deposit;
     }
@@ -278,7 +278,7 @@ public class ShoppingItem implements Serializable {
                    && item.vat == vat
                    && item.itemRetailPrice == itemRetailPrice
                    && item.containerDiscount == containerDiscount
-                   && item.superHash == superHash;
+                   && item.superIndex == superIndex;
         } else {
             return false;
         }

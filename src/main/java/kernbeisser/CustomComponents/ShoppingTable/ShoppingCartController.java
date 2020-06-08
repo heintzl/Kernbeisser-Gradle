@@ -20,8 +20,12 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     }
 
     public void addShoppingItem(ShoppingItem item, boolean piece) {
-        model.addItem(item, piece);
+        int itemIndex = model.addItem(item, piece);
+        if (item.getShoppingCartIndex() == 0){
+            item.setShoppingCartIndex(itemIndex);
+        }
         if (item.getSingleDeposit() != 0) {
+
             model.addItem(item.createItemDeposit(), true);
         }
         if (item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
@@ -49,7 +53,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
                         try {
                             containers = Integer.parseInt(response);
                             if (containers > 0) {
-                                model.addItem(item.createContainerDeposit(containers), true);
+                                model.addItemBehind(item.createContainerDeposit(containers), item,true);
                                 exit = true;
                             } else {
                                 throw (new NumberFormatException());
