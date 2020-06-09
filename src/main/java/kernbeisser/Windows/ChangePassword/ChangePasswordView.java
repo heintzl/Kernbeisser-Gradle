@@ -20,6 +20,7 @@ public class ChangePasswordView implements View<ChangePasswordController> {
     private JPasswordField repeatedNewPassword;
     private JLabel message;
     private JLabel passwordHint;
+    private JLabel currentPasswordLable;
 
     @Override
     public void initialize(ChangePasswordController controller) {
@@ -51,6 +52,11 @@ public class ChangePasswordView implements View<ChangePasswordController> {
 
     public void passwordsDontMatch() {
         message.setText("Bitte Wiederholen sie das Passwort korrekt.");
+    }
+
+    void setVerifyWithOldEnable(boolean enable){
+        currentPasswordLable.setVisible(enable);
+        currentPassword.setVisible(enable);
     }
 
     void setPasswordStrength(Strength strength){

@@ -103,6 +103,6 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
     }
 
     public void changePassword() {
-        new ChangePasswordController(model.getOwner()).openAsWindow(getView().getWindow(), SubWindow::new);
+        new ChangePasswordController(model.getOwner(),false).openAsWindow(getView().getWindow(), SubWindow::new);
     }
 }

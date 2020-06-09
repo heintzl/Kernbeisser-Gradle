@@ -11,9 +11,11 @@ import javax.persistence.EntityTransaction;
 public class ChangePasswordModel implements Model<ChangePasswordController> {
 
     private final User user;
+    private final boolean verifyWithOldPassword;
 
-    public ChangePasswordModel(User user) {
+    public ChangePasswordModel(User user, boolean verifyWithOldPassword) {
         this.user = user;
+        this.verifyWithOldPassword = verifyWithOldPassword;
     }
 
     public boolean checkPassword(String password){
@@ -35,5 +37,9 @@ public class ChangePasswordModel implements Model<ChangePasswordController> {
         em.flush();
         et.commit();
         em.close();
+    }
+
+    public boolean verifyWithOldPassword() {
+        return verifyWithOldPassword;
     }
 }

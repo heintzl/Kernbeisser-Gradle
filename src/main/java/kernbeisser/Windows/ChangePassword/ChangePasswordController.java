@@ -7,14 +7,12 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.regex.Pattern;
-
 public class ChangePasswordController implements Controller<ChangePasswordView,ChangePasswordModel> {
     private final ChangePasswordModel model;
     private final ChangePasswordView view;
 
-    public ChangePasswordController(User user) {
-        model = new ChangePasswordModel(user);
+    public ChangePasswordController(User user,boolean verifyWithOldPassword) {
+        model = new ChangePasswordModel(user, verifyWithOldPassword);
         view = new ChangePasswordView();
     }
 
@@ -32,7 +30,7 @@ public class ChangePasswordController implements Controller<ChangePasswordView,C
 
     @Override
     public void fillUI() {
-
+        view.setVerifyWithOldEnable(model.verifyWithOldPassword());
     }
 
     private int getPasswordStrength(String password){
@@ -90,7 +88,7 @@ public class ChangePasswordController implements Controller<ChangePasswordView,C
     }
 
     boolean checkPassword(){
-        if(!validOldPassword(view.getCurrentPassword())){
+        if(!((!model.verifyWithOldPassword())||validOldPassword(view.getCurrentPassword()))){
             view.currentPasswordEnteredWrong();
             return false;
         }

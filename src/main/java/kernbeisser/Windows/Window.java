@@ -17,6 +17,7 @@ public interface Window {
     void open();
     void close();
     void kill();
+    void setTitle(String title);
     void setSize(Dimension dimension);
     boolean noAccess();
 
@@ -81,6 +82,11 @@ public interface Window {
 
         @Override
         public void kill() {
+        }
+
+        @Override
+        public void setTitle(String title) {
+
         }
 
         @Override
