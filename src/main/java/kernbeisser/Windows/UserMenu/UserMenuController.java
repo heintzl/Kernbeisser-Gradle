@@ -4,6 +4,7 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
+import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
@@ -14,6 +15,7 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
+import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -98,5 +100,9 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
 
     public void openEditPermissionsWindow() {
         new PermissionController().openTab("Berechtigungen bearbeiten");
+    }
+
+    public void changePassword() {
+        new ChangePasswordController(model.getOwner()).openAsWindow(getView().getWindow(), SubWindow::new);
     }
 }

@@ -12,6 +12,9 @@ public enum Setting {
     DEFAULT_THEME(Theme.LIGHT.name()),
     INFO_LINE_LAST_CATALOG("notDefined"),
     UPDATE_CATALOG_FROM_INTERNET("false"),
+    MIN_PASSWORD_LENGTH("5"),
+    MIN_REQUIRED_PASSWORD_STRENGTH("3"),
+    HASH_COSTS("12"),
     ;
 
     private final String defaultValue;

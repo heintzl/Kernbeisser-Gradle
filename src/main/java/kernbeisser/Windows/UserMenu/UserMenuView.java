@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class UserMenuView implements View<UserMenuController> {
     private JButton beginSelfShopping;
@@ -21,6 +23,7 @@ public class UserMenuView implements View<UserMenuController> {
     private UserInfoView userInfoView;
     private JLabel username;
     private JButton editPermissions;
+    private JButton changePassword;
 
     private final UserMenuController controller;
 
@@ -46,6 +49,9 @@ public class UserMenuView implements View<UserMenuController> {
         beginSelfShopping.addActionListener(e -> controller.beginSelfShopping());
         orderContainer.addActionListener(e -> controller.orderContainers());
         editPermissions.addActionListener(e -> controller.openEditPermissionsWindow());
+        changePassword.addActionListener(e -> {
+            controller.changePassword();
+        });
     }
 
     @Override
