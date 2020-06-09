@@ -74,4 +74,9 @@ public class JFrameWindow extends JFrame implements Window {
     public boolean commitClose() {
         return true;
     }
+
+    @Override
+    public void setTitle(String title) {
+        super.setTitle(title);
+    }
 }

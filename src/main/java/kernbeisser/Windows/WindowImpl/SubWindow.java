@@ -21,6 +21,12 @@ public class SubWindow extends JDialog implements Window {
     }
 
     @Override
+    public void setSize(Dimension d) {
+        super.setSize(d);
+        super.setLocationRelativeTo(null);
+    }
+
+    @Override
     public void addCloseEventListener(WindowCloseEvent runnable) {
         addWindowListener(runnable);
     }
@@ -64,5 +70,10 @@ public class SubWindow extends JDialog implements Window {
     @Override
     public void setContent(Controller<?,?> content) {
         add(content.getView().getContent());
+    }
+
+    @Override
+    public void setTitle(String title) {
+        super.setTitle(title);
     }
 }

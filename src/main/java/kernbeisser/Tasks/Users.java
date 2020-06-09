@@ -2,6 +2,7 @@ package kernbeisser.Tasks;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
 
 import java.nio.charset.StandardCharsets;
@@ -14,7 +15,7 @@ import java.util.Random;
 
 public class Users {
 
-    private static final String defaultPassword = BCrypt.withDefaults().hashToString(12, "start".toCharArray());
+    private static final String defaultPassword = BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray());
 
     public static User[] parse(String[] stringRaw, HashSet<String> usernames, HashMap<String,Job> jobHashMap){
 

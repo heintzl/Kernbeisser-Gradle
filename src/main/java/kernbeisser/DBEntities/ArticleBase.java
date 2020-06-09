@@ -2,6 +2,7 @@ package kernbeisser.DBEntities;
 
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
+import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 

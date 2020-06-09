@@ -35,4 +35,8 @@ public interface View <C extends Controller<? extends View<? extends C>,? extend
         if(window != null)
             window.back();
     }
+
+    default String getTitle(){
+        return "";
+    }
 }

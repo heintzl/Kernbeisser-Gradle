@@ -101,6 +101,7 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
         createWindow.getController().initView();
         createWindow.setContent(this);
         createWindow.setSize(getView().getSize());
+        createWindow.setTitle(getView().getTitle());
         parent.openWindow(createWindow,closeOld);
         return createWindow;
     }

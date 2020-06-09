@@ -12,8 +12,8 @@ import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import org.jetbrains.annotations.NotNull;
 
 public class CashierShoppingMaskController implements Controller<CashierShoppingMaskView,CashierShoppingMaskModel> {
-    private CashierShoppingMaskModel model;
-    private CashierShoppingMaskView view;
+    private final CashierShoppingMaskModel model;
+    private final CashierShoppingMaskView view;
 
     private SearchBoxController<User> searchBoxController;
 
@@ -33,7 +33,6 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
         searchBoxController.addSelectionListener(this::selectUser);
         model = new CashierShoppingMaskModel();
         this.view = new CashierShoppingMaskView(this);
-
     }
 
     private void selectUser(User user){

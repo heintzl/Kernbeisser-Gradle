@@ -163,7 +163,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
         do {
             password = view.requestPassword();
         } while (password.equals(""));
-        user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
+        user.setPassword(BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), password.toCharArray()));
         user.getPermissions().add(admin);
         user.setUserGroup(new UserGroup());
         Tools.persist(user.getUserGroup());
@@ -196,7 +196,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             HashMap<String,Job> jobs = new HashMap<>();
             Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            String defaultPassword = BCrypt.withDefaults().hashToString(12, "start".toCharArray());
+            String defaultPassword = BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray());
             for (String l : lines) {
                 String[] rawUserData = l.split(";");
                 User[] users = Users.parse(rawUserData,usernames,jobs);

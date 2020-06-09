@@ -405,4 +405,14 @@ public class Tools {
         et.commit();
         em.close();
     }
+
+    public static boolean validate(Container container){
+        for (Component component : container.getComponents()) {
+            JComponent jComponent = ((JComponent)component);
+            if(jComponent != null && !validate(jComponent))return false;
+        }
+        if(!(container instanceof JComponent))return true;
+        JComponent jContainer = ((JComponent)container);
+        return jContainer.getInputVerifier()==null||jContainer.getInputVerifier().verify(jContainer);
+    }
 }

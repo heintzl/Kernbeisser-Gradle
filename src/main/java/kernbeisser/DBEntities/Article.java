@@ -4,12 +4,9 @@ package kernbeisser.DBEntities;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
-import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -327,6 +324,4 @@ public class Article extends ArticleBase{
     public String toString() {
         return getName();
     }
-
-
 }

@@ -9,7 +9,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.*;
 
@@ -86,6 +85,12 @@ public class User implements Serializable {
 
     @Column
     private boolean unreadable = false;
+
+    @Column
+    private Instant lastPasswordChange;
+
+    @Column
+    private boolean forcePasswordChange = false;
 
     public static List<User> getAll(String condition) {
         return Tools.getAll(User.class, condition);
@@ -204,7 +209,11 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        if(!password.equals(this.password)) {
+            this.password = password;
+            this.lastPasswordChange = Instant.now();
+            this.forcePasswordChange = false;
+        }
     }
 
     public String getFirstName() {
@@ -385,5 +394,17 @@ public class User implements Serializable {
         }finally {
             em.close();
         }
+    }
+
+    public boolean isForcePasswordChange() {
+        return forcePasswordChange;
+    }
+
+    public void setForcePasswordChange(boolean requiresPasswordChange) {
+        this.forcePasswordChange = requiresPasswordChange;
+    }
+
+    public Instant getLastPasswordChange() {
+        return lastPasswordChange;
     }
 }
