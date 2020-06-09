@@ -102,8 +102,6 @@ public class User implements Serializable {
             return em.createQuery("select u from User u where u.username = :username", User.class)
                      .setParameter("username", username)
                      .getSingleResult();
-        } catch (NoResultException e) {
-            throw e;
         } finally {
             em.close();
         }

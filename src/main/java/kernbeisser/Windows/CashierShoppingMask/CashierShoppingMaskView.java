@@ -14,9 +14,9 @@ import java.awt.*;
 
 public class CashierShoppingMaskView implements View<CashierShoppingMaskController> {
     private JPanel main;
-    private JTabbedPane tabbedPane;
     private SearchBoxView<User> searchBoxView;
     private PermissionButton openShoppingMask;
+    private JTextField secondSellerUsername;
 
     private final CashierShoppingMaskController controller;
 
@@ -32,13 +32,12 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
         this.searchBoxView = userSearchBoxView;
     }
 
-    void addShoppingMaskView(String title,ShoppingMaskUIView view){
-        this.tabbedPane.addTab(title,view.getContent());
-        tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
-    }
-
     public void setStartFor(String username) {
         openShoppingMask.setText("Einkauf für "+username+" beginnen");
+    }
+
+    String getSecondSellerUsername(){
+        return secondSellerUsername.getText();
     }
 
     public void setOpenShoppingMaskEnabled(boolean b) {
@@ -63,5 +62,13 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
     @Override
     public IconCode getTabIcon() {
         return FontAwesome.SHOPPING_CART;
+    }
+
+    public void usernameNotFound() {
+        JOptionPane.showMessageDialog(getTopComponent(),"Der eingegebene zusatz Ladendient kann nicht gefunden werden,\nda kein Nutzer mit dem Benutzernamen "+getSecondSellerUsername()+" existiert!","Kein Nutzer gefunden!",JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void setSecondUsername(String username) {
+        secondSellerUsername.setText(username);
     }
 }

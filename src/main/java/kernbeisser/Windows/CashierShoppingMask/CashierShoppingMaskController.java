@@ -11,6 +11,8 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.NoResultException;
+
 public class CashierShoppingMaskController implements Controller<CashierShoppingMaskView,CashierShoppingMaskModel> {
     private final CashierShoppingMaskModel model;
     private final CashierShoppingMaskView view;
@@ -22,17 +24,17 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
                                                                  Column.create("Vorname", User::getFirstName, Key.USER_FIRST_NAME_READ),
                                                              Column.create("Nachname", User::getSurname, Key.USER_SURNAME_READ),
                                                              Column.create("Benutzername", User::getUsername, Key.USER_USERNAME_READ)
-        ){
-            @Override
-            public void refreshLoadSolutions() {
-                CashierShoppingMaskController.this.selectUser(null);
-                super.refreshLoadSolutions();
-            }
-        };
+        );
         searchBoxController.initView();
+        searchBoxController.addLostSelectionListener(() -> selectUser(null));
+        searchBoxController.addDoubleClickListener(this::selectSecondUser);
         searchBoxController.addSelectionListener(this::selectUser);
         model = new CashierShoppingMaskModel();
         this.view = new CashierShoppingMaskView(this);
+    }
+
+    private void selectSecondUser(User user){
+        view.setSecondUsername(user.getUsername());
     }
 
     private void selectUser(User user){
@@ -47,7 +49,15 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(searchBoxController.getSelectedObject());
         saleSession.setSeller(LogInModel.getLoggedIn());
-        view.addShoppingMaskView("Einkauf für "+saleSession.getCustomer().getUsername(),new ShoppingMaskUIController(saleSession).getInitializedView());
+        if (!view.getSecondSellerUsername().equals("")) {
+            try {
+                saleSession.setSecondSeller(User.getByUsername(view.getSecondSellerUsername()));
+            } catch (NoResultException e) {
+                view.usernameNotFound();
+                return;
+            }
+        }
+        new ShoppingMaskUIController(saleSession).openTab("Einkauf für "+saleSession.getCustomer().getSurname()+", "+saleSession.getCustomer().getFirstName());
     }
 
     public SearchBoxView<User> getSearchBoxView(){

@@ -18,6 +18,10 @@ public class SaleSession {
 
     @ManyToOne
     @JoinColumn
+    private User secondSeller;
+
+    @ManyToOne
+    @JoinColumn
     private User seller;
 
     public static List<SaleSession> getAll(String condition) {
@@ -42,5 +46,13 @@ public class SaleSession {
 
     public int getId() {
         return sSid;
+    }
+
+    public User getSecondSeller() {
+        return secondSeller;
+    }
+
+    public void setSecondSeller(User secondary) {
+        this.secondSeller = secondary;
     }
 }
