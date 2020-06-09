@@ -39,4 +39,8 @@ public interface View <C extends Controller<? extends View<? extends C>,? extend
     default String getTitle(){
         return "";
     }
+
+    default boolean isStackable(){
+        return false;
+    }
 }

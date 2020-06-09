@@ -79,18 +79,26 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                 }
                 break;
             case ADD:
-                System.out.println(view.validate());
+                System.out.println(view.validateInputFormat());
                 if (model.usernameExists(data.getUsername())) {
                     view.usernameAlreadyExists();
                     return;
                 }
-                if (data.getPassword() == null) {
+                if (data.getPassword().equals("")) {
                     requestChangePassword();
                 }
                 break;
         }
         if (model.doAction(data)) {
             view.back();
+        }
+    }
+
+    void refreshUsername(){
+        if(model.getMode()==Mode.ADD) {
+            User data = view.getData(model.getUser());
+            data.setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ",""), data.getSurname().toLowerCase()).replace(" ",""));
+            view.setData(data);
         }
     }
 

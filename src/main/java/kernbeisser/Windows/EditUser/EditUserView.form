@@ -230,7 +230,9 @@
           </grid>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
         </constraints>
-        <properties/>
+        <properties>
+          <enabled value="false"/>
+        </properties>
       </component>
       <component id="457d" class="kernbeisser.CustomComponents.PermissionButton" binding="chgPassword">
         <constraints>

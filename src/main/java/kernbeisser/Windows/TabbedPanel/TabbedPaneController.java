@@ -33,7 +33,7 @@ public class TabbedPaneController implements Controller<TabbedPaneView,TabbedPan
 
     public void addTab(Tab tab){
         int posIn = model.getIndexOfControllerClass(tab);
-        if(posIn==-1) {
+        if(tab.getController().getView().isStackable() || posIn==-1) {
             model.addTab(tab);
             view.addTab(new DefaultTab(IconFontSwing.buildIcon(tab.getIcon(), 20, new Color(0x32C4A2)), tab.getTitle(),
                                        () -> closeTab(tab), () -> view.setSelected(model.indexOf(tab))).getMain(),

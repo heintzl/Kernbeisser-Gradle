@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class EditUserView implements View<EditUserController> {
     private JLabel lblVorname;
@@ -130,9 +132,15 @@ public class EditUserView implements View<EditUserController> {
 
         });
         chgJobs.addActionListener(e -> controller.openJobSelector());
-        submit.addActionListener(e -> {
-            controller.doAction();
-        });
+        submit.addActionListener(e -> controller.doAction());
+        KeyAdapter refreshUsername = new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                controller.refreshUsername();
+            }
+        };
+        firstName.addKeyListener(refreshUsername);
+        lastName.addKeyListener(refreshUsername);
         hasKey.addActionListener(e -> keyNumber.setEnabled(!keyNumber.isEnabled()));
         editPermission.addActionListener(e -> controller.openPermissionSelector());
         cancel.addActionListener(e -> back());
@@ -143,7 +151,7 @@ public class EditUserView implements View<EditUserController> {
         phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ, Key.USER_PHONE_NUMBER1_WRITE);
         phone1.setInputVerifier(new NotNullVerifier());
         phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ, Key.USER_PHONE_NUMBER2_WRITE);
-        username.setRequiredKeys(Key.USER_USERNAME_READ, Key.USER_USERNAME_WRITE);
+        username.setRequiredReadKeys(Key.USER_USERNAME_READ);
         street.setRequiredKeys(Key.USER_STREET_READ, Key.USER_STREET_WRITE);
         street.setInputVerifier(new NotNullVerifier());
         firstName.setRequiredKeys(Key.USER_FIRST_NAME_READ,Key.USER_FIRST_NAME_WRITE);
@@ -164,7 +172,7 @@ public class EditUserView implements View<EditUserController> {
         submit.setVerifyInputWhenFocusTarget(true);
     }
 
-    boolean validate(){
+    boolean validateInputFormat(){
         return Tools.validate(userDataPanel);
     }
 
@@ -175,7 +183,7 @@ public class EditUserView implements View<EditUserController> {
 
     @Override
     public @NotNull Dimension getSize() {
-        return new Dimension(500,600);
+        return new Dimension(500,700);
     }
 
     private void createUIComponents() {
@@ -191,4 +199,5 @@ public class EditUserView implements View<EditUserController> {
             }
         };
     }
+
 }

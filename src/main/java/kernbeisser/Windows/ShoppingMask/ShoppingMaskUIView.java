@@ -168,7 +168,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         customerLoginName.setText(saleSession.getCustomer().getUsername());
         customerCredit.setText(format("{0, number, 0.00}\u20AC", saleSession.getCustomer().getUserGroup().getValue()));
         salesPerson1.setText(saleSession.getSeller().getUsername());
-        salesPerson2.setText("not implemented");
+        salesPerson2.setText(saleSession.getSecondSeller() != null ? saleSession.getSecondSeller().getUsername() : "");
     }
 
     private void articleTypeChange(char type) {
@@ -429,5 +429,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     @Override
     public IconCode getTabIcon() {
         return FontAwesome.SHOPPING_CART;
+    }
+
+    @Override
+    public boolean isStackable() {
+        return true;
     }
 }
