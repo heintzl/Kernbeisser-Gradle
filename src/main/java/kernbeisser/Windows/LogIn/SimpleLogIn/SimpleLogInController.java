@@ -1,11 +1,13 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
 import kernbeisser.Enums.Key;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.TabbedPanel.DefaultTab;
@@ -13,10 +15,13 @@ import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.View;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.UserMenu.UserMenuController;
+import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 public class SimpleLogInController implements Controller<SimpleLogInView,SimpleLogInModel> {
 
@@ -54,9 +59,14 @@ public class SimpleLogInController implements Controller<SimpleLogInView,SimpleL
     public void logIn() {
         try {
             model.logIn(view.getUsername(),view.getPassword());
-            removeSelf();
             loadUserSettings();
-            new UserMenuController().openTab("Menu");
+            if (LogInModel.getLoggedIn().getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS) > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()) {
+                new ChangePasswordController(LogInModel.getLoggedIn(),true).openAsWindow(getView().getWindow(),
+                                                                                         SubWindow::new);
+            }else {
+                removeSelf();
+                new UserMenuController().openTab("Menu");
+            }
         } catch (AccessDeniedException e) {
             view.accessDenied();
         } catch (PermissionRequired permissionRequired) {

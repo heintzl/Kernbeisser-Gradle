@@ -7,6 +7,7 @@ import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Selector.SelectorController;
 import kernbeisser.Windows.WindowImpl.SubWindow;
@@ -30,7 +31,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     }
 
     private void changePassword(String to) {
-        model.getUser().setPassword(BCrypt.withDefaults().hashToString(12, to.toCharArray()));
+        model.getUser().setPassword(BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), to.toCharArray()));
     }
 
     void requestChangePassword() {

@@ -89,4 +89,10 @@ public class ChangePasswordView implements View<ChangePasswordController> {
     public @NotNull Dimension getSize() {
         return new Dimension(500,500);
     }
+
+
+    @Override
+    public String getTitle() {
+        return "Passwort ändern";
+    }
 }
