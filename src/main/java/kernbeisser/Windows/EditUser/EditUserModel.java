@@ -28,11 +28,7 @@ public class EditUserModel implements Model<EditUserController> {
             user.setPassword("");
         }
     }
-
-    Collection<Permission> getAllPermission() {
-        return Permission.getAll(null);
-    }
-
+    
     boolean doAction(User user) {
         try {
             switch (mode) {

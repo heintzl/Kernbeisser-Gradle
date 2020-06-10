@@ -2,10 +2,7 @@ package kernbeisser.Windows.EditUser;
 
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
-import kernbeisser.CustomComponents.Verifier.EmailVerifier;
-import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
-import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
-import kernbeisser.CustomComponents.Verifier.UsernameVerifier;
+import kernbeisser.CustomComponents.Verifier.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Useful.Tools;
@@ -149,7 +146,7 @@ public class EditUserView implements View<EditUserController> {
         email.setReadWrite(Key.USER_EMAIL_READ);
         email.setInputVerifier(new EmailVerifier());
         phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ, Key.USER_PHONE_NUMBER1_WRITE);
-        phone1.setInputVerifier(new NotNullVerifier());
+        phone1.setInputVerifier(new RegexVerifier(".+"));
         phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ, Key.USER_PHONE_NUMBER2_WRITE);
         username.setRequiredReadKeys(Key.USER_USERNAME_READ);
         street.setRequiredKeys(Key.USER_STREET_READ, Key.USER_STREET_WRITE);
