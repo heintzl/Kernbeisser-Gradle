@@ -5,6 +5,10 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.transaction.NotSupportedException;
@@ -13,6 +17,8 @@ import java.util.List;
 
 @Entity
 @Table
+@NoArgsConstructor
+@Getter
 public class ShoppingItem implements Serializable {
 
     @Id
@@ -27,6 +33,7 @@ public class ShoppingItem implements Serializable {
 
     @JoinColumn(nullable = false)
     @ManyToOne
+    @Setter
     private Purchase purchase;
 
     @Column
@@ -36,12 +43,14 @@ public class ShoppingItem implements Serializable {
     private int kbNumber;
 
     @Column
+    @Setter
     private int itemMultiplier = 1;
 
     @Column
     private double vat;
 
     @Column
+    @Getter(AccessLevel.NONE)
     private MetricUnits metricUnits;
 
     @Column
@@ -65,6 +74,10 @@ public class ShoppingItem implements Serializable {
     @Column
     private double itemNetPrice;
 
+    @Column
+    @Setter
+    private int shoppingCartIndex;
+
     @Transient
     private double singleDeposit;
 
@@ -75,14 +88,7 @@ public class ShoppingItem implements Serializable {
     private double containerSize;
 
     @Transient
-    private int superHash;
-
-    public ShoppingItem() {
-    }
-
-    public boolean getContainerDiscount() {
-        return containerDiscount;
-    }
+    private int superIndex;
 
     public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
         this.containerDiscount = hasContainerDiscount;
@@ -93,7 +99,9 @@ public class ShoppingItem implements Serializable {
         this.metricUnits = article.isWeighAble() ? article.getMetricUnits() : MetricUnits.PIECE;
         this.vat = article.getVat().getValue();
         this.weighAble = article.isWeighAble();
-        this.surcharge = (hasContainerDiscount ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : article.getSurcharge());
+        this.surcharge = (hasContainerDiscount
+                          ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue()
+                          : article.getSurcharge());
         this.discount = discount;
         if (article.getSupplier() != null) {
             this.shortName = article.getSupplier().getShortName();
@@ -105,28 +113,16 @@ public class ShoppingItem implements Serializable {
         this.itemRetailPrice = calculateItemRetailPrice();
     }
 
-    public double getRetailPrice() {
-        return itemRetailPrice * metricUnits.getBaseFactor() * itemMultiplier;
-    }
-
-    public double getItemRetailPrice() {
-        return itemRetailPrice;
-    }
-
-    private double calculateItemRetailPrice(){
-        return Math.round(100 * itemNetPrice * (1+vat) * (1+surcharge))/100. * (1 - discount/100.);
-    }
-
-
     public static ShoppingItem createOrganic(double price) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             ShoppingItem out = new ShoppingItem(
-                    em.createQuery("select  i from Article i where name like 'Obst und Gem\u00fcse'", Article.class).getSingleResult(),0,false){
+                    em.createQuery("select  i from Article i where name like 'Obst und Gem\u00fcse'", Article.class)
+                      .getSingleResult(), 0, false) {
                 @Override
                 public void addToRetailPrice(double addedRetailPrice) {
-                    ShoppingItem.addToRetailPrice(this,addedRetailPrice);
+                    ShoppingItem.addToRetailPrice(this, addedRetailPrice);
                 }
             };
             out.addToRetailPrice(price);
@@ -154,10 +150,11 @@ public class ShoppingItem implements Serializable {
         EntityTransaction et = em.getTransaction();
         try {
             ShoppingItem out = new ShoppingItem(
-                    em.createQuery("select  i from Article i where name like 'Backware'", Article.class).getSingleResult(),0,false){
+                    em.createQuery("select  i from Article i where name like 'Backware'", Article.class)
+                      .getSingleResult(), 0, false) {
                 @Override
                 public void addToRetailPrice(double addedRetailPrice) {
-                    ShoppingItem.addToRetailPrice(this,addedRetailPrice);
+                    ShoppingItem.addToRetailPrice(this, addedRetailPrice);
                 }
             };
             out.addToRetailPrice(price);
@@ -185,10 +182,11 @@ public class ShoppingItem implements Serializable {
         EntityTransaction et = em.getTransaction();
         try {
             ShoppingItem out = new ShoppingItem(
-                    em.createQuery("select  i from Article i where name like 'Pfand'", Article.class).getSingleResult(),0,false){
+                    em.createQuery("select  i from Article i where name like 'Pfand'", Article.class).getSingleResult(),
+                    0, false) {
                 @Override
                 public void addToRetailPrice(double addedRetailPrice) {
-                    ShoppingItem.addToRetailPrice(this,addedRetailPrice);
+                    ShoppingItem.addToRetailPrice(this, addedRetailPrice);
                 }
             };
             out.addToRetailPrice(price);
@@ -212,10 +210,27 @@ public class ShoppingItem implements Serializable {
         // TODO wie wird der Pfand verbucht? Als NetPrice oder irgendwie anders?
     }
 
+    public static List<ShoppingItem> getAll(String condition) {
+        return Tools.getAll(ShoppingItem.class, condition);
+    }
+
+    private static void addToRetailPrice(ShoppingItem item, double addRetailPrice) {
+        item.itemRetailPrice += Math.round(addRetailPrice * 100) / 100.;
+        item.itemNetPrice = item.itemRetailPrice / (1 + item.surcharge) / (1 + item.vat);
+    }
+
+    public double getRetailPrice() {
+        return itemRetailPrice * metricUnits.getBaseFactor() * itemMultiplier;
+    }
+
+    private double calculateItemRetailPrice() {
+        return Math.round(100 * itemNetPrice * (1 + vat) * (1 + surcharge)) / 100. * (1 - discount / 100.);
+    }
+
     public ShoppingItem createItemDeposit() {
         ShoppingItem deposit = createDeposit(this.singleDeposit);
         deposit.name = "    > Einzelpfand";
-        deposit.superHash = this.hashCode();
+        deposit.superIndex = this.getShoppingCartIndex();
         deposit.itemMultiplier = this.itemMultiplier;
         return deposit;
     }
@@ -223,19 +238,16 @@ public class ShoppingItem implements Serializable {
     public ShoppingItem createContainerDeposit(int number) {
         ShoppingItem deposit = createDeposit(this.containerDeposit);
         deposit.name = "    > Gebindepfand";
-        deposit.superHash = this.hashCode();
+        deposit.superIndex = this.getShoppingCartIndex();
         deposit.itemMultiplier = number;
         return deposit;
-    }
-
-    public static List<ShoppingItem> getAll(String condition) {
-        return Tools.getAll(ShoppingItem.class, condition);
     }
 
     public Article extractArticle() {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("SELECT i from Article i where kbNumber = " + kbNumber, Article.class).getSingleResult();
+            return em.createQuery("SELECT i from Article i where kbNumber = " + kbNumber, Article.class)
+                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
         } finally {
@@ -243,87 +255,12 @@ public class ShoppingItem implements Serializable {
         }
     }
 
-    public void addToRetailPrice(double addedRetailPrice) throws NotSupportedException{
+    public void addToRetailPrice(double addedRetailPrice) throws NotSupportedException {
         throw new NotSupportedException();
-    }
-
-    private static void addToRetailPrice(ShoppingItem item,double addRetailPrice){
-        item.itemRetailPrice += Math.round(addRetailPrice*100)/100.;
-        item.itemNetPrice = item.itemRetailPrice / (1+item.surcharge) / (1+item.vat);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getKbNumber() {
-        return kbNumber;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public double getItemNetPrice() {
-        return itemNetPrice;
-    }
-
-    public double getVat() {
-        return vat;
-    }
-
-    public boolean isWeighable() {
-        return weighAble;
     }
 
     public MetricUnits getMetricUnits() {
         return metricUnits != null ? metricUnits : MetricUnits.NONE;
-    }
-
-    public long getSiid() {
-        return siid;
-    }
-
-    public int getItemMultiplier() {
-        return itemMultiplier;
-    }
-
-    public void setItemMultiplier(int amount) {
-        this.itemMultiplier = amount;
-    }
-
-    public Purchase getPurchase() {
-        return purchase;
-    }
-
-    public void setPurchase(Purchase purchase) {
-        this.purchase = purchase;
-    }
-
-    public int getDiscount() {
-        return discount;
-    }
-
-    public int getSuppliersItemNumber() {
-        return suppliersItemNumber;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public double getSurcharge() {
-        return surcharge;
-    }
-
-    public double getSingleDeposit() {return singleDeposit; }
-
-    public double getContainerDeposit() {return containerDeposit; }
-
-    public double getContainerSize() {return containerSize; }
-
-    public long getSuperHash() {
-        return superHash;
     }
 
     @Override
@@ -335,7 +272,13 @@ public class ShoppingItem implements Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof ShoppingItem) {
             ShoppingItem item = (ShoppingItem) obj;
-            return item.discount == discount && item.name.equals(name) && item.kbNumber == kbNumber && item.vat == vat && item.itemRetailPrice == itemRetailPrice && item.containerDiscount == containerDiscount && item.superHash == superHash;
+            return item.discount == discount
+                   && item.name.equals(name)
+                   && item.kbNumber == kbNumber
+                   && item.vat == vat
+                   && item.itemRetailPrice == itemRetailPrice
+                   && item.containerDiscount == containerDiscount
+                   && item.superIndex == superIndex;
         } else {
             return false;
         }
@@ -370,6 +313,6 @@ public class ShoppingItem implements Serializable {
         this.singleDeposit = other.singleDeposit;
         this.containerDeposit = other.containerDeposit;
         this.containerSize = other.containerSize;
-        this.superHash = other.superHash;
+        this.superIndex = other.superIndex;
     }
 }

@@ -10,14 +10,14 @@ import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.PersistenceException;
-import java.util.Collection;
+import java.util.List;
 
 public class PayController implements Controller<PayView,PayModel> {
 
     private final PayModel model;
     private final PayView view;
 
-    public PayController(Window current, SaleSession saleSession, Collection<ShoppingItem> shoppingCart,
+    public PayController(Window current, SaleSession saleSession, List<ShoppingItem> shoppingCart,
                          Runnable transferCompleted) {
         model = new PayModel(saleSession, shoppingCart, transferCompleted);
         view = new PayView(current, this);
@@ -26,6 +26,7 @@ public class PayController implements Controller<PayView,PayModel> {
     void commitPayment() {
         Purchase purchase;
         try {
+            // FIXME why pass shoppingCart to model if it was initialized with it?
             purchase = model.pay(model.getSaleSession(), model.getShoppingCart(),
                                  model.shoppingCartSum());
             model.print(purchase, view.getSelectedPrintService());

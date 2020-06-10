@@ -55,7 +55,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
                     return name;
                 }),
                 Column.create("2", e -> {
-                    JLabel discount = new JLabel(e.getContainerDiscount()
+                    JLabel discount = new JLabel(e.isContainerDiscount()
                                                  ? "Vorbestellt"
                                                  : (e.getDiscount() != 0
                                                     ? e.getDiscount() + "%"
