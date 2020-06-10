@@ -11,6 +11,8 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -110,29 +112,6 @@ public class Tools {
         });
     }
 
-    public static void ping(JComponent component) {
-        ping(component, false);
-    }
-
-    public static void ping(JComponent component, boolean forceGround) {
-        new Thread(() -> {
-            Toolkit.getDefaultToolkit().beep();
-            component.requestFocus();
-            for (int i = forceGround ? 0 : 100; i < 256; i++) {
-                try {
-                    Thread.sleep(4);
-                    if (forceGround) {
-                        component.setForeground(new Color(255 - i, 0, 0));
-                    } else {
-                        component.setBackground(new Color(255, i, i));
-                    }
-                } catch (InterruptedException e) {
-                    Tools.showUnexpectedErrorWarning(e);
-                }
-
-            }
-        }).start();
-    }
 
     public static <T, O extends Collection<T>> O extract(Supplier<O> supplier, String s, String separator,
                                                          Function<String,T> method) {
@@ -223,27 +202,6 @@ public class Tools {
         }
     }
 
-    public static <T> T createNewPersistenceInstance(T t,Supplier<T> newInstancePattern){
-        T newInstance = newInstancePattern.get();
-        for (Field field : newInstance.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            if (Collection.class.isAssignableFrom(field.getType())) {
-                try {
-                    ((Collection<?>)field.get(newInstance)).addAll((Collection) field.get(t));
-                } catch (IllegalAccessException e) {
-                    Tools.showUnexpectedErrorWarning(e);
-                }
-            }else {
-                try {
-                    field.set(newInstance,field.get(t));
-                } catch (IllegalAccessException e) {
-                    Tools.showUnexpectedErrorWarning(e);
-                }
-            }
-        }
-        setId(newInstance,0);
-        return newInstance;
-    }
 
 
     public static <T> T setId(T t,long id){
@@ -275,24 +233,6 @@ public class Tools {
             }
         }
         return toOverride;
-    }
-
-    public static void setPromptText(JTextField jTextField, String promptText) {
-        jTextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (jTextField.getText().equals(promptText)) {
-                    jTextField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (jTextField.getText().equals("")) {
-                    jTextField.setText(promptText);
-                }
-            }
-        });
     }
 
     public static long tryParseLong(String s) {
@@ -406,13 +346,42 @@ public class Tools {
         em.close();
     }
 
-    public static boolean validate(Container container){
-        for (Component component : container.getComponents()) {
-            JComponent jComponent = ((JComponent)component);
-            if(jComponent != null && !validate(jComponent))return false;
+    public static void showHint(JComponent component){
+        Color originalColor = component.getForeground();
+        Color originalBackgroundColor = component.getBackground();
+        component.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                e.getComponent().setForeground(originalColor);
+                e.getComponent().setBackground(originalBackgroundColor);
+                e.getComponent().removeFocusListener(this);
+            }
+        });
+        ToolTipManager.sharedInstance().mouseMoved(new MouseEvent(
+                component,
+                MouseEvent.MOUSE_MOVED,
+                System.currentTimeMillis(),
+                0,
+                10,
+                10,
+                0,
+                false));
+        if(((JTextComponent)component).getText().replace(" ","").equals(""))
+            component.setBackground(new Color(0xFF9999));
+        else component.setForeground(new Color(0xFF00000));
+
+    }
+
+    public static boolean verify(JComponent ... components){
+        boolean result = true;
+        for (JComponent component : components) {
+            if(component instanceof JTextComponent) {
+                if (component.getInputVerifier() != null && !component.getInputVerifier().verify(component)) {
+                    result = false;
+                    component.getInputVerifier().shouldYieldFocus(component);
+                }
+            }
         }
-        if(!(container instanceof JComponent))return true;
-        JComponent jContainer = ((JComponent)container);
-        return jContainer.getInputVerifier()==null||jContainer.getInputVerifier().verify(jContainer);
+        return result;
     }
 }

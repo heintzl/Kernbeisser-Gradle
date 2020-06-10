@@ -10,6 +10,7 @@ import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -163,6 +164,29 @@ public class EditItemView implements View<EditItemController> {
         containerSize.setInputVerifier(DoubleVerifier.from(0,0.1,40,1000));
         showInShoppingMask.setRequiredReadKeys(Key.ARTICLE_SHOW_IN_SHOP_READ,Key.ARTICLE_SHOW_IN_SHOP_WRITE);
         weighable.setRequiredReadKeys(Key.ARTICLE_WEIGHABLE_READ,Key.ARTICLE_WEIGHABLE_WRITE);
+    }
+
+    boolean validate(){
+        return Tools.verify(
+                itemName,
+                supplier,
+                netPrice,
+                deposit,
+                kbItemNumber,
+                supplierItemNumber,
+                crateDeposit,
+                search,
+                priceList,
+                amount,
+                containerSize,
+                metricUnits,
+                containerDefinition,
+                barcode,
+                showInShoppingMask,
+                weighable,
+                extraInfo,
+                vat
+        );
     }
 
     void setActionTitle(String s){

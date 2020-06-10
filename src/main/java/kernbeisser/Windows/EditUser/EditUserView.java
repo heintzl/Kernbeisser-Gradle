@@ -170,7 +170,29 @@ public class EditUserView implements View<EditUserController> {
     }
 
     boolean validateInputFormat(){
-        return Tools.validate(userDataPanel);
+        return Tools.verify(
+                firstName,
+                lastName,
+                street,
+                grpUser,
+                grpAddress,
+                grpLogin,
+                postalCode,
+                town,
+                phone1,
+                phone2,
+                username,
+                hasKey,
+                isEmployee,
+                grpGenossenschaft,
+                shares,
+                solidarySupplement,
+                chgJobs,
+                userDataPanel,
+                extraJobs,
+                keyNumber,
+                email
+        );
     }
 
     @Override
