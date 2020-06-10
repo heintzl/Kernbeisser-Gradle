@@ -17,8 +17,4 @@ public class LongVerifier extends ParseVerifier<Long>{
         return Long.MAX_VALUE;
     }
 
-    @Override
-    public String message() {
-        return "Der eingegebene wert kann nicht interpretiert werden";
-    }
 }

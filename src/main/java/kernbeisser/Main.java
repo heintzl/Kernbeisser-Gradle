@@ -41,7 +41,6 @@ public class Main {
             openLogIn();
         }
     }
-
     public static void checkCatalog() {
 
         logger.info("Checking Catalog ...");

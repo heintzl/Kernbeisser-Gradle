@@ -4,6 +4,7 @@ import kernbeisser.Useful.Tools;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
+import java.awt.*;
 import java.text.NumberFormat;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -42,19 +43,15 @@ public abstract class ParseVerifier <T extends Comparable<T>> extends TextCompon
     public boolean shouldYieldFocus(JComponent input) {
         boolean verified = verify(input);
         if(verified) {
+            input.setForeground(new Color(0x0));
             T parsed = parse(((JTextComponent) input).getText());
             if ((checkHigherThan() != null && parsed.compareTo(
                     checkHigherThan()) > 0) || (checkLowerThan() != null && parsed.compareTo(checkLowerThan()) < 0)) {
                 return JOptionPane.showConfirmDialog(input, "Ist die eingegebene Zahl " + parsed + " korrekt?")==0;
             }
         }else {
-            JOptionPane.showMessageDialog(input,message());
-            Tools.ping(input);
+            input.setForeground(new Color(0xA00606));
         }
         return verified;
-    }
-
-    public String message(){
-        return "Der eingegebene Wert ist keine Zahl oder liegt nicht zwischen "+min()+" und "+max();
     }
 }

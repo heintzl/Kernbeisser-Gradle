@@ -4,6 +4,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +16,8 @@ import java.util.List;
 public class ArticleKornkraft extends ArticleBase implements Serializable {
 
     @Column
+    @Getter
+    @Setter
     private boolean synchronised = false;
 
     public static List<ArticleKornkraft> getAll(String condition) {
@@ -64,13 +68,5 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
         } catch (NoResultException e) {
             return SurchargeTable.DEFAULT;
         }
-    }
-
-    public boolean isSynchronized() {
-        return synchronised;
-    }
-
-    public void setSynchronized(boolean b) {
-        this.synchronised = b;
     }
 }

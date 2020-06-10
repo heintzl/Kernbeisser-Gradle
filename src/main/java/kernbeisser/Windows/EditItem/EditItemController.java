@@ -61,6 +61,7 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
     }
 
     void doAction() {
+        if(!view.validate())return;
         Article data = view.collectItem(model.getSource());
         if (model.getMode() == Mode.ADD) {
             if(model.nameExists(data.getName())){

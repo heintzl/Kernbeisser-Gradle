@@ -74,7 +74,7 @@ public class PayModel implements Model<PayController> {
             purchase.setSession(db);
             em.persist(purchase);
             for (ShoppingItem item : items) {
-                ShoppingItem shoppingItem = Tools.removeLambda(item, ShoppingItem::new);
+                ShoppingItem shoppingItem = item.newInstance();
                 shoppingItem.setPurchase(purchase);
                 em.persist(shoppingItem);
             }
