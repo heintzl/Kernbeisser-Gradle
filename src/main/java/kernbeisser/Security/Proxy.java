@@ -3,6 +3,7 @@ package kernbeisser.Security;
 import javassist.bytecode.DuplicateMemberException;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -12,6 +13,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class Proxy {
@@ -56,9 +58,9 @@ public class Proxy {
         {
             Key key = method.getAnnotation(Key.class);
             Object out;
-            if(key==null||LogInModel.getLoggedIn().hasPermission(key.value()))
+            if(key==null || PermissionSet.hasPermissions(key.value()))
             out = method.invoke(original, args);
-            else throw new AccessDeniedException();
+            else throw new AccessDeniedException("User["+LogInModel.getLoggedIn().getId() + "] cannot access " + method + " because the user has not the required Keys:" + Arrays.toString(key.value()));
             return out;
         }
     }
