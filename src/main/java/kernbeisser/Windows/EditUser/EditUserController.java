@@ -8,6 +8,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Selector.SelectorController;
 import kernbeisser.Windows.WindowImpl.SubWindow;
@@ -62,7 +63,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
 
     @Override
     public void fillUI() {
-        view.setData(model.getUser());
+        view.setData(Proxy.getSecureInstance(model.getUser()));
         if(model.getMode()==Mode.ADD)refreshUsername();
     }
 

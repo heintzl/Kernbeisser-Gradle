@@ -3,6 +3,7 @@ package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Key;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -138,7 +139,7 @@ public class User implements Serializable {
                                  .setMaxResults(max)
                                  .getResultList();
         em.close();
-        return out;
+        return Proxy.getSecureInstances(out);
     }
 
     public int getShares() {
@@ -214,6 +215,7 @@ public class User implements Serializable {
         }
     }
 
+    @kernbeisser.Security.Key(Key.USER_FIRST_NAME_READ)
     public String getFirstName() {
         return firstName;
     }
