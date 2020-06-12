@@ -2,6 +2,7 @@ package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Main;
+import kernbeisser.Security.Proxy;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -190,7 +191,7 @@ public class Tools {
         List<T> out = em.createQuery("select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
                         .getResultList();
         em.close();
-        return out;
+        return Proxy.getSecureInstances(out);
     }
 
     public static <T> T mergeWithoutId(T in) {

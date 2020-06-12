@@ -27,15 +27,11 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
         );
         searchBoxController.initView();
         searchBoxController.addLostSelectionListener(() -> selectUser(null));
-        searchBoxController.addDoubleClickListener(this::selectSecondUser);
         searchBoxController.addSelectionListener(this::selectUser);
         model = new CashierShoppingMaskModel();
         this.view = new CashierShoppingMaskView(this);
     }
 
-    private void selectSecondUser(User user){
-        view.setSecondUsername(user.getUsername());
-    }
 
     private void selectUser(User user){
         if(user!=null){
@@ -49,11 +45,10 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(searchBoxController.getSelectedObject());
         saleSession.setSeller(LogInModel.getLoggedIn());
-        if (!view.getSecondSellerUsername().equals("")) {
+        if (!view.getSecondSeller().equals("Keiner")) {
             try {
-                saleSession.setSecondSeller(User.getByUsername(view.getSecondSellerUsername()));
+                saleSession.setSecondSeller(User.getByUsername(view.getSecondSeller()));
             } catch (NoResultException e) {
-                view.usernameNotFound();
                 return;
             }
         }
@@ -76,7 +71,7 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
 
     @Override
     public void fillUI() {
-
+        view.setAllSecondarySellers(User.getAll(null));
     }
 
     @Override

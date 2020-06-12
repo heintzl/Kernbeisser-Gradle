@@ -22,8 +22,7 @@ public class Proxy {
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(parent.getClass());
         try {
-            Object created = factory.create(new Class[0], new Object[0], new SecurityHandler(parent));
-            return (T) created;
+            return (T) factory.create(new Class[0], new Object[0], new SecurityHandler(parent));
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
             return parent;
