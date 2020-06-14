@@ -24,6 +24,18 @@ public final class PermissionSet {
         return (bits[key.ordinal() / 64] & bit) == bit;
     }
 
+    public static void addPermission(Key key){
+        int o = key.ordinal();
+        bits[o / 64] = (bits[o / 64] | (1<<(o%64)));
+    }
+
+    public static void removePermission(Key key){
+        int o = key.ordinal();
+        long bit =  (1<<(key.ordinal()%64));
+        if((bits[key.ordinal() / 64] & bit) == bit)
+        bits[o / 64] = (bits[o / 64] & (1<<(o%64)));
+    }
+
     public static boolean hasPermissions(Key ... keys){
         for (Key key : keys) {
             if(!hasPermission(key))return false;

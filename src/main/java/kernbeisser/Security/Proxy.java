@@ -22,7 +22,9 @@ public class Proxy {
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(parent.getClass());
         try {
-            return (T) factory.create(new Class[0], new Object[0], new SecurityHandler(parent));
+            T proxy = (T) factory.create(new Class[0], new Object[0], new SecurityHandler());
+            BeanUtils.copyProperties(proxy,parent);
+            return proxy;
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
             return parent;
@@ -39,7 +41,9 @@ public class Proxy {
         factory.setSuperclass(any.getClass());
         buffer.forEach(parent -> {
             try {
-                collection.add((V) factory.create(new Class[0], new Object[0], new SecurityHandler(parent)));
+                V proxy = (V) factory.create(new Class[0], new Object[0], new SecurityHandler());
+                BeanUtils.copyProperties(proxy,parent);
+                collection.add(proxy);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
@@ -48,18 +52,15 @@ public class Proxy {
     }
 
     static class SecurityHandler implements MethodHandler {
-        private final Object original;
 
-        public SecurityHandler(Object original) {
-            this.original = original;
-        }
-        public Object invoke(Object proxy, Method method,Method p, Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, AccessDeniedException
+        public SecurityHandler() { }
+        public Object invoke(Object proxy, Method proxyMethod,Method original, Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, AccessDeniedException
         {
-            Key key = method.getAnnotation(Key.class);
+            Key key = original.getAnnotation(Key.class);
             Object out;
             if(key==null || PermissionSet.hasPermissions(key.value()))
-            out = method.invoke(original, args);
-            else throw new AccessDeniedException("User["+LogInModel.getLoggedIn().getId() + "] cannot access " + method + " because the user has not the required Keys:" + Arrays.toString(key.value()));
+                out = original.invoke(proxy, args);
+            else throw new AccessDeniedException("User["+LogInModel.getLoggedIn().getId() + "] cannot access " + original + " because the user has not the required Keys:" + Arrays.toString(key.value()));
             return out;
         }
     }

@@ -86,7 +86,7 @@ public class EditUserModel implements Model<EditUserController> {
         UserGroup newUserGroup = new UserGroup();
         em.persist(newUserGroup);
         user.setUserGroup(newUserGroup);
-        em.persist(Tools.mergeWithoutId(user));
+        em.persist(new User(user));
         em.flush();
         et.commit();
         em.close();

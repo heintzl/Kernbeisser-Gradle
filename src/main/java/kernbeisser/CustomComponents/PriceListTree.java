@@ -3,6 +3,7 @@ package kernbeisser.CustomComponents;
 import kernbeisser.CustomComponents.ObjectTree.ChildFactory;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 
 import java.util.Collection;

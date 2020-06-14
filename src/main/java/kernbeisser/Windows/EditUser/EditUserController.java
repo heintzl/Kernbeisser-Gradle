@@ -8,6 +8,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Selector.SelectorController;
@@ -94,8 +95,12 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                     view.usernameAlreadyExists();
                     return;
                 }
-                if (data.getPassword().equals("")) {
-                    requestChangePassword();
+                try {
+                    if (data.getPassword().equals("")) {
+                        requestChangePassword();
+                    }
+                } catch (AccessDeniedException e) {
+                    e.printStackTrace();
                 }
                 break;
         }

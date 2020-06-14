@@ -3,6 +3,7 @@ package kernbeisser.Useful;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Main;
 import kernbeisser.Security.Proxy;
+import org.apache.commons.beanutils.BeanUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -18,6 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -223,17 +225,28 @@ public class Tools {
     }
 
     public static <T> T mergeWithoutId(T in, T toOverride) {
-        for (Field field : toOverride.getClass().getDeclaredFields()) {
-            if (field.getAnnotation(Id.class) == null) {
-                field.setAccessible(true);
+        try {
+            long before = getId(in);
+            BeanUtils.copyProperties(toOverride,in);
+            setId(in,before);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return toOverride;
+    }
+
+    private static <T> long getId(T in) {
+        for (Field declaredField : in.getClass().getDeclaredFields()) {
+            if(declaredField.getAnnotation(Id.class)!=null){
+                declaredField.setAccessible(true);
                 try {
-                    field.set(toOverride, field.get(in));
+                    return (long) declaredField.get(in);
                 } catch (IllegalAccessException e) {
-                    Tools.showUnexpectedErrorWarning(e);
+                    e.printStackTrace();
                 }
             }
         }
-        return toOverride;
+        return Long.MIN_VALUE;
     }
 
     public static long tryParseLong(String s) {

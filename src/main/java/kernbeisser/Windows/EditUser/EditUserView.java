@@ -5,6 +5,7 @@ import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.CustomComponents.Verifier.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +76,11 @@ public class EditUserView implements View<EditUserController> {
         hasKey.setSelected(data.getKernbeisserKeyNumber()>0);
         keyNumber.setEnabled(hasKey.isSelected());
         keyNumber.setText(data.getKernbeisserKeyNumber()+"");
-        isEmployee.setSelected(data.isEmployee());
+        try {
+            isEmployee.setSelected(data.isEmployee());
+        } catch (AccessDeniedException e) {
+            System.out.println("Access denied");
+        }
         extraJobs.setText(data.getExtraJobs());
     }
 

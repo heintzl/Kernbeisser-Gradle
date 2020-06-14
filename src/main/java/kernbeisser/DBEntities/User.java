@@ -3,8 +3,10 @@ package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Key;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
@@ -16,6 +18,7 @@ import java.util.*;
 
 @Entity
 @Table
+@NoArgsConstructor
 @Where(clause = "unreadable = false")
 public class User implements Serializable {
     @Id
@@ -185,7 +188,9 @@ public class User implements Serializable {
         this.kernbeisserKey = kernbeisserKey;
     }
 
-    public boolean isEmployee() {
+
+    @kernbeisser.Security.Key(Key.USER_EMPLOYEE_READ)
+    public boolean isEmployee() throws AccessDeniedException{
         return employee;
     }
 
@@ -205,7 +210,7 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    public String getPassword() {
+    public String getPassword()throws AccessDeniedException {
         return password;
     }
 
@@ -217,7 +222,6 @@ public class User implements Serializable {
         }
     }
 
-    @kernbeisser.Security.Key(Key.USER_FIRST_NAME_READ)
     public String getFirstName() {
         return firstName;
     }
@@ -408,5 +412,32 @@ public class User implements Serializable {
 
     public Instant getLastPasswordChange() {
         return lastPasswordChange;
+    }
+
+    public User(User other) {
+        this.id = other.id;
+        this.permissions = other.permissions;
+        this.shares = other.shares;
+        this.solidaritySurcharge = other.solidaritySurcharge;
+        this.extraJobs = other.extraJobs;
+        this.jobs = other.jobs;
+        this.kernbeisserKey = other.kernbeisserKey;
+        this.employee = other.employee;
+        this.username = other.username;
+        this.password = other.password;
+        this.firstName = other.firstName;
+        this.surname = other.surname;
+        this.phoneNumber1 = other.phoneNumber1;
+        this.phoneNumber2 = other.phoneNumber2;
+        this.street = other.street;
+        this.town = other.town;
+        this.townCode = other.townCode;
+        this.email = other.email;
+        this.createDate = other.createDate;
+        this.updateDate = other.updateDate;
+        this.userGroup = other.userGroup;
+        this.unreadable = other.unreadable;
+        this.lastPasswordChange = other.lastPasswordChange;
+        this.forcePasswordChange = other.forcePasswordChange;
     }
 }
