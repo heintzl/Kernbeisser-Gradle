@@ -9,10 +9,6 @@ public class IntegerVerifier extends ParseVerifier<Integer> {
         return Integer.parseInt(s);
     }
 
-    @Override
-    public String message() {
-        return "Das folgende Feld hat einen nicht korrekten Wert!";
-    }
 
 
     public static InputVerifier from(int from,int to){

@@ -1,11 +1,5 @@
 package kernbeisser.CustomComponents.Verifier;
 
-import kernbeisser.Useful.Tools;
-
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
-import java.util.function.Function;
-
 public class DoubleVerifier extends ParseVerifier<Double> {
     public static DoubleVerifier from(double from, double to) {
         return new DoubleVerifier(){

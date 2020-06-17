@@ -315,4 +315,30 @@ public class ShoppingItem implements Serializable {
         return name;
     }
 
+
+    public ShoppingItem newInstance(){
+        return new ShoppingItem(this);
+    }
+
+    public ShoppingItem(ShoppingItem other) {
+        this.amount = other.amount;
+        this.discount = other.discount;
+        this.purchase = other.purchase;
+        this.name = other.name;
+        this.kbNumber = other.kbNumber;
+        this.itemMultiplier = other.itemMultiplier;
+        this.vat = other.vat;
+        this.metricUnits = other.metricUnits;
+        this.weighAble = other.weighAble;
+        this.suppliersItemNumber = other.suppliersItemNumber;
+        this.shortName = other.shortName;
+        this.surcharge = other.surcharge;
+        this.containerDiscount = other.containerDiscount;
+        this.itemRetailPrice = other.itemRetailPrice;
+        this.itemNetPrice = other.itemNetPrice;
+        this.singleDeposit = other.singleDeposit;
+        this.containerDeposit = other.containerDeposit;
+        this.containerSize = other.containerSize;
+        this.superIndex = other.superIndex;
+    }
 }

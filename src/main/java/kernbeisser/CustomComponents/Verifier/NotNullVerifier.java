@@ -13,11 +13,7 @@ public class NotNullVerifier extends TextComponentVerifier {
 
     @Override
     public boolean shouldYieldFocus(JComponent input) {
-        boolean verified = verify(input);
-        if(!verified){
-            JOptionPane.showMessageDialog(input,"Sie müssen das folgende feld ausfüllen");
-            Tools.ping(input);
-        }
-        return verified;
+        if(!verify(input)) Tools.showHint(input);
+        return true;
     }
 }

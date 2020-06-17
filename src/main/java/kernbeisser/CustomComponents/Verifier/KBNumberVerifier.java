@@ -11,8 +11,4 @@ public class KBNumberVerifier extends IntegerVerifier{
         return 999999;
     }
 
-    @Override
-    public String message() {
-        return "Die Artikelnummer darf nur zwischen 0 und 999999 liegen";
-    }
 }

@@ -1,7 +1,10 @@
 package kernbeisser.CustomComponents.Verifier;
 
+import kernbeisser.Useful.Tools;
+
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
+import java.awt.*;
 
 public abstract class TextComponentVerifier extends InputVerifier {
     @Override
@@ -10,4 +13,17 @@ public abstract class TextComponentVerifier extends InputVerifier {
     }
 
     public abstract boolean verify(JTextComponent component);
+
+    @Override
+    public boolean shouldYieldFocus(JComponent input) {
+        boolean isOkay = verify(input);
+        input.setForeground(new Color(isOkay ? 0x0 : 0xFF0000));
+        if(!isOkay)
+        showHint(input);
+        return true;
+    }
+
+    public void showHint(JComponent component){
+        Tools.showHint(component);
+    }
 }

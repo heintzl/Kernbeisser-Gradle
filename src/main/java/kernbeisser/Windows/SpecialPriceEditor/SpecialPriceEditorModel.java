@@ -32,7 +32,7 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
         et.begin();
         Article i = em.find(Article.class, article.getId());
         Offer o = em.find(Offer.class,offer.getOid());
-        i.getSpecialPriceMonths().remove(o);
+        i.getSpecialPriceMonth().remove(o);
         em.remove(o);
         em.persist(i);
         em.flush();
@@ -58,7 +58,7 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
         et.begin();
         Article i = em.createQuery("select i from Article i where id = :id", Article.class).setParameter("id", article.getId()).getSingleResult();
         em.persist(offer);
-        i.getSpecialPriceMonths().add(offer);
+        i.getSpecialPriceMonth().add(offer);
         em.flush();
         et.commit();
         em.close();

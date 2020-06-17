@@ -5,6 +5,9 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
 import kernbeisser.Useful.Tools;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -14,6 +17,9 @@ import java.util.List;
 
 @Entity
 @Table
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Article extends ArticleBase{
     @Column(unique = true)
     private int kbNumber;
@@ -128,16 +134,6 @@ public class Article extends ArticleBase{
     }
 
 
-    public int getKbNumber() {
-        return kbNumber;
-    }
-
-    public void setKbNumber(int kbNumber) {
-        this.kbNumber = kbNumber;
-    }
-
-
-
     public SurchargeTable getSurchargeTable() {
         //TODO really expensive!
         EntityManager em = DBConnection.getEntityManager();
@@ -154,166 +150,6 @@ public class Article extends ArticleBase{
         }
     }
 
-    public double getSurcharge() {
-        return surcharge;
-    }
-
-    public void setSurcharge(double surcharge) {
-        this.surcharge = surcharge;
-    }
-
-    public PriceList getPriceList() {
-        return priceList;
-    }
-
-    public void setPriceList(PriceList priceList) {
-        this.priceList = priceList;
-    }
-
-    public ContainerDefinition getContainerDef() {
-        return containerDef;
-    }
-
-    public void setContainerDef(ContainerDefinition containerDef) {
-        this.containerDef = containerDef;
-    }
-
-    public int getSuppliersItemNumber() {
-        return suppliersItemNumber;
-    }
-
-    public void setSuppliersItemNumber(int suppliersItemNumber) {
-        this.suppliersItemNumber = suppliersItemNumber;
-    }
-
-    public boolean isWeighAble() {
-        return weighAble;
-    }
-
-    public void setWeighAble(boolean weighAble) {
-        this.weighAble = weighAble;
-    }
-
-    public boolean isListed() {
-        return listed;
-    }
-
-    public void setListed(boolean listed) {
-        this.listed = listed;
-    }
-
-    public boolean isShowInShop() {
-        return showInShop;
-    }
-
-    public void setShowInShop(boolean showInShop) {
-        this.showInShop = showInShop;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public boolean isPrintAgain() {
-        return printAgain;
-    }
-
-    public void setPrintAgain(boolean printAgain) {
-        this.printAgain = printAgain;
-    }
-
-    public boolean isDeleteAllowed() {
-        return deleteAllowed;
-    }
-
-    public void setDeleteAllowed(boolean deleteAllowed) {
-        this.deleteAllowed = deleteAllowed;
-    }
-
-    public void setSpecialPriceMonth(List<Offer> specialPriceMonth) {
-        this.specialPriceMonth = specialPriceMonth;
-    }
-
-    public List<Offer> getSpecialPriceMonths() {
-        return specialPriceMonth;
-    }
-
-    public int getDelivered() {
-        return delivered;
-    }
-
-    public void setDelivered(int delivered) {
-        this.delivered = delivered;
-    }
-
-
-    public Instant getIntake() {
-        return intake;
-    }
-
-    public void setIntake(Instant intake) {
-        this.intake = intake;
-    }
-
-    public Instant getLastDelivery() {
-        return lastDelivery;
-    }
-
-    public void setLastDelivery(Instant lastDelivery) {
-        this.lastDelivery = lastDelivery;
-    }
-
-    public Instant getDeletedDate() {
-        return deletedDate;
-    }
-
-    public void setDeletedDate(Instant deletedDate) {
-        this.deletedDate = deletedDate;
-    }
-
-    public Cooling getCooling() {
-        return cooling;
-    }
-
-    public void setCooling(Cooling cooling) {
-        this.cooling = cooling;
-    }
-
-    public boolean isCoveredIntake() {
-        return coveredIntake;
-    }
-
-    public void setCoveredIntake(boolean coveredIntake) {
-        this.coveredIntake = coveredIntake;
-    }
-
-    public int getLoss() {
-        return loss;
-    }
-
-    public void setLoss(int loss) {
-        this.loss = loss;
-    }
-
-    public String getInfo() {
-        return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    public int getSold() {
-        return sold;
-    }
-
-    public void setSold(int sold) {
-        this.sold = sold;
-    }
 
     @Override
     public int hashCode() {
@@ -323,5 +159,34 @@ public class Article extends ArticleBase{
     @Override
     public String toString() {
         return getName();
+    }
+
+    private Article(Article other) {
+        this.kbNumber = other.kbNumber;
+        this.surcharge = other.surcharge;
+        this.priceList = other.priceList;
+        this.containerDef = other.containerDef;
+        this.suppliersItemNumber = other.suppliersItemNumber;
+        this.weighAble = other.weighAble;
+        this.listed = other.listed;
+        this.showInShop = other.showInShop;
+        this.deleted = other.deleted;
+        this.printAgain = other.printAgain;
+        this.deleteAllowed = other.deleteAllowed;
+        this.loss = other.loss;
+        this.info = other.info;
+        this.sold = other.sold;
+        this.specialPriceMonth = other.specialPriceMonth;
+        this.delivered = other.delivered;
+        this.intake = other.intake;
+        this.lastDelivery = other.lastDelivery;
+        this.deletedDate = other.deletedDate;
+        this.cooling = other.cooling;
+        this.coveredIntake = other.coveredIntake;
+        super.setData(other);
+    }
+
+    public Article newInstance(){
+        return new Article(this);
     }
 }

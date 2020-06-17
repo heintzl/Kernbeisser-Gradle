@@ -2,6 +2,7 @@ package kernbeisser.Windows.LogIn.SimpleLogIn;
 
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.CustomComponents.Verifier.RegexVerifier;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;

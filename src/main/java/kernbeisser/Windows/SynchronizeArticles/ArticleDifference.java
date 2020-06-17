@@ -33,7 +33,7 @@ public class ArticleDifference<T>{
         EntityTransaction et = em.getTransaction();
         et.begin();
         ArticleKornkraft articleKornkraft = em.find(ArticleKornkraft.class,catalog.getId());
-        articleKornkraft.setSynchronized(true);
+        articleKornkraft.setSynchronised(true);
         em.persist(articleKornkraft);
         em.flush();
         et.commit();

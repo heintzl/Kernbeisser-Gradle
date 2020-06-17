@@ -14,20 +14,28 @@ import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserController implements Controller<EditUserView,EditUserModel> {
-    private EditUserView view;
+    private final EditUserView view;
     private final EditUserModel model;
 
     public EditUserController(User user, Mode mode) {
         model = new EditUserModel(user == null ? new User() : user, mode);
-        if (mode == Mode.REMOVE) {
-            model.doAction(user);
-        } else {
-            this.view = new EditUserView(this);
+        switch (mode){
+            case ADD:
+                this.view = new EditUserView(this);
+                view.setUniqueVerifier();
+                break;
+            case EDIT:
+                this.view = new EditUserView(this);
+                view.setUniqueVerifier(user);
+                break;
+            case REMOVE:
+                model.doAction(user);
+                view = null;
+                return;
+            default:
+                this.view = new EditUserView(this);
+                break;
         }
-        if(mode==Mode.EDIT)
-            view.setUniqueVerifier(user);
-        if(mode==Mode.ADD)
-            view.setUniqueVerifier();
     }
 
     private void changePassword(String to) {
@@ -55,6 +63,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     @Override
     public void fillUI() {
         view.setData(model.getUser());
+        if(model.getMode()==Mode.ADD)refreshUsername();
     }
 
     @Override
@@ -68,6 +77,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     }
 
     void doAction() {
+        if(!view.validateInputFormat()) return;
         User data = view.getData(model.getUser());
         switch (model.getMode()) {
             case EDIT:
@@ -79,7 +89,6 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                 }
                 break;
             case ADD:
-                System.out.println(view.validateInputFormat());
                 if (model.usernameExists(data.getUsername())) {
                     view.usernameAlreadyExists();
                     return;
@@ -107,7 +116,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                                  Column.create("Name", Job::getName, Key.JOB_NAME_READ),
                                  Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ)
         ).openAsWindow(getView().getWindow(),
-                              SubWindow::new);
+                       SubWindow::new);
     }
 
     void openPermissionSelector(){
