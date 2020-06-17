@@ -240,7 +240,7 @@ public class Tools {
             if(declaredField.getAnnotation(Id.class)!=null){
                 declaredField.setAccessible(true);
                 try {
-                    return (long) declaredField.get(in);
+                    return ((Number) declaredField.get(in)).longValue();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -397,5 +397,22 @@ public class Tools {
             }
         }
         return result;
+    }
+
+    public static void copyInto(Object source,Object destination){
+        Class<?> clazz = source.getClass();
+        boolean isProxy = Proxy.isProxyInstance(source);
+        while (!clazz.equals(Object.class)) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if(isProxy && field.getName().equals("handler"))continue;
+                field.setAccessible(true);
+                try {
+                    field.set(destination, field.get(source));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
     }
 }

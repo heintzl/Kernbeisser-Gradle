@@ -6,6 +6,7 @@ import javassist.util.proxy.ProxyFactory;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -23,7 +24,7 @@ public class Proxy {
         factory.setSuperclass(parent.getClass());
         try {
             T proxy = (T) factory.create(new Class[0], new Object[0], new SecurityHandler());
-            BeanUtils.copyProperties(proxy,parent);
+            Tools.copyInto(parent,proxy);
             return proxy;
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
@@ -42,7 +43,7 @@ public class Proxy {
         buffer.forEach(parent -> {
             try {
                 V proxy = (V) factory.create(new Class[0], new Object[0], new SecurityHandler());
-                BeanUtils.copyProperties(proxy,parent);
+                Tools.copyInto(parent,proxy);
                 collection.add(proxy);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
@@ -51,12 +52,16 @@ public class Proxy {
         return collection;
     }
 
+    public static boolean isProxyInstance(Object o) {
+        return ProxyFactory.isProxyClass(o.getClass());
+    }
+
     static class SecurityHandler implements MethodHandler {
 
         public SecurityHandler() { }
         public Object invoke(Object proxy, Method proxyMethod,Method original, Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, AccessDeniedException
         {
-            Key key = original.getAnnotation(Key.class);
+            Key key = proxyMethod.getAnnotation(Key.class);
             Object out;
             if(key==null || PermissionSet.hasPermissions(key.value()))
                 out = original.invoke(proxy, args);

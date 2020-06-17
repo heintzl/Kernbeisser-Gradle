@@ -5,6 +5,7 @@ import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
@@ -30,6 +31,9 @@ public class EditUserModel implements Model<EditUserController> {
     }
     
     boolean doAction(User user) {
+        System.out.println(user.getId());
+        user = new User(user);
+        System.out.println(user.getId());
         try {
             switch (mode) {
                 case ADD:
@@ -76,7 +80,7 @@ public class EditUserModel implements Model<EditUserController> {
     }
 
     private void edit(User user) {
-        Tools.edit(user.getId(), user);
+        Tools.edit(user.getId(),user);
     }
 
     private void add(User user) {

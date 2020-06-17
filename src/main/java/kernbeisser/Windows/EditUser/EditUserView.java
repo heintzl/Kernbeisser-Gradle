@@ -1,12 +1,10 @@
 package kernbeisser.Windows.EditUser;
 
+import kernbeisser.CustomComponents.AccessChecking.*;
 import kernbeisser.CustomComponents.PermissionButton;
-import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.CustomComponents.Verifier.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
-import kernbeisser.Exeptions.AccessDeniedException;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,10 +16,10 @@ import java.awt.event.KeyEvent;
 public class EditUserView implements View<EditUserController> {
     private JLabel lblVorname;
     private JLabel lblNachname;
-    private kernbeisser.CustomComponents.TextFields.PermissionField firstName;
-    private kernbeisser.CustomComponents.TextFields.PermissionField lastName;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> firstName;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> lastName;
     private JLabel lblStrasse;
-    private kernbeisser.CustomComponents.TextFields.PermissionField street;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> street;
     private JLabel lblPlz;
     private JLabel lblOrt;
     private JLabel grpUser;
@@ -31,71 +29,53 @@ public class EditUserView implements View<EditUserController> {
     private JLabel grpLogin;
     private JLabel lblUsername;
     private JLabel lblPasswort;
-    private kernbeisser.CustomComponents.TextFields.PermissionField postalCode;
-    private kernbeisser.CustomComponents.TextFields.PermissionField town;
-    private kernbeisser.CustomComponents.TextFields.PermissionField phone1;
-    private kernbeisser.CustomComponents.TextFields.PermissionField phone2;
-    private kernbeisser.CustomComponents.TextFields.PermissionField username;
+    private AccessCheckingField<User,Long> postalCode;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> town;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> phone1;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> phone2;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> username;
     private kernbeisser.CustomComponents.PermissionButton chgPassword;
     private JLabel lblRolle;
     private JLabel lblHasKey;
     private JLabel lblIsEmployee;
     private kernbeisser.CustomComponents.PermissionCheckBox hasKey;
-    private kernbeisser.CustomComponents.PermissionCheckBox isEmployee;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckBox<User> isEmployee;
     private JLabel lblZusatzdienste;
     private JLabel lblAnteile;
     private JLabel grpGenossenschaft;
-    private kernbeisser.CustomComponents.PermissionSpinner shares;
-    private kernbeisser.CustomComponents.PermissionSpinner solidarySupplement;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,Integer> shares;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,Double> solidarySupplement;
     private kernbeisser.CustomComponents.PermissionButton chgJobs;
     private JLabel lblDienste;
     private JPanel userDataPanel;
-    private kernbeisser.CustomComponents.TextFields.PermissionField extraJobs;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> extraJobs;
     private JButton cancel;
     private JButton submit;
     private JPanel buttonPanel;
     private PermissionButton editPermission;
-    private kernbeisser.CustomComponents.TextFields.IntegerParseField keyNumber;
-    private PermissionField email;
-
-    private final EditUserController controller;
-
-    public EditUserView(EditUserController controller) {
-        this.controller = controller;
-    }
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,Integer> keyNumber;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> email;
 
 
-    void setData(User data) {
-        firstName.setText(data.getFirstName());
-        lastName.setText(data.getSurname());
-        street.setText(data.getStreet());
-        town.setText(data.getTown());
-        phone1.setText(data.getPhoneNumber1());
-        phone2.setText(data.getPhoneNumber2());
-        username.setText(data.getUsername());
-        hasKey.setSelected(data.getKernbeisserKeyNumber()>0);
-        keyNumber.setEnabled(hasKey.isSelected());
-        keyNumber.setText(data.getKernbeisserKeyNumber()+"");
-        try {
-            isEmployee.setSelected(data.isEmployee());
-        } catch (AccessDeniedException e) {
-            System.out.println("Access denied");
-        }
-        extraJobs.setText(data.getExtraJobs());
-    }
+    private final ObjectForm<User> objectForm = new ObjectForm<>(
+            firstName,
+            lastName,
+            street,
+            postalCode,
+            town,
+            phone1,
+            phone2,
+            username,
+            isEmployee,
+            shares,
+            solidarySupplement,
+            extraJobs,
+            keyNumber,
+            email
+    );
 
-    User getData(User data) {
-        data.setFirstName(firstName.getText());
-        data.setSurname(lastName.getText());
-        data.setStreet(street.getText());
-        data.setTown(town.getText());
-        data.setPhoneNumber1(phone1.getText());
-        data.setPhoneNumber2(phone2.getText());
-        data.setUsername(username.getText());
-        data.setKernbeisserKey(hasKey.isSelected() ? keyNumber.getSafeValue() : -1);
-        data.setEmployee(isEmployee.isSelected());
-        data.setExtraJobs(extraJobs.getText());
-        return data;
+    ObjectForm<User> getObjectForm() {
+        return objectForm;
     }
 
     void passwordToShort() {
@@ -146,58 +126,18 @@ public class EditUserView implements View<EditUserController> {
         hasKey.addActionListener(e -> keyNumber.setEnabled(!keyNumber.isEnabled()));
         editPermission.addActionListener(e -> controller.openPermissionSelector());
         cancel.addActionListener(e -> back());
-        postalCode.setRequiredKeys(Key.USER_TOWN_CODE_READ, Key.USER_TOWN_CODE_WRITE);
-        town.setRequiredKeys(Key.USER_TOWN_READ, Key.USER_TOWN_WRITE);
-        email.setReadWrite(Key.USER_EMAIL_READ);
         email.setInputVerifier(new EmailVerifier());
-        phone1.setRequiredKeys(Key.USER_PHONE_NUMBER1_READ, Key.USER_PHONE_NUMBER1_WRITE);
         phone1.setInputVerifier(new RegexVerifier(".+"));
-        phone2.setRequiredKeys(Key.USER_PHONE_NUMBER2_READ, Key.USER_PHONE_NUMBER2_WRITE);
-        username.setRequiredReadKeys(Key.USER_USERNAME_READ);
-        street.setRequiredKeys(Key.USER_STREET_READ, Key.USER_STREET_WRITE);
         street.setInputVerifier(new NotNullVerifier());
-        firstName.setRequiredKeys(Key.USER_FIRST_NAME_READ,Key.USER_FIRST_NAME_WRITE);
         firstName.setInputVerifier(new NotNullVerifier());
-        lastName.setRequiredKeys(Key.USER_SURNAME_READ,Key.USER_SURNAME_WRITE);
         lastName.setInputVerifier(new NotNullVerifier());
         chgPassword.setRequiredWriteKeys(Key.USER_PASSWORD_WRITE);
         editPermission.setRequiredWriteKeys(Key.USER_PERMISSION_WRITE);
         hasKey.setReadWrite(Key.USER_KERNBEISSER_KEY_READ);
-        isEmployee.setReadWrite(Key.USER_EMPLOYEE_READ);
-        extraJobs.setReadWrite(Key.USER_EXTRA_JOBS_READ);
-        solidarySupplement.setReadWrite(Key.USER_SOLIDARITY_SURCHARGE_READ);
         chgJobs.setRequiredWriteKeys(Key.USER_JOBS_WRITE,Key.USER_JOBS_READ);
         hasKey.setRequiredWriteKeys(Key.USER_KERNBEISSER_KEY_WRITE);
-        keyNumber.setRequiredKeys(Key.USER_KERNBEISSER_KEY_READ,Key.USER_KERNBEISSER_KEY_WRITE);
-        shares.setReadWrite(Key.USER_SHARES_READ);
         shares.setInputVerifier(IntegerVerifier.from(1,1,3,10));
         submit.setVerifyInputWhenFocusTarget(true);
-    }
-
-    boolean validateInputFormat(){
-        return Tools.verify(
-                firstName,
-                lastName,
-                street,
-                grpUser,
-                grpAddress,
-                grpLogin,
-                postalCode,
-                town,
-                phone1,
-                phone2,
-                username,
-                hasKey,
-                isEmployee,
-                grpGenossenschaft,
-                shares,
-                solidarySupplement,
-                chgJobs,
-                userDataPanel,
-                extraJobs,
-                keyNumber,
-                email
-        );
     }
 
     @Override
@@ -222,6 +162,23 @@ public class EditUserView implements View<EditUserController> {
 
             }
         };
+        firstName = new AccessCheckingField<>(User::getFirstName,User::setFirstName, AccessCheckingField.NONE);
+        lastName = new AccessCheckingField<>(User::getSurname,User::setSurname,AccessCheckingField.NONE);
+        street = new AccessCheckingField<>(User::getStreet,User::setStreet,AccessCheckingField.NONE);
+        postalCode = new AccessCheckingField<>(User::getTownCode, User::setTownCode, AccessCheckingField.LONG);
+        town = new AccessCheckingField<>(User::getTown,User::setTown,AccessCheckingField.NONE);
+        phone1 = new AccessCheckingField<>(User::getPhoneNumber1,User::setPhoneNumber1,AccessCheckingField.NONE);
+        phone2 = new AccessCheckingField<>(User::getPhoneNumber2,User::setPhoneNumber2,AccessCheckingField.NONE);
+        username = new AccessCheckingField<>(User::getUsername,User::setUsername,AccessCheckingField.NONE);
+        isEmployee = new AccessCheckBox<>(User::isEmployee, User::setEmployee);
+        shares = new AccessCheckingField<>(User::getShares,User::setShares,AccessCheckingField.INT_FORMER);
+        solidarySupplement = new AccessCheckingField<>(User::getSolidaritySurcharge,User::setSolidaritySurcharge,AccessCheckingField.DOUBLE_FORMER);
+        extraJobs = new AccessCheckingField<>(User::getExtraJobs,User::setExtraJobs,AccessCheckingField.NONE);
+        keyNumber = new AccessCheckingField<>(User::getKernbeisserKeyNumber, User::setKernbeisserKey, AccessCheckingField.INT_FORMER);
+        email = new AccessCheckingField<>(User::getEmail,User::setEmail,AccessCheckingField.EMAIL_FORMER);
     }
 
+    public void invalidInput() {
+        JOptionPane.showMessageDialog(getTopComponent(),"Der Eingegeben werte sind nicht korrekt!");
+    }
 }

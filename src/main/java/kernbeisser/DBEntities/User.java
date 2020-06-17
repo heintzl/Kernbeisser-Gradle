@@ -222,50 +222,63 @@ public class User implements Serializable {
         }
     }
 
+
+    @kernbeisser.Security.Key(Key.USER_FIRST_NAME_READ)
     public String getFirstName() {
         return firstName;
     }
 
+    @kernbeisser.Security.Key(Key.USER_FIRST_NAME_WRITE)
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @kernbeisser.Security.Key(Key.USER_SURNAME_READ)
     public String getSurname() {
         return surname;
     }
 
+    @kernbeisser.Security.Key(Key.USER_SURNAME_WRITE)
     public void setSurname(String surname) {
         this.surname = surname;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER1_READ)
     public String getPhoneNumber1() {
         return phoneNumber1;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER1_WRITE)
     public void setPhoneNumber1(String phoneNumber1) {
         this.phoneNumber1 = phoneNumber1;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER2_READ)
     public String getPhoneNumber2() {
         return phoneNumber2;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER2_WRITE)
     public void setPhoneNumber2(String phoneNumber2) {
         this.phoneNumber2 = phoneNumber2;
     }
 
+    @kernbeisser.Security.Key(Key.USER_STREET_READ)
     public String getStreet() {
         return street;
     }
 
+    @kernbeisser.Security.Key(Key.USER_STREET_WRITE)
     public void setStreet(String address) {
         this.street = address;
     }
 
+    @kernbeisser.Security.Key(Key.USER_EMAIL_READ)
     public String getEmail() {
         return email;
     }
 
+    @kernbeisser.Security.Key(Key.USER_EMAIL_WRITE)
     public void setEmail(String email) {
         this.email = email;
     }
@@ -274,10 +287,12 @@ public class User implements Serializable {
         return createDate;
     }
 
+    @kernbeisser.Security.Key(Key.USER_USER_GROUP_READ)
     public UserGroup getUserGroup() {
         return userGroup;
     }
 
+    @kernbeisser.Security.Key(Key.USER_USER_GROUP_WRITE)
     public void setUserGroup(UserGroup userGroup) {
         this.userGroup = userGroup;
     }
@@ -286,35 +301,42 @@ public class User implements Serializable {
         return updateDate;
     }
 
+    @kernbeisser.Security.Key(Key.USER_TOWN_READ)
     public String getTown() {
         return town;
     }
 
+    @kernbeisser.Security.Key(Key.USER_TOWN_WRITE)
     public void setTown(String town) {
         this.town = town;
     }
 
+    @kernbeisser.Security.Key(Key.USER_TOWN_CODE_READ)
     public long getTownCode() {
         return townCode;
     }
-
+    @kernbeisser.Security.Key(Key.USER_TOWN_CODE_WRITE)
     public void setTownCode(long townCode) {
         this.townCode = townCode;
     }
 
+
+    //changed from direct reference to getter to keep security
     public String getFullName() {
-        return this.firstName + " " + this.getSurname();
+        return this.getFirstName() + " " + this.getSurname();
     }
 
     @Override
     public String toString() {
-        return username;
+        return getUsername();
     }
 
+    @kernbeisser.Security.Key(Key.USER_PERMISSION_READ)
     public Set<Permission> getPermissions() {
         return permissions;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PERMISSION_WRITE)
     public void setPermissions(Set<Permission> permissions) {
         this.permissions = permissions;
     }

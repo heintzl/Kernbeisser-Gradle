@@ -9,6 +9,7 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Selector.SelectorController;
@@ -20,14 +21,14 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     private final EditUserModel model;
 
     public EditUserController(User user, Mode mode) {
-        model = new EditUserModel(user == null ? new User() : user, mode);
+        model = new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode);
         switch (mode){
             case ADD:
-                this.view = new EditUserView(this);
+                this.view = new EditUserView();
                 view.setUniqueVerifier();
                 break;
             case EDIT:
-                this.view = new EditUserView(this);
+                this.view = new EditUserView();
                 view.setUniqueVerifier(user);
                 break;
             case REMOVE:
@@ -35,7 +36,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                 view = null;
                 return;
             default:
-                this.view = new EditUserView(this);
+                this.view = new EditUserView();
                 break;
         }
     }
@@ -64,7 +65,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
 
     @Override
     public void fillUI() {
-        view.setData(Proxy.getSecureInstance(model.getUser()));
+        view.getObjectForm().setData(model.getUser());
         if(model.getMode()==Mode.ADD)refreshUsername();
     }
 
@@ -79,8 +80,13 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     }
 
     void doAction() {
-        if(!view.validateInputFormat()) return;
-        User data = view.getData(model.getUser());
+        User data;
+        try {
+            data = view.getObjectForm().pasteDataInto(model.getUser());
+        } catch (CannotParseException e) {
+            view.invalidInput();
+            return;
+        }
         switch (model.getMode()) {
             case EDIT:
                 if (!data.getUsername().equals(model.getUser().getUsername())) {
@@ -111,9 +117,9 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
 
     void refreshUsername(){
         if(model.getMode()==Mode.ADD) {
-            User data = view.getData(model.getUser());
+            User data = view.getObjectForm().ignoreWrongInput(new User());
             data.setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ",""), data.getSurname().toLowerCase()).replace(" ",""));
-            view.setData(data);
+            view.getObjectForm().setData(data);
         }
     }
 
