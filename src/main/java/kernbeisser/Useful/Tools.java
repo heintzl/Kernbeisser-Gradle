@@ -1,9 +1,12 @@
 package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Main;
+import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.Proxy;
 import org.apache.commons.beanutils.BeanUtils;
+import sun.misc.Unsafe;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -267,10 +270,10 @@ public class Tools {
 
     public static <T> void delete(Class<T> t, Object key) {
         runInSession(em -> em.remove(em.find(t, key)));
-     }
+    }
 
     public static <T> void edit(Object key, T to) {
-      runInSession(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
+        runInSession(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
     }
 
     public static void runInSession(Consumer<EntityManager> dbAction) {
@@ -360,7 +363,10 @@ public class Tools {
         em.close();
     }
 
+    public static int error = 0;
+
     public static void showHint(JComponent component){
+        if(!component.isEnabled())return;
         Color originalColor = component.getForeground();
         Color originalBackgroundColor = component.getBackground();
         component.addFocusListener(new FocusAdapter() {
@@ -371,15 +377,6 @@ public class Tools {
                 e.getComponent().removeFocusListener(this);
             }
         });
-        ToolTipManager.sharedInstance().mouseMoved(new MouseEvent(
-                component,
-                MouseEvent.MOUSE_MOVED,
-                System.currentTimeMillis(),
-                0,
-                10,
-                10,
-                0,
-                false));
         if(((JTextComponent)component).getText().replace(" ","").equals(""))
             component.setBackground(new Color(0xFF9999));
         else component.setForeground(new Color(0xFF00000));
@@ -413,6 +410,67 @@ public class Tools {
                 }
             }
             clazz = clazz.getSuperclass();
+        }
+    }
+
+
+    private static final Unsafe unsafe = createUnsafe();
+
+    private static Unsafe createUnsafe() {
+        Field f;
+        try {
+            f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            return (Unsafe) f.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    //IDK if this is a option but it works!
+    public static <T> T clone(T object) {
+        Class<?> clazz = object.getClass();
+        T instance = null;
+        try {
+            instance = (T) unsafe.allocateInstance(clazz);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+        while (!clazz.equals(Object.class)) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if(Modifier.isStatic(field.getModifiers()))continue;
+                if(Modifier.isFinal(field.getModifiers()))continue;
+                field.setAccessible(true);
+                try {
+                    field.set(instance, field.get(object));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return instance;
+    }
+
+    public static void invokeWithDefault(AccessConsumer<Object> consumer) throws AccessDeniedException {
+        Object[] primitiveObjects = new Object[]{
+                null,
+                (int)0,
+                (long)0,
+                (double)0,
+                (float)0,
+                (char)0,
+                (byte)0,
+                (short)0,
+                false,
+                };
+        for (Object primitiveObject : primitiveObjects) {
+            try {
+                consumer.accept(primitiveObject);
+                return;
+            }catch (NullPointerException | ClassCastException ignored ){}
         }
     }
 }

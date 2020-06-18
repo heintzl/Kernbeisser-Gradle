@@ -29,7 +29,7 @@ public class EditUserView implements View<EditUserController> {
     private JLabel grpLogin;
     private JLabel lblUsername;
     private JLabel lblPasswort;
-    private AccessCheckingField<User,Long> postalCode;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,Long> postalCode;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> town;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> phone1;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> phone2;
@@ -92,19 +92,6 @@ public class EditUserView implements View<EditUserController> {
 
     void usernameAlreadyExists() {
         JOptionPane.showMessageDialog(getTopComponent(), "Der Benutzername ist bereits vergeben");
-    }
-
-
-    void setUniqueVerifier(User selected){
-        if(selected==null){
-            setUniqueVerifier();
-            return;
-        }
-        username.setInputVerifier(UsernameVerifier.checkUsernameUnused(selected.getUsername()));
-    }
-
-    void setUniqueVerifier(){
-        username.setInputVerifier(UsernameVerifier.checkUsernameUnused());
     }
 
     @Override

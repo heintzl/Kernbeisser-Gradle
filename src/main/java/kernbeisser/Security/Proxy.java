@@ -57,8 +57,6 @@ public class Proxy {
     }
 
     static class SecurityHandler implements MethodHandler {
-
-        public SecurityHandler() { }
         public Object invoke(Object proxy, Method proxyMethod,Method original, Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, AccessDeniedException
         {
             Key key = proxyMethod.getAnnotation(Key.class);

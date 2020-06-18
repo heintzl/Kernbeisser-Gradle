@@ -3,11 +3,12 @@ package kernbeisser.CustomComponents.AccessChecking;
 import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Useful.Tools;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class AccessCheckBox <P> extends JCheckBox implements Bounded<P>{
+public class AccessCheckBox <P> extends JCheckBox implements Bounded<P,Boolean>{
     private final Setter<P,Boolean> setter;
     private final Getter<P,Boolean> getter;
 
@@ -17,21 +18,50 @@ public class AccessCheckBox <P> extends JCheckBox implements Bounded<P>{
     }
 
     @Override
-    public void setValue(P data) {
+    public void setObjectData(P data) {
         try {
             setSelected(getter.get(data));
-        } catch (AccessDeniedException e) {
+        } catch (AccessDeniedException e) {}
+    }
+
+    @Override
+    public void writeInto(P p) {
+        try {
+            setter.set(p,isSelected());
+        } catch (AccessDeniedException ignored) {}
+    }
+
+    @Override
+    public Getter<P,Boolean> getGetter() {
+        return getter;
+    }
+
+    @Override
+    public Setter<P,Boolean> getSetter() {
+        return setter;
+    }
+
+    @Override
+    public void setReadable(boolean b) {
+        if(!b){
             setText(getText() + "[Unbekannt]");
+        }else {
+            setText(getText().replace("[Unbekannt]",""));
         }
     }
 
     @Override
-    public void putOn(P p) {
-        try {
-            setter.set(p,isSelected());
-            setEnabled(true);
-        } catch (AccessDeniedException e) {
-            setEnabled(false);
-        }
+    public void setWriteable(boolean b) {
+        setEnabled(b);
+    }
+
+    @Override
+    public void markWrongInput() {
+        Tools.showHint(this);
+    }
+
+    @Override
+    public boolean validInput() {
+        return true;
     }
 }

@@ -7,6 +7,7 @@ import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
@@ -121,7 +122,7 @@ public class User implements Serializable {
         dbContent.unreadable = true;
         dbContent.firstName = "deleted";
         dbContent.surname = "deleted";
-        dbContent.username = "deleted" + dbContent.getId();
+        dbContent.username = "deleted" + dbContent.id;
         dbContent.phoneNumber1 = "deleted";
         dbContent.phoneNumber2 = "deleted";
         dbContent.email = "deleted";
@@ -147,73 +148,88 @@ public class User implements Serializable {
         return Proxy.getSecureInstances(out);
     }
 
+    @kernbeisser.Security.Key(Key.USER_SHARES_READ)
     public int getShares() {
         return shares;
     }
 
+    @kernbeisser.Security.Key(Key.USER_SHARES_WRITE)
     public void setShares(int shares) {
         this.shares = shares;
     }
 
+    @kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_READ)
     public double getSolidaritySurcharge() {
         return solidaritySurcharge;
     }
 
+    @kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_WRITE)
     public void setSolidaritySurcharge(double solidaritySurcharge) {
         this.solidaritySurcharge = solidaritySurcharge;
     }
 
+    @kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_READ)
     public String getExtraJobs() {
         return extraJobs;
     }
 
+    @kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_WRITE)
     public void setExtraJobs(String extraJobs) {
         this.extraJobs = extraJobs;
     }
 
+    @kernbeisser.Security.Key(Key.USER_JOBS_READ)
     public Set<Job> getJobs() {
         return jobs;
     }
 
+    @kernbeisser.Security.Key(Key.USER_JOBS_WRITE)
     public void setJobs(Set<Job> jobs) {
         this.jobs.clear();
         this.jobs.addAll(jobs);
     }
 
+    @kernbeisser.Security.Key(Key.USER_KERNBEISSER_KEY_READ)
     public int getKernbeisserKeyNumber() {
         return kernbeisserKey;
     }
 
+    @kernbeisser.Security.Key(Key.USER_KERNBEISSER_KEY_WRITE)
     public void setKernbeisserKey(int kernbeisserKey) {
         this.kernbeisserKey = kernbeisserKey;
     }
 
-
     @kernbeisser.Security.Key(Key.USER_EMPLOYEE_READ)
-    public boolean isEmployee() throws AccessDeniedException{
+    public boolean isEmployee() {
         return employee;
     }
 
+    @kernbeisser.Security.Key(Key.USER_EMPLOYEE_WRITE)
     public void setEmployee(boolean employee) {
         this.employee = employee;
     }
 
+    @kernbeisser.Security.Key(Key.USER_ID_READ)
     public int getId() {
         return id;
     }
 
+    @kernbeisser.Security.Key(Key.USER_USERNAME_READ)
     public String getUsername() {
         return username;
     }
 
+    @kernbeisser.Security.Key(Key.USER_USERNAME_WRITE)
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PASSWORD_READ)
     public String getPassword()throws AccessDeniedException {
         return password;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PASSWORD_WRITE)
     public void setPassword(String password) {
         if(!password.equals(this.password)) {
             this.password = password;
@@ -326,9 +342,13 @@ public class User implements Serializable {
         return this.getFirstName() + " " + this.getSurname();
     }
 
-    @Override
     public String toString() {
-        return getUsername();
+        try {
+            return getUsername();
+            //catch AccessDeniedException
+        }catch (Exception e){
+            return "Benutzer["+id+"]";
+        }
     }
 
     @kernbeisser.Security.Key(Key.USER_PERMISSION_READ)

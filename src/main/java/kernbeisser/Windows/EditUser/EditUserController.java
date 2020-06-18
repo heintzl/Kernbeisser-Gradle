@@ -22,22 +22,11 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
 
     public EditUserController(User user, Mode mode) {
         model = new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode);
-        switch (mode){
-            case ADD:
-                this.view = new EditUserView();
-                view.setUniqueVerifier();
-                break;
-            case EDIT:
-                this.view = new EditUserView();
-                view.setUniqueVerifier(user);
-                break;
-            case REMOVE:
-                model.doAction(user);
-                view = null;
-                return;
-            default:
-                this.view = new EditUserView();
-                break;
+        if (mode == Mode.REMOVE) {
+            model.doAction(model.getUser());
+            view = null;
+        } else {
+            this.view = new EditUserView();
         }
     }
 
@@ -65,13 +54,16 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
 
     @Override
     public void fillUI() {
+        view.getObjectForm().refreshAccess(model.getUser());
         view.getObjectForm().setData(model.getUser());
         if(model.getMode()==Mode.ADD)refreshUsername();
     }
 
     @Override
     public Key[] getRequiredKeys() {
-        return new Key[0];
+        return new Key[]{
+                Key.USER_USERNAME_READ,
+        };
     }
 
     @Override
@@ -85,17 +77,10 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
             data = view.getObjectForm().pasteDataInto(model.getUser());
         } catch (CannotParseException e) {
             view.invalidInput();
+            view.getObjectForm().markErrors();
             return;
         }
         switch (model.getMode()) {
-            case EDIT:
-                if (!data.getUsername().equals(model.getUser().getUsername())) {
-                    if (model.usernameExists(data.getUsername())) {
-                        view.usernameAlreadyExists();
-                        return;
-                    }
-                }
-                break;
             case ADD:
                 if (model.usernameExists(data.getUsername())) {
                     view.usernameAlreadyExists();
