@@ -429,7 +429,7 @@ public class Tools {
     }
 
 
-    //IDK if this is a option but it works!
+    //I don't know if we should use Java Unsafe like the name already says ...
     public static <T> T clone(T object) {
         Class<?> clazz = object.getClass();
         T instance = null;
@@ -452,6 +452,15 @@ public class Tools {
             clazz = clazz.getSuperclass();
         }
         return instance;
+    }
+
+    public static <T> T createWithoutConstructor(Class<T> clazz){
+        try {
+            return (T) unsafe.allocateInstance(clazz);
+        } catch (InstantiationException e) {
+            Tools.showUnexpectedErrorWarning(e);
+            return null;
+        }
     }
 
     public static void invokeWithDefault(AccessConsumer<Object> consumer) throws AccessDeniedException {

@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DBLogInController implements Controller<DBLogInView,DBLogInModel> {
 
-    private DBLogInView view;
-    private DBLogInModel model;
+    private final DBLogInView view;
+    private final DBLogInModel model;
 
     public DBLogInController(){
         this.model = new DBLogInModel();

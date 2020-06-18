@@ -10,6 +10,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.Menu.MenuController;
 import kernbeisser.Windows.TabbedPanel.DefaultTab;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.View;
@@ -65,7 +66,7 @@ public class SimpleLogInController implements Controller<SimpleLogInView,SimpleL
                                                                                          SubWindow::new);
             }else {
                 removeSelf();
-                new UserMenuController().openTab("Menu");
+                new MenuController().openTab("Menu");
             }
         } catch (AccessDeniedException e) {
             view.accessDenied();
