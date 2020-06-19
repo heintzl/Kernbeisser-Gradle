@@ -1,6 +1,7 @@
 package kernbeisser.Useful;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 
 import javax.persistence.EntityManager;
@@ -9,10 +10,7 @@ import javax.persistence.Id;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -383,5 +381,35 @@ public class Tools {
             }
         }
         return result;
+    }
+
+    public static void activateBarcodeListener() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getIntValue()) {
+                    JOptionPane.showMessageDialog(e.getComponent(), "In " + e.getComponent()
+                                                                             .getName() + " ist keine Barcode-Eingabe möglich");
+                }
+                return true;
+            }
+        });
+    }
+
+    private static Component getParentView(Component component) {
+        Component c = component;
+        if (View.class.isAssignableFrom(c.getClass())) {
+            return c;
+        }
+        return c;
+    }
+
+    public static void deactivateBarcodeListener() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                return false;
+            }
+        });
     }
 }

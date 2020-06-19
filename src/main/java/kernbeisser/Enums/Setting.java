@@ -2,6 +2,8 @@ package kernbeisser.Enums;
 
 import kernbeisser.DBEntities.SettingValue;
 
+import java.awt.event.KeyEvent;
+
 public enum Setting {
     DB_VERSION("0.1.0j"),
     DB_INITIALIZED("false"),
@@ -15,7 +17,8 @@ public enum Setting {
     MIN_PASSWORD_LENGTH("5"),
     MIN_REQUIRED_PASSWORD_STRENGTH("3"),
     HASH_COSTS("12"),
-    FORCE_PASSWORD_CHANGE_AFTER("365")
+    FORCE_PASSWORD_CHANGE_AFTER("365"),
+    SCANNER_PREFIX_KEY(Integer.toString(KeyEvent.VK_F12))
     ;
 
     private final String defaultValue;
