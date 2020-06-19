@@ -14,6 +14,8 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>,Searc
     private final SearchBoxView<T> view;
     private final SearchBoxModel<T> model;
 
+
+    @SafeVarargs
     public SearchBoxController(Searchable<T> searchFunction, Column<T>... columns){
         this.model = new SearchBoxModel<>(searchFunction);
         this.view = new SearchBoxView<>(this);

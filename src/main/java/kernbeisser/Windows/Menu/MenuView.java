@@ -19,6 +19,7 @@ import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
+import kernbeisser.Windows.UserInfo.UserInfoView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +28,7 @@ import javax.swing.*;
 public class MenuView implements View<MenuController> {
 
 
+    private UserInfoView infoPanel;
     private JPanel main;
     private kernbeisser.CustomComponents.ControllerButton openCashierShoppingMask;
     private kernbeisser.CustomComponents.ControllerButton printBonFromPast;
@@ -60,14 +62,15 @@ public class MenuView implements View<MenuController> {
 
 
     private void createUIComponents() {
-        openCashierShoppingMask = new ControllerButton(new CashierShoppingMaskController(), controller -> controller.openTab("<PlaceHolder>"));
+        infoPanel = new UserInfoController(LogInModel.getLoggedIn()).getInitializedView();
+        openCashierShoppingMask = new ControllerButton(new CashierShoppingMaskController(), controller -> controller.openTab("Ladendienst"));
         //NOT IMPLEMENTED
         printBonFromPast = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
-        editPriceList = new ControllerButton(new ManagePriceListsController(), controller -> controller.openTab("<PlaceHolder>"));
-        editArticles = new ControllerButton(new EditItemsController(), controller -> controller.openTab("<PlaceHolder>"));
-        editSurchargeTables = new ControllerButton(new EditSurchargeTables(), controller -> controller.openTab("<PlaceHolder>"));
+        editPriceList = new ControllerButton(new ManagePriceListsController(), controller -> controller.openTab("Preislisten bearbeiten"));
+        editArticles = new ControllerButton(new EditItemsController(), controller -> controller.openTab("Artikel bearbeiten"));
+        editSurchargeTables = new ControllerButton(new EditSurchargeTables(), controller -> controller.openTab("Zuschlagstabellen bearbeiten"));
         changePassword = new ControllerButton(new ChangePasswordController(LogInModel.getLoggedIn(),true), controller -> controller.openTab("<PlaceHolder>"));
-        transactionHistory = new ControllerButton(new UserInfoController(LogInModel.getLoggedIn()), controller -> controller.openTab("<PlaceHolder>"));
+        transactionHistory = new ControllerButton(new UserInfoController(LogInModel.getLoggedIn()), controller -> controller.openTab(""));
         editOwnUser = new ControllerButton(new EditUserController(LogInModel.getLoggedIn(), Mode.EDIT),controller -> controller.openTab("<PlaceHolder>"));
         //NOT IMPLEMENTED
         editUserSettings = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));

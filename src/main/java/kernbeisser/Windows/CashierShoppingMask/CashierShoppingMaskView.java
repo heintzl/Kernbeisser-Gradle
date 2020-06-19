@@ -18,7 +18,7 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
     private JPanel main;
     private SearchBoxView<User> searchBoxView;
     private PermissionButton openShoppingMask;
-    private kernbeisser.CustomComponents.PermissionComboBox<String> secondSellerUsername;
+    private kernbeisser.CustomComponents.PermissionComboBox<User> secondSellerUsername;
 
     private final CashierShoppingMaskController controller;
 
@@ -38,8 +38,8 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
         openShoppingMask.setText("Einkauf für "+username+" beginnen");
     }
 
-    public String getSecondSeller(){
-        return (String) secondSellerUsername.getSelectedItem();
+    public User getSecondSeller(){
+        return (User) secondSellerUsername.getSelectedItem();
     }
 
     public void setOpenShoppingMaskEnabled(boolean b) {
@@ -68,7 +68,9 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
 
     public void setAllSecondarySellers(Collection<User> users){
         secondSellerUsername.removeAllItems();
-        secondSellerUsername.addItem("Keiner");
-        users.forEach(e -> secondSellerUsername.addItem(e.getUsername()));
+        User user = new User();
+        user.setUsername("Keiner");
+        secondSellerUsername.addItem(user);
+        users.forEach(e -> secondSellerUsername.addItem(e));
     }
 }
