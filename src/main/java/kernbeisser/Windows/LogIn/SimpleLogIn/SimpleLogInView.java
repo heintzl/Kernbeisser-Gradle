@@ -2,7 +2,6 @@ package kernbeisser.Windows.LogIn.SimpleLogIn;
 
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
-import kernbeisser.CustomComponents.Verifier.RegexVerifier;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -34,11 +33,11 @@ public class SimpleLogInView implements View<SimpleLogInController> {
     }
 
     public void accessDenied() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Zugriff verweigert. Anmeldedaten sind inkorrect!");
+        JOptionPane.showMessageDialog(getTopComponent(),"Zugriff verweigert. Anmeldedaten sind ungültig!");
     }
 
     public void permissionRequired() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Zugriff verweigert.\nIhr Benutzerkonto hat Leider nicht die Berechtigung sich anzumelden.\nSie können es bei einem Admin freischalten lassen.");
+        JOptionPane.showMessageDialog(getTopComponent(),"Zugriff verweigert.\nIhr Benutzerkonto hat leider nicht die Berechtigung sich anzumelden.\nSie können es bei einem Admin freischalten lassen.");
     }
 
     @Override
@@ -59,6 +58,7 @@ public class SimpleLogInView implements View<SimpleLogInController> {
                 Tools.showUnexpectedErrorWarning(e);
             }
         }
+        Tools.activateBarcodeListener();
         // TODO test code; remove  up to here
     }
 
