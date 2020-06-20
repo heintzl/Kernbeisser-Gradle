@@ -148,6 +148,10 @@ public class User implements Serializable {
         return Proxy.getSecureInstances(out);
     }
 
+    public static User getById(int parseInt) {
+        return DBConnection.getEntityManager().find(User.class,parseInt);
+    }
+
     @kernbeisser.Security.Key(Key.USER_SHARES_READ)
     public int getShares() {
         return shares;

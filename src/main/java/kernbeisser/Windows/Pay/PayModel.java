@@ -5,6 +5,7 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 import net.sf.jasperreports.engine.JRException;
@@ -50,7 +51,8 @@ public class PayModel implements Model<PayController> {
                            .sum() * (1 + saleSession.getCustomer().getSolidaritySurcharge());
     }
 
-    Purchase pay(SaleSession saleSession, List<ShoppingItem> items, double sum) throws PersistenceException {
+    Purchase pay(SaleSession saleSession, List<ShoppingItem> items, double sum)
+            throws PersistenceException, AccessDeniedException {
         //Build connection by default
         EntityManager em = DBConnection.getEntityManager();
 
@@ -59,6 +61,14 @@ public class PayModel implements Model<PayController> {
         et.begin();
 
         try {
+            //Do money exchange
+            try {
+                Transaction.doPurchaseTransaction(saleSession.getCustomer(), shoppingCartSum());
+            }catch (AccessDeniedException e) {
+                em.close();
+                throw new AccessDeniedException("The user has not enough value to buy these Articles");
+            }
+
             //Create saleSession if not exists
             SaleSession db = em.find(SaleSession.class, saleSession.getId());
             if (db == null) {
@@ -66,8 +76,6 @@ public class PayModel implements Model<PayController> {
                 db = saleSession;
             }
 
-            //Do money exchange
-            Transaction.doPurchaseTransaction(saleSession.getCustomer(), shoppingCartSum());
 
             //Save ShoppingItems in Purchase
             Purchase purchase = new Purchase();

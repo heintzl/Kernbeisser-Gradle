@@ -20,6 +20,7 @@ public class UserGroup {
     @Column
     private int interestThisYear;
 
+
     public static List<UserGroup> getAll(String condition) {
         return Tools.getAll(UserGroup.class, condition);
     }

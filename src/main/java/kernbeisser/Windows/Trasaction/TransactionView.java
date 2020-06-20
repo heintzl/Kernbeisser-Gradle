@@ -9,6 +9,7 @@ import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Enums.Key;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -354,4 +355,8 @@ public class TransactionView implements View<TransactionController> {
         return main;
     }
 
+    public void userHasNotEnoughValue() {
+        JOptionPane.showMessageDialog(getTopComponent(), "Die eingegeben Überweissungen könnnen nicht getätight werden,\nda einige der Benutzer nicht die Berechtigung haben, unter das minimale\nGuthaben von " + String.format("%.2f€",
+                                                                                                                                                                                                                               Setting.DEFAULT_MIN_VALUE.getDoubleValue()) + " zu gehen");
+    }
 }
