@@ -66,9 +66,18 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         } else { view.setKbNumber("");}
     }
 
+    void searchByBarcode(long barcode) {
+        view.setOptArticleNo();
+        Article found = model.getByBarcode(barcode);
+        if (found != null) {
+            view.loadItemStats(found);
+            view.addToCart();
+        } else { view.setKbNumber("");}
+    }
+
     double getPrice(Article article) {
-        ShoppingItem si = new ShoppingItem(article, 0,false);
-        return si.getItemRetailPrice();//PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
+        ShoppingItem shoppingItem = new ShoppingItem(article, 0,false);
+        return shoppingItem.getItemRetailPrice();
     }
 
     private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
@@ -150,6 +159,15 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     public void processBarcode(String barcode) {
-        JOptionPane.showMessageDialog(view.getContent(), "Barcode ist " + barcode);
+        try {
+            long bc = Long.parseLong(barcode);
+            searchByBarcode(bc);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(view.getContent(),
+                                          "Ungültiger Barcode: " + barcode,
+                                          "Barcode Fehler",
+                                          JOptionPane.WARNING_MESSAGE);
+        }
+
     }
 }

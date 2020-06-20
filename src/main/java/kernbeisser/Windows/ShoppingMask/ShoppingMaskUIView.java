@@ -112,9 +112,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         barcodeCapture = new BarcodeCapture(c -> controller.processBarcode(c));
     }
 
-    private void doCancel() {
-
-    }
+    private void doCancel() {}
 
     private void doCheckout() {
         controller.startPay();
@@ -124,10 +122,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         controller.openSearchWindow();
     }
 
-    private void addToCart() {
+    public void addToCart() {
         if (controller.addToShoppingCart()) {articleTypeInitialize(currentArticleType);};
     }
     private void editUserAction() {controller.editUserAction();}
+
+    private void createUIComponents() {
+        shoppingCartView = cartController.getView();
+    }
 
     public void setKbNumber(String value) {
         this.kbNumber.setText(value);
@@ -149,6 +151,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     public void setOptTaxStandard() {
         this.optTaxStandard.setSelected(true);
+    }
+
+    public void setOptArticleNo() {
+        this.optArticleNo.setSelected(true);
     }
 
     public void setPriceUnit(String value) {
@@ -291,10 +297,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         }
     }
 
-    private void createUIComponents() {
-        shoppingCartView = cartController.getView();
-    }
-
     double getPriceVATIncluded() {
         return price.getSafeValue();
     }
@@ -358,25 +360,12 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         articleUnit.setText("");
     }
 
-    int getArticleAmount() {
-        return articleAmount.getSafeValue();
-    }
-
-    public void setArticleAmount(String value) {
-        this.articleAmount.setText(value);
-        this.kbNumber.setEnabled(!value.equals("--"));
-    }
-
     public String getItemName() {
         return articleName.getText();
     }
 
     public double getDeposit() {
         return deposit.getSafeValue();
-    }
-
-    public void setDeposit(String value) {
-        this.deposit.setText(value);
     }
 
     VAT getSelectedVAT() {

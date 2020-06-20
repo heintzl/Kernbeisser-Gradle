@@ -55,10 +55,6 @@ public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
         return out;
     }
 
-    Article getByKbNumber(int kbNumber) {
-        return Article.getByKbNumber(kbNumber);
-    }
-
     boolean editBarcode(int itemId, long newBarcode) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -107,7 +103,16 @@ public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
         this.saleSession = saleSession;
     }
 
+    Article getByKbNumber(int kbNumber) {
+        return Article.getByKbNumber(kbNumber);
+    }
+
     Article getBySupplierItemNumber(int suppliersNumber) {
         return Article.getBySuppliersItemNumber(suppliersNumber);
     }
+
+    Article getByBarcode(long barcode) {
+        return Article.getByBarcode(barcode);
+    }
+
 }

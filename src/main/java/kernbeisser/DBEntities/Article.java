@@ -133,6 +133,19 @@ public class Article extends ArticleBase{
         }
     }
 
+    public static Article getByBarcode(long barcode) {
+        EntityManager em = DBConnection.getEntityManager();
+        try {
+            return em.createQuery("select i from Article i where barcode = :n", Article.class)
+                     .setParameter("n", barcode)
+                     .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
 
     public SurchargeTable getSurchargeTable() {
         //TODO really expensive!
