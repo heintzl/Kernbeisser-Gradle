@@ -432,6 +432,10 @@ public class User implements Serializable {
             EntityTransaction et = em.getTransaction();
             et.begin();
             User kernbeisser = new User();
+            Permission admin = new Permission();
+            admin.getKeySet().addAll(Arrays.asList(Key.values()));
+            em.persist(admin);
+            kernbeisser.getPermissions().add(admin);
             kernbeisser.setPassword("CANNOT LOG IN");
             kernbeisser.setFirstName("Konto");
             kernbeisser.setSurname("Kernbeisser");

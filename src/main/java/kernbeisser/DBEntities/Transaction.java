@@ -56,11 +56,17 @@ public class Transaction  {
         UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
         UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
         double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
-        if(fromUG.getValue()-value < minValue){
-            if (!from.hasPermission(Key.GO_UNDER_MIN)) throw new AccessDeniedException("the sending user ["+from.getId()+"] has not the Permission to go under the min value of "+minValue+"€");
-        }
-        if(toUG.getValue()+value < minValue){
-            if (!to.hasPermission(Key.GO_UNDER_MIN)) throw new AccessDeniedException("the receiving user ["+from.getId()+"] has not the Permission to go under the min value of "+minValue+"€");
+        if(transactionType != TransactionType.INITIALIZE) {
+            if (fromUG.getValue() - value < minValue) {
+                if (!from.hasPermission(Key.GO_UNDER_MIN))
+                    throw new AccessDeniedException(
+                            "the sending user [" + from.getId() + "] has not the Permission to go under the min value of " + minValue + "€");
+            }
+            if (toUG.getValue() + value < minValue) {
+                if (!to.hasPermission(Key.GO_UNDER_MIN))
+                    throw new AccessDeniedException(
+                            "the receiving user [" + from.getId() + "] has not the Permission to go under the min value of " + minValue + "€");
+            }
         }
         et.begin();
         setValue(fromUG,fromUG.getValue()-value);

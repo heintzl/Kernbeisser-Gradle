@@ -138,6 +138,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                     new Thread(() -> {
                         Permission keyPermission = new Permission();
                         keyPermission.getKeySet().add(Key.ACTION_LOGIN);
+                        keyPermission.getKeySet().add(Key.GO_UNDER_MIN);
                         Tools.persist(keyPermission);
                         view.setUserProgress(0);
                         parseJobs(jobs);
