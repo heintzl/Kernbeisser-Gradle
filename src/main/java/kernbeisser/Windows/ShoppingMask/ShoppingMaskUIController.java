@@ -15,6 +15,7 @@ import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorControlle
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.text.MessageFormat;
 
 
@@ -146,5 +147,9 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
 
     void editUserAction() {
         new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT).openAsWindow(view.getWindow(),SubWindow::new);
+    }
+
+    public void processBarcode(String barcode) {
+        JOptionPane.showMessageDialog(view.getContent(), "Barcode ist " + barcode);
     }
 }

@@ -1,16 +1,19 @@
 package kernbeisser.CustomComponents;
 
 import kernbeisser.Windows.View;
-import lombok.Getter;
 
 import javax.swing.*;
 
 public class ViewMainPanel extends JPanel {
-    @Getter
+
     private final View view;
 
-    public ViewMainPanel(JComponent mainPanel) {
+    public ViewMainPanel(JComponent mainPanel, View view) {
+        super.setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
         super.add(mainPanel);
- //       this.view = view;
+        this.view = view;
     }
+
+    public View getView() { return view; }
+
 }

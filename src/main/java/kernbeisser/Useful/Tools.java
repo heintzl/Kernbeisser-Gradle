@@ -1,5 +1,6 @@
 package kernbeisser.Useful;
 
+import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
@@ -383,28 +384,21 @@ public class Tools {
         return result;
     }
 
-    public static void activateBarcodeListener() {
+    public static void activateKeyboardListener() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getIntValue()) {
-                    JOptionPane.showMessageDialog(e.getComponent(), "In " + e.getComponent()
-                                                                             .getName() + " ist keine Barcode-Eingabe möglich");
+                ViewMainPanel viewMainPanel = (ViewMainPanel) SwingUtilities.getAncestorOfClass(ViewMainPanel.class, e.getComponent());
+                if (viewMainPanel != null) {
+                    return viewMainPanel.getView().processKeyboardInput(e);
+                } else {
+                    return false;
                 }
-                return true;
             }
         });
     }
 
-    private static Component getParentView(Component component) {
-        Component c = component;
-        if (View.class.isAssignableFrom(c.getClass())) {
-            return c;
-        }
-        return c;
-    }
-
-    public static void deactivateBarcodeListener() {
+    public static void deactivateKeyboardListener() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {

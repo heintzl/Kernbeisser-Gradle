@@ -9,6 +9,7 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
@@ -93,6 +94,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private boolean isWeighable;
     static Vector<Component> traversalOrder = new Vector<Component>(1);
     static FocusTraversal traversalPolicy;
+    private String barcode;
+    private boolean isBarcodeInput = false;
 
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
@@ -438,4 +441,26 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     public boolean isStackable() {
         return true;
     }
+
+    @Override
+    public boolean processKeyboardInput(KeyEvent e) {
+        if (this.isBarcodeInput) {
+            if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getIntValue()) {
+                controller.processBarcode(barcode);
+                this.barcode = "";
+                this.isBarcodeInput = false;
+            } else {
+                if (e.getID() == KeyEvent.KEY_TYPED) {
+                    this.barcode += e.getKeyChar();
+                }
+            }
+            return true;
+        } else if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getIntValue()) {
+            this.isBarcodeInput = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
