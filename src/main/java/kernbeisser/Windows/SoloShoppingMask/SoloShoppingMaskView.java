@@ -15,7 +15,7 @@ public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
 
     private JPanel main;
 
-    private BarcodeCapture barcodeCapture;
+//    private BarcodeCapture barcodeCapture;
 
     private ShoppingMaskUIView shoppingMaskUIView;
 
@@ -23,7 +23,7 @@ public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
 
     public SoloShoppingMaskView(SoloShoppingMaskController controller) {
         this.controller = controller;
-        this.barcodeCapture = new BarcodeCapture(c->controller.processBarcode(c));
+//        this.barcodeCapture = new BarcodeCapture(c->controller.processBarcode(c));
     }
 
     private void createUIComponents() {
@@ -52,7 +52,7 @@ public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
 
     @Override
     public boolean processKeyboardInput(KeyEvent e) {
-        return barcodeCapture.processKeyEvent(e);
+        return shoppingMaskUIView.processKeyboardInput(e);
     }
 
 }

@@ -19,7 +19,7 @@ public enum Setting {
     HASH_COSTS("12"),
     FORCE_PASSWORD_CHANGE_AFTER("365"),
     SCANNER_PREFIX_KEY(Integer.toString(KeyEvent.VK_F12)),
-    SCANNER_SUFFIX_KEY(Integer.toString(KeyEvent.VK_F24))
+    SCANNER_SUFFIX_KEY(Integer.toString(KeyEvent.VK_END))
     ;
 
     private final String defaultValue;
