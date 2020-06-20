@@ -3,6 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
@@ -94,8 +95,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private boolean isWeighable;
     static Vector<Component> traversalOrder = new Vector<Component>(1);
     static FocusTraversal traversalPolicy;
-    private String barcode;
-    private boolean isBarcodeInput = false;
+    private BarcodeCapture barcodeCapture;
 
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
@@ -109,6 +109,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         traversalOrder.add(deposit);
         traversalPolicy = new FocusTraversal(traversalOrder);
         westPanel.setFocusTraversalPolicy(traversalPolicy);
+        barcodeCapture = new BarcodeCapture(c -> controller.processBarcode(c));
     }
 
     private void doCancel() {
@@ -444,23 +445,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     @Override
     public boolean processKeyboardInput(KeyEvent e) {
-        if (this.isBarcodeInput) {
-            if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getIntValue()) {
-                controller.processBarcode(barcode);
-                this.barcode = "";
-                this.isBarcodeInput = false;
-            } else {
-                if (e.getID() == KeyEvent.KEY_TYPED) {
-                    this.barcode += e.getKeyChar();
-                }
-            }
-            return true;
-        } else if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getIntValue()) {
-            this.isBarcodeInput = true;
-            return true;
-        } else {
-            return false;
-        }
+        return barcodeCapture.processKeyEvent(e);
     }
 
 }
