@@ -1,8 +1,15 @@
 package kernbeisser.Windows.Menu;
 
 import kernbeisser.Enums.Key;
+import kernbeisser.Main;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
+import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
+import kernbeisser.Windows.UserMenu.UserMenuController;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class MenuController implements Controller<MenuView,MenuModel> {
 
@@ -35,5 +42,24 @@ public class MenuController implements Controller<MenuView,MenuModel> {
     @Override
     public Key[] getRequiredKeys() {
         return new Key[0];
+    }
+
+    @Override
+    public boolean commitClose() {
+        if (JOptionPane.showConfirmDialog(getView().getTopComponent(), "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen") == 0) {
+            TabbedPaneModel.DEFAULT_TABBED_PANE.unsafeClose(asTab("Menu"));
+            if(TabbedPaneModel.DEFAULT_TABBED_PANE.clear()){
+                try {
+                    Main.setSettingLAF();
+                } catch (UnsupportedLookAndFeelException e) {
+                    Tools.showUnexpectedErrorWarning(e);
+                }
+                SwingUtilities.updateComponentTreeUI(TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
+                new SimpleLogInController().openTab("Log In");
+            }else {
+                new MenuController().openTab("Menu");
+            }
+        }
+        return false;
     }
 }

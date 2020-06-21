@@ -90,7 +90,7 @@ public class EditUserModel implements Model<EditUserController> {
         UserGroup newUserGroup = new UserGroup();
         em.persist(newUserGroup);
         user.setUserGroup(newUserGroup);
-        em.persist(new User(user));
+        em.persist(Tools.setId(new User(user),0));
         em.flush();
         et.commit();
         em.close();
