@@ -38,6 +38,7 @@ public class Main {
         if (!Setting.DB_INITIALIZED.getBooleanValue()) {
             SwingUtilities.invokeLater(() -> new DataImportController().openTab("Daten importieren"));
         } else {
+            Tools.activateKeyboardListener();
             openLogIn();
         }
     }

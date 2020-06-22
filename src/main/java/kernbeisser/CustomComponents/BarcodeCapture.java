@@ -1,8 +1,11 @@
 package kernbeisser.CustomComponents;
 
 import kernbeisser.Enums.Setting;
+import kernbeisser.Main;
 
+import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class BarcodeCapture {
@@ -16,12 +19,20 @@ public class BarcodeCapture {
     };
 
     public boolean processKeyEvent(KeyEvent e) {
+        Timer timeoutTimer = new Timer(Setting.SCANNER_TIMEOUT.getIntValue(),t ->
+        {
+           if (isBarcodeInput) {
+               barcode = "";
+               isBarcodeInput = false;
+               Main.logger.debug("Barcode Scanner timeout");
+           }
+        });
         if (this.isBarcodeInput) {
             if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getKeyEventValue()) {
                 if (e.getID() == KeyEvent.KEY_RELEASED) {
                     barcodeConsumer.accept(barcode);
-                    this.barcode = "";
-                    this.isBarcodeInput = false;
+                    barcode = "";
+                    isBarcodeInput = false;
                 }
             } else {
                 if (e.getID() == KeyEvent.KEY_TYPED) {
@@ -31,6 +42,7 @@ public class BarcodeCapture {
             return true;
         } else if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()) {
             this.isBarcodeInput = true;
+            timeoutTimer.start();
             return true;
         } else {
             return false;
