@@ -72,7 +72,9 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         if (found != null) {
             view.loadItemStats(found);
             view.addToCart();
-        } else { view.setKbNumber("");}
+        } else {
+            JOptionPane.showMessageDialog( view.getContent(), "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden", "Artikel nicht gefunden", JOptionPane.INFORMATION_MESSAGE);
+            view.setKbNumber("");}
     }
 
     double getPrice(Article article) {

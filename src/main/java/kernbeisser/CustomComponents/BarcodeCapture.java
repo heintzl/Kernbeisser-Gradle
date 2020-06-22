@@ -13,21 +13,22 @@ public class BarcodeCapture {
     private boolean isBarcodeInput = false;
     private String barcode = "";
     private Consumer<String> barcodeConsumer;
+    private Timer timeoutTimer = new Timer(Setting.SCANNER_TIMEOUT.getIntValue(),t ->
+    {
+        if (isBarcodeInput) {
+            barcode = "";
+            isBarcodeInput = false;
+            Main.logger.debug("Barcode Scanner timeout");
+        }
+    });
 
     public BarcodeCapture(Consumer<String> barcodeConsumer){
         this.barcodeConsumer = barcodeConsumer;
     };
 
     public boolean processKeyEvent(KeyEvent e) {
-        Timer timeoutTimer = new Timer(Setting.SCANNER_TIMEOUT.getIntValue(),t ->
-        {
-           if (isBarcodeInput) {
-               barcode = "";
-               isBarcodeInput = false;
-               Main.logger.debug("Barcode Scanner timeout");
-           }
-        });
         if (this.isBarcodeInput) {
+            timeoutTimer.restart();
             if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getKeyEventValue()) {
                 if (e.getID() == KeyEvent.KEY_RELEASED) {
                     barcodeConsumer.accept(barcode);
@@ -41,7 +42,7 @@ public class BarcodeCapture {
             }
             return true;
         } else if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()) {
-            this.isBarcodeInput = true;
+            isBarcodeInput = true;
             timeoutTimer.start();
             return true;
         } else {
