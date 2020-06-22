@@ -58,7 +58,6 @@ public class SimpleLogInView implements View<SimpleLogInController> {
                 Tools.showUnexpectedErrorWarning(e);
             }
         }
-        Tools.activateKeyboardListener();
         // TODO test code; remove  up to here
     }
 
