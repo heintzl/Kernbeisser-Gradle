@@ -17,17 +17,19 @@ public class BarcodeCapture {
 
     public boolean processKeyEvent(KeyEvent e) {
         if (this.isBarcodeInput) {
-            if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getIntValue()) {
-                barcodeConsumer.accept(barcode);
-                this.barcode = "";
-                this.isBarcodeInput = false;
+            if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getKeyEventValue()) {
+                if (e.getID() == KeyEvent.KEY_RELEASED) {
+                    barcodeConsumer.accept(barcode);
+                    this.barcode = "";
+                    this.isBarcodeInput = false;
+                }
             } else {
                 if (e.getID() == KeyEvent.KEY_TYPED) {
                     this.barcode += e.getKeyChar();
                 }
             }
             return true;
-        } else if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getIntValue()) {
+        } else if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()) {
             this.isBarcodeInput = true;
             return true;
         } else {
