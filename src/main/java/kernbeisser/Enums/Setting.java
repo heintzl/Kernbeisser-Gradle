@@ -2,6 +2,8 @@ package kernbeisser.Enums;
 
 import kernbeisser.DBEntities.SettingValue;
 
+import java.awt.event.KeyEvent;
+
 public enum Setting {
     DB_VERSION("0.1.0j"),
     DB_INITIALIZED("false"),
@@ -15,7 +17,12 @@ public enum Setting {
     MIN_PASSWORD_LENGTH("5"),
     MIN_REQUIRED_PASSWORD_STRENGTH("3"),
     HASH_COSTS("12"),
-    FORCE_PASSWORD_CHANGE_AFTER("365")
+    FORCE_PASSWORD_CHANGE_AFTER("365"),
+    SCANNER_PREFIX_KEY("VK_F12"),
+    SCANNER_SUFFIX_KEY("VK_END"),
+    SCANNER_TIMEOUT("50"),
+    APP_DEFAULT_WIDTH("1600"),
+    APP_DEFAULT_HEIGHT("1000")
     ;
 
     private final String defaultValue;
@@ -38,6 +45,17 @@ public enum Setting {
     }
     public float getFloatValue(){
         return Float.parseFloat(SettingValue.getValue(this));
+    }
+    public int getKeyEventValue() {
+        int value = 0;
+        try {
+            value = KeyEvent.class.getDeclaredField(this.getStringValue()).getInt(null);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return value;
     }
     public <T extends Enum<T>> T getEnumValue(Class<T> c){return Enum.valueOf(c,SettingValue.getValue(this));}
 

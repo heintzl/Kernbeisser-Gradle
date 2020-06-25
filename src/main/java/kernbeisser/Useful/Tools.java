@@ -1,6 +1,8 @@
 package kernbeisser.Useful;
 
+import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 
 import javax.persistence.EntityManager;
@@ -9,10 +11,7 @@ import javax.persistence.Id;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -383,5 +382,28 @@ public class Tools {
             }
         }
         return result;
+    }
+
+    public static void activateKeyboardListener() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                ViewMainPanel viewMainPanel = (ViewMainPanel) SwingUtilities.getAncestorOfClass(ViewMainPanel.class, e.getComponent());
+                if (viewMainPanel != null) {
+                    return viewMainPanel.getView().processKeyboardInput(e);
+                } else {
+                    return false;
+                }
+            }
+        });
+    }
+
+    public static void deactivateKeyboardListener() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                return false;
+            }
+        });
     }
 }

@@ -26,6 +26,10 @@ public class SoloShoppingMaskController implements Controller<SoloShoppingMaskVi
         this.view = new SoloShoppingMaskView(this);
     }
 
+    public void processBarcode(String barcode) {
+        shoppingMaskUIController.processBarcode(barcode);
+    }
+
     @Override
     public @NotNull SoloShoppingMaskView getView() {
         return view;

@@ -69,7 +69,7 @@ public class SubWindow extends JDialog implements Window {
 
     @Override
     public void setContent(Controller<?,?> content) {
-        add(content.getView().getContent());
+        add(content.getView().getWrappedContent());
     }
 
     @Override
