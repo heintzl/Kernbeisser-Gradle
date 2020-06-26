@@ -181,7 +181,7 @@ public class ObjectTable<T> extends JTable {
         setModel(new DefaultTableModel(values, names) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return columns.get(column).isEditable(objects.get(column));
+                return columns.get(column).isEditable(objects.get(row));
             }
         });
         if (complex) {

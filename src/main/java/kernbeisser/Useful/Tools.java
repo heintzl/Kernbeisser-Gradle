@@ -334,7 +334,9 @@ public class Tools {
     }
 
     public static <T> T removeLambda(T from,Supplier<T> original){
-        return Tools.overwrite(original.get(),from);
+        T out = original.get();
+        copyInto(from,out);
+        return out;
     }
 
 
@@ -343,18 +345,6 @@ public class Tools {
         EntityTransaction et = em.getTransaction();
         et.begin();
         em.persist(value);
-        em.flush();
-        et.commit();
-        em.close();
-    }
-
-    public static <T> void persist(T[] value){
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        for (T t : value) {
-            em.persist(t);
-        }
         em.flush();
         et.commit();
         em.close();
