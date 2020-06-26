@@ -1,6 +1,7 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
 import kernbeisser.Enums.Key;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Windows.LogIn.LogInModel;
 import org.jetbrains.annotations.Contract;
@@ -113,8 +114,12 @@ public interface Column<T> {
 
     String getName();
 
-    Object getValue(T t);
+    Object getValue(T t) throws AccessDeniedException;
 
     default void onAction(T t) {
+    }
+
+    default boolean isEditable(T t){
+        return false;
     }
 }

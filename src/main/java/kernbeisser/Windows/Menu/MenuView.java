@@ -16,6 +16,7 @@ import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
+import kernbeisser.Windows.Setting.SettingController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
@@ -81,7 +82,7 @@ public class MenuView implements View<MenuController> {
         placeHolderControllerButton = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
         changeDBConnection = new ControllerButton(new DBLogInController(), controller -> controller.openTab("<PlaceHolder>"));
         //NOT IMPLEMENTED
-        editApplicationSettings = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
+        editApplicationSettings = new ControllerButton(new SettingController(),e -> e.openTab("Einstellungen"));
         order = new ControllerButton(new ContainerController(LogInModel.getLoggedIn()), controller -> controller.openTab("<PlaceHolder>"));
         //NOT IMPLEMENTED
         placeHolderControllerButton1 = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));

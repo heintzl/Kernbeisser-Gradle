@@ -145,14 +145,12 @@ public class EditUserView implements View<EditUserController> {
         };
         buttonPanel = new JPanel(){
             @Override
-            protected void paintComponent(Graphics g) {
-
-            }
+            protected void paintComponent(Graphics g) {}
         };
         firstName = new AccessCheckingField<>(User::getFirstName,User::setFirstName, AccessCheckingField.NONE);
         lastName = new AccessCheckingField<>(User::getSurname,User::setSurname,AccessCheckingField.NONE);
         street = new AccessCheckingField<>(User::getStreet,User::setStreet,AccessCheckingField.NONE);
-        postalCode = new AccessCheckingField<>(User::getTownCode, User::setTownCode, AccessCheckingField.LONG);
+        postalCode = new AccessCheckingField<>(User::getTownCode, User::setTownCode, AccessCheckingField.LONG_FORMER);
         town = new AccessCheckingField<>(User::getTown,User::setTown,AccessCheckingField.NONE);
         phone1 = new AccessCheckingField<>(User::getPhoneNumber1,User::setPhoneNumber1,AccessCheckingField.NONE);
         phone2 = new AccessCheckingField<>(User::getPhoneNumber2,User::setPhoneNumber2,AccessCheckingField.NONE);

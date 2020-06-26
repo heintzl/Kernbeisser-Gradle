@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Menu;
 
+import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Enums.Key;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
@@ -36,7 +37,6 @@ public class MenuController implements Controller<MenuView,MenuModel> {
 
     @Override
     public void fillUI() {
-
     }
 
     @Override

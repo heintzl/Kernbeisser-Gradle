@@ -1,5 +1,7 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
+import kernbeisser.Exeptions.AccessDeniedException;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -8,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 public class ObjectTable<T> extends JTable {
@@ -16,8 +19,8 @@ public class ObjectTable<T> extends JTable {
 
     private T lastSelected = null;
 
-    private ArrayList<T> objects = new ArrayList<>();
-    private ArrayList<Column<T>> columns = new ArrayList<>();
+    private List<T> objects = new ArrayList<>();
+    private List<Column<T>> columns = new ArrayList<>();
     private boolean complex = false;
 
 
@@ -145,11 +148,6 @@ public class ObjectTable<T> extends JTable {
         repaintUI();
     }
 
-    public void remove(int id) {
-        objects.remove(id);
-        repaintUI();
-    }
-
     public Collection<T> getItems() {
         return objects;
     }
@@ -162,8 +160,18 @@ public class ObjectTable<T> extends JTable {
     public void repaintUI() {
         Object[][] values = new Object[objects.size()][columns.size()];
         for (int c = 0; c < columns.size(); c++) {
+            boolean access = true;
             for (int i = 0; i < objects.size(); i++) {
-                values[i][c] = columns.get(c).getValue(objects.get(i));
+                if(access){
+                    try {
+                        values[i][c] = columns.get(c).getValue(objects.get(i));
+                    } catch (AccessDeniedException e) {
+                        access = false;
+                        values[i][c] = "[Keine Leseberechtigung]";
+                    }
+                }else {
+                    values[i][c] = "[Keine Leseberechtigung]";
+                }
             }
         }
         String[] names = new String[columns.size()];
@@ -173,7 +181,7 @@ public class ObjectTable<T> extends JTable {
         setModel(new DefaultTableModel(values, names) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return columns.get(column).isEditable(objects.get(column));
             }
         });
         if (complex) {

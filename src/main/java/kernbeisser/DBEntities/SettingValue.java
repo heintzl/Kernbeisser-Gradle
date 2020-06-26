@@ -92,9 +92,14 @@ public class SettingValue {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        SettingValue settingValue = em.createQuery("select s from SettingValue s where s.setting = :setting",SettingValue.class).setParameter("setting",setting).getSingleResult();
-        settingValue.setValue(value);
-        em.persist(settingValue);
+        try {
+            SettingValue settingValue = em.createQuery("select s from SettingValue s where s.setting = :setting",SettingValue.class).setParameter("setting",setting).getSingleResult();
+            settingValue.setValue(value);
+            em.persist(settingValue);
+        }catch (NoResultException ignored){
+            em.close();
+            return;
+        }
         et.commit();
         em.close();
         settingValueHashMap.replace(setting,value);
