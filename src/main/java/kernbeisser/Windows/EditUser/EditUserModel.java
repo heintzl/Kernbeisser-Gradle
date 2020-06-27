@@ -55,14 +55,19 @@ public class EditUserModel implements Model<EditUserController> {
 
     String generateUsername(String firstName,String surname){
         EntityManager em = DBConnection.getEntityManager();
-        HashSet<String> usernames = new HashSet<>(em.createQuery("select u.username from User u where firstName = :firstName")
-                                                    .setParameter("firstName",firstName)
-                                                    .getResultList());
+        @SuppressWarnings("unchecked")
+        HashSet<String> usernames = new HashSet<String>(em.createQuery("select u.username from User u where firstName = :firstName")
+                                                          .setParameter("firstName",firstName)
+                                                          .getResultList());
         for (int i = 1; i < surname.length()+1; i++) {
             String generated = firstName+"."+surname.substring(0,i);
             if(!usernames.contains(generated))return generated;
         }
-        return firstName+"."+surname.substring(0,1)+""+usernames.size();
+        try{
+            return firstName+"."+surname.substring(0,1)+""+usernames.size();
+        }catch (IndexOutOfBoundsException e){
+            return firstName+"."+usernames.size();
+        }
     }
 
     boolean usernameExists(String username) {

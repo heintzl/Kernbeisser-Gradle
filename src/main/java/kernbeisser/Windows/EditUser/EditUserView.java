@@ -57,22 +57,7 @@ public class EditUserView implements View<EditUserController> {
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> email;
 
 
-    private final ObjectForm<User> objectForm = new ObjectForm<>(
-            firstName,
-            lastName,
-            street,
-            postalCode,
-            town,
-            phone1,
-            phone2,
-            username,
-            isEmployee,
-            shares,
-            solidarySupplement,
-            extraJobs,
-            keyNumber,
-            email
-    );
+    private ObjectForm<User> objectForm;
 
     ObjectForm<User> getObjectForm() {
         return objectForm;
@@ -96,6 +81,23 @@ public class EditUserView implements View<EditUserController> {
 
     @Override
     public void initialize(EditUserController controller) {
+        objectForm = new ObjectForm<>(
+                controller.getModel().getUser(),
+                firstName,
+                lastName,
+                street,
+                postalCode,
+                town,
+                phone1,
+                phone2,
+                username,
+                isEmployee,
+                shares,
+                solidarySupplement,
+                extraJobs,
+                keyNumber,
+                email
+        );
         chgPassword.addActionListener(e -> {
             controller.requestChangePassword();
 
@@ -147,14 +149,14 @@ public class EditUserView implements View<EditUserController> {
             @Override
             protected void paintComponent(Graphics g) {}
         };
-        firstName = new AccessCheckingField<>(User::getFirstName,User::setFirstName, AccessCheckingField.NONE);
-        lastName = new AccessCheckingField<>(User::getSurname,User::setSurname,AccessCheckingField.NONE);
-        street = new AccessCheckingField<>(User::getStreet,User::setStreet,AccessCheckingField.NONE);
+        firstName = new AccessCheckingField<>(User::getFirstName,User::setFirstName, AccessCheckingField.NOT_NULL);
+        lastName = new AccessCheckingField<>(User::getSurname,User::setSurname,AccessCheckingField.NOT_NULL);
+        street = new AccessCheckingField<>(User::getStreet,User::setStreet,AccessCheckingField.NOT_NULL);
         postalCode = new AccessCheckingField<>(User::getTownCode, User::setTownCode, AccessCheckingField.LONG_FORMER);
-        town = new AccessCheckingField<>(User::getTown,User::setTown,AccessCheckingField.NONE);
-        phone1 = new AccessCheckingField<>(User::getPhoneNumber1,User::setPhoneNumber1,AccessCheckingField.NONE);
+        town = new AccessCheckingField<>(User::getTown,User::setTown,AccessCheckingField.NOT_NULL);
+        phone1 = new AccessCheckingField<>(User::getPhoneNumber1,User::setPhoneNumber1,AccessCheckingField.NOT_NULL);
         phone2 = new AccessCheckingField<>(User::getPhoneNumber2,User::setPhoneNumber2,AccessCheckingField.NONE);
-        username = new AccessCheckingField<>(User::getUsername,User::setUsername,AccessCheckingField.NONE);
+        username = new AccessCheckingField<>(User::getUsername,User::setUsername,AccessCheckingField.NOT_NULL);
         isEmployee = new AccessCheckBox<>(User::isEmployee, User::setEmployee);
         shares = new AccessCheckingField<>(User::getShares,User::setShares,AccessCheckingField.INT_FORMER);
         solidarySupplement = new AccessCheckingField<>(User::getSolidaritySurcharge,User::setSolidaritySurcharge,AccessCheckingField.DOUBLE_FORMER);
@@ -165,5 +167,9 @@ public class EditUserView implements View<EditUserController> {
 
     public void invalidInput() {
         JOptionPane.showMessageDialog(getTopComponent(),"Der Eingegeben werte sind nicht korrekt!");
+    }
+
+    public void setUsername(String username) {
+        this.username.setText(username);
     }
 }

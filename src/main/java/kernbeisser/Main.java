@@ -6,10 +6,8 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
-import kernbeisser.Security.Proxy;
 import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.Tasks.Catalog;
 import kernbeisser.Useful.Tools;
@@ -24,8 +22,7 @@ import java.io.IOException;
 
 public class Main {
 
-
-    public static Logger logger = LogManager.getLogger(Main.class);
+    public static final Logger logger = LogManager.getLogger(Main.class);
     /**
      * sets the Look and Feel to Windows standard,
      * sets the Image path,

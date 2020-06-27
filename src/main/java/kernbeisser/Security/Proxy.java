@@ -8,8 +8,10 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
+import lombok.SneakyThrows;
 import org.apache.commons.beanutils.BeanUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -56,14 +58,21 @@ public class Proxy {
         return ProxyFactory.isProxyClass(o.getClass());
     }
 
+    @SneakyThrows
+    public static SecurityHandler getHandler(Object o){
+        Field handler = o.getClass().getDeclaredField("handler");
+        handler.setAccessible(true);
+        return (SecurityHandler) handler.get(o);
+    }
+
     static class SecurityHandler implements MethodHandler {
         public Object invoke(Object proxy, Method proxyMethod,Method original, Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, AccessDeniedException
         {
             Key key = proxyMethod.getAnnotation(Key.class);
             Object out;
             if(key==null || PermissionSet.hasPermissions(key.value()))
-                out = original.invoke(proxy, args);
-            else throw new AccessDeniedException("User["+LogInModel.getLoggedIn().getId() + "] cannot access " + original + " because the user has not the required Keys:" + Arrays.toString(key.value()));
+                    out = original.invoke(proxy, args);
+                else throw new AccessDeniedException("User["+LogInModel.getLoggedIn().getId() + "] cannot access " + original + " because the user has not the required Keys:" + Arrays.toString(key.value()));
             return out;
         }
     }

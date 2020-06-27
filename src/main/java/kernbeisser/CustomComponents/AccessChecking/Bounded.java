@@ -2,11 +2,16 @@ package kernbeisser.CustomComponents.AccessChecking;
 
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 
 import java.lang.invoke.LambdaMetafactory;
 
 public interface Bounded <T,V>{
+
+    void inputChanged();
+
+    boolean isInputChanged();
 
     void setObjectData(T data);
 
@@ -26,7 +31,6 @@ public interface Bounded <T,V>{
 
     default boolean canWrite(T v){
         Setter<T,V> setter = getSetter();
-        assert setter != null;
         try {
             //throws
             try {
@@ -38,14 +42,8 @@ public interface Bounded <T,V>{
             }
         } catch (AccessDeniedException e) {
             return false;
-        }catch (NullPointerException e){
-            System.out.println(Tools.error);
-            e.printStackTrace();
-            return true;
         }
     }
-
-
 
     default boolean canRead(T v){
         try {

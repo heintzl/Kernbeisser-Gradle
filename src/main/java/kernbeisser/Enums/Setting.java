@@ -3,12 +3,27 @@ package kernbeisser.Enums;
 import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public enum Setting {
     DB_VERSION("0.1.0"),
     DB_INITIALIZED("false"),
-    VAT_LOW("0.07"),
-    VAT_HIGH("0.19"),
+    VAT_LOW("0.07"){
+        @Override
+        public void setValue(Object s) {
+            super.setValue(s);
+            JOptionPane.showMessageDialog(null,"Bitte starten sie das Programm neu um mwSt. zu aktualiesieren");
+        }
+    },
+    VAT_HIGH("0.19"){
+        @Override
+        public void setValue(Object s) {
+            super.setValue(s);
+            JOptionPane.showMessageDialog(null,"Bitte starten sie das Programm neu um mwSt. zu aktualiesieren");
+        }
+    },
     DEFAULT_MAX_SEARCH("500"),
     CONTAINER_SURCHARGE_REDUCTION ("0.5"),
     DEFAULT_THEME(Theme.LIGHT),
@@ -35,7 +50,7 @@ public enum Setting {
         this.defaultValue = defaultValue;
     }
 
-    Setting(Enum<?> e){
+    Setting(@NotNull Enum<?> e){
         this.defaultValue = e.name();
     }
 
@@ -101,7 +116,7 @@ public enum Setting {
         SettingValue.setValue(this,String.valueOf(s));
     }
 
-    public static Class<?> getExpectedType(Setting setting){
+    public static Class<?> getExpectedType(@NotNull Setting setting){
         if (setting.getDefaultValue().matches("\\d*")) return Integer.class;
         if (setting.getDefaultValue().matches("\\d+[.]\\d*")) return Double.class;
         if (setting.getDefaultValue().matches("\\d+[Ll]")) return Long.class;

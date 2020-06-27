@@ -8,9 +8,7 @@ import kernbeisser.Useful.Tools;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 
 public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V> {
 
@@ -23,6 +21,13 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
         }
     };
 
+    @Override
+    public void inputChanged() {
+        inputChanged = true;
+    }
+
+    private boolean inputChanged = false;
+
     private final Setter<P,V> setter;
     private final Getter<P,V> getter;
 
@@ -33,6 +38,17 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
         this.getter = getter;
         this.setter = setter;
         this.stringTransformer = stringTransformer;
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                inputChanged = true;
+            }
+        });
+    }
+
+    @Override
+    public boolean isInputChanged() {
+        return inputChanged;
     }
 
     @Override
@@ -174,4 +190,19 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
             return s;
         }
     };
+
+    public final static StringTransformer<String> NOT_NULL = new StringTransformer<String>() {
+        @Override
+        public String toString(String s) {
+            return s;
+        }
+
+        @Override
+        public String fromString(String s) throws CannotParseException {
+            if(s.replace(" ","").equals("")) throw new CannotParseException(this+" doesn't contain a value");
+            return s;
+        }
+    };
+
+
 }

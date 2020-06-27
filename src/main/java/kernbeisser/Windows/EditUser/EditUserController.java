@@ -53,17 +53,13 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     }
 
     @Override
-    public void fillUI() {
-        view.getObjectForm().refreshAccess(model.getUser());
-        view.getObjectForm().setData(model.getUser());
-        if(model.getMode()==Mode.ADD)refreshUsername();
-    }
+    public void fillUI() {}
 
     @Override
     public Key[] getRequiredKeys() {
         return new Key[]{
                 Key.USER_USERNAME_READ,
-        };
+                };
     }
 
     @Override
@@ -74,7 +70,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     void doAction() {
         User data;
         try {
-            data = view.getObjectForm().pasteDataInto(model.getUser());
+            data = view.getObjectForm().getData();
         } catch (CannotParseException e) {
             view.invalidInput();
             view.getObjectForm().markErrors();
@@ -82,6 +78,11 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
         }
         switch (model.getMode()) {
             case ADD:
+                if (!view.getObjectForm().isValid()) {
+                    view.invalidInput();
+                    view.getObjectForm().markErrors();
+                    return;
+                }
                 if (model.usernameExists(data.getUsername())) {
                     view.usernameAlreadyExists();
                     return;
@@ -102,9 +103,15 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
 
     void refreshUsername(){
         if(model.getMode()==Mode.ADD) {
-            User data = view.getObjectForm().ignoreWrongInput(new User());
-            data.setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ",""), data.getSurname().toLowerCase()).replace(" ",""));
-            view.getObjectForm().setData(data);
+            User data = view.getObjectForm().getDataIgnoreWrongInput();
+            if (data.getSurname() != null && data.getFirstName() != null) {
+                view.getObjectForm()
+                    .getOriginal()
+                    .setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ", ""),
+                                                        data.getSurname().toLowerCase()).replace(" ", ""));
+                view.getObjectForm().pullData();
+            }
+            view.setUsername(view.getObjectForm().getOriginal().getUsername());
         }
     }
 

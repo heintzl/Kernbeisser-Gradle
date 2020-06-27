@@ -5,20 +5,35 @@ import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
 
 import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 public class AccessCheckingComboBox <P,V> extends JComboBox<V> implements Bounded<P,V>{
+    private boolean inputChanged = false;
+
     private final Setter<P,V> setter;
     private final Getter<P,V> getter;
 
     public AccessCheckingComboBox(Getter<P,V> getter, Setter<P,V> setter){
         this.getter = getter;
         this.setter = setter;
+        addActionListener(e -> inputChanged = true);
+    }
+
+    @Override
+    public void inputChanged() {
+        inputChanged = true;
     }
 
     public void setItems(Collection<V> values){
         removeAllItems();
         values.forEach(super::addItem);
+    }
+
+    @Override
+    public boolean isInputChanged() {
+        return inputChanged;
     }
 
     @Override

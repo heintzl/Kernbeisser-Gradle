@@ -67,7 +67,7 @@ public class SettingView implements View<SettingController> {
     }
 
     boolean commitType(String type){
-        return JOptionPane.showConfirmDialog(getTopComponent(),"Der eingegebene Wert ist anders als erwartet\nErwartet: "+type)==0;
+        return JOptionPane.showConfirmDialog(getTopComponent(),"Der eingegebene Wert ist anders als erwartet\nErwartet: "+type+"\nSoll der Wert trotzdem verändert werden?(dies kann Fehler hervorrufen)")==0;
     }
 
     public boolean commitResetSettings() {
