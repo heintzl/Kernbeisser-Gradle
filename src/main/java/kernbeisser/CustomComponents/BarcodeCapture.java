@@ -1,5 +1,7 @@
 package kernbeisser.CustomComponents;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 
@@ -7,6 +9,8 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import static jiconfont.icons.font_awesome.FontAwesome.BARCODE;
 
 public class BarcodeCapture {
 
@@ -16,11 +20,22 @@ public class BarcodeCapture {
     private Timer timeoutTimer = new Timer(Setting.SCANNER_TIMEOUT.getIntValue(),t ->
     {
         if (isBarcodeInput) {
+            String message = barcode.hashCode() == 0
+                             ? "Bitte Barcode eingeben:"
+                             : "Ein Barcode wurde empfangen, ohne dass die Übertragung beendet wurde. Er kann hier bearbeitet und übernommen werden:";
+            String response = barcodeManInput(message, barcode);
+            if (response != null) {barcodeConsumer.accept(response);}
             barcode = "";
             isBarcodeInput = false;
             Main.logger.debug("Barcode Scanner timeout");
         }
     });
+
+    private String barcodeManInput(String message, String initValue) {
+        return (String) JOptionPane.showInputDialog(null, message, "Barcode Eingabe", JOptionPane.INFORMATION_MESSAGE,
+                                                               IconFontSwing.buildIcon(FontAwesome.BARCODE, 64), null, initValue);
+
+    }
 
     public BarcodeCapture(Consumer<String> barcodeConsumer){
         this.barcodeConsumer = barcodeConsumer;
