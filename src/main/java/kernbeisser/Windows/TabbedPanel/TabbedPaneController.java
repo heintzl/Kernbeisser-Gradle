@@ -37,7 +37,7 @@ public class TabbedPaneController implements Controller<TabbedPaneView,TabbedPan
             model.addTab(tab);
             view.addTab(new DefaultTab(IconFontSwing.buildIcon(tab.getIcon(), 20, new Color(0x32C4A2)), tab.getTitle(),
                                        () -> closeTab(tab), () -> view.setSelected(model.indexOf(tab))).getMain(),
-                        tab.getController().getView().getContent(), model.indexOf(tab));
+                        tab.getController().getView().getWrappedContent(), model.indexOf(tab));
             view.setSelected(model.indexOf(tab));
         }else {
             view.setSelected(posIn);
