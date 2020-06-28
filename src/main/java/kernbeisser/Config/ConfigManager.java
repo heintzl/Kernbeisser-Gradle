@@ -2,10 +2,12 @@ package kernbeisser.Config;
 
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -15,13 +17,17 @@ import java.nio.file.Paths;
 
 public class ConfigManager {
 
+    public static Logger logger = LogManager.getLogger(ConfigManager.class);
+
     public static final int CONFIG_FILE_INDENT_FACTOR = 2;
 
     private static final File file = new File("config.json");
     private static final JSONObject config = new JSONObject(fileToString(StandardCharsets.UTF_8));
+    private static final byte[] dbPassword = {/*example: 0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66*/};
 
     //Static only class
-    private ConfigManager() {}
+    private ConfigManager() {
+    }
 
     public static JSONObject getHeader() {
         return config;
@@ -40,7 +46,19 @@ public class ConfigManager {
 
     public static String[] getDBAccessData() {
         JSONObject obj = getDBAccess();
-        return new String[]{obj.getString("URL"), obj.getString("Username"), obj.getString("Password")};
+
+        String configPassword = null;
+        try {
+            configPassword = obj.getString("Password");
+        } catch (JSONException e) {
+            logger.debug("No DBAccess.Password found in config file.");
+        }
+        if (configPassword == null || configPassword.isEmpty()) {
+            logger.info("Using embedded password for DBConnection.");
+            return new String[]{obj.getString("URL"), obj.getString("Username"), new String(dbPassword)};
+        } else {
+            return new String[]{obj.getString("URL"), obj.getString("Username"), configPassword};
+        }
     }
 
     public static JSONObject getDBAccess() {
@@ -62,14 +80,14 @@ public class ConfigManager {
         }
     }
 
-    public static File getCatalogFile(){
-        return getFile(getHeader(),"CatalogSource");
+    public static File getCatalogFile() {
+        return getFile(getHeader(), "CatalogSource");
     }
 
-    public static String getCatalogInfoLine(){
+    public static String getCatalogInfoLine() {
         try {
             File catFile = getCatalogFile();
-            if (catFile.exists() && ! catFile.isDirectory()) {
+            if (catFile.exists() && !catFile.isDirectory()) {
                 FileInputStream fis = new FileInputStream(getCatalogFile());
                 BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
                 String infoLine = dis.readLine();
@@ -92,18 +110,18 @@ public class ConfigManager {
                 FileWriter fw = new FileWriter(file);
                 fw.write(getPattern().toString(CONFIG_FILE_INDENT_FACTOR));
                 fw.close();
-            }else {
+            } else {
                 throw new IOException("ConfigManager cannot create config file at File");
             }
         } catch (IOException e) {
-            Main.logger.error("Cannot create config file at "+file.getAbsolutePath());
-            JOptionPane.showMessageDialog(null,"Das Programm kann keine Config-Datei erstellen:\n"+e);
+            Main.logger.error("Cannot create config file at " + file.getAbsolutePath());
+            JOptionPane.showMessageDialog(null, "Das Programm kann keine Config-Datei erstellen:\n" + e);
             Tools.showUnexpectedErrorWarning(e);
         }
 
     }
 
-    public static JSONObject getPattern(){
+    public static JSONObject getPattern() {
         JSONObject object = new JSONObject();
         JSONObject dbAccess = new JSONObject();
         dbAccess.put("URL", "");
@@ -115,7 +133,7 @@ public class ConfigManager {
         reports.put("invoiceFileName", "");
         object.put("DBAccess", dbAccess);
         object.put("Reports", reports);
-        object.put("CatalogSource","");
+        object.put("CatalogSource", "");
         object.put("dbIsInitialized", false);
         object.put("ImagePath", "");
         return object;
@@ -133,17 +151,21 @@ public class ConfigManager {
         return Paths.get(getConfigSub(subCategory).getString(key));
     }
 
-    public static File getFile(JSONObject parent,String key){
+    public static File getFile(JSONObject parent, String key) {
         String fileData = parent.getString(key);
-        File relative = new File(file.getAbsoluteFile().getParentFile(),fileData);
-        if(relative.exists())return relative;
+        File relative = new File(file.getAbsoluteFile().getParentFile(), fileData);
+        if (relative.exists()) {
+            return relative;
+        }
         File absolute = new File(fileData);
-        if(absolute.exists()) return absolute;
+        if (absolute.exists()) {
+            return absolute;
+        }
         JFileChooser jFileChooser = new JFileChooser();
-        jFileChooser.setDialogTitle(key+" Dateipfad auswählen");
+        jFileChooser.setDialogTitle(key + " Dateipfad auswählen");
         jFileChooser.showOpenDialog(null);
         File out = jFileChooser.getSelectedFile().getAbsoluteFile();
-        parent.put(key,out.getAbsolutePath());
+        parent.put(key, out.getAbsolutePath());
         updateFile();
         return out;
     }
