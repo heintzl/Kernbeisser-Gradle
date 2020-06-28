@@ -32,7 +32,7 @@ public class AccessCheckBox <P> extends JCheckBox implements Bounded<P,Boolean>{
     public void setObjectData(P data) {
         try {
             setSelected(getter.get(data));
-        } catch (AccessDeniedException e) {}
+        } catch (AccessDeniedException ignored) {}
     }
 
     @Override

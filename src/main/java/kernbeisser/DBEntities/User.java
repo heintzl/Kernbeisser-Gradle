@@ -6,7 +6,9 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -29,15 +31,23 @@ public class User implements Serializable {
 
     @JoinColumn
     @ManyToMany(fetch = FetchType.EAGER)
+    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_PASSWORD_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_PASSWORD_READ)})
     private Set<Permission> permissions = new HashSet<>();
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SHARES_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SHARES_READ)})
     private int shares;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_READ)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_WRITE)})
     private double solidaritySurcharge;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_READ)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_WRITE)})
     private String extraJobs;
 
     @JoinColumn
@@ -152,35 +162,6 @@ public class User implements Serializable {
         return DBConnection.getEntityManager().find(User.class,parseInt);
     }
 
-    @kernbeisser.Security.Key(Key.USER_SHARES_READ)
-    public int getShares() {
-        return shares;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_SHARES_WRITE)
-    public void setShares(int shares) {
-        this.shares = shares;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_READ)
-    public double getSolidaritySurcharge() {
-        return solidaritySurcharge;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_WRITE)
-    public void setSolidaritySurcharge(double solidaritySurcharge) {
-        this.solidaritySurcharge = solidaritySurcharge;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_READ)
-    public String getExtraJobs() {
-        return extraJobs;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_WRITE)
-    public void setExtraJobs(String extraJobs) {
-        this.extraJobs = extraJobs;
-    }
 
     @kernbeisser.Security.Key(Key.USER_JOBS_READ)
     public Set<Job> getJobs() {

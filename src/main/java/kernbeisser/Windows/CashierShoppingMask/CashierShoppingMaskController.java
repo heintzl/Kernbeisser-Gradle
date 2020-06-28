@@ -46,7 +46,7 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
 
     public void openMaskWindow() {
         SaleSession saleSession = new SaleSession();
-        saleSession.setCustomer(new User(searchBoxController.getSelectedObject()));
+        saleSession.setCustomer(searchBoxController.getSelectedObject());
         saleSession.setSeller(LogInModel.getLoggedIn());
         if (!view.getSecondSeller().toString().equals("Keiner")) {
             try {
