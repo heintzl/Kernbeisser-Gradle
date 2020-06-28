@@ -15,6 +15,7 @@ import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorControlle
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.text.MessageFormat;
 
 
@@ -65,9 +66,20 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         } else { view.setKbNumber("");}
     }
 
+    void searchByBarcode(long barcode) {
+        view.setOptArticleNo();
+        Article found = model.getByBarcode(barcode);
+        if (found != null) {
+            view.loadItemStats(found);
+            view.addToCart();
+        } else {
+            JOptionPane.showMessageDialog( view.getContent(), "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden", "Artikel nicht gefunden", JOptionPane.INFORMATION_MESSAGE);
+            view.setKbNumber("");}
+    }
+
     double getPrice(Article article) {
-        ShoppingItem si = new ShoppingItem(article, 0,false);
-        return si.getItemRetailPrice();//PriceCalculator.getItemPrice(article, 0, model.getSaleSession().getCustomer().getSolidaritySurcharge());
+        ShoppingItem shoppingItem = new ShoppingItem(article, 0,false);
+        return shoppingItem.getItemRetailPrice();
     }
 
     private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
@@ -146,5 +158,18 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
 
     void editUserAction() {
         new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT).openAsWindow(view.getWindow(),SubWindow::new);
+    }
+
+    public void processBarcode(String barcode) {
+        try {
+            long bc = Long.parseLong(barcode);
+            searchByBarcode(bc);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(view.getContent(),
+                                          "Ungültiger Barcode: " + barcode,
+                                          "Barcode Fehler",
+                                          JOptionPane.WARNING_MESSAGE);
+        }
+
     }
 }

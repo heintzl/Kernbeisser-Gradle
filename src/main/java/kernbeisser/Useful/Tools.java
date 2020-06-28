@@ -1,7 +1,9 @@
 package kernbeisser.Useful;
 
+import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.Proxy;
@@ -14,10 +16,7 @@ import javax.persistence.Id;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
@@ -472,5 +471,28 @@ public class Tools {
 
     public static StackTraceElement getCallerStackTraceElement(int above){
         return Thread.currentThread().getStackTrace()[2+above];
+    }
+
+    public static void activateKeyboardListener() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                ViewMainPanel viewMainPanel = (ViewMainPanel) SwingUtilities.getAncestorOfClass(ViewMainPanel.class, e.getComponent());
+                if (viewMainPanel != null) {
+                    return viewMainPanel.getView().processKeyboardInput(e);
+                } else {
+                    return false;
+                }
+            }
+        });
+    }
+
+    public static void deactivateKeyboardListener() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                return false;
+            }
+        });
     }
 }

@@ -4,6 +4,8 @@ import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 
+import java.awt.event.KeyEvent;
+
 public enum Setting {
     DB_VERSION("0.1.0"),
     DB_INITIALIZED("false"),
@@ -19,6 +21,11 @@ public enum Setting {
     HASH_COSTS("12"),
     FORCE_PASSWORD_CHANGE_AFTER("365"),
     DEFAULT_MIN_VALUE("0.")
+    SCANNER_PREFIX_KEY("VK_F12"),
+    SCANNER_SUFFIX_KEY("VK_END"),
+    SCANNER_TIMEOUT("50"),
+    APP_DEFAULT_WIDTH("1600"),
+    APP_DEFAULT_HEIGHT("1000")
     ;
 
 
@@ -82,6 +89,17 @@ public enum Setting {
             Main.logger.error(element.getClassName()+"::"+element.getMethodName()+" requires float value Setting["+toString()+"] has the value '"+getStringValue()+"' which cant be interpreted as an integer");
             throw new NumberFormatException();
         }
+    }
+    public int getKeyEventValue() {
+        int value = 0;
+        try {
+            value = KeyEvent.class.getDeclaredField(this.getStringValue()).getInt(null);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return value;
     }
     public <T extends Enum<T>> T getEnumValue(Class<T> c){return Enum.valueOf(c,SettingValue.getValue(this));}
     public String getDefaultValue() {
