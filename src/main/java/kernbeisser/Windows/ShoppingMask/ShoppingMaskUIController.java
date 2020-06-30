@@ -38,7 +38,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         boolean success = false;
         try {
             ShoppingItem item = extractShoppingItemFromUI();
-            if (item.getItemMultiplier() > 0) {
+            if (item.getItemMultiplier() != 0) {
                 shoppingCartController.addShoppingItem(extractShoppingItemFromUI(), piece);
                 success = true;
             }
@@ -117,9 +117,19 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 customItem.setItemMultiplier((int) view.getAmount());
                 return customItem;
             case ShoppingMaskUIView.DEPOSIT:
-                return ShoppingItem.createDeposit(view.getDeposit());
+                if (view.getDeposit() < 0) {
+                    view.messageDepositStorno();
+                    return null;
+                } else {
+                    return ShoppingItem.createDeposit(view.getDeposit());
+                }
             case ShoppingMaskUIView.RETURN_DEPOSIT:
-                return ShoppingItem.createDeposit(view.getDeposit() * (-1));
+                if (view.getDeposit() < 0) {
+                    view.messageDepositStorno();
+                    return null;
+                } else {
+                    return ShoppingItem.createDeposit(view.getDeposit() * (-1));
+                }
             default:
                 return null;
         }

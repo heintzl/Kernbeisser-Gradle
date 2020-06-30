@@ -258,6 +258,11 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         JOptionPane.showMessageDialog(getContent(), "Ungültiger Barcode: " + barcode,"Barcode Fehler", JOptionPane.WARNING_MESSAGE);
     }
 
+    public void messageDepositStorno() {
+        JOptionPane.showMessageDialog(getContent(), "Pfand kann nicht storniert werden!","Storno" , JOptionPane.WARNING_MESSAGE);
+        deposit.setText("");
+    }
+
     public String getItemName() {
         return articleName.getText();
     }
