@@ -32,17 +32,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
             if (item.getItemMultiplier() >= item.getContainerSize()) {
                 int containers = 0;
                 boolean exit = false;
-                String initValue = MessageFormat.format("{0, number, 0}",
-                                                        Math.floor(item.getItemMultiplier() / item.getContainerSize()))
-                                                .trim();
-
-                String response = JOptionPane.showInputDialog(
-                        view,
-                        MessageFormat.format(
-                                "Die eingegebene Menge passt in ein oder mehrere {0, number, 0}er Pfand-Gebinde. Für wie viele Gebinde soll Pfand berechnet werden?",
-                                item.getContainerSize()),
-                        initValue
-                );
+                String response = view.inputNoOfContainers(item, false);
                 if (response != null) {
                     response = response.trim();
                 }
@@ -59,11 +49,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
                                 throw (new NumberFormatException());
                             }
                         } catch (NumberFormatException exception) {
-                            response = JOptionPane.showInputDialog(
-                                    view,
-                                    "Eingabe kann nicht verarbeitet werden, bitte noch einmal versuchen. Für wie viele Gebinde soll Pfand berechnet werden?",
-                                    initValue
-                            );
+                            response = view.inputNoOfContainers(item, true);
                         }
                     }
                 } while (!exit);

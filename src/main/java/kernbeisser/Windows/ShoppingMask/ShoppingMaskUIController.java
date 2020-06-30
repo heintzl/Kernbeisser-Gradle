@@ -38,7 +38,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         boolean success = false;
         try {
             ShoppingItem item = extractShoppingItemFromUI();
-            if (item.getItemMultiplier() != 0) {
+            if (item.getItemMultiplier() > 0) {
                 shoppingCartController.addShoppingItem(extractShoppingItemFromUI(), piece);
                 success = true;
             }
@@ -73,7 +73,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             view.loadItemStats(found);
             view.addToCart();
         } else {
-            JOptionPane.showMessageDialog( view.getContent(), "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden", "Artikel nicht gefunden", JOptionPane.INFORMATION_MESSAGE);
+            view.messageBarcodeNotFound(barcode);
             view.setKbNumber("");}
     }
 
@@ -165,10 +165,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             long bc = Long.parseLong(barcode);
             searchByBarcode(bc);
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(view.getContent(),
-                                          "Ungültiger Barcode: " + barcode,
-                                          "Barcode Fehler",
-                                          JOptionPane.WARNING_MESSAGE);
+            view.messageInvalidBarcode(barcode);
         }
 
     }
