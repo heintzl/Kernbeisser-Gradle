@@ -3,7 +3,7 @@ package kernbeisser.Windows.Pay;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
@@ -64,7 +64,7 @@ public class PayController implements Controller<PayView,PayModel> {
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

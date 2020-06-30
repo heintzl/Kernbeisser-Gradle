@@ -5,7 +5,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
@@ -22,11 +22,11 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
     public CashierShoppingMaskController() {
         this.searchBoxController = new SearchBoxController<>(User::defaultSearch,
                                                              Column.create("Vorname", User::getFirstName,
-                                                                           Key.USER_FIRST_NAME_READ),
+                                                                           PermissionKey.USER_FIRST_NAME_READ),
                                                              Column.create("Nachname", User::getSurname,
-                                                                           Key.USER_SURNAME_READ),
+                                                                           PermissionKey.USER_SURNAME_READ),
                                                              Column.create("Benutzername", User::getUsername,
-                                                                           Key.USER_USERNAME_READ)
+                                                                           PermissionKey.USER_USERNAME_READ)
         );
         searchBoxController.initView();
         searchBoxController.addLostSelectionListener(() -> selectUser(null));
@@ -78,7 +78,7 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

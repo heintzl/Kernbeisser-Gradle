@@ -1,18 +1,13 @@
 package kernbeisser.Security;
 
-import javassist.bytecode.DuplicateMemberException;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.SneakyThrows;
-import org.apache.commons.beanutils.BeanUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -20,6 +15,44 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class Proxy {
+
+    /**
+     * creates a empty instance of a security checked object, which is used to test functions for accessibility
+     * @param parent the parent for the Object
+     * @param <T> the type of the secure instance
+     * @return a empty proxy object
+     */
+    public static <T> T getEmptySecurityInstance(T parent){
+        if (ProxyFactory.isProxyClass(parent.getClass()))return parent;
+        ProxyFactory factory = new ProxyFactory();
+        factory.setSuperclass(parent.getClass());
+        try {
+            return (T) factory.create(new Class[0], new Object[0], new SecurityHandler());
+        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            e.printStackTrace();
+            return parent;
+        }
+    }
+
+    /**
+     * creates a empty instance of a security checked object, which is used to test functions for accessibility
+     * @param clazz the clazz for the Object
+     * @param <T> the type of the secure instance
+     * @return a empty proxy object
+     */
+    public static <T> T getEmptySecurityInstance(Class<T> clazz){
+        if(ProxyFactory.isProxyClass(clazz))return Tools.createWithoutConstructor(clazz);
+        ProxyFactory factory = new ProxyFactory();
+        factory.setSuperclass(clazz);
+        try {
+            return (T) factory.create(new Class[0], new Object[0], new SecurityHandler());
+        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            e.printStackTrace();
+            return Tools.createWithoutConstructor(clazz);
+        }
+    }
+
+
 
     /**
      * wraps a Object with a Proxy which is used to check if the PermissionSet contains the required Keys to
@@ -92,6 +125,8 @@ public class Proxy {
         return (SecurityHandler) handler.get(o);
     }
 
+
+
     /**
      * the class which handel when a method is called by a proxy instance
      * SecurityHandler checks if the current load PermissionSet contains all keys
@@ -103,7 +138,7 @@ public class Proxy {
         {
             Key key = proxyMethod.getAnnotation(Key.class);
             Object out;
-            if(key==null || PermissionSet.hasPermissions(key.value()))
+            if(key==null || MasterPermissionSet.hasPermissions(key.value()))
                     out = original.invoke(proxy, args);
                 else throw new AccessDeniedException("User["+LogInModel.getLoggedIn().getId() + "] cannot access " + original + " because the user has not the required Keys:" + Arrays.toString(key.value()));
             return Proxy.getSecureInstance(out);

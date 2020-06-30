@@ -3,7 +3,7 @@ package kernbeisser.Windows.Container;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -119,12 +119,12 @@ public class ContainerController implements Controller<ContainerView,ContainerMo
     @Override
     public void fillUI() {
         view.setLastContainers(model.getLastContainers());
-        view.setInsertSectionEnabled(Key.ACTION_ORDER_CONTAINER.userHas());
+        view.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
         refreshUnpaidContainers();
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

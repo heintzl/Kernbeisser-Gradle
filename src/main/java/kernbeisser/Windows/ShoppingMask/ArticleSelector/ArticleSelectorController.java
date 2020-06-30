@@ -4,7 +4,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +26,12 @@ public class ArticleSelectorController implements Controller<ArticleSelectorView
             }
             return articles;
         },
-                                                        Column.create("Name", Article::getName, Key.ARTICLE_NAME_READ),
+                                                        Column.create("Name", Article::getName, PermissionKey.ARTICLE_NAME_READ),
                                                         Column.create("Barcode", Article::getBarcode,
-                                                                      Key.ARTICLE_BARCODE_READ),
+                                                                      PermissionKey.ARTICLE_BARCODE_READ),
                                                         Column.create("Lieferant", e -> e.getSupplier().getShortName(),
-                                                                      Key.ARTICLE_SUPPLIER_READ,
-                                                                      Key.SUPPLIER_SHORT_NAME_READ));
+                                                                      PermissionKey.ARTICLE_SUPPLIER_READ,
+                                                                      PermissionKey.SUPPLIER_SHORT_NAME_READ));
         searchBoxController.initView();
         this.model = new ArticleSelectorModel(consumer);
         this.view = new ArticleSelectorView(this);
@@ -58,8 +58,8 @@ public class ArticleSelectorController implements Controller<ArticleSelectorView
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public SearchBoxView<Article> getSearchBoxView() {

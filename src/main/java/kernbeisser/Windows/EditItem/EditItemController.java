@@ -3,7 +3,7 @@ package kernbeisser.Windows.EditItem;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
@@ -56,8 +56,8 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     void doAction() {

@@ -2,7 +2,7 @@ package kernbeisser.Windows.Purchase;
 
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class PurchaseController implements Controller<PurchaseView,PurchaseModel
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

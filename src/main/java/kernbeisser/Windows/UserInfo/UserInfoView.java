@@ -5,7 +5,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Colors;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.View;
@@ -73,29 +73,32 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
     public void createUIComponents(){
         valueHistory = new ObjectTable<Transaction>();
         buyChart = controller.createBuyChart();
-        permissions = new ObjectTable<>(Column.create("Name",Permission::getName,Key.PERMISSION_NAME_READ));
-        userGroup = new ObjectTable<User>(Column.create("Benutzername",User::getUsername,Key.USER_USERNAME_READ),Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ));
-        jobs = new ObjectTable<Job>(Column.create("Name",Job::getName,Key.JOB_NAME_READ),Column.create("Beschreibung",Job::getDescription,Key.JOB_DESCRIPTION_READ));
+        permissions = new ObjectTable<>(Column.create("Name", Permission::getName, PermissionKey.PERMISSION_NAME_READ));
+        userGroup = new ObjectTable<User>(Column.create("Benutzername", User::getUsername, PermissionKey.USER_USERNAME_READ), Column.create("Vorname", User::getFirstName,
+                                                                                                                                            PermissionKey.USER_FIRST_NAME_READ), Column.create("Nachname", User::getSurname,
+                                                                                                                                                                                               PermissionKey.USER_SURNAME_READ));
+        jobs = new ObjectTable<Job>(Column.create("Name", Job::getName, PermissionKey.JOB_NAME_READ), Column.create("Beschreibung", Job::getDescription,
+                                                                                                                    PermissionKey.JOB_DESCRIPTION_READ));
         shoppingHistory = new ObjectTable<Purchase>(Column.create("Datum",e -> Date.INSTANT_FORMAT.format(e.getCreateDate())),Column.create("Verkäufer", e -> e.getSession().getSeller()),Column.create("Käufer", e -> e.getSession().getCustomer()),Column.create("Summe", e -> String.format("%.2f€", e.getSum())));
     }
 
     void pasteUser(User user){
-        phoneNumber1.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_PHONE_NUMBER1_READ) ? user.getPhoneNumber1() : "Kein zugriff");
-        username.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_USERNAME_READ) ? user.getUsername() : "Kein zugriff");
-        firstName.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_FIRST_NAME_READ) ? user.getFirstName() : "Kein zugriff");
-        surname.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_SURNAME_READ) ? user.getSurname() : "Kein zugriff");
-        email.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_EMAIL_READ) ? user.getEmail() : "Kein zugriff");
-        phoneNumber2.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_PHONE_NUMBER2_READ) ? user.getPhoneNumber2() : "Kein zugriff");
-        townCode.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_TOWN_READ) ? String.valueOf(user.getTownCode()) : "Kein zugriff");
-        street.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_STREET_READ) ? user.getStreet() : "Kein zugriff");
-        shares.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_SHARES_READ) ? String.valueOf(user.getShares()) : "Kein zugriff");
-        solidarySurcharge.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_SOLIDARITY_SURCHARGE_READ) ? user.getSolidaritySurcharge()+"" : "Kein zugriff");
-        createDate.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_CREATE_DATE_READ) ? Date.INSTANT_FORMAT.format(user.getCreateDate())
-                                                                                             : "Kein zugriff");
-        updateDate.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_UPDATE_DATE_READ) ? Date.INSTANT_FORMAT.format(user.getUpdateDate())
-                                                                                             : "Kein zugriff");
-        key.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_KERNBEISSER_KEY_READ) ? user.getKernbeisserKeyNumber() == -1 ? "Kein Schlüssel" : user.getKernbeisserKeyNumber()+"" : "Kein zugriff");
-        city.setText(LogInModel.getLoggedIn().hasPermission(Key.USER_TOWN_READ) ? user.getTown() : "Kein Zugriff");
+        phoneNumber1.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_PHONE_NUMBER1_READ) ? user.getPhoneNumber1() : "Kein zugriff");
+        username.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_USERNAME_READ) ? user.getUsername() : "Kein zugriff");
+        firstName.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_FIRST_NAME_READ) ? user.getFirstName() : "Kein zugriff");
+        surname.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_SURNAME_READ) ? user.getSurname() : "Kein zugriff");
+        email.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_EMAIL_READ) ? user.getEmail() : "Kein zugriff");
+        phoneNumber2.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_PHONE_NUMBER2_READ) ? user.getPhoneNumber2() : "Kein zugriff");
+        townCode.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_TOWN_READ) ? String.valueOf(user.getTownCode()) : "Kein zugriff");
+        street.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_STREET_READ) ? user.getStreet() : "Kein zugriff");
+        shares.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_SHARES_READ) ? String.valueOf(user.getShares()) : "Kein zugriff");
+        solidarySurcharge.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_SOLIDARITY_SURCHARGE_READ) ? user.getSolidaritySurcharge() + "" : "Kein zugriff");
+        createDate.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_CREATE_DATE_READ) ? Date.INSTANT_FORMAT.format(user.getCreateDate())
+                                                                                                       : "Kein zugriff");
+        updateDate.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_UPDATE_DATE_READ) ? Date.INSTANT_FORMAT.format(user.getUpdateDate())
+                                                                                                       : "Kein zugriff");
+        key.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_KERNBEISSER_KEY_READ) ? user.getKernbeisserKey() == -1 ? "Kein Schlüssel" : user.getKernbeisserKey() + "" : "Kein zugriff");
+        city.setText(LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_TOWN_READ) ? user.getTown() : "Kein Zugriff");
     }
 
     void pasteWithoutPermissionCheck(User user){
@@ -111,7 +114,7 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
         solidarySurcharge.setText(user.getSolidaritySurcharge()+"");
         createDate.setText(Date.INSTANT_FORMAT.format(user.getCreateDate()));
         updateDate.setText(Date.INSTANT_FORMAT.format(user.getUpdateDate()));
-        key.setText(user.getKernbeisserKeyNumber() == -1 ? "Kein Schlüssel" : user.getKernbeisserKeyNumber()+"");
+        key.setText(user.getKernbeisserKey() == -1 ? "Kein Schlüssel" : user.getKernbeisserKey()+"");
         city.setText(user.getTown());
     }
 

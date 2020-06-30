@@ -5,7 +5,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.AccessDeniedException;
@@ -56,9 +56,9 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     public void fillUI() {}
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[]{
-                Key.USER_USERNAME_READ,
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[]{
+                PermissionKey.USER_USERNAME_READ,
                 };
     }
 
@@ -91,7 +91,8 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                     if (data.getPassword().equals("")) {
                         requestChangePassword();
                     }
-                } catch (AccessDeniedException e) {
+
+                } catch (/*Access Denied exception TODO:*/Exception e) {
                     e.printStackTrace();
                 }
                 break;
@@ -117,8 +118,8 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
 
     void openJobSelector() {
         new SelectorController<>("Ausgewählte Jobs", model.getUser().getJobs(), Job::defaultSearch,
-                                 Column.create("Name", Job::getName, Key.JOB_NAME_READ),
-                                 Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ)
+                                 Column.create("Name", Job::getName, PermissionKey.JOB_NAME_READ),
+                                 Column.create("Beschreibung", Job::getDescription, PermissionKey.JOB_DESCRIPTION_READ)
         ).openAsWindow(getView().getWindow(),
                        SubWindow::new);
     }
@@ -126,7 +127,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     void openPermissionSelector(){
         new SelectorController<>("Ausgewählte Berechtigungen", model.getUser().getPermissions(),
                                  Permission::defaultSearch,
-                                 Column.create("Name", Permission::getName, Key.PERMISSION_NAME_READ)
+                                 Column.create("Name", Permission::getName, PermissionKey.PERMISSION_NAME_READ)
         ).openAsWindow(getView().getWindow(),
                        SubWindow::new);
     }

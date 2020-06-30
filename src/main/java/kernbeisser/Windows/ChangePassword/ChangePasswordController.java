@@ -2,7 +2,7 @@ package kernbeisser.Windows.ChangePassword;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +122,7 @@ public class ChangePasswordController implements Controller<ChangePasswordView,C
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

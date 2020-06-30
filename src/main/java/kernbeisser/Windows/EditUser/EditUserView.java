@@ -4,7 +4,7 @@ import kernbeisser.CustomComponents.AccessChecking.*;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.Verifier.*;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -120,11 +120,11 @@ public class EditUserView implements View<EditUserController> {
         street.setInputVerifier(new NotNullVerifier());
         firstName.setInputVerifier(new NotNullVerifier());
         lastName.setInputVerifier(new NotNullVerifier());
-        chgPassword.setRequiredWriteKeys(Key.USER_PASSWORD_WRITE);
-        editPermission.setRequiredWriteKeys(Key.USER_PERMISSION_WRITE);
-        hasKey.setReadWrite(Key.USER_KERNBEISSER_KEY_READ);
-        chgJobs.setRequiredWriteKeys(Key.USER_JOBS_WRITE,Key.USER_JOBS_READ);
-        hasKey.setRequiredWriteKeys(Key.USER_KERNBEISSER_KEY_WRITE);
+        chgPassword.setRequiredWriteKeys(PermissionKey.USER_PASSWORD_WRITE);
+        editPermission.setRequiredWriteKeys(PermissionKey.USER_PERMISSION_WRITE);
+        hasKey.setReadWrite(PermissionKey.USER_KERNBEISSER_KEY_READ);
+        chgJobs.setRequiredWriteKeys(PermissionKey.USER_JOBS_WRITE, PermissionKey.USER_JOBS_READ);
+        hasKey.setRequiredWriteKeys(PermissionKey.USER_KERNBEISSER_KEY_WRITE);
         shares.setInputVerifier(IntegerVerifier.from(1,1,3,10));
         submit.setVerifyInputWhenFocusTarget(true);
     }
@@ -161,7 +161,7 @@ public class EditUserView implements View<EditUserController> {
         shares = new AccessCheckingField<>(User::getShares,User::setShares,AccessCheckingField.INT_FORMER);
         solidarySupplement = new AccessCheckingField<>(User::getSolidaritySurcharge,User::setSolidaritySurcharge,AccessCheckingField.DOUBLE_FORMER);
         extraJobs = new AccessCheckingField<>(User::getExtraJobs,User::setExtraJobs,AccessCheckingField.NONE);
-        keyNumber = new AccessCheckingField<>(User::getKernbeisserKeyNumber, User::setKernbeisserKey, AccessCheckingField.INT_FORMER);
+        keyNumber = new AccessCheckingField<>(User::getKernbeisserKey, User::setKernbeisserKey, AccessCheckingField.INT_FORMER);
         email = new AccessCheckingField<>(User::getEmail,User::setEmail,AccessCheckingField.EMAIL_FORMER);
     }
 

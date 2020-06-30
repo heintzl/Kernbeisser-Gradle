@@ -9,7 +9,7 @@ import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,11 +71,11 @@ public class ManagePriceListsView implements View<ManagePriceListsController> {
 
     @Override
     public void initialize(ManagePriceListsController controller) {
-        add.setRequiredWriteKeys(Key.ACTION_ADD_PRICELIST, Key.PRICELIST_NAME_WRITE);
-        delete.setRequiredWriteKeys(Key.ACTION_DELETE_PRICELIST);
-        edit.setRequiredWriteKeys(Key.ACTION_EDIT_PRICELIST, Key.PRICELIST_NAME_WRITE,
-                                  Key.PRICELIST_SUPER_PRICE_LIST_WRITE);
-        priceListName.setRequiredWriteKeys(Key.PRICELIST_NAME_WRITE);
+        add.setRequiredWriteKeys(PermissionKey.ACTION_ADD_PRICELIST, PermissionKey.PRICELIST_NAME_WRITE);
+        delete.setRequiredWriteKeys(PermissionKey.ACTION_DELETE_PRICELIST);
+        edit.setRequiredWriteKeys(PermissionKey.ACTION_EDIT_PRICELIST, PermissionKey.PRICELIST_NAME_WRITE,
+                                  PermissionKey.PRICELIST_SUPER_PRICE_LIST_WRITE);
+        priceListName.setRequiredWriteKeys(PermissionKey.PRICELIST_NAME_WRITE);
         priceListTree.addSelectionListener(e -> controller.displayCurrentSuperPriceList());
         add.addActionListener(e -> controller.saveAction());
         edit.addActionListener(e -> controller.renameAction());

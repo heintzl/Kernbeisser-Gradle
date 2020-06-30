@@ -1,5 +1,7 @@
 package kernbeisser.Security;
 
+import kernbeisser.Enums.PermissionKey;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,5 +17,5 @@ import java.util.Collection;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Key {
-    kernbeisser.Enums.Key[] value();
+    PermissionKey[] value();
 }

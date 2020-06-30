@@ -1,9 +1,8 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
-import kernbeisser.Security.PermissionSet;
-import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Security.MasterPermissionSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,10 +71,10 @@ public interface Column<T> {
 
     @NotNull
     @Contract(value = "_, _, _, _ -> new", pure = true)
-    static <T> Column<T> create(String s, Function<T,Object> v, Consumer<T> action, Key... keys) {
+    static <T> Column<T> create(String s, Function<T,Object> v, Consumer<T> action, PermissionKey... keys) {
 
         return new Column<T>() {
-            final boolean read = PermissionSet.hasPermissions(keys);
+            final boolean read = MasterPermissionSet.hasPermissions(keys);
 
             @Override
             public String getName() {
@@ -96,9 +95,9 @@ public interface Column<T> {
 
     @NotNull
     @Contract(value = "_, _, _ -> new", pure = true)
-    static <T> Column<T> create(String s, Function<T,Object> v, Key... keys) {
+    static <T> Column<T> create(String s, Function<T,Object> v, PermissionKey... keys) {
         return new Column<T>() {
-            final boolean read = PermissionSet.hasPermissions(keys);
+            final boolean read = MasterPermissionSet.hasPermissions(keys);
 
             @Override
             public String getName() {

@@ -5,7 +5,7 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public enum Key {
+public enum PermissionKey {
 
     //VALUE
     GO_UNDER_MIN(KeyCategory.ACTION),
@@ -73,6 +73,12 @@ public enum Key {
     USER_UPDATE_DATE_WRITE(KeyCategory.USERS),
     USER_USER_GROUP_READ(KeyCategory.USERS),
     USER_USER_GROUP_WRITE(KeyCategory.USERS),
+    USER_UNREADABLE_READ(KeyCategory.USERS),
+    USER_UNREADABLE_WRITE(KeyCategory.USERS),
+    USER_FORCE_PASSWORD_CHANGE_READ(KeyCategory.USERS),
+    USER_FORCE_PASSWORD_CHANGE_WRITE(KeyCategory.USERS),
+    USER_LAST_PASSWORD_CHANGE_READ(KeyCategory.USERS),
+    USER_LAST_PASSWORD_CHANGE_WRITE(KeyCategory.USERS),
     ARTICLE_IID_READ(KeyCategory.ARTICLE),
     ARTICLE_IID_WRITE(KeyCategory.ARTICLE),
     ARTICLE_NAME_READ(KeyCategory.ARTICLE),
@@ -121,8 +127,8 @@ public enum Key {
     ARTICLE_DELETE_ALLOWED_WRITE(KeyCategory.ARTICLE),
     ARTICLE_INFO_READ(KeyCategory.ARTICLE),
     ARTICLE_INFO_WRITE(KeyCategory.ARTICLE),
-    ARTICLE_SPECIAL_PRICE_MONTH_READ(KeyCategory.ARTICLE),
-    ARTICLE_SPECIAL_PRICE_MONTH_WRITE(KeyCategory.ARTICLE),
+    ARTICLE_OFFERS_READ(KeyCategory.ARTICLE),
+    ARTICLE_OFFERS_WRITE(KeyCategory.ARTICLE),
     ARTICLE_DELIVERED_READ(KeyCategory.ARTICLE),
     ARTICLE_DELIVERED_WRITE(KeyCategory.ARTICLE),
     ARTICLE_INTAKE_READ(KeyCategory.ARTICLE),
@@ -133,6 +139,14 @@ public enum Key {
     ARTICLE_LAST_DELIVERY_WRITE(KeyCategory.ARTICLE),
     ARTICLE_DELETED_DATE_READ(KeyCategory.ARTICLE),
     ARTICLE_DELETED_DATE_WRITE(KeyCategory.ARTICLE),
+    ARTICLE_COLLING_READ(KeyCategory.ARTICLE),
+    ARTICLE_COLLING_WRITE(KeyCategory.ARTICLE),
+    ARTICLE_LOSS_READ(KeyCategory.ARTICLE),
+    ARTICLE_LOSS_WRITE(KeyCategory.ARTICLE),
+    ARTICLE_SOLD_READ(KeyCategory.ARTICLE),
+    ARTICLE_SOLD_WRITE(KeyCategory.ARTICLE),
+    ARTICLE_COVERED_INTAKE_READ(KeyCategory.ARTICLE),
+    ARTICLE_COVERED_INTAKE_WRITE(KeyCategory.ARTICLE),
     PRICELIST_PID_READ(KeyCategory.PRICE_LISTS),
     PRICELIST_PID_WRITE(KeyCategory.PRICE_LISTS),
     PRICELIST_NAME_READ(KeyCategory.PRICE_LISTS),
@@ -301,15 +315,15 @@ public enum Key {
 
     private final KeyCategory category;
 
-    Key(KeyCategory category) {
+    PermissionKey(KeyCategory category) {
         this.category = category;
     }
 
-    public Key getWriteKey(){
+    public PermissionKey getWriteKey(){
         return valueOf(name().replace("READ","WRITE"));
     }
 
-    public Key getReadKey(){
+    public PermissionKey getReadKey(){
         return valueOf(name().replace("WRITE","READ"));
     }
 
@@ -317,9 +331,9 @@ public enum Key {
         return LogInModel.getLoggedIn().hasPermission(this);
     }
 
-    public static Collection<Key> find(KeyCategory category) {
-        Collection<Key> out = new ArrayList<>();
-        for (Key value : values()) {
+    public static Collection<PermissionKey> find(KeyCategory category) {
+        Collection<PermissionKey> out = new ArrayList<>();
+        for (PermissionKey value : values()) {
             if (value.category == category) {
                 out.add(value);
             }
@@ -327,9 +341,9 @@ public enum Key {
         return out;
     }
 
-    public static Collection<Key> find(KeyCategory category,boolean read,boolean write){
-        Collection<Key> out = new ArrayList<>();
-        for (Key value : values()) {
+    public static Collection<PermissionKey> find(KeyCategory category, boolean read, boolean write){
+        Collection<PermissionKey> out = new ArrayList<>();
+        for (PermissionKey value : values()) {
             if (value.category == category) {
                 if((read&&value.name().endsWith("READ"))||(write&&value.name().endsWith("WRITE")))
                 out.add(value);

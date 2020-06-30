@@ -1,7 +1,7 @@
 package kernbeisser.Windows.EditSurchargeTable;
 
 import kernbeisser.DBEntities.SurchargeTable;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class EditSurchargeTableController implements Controller<EditSurchargeTab
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

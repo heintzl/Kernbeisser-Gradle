@@ -1,6 +1,6 @@
 package kernbeisser.StartUp.LogIn;
 
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +30,7 @@ public class DBLogInController implements Controller<DBLogInView,DBLogInModel> {
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

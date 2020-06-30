@@ -4,12 +4,11 @@ package kernbeisser.DBEntities;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -24,69 +23,112 @@ import java.util.List;
 @NoArgsConstructor
 public class Article extends ArticleBase{
     @Column(unique = true)
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_KB_NUMBER_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_KB_NUMBER_WRITE)})
     private int kbNumber;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_SURCHARGE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_SURCHARGE_WRITE)})
     private double surcharge;
 
     @ManyToOne
     @JoinColumn(name = "priceListId")
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_PRICE_LIST_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_PRICE_LIST_WRITE)})
     private PriceList priceList;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_WRITE)})
     private ContainerDefinition containerDef;
 
-
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE)})
     private int suppliersItemNumber;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_WEIGHABLE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_WEIGHABLE_WRITE)})
     private boolean weighAble;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_LISTED_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_LISTED_WRITE)})
     private boolean listed;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_SHOW_IN_SHOP_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_SHOW_IN_SHOP_WRITE)})
     private boolean showInShop;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETED_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETED_WRITE)})
     private boolean deleted;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
     private boolean printAgain;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETE_ALLOWED_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETE_ALLOWED_WRITE)})
     private boolean deleteAllowed;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_LOSS_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_LOSS_WRITE)})
     private int loss;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_INFO_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_INFO_WRITE)})
     private String info;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_SOLD_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_SOLD_WRITE)})
     private int sold;
 
     @JoinColumn
     @OneToMany(fetch = FetchType.EAGER)
-    private List<Offer> specialPriceMonth = new ArrayList<>();
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_OFFERS_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_OFFERS_WRITE)})
+    private List<Offer> offers = new ArrayList<>();
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_DELIVERED_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_DELIVERED_WRITE)})
     private int delivered;
 
+
+
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_INTAKE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_INTAKE_WRITE)})
     private Instant intake;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_LAST_DELIVERY_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_LAST_DELIVERY_WRITE)})
     private Instant lastDelivery;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETED_DATE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETED_DATE_WRITE)})
     private Instant deletedDate;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_COLLING_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_COLLING_WRITE)})
     private Cooling cooling;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_COVERED_INTAKE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_COVERED_INTAKE_WRITE)})
     private boolean coveredIntake;
 
     public static List<Article> getAll(String condition) {
@@ -191,7 +233,7 @@ public class Article extends ArticleBase{
         this.loss = other.loss;
         this.info = other.info;
         this.sold = other.sold;
-        this.specialPriceMonth = other.specialPriceMonth;
+        this.offers = other.offers;
         this.delivered = other.delivered;
         this.intake = other.intake;
         this.lastDelivery = other.lastDelivery;

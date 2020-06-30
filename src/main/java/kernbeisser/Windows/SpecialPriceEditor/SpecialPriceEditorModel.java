@@ -67,7 +67,7 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
     public Collection<Article> searchArticle(String search,int maxResults,boolean onlyActionArticle){
         EntityManager em = DBConnection.getEntityManager();
         Collection<Article> out = em.createQuery(
-                "select i from Article i where (i.suppliersItemNumber = :n or kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n)"+(onlyActionArticle ?" and size(i.specialPriceMonth) > 0" : ""),
+                "select i from Article i where (i.suppliersItemNumber = :n or kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n)"+(onlyActionArticle ?" and size(i.offers) > 0" : ""),
                 Article.class
         )
                                     .setParameter("n", Tools.tryParseInteger(search))

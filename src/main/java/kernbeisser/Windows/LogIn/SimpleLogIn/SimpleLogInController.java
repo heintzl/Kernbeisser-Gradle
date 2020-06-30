@@ -1,6 +1,6 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
@@ -11,16 +11,12 @@ import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Menu.MenuController;
-import kernbeisser.Windows.TabbedPanel.DefaultTab;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.View;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
-import kernbeisser.Windows.UserMenu.UserMenuController;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -53,8 +49,8 @@ public class SimpleLogInController implements Controller<SimpleLogInView,SimpleL
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public void logIn() {

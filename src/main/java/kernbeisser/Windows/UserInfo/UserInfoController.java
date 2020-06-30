@@ -4,7 +4,7 @@ import kernbeisser.CustomComponents.Charts.BuyChart;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Purchase.PurchaseController;
@@ -43,8 +43,8 @@ public class UserInfoController implements Controller<UserInfoView,UserInfoModel
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public void loadCurrentSite() {
@@ -64,15 +64,15 @@ public class UserInfoController implements Controller<UserInfoView,UserInfoModel
                     if(e.getFrom()==null)return "Kenbeisser";
                     else
                     return e.getFrom().getUsername();
-                }, Key.USER_USERNAME_READ));
+                }, PermissionKey.USER_USERNAME_READ));
                 columns.add(Column.create("An",e -> {
                     if(e.getTo()==null)return "Kenbeisser";
                     else
                     return e.getTo().getUsername();
-                }, Key.USER_USERNAME_READ));
+                }, PermissionKey.USER_USERNAME_READ));
                 columns.add(Column.create("Betrag",e -> String.format("%.2f€", e.getValue())));
                 columns.add(generateAfterValueChangeColumn());
-                columns.add(Column.create("Info",Transaction::getInfo,Key.TRANSACTION_INFO_READ));
+                columns.add(Column.create("Info", Transaction::getInfo, PermissionKey.TRANSACTION_INFO_READ));
                 columns.add(Column.create("Datum",Transaction::getDate));
                 view.setValueHistoryColumns(columns);
                 view.setValueHistory(model.getUser().getAllValueChanges());

@@ -1,7 +1,7 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
 
 import javax.persistence.*;
@@ -23,7 +23,7 @@ public class Permission {
     @JoinColumn
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Key> keySet = new HashSet<>();
+    private Set<PermissionKey> keySet = new HashSet<>();
 
     public static List<Permission> getAll(String condition) {
         return Tools.getAll(Permission.class, condition);
@@ -41,15 +41,15 @@ public class Permission {
         this.name = name;
     }
 
-    public Set<Key> getKeySet() {
+    public Set<PermissionKey> getKeySet() {
         return keySet;
     }
 
-    public void setKeySet(Set<Key> keySet) {
+    public void setKeySet(Set<PermissionKey> keySet) {
         this.keySet = keySet;
     }
 
-    public boolean contains(Key key) {
+    public boolean contains(PermissionKey key) {
         return keySet.contains(key);
     }
 

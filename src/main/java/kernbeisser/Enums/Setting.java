@@ -109,9 +109,7 @@ public enum Setting {
         int value = 0;
         try {
             value = KeyEvent.class.getDeclaredField(this.getStringValue()).getInt(null);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
         return value;

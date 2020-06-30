@@ -3,7 +3,7 @@ package kernbeisser.Windows.ObjectView;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
@@ -89,8 +89,8 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public SearchBoxView<T> getSearchBoxView() {

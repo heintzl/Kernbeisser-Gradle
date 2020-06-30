@@ -1,7 +1,7 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
@@ -10,7 +10,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -58,12 +57,12 @@ public class Transaction  {
         double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
         if(transactionType != TransactionType.INITIALIZE) {
             if (fromUG.getValue() - value < minValue) {
-                if (!from.hasPermission(Key.GO_UNDER_MIN))
+                if (!from.hasPermission(PermissionKey.GO_UNDER_MIN))
                     throw new AccessDeniedException(
                             "the sending user [" + from.getId() + "] has not the Permission to go under the min value of " + minValue + "€");
             }
             if (toUG.getValue() + value < minValue) {
-                if (!to.hasPermission(Key.GO_UNDER_MIN))
+                if (!to.hasPermission(PermissionKey.GO_UNDER_MIN))
                     throw new AccessDeniedException(
                             "the receiving user [" + from.getId() + "] has not the Permission to go under the min value of " + minValue + "€");
             }
@@ -88,10 +87,10 @@ public class Transaction  {
     public static boolean isValidTransaction(Transaction transaction){
         double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
         if(transaction.getFrom().getUserGroup().getValue() - transaction.getValue() < minValue){
-            if (!transaction.getFrom().hasPermission(Key.GO_UNDER_MIN)) return false;
+            if (!transaction.getFrom().hasPermission(PermissionKey.GO_UNDER_MIN)) return false;
         }
         if(transaction.getTo().getUserGroup().getValue() - transaction.getValue() < minValue){
-            return transaction.getTo().hasPermission(Key.GO_UNDER_MIN);
+            return transaction.getTo().hasPermission(PermissionKey.GO_UNDER_MIN);
         }
         return true;
     }

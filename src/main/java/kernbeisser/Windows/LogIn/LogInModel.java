@@ -3,16 +3,15 @@ package kernbeisser.Windows.LogIn;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Main;
-import kernbeisser.Security.PermissionSet;
+import kernbeisser.Security.MasterPermissionSet;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import java.util.Collection;
 
 public class LogInModel implements Model {
 
@@ -34,9 +33,9 @@ public class LogInModel implements Model {
                           .setParameter("username", username).
                                   getSingleResult();
             if ( BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
-                if(!user.hasPermission(Key.ACTION_LOGIN))throw new PermissionRequired();
+                if(!user.hasPermission(PermissionKey.ACTION_LOGIN))throw new PermissionRequired();
                 loggedIn = user;
-                PermissionSet.loadPermission(user.getPermissions());
+                MasterPermissionSet.loadPermission(user.getPermissions());
                 Main.logger.info("User with user id ["+user.getId()+"] has logged in");
             } else {
                 throw new AccessDeniedException();

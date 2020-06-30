@@ -6,14 +6,13 @@ import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
-import kernbeisser.Security.PermissionSet;
+import kernbeisser.Security.MasterPermissionSet;
 import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -21,15 +20,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.Date;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 public class DataImportController implements Controller<DataImportView,DataImportModel> {
@@ -137,8 +129,8 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 if (jobs.exists() && users.exists()) {
                     new Thread(() -> {
                         Permission keyPermission = new Permission();
-                        keyPermission.getKeySet().add(Key.ACTION_LOGIN);
-                        keyPermission.getKeySet().add(Key.GO_UNDER_MIN);
+                        keyPermission.getKeySet().add(PermissionKey.ACTION_LOGIN);
+                        keyPermission.getKeySet().add(PermissionKey.GO_UNDER_MIN);
                         Tools.persist(keyPermission);
                         view.setUserProgress(0);
                         parseJobs(jobs);
@@ -156,7 +148,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
 
     private void createAdmin(){
         Permission admin = new Permission();
-        admin.getKeySet().addAll(Arrays.asList(Key.values()));
+        admin.getKeySet().addAll(Arrays.asList(PermissionKey.values()));
         admin.setName("Admin(System Created)");
         User user = new User();
         user.setFirstName("System");
@@ -209,15 +201,15 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 users[0].setPassword(defaultPassword);
                 users[1].setPassword(defaultPassword);
                 Tools.persist(userGroup);
-                if (users[0].getKernbeisserKeyNumber()!=-1) {
+                if (users[0].getKernbeisserKey()!=-1) {
                     users[0].getPermissions().add(keyPermission);
                 }
                 Tools.persist(users[0]);
                 if(!users[1].getFirstName().equals(""))
                 Tools.persist(users[1]);
-                PermissionSet.addPermission(Key.GO_UNDER_MIN);
+                MasterPermissionSet.addPermission(PermissionKey.GO_UNDER_MIN);
                 Transaction.doTransaction(User.getKernbeisserUser(),users[0],Users.getValue(rawUserData),TransactionType.INITIALIZE,"Übertrag des Guthaben des alten Kernbeisser Programmes");
-                PermissionSet.removePermission(Key.GO_UNDER_MIN);
+                MasterPermissionSet.removePermission(PermissionKey.GO_UNDER_MIN);
             }
             view.setUserProgress(4);
         } catch (IOException | AccessDeniedException e) {
@@ -339,7 +331,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

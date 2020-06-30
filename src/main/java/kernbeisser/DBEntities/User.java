@@ -2,14 +2,12 @@ package kernbeisser.DBEntities;
 
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.Key;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
@@ -27,86 +25,125 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(updatable = false, insertable = false, nullable = false)
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_ID_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
     private int id;
 
     @JoinColumn
     @ManyToMany(fetch = FetchType.EAGER)
-    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_PASSWORD_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_PASSWORD_READ)})
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
     private Set<Permission> permissions = new HashSet<>();
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SHARES_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SHARES_READ)})
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_READ)})
     private int shares;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_READ)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_WRITE)})
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SOLIDARITY_SURCHARGE_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SOLIDARITY_SURCHARGE_READ)})
     private double solidaritySurcharge;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_READ)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_WRITE)})
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_READ)})
     private String extraJobs;
 
     @JoinColumn
     @ManyToMany(fetch = FetchType.EAGER)
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_JOBS_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_JOBS_READ)})
     private Set<Job> jobs = new HashSet<>();
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_KERNBEISSER_KEY_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_KERNBEISSER_KEY_READ)})
     private int kernbeisserKey;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EMPLOYEE_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EMPLOYEE_READ)})
     private boolean employee;
 
     @Column(unique = true, nullable = false)
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_READ)})
     private String username;
 
     @Column(nullable = false)
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
     private String password;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_FIRST_NAME_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_FIRST_NAME_READ)})
     private String firstName;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SURNAME_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SURNAME_READ)})
     private String surname;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER1_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER1_READ)})
     private String phoneNumber1;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER2_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER2_READ)})
     private String phoneNumber2;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_STREET_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_STREET_READ)})
     private String street;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_READ)})
     private String town;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_READ)})
     private long townCode;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EMAIL_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EMAIL_READ)})
     private String email;
 
     @CreationTimestamp
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_CREATE_DATE_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_CREATE_DATE_READ)})
     private Instant createDate;
 
     @UpdateTimestamp
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_READ)})
     private Instant updateDate;
 
     @ManyToOne
     @JoinColumn(nullable = false)
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_READ)})
     private UserGroup userGroup;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_UNREADABLE_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_UNREADABLE_READ)})
     private boolean unreadable = false;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_READ)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_WRITE)})
     private Instant lastPasswordChange;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
     private boolean forcePasswordChange = false;
 
     public static List<User> getAll(String condition) {
@@ -163,58 +200,9 @@ public class User implements Serializable {
     }
 
 
-    @kernbeisser.Security.Key(Key.USER_JOBS_READ)
-    public Set<Job> getJobs() {
-        return jobs;
-    }
 
-    @kernbeisser.Security.Key(Key.USER_JOBS_WRITE)
-    public void setJobs(Set<Job> jobs) {
-        this.jobs.clear();
-        this.jobs.addAll(jobs);
-    }
 
-    @kernbeisser.Security.Key(Key.USER_KERNBEISSER_KEY_READ)
-    public int getKernbeisserKeyNumber() {
-        return kernbeisserKey;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_KERNBEISSER_KEY_WRITE)
-    public void setKernbeisserKey(int kernbeisserKey) {
-        this.kernbeisserKey = kernbeisserKey;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_EMPLOYEE_READ)
-    public boolean isEmployee() {
-        return employee;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_EMPLOYEE_WRITE)
-    public void setEmployee(boolean employee) {
-        this.employee = employee;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_ID_READ)
-    public int getId() {
-        return id;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_USERNAME_READ)
-    public String getUsername() {
-        return username;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_USERNAME_WRITE)
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_PASSWORD_READ)
-    public String getPassword()throws AccessDeniedException {
-        return password;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_PASSWORD_WRITE)
+    @kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)
     public void setPassword(String password) {
         if(!password.equals(this.password)) {
             this.password = password;
@@ -224,102 +212,7 @@ public class User implements Serializable {
     }
 
 
-    @kernbeisser.Security.Key(Key.USER_FIRST_NAME_READ)
-    public String getFirstName() {
-        return firstName;
-    }
 
-    @kernbeisser.Security.Key(Key.USER_FIRST_NAME_WRITE)
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_SURNAME_READ)
-    public String getSurname() {
-        return surname;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_SURNAME_WRITE)
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER1_READ)
-    public String getPhoneNumber1() {
-        return phoneNumber1;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER1_WRITE)
-    public void setPhoneNumber1(String phoneNumber1) {
-        this.phoneNumber1 = phoneNumber1;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER2_READ)
-    public String getPhoneNumber2() {
-        return phoneNumber2;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER2_WRITE)
-    public void setPhoneNumber2(String phoneNumber2) {
-        this.phoneNumber2 = phoneNumber2;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_STREET_READ)
-    public String getStreet() {
-        return street;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_STREET_WRITE)
-    public void setStreet(String address) {
-        this.street = address;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_EMAIL_READ)
-    public String getEmail() {
-        return email;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_EMAIL_WRITE)
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Instant getCreateDate() {
-        return createDate;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_USER_GROUP_READ)
-    public UserGroup getUserGroup() {
-        return userGroup;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_USER_GROUP_WRITE)
-    public void setUserGroup(UserGroup userGroup) {
-        this.userGroup = userGroup;
-    }
-
-    public Instant getUpdateDate() {
-        return updateDate;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_TOWN_READ)
-    public String getTown() {
-        return town;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_TOWN_WRITE)
-    public void setTown(String town) {
-        this.town = town;
-    }
-
-    @kernbeisser.Security.Key(Key.USER_TOWN_CODE_READ)
-    public long getTownCode() {
-        return townCode;
-    }
-    @kernbeisser.Security.Key(Key.USER_TOWN_CODE_WRITE)
-    public void setTownCode(long townCode) {
-        this.townCode = townCode;
-    }
 
 
     //changed from direct reference to getter to keep security
@@ -336,18 +229,9 @@ public class User implements Serializable {
         }
     }
 
-    @kernbeisser.Security.Key(Key.USER_PERMISSION_READ)
-    public Set<Permission> getPermissions() {
-        return permissions;
-    }
 
-    @kernbeisser.Security.Key(Key.USER_PERMISSION_WRITE)
-    public void setPermissions(Set<Permission> permissions) {
-        this.permissions = permissions;
-    }
-
-    public boolean hasPermission(Key... keys) {
-        for (Key key : keys) {
+    public boolean hasPermission(PermissionKey... keys) {
+        for (PermissionKey key : keys) {
             boolean hasPermission = false;
             for (Permission permission : permissions) {
                 if (permission.contains(key)) {
@@ -362,8 +246,8 @@ public class User implements Serializable {
         return true;
     }
 
-    public boolean hasPermission(Collection<Key> keys) {
-        for (Key key : keys) {
+    public boolean hasPermission(Collection<PermissionKey> keys) {
+        for (PermissionKey key : keys) {
             boolean hasPermission = false;
             for (Permission permission : permissions) {
                 if (permission.contains(key)) {
@@ -414,7 +298,7 @@ public class User implements Serializable {
             et.begin();
             User kernbeisser = new User();
             Permission admin = new Permission();
-            admin.getKeySet().addAll(Arrays.asList(Key.values()));
+            admin.getKeySet().addAll(Arrays.asList(PermissionKey.values()));
             em.persist(admin);
             kernbeisser.getPermissions().add(admin);
             kernbeisser.setPassword("CANNOT LOG IN");
@@ -433,17 +317,6 @@ public class User implements Serializable {
         }
     }
 
-    public boolean isForcePasswordChange() {
-        return forcePasswordChange;
-    }
-
-    public void setForcePasswordChange(boolean requiresPasswordChange) {
-        this.forcePasswordChange = requiresPasswordChange;
-    }
-
-    public Instant getLastPasswordChange() {
-        return lastPasswordChange;
-    }
 
     public User(User other) {
         this.id = other.id;

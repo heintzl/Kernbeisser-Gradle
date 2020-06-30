@@ -6,6 +6,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
@@ -19,6 +20,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class Main {
 
@@ -31,6 +36,7 @@ public class Main {
      */
     public static void main(String[] args)
             throws UnsupportedLookAndFeelException {
+        createSecurityForClass(User.class);
         buildEnvironment();
         checkVersion();
         checkCatalog();
@@ -112,5 +118,16 @@ public class Main {
         em.flush();
         et.commit();
         em.close();
+    }
+
+    public static void createSecurityForClass(Class<?> clazz){
+        for (Field declaredField : clazz.getDeclaredFields()) {
+            declaredField.setAccessible(true);
+            for (Annotation annotation : declaredField.getAnnotations()) {
+                System.out.println(annotation);
+            }
+            System.out.println(declaredField);
+            System.out.println();
+        }
     }
 }

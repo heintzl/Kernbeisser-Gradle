@@ -1,13 +1,9 @@
 package kernbeisser.Windows;
 
-import kernbeisser.Enums.Key;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInModel;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Field;
 
 public interface Window {
     Image STANDARD_IMAGE = Images.getImage("Icon.png");
