@@ -1,5 +1,6 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
+import jdk.nashorn.internal.scripts.JO;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
 import kernbeisser.Windows.Controller;
@@ -13,6 +14,38 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     private ShoppingCartView view;
     private ShoppingCartModel model;
 
+    private boolean checkStorno(ShoppingItem item, boolean piece) {
+        boolean result = true;
+        boolean exit = true;
+        String response = "";
+        if (piece && item.getItemMultiplier() < 0) {
+            response = view.inputStornoRetailPrice(item.getItemRetailPrice(), false);
+            do {
+                if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
+                    exit = true;
+                    result = false;
+                } else {
+                    try {
+                        double alteredRetailPrice = Double.parseDouble(response.replace(',', '.'));
+                        if (alteredRetailPrice > 0) {
+                            if (alteredRetailPrice != item.getItemRetailPrice()) {
+                                item.setItemRetailPrice(alteredRetailPrice);
+                            }
+                            item.setName("St. " + item.getName());
+                            exit = true;
+                        } else {
+                            throw (new NumberFormatException());
+                        }
+                    } catch (NumberFormatException exception) {
+                        response = view.inputStornoRetailPrice(item.getItemRetailPrice(), true);
+                    }
+                }
+            } while (!exit);
+        } else if (!piece && item.getRetailPrice() < 0) {
+            result = (view.confirmStorno() == JOptionPane.YES_OPTION);
+        }
+        return result;
+    }
 
     public ShoppingCartController(double userValue, double userSurcharge) {
         model = new ShoppingCartModel(userValue, userSurcharge);
@@ -20,39 +53,37 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     }
 
     public void addShoppingItem(ShoppingItem item, boolean piece) {
-        int itemIndex = model.addItem(item, piece);
-        if (item.getShoppingCartIndex() == 0){
-            item.setShoppingCartIndex(itemIndex);
-        }
-        if (item.getSingleDeposit() != 0) {
-
-            model.addItem(item.createItemDeposit(), true);
-        }
-        if (item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
-            if (item.getItemMultiplier() >= item.getContainerSize()) {
-                int containers = 0;
-                boolean exit = false;
-                String response = view.inputNoOfContainers(item, false);
-                if (response != null) {
-                    response = response.trim();
-                }
-                do {
-                    if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
-                        exit = true;
-                    } else {
-                        try {
-                            containers = Integer.parseInt(response);
-                            if (containers > 0) {
-                                model.addItemBehind(item.createContainerDeposit(containers), item,true);
-                                exit = true;
-                            } else {
-                                throw (new NumberFormatException());
+        if (checkStorno(item, piece)) {
+            int itemIndex = model.addItem(item, piece);
+            if (item.getShoppingCartIndex() == 0) {
+                item.setShoppingCartIndex(itemIndex);
+            }
+            if (item.getSingleDeposit() != 0) {
+                model.addItem(item.createItemDeposit(), true);
+            }
+            if (item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
+                if (Math.abs(item.getItemMultiplier()) >= item.getContainerSize()) {
+                    int containers = 0;
+                    boolean exit = false;
+                    String response = view.inputNoOfContainers(item, false);
+                    do {
+                        if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
+                            exit = true;
+                        } else {
+                            try {
+                                containers = Integer.parseInt(response);
+                                if (Math.signum(containers) == Math.signum(item.getItemMultiplier())) {
+                                    model.addItemBehind(item.createContainerDeposit(containers), item, true);
+                                    exit = true;
+                                } else {
+                                    throw (new NumberFormatException());
+                                }
+                            } catch (NumberFormatException exception) {
+                                response = view.inputNoOfContainers(item, true);
                             }
-                        } catch (NumberFormatException exception) {
-                            response = view.inputNoOfContainers(item, true);
                         }
-                    }
-                } while (!exit);
+                    } while (!exit);
+                }
             }
         }
         refresh();

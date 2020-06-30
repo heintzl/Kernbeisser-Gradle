@@ -23,6 +23,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     private JLabel value;
     private JPanel main;
     private ObjectTable<ShoppingItem> shoppingItems;
+    private final String stornoMessageTitle = "Storno";
 
     ShoppingCartView(ShoppingCartController controller) {
         this.controller = controller;
@@ -37,7 +38,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     }
 
     void setSum(double s) {
-        sum.setText(format("{0, number, 0.00}€", s));
+        sum.setText(format("{0,number,0.00}€", s));
     }
 
     void setValue(double s) {
@@ -45,10 +46,10 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     }
 
     public String inputNoOfContainers(ShoppingItem item, boolean retry) {
-        String initValue = MessageFormat.format("{0, number, 0}", Math.floor(item.getItemMultiplier() / item.getContainerSize())).trim();
+        String initValue = MessageFormat.format("{0,number,0}", Math.floor(item.getItemMultiplier() / item.getContainerSize())).trim();
         String message = MessageFormat.format(retry
-                                              ? "Eingabe kann nicht verarbeitet werden, bitte noch einmal versuchen. Für wie viele {0, number, 0}er Pfand-Gebinde soll Pfand berechnet werden?"
-                                              : "Die eingegebene Menge passt in ein oder mehrere {0, number, 0}er Pfand-Gebinde. Für wie viele Gebinde soll Pfand berechnet werden?",
+                                              ? "Eingabe kann nicht verarbeitet werden, bitte noch einmal versuchen. Für wie viele {0,number,0}er Pfand-Gebinde soll Pfand berechnet werden?"
+                                              : "Die eingegebene Menge passt in ein oder mehrere {0,number,0}er Pfand-Gebinde. Für wie viele Gebinde soll Pfand berechnet werden?",
                                               item.getContainerSize());
         String response = JOptionPane.showInputDialog(
                 getContent(),
@@ -59,6 +60,37 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
             response = response.trim();
         }
         return response;
+    }
+
+    public String inputStornoRetailPrice(double itemRetailPrice, boolean retry) {
+        String initValue = MessageFormat.format("{0, number, 0.00}", itemRetailPrice).trim();
+        String message = "";
+        String response = "";
+        if (retry) { // item is piece, first try
+            message = "Die Eingabe ist ungültig. Bitte hier einen gültigen Einzelpreis angeben, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
+        } else { //item is piece later try
+            message = "Negative Menge: Soll der Artikel wirklich storniert werden? Dann kann hier der Einzelpreis angepasst werden, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
+        }
+        java.awt.Toolkit.getDefaultToolkit().beep();
+        response = (String) JOptionPane.showInputDialog(
+                getContent(),
+                message,
+                stornoMessageTitle,
+                JOptionPane.YES_NO_OPTION,
+                null,
+                null,
+                initValue
+        );
+        if (response != null) {
+            response = response.trim();
+        }
+        return response;
+    }
+
+    public int confirmStorno() {
+        return JOptionPane.showConfirmDialog(
+                getContent(),"Soll die Ware wirklich storniert werden?", stornoMessageTitle, JOptionPane.YES_NO_OPTION
+        );
     }
 
     private void createUIComponents() {

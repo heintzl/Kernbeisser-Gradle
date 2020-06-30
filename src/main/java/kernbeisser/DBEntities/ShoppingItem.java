@@ -37,6 +37,7 @@ public class ShoppingItem implements Serializable {
     private Purchase purchase;
 
     @Column
+    @Setter
     private String name;
 
     @Column
@@ -69,6 +70,7 @@ public class ShoppingItem implements Serializable {
     private boolean containerDiscount;
 
     @Column
+    @Setter
     private double itemRetailPrice;
 
     @Column
