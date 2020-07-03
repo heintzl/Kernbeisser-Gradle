@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.MessageFormat;
 import java.util.Vector;
 
 import static java.text.MessageFormat.format;
@@ -32,6 +33,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     static final int DEPOSIT = 3;
     static final int RETURN_DEPOSIT = 4;
     static final int PRODUCE = 5;
+    static final String stornoMessageTitle = "Storno";
 
     private ShoppingMaskUIController controller;
     private ShoppingCartController cartController;
@@ -262,6 +264,38 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         JOptionPane.showMessageDialog(getContent(), "Pfand kann nicht storniert werden!","Storno" , JOptionPane.WARNING_MESSAGE);
         deposit.setText("");
     }
+
+    public String inputStornoRetailPrice(double itemRetailPrice, boolean retry) {
+        String initValue = MessageFormat.format("{0, number, 0.00}", itemRetailPrice).trim();
+        String message = "";
+        String response = "";
+        if (retry) { // item is piece, first try
+            message = "Die Eingabe ist ungültig. Bitte hier einen gültigen Einzelpreis angeben, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
+        } else { //item is piece later try
+            message = "Negative Menge: Soll der Artikel wirklich storniert werden? Dann kann hier der Einzelpreis angepasst werden, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
+        }
+        java.awt.Toolkit.getDefaultToolkit().beep();
+        response = (String) JOptionPane.showInputDialog(
+                getContent(),
+                message,
+                stornoMessageTitle,
+                JOptionPane.YES_NO_OPTION,
+                null,
+                null,
+                initValue
+        );
+        if (response != null) {
+            response = response.trim();
+        }
+        return response;
+    }
+
+    public int confirmStorno() {
+        return JOptionPane.showConfirmDialog(
+                getContent(),"Soll die Ware wirklich storniert werden?", stornoMessageTitle, JOptionPane.YES_NO_OPTION
+        );
+    }
+
 
     public String getItemName() {
         return articleName.getText();
