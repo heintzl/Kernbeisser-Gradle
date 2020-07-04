@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.text.MessageFormat;
 import java.util.Collection;
 
 import static java.text.MessageFormat.format;
@@ -22,7 +23,6 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     private JLabel value;
     private JPanel main;
     private ObjectTable<ShoppingItem> shoppingItems;
-
     ShoppingCartView(ShoppingCartController controller) {
         this.controller = controller;
     }
@@ -36,13 +36,30 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     }
 
     void setSum(double s) {
-        sum.setText(format("{0, number, 0.00}€", s));
+        sum.setText(format("{0,number,0.00}€", s));
     }
 
     void setValue(double s) {
         value.setText(String.format("%.2f€",s));
     }
 
+    public String inputNoOfContainers(ShoppingItem item, boolean retry) {
+        String initValue = MessageFormat.format("{0,number,0}", Math.floor(item.getItemMultiplier() / item.getContainerSize())).trim();
+        String message = MessageFormat.format(retry
+                                              ? "Eingabe kann nicht verarbeitet werden, bitte noch einmal versuchen. Für wie viele {0,number,0}er Pfand-Gebinde soll Pfand berechnet werden?"
+                                              : "Die eingegebene Menge passt in ein oder mehrere {0,number,0}er Pfand-Gebinde. Für wie viele Gebinde soll Pfand berechnet werden?",
+                                              item.getContainerSize());
+        String response = JOptionPane.showInputDialog(
+                getContent(),
+                message,
+                initValue
+        );
+        if (response != null) {
+            response = response.trim();
+        }
+        return response;
+    }
+    
     private void createUIComponents() {
         int size = 20;
         Font gridFont = new Font("Arial", Font.PLAIN, size);

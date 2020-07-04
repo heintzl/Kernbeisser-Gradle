@@ -32,13 +32,46 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         this.view = new ShoppingMaskUIView(this, shoppingCartController);
     }
 
+    private boolean checkStorno(ShoppingItem item, boolean piece) {
+        boolean result = true;
+        boolean exit = true;
+        String response = "";
+        if (piece && item.getItemMultiplier() < 0) {
+            response = view.inputStornoRetailPrice(item.getItemRetailPrice(), false);
+            do {
+                if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
+                    exit = true;
+                    result = false;
+                } else {
+                    try {
+                        double alteredRetailPrice = Double.parseDouble(response.replace(',', '.'));
+                        if (alteredRetailPrice > 0) {
+                            if (alteredRetailPrice != item.getItemRetailPrice()) {
+                                item.setItemRetailPrice(alteredRetailPrice);
+                            }
+                            item.setName("St. " + item.getName());
+                            exit = true;
+                        } else {
+                            throw (new NumberFormatException());
+                        }
+                    } catch (NumberFormatException exception) {
+                        response = view.inputStornoRetailPrice(item.getItemRetailPrice(), true);
+                    }
+                }
+            } while (!exit);
+        } else if (!piece && item.getRetailPrice() < 0) {
+            result = (view.confirmStorno() == JOptionPane.YES_OPTION);
+        }
+        return result;
+    }
+
     boolean addToShoppingCart() {
         boolean piece = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
         boolean success = false;
         try {
             ShoppingItem item = extractShoppingItemFromUI();
-            if (item.getItemMultiplier() != 0) {
-                shoppingCartController.addShoppingItem(extractShoppingItemFromUI(), piece);
+            if (item.getItemMultiplier() != 0 && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece) )) {
+                shoppingCartController.addShoppingItem(item, piece);
                 success = true;
             }
         } catch (UndefinedInputException undefinedInputException) {
@@ -72,7 +105,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             view.loadItemStats(found);
             view.addToCart();
         } else {
-            JOptionPane.showMessageDialog( view.getContent(), "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden", "Artikel nicht gefunden", JOptionPane.INFORMATION_MESSAGE);
+            view.messageBarcodeNotFound(barcode);
             view.setKbNumber("");}
     }
 
@@ -116,9 +149,19 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 customItem.setItemMultiplier((int) view.getAmount());
                 return customItem;
             case ShoppingMaskUIView.DEPOSIT:
-                return ShoppingItem.createDeposit(view.getDeposit());
+                if (view.getDeposit() < 0) {
+                    view.messageDepositStorno();
+                    return null;
+                } else {
+                    return ShoppingItem.createDeposit(view.getDeposit());
+                }
             case ShoppingMaskUIView.RETURN_DEPOSIT:
-                return ShoppingItem.createDeposit(view.getDeposit() * (-1));
+                if (view.getDeposit() < 0) {
+                    view.messageDepositStorno();
+                    return null;
+                } else {
+                    return ShoppingItem.createDeposit(view.getDeposit() * (-1));
+                }
             default:
                 return null;
         }
@@ -164,10 +207,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             long bc = Long.parseLong(barcode);
             searchByBarcode(bc);
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(view.getContent(),
-                                          "Ungültiger Barcode: " + barcode,
-                                          "Barcode Fehler",
-                                          JOptionPane.WARNING_MESSAGE);
+            view.messageInvalidBarcode(barcode);
         }
 
     }

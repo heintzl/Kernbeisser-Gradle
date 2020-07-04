@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 
 public enum Setting {
-    DB_VERSION("0.1.0"),
+    DB_VERSION("0.1.1"),
     DB_INITIALIZED("false"),
     VAT_LOW("0.07"){
         @Override

@@ -11,7 +11,6 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
@@ -22,7 +21,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import static java.text.MessageFormat.format;
@@ -35,6 +33,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     static final int DEPOSIT = 3;
     static final int RETURN_DEPOSIT = 4;
     static final int PRODUCE = 5;
+    static final String stornoMessageTitle = "Storno";
 
     private ShoppingMaskUIController controller;
     private ShoppingCartController cartController;
@@ -113,8 +112,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         westPanel.setFocusTraversalPolicy(traversalPolicy);
         barcodeCapture = new BarcodeCapture(c -> controller.processBarcode(c));
         keyCapture = new KeyCapture();
-        keyCapture.add(KeyEvent.VK_F2, () -> setAmountByFnKey("2"));
-        keyCapture.add(KeyEvent.VK_F3, () -> setAmountByFnKey("3"));
+        keyCapture.add(KeyEvent.VK_F2, () -> setAmount("2"));
+        keyCapture.add(KeyEvent.VK_F3, () -> setAmount("3"));
     }
 
     private void doCancel() {}
@@ -253,11 +252,51 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         articleUnit.setText("");
     }
 
-    private void setAmountByFnKey(String value) {
-        if (amount.isEnabled() && amount.isVisible()) {
-            setAmount(value);
-        }
+    public void messageBarcodeNotFound(long barcode) {
+        JOptionPane.showMessageDialog( getContent(), "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden", "Artikel nicht gefunden", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    public void messageInvalidBarcode(String barcode) {
+        JOptionPane.showMessageDialog(getContent(), "Ungültiger Barcode: " + barcode,"Barcode Fehler", JOptionPane.WARNING_MESSAGE);
+    }
+
+    public void messageDepositStorno() {
+        JOptionPane.showMessageDialog(getContent(), "Pfand kann nicht storniert werden!","Storno" , JOptionPane.WARNING_MESSAGE);
+        deposit.setText("");
+    }
+
+    public String inputStornoRetailPrice(double itemRetailPrice, boolean retry) {
+        String initValue = MessageFormat.format("{0, number, 0.00}", itemRetailPrice).trim();
+        String message = "";
+        String response = "";
+        if (retry) { // item is piece, first try
+            message = "Die Eingabe ist ungültig. Bitte hier einen gültigen Einzelpreis angeben, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
+        } else { //item is piece later try
+            message = "Negative Menge: Soll der Artikel wirklich storniert werden? Dann kann hier der Einzelpreis angepasst werden, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
+        }
+        java.awt.Toolkit.getDefaultToolkit().beep();
+        response = (String) JOptionPane.showInputDialog(
+                getContent(),
+                message,
+                stornoMessageTitle,
+                JOptionPane.YES_NO_OPTION,
+                null,
+                null,
+                initValue
+        );
+        if (response != null) {
+            response = response.trim();
+        }
+        return response;
+    }
+
+    public int confirmStorno() {
+        return JOptionPane.showConfirmDialog(
+                getContent(),"Soll die Ware wirklich storniert werden?", stornoMessageTitle, JOptionPane.YES_NO_OPTION
+        );
+    }
+
+
     public String getItemName() {
         return articleName.getText();
     }
@@ -306,8 +345,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         return amount.getSafeValue();
     }
 
-    public void setAmount(String value) {
-        this.amount.setText(value);
+    private void setAmount(String value) {
+        if (amount.isEnabled() && amount.isVisible()) {
+            this.amount.setText(value);
+        }
     }
 
     public int getDiscount() {
