@@ -27,7 +27,6 @@ public class Shelf {
     }
 
     public void removePriceList(PriceList p){
-        articles.remove(p);
     }
 
     public Set<Article> getArticles() {
