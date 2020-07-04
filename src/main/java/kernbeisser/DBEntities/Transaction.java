@@ -3,8 +3,12 @@ package kernbeisser.DBEntities;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -19,27 +23,41 @@ import java.util.List;
 public class Transaction  {
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.TRANSACTION_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.TRANSACTION_ID_WRITE)})
     private int id;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.TRANSACTION_VALUE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.TRANSACTION_VALUE_WRITE)})
     private double value;
 
     @Column
     @Enumerated(EnumType.STRING)
+    @Getter(onMethod_= {@Key(PermissionKey.TRANSACTION_TRANSACTION_TYPE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.TRANSACTION_TRANSACTION_TYPE_WRITE)})
     private TransactionType transactionType;
 
     @JoinColumn(nullable = false)
     @ManyToOne
+    @Getter(onMethod_= {@Key(PermissionKey.TRANSACTION_FROM_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.TRANSACTION_FROM_WRITE)})
     private User from;
 
     @JoinColumn(nullable = false)
     @ManyToOne
+    @Getter(onMethod_= {@Key(PermissionKey.TRANSACTION_TO_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.TRANSACTION_TO_WRITE)})
     private User to;
 
     @CreationTimestamp
+    @Getter(onMethod_= {@Key(PermissionKey.TRANSACTION_DATE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.TRANSACTION_DATE_WRITE)})
     private Instant date;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.TRANSACTION_INFO_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.TRANSACTION_INFO_WRITE)})
     private String info;
 
 
@@ -107,53 +125,5 @@ public class Transaction  {
 
     public static void doPurchaseTransaction(User customer,double value) throws AccessDeniedException {
         doTransaction(customer,User.getKernbeisserUser(),value,TransactionType.PURCHASE, "Einkauf vom " + LocalDate.now());
-    }
-
-    public Instant getDate() {
-        return date;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getInfo() {
-        return info;
-    }
-
-    public TransactionType getTransactionType() {
-        return transactionType;
-    }
-
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public void setTransactionType(TransactionType transactionType) {
-        this.transactionType = transactionType;
-    }
-
-    public void setFrom(User from) {
-        this.from = from;
-    }
-
-    public void setTo(User to) {
-        this.to = to;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    public User getFrom() {
-        return from;
-    }
-
-    public User getTo() {
-        return to;
-    }
-
-    public double getValue() {
-        return value;
     }
 }

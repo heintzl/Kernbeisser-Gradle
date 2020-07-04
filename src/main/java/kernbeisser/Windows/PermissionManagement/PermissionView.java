@@ -13,7 +13,7 @@ import java.util.Collection;
 public class PermissionView implements View<PermissionController> {
     private ObjectTable<Permission> permission;
     private JPanel main;
-    private JComboBox<KeyCategory> category;
+    private JComboBox<Object> category;
     private JButton back;
     private JButton add;
     private JButton delete;
@@ -64,15 +64,20 @@ public class PermissionView implements View<PermissionController> {
     }
 
 
-    void setCategories(KeyCategory[] categories) {
+    void setCategories(Class<?>[] categories) {
         category.removeAllItems();
-        for (KeyCategory keyCategory : categories) {
+        category.addItem("Aktionen");
+        for (Class<?> keyCategory : categories) {
             category.addItem(keyCategory);
         }
     }
 
-    public KeyCategory getCategory() {
-        return (KeyCategory) category.getSelectedItem();
+    public Class<?> getCategory() {
+        try{
+            return (Class<?>) category.getSelectedItem();
+        }catch (ClassCastException e){
+            return null;
+        }
     }
 
     @Override

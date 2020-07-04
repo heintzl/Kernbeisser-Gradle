@@ -1,5 +1,6 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
+import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Security.MasterPermissionSet;
@@ -12,8 +13,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface Column<T> {
-    static <T> Column<T> create(String s, Function<T,Object> v) {
+    static <T> Column<T> create(String s, Getter<T,Object> v) {
         return new Column<T>() {
+            private boolean read = true;
+
             @Override
             public String getName() {
                 return s;
@@ -21,30 +24,17 @@ public interface Column<T> {
 
             @Override
             public Object getValue(T t) {
-                return v.apply(t);
+                if(!read)return "***********";
+                try {
+                    return v.get(t);
+                } catch (AccessDeniedException e) {
+                    read = false;
+                    return getValue(t);
+                }
             }
         };
     }
 
-    static <T> Column<T> create(String s, Function<T,Object> v, Consumer<T> action) {
-        return new Column<T>() {
-            @Override
-            public String getName() {
-                return s;
-            }
-
-            @Override
-            public Object getValue(T t) {
-                return v.apply(t);
-
-            }
-
-            @Override
-            public void onAction(T t) {
-                action.accept(t);
-            }
-        };
-    }
 
     @NotNull
     @Contract(value = "_, _, _ -> new", pure = true)
@@ -69,12 +59,11 @@ public interface Column<T> {
         };
     }
 
-    @NotNull
-    @Contract(value = "_, _, _, _ -> new", pure = true)
-    static <T> Column<T> create(String s, Function<T,Object> v, Consumer<T> action, PermissionKey... keys) {
 
+    @NotNull
+    static <T> Column<T> create(String s, Getter<T,Object> v, Consumer<T> action) {
         return new Column<T>() {
-            final boolean read = MasterPermissionSet.hasPermissions(keys);
+            private boolean read = true;
 
             @Override
             public String getName() {
@@ -83,7 +72,13 @@ public interface Column<T> {
 
             @Override
             public Object getValue(T t) {
-                return read ? v.apply(t) : "***********";
+                if(!read)return "***********";
+                try {
+                    return v.get(t);
+                } catch (AccessDeniedException e) {
+                    read = false;
+                    return getValue(t);
+                }
             }
 
             @Override

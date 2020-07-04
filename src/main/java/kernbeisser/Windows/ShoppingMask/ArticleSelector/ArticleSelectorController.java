@@ -26,12 +26,9 @@ public class ArticleSelectorController implements Controller<ArticleSelectorView
             }
             return articles;
         },
-                                                        Column.create("Name", Article::getName, PermissionKey.ARTICLE_NAME_READ),
-                                                        Column.create("Barcode", Article::getBarcode,
-                                                                      PermissionKey.ARTICLE_BARCODE_READ),
-                                                        Column.create("Lieferant", e -> e.getSupplier().getShortName(),
-                                                                      PermissionKey.ARTICLE_SUPPLIER_READ,
-                                                                      PermissionKey.SUPPLIER_SHORT_NAME_READ));
+                                                        Column.create("Name", Article::getName),
+                                                        Column.create("Barcode", Article::getBarcode),
+                                                        Column.create("Lieferant", e -> e.getSupplier().getShortName()));
         searchBoxController.initView();
         this.model = new ArticleSelectorModel(consumer);
         this.view = new ArticleSelectorView(this);

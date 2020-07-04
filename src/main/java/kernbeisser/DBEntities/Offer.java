@@ -1,6 +1,12 @@
 package kernbeisser.DBEntities;
 
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
+import kernbeisser.Security.Key;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,69 +14,34 @@ import java.sql.Date;
 
 @Entity
 @Table
+@EqualsAndHashCode
 public class Offer implements Serializable {
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.OFFER_OID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.OFFER_OID_WRITE)})
     private int oid;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.OFFER_SPECIAL_NET_PRICE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.OFFER_SPECIAL_NET_PRICE_WRITE)})
     private double specialNetPrice;
 
     @Column()
-    //dangerous SQL keyword from do not rename to 'from'
+    //dangerous SQL keyword 'from' do not rename to 'from'
+    @Getter(onMethod_= {@Key(PermissionKey.OFFER_FROM_DATE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.OFFER_FROM_DATE_WRITE)})
     private Date fromDate;
 
     @Column()
-    //dangerous SQL keyword from do not rename to 'to'
+    //dangerous SQL keyword 'to' do not rename to 'to'
+    @Getter(onMethod_= {@Key(PermissionKey.OFFER_TO_DATE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.OFFER_TO_DATE_WRITE)})
     private Date toDate;
 
     @Column
-    //dangerous SQL keyword repeat do not rename to 'repeat'
+    //dangerous SQL keyword 'repeat' do not rename to 'repeat'
+    @Getter(onMethod_= {@Key(PermissionKey.OFFER_REPEAT_MODE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.OFFER_REPEAT_MODE_WRITE)})
     private Repeat repeatMode;
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(Date from) {
-        this.fromDate = from;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
-    }
-
-    public int getOid() {
-        return oid;
-    }
-
-    public double getSpecialNetPrice() {
-        return specialNetPrice;
-    }
-
-    public void setSpecialNetPrice(double specialNetPrice) {
-        this.specialNetPrice = specialNetPrice;
-    }
-
-    public Repeat getRepeatMode() {
-        return repeatMode;
-    }
-
-    public void setRepeatMode(Repeat repeat) {
-        this.repeatMode = repeat;
-    }
-
-    @Override
-    public int hashCode() {
-        return oid;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return ((Offer)obj).oid == oid;
-    }
 }

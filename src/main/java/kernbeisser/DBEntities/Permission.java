@@ -2,7 +2,12 @@ package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -12,41 +17,28 @@ import java.util.Set;
 
 @Entity
 @Table
+@EqualsAndHashCode
 public class Permission {
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.PERMISSION_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.PERMISSION_ID_WRITE)})
     private int id;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
     private String name;
 
     @JoinColumn
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
+    @Getter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
     private Set<PermissionKey> keySet = new HashSet<>();
 
     public static List<Permission> getAll(String condition) {
         return Tools.getAll(Permission.class, condition);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<PermissionKey> getKeySet() {
-        return keySet;
-    }
-
-    public void setKeySet(Set<PermissionKey> keySet) {
-        this.keySet = keySet;
     }
 
     public boolean contains(PermissionKey key) {
@@ -69,33 +61,5 @@ public class Permission {
                                 .getResultList();
         em.close();
         return out;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Permission)) {
-            return false;
-        }
-
-        Permission that = (Permission) o;
-
-        if (getId() != that.getId()) {
-            return false;
-        }
-        if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) {
-            return false;
-        }
-        return getKeySet() != null ? getKeySet().equals(that.getKeySet()) : that.getKeySet() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getId();
-        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-        result = 31 * result + (getKeySet() != null ? getKeySet().hashCode() : 0);
-        return result;
     }
 }

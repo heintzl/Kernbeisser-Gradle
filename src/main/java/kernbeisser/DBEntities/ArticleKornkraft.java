@@ -2,8 +2,11 @@ package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,8 +19,8 @@ import java.util.List;
 public class ArticleKornkraft extends ArticleBase implements Serializable {
 
     @Column
-    @Getter
-    @Setter
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_KORNKRAFT_SYNCHRONISED_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_KORNKRAFT_SYNCHRONISED_WRITE)})
     private boolean synchronised = false;
 
     public static List<ArticleKornkraft> getAll(String condition) {

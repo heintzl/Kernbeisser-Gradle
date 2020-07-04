@@ -70,9 +70,9 @@ public class ContainerView implements View<ContainerController> {
                 Column.create("Ladennummer", Container::getKBNumber, PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_KB_NUMBER_READ),
                 Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
                 Column.create("Produktname", e -> e.getItem().getName(), PermissionKey.CONTAINER_ITEM_READ,
-                              PermissionKey.ARTICLE_NAME_READ),
+                              PermissionKey.ARTICLE_BASE_NAME_READ),
                 Column.create("Netto-Preis", e -> e.getNetPrice() + "€", PermissionKey.CONTAINER_ITEM_READ,
-                              PermissionKey.ARTICLE_NET_PRICE_READ),
+                              PermissionKey.ARTICLE_BASE_NET_PRICE_READ),
                 Column.create("Verkaufspreis", e -> "notDefined" + "€")
         );
         unpaidContainers = new ObjectTable<>(
@@ -80,9 +80,9 @@ public class ContainerView implements View<ContainerController> {
                 Column.create("Ladennummer", Container::getKBNumber, PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_KB_NUMBER_READ),
                 Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
                 Column.create("Produktname", e -> e.getItem().getName(), PermissionKey.CONTAINER_ITEM_READ,
-                              PermissionKey.ARTICLE_NAME_READ),
+                              PermissionKey.ARTICLE_BASE_NAME_READ),
                 Column.create("Netto-Preis", e -> e.getNetPrice() + "€", PermissionKey.CONTAINER_ITEM_READ,
-                              PermissionKey.ARTICLE_NET_PRICE_READ),
+                              PermissionKey.ARTICLE_BASE_NET_PRICE_READ),
                 Column.create("Verkaufspreis", e -> "notDefined" + "€"),
                 new Column<Container>() {
                     @Override

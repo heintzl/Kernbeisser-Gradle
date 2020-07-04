@@ -10,7 +10,6 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
-import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -87,7 +86,7 @@ public class EditItemModel implements Model<EditItemController> {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.persist(article.newInstance());
+        em.persist(article.unwrapProxy());
         em.flush();
         et.commit();
         em.close();

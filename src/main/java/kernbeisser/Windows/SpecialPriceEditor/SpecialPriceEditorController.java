@@ -58,7 +58,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
             view.setSelectedArticleIdentifier(null);
             view.setSelectedArticleNetPrice(0);
         }else {
-            view.setOffers(article.getSpecialPriceMonth());
+            view.setOffers(article.getOffers());
             view.setAddEnable(true);
             view.setSelectedArticleIdentifier(article.getName());
             view.setSelectedArticleNetPrice(article.getNetPrice());
@@ -84,7 +84,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
         try {
             model.addOffer(model.getSelectedArticle(), collect());
             model.refreshItem();
-            view.setOffers(model.getSelectedArticle().getSpecialPriceMonth());
+            view.setOffers(model.getSelectedArticle().getOffers());
         } catch (IncorrectInput incorrectInput) {
             view.cannotParseDateFormat();
         }
@@ -103,7 +103,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
     public void edit() {
         try {
             model.refreshItem();
-            view.setOffers(model.getSelectedArticle().getSpecialPriceMonth());
+            view.setOffers(model.getSelectedArticle().getOffers());
             model.edit(model.getSelectedOffer().getOid(),collect());
         } catch (IncorrectInput incorrectInput) {
             view.cannotParseDateFormat();
@@ -113,7 +113,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
     public void remove() {
         model.remove(model.getSelectedArticle(), model.getSelectedOffer());
         model.refreshItem();
-        view.setOffers(model.getSelectedArticle().getSpecialPriceMonth());
+        view.setOffers(model.getSelectedArticle().getOffers());
     }
 
     void searchFrom() {

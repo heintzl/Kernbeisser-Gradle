@@ -1,7 +1,11 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -12,12 +16,18 @@ import java.util.List;
 public class UserGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter(onMethod_= {@Key(PermissionKey.USER_GROUP_GID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_GROUP_GID_WRITE)})
     private int gid;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.USER_GROUP_VALUE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_GROUP_VALUE_WRITE)})
     private double value;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.USER_GROUP_INTEREST_THIS_YEAR_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_GROUP_INTEREST_THIS_YEAR_WRITE)})
     private int interestThisYear;
 
 
@@ -25,25 +35,6 @@ public class UserGroup {
         return Tools.getAll(UserGroup.class, condition);
     }
 
-    public double getValue() {
-        return value;
-    }
-
-    private void setValue(double value) {
-        this.value = value;
-    }
-
-    public int getId() {
-        return gid;
-    }
-
-    public int getInterestThisYear() {
-        return interestThisYear;
-    }
-
-    public void setInterestThisYear(int interestThisYear) {
-        this.interestThisYear = interestThisYear;
-    }
 
     public Collection<User> getMembers() {
         EntityManager em = DBConnection.getEntityManager();

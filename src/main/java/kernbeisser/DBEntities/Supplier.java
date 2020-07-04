@@ -1,7 +1,11 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,36 +22,58 @@ public class Supplier implements Serializable {
     @Id
     @Column(updatable = false, insertable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_SID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_SID_WRITE)})
     private int sid;
 
     @Column(unique = true)
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_NAME_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_NAME_WRITE)})
     private String name;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_PHONE_NUMBER_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_PHONE_NUMBER_WRITE)})
     private String phoneNumber;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_FAX_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_FAX_WRITE)})
     private String fax;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_ADDRESS_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_ADDRESS_WRITE)})
     private String address;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_EMAIL_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_EMAIL_WRITE)})
     private String email;
 
     @Column(unique = true)
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_SHORT_NAME_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_SHORT_NAME_WRITE)})
     private String shortName;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_SURCHARGE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_SURCHARGE_WRITE)})
     private int surcharge;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_KEEPER_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_KEEPER_WRITE)})
     private String keeper;
 
     @CreationTimestamp
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_CREATE_DATE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_CREATE_DATE_WRITE)})
     private Instant createDate;
 
     @UpdateTimestamp
+    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_UPDATE_DATE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_UPDATE_DATE_WRITE)})
     private Instant updateDate;
 
     public static Supplier getKKSupplier() {
@@ -75,73 +101,5 @@ public class Supplier implements Serializable {
     @Override
     public String toString() {
         return name;
-    }
-
-    public int getId() {
-        return sid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getFax() {
-        return fax;
-    }
-
-    public void setFax(String fax) {
-        this.fax = fax;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    public int getSurcharge() {
-        return surcharge;
-    }
-
-    public void setSurcharge(int surcharge) {
-        this.surcharge = surcharge;
-    }
-
-    public String getKeeper() {
-        return keeper;
-    }
-
-    public void setKeeper(String keeper) {
-        this.keeper = keeper;
     }
 }

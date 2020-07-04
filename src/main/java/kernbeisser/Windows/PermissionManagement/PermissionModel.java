@@ -10,6 +10,7 @@ import kernbeisser.Windows.Model;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Collection;
+import java.util.HashSet;
 
 public class PermissionModel implements Model<PermissionController> {
     void addKey(Permission permission, PermissionKey key) {
@@ -24,8 +25,12 @@ public class PermissionModel implements Model<PermissionController> {
         return Permission.getAll(null);
     }
 
-    KeyCategory[] getAllKeyCategories() {
-        return KeyCategory.values();
+    Class<?>[] getAllKeyCategories() {
+        HashSet<Class<?>> classes = new HashSet<>();
+        for (PermissionKey value : PermissionKey.values()) {
+            classes.add(value.getClass());
+        }
+        return classes.toArray(new Class[0]);
     }
 
     void deletePermission(Permission selectedObject) {

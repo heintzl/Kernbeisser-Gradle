@@ -49,9 +49,9 @@ public class Article extends ArticleBase{
     private int suppliersItemNumber;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_WEIGHABLE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_WEIGHABLE_WRITE)})
-    private boolean weighAble;
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_WRITE)})
+    private boolean weighable;
 
     @Column
     @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_LISTED_READ)})
@@ -122,8 +122,8 @@ public class Article extends ArticleBase{
     private Instant deletedDate;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_COLLING_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_COLLING_WRITE)})
+    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_COOLING_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_COOLING_WRITE)})
     private Cooling cooling;
 
     @Column
@@ -218,32 +218,9 @@ public class Article extends ArticleBase{
         return getName();
     }
 
-    private Article(Article other) {
-        this.kbNumber = other.kbNumber;
-        this.surcharge = other.surcharge;
-        this.priceList = other.priceList;
-        this.containerDef = other.containerDef;
-        this.suppliersItemNumber = other.suppliersItemNumber;
-        this.weighAble = other.weighAble;
-        this.listed = other.listed;
-        this.showInShop = other.showInShop;
-        this.deleted = other.deleted;
-        this.printAgain = other.printAgain;
-        this.deleteAllowed = other.deleteAllowed;
-        this.loss = other.loss;
-        this.info = other.info;
-        this.sold = other.sold;
-        this.offers = other.offers;
-        this.delivered = other.delivered;
-        this.intake = other.intake;
-        this.lastDelivery = other.lastDelivery;
-        this.deletedDate = other.deletedDate;
-        this.cooling = other.cooling;
-        this.coveredIntake = other.coveredIntake;
-        super.setData(other);
-    }
-
-    public Article newInstance(){
-        return new Article(this);
+    public Article unwrapProxy(){
+        Article out = new Article();
+        Tools.copyInto(this,out);
+        return out;
     }
 }

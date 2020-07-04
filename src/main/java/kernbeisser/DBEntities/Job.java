@@ -1,7 +1,12 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,55 +21,37 @@ import java.util.List;
 public class Job {
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.JOB_JID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.JOB_JID_WRITE)})
     private int jid;
 
     @Column(unique = true)
+    @Getter(onMethod_= {@Key(PermissionKey.JOB_NAME_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.JOB_NAME_WRITE)})
     private String name;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.JOB_DESCRIPTION_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.JOB_DESCRIPTION_WRITE)})
     private String description;
 
     @CreationTimestamp
+    @Getter(onMethod_= {@Key(PermissionKey.JOB_CREATE_DATE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.JOB_CREATE_DATE_WRITE)})
     private Instant createDate;
 
     @UpdateTimestamp
+    @Getter(onMethod_= {@Key(PermissionKey.JOB_UPDATE_DATE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.JOB_UPDATE_DATE_WRITE)})
     private Instant updateDate;
 
     public static List<Job> getAll(String condition) {
         return Tools.getAll(Job.class, condition);
     }
 
-    public Instant getCreateDate() {
-        return createDate;
-    }
-
-    public Instant getUpdateDate() {
-        return updateDate;
-    }
-
-    public int getId() {
-        return jid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Job && ((Job) obj).getId() == this.getId();
+        return obj instanceof Job && ((Job) obj).getJid() == this.getJid();
     }
 
     public static Collection<Job> defaultSearch(String s, int max) {

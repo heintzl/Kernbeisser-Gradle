@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -141,7 +142,7 @@ public class Proxy {
             if(key==null || MasterPermissionSet.hasPermissions(key.value()))
                     out = original.invoke(proxy, args);
                 else throw new AccessDeniedException("User["+LogInModel.getLoggedIn().getId() + "] cannot access " + original + " because the user has not the required Keys:" + Arrays.toString(key.value()));
-            return Proxy.getSecureInstance(out);
+            return out;
         }
     }
 }

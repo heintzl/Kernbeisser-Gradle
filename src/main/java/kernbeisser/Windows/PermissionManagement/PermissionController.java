@@ -39,7 +39,7 @@ public class PermissionController implements Controller<PermissionView,Permissio
 
     void loadSolutions() {
         Column<Permission> nameColumn = Column.create("Berechtigung", Permission::getName);
-        Collection<Column<Permission>> keyColumns = view.getCategory() != KeyCategory.ACTION && view.getCategory() != KeyCategory.WINDOW ?
+        Collection<Column<Permission>> keyColumns = view.getCategory() != null ?
                                                     Tools.transform(
                                                             PermissionKey.find(
                                                                     view.getCategory()
@@ -63,7 +63,7 @@ public class PermissionController implements Controller<PermissionView,Permissio
                                                                                 s -> soloChange(s, e)));
         ArrayList<Column<Permission>> columns = new ArrayList<>(keyColumns.size() + 2);
         columns.add(nameColumn);
-        if(view.getCategory() != KeyCategory.ACTION && view.getCategory() != KeyCategory.WINDOW)
+        if(view.getCategory() != null)
         columns.add(Column.create("Alle "+view.getCategory()+" Berechtigungen",permission -> {
                                       boolean read = true;
                                       boolean write = true;

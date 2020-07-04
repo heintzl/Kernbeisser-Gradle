@@ -71,11 +71,11 @@ public class ManagePriceListsView implements View<ManagePriceListsController> {
 
     @Override
     public void initialize(ManagePriceListsController controller) {
-        add.setRequiredWriteKeys(PermissionKey.ACTION_ADD_PRICELIST, PermissionKey.PRICELIST_NAME_WRITE);
+        add.setRequiredWriteKeys(PermissionKey.ACTION_ADD_PRICELIST, PermissionKey.PRICE_LIST_NAME_WRITE);
         delete.setRequiredWriteKeys(PermissionKey.ACTION_DELETE_PRICELIST);
-        edit.setRequiredWriteKeys(PermissionKey.ACTION_EDIT_PRICELIST, PermissionKey.PRICELIST_NAME_WRITE,
-                                  PermissionKey.PRICELIST_SUPER_PRICE_LIST_WRITE);
-        priceListName.setRequiredWriteKeys(PermissionKey.PRICELIST_NAME_WRITE);
+        edit.setRequiredWriteKeys(PermissionKey.ACTION_EDIT_PRICELIST, PermissionKey.PRICE_LIST_NAME_WRITE,
+                                  PermissionKey.PRICE_LIST_SUPER_PRICE_LIST_WRITE);
+        priceListName.setRequiredWriteKeys(PermissionKey.PRICE_LIST_NAME_WRITE);
         priceListTree.addSelectionListener(e -> controller.displayCurrentSuperPriceList());
         add.addActionListener(e -> controller.saveAction());
         edit.addActionListener(e -> controller.renameAction());

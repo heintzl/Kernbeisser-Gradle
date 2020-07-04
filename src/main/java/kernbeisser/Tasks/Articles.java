@@ -55,7 +55,7 @@ public class Articles {
             article.setContainerDef(ContainerDefinition.valueOf(rawArticleValues[14]));
             article.setContainerSize(Double.parseDouble(rawArticleValues[15].replaceAll(",", ".")));
             article.setSuppliersItemNumber(Integer.parseInt(rawArticleValues[16]));
-            article.setWeighAble(!Boolean.parseBoolean(rawArticleValues[17]));
+            article.setWeighable(!Boolean.parseBoolean(rawArticleValues[17]));
             article.setListed(Boolean.parseBoolean(rawArticleValues[18]));
             article.setShowInShop(Boolean.parseBoolean(rawArticleValues[19]));
             article.setDeleted(Boolean.parseBoolean(rawArticleValues[20]));
@@ -64,7 +64,7 @@ public class Articles {
             article.setLoss(Integer.parseInt(rawArticleValues[23]));
             article.setInfo(rawArticleValues[24]);
             article.setSold(Integer.parseInt(rawArticleValues[25]));
-            article.setSpecialPriceMonth(
+            article.setOffers(
                     extractOffers(Tools.extract(Boolean.class, rawArticleValues[26], "_", Boolean::parseBoolean),
                                   Integer.parseInt(rawArticleValues[7])/100f));
             article.setDelivered(Integer.parseInt(rawArticleValues[27]));

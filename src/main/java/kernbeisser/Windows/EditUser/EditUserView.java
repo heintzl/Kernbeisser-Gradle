@@ -121,7 +121,7 @@ public class EditUserView implements View<EditUserController> {
         firstName.setInputVerifier(new NotNullVerifier());
         lastName.setInputVerifier(new NotNullVerifier());
         chgPassword.setRequiredWriteKeys(PermissionKey.USER_PASSWORD_WRITE);
-        editPermission.setRequiredWriteKeys(PermissionKey.USER_PERMISSION_WRITE);
+        editPermission.setRequiredWriteKeys(PermissionKey.USER_PERMISSIONS_READ);
         hasKey.setReadWrite(PermissionKey.USER_KERNBEISSER_KEY_READ);
         chgJobs.setRequiredWriteKeys(PermissionKey.USER_JOBS_WRITE, PermissionKey.USER_JOBS_READ);
         hasKey.setRequiredWriteKeys(PermissionKey.USER_KERNBEISSER_KEY_WRITE);

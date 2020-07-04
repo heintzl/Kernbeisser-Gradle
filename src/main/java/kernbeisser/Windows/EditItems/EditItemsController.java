@@ -19,19 +19,19 @@ public class EditItemsController implements Controller<EditItemsView,EditItemsMo
 
     public EditItemsController() {
         this.model = new EditItemsModel();
-        objectViewController = new ObjectViewController<Article>(
+        objectViewController = new ObjectViewController<>(
                 EditItemController::new, Article::defaultSearch,
-                Column.create("Name", Article::getName, PermissionKey.ARTICLE_NAME_READ),
-                Column.create("Packungsgröße",e -> (e.getAmount())+e.getMetricUnits().getShortName()),
-                Column.create("Ladennummer", Article::getKbNumber, PermissionKey.ARTICLE_KB_NUMBER_READ),
-                Column.create("Lieferantenummer", Article::getSuppliersItemNumber, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
-                Column.create("Auswiegware", e -> e.isWeighAble() ?  "Ja" : "Nein", PermissionKey.ARTICLE_WEIGHABLE_READ),
-                Column.create("Nettopreis",e -> String.format("%.2f€",e.getNetPrice()), PermissionKey.ARTICLE_NET_PRICE_READ),
-                Column.create("Einzelpfand",e -> String.format("%.2f€",e.getSingleDeposit()), PermissionKey.ARTICLE_SINGLE_DEPOSIT_READ),
-                Column.create("MwSt.",e -> e.getVat().getName(), PermissionKey.ARTICLE_VAT_READ),
+                Column.create("Name", Article::getName),
+                Column.create("Packungsgröße", e -> (e.getAmount()) + e.getMetricUnits().getShortName()),
+                Column.create("Ladennummer", Article::getKbNumber),
+                Column.create("Lieferantenummer", Article::getSuppliersItemNumber),
+                Column.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein"),
+                Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice())),
+                Column.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit())),
+                Column.create("MwSt.", e -> e.getVat().getName()),
                 Column.create("Gebindegrösse.", Article::getContainerSize),
-                Column.create("Preisliste", Article::getPriceList, PermissionKey.ARTICLE_PRICE_LIST_READ),
-                Column.create("Barcode", Article::getBarcode, PermissionKey.ARTICLE_BARCODE_READ)
+                Column.create("Preisliste", Article::getPriceList),
+                Column.create("Barcode", Article::getBarcode)
         );
         objectViewController.initView();
         objectViewController.setSearch("");

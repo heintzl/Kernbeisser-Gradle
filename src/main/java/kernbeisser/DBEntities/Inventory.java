@@ -1,5 +1,10 @@
 package kernbeisser.DBEntities;
 
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
@@ -11,22 +16,14 @@ import java.time.Instant;
 public class Inventory {
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.INVENTORY_ID_READ)})
+    @Setter(value = AccessLevel.NONE, onMethod_= {@Key(PermissionKey.INVENTORY_ID_WRITE)})
     private int id;
 
     @CreationTimestamp
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.INVENTORY_CREATION_TIME_STAMP_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.INVENTORY_CREATION_TIME_STAMP_WRITE)})
     private Instant creationTimeStamp;
 
-
-    public Instant getCreationTimeStamp() {
-        return creationTimeStamp;
-    }
-
-    public void setCreationTimeStamp(Instant creationTimeStamp) {
-        this.creationTimeStamp = creationTimeStamp;
-    }
-
-    public int getId() {
-        return id;
-    }
 }

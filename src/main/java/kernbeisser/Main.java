@@ -6,13 +6,15 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.Tasks.Catalog;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
+import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,10 +22,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class Main {
 
@@ -36,7 +38,6 @@ public class Main {
      */
     public static void main(String[] args)
             throws UnsupportedLookAndFeelException {
-        createSecurityForClass(User.class);
         buildEnvironment();
         checkVersion();
         checkCatalog();
@@ -120,14 +121,33 @@ public class Main {
         em.close();
     }
 
-    public static void createSecurityForClass(Class<?> clazz){
-        for (Field declaredField : clazz.getDeclaredFields()) {
-            declaredField.setAccessible(true);
-            for (Annotation annotation : declaredField.getAnnotations()) {
-                System.out.println(annotation);
+    public static void generateKeySet(Class<?> clazz){
+        for (Field field : clazz.getDeclaredFields()) {
+            if(!Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
+                String base = toEnumName(clazz.getSimpleName()).replaceFirst("_", "") + "_" + toEnumName(
+                        field.getName());
+                System.out.println(base + "_READ(" + clazz.getSimpleName() + ".class),");
+                System.out.println(base + "_WRITE(" + clazz.getSimpleName() + ".class),");
             }
-            System.out.println(declaredField);
-            System.out.println();
         }
+    }
+
+    public static String toEnumName(String s){
+        char[] charArray = s.toCharArray();
+        Collection<String> parts = new ArrayList<>();
+        int before = 0;
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+            if (Character.isUpperCase(c)) {
+                parts.add(s.substring(before,i));
+                before = i;
+            }
+        }
+        parts.add(s.substring(before,charArray.length));
+        StringBuilder sb = new StringBuilder();
+        parts.forEach(e -> sb.append(e.toUpperCase()).append("_"));
+        if(sb.length() > 0)
+        sb.deleteCharAt(sb.length()-1);
+        return sb.toString();
     }
 }

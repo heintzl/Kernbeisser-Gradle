@@ -93,7 +93,7 @@ public class EditItemView implements View<EditItemController> {
         amount.setText(String.valueOf(article.getAmount()));
         barcode.setText(String.valueOf(article.getBarcode()));
         showInShoppingMask.setSelected(article.isShowInShop());
-        weighable.setSelected(article.isWeighAble());
+        weighable.setSelected(article.isWeighable());
         extraInfo.setText(article.getInfo());
         priceList.setSelectedItem(article.getPriceList());
         supplier.setSelectedItem(article.getSupplier());
@@ -117,7 +117,7 @@ public class EditItemView implements View<EditItemController> {
             out.setBarcode(null);
         }
         out.setShowInShop(showInShoppingMask.isSelected());
-        out.setWeighAble(weighable.isSelected());
+        out.setWeighable(weighable.isSelected());
         out.setInfo(extraInfo.getText());
         out.setPriceList((PriceList) priceList.getSelectedItem());
         out.setSupplier((Supplier) supplier.getSelectedItem());
@@ -137,33 +137,24 @@ public class EditItemView implements View<EditItemController> {
     public void initialize(EditItemController controller) {
         cancel.addActionListener((e) -> back());
         commit.addActionListener((e) -> controller.doAction());
-        itemName.setRequiredKeys(PermissionKey.ARTICLE_NAME_READ, PermissionKey.ARTICLE_NAME_WRITE);
+        itemName.setRequiredKeys(PermissionKey.ARTICLE_BASE_NAME_READ, PermissionKey.ARTICLE_BASE_NAME_WRITE);
         itemName.setInputVerifier(new NotNullVerifier());
-        amount.setRequiredKeys(PermissionKey.ARTICLE_AMOUNT_READ, PermissionKey.ARTICLE_AMOUNT_WRITE);
+        amount.setRequiredKeys(PermissionKey.ARTICLE_BASE_AMOUNT_READ, PermissionKey.ARTICLE_BASE_AMOUNT_WRITE);
         amount.setInputVerifier(IntegerVerifier.from(0,Integer.MAX_VALUE));
-        netPrice.setRequiredKeys(PermissionKey.ARTICLE_NET_PRICE_READ, PermissionKey.ARTICLE_NET_PRICE_WRITE);
         netPrice.setInputVerifier(DoubleVerifier.from(0.,999999));
-        supplier.setRequiredReadKeys(PermissionKey.ARTICLE_SUPPLIER_READ, PermissionKey.SUPPLIER_NAME_READ);
-        supplier.setRequiredWriteKeys(PermissionKey.ARTICLE_SUPPLIER_WRITE);
-        deposit.setRequiredKeys(PermissionKey.ARTICLE_SINGLE_DEPOSIT_READ, PermissionKey.ARTICLE_SINGLE_DEPOSIT_WRITE);
+        supplier.setRequiredReadKeys(PermissionKey.ARTICLE_BASE_SUPPLIER_READ, PermissionKey.SUPPLIER_NAME_READ);
+        supplier.setRequiredWriteKeys(PermissionKey.ARTICLE_BASE_SUPPLIER_WRITE);
+        deposit.setRequiredKeys(PermissionKey.ARTICLE_BASE_SINGLE_DEPOSIT_READ, PermissionKey.ARTICLE_BASE_SINGLE_DEPOSIT_WRITE);
         deposit.setInputVerifier(DoubleVerifier.from(0,0.1,5,300));
-        kbItemNumber.setRequiredKeys(PermissionKey.ARTICLE_KB_NUMBER_READ, PermissionKey.ARTICLE_KB_NUMBER_READ);
         kbItemNumber.setInputVerifier(new KBNumberVerifier());
-        supplierItemNumber.setRequiredKeys(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE);
+        supplierItemNumber.setRequiredKeys(PermissionKey.ARTICLE_BASE_SUPPLIERS_ITEM_NUMBER_READ, PermissionKey.ARTICLE_BASE_SUPPLIERS_ITEM_NUMBER_WRITE);
         supplierItemNumber.setInputVerifier(IntegerVerifier.from(0,999999));
-        crateDeposit.setRequiredKeys(PermissionKey.ARTICLE_CRATE_DEPOSIT_READ, PermissionKey.ARTICLE_CRATE_DEPOSIT_WRITE);
         crateDeposit.setInputVerifier(DoubleVerifier.from(0.,0.99,5,20));
-        priceList.setRequiredReadKeys(PermissionKey.ARTICLE_PRICE_LIST_READ, PermissionKey.PRICELIST_NAME_READ);
         priceList.setRequiredWriteKeys(PermissionKey.ARTICLE_PRICE_LIST_WRITE);
         search.setRequiredWriteKeys(PermissionKey.ARTICLE_PRICE_LIST_WRITE);
-        vat.setRequiredKeys(PermissionKey.ARTICLE_VAT_READ, PermissionKey.ARTICLE_VAT_WRITE);
-        metricUnits.setRequiredKeys(PermissionKey.ARTICLE_METRIC_UNITS_READ, PermissionKey.ARTICLE_METRIC_UNITS_WRITE);
-        barcode.setRequiredKeys(PermissionKey.ARTICLE_BARCODE_READ, PermissionKey.ARTICLE_BARCODE_WRITE);
         containerDefinition.setRequiredKeys(PermissionKey.ARTICLE_CONTAINER_DEF_READ, PermissionKey.ARTICLE_CONTAINER_DEF_WRITE);
-        containerSize.setRequiredKeys(PermissionKey.ARTICLE_CONTAINER_SIZE_READ, PermissionKey.ARTICLE_CONTAINER_SIZE_WRITE);
         containerSize.setInputVerifier(DoubleVerifier.from(0,0.1,40,1000));
         showInShoppingMask.setRequiredReadKeys(PermissionKey.ARTICLE_SHOW_IN_SHOP_READ, PermissionKey.ARTICLE_SHOW_IN_SHOP_WRITE);
-        weighable.setRequiredReadKeys(PermissionKey.ARTICLE_WEIGHABLE_READ, PermissionKey.ARTICLE_WEIGHABLE_WRITE);
     }
 
     boolean validate(){

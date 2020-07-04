@@ -1,9 +1,13 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -17,35 +21,20 @@ public class SettingValue {
 
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_ID_WRITE)})
     private int id;
 
     @Column
     @Enumerated(value = EnumType.STRING)
+    @Getter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_SETTING_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_SETTING_WRITE)})
     private Setting setting;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_VALUE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_VALUE_WRITE)})
     private String value;
-
-    public Setting getSetting() {
-        return setting;
-    }
-
-    private void setSetting(Setting setting) {
-        this.setting = setting;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    private void setValue(String value) {
-        this.value = value;
-
-    }
-
-    public int getId() {
-        return id;
-    }
 
     public static String getValue(Setting s){
         if(settingValueHashMap==null){

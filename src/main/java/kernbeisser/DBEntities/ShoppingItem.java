@@ -96,9 +96,9 @@ public class ShoppingItem implements Serializable {
         this.kbNumber = article.getKbNumber();
         this.amount = article.getAmount();
         this.itemNetPrice = article.getNetPrice();
-        this.metricUnits = article.isWeighAble() ? article.getMetricUnits() : MetricUnits.PIECE;
+        this.metricUnits = article.isWeighable() ? article.getMetricUnits() : MetricUnits.PIECE;
         this.vat = article.getVat().getValue();
-        this.weighAble = article.isWeighAble();
+        this.weighAble = article.isWeighable();
         this.surcharge = (hasContainerDiscount
                           ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue()
                           : article.getSurcharge());
