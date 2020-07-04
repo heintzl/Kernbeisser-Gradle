@@ -28,7 +28,7 @@ public class ReportUtil {
     }
 
     public static void exportInvoicePDF(Collection<ShoppingItem> shoppingCart, Purchase purchase) throws JRException {
-        String outFileName = String.format("%d_%s_%s_%s.pdf", purchase.getId(),
+        String outFileName = String.format("%d_%s_%s_%s.pdf", purchase.getSid(),
                                            purchase.getSession().getCustomer().getFirstName(),
                                            purchase.getSession().getCustomer().getSurname(),
                                            purchase.getCreateDate().toString()).replaceAll("[\\\\/:*?\"<>|]", "_");
@@ -45,7 +45,7 @@ public class ReportUtil {
     @NotNull
     private static Map<String,Object> getInvoiceParams(Purchase purchase) {
         Map<String,Object> reportParams = new HashMap<>();
-        reportParams.put("BonNo", purchase.getId());
+        reportParams.put("BonNo", purchase.getSid());
         reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
         reportParams.put("Seller", purchase.getSession().getSeller().getFullName());
         reportParams.put("Credit", purchase.getSession().getCustomer().getUserGroup().getValue());

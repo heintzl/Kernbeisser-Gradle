@@ -1,8 +1,12 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.UserSetting;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -17,54 +21,27 @@ public class UserSettingValue {
 
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private int id;
 
     @JoinColumn
     @ManyToOne
+    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private User user;
 
     @Column
     @Enumerated(EnumType.STRING)
+    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private UserSetting userSetting;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private String value;
 
-    public static User getLoaded() {
-        return loaded;
-    }
-
-    private static void setLoaded(User loaded) {
-        UserSettingValue.loaded = loaded;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    private void setUser(User user) {
-        this.user = user;
-    }
-
-    public UserSetting getUserSetting() {
-        return userSetting;
-    }
-
-    private void setUserSetting(UserSetting userSetting) {
-        this.userSetting = userSetting;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 
     public static List<UserSettingValue> getAll(String condition){
         return Tools.getAll(UserSettingValue.class, condition);

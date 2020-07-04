@@ -14,7 +14,7 @@ public class InventoryState {
     @Id
     @GeneratedValue
     @Getter(onMethod_= {@Key(PermissionKey.INVENTORY_STATE_ID_READ)})
-    @Setter(value = AccessLevel.NONE, onMethod_= {@Key(PermissionKey.INVENTORY_STATE_ID_WRITE)})
+    @Setter(onMethod_= {@Key(PermissionKey.INVENTORY_STATE_ID_WRITE)})
     private int id;
 
     @JoinColumn

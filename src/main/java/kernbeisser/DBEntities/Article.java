@@ -198,7 +198,7 @@ public class Article extends ArticleBase{
             return em.createQuery(
                     "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
                     SurchargeTable.class)
-                     .setParameter("supplier", getSupplier() != null ? getSupplier().getId() : -1)
+                     .setParameter("supplier", getSupplier() != null ? getSupplier().getSid() : -1)
                      .setParameter("number", getSuppliersItemNumber())
                      .setMaxResults(1)
                      .getSingleResult();

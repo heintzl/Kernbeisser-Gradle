@@ -20,7 +20,7 @@ public class ArticleBase {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_BASE_ID_READ)})
-    @Setter(value = AccessLevel.NONE,onMethod_= {@Key(PermissionKey.ARTICLE_BASE_ID_WRITE)})
+    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_BASE_ID_WRITE)})
     private int id;
 
     @Column

@@ -63,7 +63,7 @@ public class PayModel implements Model<PayController> {
             }
 
             //Create saleSession if not exists
-            SaleSession db = em.find(SaleSession.class, saleSession.getId());
+            SaleSession db = em.find(SaleSession.class, saleSession.getSSid());
             if (db == null) {
                 em.persist(saleSession);
                 db = saleSession;

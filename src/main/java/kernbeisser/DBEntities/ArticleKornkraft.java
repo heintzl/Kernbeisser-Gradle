@@ -64,7 +64,7 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
             return em.createQuery(
                     "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
                     SurchargeTable.class)
-                     .setParameter("supplier", Supplier.getKKSupplier().getId())
+                     .setParameter("supplier", Supplier.getKKSupplier().getSid())
                      .setParameter("number", getSuppliersItemNumber())
                      .setMaxResults(1)
                      .getSingleResult();

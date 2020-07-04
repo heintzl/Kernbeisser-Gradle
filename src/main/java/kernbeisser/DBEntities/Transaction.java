@@ -70,8 +70,8 @@ public class Transaction  {
             throws AccessDeniedException {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
-        UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
-        UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
+        UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getGid());
+        UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getGid());
         double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
         if(transactionType != TransactionType.INITIALIZE) {
             if (fromUG.getValue() - value < minValue) {
