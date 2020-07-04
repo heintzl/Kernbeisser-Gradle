@@ -8,6 +8,9 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Selector.SelectorController;
 import kernbeisser.Windows.WindowImpl.SubWindow;
@@ -18,23 +21,12 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     private final EditUserModel model;
 
     public EditUserController(User user, Mode mode) {
-        model = new EditUserModel(user == null ? new User() : user, mode);
-        switch (mode){
-            case ADD:
-                this.view = new EditUserView(this);
-                view.setUniqueVerifier();
-                break;
-            case EDIT:
-                this.view = new EditUserView(this);
-                view.setUniqueVerifier(user);
-                break;
-            case REMOVE:
-                model.doAction(user);
-                view = null;
-                return;
-            default:
-                this.view = new EditUserView(this);
-                break;
+        model = new EditUserModel(mode == Mode.ADD ? Proxy.getSecureInstance(new User()) : user == null ? Proxy.getSecureInstance(new User()) : user, mode);
+        if (mode == Mode.REMOVE) {
+            model.doAction(model.getUser());
+            view = null;
+        } else {
+            this.view = new EditUserView();
         }
     }
 
@@ -61,14 +53,13 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     }
 
     @Override
-    public void fillUI() {
-        view.setData(model.getUser());
-        if(model.getMode()==Mode.ADD)refreshUsername();
-    }
+    public void fillUI() {}
 
     @Override
     public Key[] getRequiredKeys() {
-        return new Key[0];
+        return new Key[]{
+                Key.USER_USERNAME_READ,
+                };
     }
 
     @Override
@@ -77,24 +68,31 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     }
 
     void doAction() {
-        if(!view.validateInputFormat()) return;
-        User data = view.getData(model.getUser());
+        User data;
+        try {
+            data = view.getObjectForm().getData();
+        } catch (CannotParseException e) {
+            view.invalidInput();
+            view.getObjectForm().markErrors();
+            return;
+        }
         switch (model.getMode()) {
-            case EDIT:
-                if (!data.getUsername().equals(model.getUser().getUsername())) {
-                    if (model.usernameExists(data.getUsername())) {
-                        view.usernameAlreadyExists();
-                        return;
-                    }
-                }
-                break;
             case ADD:
+                if (!view.getObjectForm().isValid()) {
+                    view.invalidInput();
+                    view.getObjectForm().markErrors();
+                    return;
+                }
                 if (model.usernameExists(data.getUsername())) {
                     view.usernameAlreadyExists();
                     return;
                 }
-                if (data.getPassword().equals("")) {
-                    requestChangePassword();
+                try {
+                    if (data.getPassword().equals("")) {
+                        requestChangePassword();
+                    }
+                } catch (AccessDeniedException e) {
+                    e.printStackTrace();
                 }
                 break;
         }
@@ -105,9 +103,15 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
 
     void refreshUsername(){
         if(model.getMode()==Mode.ADD) {
-            User data = view.getData(model.getUser());
-            data.setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ",""), data.getSurname().toLowerCase()).replace(" ",""));
-            view.setData(data);
+            User data = view.getObjectForm().getDataIgnoreWrongInput();
+            if (data.getSurname() != null && data.getFirstName() != null) {
+                view.getObjectForm()
+                    .getOriginal()
+                    .setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ", ""),
+                                                        data.getSurname().toLowerCase()).replace(" ", ""));
+                view.getObjectForm().pullData();
+            }
+            view.setUsername(view.getObjectForm().getOriginal().getUsername());
         }
     }
 

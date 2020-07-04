@@ -5,6 +5,7 @@ import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
@@ -30,6 +31,9 @@ public class EditUserModel implements Model<EditUserController> {
     }
     
     boolean doAction(User user) {
+        System.out.println(user.getId());
+        user = new User(user);
+        System.out.println(user.getId());
         try {
             switch (mode) {
                 case ADD:
@@ -51,14 +55,19 @@ public class EditUserModel implements Model<EditUserController> {
 
     String generateUsername(String firstName,String surname){
         EntityManager em = DBConnection.getEntityManager();
-        HashSet<String> usernames = new HashSet<>(em.createQuery("select u.username from User u where firstName = :firstName")
-                                                    .setParameter("firstName",firstName)
-                                                    .getResultList());
+        @SuppressWarnings("unchecked")
+        HashSet<String> usernames = new HashSet<String>(em.createQuery("select u.username from User u where firstName = :firstName")
+                                                          .setParameter("firstName",firstName)
+                                                          .getResultList());
         for (int i = 1; i < surname.length()+1; i++) {
             String generated = firstName+"."+surname.substring(0,i);
             if(!usernames.contains(generated))return generated;
         }
-        return firstName+"."+surname.substring(0,1)+""+usernames.size();
+        try{
+            return firstName+"."+surname.substring(0,1)+""+usernames.size();
+        }catch (IndexOutOfBoundsException e){
+            return firstName+"."+usernames.size();
+        }
     }
 
     boolean usernameExists(String username) {
@@ -76,7 +85,7 @@ public class EditUserModel implements Model<EditUserController> {
     }
 
     private void edit(User user) {
-        Tools.edit(user.getId(), user);
+        Tools.edit(user.getId(),user);
     }
 
     private void add(User user) {
@@ -86,7 +95,7 @@ public class EditUserModel implements Model<EditUserController> {
         UserGroup newUserGroup = new UserGroup();
         em.persist(newUserGroup);
         user.setUserGroup(newUserGroup);
-        em.persist(Tools.mergeWithoutId(user));
+        em.persist(Tools.setId(new User(user),0));
         em.flush();
         et.commit();
         em.close();

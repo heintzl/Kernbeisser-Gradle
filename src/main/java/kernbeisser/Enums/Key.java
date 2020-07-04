@@ -7,6 +7,9 @@ import java.util.Collection;
 
 public enum Key {
 
+    //VALUE
+    GO_UNDER_MIN(KeyCategory.ACTION),
+
     //Window Permissions
     ACTION_OPEN_MANAGE_PRICELISTS(KeyCategory.WINDOW),
 
@@ -334,5 +337,4 @@ public enum Key {
         }
         return out;
     }
-
 }

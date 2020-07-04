@@ -3,6 +3,8 @@ package kernbeisser.Windows.ShoppingMask;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.Enums.Key;
+import kernbeisser.Security.PermissionSet;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;

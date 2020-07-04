@@ -7,6 +7,7 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.TransactionType;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Key;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public class TransactionController implements Controller<TransactionView,Transac
                                                             );
         userSearchBoxController.initView();
         view = new TransactionView(this);
-        userSearchBoxController.addSelectionListener(e -> view.setTo(e.getUsername()));
+        userSearchBoxController.addSelectionListener(e -> view.setTo(e.toString()));
     }
 
     @Override
@@ -62,7 +63,12 @@ public class TransactionController implements Controller<TransactionView,Transac
     }
 
     void unsafeTransfer(){
-        model.transfer();
+        try {
+            model.transfer();
+        } catch (AccessDeniedException e) {
+            view.userHasNotEnoughValue();
+            return;
+        }
         view.success();
         model.getTransactions().clear();
         view.setTransactions(model.getTransactions());

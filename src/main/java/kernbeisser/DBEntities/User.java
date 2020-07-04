@@ -3,9 +3,16 @@ package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Key;
+import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +21,8 @@ import java.util.*;
 
 @Entity
 @Table
+@NoArgsConstructor
+@Where(clause = "unreadable = false")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,15 +31,23 @@ public class User implements Serializable {
 
     @JoinColumn
     @ManyToMany(fetch = FetchType.EAGER)
+    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_PASSWORD_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_PASSWORD_READ)})
     private Set<Permission> permissions = new HashSet<>();
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SHARES_WRITE)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SHARES_READ)})
     private int shares;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_READ)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_SOLIDARITY_SURCHARGE_WRITE)})
     private double solidaritySurcharge;
 
     @Column
+    @Setter(onMethod_= {@kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_READ)})
+    @Getter(onMethod_= {@kernbeisser.Security.Key(Key.USER_EXTRA_JOBS_WRITE)})
     private String extraJobs;
 
     @JoinColumn
@@ -115,7 +132,7 @@ public class User implements Serializable {
         dbContent.unreadable = true;
         dbContent.firstName = "deleted";
         dbContent.surname = "deleted";
-        dbContent.username = "deleted" + dbContent.getId();
+        dbContent.username = "deleted" + dbContent.id;
         dbContent.phoneNumber1 = "deleted";
         dbContent.phoneNumber2 = "deleted";
         dbContent.email = "deleted";
@@ -132,80 +149,72 @@ public class User implements Serializable {
     public static Collection<User> defaultSearch(String s, int max) {
         EntityManager em = DBConnection.getEntityManager();
         Collection<User> out = em.createQuery(
-                "select u from User u where u.unreadable = false and (u.firstName like :search or u.surname like :search or u.username like :search) order by u.firstName ASC",
+                "select u from User u where (u.firstName like :search or u.surname like :search or u.username like :search) order by u.firstName ASC",
                 User.class)
                                  .setParameter("search", s + "%")
                                  .setMaxResults(max)
                                  .getResultList();
         em.close();
-        return out;
+        return Proxy.getSecureInstances(out);
     }
 
-    public int getShares() {
-        return shares;
+    public static User getById(int parseInt) {
+        return DBConnection.getEntityManager().find(User.class,parseInt);
     }
 
-    public void setShares(int shares) {
-        this.shares = shares;
-    }
 
-    public double getSolidaritySurcharge() {
-        return solidaritySurcharge;
-    }
-
-    public void setSolidaritySurcharge(double solidaritySurcharge) {
-        this.solidaritySurcharge = solidaritySurcharge;
-    }
-
-    public String getExtraJobs() {
-        return extraJobs;
-    }
-
-    public void setExtraJobs(String extraJobs) {
-        this.extraJobs = extraJobs;
-    }
-
+    @kernbeisser.Security.Key(Key.USER_JOBS_READ)
     public Set<Job> getJobs() {
         return jobs;
     }
 
+    @kernbeisser.Security.Key(Key.USER_JOBS_WRITE)
     public void setJobs(Set<Job> jobs) {
         this.jobs.clear();
         this.jobs.addAll(jobs);
     }
 
+    @kernbeisser.Security.Key(Key.USER_KERNBEISSER_KEY_READ)
     public int getKernbeisserKeyNumber() {
         return kernbeisserKey;
     }
 
+    @kernbeisser.Security.Key(Key.USER_KERNBEISSER_KEY_WRITE)
     public void setKernbeisserKey(int kernbeisserKey) {
         this.kernbeisserKey = kernbeisserKey;
     }
 
+    @kernbeisser.Security.Key(Key.USER_EMPLOYEE_READ)
     public boolean isEmployee() {
         return employee;
     }
 
+    @kernbeisser.Security.Key(Key.USER_EMPLOYEE_WRITE)
     public void setEmployee(boolean employee) {
         this.employee = employee;
     }
 
+    @kernbeisser.Security.Key(Key.USER_ID_READ)
     public int getId() {
         return id;
     }
 
+    @kernbeisser.Security.Key(Key.USER_USERNAME_READ)
     public String getUsername() {
         return username;
     }
 
+    @kernbeisser.Security.Key(Key.USER_USERNAME_WRITE)
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getPassword() {
+    @kernbeisser.Security.Key(Key.USER_PASSWORD_READ)
+    public String getPassword()throws AccessDeniedException {
         return password;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PASSWORD_WRITE)
     public void setPassword(String password) {
         if(!password.equals(this.password)) {
             this.password = password;
@@ -214,50 +223,63 @@ public class User implements Serializable {
         }
     }
 
+
+    @kernbeisser.Security.Key(Key.USER_FIRST_NAME_READ)
     public String getFirstName() {
         return firstName;
     }
 
+    @kernbeisser.Security.Key(Key.USER_FIRST_NAME_WRITE)
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @kernbeisser.Security.Key(Key.USER_SURNAME_READ)
     public String getSurname() {
         return surname;
     }
 
+    @kernbeisser.Security.Key(Key.USER_SURNAME_WRITE)
     public void setSurname(String surname) {
         this.surname = surname;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER1_READ)
     public String getPhoneNumber1() {
         return phoneNumber1;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER1_WRITE)
     public void setPhoneNumber1(String phoneNumber1) {
         this.phoneNumber1 = phoneNumber1;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER2_READ)
     public String getPhoneNumber2() {
         return phoneNumber2;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PHONE_NUMBER2_WRITE)
     public void setPhoneNumber2(String phoneNumber2) {
         this.phoneNumber2 = phoneNumber2;
     }
 
+    @kernbeisser.Security.Key(Key.USER_STREET_READ)
     public String getStreet() {
         return street;
     }
 
+    @kernbeisser.Security.Key(Key.USER_STREET_WRITE)
     public void setStreet(String address) {
         this.street = address;
     }
 
+    @kernbeisser.Security.Key(Key.USER_EMAIL_READ)
     public String getEmail() {
         return email;
     }
 
+    @kernbeisser.Security.Key(Key.USER_EMAIL_WRITE)
     public void setEmail(String email) {
         this.email = email;
     }
@@ -266,10 +288,12 @@ public class User implements Serializable {
         return createDate;
     }
 
+    @kernbeisser.Security.Key(Key.USER_USER_GROUP_READ)
     public UserGroup getUserGroup() {
         return userGroup;
     }
 
+    @kernbeisser.Security.Key(Key.USER_USER_GROUP_WRITE)
     public void setUserGroup(UserGroup userGroup) {
         this.userGroup = userGroup;
     }
@@ -278,35 +302,46 @@ public class User implements Serializable {
         return updateDate;
     }
 
+    @kernbeisser.Security.Key(Key.USER_TOWN_READ)
     public String getTown() {
         return town;
     }
 
+    @kernbeisser.Security.Key(Key.USER_TOWN_WRITE)
     public void setTown(String town) {
         this.town = town;
     }
 
+    @kernbeisser.Security.Key(Key.USER_TOWN_CODE_READ)
     public long getTownCode() {
         return townCode;
     }
-
+    @kernbeisser.Security.Key(Key.USER_TOWN_CODE_WRITE)
     public void setTownCode(long townCode) {
         this.townCode = townCode;
     }
 
+
+    //changed from direct reference to getter to keep security
     public String getFullName() {
-        return this.firstName + " " + this.getSurname();
+        return this.getFirstName() + " " + this.getSurname();
     }
 
-    @Override
     public String toString() {
-        return username;
+        try {
+            return getUsername();
+            //catch AccessDeniedException
+        }catch (Exception e){
+            return "Benutzer["+id+"]";
+        }
     }
 
+    @kernbeisser.Security.Key(Key.USER_PERMISSION_READ)
     public Set<Permission> getPermissions() {
         return permissions;
     }
 
+    @kernbeisser.Security.Key(Key.USER_PERMISSION_WRITE)
     public void setPermissions(Set<Permission> permissions) {
         this.permissions = permissions;
     }
@@ -378,6 +413,10 @@ public class User implements Serializable {
             EntityTransaction et = em.getTransaction();
             et.begin();
             User kernbeisser = new User();
+            Permission admin = new Permission();
+            admin.getKeySet().addAll(Arrays.asList(Key.values()));
+            em.persist(admin);
+            kernbeisser.getPermissions().add(admin);
             kernbeisser.setPassword("CANNOT LOG IN");
             kernbeisser.setFirstName("Konto");
             kernbeisser.setSurname("Kernbeisser");
@@ -404,5 +443,32 @@ public class User implements Serializable {
 
     public Instant getLastPasswordChange() {
         return lastPasswordChange;
+    }
+
+    public User(User other) {
+        this.id = other.id;
+        this.permissions = other.permissions;
+        this.shares = other.shares;
+        this.solidaritySurcharge = other.solidaritySurcharge;
+        this.extraJobs = other.extraJobs;
+        this.jobs = other.jobs;
+        this.kernbeisserKey = other.kernbeisserKey;
+        this.employee = other.employee;
+        this.username = other.username;
+        this.password = other.password;
+        this.firstName = other.firstName;
+        this.surname = other.surname;
+        this.phoneNumber1 = other.phoneNumber1;
+        this.phoneNumber2 = other.phoneNumber2;
+        this.street = other.street;
+        this.town = other.town;
+        this.townCode = other.townCode;
+        this.email = other.email;
+        this.createDate = other.createDate;
+        this.updateDate = other.updateDate;
+        this.userGroup = other.userGroup;
+        this.unreadable = other.unreadable;
+        this.lastPasswordChange = other.lastPasswordChange;
+        this.forcePasswordChange = other.forcePasswordChange;
     }
 }

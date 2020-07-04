@@ -65,6 +65,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
         if (view.commitDelete()) {
             model.remove(searchBoxController.getSelectedObject());
         }
+        search();
         refresh();
     }
 

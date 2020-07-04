@@ -66,7 +66,7 @@
           <text value="Ort:"/>
         </properties>
       </component>
-      <component id="782b2" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="firstName">
+      <component id="cc290" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="firstName" custom-create="true">
         <constraints>
           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -77,7 +77,7 @@
           <opaque value="false"/>
         </properties>
       </component>
-      <component id="3c563" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="lastName">
+      <component id="bf8fc" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="lastName" custom-create="true">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -86,7 +86,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="ea366" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="street">
+      <component id="e65ac" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="street" custom-create="true">
         <constraints>
           <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -181,7 +181,7 @@
           <text value="Passwort:"/>
         </properties>
       </component>
-      <component id="dba57" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="postalCode">
+      <component id="73cb" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="postalCode" custom-create="true">
         <constraints>
           <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -192,7 +192,7 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="9b528" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="town">
+      <component id="e835c" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="town" custom-create="true">
         <constraints>
           <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -201,7 +201,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="dda88" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="phone1">
+      <component id="92c81" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="phone1" custom-create="true">
         <constraints>
           <grid row="9" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -212,7 +212,7 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="87b11" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="phone2">
+      <component id="8c52b" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="phone2" custom-create="true">
         <constraints>
           <grid row="10" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -223,7 +223,7 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="52761" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="username">
+      <component id="5bb5c" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="username" custom-create="true">
         <constraints>
           <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -263,25 +263,23 @@
           <text value="Schlüssel:"/>
         </properties>
       </component>
-      <component id="f7f2" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="hasKey">
+      <component id="6b5b7" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="hasKey">
         <constraints>
           <grid row="16" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <opaque value="false"/>
-          <selected value="false"/>
           <text value=""/>
         </properties>
       </component>
-      <component id="94d6f" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="isEmployee">
+      <component id="91e6e" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckBox" binding="isEmployee" custom-create="true">
         <constraints>
           <grid row="18" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <opaque value="false"/>
-          <text value=""/>
         </properties>
       </component>
       <component id="216de" class="javax.swing.JLabel" binding="lblIsEmployee">
@@ -335,14 +333,14 @@
           <text value="Solidarzuschlag:"/>
         </properties>
       </component>
-      <component id="1cb7e" class="kernbeisser.CustomComponents.PermissionSpinner" binding="shares">
+      <component id="e6006" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="shares" custom-create="true">
         <constraints>
           <grid row="21" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
-      <component id="1ec43" class="kernbeisser.CustomComponents.PermissionSpinner" binding="solidarySupplement">
+      <component id="2bc92" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="solidarySupplement" custom-create="true">
         <constraints>
           <grid row="22" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
@@ -368,7 +366,7 @@
           <text value="Dienste:"/>
         </properties>
       </component>
-      <component id="16577" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="extraJobs">
+      <component id="c4647" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="extraJobs" custom-create="true">
         <constraints>
           <grid row="20" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -469,7 +467,7 @@
           <text value="Schlüsselnummer:"/>
         </properties>
       </component>
-      <component id="74c39" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="keyNumber">
+      <component id="c1643" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="keyNumber" custom-create="true">
         <constraints>
           <grid row="17" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
@@ -478,7 +476,7 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="f4a21" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="email">
+      <component id="b9221" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="email" custom-create="true">
         <constraints>
           <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>

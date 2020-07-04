@@ -1,6 +1,9 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.Key;
+import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -46,15 +49,29 @@ public class Transaction  {
         return Tools.getAll(Transaction.class, condition);
     }
 
-    public static void doTransaction(User from, User to, double value,TransactionType transactionType, String info) {
+    public static void doTransaction(User from, User to, double value,TransactionType transactionType, String info)
+            throws AccessDeniedException {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
-        et.begin();
         UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
-        setValue(fromUG,fromUG.getValue()-value);
-        em.persist(fromUG);
         UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
+        double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
+        if(transactionType != TransactionType.INITIALIZE) {
+            if (fromUG.getValue() - value < minValue) {
+                if (!from.hasPermission(Key.GO_UNDER_MIN))
+                    throw new AccessDeniedException(
+                            "the sending user [" + from.getId() + "] has not the Permission to go under the min value of " + minValue + "€");
+            }
+            if (toUG.getValue() + value < minValue) {
+                if (!to.hasPermission(Key.GO_UNDER_MIN))
+                    throw new AccessDeniedException(
+                            "the receiving user [" + from.getId() + "] has not the Permission to go under the min value of " + minValue + "€");
+            }
+        }
+        et.begin();
+        setValue(fromUG,fromUG.getValue()-value);
         setValue(toUG,toUG.getValue()+value);
+        em.persist(fromUG);
         em.persist(toUG);
         Transaction transaction = new Transaction();
         transaction.value = value;
@@ -68,6 +85,17 @@ public class Transaction  {
         em.close();
     }
 
+    public static boolean isValidTransaction(Transaction transaction){
+        double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
+        if(transaction.getFrom().getUserGroup().getValue() - transaction.getValue() < minValue){
+            if (!transaction.getFrom().hasPermission(Key.GO_UNDER_MIN)) return false;
+        }
+        if(transaction.getTo().getUserGroup().getValue() - transaction.getValue() < minValue){
+            return transaction.getTo().hasPermission(Key.GO_UNDER_MIN);
+        }
+        return true;
+    }
+
     private static void setValue(UserGroup transaction,double value){
         try {
             Method method = UserGroup.class.getDeclaredMethod("setValue", double.class);
@@ -78,7 +106,7 @@ public class Transaction  {
         }
     }
 
-    public static void doPurchaseTransaction(User customer,double value){
+    public static void doPurchaseTransaction(User customer,double value) throws AccessDeniedException {
         doTransaction(customer,User.getKernbeisserUser(),value,TransactionType.PURCHASE, "Einkauf vom " + LocalDate.now());
     }
 

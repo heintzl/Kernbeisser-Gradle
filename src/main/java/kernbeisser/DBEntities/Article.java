@@ -4,9 +4,11 @@ package kernbeisser.DBEntities;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -104,7 +106,7 @@ public class Article extends ArticleBase{
                                     .setMaxResults(maxResults)
                                     .getResultList();
         em.close();
-        return out;
+        return Proxy.getSecureInstances(out);
     }
 
     public static Article getByKbNumber(int kbNumber) {

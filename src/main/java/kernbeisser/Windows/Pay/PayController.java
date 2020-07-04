@@ -4,6 +4,7 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
@@ -27,9 +28,15 @@ public class PayController implements Controller<PayView,PayModel> {
         Purchase purchase;
         try {
             // FIXME why pass shoppingCart to model if it was initialized with it?
-            purchase = model.pay(model.getSaleSession(), model.getShoppingCart(),
-                                 model.shoppingCartSum());
-            model.print(purchase, view.getSelectedPrintService());
+
+            try {
+                purchase = model.pay(model.getSaleSession(), model.getShoppingCart(),
+                                     model.shoppingCartSum());
+                model.print(purchase, view.getSelectedPrintService());
+            } catch (AccessDeniedException e) {
+                view.notEnoughValue();
+            }
+
         } catch (PersistenceException e) {
             Tools.showUnexpectedErrorWarning(e);
         }

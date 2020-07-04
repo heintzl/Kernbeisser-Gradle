@@ -7,6 +7,7 @@ import kernbeisser.Enums.Key;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Main;
+import kernbeisser.Security.PermissionSet;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -35,6 +36,7 @@ public class LogInModel implements Model {
             if ( BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
                 if(!user.hasPermission(Key.ACTION_LOGIN))throw new PermissionRequired();
                 loggedIn = user;
+                PermissionSet.loadPermission(user.getPermissions());
                 Main.logger.info("User with user id ["+user.getId()+"] has logged in");
             } else {
                 throw new AccessDeniedException();

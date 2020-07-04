@@ -2,8 +2,13 @@ package kernbeisser.Useful;
 
 import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
+import kernbeisser.Security.AccessConsumer;
+import kernbeisser.Security.Proxy;
+import org.apache.commons.beanutils.BeanUtils;
+import sun.misc.Unsafe;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -13,9 +18,7 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -189,7 +192,7 @@ public class Tools {
         List<T> out = em.createQuery("select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
                         .getResultList();
         em.close();
-        return out;
+        return Proxy.getSecureInstances(out);
     }
 
     public static <T> T mergeWithoutId(T in) {
@@ -221,17 +224,28 @@ public class Tools {
     }
 
     public static <T> T mergeWithoutId(T in, T toOverride) {
-        for (Field field : toOverride.getClass().getDeclaredFields()) {
-            if (field.getAnnotation(Id.class) == null) {
-                field.setAccessible(true);
+        try {
+            long before = getId(in);
+            BeanUtils.copyProperties(toOverride,in);
+            setId(in,before);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return toOverride;
+    }
+
+    private static <T> long getId(T in) {
+        for (Field declaredField : in.getClass().getDeclaredFields()) {
+            if(declaredField.getAnnotation(Id.class)!=null){
+                declaredField.setAccessible(true);
                 try {
-                    field.set(toOverride, field.get(in));
+                    return ((Number) declaredField.get(in)).longValue();
                 } catch (IllegalAccessException e) {
-                    Tools.showUnexpectedErrorWarning(e);
+                    e.printStackTrace();
                 }
             }
         }
-        return toOverride;
+        return Long.MIN_VALUE;
     }
 
     public static long tryParseLong(String s) {
@@ -252,10 +266,10 @@ public class Tools {
 
     public static <T> void delete(Class<T> t, Object key) {
         runInSession(em -> em.remove(em.find(t, key)));
-     }
+    }
 
     public static <T> void edit(Object key, T to) {
-      runInSession(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
+        runInSession(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
     }
 
     public static void runInSession(Consumer<EntityManager> dbAction) {
@@ -319,7 +333,9 @@ public class Tools {
     }
 
     public static <T> T removeLambda(T from,Supplier<T> original){
-        return Tools.overwrite(original.get(),from);
+        T out = original.get();
+        copyInto(from,out);
+        return out;
     }
 
 
@@ -333,19 +349,10 @@ public class Tools {
         em.close();
     }
 
-    public static <T> void persist(T[] value){
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        for (T t : value) {
-            em.persist(t);
-        }
-        em.flush();
-        et.commit();
-        em.close();
-    }
+    public static int error = 0;
 
     public static void showHint(JComponent component){
+        if(!component.isEnabled())return;
         Color originalColor = component.getForeground();
         Color originalBackgroundColor = component.getBackground();
         component.addFocusListener(new FocusAdapter() {
@@ -356,15 +363,6 @@ public class Tools {
                 e.getComponent().removeFocusListener(this);
             }
         });
-        ToolTipManager.sharedInstance().mouseMoved(new MouseEvent(
-                component,
-                MouseEvent.MOUSE_MOVED,
-                System.currentTimeMillis(),
-                0,
-                10,
-                10,
-                0,
-                false));
         if(((JTextComponent)component).getText().replace(" ","").equals(""))
             component.setBackground(new Color(0xFF9999));
         else component.setForeground(new Color(0xFF00000));
@@ -382,6 +380,97 @@ public class Tools {
             }
         }
         return result;
+    }
+
+    public static void copyInto(Object source,Object destination){
+        Class<?> clazz = source.getClass();
+        boolean isProxy = Proxy.isProxyInstance(source);
+        while (!clazz.equals(Object.class)) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if(isProxy && field.getName().equals("handler"))continue;
+                field.setAccessible(true);
+                try {
+                    field.set(destination, field.get(source));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+    }
+
+
+    private static final Unsafe unsafe = createUnsafe();
+
+    private static Unsafe createUnsafe() {
+        Field f;
+        try {
+            f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            return (Unsafe) f.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    //I don't know if we should use Java Unsafe like the name already says ...
+    public static <T> T clone(T object) {
+        Class<?> clazz = object.getClass();
+        T instance = null;
+        try {
+            instance = (T) unsafe.allocateInstance(clazz);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+        while (!clazz.equals(Object.class)) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if(Modifier.isStatic(field.getModifiers()))continue;
+                if(Modifier.isFinal(field.getModifiers()))continue;
+                field.setAccessible(true);
+                try {
+                    field.set(instance, field.get(object));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return instance;
+    }
+
+    public static <T> T createWithoutConstructor(Class<T> clazz){
+        try {
+            return (T) unsafe.allocateInstance(clazz);
+        } catch (InstantiationException e) {
+            Tools.showUnexpectedErrorWarning(e);
+            return null;
+        }
+    }
+
+    public static void invokeWithDefault(AccessConsumer<Object> consumer) throws AccessDeniedException {
+        Object[] primitiveObjects = new Object[]{
+                null,
+                (int)0,
+                (long)0,
+                (double)0,
+                (float)0,
+                (char)0,
+                (byte)0,
+                (short)0,
+                false,
+                };
+        for (Object primitiveObject : primitiveObjects) {
+            try {
+                consumer.accept(primitiveObject);
+                return;
+            }catch (NullPointerException | ClassCastException ignored ){}
+        }
+    }
+
+    public static StackTraceElement getCallerStackTraceElement(int above){
+        return Thread.currentThread().getStackTrace()[2+above];
     }
 
     public static void activateKeyboardListener() {

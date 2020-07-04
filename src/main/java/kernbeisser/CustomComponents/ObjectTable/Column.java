@@ -1,6 +1,8 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
 import kernbeisser.Enums.Key;
+import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Security.PermissionSet;
 import kernbeisser.Windows.LogIn.LogInModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +75,7 @@ public interface Column<T> {
     static <T> Column<T> create(String s, Function<T,Object> v, Consumer<T> action, Key... keys) {
 
         return new Column<T>() {
-            boolean read = LogInModel.getLoggedIn().hasPermission(keys);
+            final boolean read = PermissionSet.hasPermissions(keys);
 
             @Override
             public String getName() {
@@ -96,7 +98,7 @@ public interface Column<T> {
     @Contract(value = "_, _, _ -> new", pure = true)
     static <T> Column<T> create(String s, Function<T,Object> v, Key... keys) {
         return new Column<T>() {
-            boolean read = LogInModel.getLoggedIn().hasPermission(keys);
+            final boolean read = PermissionSet.hasPermissions(keys);
 
             @Override
             public String getName() {
@@ -112,8 +114,12 @@ public interface Column<T> {
 
     String getName();
 
-    Object getValue(T t);
+    Object getValue(T t) throws AccessDeniedException;
 
     default void onAction(T t) {
+    }
+
+    default boolean isEditable(T t){
+        return false;
     }
 }

@@ -3,8 +3,10 @@ package kernbeisser.StartUp.DataImport;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
+import kernbeisser.Security.PermissionSet;
 import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
@@ -136,6 +138,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                     new Thread(() -> {
                         Permission keyPermission = new Permission();
                         keyPermission.getKeySet().add(Key.ACTION_LOGIN);
+                        keyPermission.getKeySet().add(Key.GO_UNDER_MIN);
                         Tools.persist(keyPermission);
                         view.setUserProgress(0);
                         parseJobs(jobs);
@@ -212,10 +215,12 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 Tools.persist(users[0]);
                 if(!users[1].getFirstName().equals(""))
                 Tools.persist(users[1]);
+                PermissionSet.addPermission(Key.GO_UNDER_MIN);
                 Transaction.doTransaction(User.getKernbeisserUser(),users[0],Users.getValue(rawUserData),TransactionType.INITIALIZE,"Übertrag des Guthaben des alten Kernbeisser Programmes");
+                PermissionSet.removePermission(Key.GO_UNDER_MIN);
             }
             view.setUserProgress(4);
-        } catch (IOException e) {
+        } catch (IOException | AccessDeniedException e) {
             Tools.showUnexpectedErrorWarning(e);
         }
     }

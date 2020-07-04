@@ -9,14 +9,16 @@ import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
+import javax.jws.soap.SOAPBinding;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
 
 public class CashierShoppingMaskView implements View<CashierShoppingMaskController> {
     private JPanel main;
     private SearchBoxView<User> searchBoxView;
     private PermissionButton openShoppingMask;
-    private JTextField secondSellerUsername;
+    private kernbeisser.CustomComponents.PermissionComboBox<User> secondSellerUsername;
 
     private final CashierShoppingMaskController controller;
 
@@ -36,8 +38,8 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
         openShoppingMask.setText("Einkauf für "+username+" beginnen");
     }
 
-    String getSecondSellerUsername(){
-        return secondSellerUsername.getText();
+    public User getSecondSeller(){
+        return (User) secondSellerUsername.getSelectedItem();
     }
 
     public void setOpenShoppingMaskEnabled(boolean b) {
@@ -64,11 +66,11 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
         return FontAwesome.SHOPPING_CART;
     }
 
-    public void usernameNotFound() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Der eingegebene zusatz Ladendient kann nicht gefunden werden,\nda kein Nutzer mit dem Benutzernamen "+getSecondSellerUsername()+" existiert!","Kein Nutzer gefunden!",JOptionPane.ERROR_MESSAGE);
-    }
-
-    public void setSecondUsername(String username) {
-        secondSellerUsername.setText(username);
+    public void setAllSecondarySellers(Collection<User> users){
+        secondSellerUsername.removeAllItems();
+        User user = new User();
+        user.setUsername("Keiner");
+        secondSellerUsername.addItem(user);
+        users.forEach(e -> secondSellerUsername.addItem(e));
     }
 }
