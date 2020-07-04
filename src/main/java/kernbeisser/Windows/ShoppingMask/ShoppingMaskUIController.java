@@ -196,7 +196,12 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     void openSearchWindow() {
-        new ArticleSelectorController(view::loadItemStats).openAsWindow(view.getWindow(),SubWindow::new);
+        new ArticleSelectorController(this::searchWindowResult).openAsWindow(view.getWindow(),SubWindow::new);
+    }
+
+    void searchWindowResult(Article article) {
+        view.setOptArticleNo();
+        view.loadItemStats(article);
     }
 
     void editUserAction() {
