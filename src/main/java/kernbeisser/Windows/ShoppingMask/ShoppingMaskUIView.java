@@ -114,6 +114,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         keyCapture = new KeyCapture();
         keyCapture.add(KeyEvent.VK_F2, () -> setAmount("2"));
         keyCapture.add(KeyEvent.VK_F3, () -> setAmount("3"));
+        keyCapture.add(KeyEvent.VK_F4, () -> setAmount("4"));
+        keyCapture.add(KeyEvent.VK_F5, () -> setAmount("5"));
+        keyCapture.add(KeyEvent.VK_F6, () -> setAmount("6"));
+        keyCapture.add(KeyEvent.VK_F7, () -> setAmount("8"));
+        keyCapture.add(KeyEvent.VK_F8, () -> setAmount("10"));
+        keyCapture.add(KeyEvent.VK_INSERT, () -> optProduce.doClick());
+        keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
+        keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
     }
 
     private void doCancel() {}
