@@ -16,7 +16,7 @@ import javax.persistence.Persistence;
 import java.util.HashMap;
 
 public class DBConnection {
-
+    
     private static EntityManagerFactory entityManagerFactory = null;
 
     public static boolean tryLogIn(String url, String username, String password) {
@@ -35,19 +35,20 @@ public class DBConnection {
         }
     }
 
+    private static final Object DB_LOGIN_LOCK = new Object();
     public static void logInWithConfig() {
-        Object lock = new Object();
-        synchronized (lock) {
-            String[] conf = ConfigManager.getDBAccessData();
-            if (!tryLogIn(conf[0], conf[1], conf[2])) {
-                new DBLogInController().openAsWindow(Window.NEW_VIEW_CONTAINER, JFrameWindow::new).addCloseEventListener(e -> lock.notify());
+        String[] conf = ConfigManager.getDBAccessData();
+        if (!tryLogIn(conf[0], conf[1], conf[2])) {
+            synchronized (DB_LOGIN_LOCK){
+                new DBLogInController().openAsWindow(Window.NEW_VIEW_CONTAINER, JFrameWindow::new).addCloseEventListener(e -> DB_LOGIN_LOCK.notify());
+            }
+            synchronized (DB_LOGIN_LOCK){
                 try {
-                    lock.wait();
+                    DB_LOGIN_LOCK.wait();
                 } catch (InterruptedException e) {
-                    Tools.showUnexpectedErrorWarning(e);
+                    e.printStackTrace();
                 }
             }
-
         }
     }
 
@@ -82,6 +83,10 @@ public class DBConnection {
         Setting.DB_INITIALIZED.setValue(false);
         Setting.INFO_LINE_LAST_CATALOG.setValue(Setting.INFO_LINE_LAST_CATALOG.getDefaultValue());
         Main.logger.info("DB update complete");
+    }
+
+    public static boolean isInitialized() {
+        return entityManagerFactory != null;
     }
 }
 
