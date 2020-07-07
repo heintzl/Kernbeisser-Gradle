@@ -2,160 +2,68 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kernbeisser.Windows.Pay.PayView">
   <grid id="27dc6" binding="main" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="114" y="35" width="470" height="520"/>
+      <xy x="20" y="20" width="500" height="400"/>
     </constraints>
-    <properties>
-      <alignmentX value="0.5"/>
-    </properties>
-    <clientProperties>
-      <html.disable class="java.lang.Boolean" value="false"/>
-    </clientProperties>
+    <properties/>
     <border type="none"/>
     <children>
-      <grid id="ad71e" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <component id="834f" class="javax.swing.JLabel">
+        <constraints border-constraint="North"/>
+        <properties>
+          <font size="16" style="1"/>
+          <foreground color="-12828928"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <text value="Abrechnung"/>
+        </properties>
+      </component>
+      <grid id="8e150" binding="shoppingListPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties>
+          <background color="-1"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <nested-form id="db9fd" form-file="kernbeisser/CustomComponents/ShoppingTable/ShoppingCartView.form" binding="shoppingCartView" custom-create="true">
+            <constraints border-constraint="Center"/>
+          </nested-form>
+        </children>
+      </grid>
+      <grid id="ed358" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints border-constraint="South"/>
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="4561f" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+          <component id="fd63d" class="javax.swing.JCheckBox" binding="printReceipt">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="83d13" class="javax.swing.JButton" binding="cancel">
-                <constraints/>
-                <properties>
-                  <foreground color="-4490175"/>
-                  <text value="Abrechen"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-          <grid id="1cb6d" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="2">
+            <properties>
+              <text value="Bon drucken"/>
+            </properties>
+          </component>
+          <component id="ef0da" class="javax.swing.JButton" binding="cancel">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="32fc9" class="javax.swing.JButton" binding="commitPayment">
-                <constraints/>
-                <properties>
-                  <foreground color="-10634437"/>
-                  <text value="Bezahlen"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-        </children>
-      </grid>
-      <component id="8b824" class="javax.swing.JLabel">
-        <constraints border-constraint="North"/>
-        <properties>
-          <font name="Fira Code Medium" size="16" style="1"/>
-          <foreground color="-15811840"/>
-          <horizontalAlignment value="0"/>
-          <horizontalTextPosition value="11"/>
-          <text value="Abbrechnung"/>
-        </properties>
-      </component>
-      <grid id="d9b06" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
-        <constraints border-constraint="Center"/>
-        <properties/>
-        <border type="none">
-          <title-color color="-4473925"/>
-        </border>
-        <children>
-          <grid id="35762" layout-manager="GridLayoutManager" row-count="7" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints/>
             <properties>
-              <preferredSize width="200" height="400"/>
+              <text value="Abbrechen"/>
             </properties>
-            <border type="none" title="Bon"/>
-            <children>
-              <component id="3b8f9" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Bon ausdrucken?"/>
-                </properties>
-              </component>
-              <hspacer id="c05ee">
-                <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </hspacer>
-              <vspacer id="eaea1">
-                <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </vspacer>
-              <component id="6a41d" class="javax.swing.JRadioButton" binding="printBon">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Ja"/>
-                </properties>
-              </component>
-              <component id="85b08" class="javax.swing.JRadioButton" binding="printNoBon">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Nein"/>
-                </properties>
-              </component>
-              <component id="20df9" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Papier Format"/>
-                </properties>
-              </component>
-              <component id="2b96c" class="javax.swing.JComboBox" binding="paperFormat">
-                <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="8289a" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Drucker"/>
-                </properties>
-              </component>
-              <component id="c95a8" class="javax.swing.JComboBox" binding="printers">
-                <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-              </component>
-            </children>
-          </grid>
-          <scrollpane id="17610">
-            <constraints/>
+          </component>
+          <component id="37fae" class="javax.swing.JButton" binding="commitPayment">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
             <properties>
-              <preferredSize width="200" height="400"/>
+              <text value="Bezahlen"/>
             </properties>
-            <border type="none" title="Warenkorb"/>
-            <children>
-              <component id="c8447" class="kernbeisser.CustomComponents.ObjectTable.ObjectTable" binding="shoppingCart" custom-create="true">
-                <constraints/>
-                <properties>
-                  <preferredScrollableViewportSize width="200" height="393"/>
-                </properties>
-              </component>
-            </children>
-          </scrollpane>
+          </component>
+          <hspacer id="15d93">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
         </children>
       </grid>
     </children>
