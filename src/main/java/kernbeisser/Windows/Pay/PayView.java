@@ -25,7 +25,6 @@ public class PayView implements View<PayController> {
     private JCheckBox printReceipt;
     private JButton commitPayment;
     private JButton cancel;
-    private ObjectTable<ShoppingItem> shoppingCart;
     private ShoppingCartController shoppingCartController;
 
 
@@ -35,15 +34,11 @@ public class PayView implements View<PayController> {
     }
 
     private void createUIComponents() {
-        shoppingCart = new ObjectTable<>(
-                Column.create("Name", ShoppingItem::getName),
-                Column.create("Anzahl", ShoppingItem::getItemMultiplier),
-                Column.create("Preis", e -> controller.getPrice(e)  + "€")
-        );
+        shoppingCartView = shoppingCartController.getInitializedView();
     }
 
     public void fillShoppingCart(List<ShoppingItem> items) {
-        //TODO
+        items.forEach(e -> shoppingCartController.addShoppingItem(e,false));
     }
 
     @Override
