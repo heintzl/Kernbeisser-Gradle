@@ -190,7 +190,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     void startPay() {
-        new PayController(null, model.getSaleSession(), shoppingCartController.getItems(), () -> {
+        new PayController(model.getSaleSession(), shoppingCartController.getItems(), () -> {
             getView().back();
         }).openAsWindow(view.getWindow(), SubWindow::new);
     }

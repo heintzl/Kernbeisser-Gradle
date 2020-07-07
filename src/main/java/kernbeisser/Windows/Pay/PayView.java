@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class PayView implements View<PayController> {
-    private final PayController controller;
     private JPanel main;
     private JPanel shoppingListPanel;
     private ShoppingCartView shoppingCartView;
@@ -25,11 +24,10 @@ public class PayView implements View<PayController> {
     private JCheckBox printReceipt;
     private JButton commitPayment;
     private JButton cancel;
-    private ShoppingCartController shoppingCartController;
+    private final ShoppingCartController shoppingCartController;
 
 
-    public PayView(Window current, PayController payController, ShoppingCartController cartController) {
-        this.controller = payController;
+    public PayView(ShoppingCartController cartController) {
         this.shoppingCartController = cartController;
     }
 

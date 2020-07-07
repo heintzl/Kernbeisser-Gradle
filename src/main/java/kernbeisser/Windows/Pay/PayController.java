@@ -19,10 +19,10 @@ public class PayController implements Controller<PayView,PayModel> {
     private final PayModel model;
     private final PayView view;
 
-    public PayController(Window current, SaleSession saleSession, List<ShoppingItem> shoppingCart,
+    public PayController(SaleSession saleSession, List<ShoppingItem> shoppingCart,
                          Runnable transferCompleted) {
         model = new PayModel(saleSession, shoppingCart, transferCompleted);
-        view = new PayView(current, this, new ShoppingCartController(saleSession.getCustomer().getUserGroup().getValue(),saleSession.getCustomer().getSolidaritySurcharge()));
+        view = new PayView(new ShoppingCartController(saleSession.getCustomer().getUserGroup().getValue(),saleSession.getCustomer().getSolidaritySurcharge()));
     }
 
     void commitPayment(boolean printReceipt) {
