@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.print.PrintService;
 import javax.swing.*;
 import java.util.Collection;
+import java.util.List;
 
 public class PayView implements View<PayController> {
     private final PayController controller;
@@ -41,6 +42,9 @@ public class PayView implements View<PayController> {
         );
     }
 
+    public void fillShoppingCart(List<ShoppingItem> items) {
+        //TODO
+    }
 
     @Override
     public void initialize(PayController controller) {

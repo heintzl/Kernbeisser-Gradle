@@ -106,7 +106,7 @@ public class PayModel implements Model<PayController> {
         return PrintServiceLookup.lookupPrintServices(null, null);
     }
 
-    void print(Purchase purchase, PrintService printService) {
+    void print(Purchase purchase) {
         try {
             ReportManager invoice = new ReportManager();
             invoice.initInvoicePrint(shoppingCart, purchase);

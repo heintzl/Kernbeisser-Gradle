@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Pay;
 
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -21,10 +22,10 @@ public class PayController implements Controller<PayView,PayModel> {
     public PayController(Window current, SaleSession saleSession, List<ShoppingItem> shoppingCart,
                          Runnable transferCompleted) {
         model = new PayModel(saleSession, shoppingCart, transferCompleted);
-        view = new PayView(current, this);
+        view = new PayView(current, this, new ShoppingCartController(saleSession.getCustomer().getUserGroup().getValue(),saleSession.getCustomer().getSolidaritySurcharge()));
     }
 
-    void commitPayment() {
+    void commitPayment(boolean printReceipt) {
         Purchase purchase;
         try {
             // FIXME why pass shoppingCart to model if it was initialized with it?
@@ -32,7 +33,7 @@ public class PayController implements Controller<PayView,PayModel> {
             try {
                 purchase = model.pay(model.getSaleSession(), model.getShoppingCart(),
                                      model.shoppingCartSum());
-                model.print(purchase, view.getSelectedPrintService());
+                if (printReceipt) {model.print(purchase);}
             } catch (AccessDeniedException e) {
                 view.notEnoughValue();
             }
@@ -59,8 +60,6 @@ public class PayController implements Controller<PayView,PayModel> {
     @Override
     public void fillUI() {
         view.fillShoppingCart(model.getShoppingCart());
-        view.setPrintServices(model.getAllPrinters());
-        view.setSelectedPrintService(model.getDefaultPrinter());
     }
 
     @Override
