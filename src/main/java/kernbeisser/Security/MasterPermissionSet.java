@@ -13,6 +13,10 @@ import java.util.Collection;
  */
 
 public final class MasterPermissionSet {
+
+    /**
+     * the java option for a c++ bitfield
+     */
     private static final long[] bits = new long[((PermissionKey.values().length / Long.SIZE) + 1)];
 
 
@@ -73,5 +77,13 @@ public final class MasterPermissionSet {
             if(!hasPermission(key))return false;
         }
         return true;
+    }
+
+    /**
+     * enables / disable all bits(Permissions)
+     * @param b the value which the values become set
+     */
+    public static void setAllBits(boolean b){
+        Arrays.fill(bits, b ? -1L : 0);
     }
 }

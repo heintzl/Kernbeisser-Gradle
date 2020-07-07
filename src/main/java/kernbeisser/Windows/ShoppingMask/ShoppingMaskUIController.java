@@ -66,19 +66,19 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     boolean addToShoppingCart() {
+        //removed success variable sry for changing your code but I think it's not
+        //good to have a return statement after the function already returned a value
         boolean piece = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
-        boolean success = false;
         try {
             ShoppingItem item = extractShoppingItemFromUI();
             if (item.getItemMultiplier() != 0 && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece) )) {
                 shoppingCartController.addShoppingItem(item, piece);
-                success = true;
+                return true;
             }
+            return false;
         } catch (UndefinedInputException undefinedInputException) {
             view.noArticleFound();
             return false;
-        } finally {
-            return success;
         }
     }
 

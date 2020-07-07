@@ -98,6 +98,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
     }
 
     void importData() {
+        MasterPermissionSet.setAllBits(true);
         if (isValidDataSource()) {
             Main.logger.info("Starting importing data");
             File jsonPath = new File(view.getFilePath()).getParentFile();
@@ -144,6 +145,7 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             }
             if (view.createStandardAdmin()) createAdmin();
         }
+        MasterPermissionSet.setAllBits(false);
     }
 
     private void createAdmin(){

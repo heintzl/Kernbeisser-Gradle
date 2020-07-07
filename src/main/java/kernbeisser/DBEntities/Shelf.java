@@ -28,5 +28,4 @@ public class Shelf {
     @Getter(onMethod_= {@Key(PermissionKey.SHELF_ARTICLES_READ)})
     @Setter(onMethod_= {@Key(PermissionKey.SHELF_ARTICLES_WRITE)})
     private Set<Article> articles = new HashSet<>();
-
 }
