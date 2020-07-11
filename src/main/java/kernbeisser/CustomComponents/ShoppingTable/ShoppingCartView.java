@@ -23,8 +23,13 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     private JLabel value;
     private JPanel main;
     private ObjectTable<ShoppingItem> shoppingItems;
-    ShoppingCartView(ShoppingCartController controller) {
+    private JLabel headerDelete;
+    private boolean editable;
+    ShoppingCartView(ShoppingCartController controller, boolean editable) {
         this.controller = controller;
+        this.editable = editable;
+        headerDelete.setVisible(editable);
+
     }
 
     void setObjects(Collection<ShoppingItem> items) {
@@ -91,16 +96,22 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
                     JLabel amount = new JLabel(e.getItemMultiplier() + e.getMetricUnits().getShortName());
                     amount.setFont(gridFont);
                     amount.setHorizontalAlignment(SwingConstants.RIGHT);
+                    if (!editable) {amount.setBorder(new EmptyBorder(0,0,0,20));}
                     return amount;
-                }),
-                Column.create("delete", (e) -> new JPanel() {
-                    @Override
-                    public void paint(Graphics g) {
-                        g.drawImage(IconFontSwing.buildImage(FontAwesome.TRASH, size + 5, Color.RED),
-                                    (getWidth() / 2) - (size / 2), 3, null);
-                    }
-                }, controller::delete)
+                })
         );
+
+        if (editable) {
+            shoppingItems.addColumn(
+                    Column.create("delete", (e) -> new JPanel() {
+                        @Override
+                        public void paint(Graphics g) {
+                            g.drawImage(IconFontSwing.buildImage(FontAwesome.TRASH, size + 5, Color.RED),
+                                        (getWidth() / 2) - (size / 2), 3, null);
+                        }
+                    }, controller::delete));
+        }
+
         shoppingItems.setRowHeight(size + 10);
         shoppingItems.setGridColor(Color.WHITE);
         shoppingItems.setComplex(true);

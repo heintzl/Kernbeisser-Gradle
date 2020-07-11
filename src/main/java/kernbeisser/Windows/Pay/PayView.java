@@ -2,68 +2,58 @@ package kernbeisser.Windows.Pay;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.View;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.print.PrintService;
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
+import java.util.List;
 
-public class PayView implements View<PayController> {
-    private final PayController controller;
+public class PayView extends JPanel implements View<PayController> {
     private JPanel main;
+    private JPanel shoppingListPanel;
+    private ShoppingCartView shoppingCartView;
+
+    private JCheckBox printReceipt;
     private JButton commitPayment;
-    private JRadioButton printBon;
-    private JRadioButton printNoBon;
-    private JComboBox paperFormat;
-    private JComboBox<PrintService> printers;
     private JButton cancel;
-    private ObjectTable<ShoppingItem> shoppingCart;
+    private final ShoppingCartController shoppingCartController;
 
 
-    public PayView(Window current, PayController payController) {
-        this.controller = payController;
-    }
-
-    PrintService getSelectedPrintService() {
-        return printers.getItemAt(printers.getSelectedIndex());
-    }
-
-    void setSelectedPrintService(PrintService printService) {
-        printers.setSelectedItem(printService);
-    }
-
-    void setPrintServices(PrintService[] printServices) {
-        printers.removeAllItems();
-        for (PrintService service : printServices) {
-            printers.addItem(service);
-        }
-    }
-
-    void fillShoppingCart(Collection<ShoppingItem> items) {
-        shoppingCart.setObjects(items);
+    public PayView(ShoppingCartController cartController) {
+        this.shoppingCartController = cartController;
     }
 
     private void createUIComponents() {
-        shoppingCart = new ObjectTable<>(
-                Column.create("Name", ShoppingItem::getName),
-                Column.create("Anzahl", ShoppingItem::getItemMultiplier),
-                Column.create("Preis", e -> controller.getPrice(e)  + "€")
-        );
+        shoppingCartView = shoppingCartController.getInitializedView();
     }
 
+    public void fillShoppingCart(List<ShoppingItem> items) {
+        items.forEach(e -> shoppingCartController.addShoppingItem(e,false));
+    }
+
+    void setViewSize(Dimension size) {
+        this.setSize(size);
+    }
 
     @Override
     public void initialize(PayController controller) {
+        printReceipt.setSelected(true);
         commitPayment.addActionListener(e -> {
-            controller.commitPayment();
+            controller.commitPayment(printReceipt.isSelected());
         });
         cancel.addActionListener(e -> {
             this.back();
         });
+        shoppingCartController.fillUI();
     }
 
     @Override

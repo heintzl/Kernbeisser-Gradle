@@ -14,9 +14,9 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     private ShoppingCartView view;
     private ShoppingCartModel model;
 
-    public ShoppingCartController(double userValue, double userSurcharge) {
+    public ShoppingCartController(double userValue, double userSurcharge, boolean editable) {
         model = new ShoppingCartModel(userValue, userSurcharge);
-        view = new ShoppingCartView(this);
+        view = new ShoppingCartView(this, editable);
     }
 
     public void addShoppingItem(ShoppingItem item, boolean piece) {

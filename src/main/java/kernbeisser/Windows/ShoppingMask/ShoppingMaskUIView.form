@@ -728,6 +728,7 @@
                     <constraints border-constraint="South"/>
                     <properties>
                       <autoscrolls value="true"/>
+                      <maximumSize width="32767" height="40"/>
                     </properties>
                     <border type="none"/>
                     <children>
