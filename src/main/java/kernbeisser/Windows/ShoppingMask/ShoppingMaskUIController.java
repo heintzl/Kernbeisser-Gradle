@@ -16,6 +16,7 @@ import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.text.MessageFormat;
 
 
@@ -28,7 +29,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         model = new ShoppingMaskModel(saleSession);
         this.shoppingCartController = new ShoppingCartController(model.getValue(), model.getSaleSession()
                                                                                         .getCustomer()
-                                                                                        .getSolidaritySurcharge());
+                                                                                        .getSolidaritySurcharge(), true);
         shoppingCartController.initView();
         this.view = new ShoppingMaskUIView(this, shoppingCartController);
     }
@@ -192,7 +193,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     void startPay() {
         new PayController(model.getSaleSession(), shoppingCartController.getItems(), () -> {
             getView().back();
-        }).openAsWindow(view.getWindow(), SubWindow::new);
+        }, new Dimension(view.getShoppingListSize().width, view.getContent().getHeight())).openAsWindow(view.getWindow(), SubWindow::new);
     }
 
     void openSearchWindow() {

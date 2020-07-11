@@ -12,17 +12,20 @@ import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.PersistenceException;
+import java.awt.*;
 import java.util.List;
 
 public class PayController implements Controller<PayView,PayModel> {
 
     private final PayModel model;
     private final PayView view;
+    private final Dimension viewSize;
 
     public PayController(SaleSession saleSession, List<ShoppingItem> shoppingCart,
-                         Runnable transferCompleted) {
+                         Runnable transferCompleted, Dimension windowSize) {
         model = new PayModel(saleSession, shoppingCart, transferCompleted);
-        view = new PayView(new ShoppingCartController(saleSession.getCustomer().getUserGroup().getValue(),saleSession.getCustomer().getSolidaritySurcharge()));
+        view = new PayView(new ShoppingCartController(saleSession.getCustomer().getUserGroup().getValue(),saleSession.getCustomer().getSolidaritySurcharge(), false));
+        this.viewSize = windowSize;
     }
 
     void commitPayment(boolean printReceipt) {
@@ -59,6 +62,7 @@ public class PayController implements Controller<PayView,PayModel> {
 
     @Override
     public void fillUI() {
+        view.setViewSize(viewSize);
         view.fillShoppingCart(model.getShoppingCart());
     }
 

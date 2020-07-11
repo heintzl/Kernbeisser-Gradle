@@ -13,10 +13,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.print.PrintService;
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 import java.util.List;
 
-public class PayView implements View<PayController> {
+public class PayView extends JPanel implements View<PayController> {
     private JPanel main;
     private JPanel shoppingListPanel;
     private ShoppingCartView shoppingCartView;
@@ -39,8 +40,13 @@ public class PayView implements View<PayController> {
         items.forEach(e -> shoppingCartController.addShoppingItem(e,false));
     }
 
+    void setViewSize(Dimension size) {
+        this.setSize(size);
+    }
+
     @Override
     public void initialize(PayController controller) {
+        printReceipt.setSelected(true);
         commitPayment.addActionListener(e -> {
             controller.commitPayment(printReceipt.isSelected());
         });

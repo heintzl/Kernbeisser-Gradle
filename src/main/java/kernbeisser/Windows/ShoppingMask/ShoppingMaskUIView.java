@@ -430,6 +430,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         return optTaxLow.isSelected() ? VAT.LOW : VAT.HIGH;
     }
 
+    Dimension getShoppingListSize() {return shoppingListPanel.getSize();}
     public Controller getController() {
         return controller;
     }
