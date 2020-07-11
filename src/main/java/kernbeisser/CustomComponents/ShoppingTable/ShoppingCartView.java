@@ -32,7 +32,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
 
     }
 
-    void setObjects(Collection<ShoppingItem> items) {
+    public void setObjects(Collection<ShoppingItem> items) {
         shoppingItems.setObjects(items);
     }
 

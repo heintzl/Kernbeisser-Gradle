@@ -88,6 +88,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private JLabel articleAmountLabel;
     private JPanel productTypePanel;
     private JPanel reductionPanel;
+    private JButton emptyShoppingCart;
     private ButtonGroup optGrpArticleType;
     private ButtonGroup optGrpReduction;
 
@@ -124,7 +125,9 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
     }
 
-    private void doCancel() {}
+    private void doCancel() {
+        controller.emptyShoppingCart();
+        back();}
 
     private void doCheckout() {
         controller.startPay();
@@ -438,6 +441,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     @Override
     public void initialize(ShoppingMaskUIController controller) {
         checkout.addActionListener(e -> doCheckout());
+        emptyShoppingCart.addActionListener(e -> controller.emptyShoppingCart());
         cancelSalesSession.addActionListener(e -> doCancel());
         searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
         searchArticle.addActionListener(e -> openSearchWindow());
