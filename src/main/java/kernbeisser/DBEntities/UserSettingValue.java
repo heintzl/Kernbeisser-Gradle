@@ -96,4 +96,14 @@ public class UserSettingValue {
         values = new HashMap<>(UserSetting.values().length);
         getAllForUser(user).forEach(e -> values.put(e.userSetting,e.value));
     }
+
+    @Override
+    public String toString() {
+        return "UserSettingValue{" +
+               "id=" + id +
+               ", user=" + user +
+               ", userSetting=" + userSetting +
+               ", value='" + value + '\'' +
+               '}';
+    }
 }

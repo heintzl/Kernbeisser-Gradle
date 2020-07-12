@@ -120,10 +120,8 @@ public class Proxy {
      * @return the SecurityHandler from the object
      */
     @SneakyThrows
-    public static SecurityHandler getHandler(Object o){
-        Field handler = o.getClass().getDeclaredField("handler");
-        handler.setAccessible(true);
-        return (SecurityHandler) handler.get(o);
+    public static MethodHandler getHandler(Object o){ ;
+        return ProxyFactory.getHandler((javassist.util.proxy.Proxy) o);
     }
 
 

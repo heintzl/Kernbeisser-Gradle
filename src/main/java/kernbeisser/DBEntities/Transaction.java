@@ -126,4 +126,6 @@ public class Transaction  {
     public static void doPurchaseTransaction(User customer,double value) throws AccessDeniedException {
         doTransaction(customer,User.getKernbeisserUser(),value,TransactionType.PURCHASE, "Einkauf vom " + LocalDate.now());
     }
+
+
 }

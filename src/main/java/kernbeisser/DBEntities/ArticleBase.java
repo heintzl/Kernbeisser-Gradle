@@ -4,6 +4,7 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 
@@ -98,5 +99,9 @@ public class ArticleBase {
         this.containerSize = other.containerSize;
         this.singleDeposit = other.singleDeposit;
         this.containerDeposit = other.containerDeposit;
+    }
+    @Override
+    public String toString(){
+        return Tools.decide(this::getName,"ArtikelBase["+id+"]");
     }
 }

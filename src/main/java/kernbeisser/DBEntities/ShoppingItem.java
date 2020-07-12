@@ -314,6 +314,6 @@ public class ShoppingItem implements Serializable {
 
     @Override
     public String toString() {
-        return name;
+        return Tools.decide(this::getName,"Einkaufsartikel["+siid+"]");
     }
 }

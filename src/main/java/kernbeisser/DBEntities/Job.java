@@ -67,4 +67,9 @@ public class Job {
         em.close();
         return out;
     }
+
+    @Override
+    public String toString() {
+        return Tools.decide(this::getName,"Job["+getJid()+"]");
+    }
 }

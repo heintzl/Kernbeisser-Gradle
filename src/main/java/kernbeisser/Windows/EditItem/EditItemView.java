@@ -1,9 +1,14 @@
 package kernbeisser.Windows.EditItem;
 
+import kernbeisser.CustomComponents.AccessChecking.AccessCheckBox;
+import kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox;
+import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
+import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.CustomComponents.Verifier.*;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
@@ -20,34 +25,45 @@ import java.util.Collection;
 public class EditItemView implements View<EditItemController> {
     private JButton commit;
     private JButton cancel;
-    private kernbeisser.CustomComponents.TextFields.PermissionField itemName;
-    private kernbeisser.CustomComponents.PermissionComboBox supplier;
-    private DoubleParseField netPrice;
-    private DoubleParseField deposit;
-    private IntegerParseField kbItemNumber;
-    private IntegerParseField supplierItemNumber;
-    private DoubleParseField crateDeposit;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,String> itemName;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article,Supplier> supplier;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Double> netPrice;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Double> deposit;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Integer> kbItemNumber;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Integer> supplierItemNumber;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Double> crateDeposit;
     private kernbeisser.CustomComponents.PermissionButton search;
-    private kernbeisser.CustomComponents.PermissionComboBox<PriceList> priceList;
-    private IntegerParseField amount;
-    private DoubleParseField containerSize;
-    private kernbeisser.CustomComponents.PermissionComboBox<MetricUnits> metricUnits;
-    private kernbeisser.CustomComponents.PermissionComboBox<ContainerDefinition> containerDefinition;
-    private kernbeisser.CustomComponents.TextFields.PermissionField barcode;
-    private kernbeisser.CustomComponents.PermissionCheckBox showInShoppingMask;
-    private kernbeisser.CustomComponents.PermissionCheckBox weighable;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article,PriceList> priceList;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Integer> amount;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Double> containerSize;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article,MetricUnits> metricUnits;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article,ContainerDefinition> containerDefinition;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Long> barcode;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckBox<Article> showInShoppingMask;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckBox<Article> weighable;
     private JTextArea extraInfo;
-    private kernbeisser.CustomComponents.PermissionComboBox<VAT> vat;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article,VAT> vat;
     private JPanel main;
 
+    private ObjectForm<Article> articleObjectForm;
+
     private void createUIComponents() {
-        amount = new IntegerParseField();
-        netPrice = new DoubleParseField();
-        deposit = new DoubleParseField();
-        kbItemNumber = new IntegerParseField();
-        supplierItemNumber = new IntegerParseField();
-        crateDeposit = new DoubleParseField();
-        containerSize = new DoubleParseField();
+        itemName = new AccessCheckingField<>(ArticleBase::getName,ArticleBase::setName,AccessCheckingField.NOT_NULL);
+        amount = new AccessCheckingField<>(ArticleBase::getAmount,ArticleBase::setAmount,AccessCheckingField.INT_FORMER);
+        netPrice = new AccessCheckingField<>(ArticleBase::getNetPrice,ArticleBase::setNetPrice,AccessCheckingField.DOUBLE_FORMER);
+        deposit = new AccessCheckingField<>(ArticleBase::getSingleDeposit,ArticleBase::setSingleDeposit,AccessCheckingField.DOUBLE_FORMER);
+        kbItemNumber = new AccessCheckingField<>(Article::getKbNumber,Article::setKbNumber,AccessCheckingField.INT_FORMER);
+        supplierItemNumber = new AccessCheckingField<>(ArticleBase::getSuppliersItemNumber,ArticleBase::setSuppliersItemNumber,AccessCheckingField.INT_FORMER);
+        crateDeposit = new AccessCheckingField<>(ArticleBase::getContainerDeposit,ArticleBase::setContainerDeposit,AccessCheckingField.DOUBLE_FORMER);
+        containerSize = new AccessCheckingField<>(ArticleBase::getContainerSize,ArticleBase::setContainerSize,AccessCheckingField.DOUBLE_FORMER);
+        supplier = new AccessCheckingComboBox<>(ArticleBase::getSupplier,ArticleBase::setSupplier);
+        priceList = new AccessCheckingComboBox<>(Article::getPriceList,Article::setPriceList);
+        metricUnits = new AccessCheckingComboBox<>(ArticleBase::getMetricUnits,ArticleBase::setMetricUnits);
+        containerDefinition = new AccessCheckingComboBox<>(Article::getContainerDef,Article::setContainerDef);
+        barcode = new AccessCheckingField<>(ArticleBase::getBarcode,ArticleBase::setBarcode,AccessCheckingField.LONG_FORMER);
+        showInShoppingMask = new AccessCheckBox<>(Article::isShowInShop,Article::setShowInShop);
+        weighable = new AccessCheckBox<>(Article::isWeighable,Article::setWeighable);
+        vat = new AccessCheckingComboBox<>(ArticleBase::getVat,ArticleBase::setVat);
     }
 
     void setUnits(MetricUnits[] metricUnits) {
@@ -81,49 +97,11 @@ public class EditItemView implements View<EditItemController> {
         }
     }
 
-    void pasteItem(Article article) {
-        itemName.setText(article.getName());
-        netPrice.setText(String.valueOf(article.getNetPrice()));
-        deposit.setText(String.valueOf(article.getSingleDeposit()));
-        kbItemNumber.setText(String.valueOf(article.getKbNumber()));
-        vat.setSelectedItem(article.getVat());
-        supplierItemNumber.setText(String.valueOf(article.getSuppliersItemNumber()));
-        crateDeposit.setText(String.valueOf(article.getContainerDeposit() ));
-        containerSize.setText(String.valueOf(article.getContainerSize()));
-        amount.setText(String.valueOf(article.getAmount()));
-        barcode.setText(String.valueOf(article.getBarcode()));
-        showInShoppingMask.setSelected(article.isShowInShop());
-        weighable.setSelected(article.isWeighable());
-        extraInfo.setText(article.getInfo());
-        priceList.setSelectedItem(article.getPriceList());
-        supplier.setSelectedItem(article.getSupplier());
-        containerDefinition.setSelectedItem(article.getContainerDef());
+
+    public ObjectForm<Article> getArticleObjectForm() {
+        return articleObjectForm;
     }
 
-    Article collectItem(Article out) {
-        out.setName(itemName.getText());
-        out.setNetPrice(netPrice.getSafeValue());
-        out.setSingleDeposit(deposit.getSafeValue());
-        out.setKbNumber(kbItemNumber.getSafeValue());
-        out.setVat((VAT) vat.getSelectedItem());
-        out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
-        out.setSuppliersItemNumber(supplierItemNumber.getSafeValue());
-        out.setContainerDeposit(crateDeposit.getSafeValue());
-        out.setContainerSize(containerSize.getSafeValue());
-        out.setAmount(amount.getSafeValue());
-        try {
-            out.setBarcode(Long.parseLong(barcode.getText()));
-        } catch (NumberFormatException e) {
-            out.setBarcode(null);
-        }
-        out.setShowInShop(showInShoppingMask.isSelected());
-        out.setWeighable(weighable.isSelected());
-        out.setInfo(extraInfo.getText());
-        out.setPriceList((PriceList) priceList.getSelectedItem());
-        out.setSupplier((Supplier) supplier.getSelectedItem());
-        out.setContainerDef((ContainerDefinition) containerDefinition.getSelectedItem());
-        return out;
-    }
 
     boolean kbNumberAlreadyExists() {
         return 0 == JOptionPane.showConfirmDialog(getTopComponent(), "Die Artikelnummer ist bereits vergeben soll die nächste freie Ausgewählt werden?");
@@ -137,24 +115,31 @@ public class EditItemView implements View<EditItemController> {
     public void initialize(EditItemController controller) {
         cancel.addActionListener((e) -> back());
         commit.addActionListener((e) -> controller.doAction());
-        itemName.setRequiredKeys(PermissionKey.ARTICLE_BASE_NAME_READ, PermissionKey.ARTICLE_BASE_NAME_WRITE);
         itemName.setInputVerifier(new NotNullVerifier());
-        amount.setRequiredKeys(PermissionKey.ARTICLE_BASE_AMOUNT_READ, PermissionKey.ARTICLE_BASE_AMOUNT_WRITE);
         amount.setInputVerifier(IntegerVerifier.from(0,Integer.MAX_VALUE));
         netPrice.setInputVerifier(DoubleVerifier.from(0.,999999));
-        supplier.setRequiredReadKeys(PermissionKey.ARTICLE_BASE_SUPPLIER_READ, PermissionKey.SUPPLIER_NAME_READ);
-        supplier.setRequiredWriteKeys(PermissionKey.ARTICLE_BASE_SUPPLIER_WRITE);
-        deposit.setRequiredKeys(PermissionKey.ARTICLE_BASE_SINGLE_DEPOSIT_READ, PermissionKey.ARTICLE_BASE_SINGLE_DEPOSIT_WRITE);
         deposit.setInputVerifier(DoubleVerifier.from(0,0.1,5,300));
         kbItemNumber.setInputVerifier(new KBNumberVerifier());
-        supplierItemNumber.setRequiredKeys(PermissionKey.ARTICLE_BASE_SUPPLIERS_ITEM_NUMBER_READ, PermissionKey.ARTICLE_BASE_SUPPLIERS_ITEM_NUMBER_WRITE);
         supplierItemNumber.setInputVerifier(IntegerVerifier.from(0,999999));
         crateDeposit.setInputVerifier(DoubleVerifier.from(0.,0.99,5,20));
-        priceList.setRequiredWriteKeys(PermissionKey.ARTICLE_PRICE_LIST_WRITE);
-        search.setRequiredWriteKeys(PermissionKey.ARTICLE_PRICE_LIST_WRITE);
-        containerDefinition.setRequiredKeys(PermissionKey.ARTICLE_CONTAINER_DEF_READ, PermissionKey.ARTICLE_CONTAINER_DEF_WRITE);
         containerSize.setInputVerifier(DoubleVerifier.from(0,0.1,40,1000));
-        showInShoppingMask.setRequiredReadKeys(PermissionKey.ARTICLE_SHOW_IN_SHOP_READ, PermissionKey.ARTICLE_SHOW_IN_SHOP_WRITE);
+        articleObjectForm = new ObjectForm<>(controller.getModel().getSource(),
+                                             itemName,
+                                             supplier,
+                                             netPrice,
+                                             deposit,
+                                             kbItemNumber,
+                                             supplierItemNumber,
+                                             crateDeposit,
+                                             priceList,
+                                             amount,
+                                             containerSize,
+                                             metricUnits,
+                                             containerDefinition,
+                                             barcode,
+                                             showInShoppingMask,
+                                             weighable
+        );
     }
 
     boolean validate(){
@@ -199,5 +184,9 @@ public class EditItemView implements View<EditItemController> {
 
     public void nameAlreadyExists() {
         JOptionPane.showMessageDialog(getTopComponent(), "Der gewählte Name ist bereits vergeben!\nBitte wählen sie einen anderen");
+    }
+
+    public void invalidInput() {
+        JOptionPane.showMessageDialog(getTopComponent(),"Bitte füllen sie alle Werte korrekt aus");
     }
 }

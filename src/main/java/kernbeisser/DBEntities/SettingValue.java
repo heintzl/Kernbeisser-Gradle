@@ -98,4 +98,13 @@ public class SettingValue {
         return Tools.getAll(SettingValue.class, condition);
     }
 
+
+    @Override
+    public String toString() {
+        return "SettingValue{" +
+               "id=" + id +
+               ", setting=" + setting +
+               ", value='" + value + '\'' +
+               '}';
+    }
 }

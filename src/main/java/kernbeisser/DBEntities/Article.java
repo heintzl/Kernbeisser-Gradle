@@ -104,8 +104,6 @@ public class Article extends ArticleBase{
     @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_DELIVERED_WRITE)})
     private int delivered;
 
-
-
     @Column
     @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_INTAKE_READ)})
     @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_INTAKE_WRITE)})
@@ -215,10 +213,11 @@ public class Article extends ArticleBase{
 
     @Override
     public String toString() {
-        return getName();
+        return Tools.decide(this::getName,"ArtikelBase["+super.toString()+"]");
     }
 
     public Article unwrapProxy(){
+        if(!Proxy.isProxyInstance(this))return this;
         Article out = new Article();
         Tools.copyInto(this,out);
         return out;

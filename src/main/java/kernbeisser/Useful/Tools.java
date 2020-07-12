@@ -1,11 +1,13 @@
 package kernbeisser.Useful;
 
+import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
+import kernbeisser.Security.AccessSupplier;
 import kernbeisser.Security.Proxy;
 import org.apache.commons.beanutils.BeanUtils;
 import sun.misc.Unsafe;
@@ -494,5 +496,21 @@ public class Tools {
                 return false;
             }
         });
+    }
+
+    public static <T> T decide(AccessSupplier<T> supplier, T t){
+        try {
+            return supplier.get();
+        } catch (AccessDeniedException e) {
+            return t;
+        }
+    }
+
+    public static <T> void tryIt(AccessConsumer<T> consumer, T t){
+        try {
+            consumer.accept(t);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
     }
 }

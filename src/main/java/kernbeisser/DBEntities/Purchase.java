@@ -64,5 +64,4 @@ public class Purchase {
         return sum * (1 + userSurcharge);
     }
 
-
 }

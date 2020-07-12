@@ -26,4 +26,6 @@ public class Inventory {
     @Setter(onMethod_= {@Key(PermissionKey.INVENTORY_CREATION_TIME_STAMP_WRITE)})
     private Instant creationTimeStamp;
 
+
+
 }

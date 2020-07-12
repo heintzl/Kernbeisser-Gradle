@@ -18,7 +18,7 @@ import java.util.Collection;
 
 public class EditItemModel implements Model<EditItemController> {
     private final Mode mode;
-    private Article article;
+    private final Article article;
 
     EditItemModel(Article article, Mode mode) {
         this.mode = mode;
@@ -126,7 +126,7 @@ public class EditItemModel implements Model<EditItemController> {
         return out;
     }
 
-    public boolean nameExists(String name) {
+    public static boolean nameExists(String name) {
         EntityManager em = DBConnection.getEntityManager();
         try {
             em.createQuery("select i from Article i where i.name like :name")

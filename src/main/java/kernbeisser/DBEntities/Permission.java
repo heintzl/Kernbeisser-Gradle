@@ -45,11 +45,6 @@ public class Permission {
         return keySet.contains(key);
     }
 
-    @Override
-    public String toString() {
-        return name;
-    }
-
     public static Collection<Permission> defaultSearch(String s, int max) {
         EntityManager em = DBConnection.getEntityManager();
         Collection<Permission> out = em.createQuery(
@@ -62,4 +57,10 @@ public class Permission {
         em.close();
         return out;
     }
+
+    @Override
+    public String toString() {
+        return Tools.decide(this::getName,"Permission["+id+"]");
+    }
+
 }

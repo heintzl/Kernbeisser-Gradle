@@ -72,4 +72,9 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
             return SurchargeTable.DEFAULT;
         }
     }
+
+    @Override
+    public String toString() {
+        return Tools.decide(this::getName,"ArtikelBase["+super.toString()+"]");
+    }
 }

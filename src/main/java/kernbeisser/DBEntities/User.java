@@ -221,12 +221,7 @@ public class User implements Serializable {
     }
 
     public String toString() {
-        try {
-            return getUsername();
-            //catch AccessDeniedException
-        }catch (Exception e){
-            return "Benutzer["+id+"]";
-        }
+        return Tools.decide(this::getUsername,"Benutzer["+id+"]");
     }
 
 

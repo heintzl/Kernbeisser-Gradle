@@ -113,11 +113,6 @@ public class PriceList implements Serializable {
         return name.hashCode();
     }
 
-    @Override
-    public String toString() {
-        return name;
-    }
-
     public Collection<PriceList> getAllPriceLists() {
         EntityManager em = DBConnection.getEntityManager();
         Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = " + getPid()+" order by p.name asc",
@@ -137,5 +132,10 @@ public class PriceList implements Serializable {
         }
         PriceList priceList = (PriceList) o;
         return pid == priceList.pid;
+    }
+
+    @Override
+    public String toString() {
+        return Tools.decide(this::getName,"Preisliste["+pid+"]");
     }
 }

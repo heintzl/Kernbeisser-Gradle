@@ -40,4 +40,5 @@ public class SaleSession {
         return Tools.getAll(SaleSession.class, condition);
     }
 
+
 }

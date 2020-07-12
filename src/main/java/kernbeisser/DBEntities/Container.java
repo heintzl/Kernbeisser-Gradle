@@ -83,4 +83,8 @@ public class Container implements Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Container["+id+"]";
+    }
 }
