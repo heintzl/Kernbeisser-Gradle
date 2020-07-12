@@ -164,7 +164,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         setPrice("");
         priceUnit.setVisible("pbac".indexOf(type) != -1);
         setPriceUnit("€");
-        netPrice.setEnabled(preordered || "dra".indexOf(type) == -1);
+        netPrice.setEnabled(preordered);
         netPrice.setVisible(preordered || price.isVisible());
         netPrice.setText("");
         netPriceUnit.setVisible(priceUnit.isVisible());
@@ -239,16 +239,15 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         articleAmount.setText(article.getAmount() + "");
         articleUnit.setText(article.getMetricUnits().getShortName());
         price.setText(String.format("%.2f", controller.getPrice(article)));
-        priceUnit.setText(article.isWeighAble() ? "€/kg" : "€");
+        priceUnit.setText(preordered && !article.isWeighAble() ? "€" : "€/kg");
         netPrice.setText(String.format("%.2f",article.getNetPrice()));
         netPriceUnit.setText(priceUnit.getText());
-        amountUnit.setText(article.isWeighAble() ? "g" : "stk.");
+        amountUnit.setText(preordered?"Geb.":article.isWeighAble() ? "g" : "stk.");
         isWeighable = article.isWeighAble();
         articleAmount.setVisible(!article.isWeighAble());
-        articleAmountLabel.setForeground(article.isWeighAble() ? Color.WHITE : Color.BLACK);
         articleUnit.setVisible(!article.isWeighAble());
-        optTaxLow.setSelected(article.getVat().getValue() == 0.07);
-        optTaxStandard.setSelected(article.getVat().getValue() != 0.07);
+        optTaxLow.setSelected(article.getVat() == VAT.LOW);
+        optTaxStandard.setSelected(article.getVat() == VAT.HIGH);
     }
 
     void defaultSettings() {
@@ -490,6 +489,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
             }
         });
         Supplier.getAll(null).forEach(s -> supplier.addItem(s));
+        articleAmount.setEnabled(false);
         optTaxLow.setText(VAT.LOW.getName());
         optTaxStandard.setText(VAT.HIGH.getName());
         articleTypeChange('a');

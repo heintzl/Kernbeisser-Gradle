@@ -105,7 +105,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         Article found = model.getByBarcode(barcode);
         if (found != null) {
             view.loadItemStats(found);
-            view.addToCart();
+            if(!view.isPreordered()) {view.addToCart();}
         } else {
             view.messageBarcodeNotFound(barcode);
             view.setKbNumber("");}
