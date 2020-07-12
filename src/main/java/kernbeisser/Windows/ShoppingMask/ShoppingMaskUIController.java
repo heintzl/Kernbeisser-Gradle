@@ -112,7 +112,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     double getPrice(Article article) {
-        ShoppingItem shoppingItem = new ShoppingItem(article, 0,false);
+        ShoppingItem shoppingItem = new ShoppingItem(article, 0,view.isPreordered());
         return shoppingItem.getItemRetailPrice();
     }
 
@@ -191,9 +191,14 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     void startPay() {
-        new PayController(model.getSaleSession(), shoppingCartController.getItems(), () -> {
-            getView().back();
-        }, new Dimension(view.getShoppingListSize().width, view.getContent().getHeight())).openAsWindow(view.getWindow(), SubWindow::new);
+        if (shoppingCartController.getItems().size() > 0) {
+            new PayController(model.getSaleSession(), shoppingCartController.getItems(), () -> {
+                getView().back();
+            }, new Dimension(view.getShoppingListSize().width, view.getContent().getHeight())).openAsWindow(
+                    view.getWindow(), SubWindow::new);
+        } else {
+            view.messageCartIsEmpty();
+        }
     }
 
     void openSearchWindow() {
