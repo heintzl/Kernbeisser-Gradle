@@ -7,6 +7,7 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Key;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditUser.EditUserController;
@@ -72,6 +73,14 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         boolean success = false;
         try {
             ShoppingItem item = extractShoppingItemFromUI();
+            if (piece) {
+                double itemMultiplier = view.getAmount() * (item.isContainerDiscount() ? item.getContainerSize() : 1.0);
+                if (itemMultiplier % 1 != 0) {
+                    if (view.confirmRoundedMultiplier((int) Math.round(itemMultiplier)) != JOptionPane.YES_OPTION)
+                        ;
+                }
+                item.setItemMultiplier((int) Math.round(itemMultiplier));
+            }
             if (item.getItemMultiplier() != 0 && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece) )) {
                 shoppingCartController.addShoppingItem(item, piece);
                 success = true;
@@ -80,6 +89,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             view.noArticleFound();
             return false;
         } finally {
+            view.setDiscount();
             return success;
         }
     }
@@ -111,9 +121,19 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             view.setKbNumber("");}
     }
 
-    double getPrice(Article article) {
+    double calculatePrice(Article article) {
         ShoppingItem shoppingItem = new ShoppingItem(article, 0,view.isPreordered());
-        return shoppingItem.getItemRetailPrice();
+        return shoppingItem.getItemRetailPrice()* (view.isPreordered()?article.getContainerSize():1);
+    }
+
+    double calculateNetPrice(Article article) {
+        ShoppingItem shoppingItem = new ShoppingItem(article, 0,view.isPreordered());
+        return shoppingItem.getItemNetPrice() * (view.isPreordered()?article.getContainerSize():1);
+    }
+
+    public double recalculatePrice(double newNetPrice) throws UndefinedInputException {
+        ShoppingItem item = extractShoppingItemFromUI();
+        return newNetPrice/item.getItemNetPrice() * item.getItemRetailPrice();
     }
 
     private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
@@ -133,9 +153,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                         throw new UndefinedInputException();
                     }
                 }
-                ShoppingItem shoppingItem = new ShoppingItem(extractedArticle, view.getDiscount(),false);
-                view.setDiscount();
-                shoppingItem.setItemMultiplier((int) view.getAmount());
+                ShoppingItem shoppingItem = new ShoppingItem(extractedArticle, view.getDiscount(),view.isPreordered());
                 return shoppingItem;
             case ShoppingMaskUIView.BAKED_GOODS:
                 return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded());
@@ -148,7 +166,6 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 customArticle.setNetPrice(view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
                 customArticle.setMetricUnits(MetricUnits.PIECE);
                 ShoppingItem customItem = new ShoppingItem(customArticle,0,false);
-                customItem.setItemMultiplier((int) view.getAmount());
                 return customItem;
             case ShoppingMaskUIView.DEPOSIT:
                 if (view.getDeposit() < 0) {

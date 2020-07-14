@@ -55,6 +55,9 @@ public class ShoppingItem implements Serializable {
     private MetricUnits metricUnits;
 
     @Column
+    private String unitAmount;
+
+    @Column
     private boolean weighAble;
 
     @Column
@@ -101,6 +104,7 @@ public class ShoppingItem implements Serializable {
         this.metricUnits = article.isWeighAble() ? article.getMetricUnits() : MetricUnits.PIECE;
         this.vat = article.getVat().getValue();
         this.weighAble = article.isWeighAble();
+        this.unitAmount = weighAble?"":article.getAmount() + article.getMetricUnits().getShortName();
         this.surcharge = (hasContainerDiscount
                           ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue()
                           : article.getSurcharge());
