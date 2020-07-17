@@ -50,7 +50,7 @@ public class PermissionController implements Controller<PermissionView,Permissio
 
                                                                         boolean read = p.contains(e);
                                                                         boolean write = p.contains(
-                                                                                PermissionKey.valueOf(e.name().replace("READ", "WRITE")));
+                                                                                PermissionKey.valueOf(e.name().replaceAll("_READ", "_WRITE")));
 
                                                                         return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
                                                                     },

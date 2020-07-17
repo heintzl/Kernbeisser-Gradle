@@ -21,6 +21,8 @@ public class CollectionView<T> implements View<CollectionController<T>> {
     private JButton addAll;
     private JButton removeAll;
     private JButton remove;
+    private JPanel moveSec;
+    private JScrollPane availableSec;
 
     @Override
     public void initialize(CollectionController<T> controller) {
@@ -50,6 +52,11 @@ public class CollectionView<T> implements View<CollectionController<T>> {
         removeAll.addActionListener(e -> controller.selectAllChosen());
         commit.addActionListener(e -> controller.commit());
         cancel.addActionListener(e -> back());
+    }
+
+    void setEditable(boolean editable){
+        availableSec.setVisible(editable);
+        moveSec.setVisible(editable);
     }
 
     @Override

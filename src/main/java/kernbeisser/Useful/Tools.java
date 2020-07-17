@@ -365,9 +365,10 @@ public class Tools {
                 e.getComponent().removeFocusListener(this);
             }
         });
-        if(((JTextComponent)component).getText().replace(" ","").equals(""))
-            component.setBackground(new Color(0xFF9999));
-        else component.setForeground(new Color(0xFF00000));
+
+        if(component instanceof JTextComponent && !((JTextComponent)component).getText().replace(" ","").equals(""))
+            component.setForeground(new Color(0xFF00000));
+        else component.setBackground(new Color(0xFF9999));
 
     }
 

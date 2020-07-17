@@ -35,6 +35,7 @@ public class CollectionController<T> implements Controller<CollectionView<T>,Col
         view.setChosen(model.getLoaded());
         model.getLoaded().forEach(view::removeAvailable);
         view.setColumns(model.getColumns());
+        view.setEditable(model.isEditable());
     }
 
     @Override
