@@ -19,7 +19,6 @@ public class CollectionModel<T> implements Model<CollectionController<T>> {
         this.columns = columns;
         this.loaded = loaded;
         this.editable = editable;
-        available.removeAll(loaded);
         this.available = available;
     }
 

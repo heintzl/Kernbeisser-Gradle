@@ -34,7 +34,7 @@ public class EditItemView implements View<EditItemController> {
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Double> crateDeposit;
     private kernbeisser.CustomComponents.PermissionButton search;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article,PriceList> priceList;
-    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Integer> amount;
+    private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Double> amount;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article,Double> containerSize;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article,MetricUnits> metricUnits;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article,ContainerDefinition> containerDefinition;
@@ -49,7 +49,9 @@ public class EditItemView implements View<EditItemController> {
 
     private void createUIComponents() {
         itemName = new AccessCheckingField<>(ArticleBase::getName,ArticleBase::setName,AccessCheckingField.NOT_NULL);
-        amount = new AccessCheckingField<>(ArticleBase::getAmount,ArticleBase::setAmount,AccessCheckingField.INT_FORMER);
+        amount = new AccessCheckingField<>(e -> e.getAmount() * e.getMetricUnits().getBaseFactor(),
+                                           (a, b) -> a.setAmount((int) (b * a.getMetricUnits().getBaseFactor())),
+                                           AccessCheckingField.DOUBLE_FORMER);
         netPrice = new AccessCheckingField<>(ArticleBase::getNetPrice,ArticleBase::setNetPrice,AccessCheckingField.DOUBLE_FORMER);
         deposit = new AccessCheckingField<>(ArticleBase::getSingleDeposit,ArticleBase::setSingleDeposit,AccessCheckingField.DOUBLE_FORMER);
         kbItemNumber = new AccessCheckingField<>(Article::getKbNumber,Article::setKbNumber,AccessCheckingField.INT_FORMER);
@@ -116,7 +118,7 @@ public class EditItemView implements View<EditItemController> {
         cancel.addActionListener((e) -> back());
         commit.addActionListener((e) -> controller.doAction());
         itemName.setInputVerifier(new NotNullVerifier());
-        amount.setInputVerifier(IntegerVerifier.from(0,Integer.MAX_VALUE));
+        amount.setInputVerifier(DoubleVerifier.from(0,Integer.MAX_VALUE));
         netPrice.setInputVerifier(DoubleVerifier.from(0.,999999));
         deposit.setInputVerifier(DoubleVerifier.from(0,0.1,5,300));
         kbItemNumber.setInputVerifier(new KBNumberVerifier());
@@ -180,6 +182,7 @@ public class EditItemView implements View<EditItemController> {
 
     public void setKbNumber(int nextUnusedArticleNumber) {
         kbItemNumber.setText(nextUnusedArticleNumber+"");
+        kbItemNumber.inputChanged();
     }
 
     public void nameAlreadyExists() {

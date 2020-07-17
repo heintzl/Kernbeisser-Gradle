@@ -88,10 +88,10 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                     return;
                 }
                 try {
-                    if (data.getPassword().equals("")) {
+                    if (data.getPassword()==null) {
                         requestChangePassword();
+                        data.setPassword(model.getUser().getPassword());
                     }
-
                 } catch (/*Access Denied exception TODO:*/Exception e) {
                     e.printStackTrace();
                 }
@@ -106,29 +106,9 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
         if(model.getMode()==Mode.ADD) {
             User data = view.getObjectForm().getDataIgnoreWrongInput();
             if (data.getSurname() != null && data.getFirstName() != null) {
-                view.getObjectForm()
-                    .getOriginal()
-                    .setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ", ""),
+                view.setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ", ""),
                                                         data.getSurname().toLowerCase()).replace(" ", ""));
-                view.getObjectForm().pullData();
             }
-            view.setUsername(view.getObjectForm().getOriginal().getUsername());
         }
-    }
-
-    void openJobSelector() {
-        new SelectorController<>("Ausgewählte Jobs", model.getUser().getJobs(), Job::defaultSearch,
-                                 Column.create("Name", Job::getName, PermissionKey.JOB_NAME_READ),
-                                 Column.create("Beschreibung", Job::getDescription, PermissionKey.JOB_DESCRIPTION_READ)
-        ).openAsWindow(getView().getWindow(),
-                       SubWindow::new);
-    }
-
-    void openPermissionSelector(){
-        new SelectorController<>("Ausgewählte Berechtigungen", model.getUser().getPermissions(),
-                                 Permission::defaultSearch,
-                                 Column.create("Name", Permission::getName, PermissionKey.PERMISSION_NAME_READ)
-        ).openAsWindow(getView().getWindow(),
-                       SubWindow::new);
     }
 }

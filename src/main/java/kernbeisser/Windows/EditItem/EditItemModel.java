@@ -86,6 +86,7 @@ public class EditItemModel implements Model<EditItemController> {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
+        article.setId(0);
         em.persist(article.unwrapProxy());
         em.flush();
         et.commit();

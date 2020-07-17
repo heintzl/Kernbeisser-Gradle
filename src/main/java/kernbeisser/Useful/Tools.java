@@ -389,6 +389,7 @@ public class Tools {
         boolean isProxy = Proxy.isProxyInstance(source);
         while (!clazz.equals(Object.class)) {
             for (Field field : clazz.getDeclaredFields()) {
+                if(Modifier.isStatic(field.getModifiers())) continue;
                 if(isProxy && field.getName().equals("handler"))continue;
                 field.setAccessible(true);
                 try {

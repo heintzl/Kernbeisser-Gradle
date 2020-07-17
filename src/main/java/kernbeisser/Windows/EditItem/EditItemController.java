@@ -102,13 +102,15 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
                 }
                 return;
             }
-            int idOfBarcode = model.barcodeExists(data.getBarcode());
-            if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
-                view.barcodeAlreadyExists();
-                return;
+            if(data.getBarcode()!=null) {
+                int idOfBarcode = model.barcodeExists(data.getBarcode());
+                if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
+                    view.barcodeAlreadyExists();
+                    return;
+                }
             }
         }
-        if (model.doAction(data)) {
+        if (model.doAction(data.unwrapProxy())) {
             view.back();
         }
     }

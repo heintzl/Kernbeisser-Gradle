@@ -6,6 +6,7 @@ import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 public class CollectionController<T> implements Controller<CollectionView<T>,CollectionModel<T>> {
     private final CollectionView<T> view;
@@ -32,6 +33,7 @@ public class CollectionController<T> implements Controller<CollectionView<T>,Col
     public void fillUI() {
         view.setAvailable(model.getAvailable());
         view.setChosen(model.getLoaded());
+        model.getLoaded().forEach(view::removeAvailable);
         view.setColumns(model.getColumns());
     }
 
@@ -47,12 +49,25 @@ public class CollectionController<T> implements Controller<CollectionView<T>,Col
     }
 
     public void selectAvailable() {
+        if(view.getSelectedAvailableObject() == null)return;
         view.addChosen(view.getSelectedAvailableObject());
         view.removeAvailable(view.getSelectedAvailableObject());
     }
 
     public void selectChosen() {
+        if(view.getSelectedChosenObject() == null)return;
         view.addAvailable(view.getSelectedChosenObject());
         view.removeChosen(view.getSelectedChosenObject());
+    }
+
+    public void selectAllAvailable() {
+        view.setChosen(new HashSet<>());
+        view.setAvailable(new HashSet<>());
+        model.getAvailable().forEach(view::addChosen);
+    }
+
+    public void selectAllChosen() {
+        view.getAllChosen().forEach(view::addAvailable);
+        view.setChosen(new HashSet<>());
     }
 }

@@ -1,6 +1,7 @@
 package kernbeisser.Windows.CollectionView;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -16,11 +17,39 @@ public class CollectionView<T> implements View<CollectionController<T>> {
     private ObjectTable<T> available;
     private ObjectTable<T> chosen;
     private JPanel main;
+    private JButton add;
+    private JButton addAll;
+    private JButton removeAll;
+    private JButton remove;
 
     @Override
     public void initialize(CollectionController<T> controller) {
-        available.addSelectionListener(e -> controller.selectAvailable());
-        chosen.addSelectionListener(e -> controller.selectChosen());
+        available.addSelectionListener(new ObjectSelectionListener<T>() {
+            T last;
+            @Override
+            public void selected(T e) {
+                if(e.equals(last))
+                controller.selectAvailable();
+                else last = e;
+            }
+        });
+        chosen.addSelectionListener(
+                new ObjectSelectionListener<T>() {
+                    T last;
+                    @Override
+                    public void selected(T e) {
+                        if(e.equals(last))
+                            controller.selectChosen();
+                        else last = e;
+                    }
+                }
+        );
+        add.addActionListener(e -> controller.selectAvailable());
+        addAll.addActionListener(e -> controller.selectAllAvailable());
+        remove.addActionListener(e -> controller.selectChosen());
+        removeAll.addActionListener(e -> controller.selectAllChosen());
+        commit.addActionListener(e -> controller.commit());
+        cancel.addActionListener(e -> back());
     }
 
     @Override
@@ -50,7 +79,7 @@ public class CollectionView<T> implements View<CollectionController<T>> {
     }
 
     void addAvailable(T t){
-        available.remove(t);
+        available.add(t);
     }
 
     void removeChosen(T t){
