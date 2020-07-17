@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -40,5 +41,23 @@ public class SaleSession {
         return Tools.getAll(SaleSession.class, condition);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SaleSession that = (SaleSession) o;
+        return sSid == that.sSid &&
+               customer.equals(that.customer) &&
+               secondSeller.equals(that.secondSeller) &&
+               seller.equals(that.seller);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(sSid, customer, secondSeller, seller);
+    }
 }

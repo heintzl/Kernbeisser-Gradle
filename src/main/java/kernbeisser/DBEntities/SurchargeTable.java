@@ -11,6 +11,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Table
 @Entity
@@ -80,5 +81,25 @@ public class SurchargeTable implements Serializable, Cloneable {
         return out;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SurchargeTable that = (SurchargeTable) o;
+        return stid == that.stid &&
+               Double.compare(that.surcharge, surcharge) == 0 &&
+               from == that.from &&
+               to == that.to &&
+               name.equals(that.name) &&
+               supplier.equals(that.supplier);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(stid, surcharge, from, to, name, supplier);
+    }
 }

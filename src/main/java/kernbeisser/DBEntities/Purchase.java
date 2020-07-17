@@ -13,6 +13,7 @@ import java.sql.Date;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Table
 @Entity
@@ -64,4 +65,24 @@ public class Purchase {
         return sum * (1 + userSurcharge);
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Purchase purchase = (Purchase) o;
+        return sid == purchase.sid &&
+               Double.compare(purchase.userSurcharge, userSurcharge) == 0 &&
+               session.equals(purchase.session) &&
+               createDate.equals(purchase.createDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sid, session, createDate, userSurcharge);
+    }
 }

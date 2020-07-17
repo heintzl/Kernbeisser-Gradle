@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.sql.Date;
 import java.time.Instant;
+import java.util.Objects;
 
 public class Inventory {
     @Id
@@ -26,6 +27,21 @@ public class Inventory {
     @Setter(onMethod_= {@Key(PermissionKey.INVENTORY_CREATION_TIME_STAMP_WRITE)})
     private Instant creationTimeStamp;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Inventory inventory = (Inventory) o;
+        return id == inventory.id &&
+               creationTimeStamp.equals(inventory.creationTimeStamp);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, creationTimeStamp);
+    }
 }

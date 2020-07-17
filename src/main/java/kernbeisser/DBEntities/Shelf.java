@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -28,4 +29,24 @@ public class Shelf {
     @Getter(onMethod_= {@Key(PermissionKey.SHELF_ARTICLES_READ)})
     @Setter(onMethod_= {@Key(PermissionKey.SHELF_ARTICLES_WRITE)})
     private Set<Article> articles = new HashSet<>();
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Shelf shelf = (Shelf) o;
+        return id == shelf.id &&
+               location.equals(shelf.location) &&
+               articles.equals(shelf.articles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, location, articles);
+    }
 }

@@ -13,6 +13,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "catalog")
@@ -76,5 +77,26 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
     @Override
     public String toString() {
         return Tools.decide(this::getName,"ArtikelBase["+super.toString()+"]");
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        ArticleKornkraft that = (ArticleKornkraft) o;
+        return synchronised == that.synchronised;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), synchronised);
     }
 }

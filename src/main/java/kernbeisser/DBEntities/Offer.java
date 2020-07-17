@@ -11,10 +11,10 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Objects;
 
 @Entity
 @Table
-@EqualsAndHashCode
 public class Offer implements Serializable {
     @Id
     @GeneratedValue
@@ -44,4 +44,26 @@ public class Offer implements Serializable {
     @Getter(onMethod_= {@Key(PermissionKey.OFFER_REPEAT_MODE_READ)})
     @Setter(onMethod_= {@Key(PermissionKey.OFFER_REPEAT_MODE_WRITE)})
     private Repeat repeatMode;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Offer offer = (Offer) o;
+        return oid == offer.oid &&
+               Double.compare(offer.specialNetPrice, specialNetPrice) == 0 &&
+               fromDate.equals(offer.fromDate) &&
+               toDate.equals(offer.toDate) &&
+               repeatMode == offer.repeatMode;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(oid, specialNetPrice, fromDate, toDate, repeatMode);
+    }
 }

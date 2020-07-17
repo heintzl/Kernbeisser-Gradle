@@ -9,13 +9,11 @@ import lombok.*;
 import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 
 @Table
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ArticleBase {
     @Id
@@ -103,5 +101,36 @@ public class ArticleBase {
     @Override
     public String toString(){
         return Tools.decide(this::getName,"ArtikelBase["+id+"]");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ArticleBase that = (ArticleBase) o;
+        return id == that.id &&
+               Double.compare(that.netPrice, netPrice) == 0 &&
+               suppliersItemNumber == that.suppliersItemNumber &&
+               amount == that.amount &&
+               Double.compare(that.containerSize, containerSize) == 0 &&
+               Double.compare(that.singleDeposit, singleDeposit) == 0 &&
+               Double.compare(that.containerDeposit, containerDeposit) == 0 &&
+               name.equals(that.name) &&
+               producer.equals(that.producer) &&
+               metricUnits == that.metricUnits &&
+               supplier.equals(that.supplier) &&
+               vat == that.vat &&
+               barcode.equals(that.barcode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, producer, netPrice, metricUnits, supplier, suppliersItemNumber, vat, amount,
+                            barcode,
+                            containerSize, singleDeposit, containerDeposit);
     }
 }

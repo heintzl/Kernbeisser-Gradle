@@ -339,4 +339,47 @@ public class User implements Serializable {
         this.lastPasswordChange = other.lastPasswordChange;
         this.forcePasswordChange = other.forcePasswordChange;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return id == user.id &&
+               shares == user.shares &&
+               Double.compare(user.solidaritySurcharge, solidaritySurcharge) == 0 &&
+               kernbeisserKey == user.kernbeisserKey &&
+               employee == user.employee &&
+               townCode == user.townCode &&
+               unreadable == user.unreadable &&
+               forcePasswordChange == user.forcePasswordChange &&
+               permissions.equals(user.permissions) &&
+               extraJobs.equals(user.extraJobs) &&
+               jobs.equals(user.jobs) &&
+               username.equals(user.username) &&
+               password.equals(user.password) &&
+               firstName.equals(user.firstName) &&
+               surname.equals(user.surname) &&
+               phoneNumber1.equals(user.phoneNumber1) &&
+               phoneNumber2.equals(user.phoneNumber2) &&
+               street.equals(user.street) &&
+               town.equals(user.town) &&
+               email.equals(user.email) &&
+               createDate.equals(user.createDate) &&
+               updateDate.equals(user.updateDate) &&
+               userGroup.equals(user.userGroup) &&
+               lastPasswordChange.equals(user.lastPasswordChange);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, permissions, shares, solidaritySurcharge, extraJobs, jobs, kernbeisserKey, employee,
+                            username, password, firstName, surname, phoneNumber1, phoneNumber2, street, town, townCode,
+                            email, createDate, updateDate, userGroup, unreadable, lastPasswordChange,
+                            forcePasswordChange);
+    }
 }

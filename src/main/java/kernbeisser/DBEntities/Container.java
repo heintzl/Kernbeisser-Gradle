@@ -13,6 +13,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -86,5 +87,31 @@ public class Container implements Serializable {
     @Override
     public String toString() {
         return "Container["+id+"]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Container container = (Container) o;
+        return id == container.id &&
+               Double.compare(container.userSurcharge, userSurcharge) == 0 &&
+               amount == container.amount &&
+               Double.compare(container.netPrice, netPrice) == 0 &&
+               payed == container.payed &&
+               item.equals(container.item) &&
+               user.equals(container.user) &&
+               info.equals(container.info) &&
+               delivery.equals(container.delivery) &&
+               createDate.equals(container.createDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, item, user, userSurcharge, info, amount, netPrice, payed, delivery, createDate);
     }
 }

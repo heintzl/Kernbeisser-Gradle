@@ -138,4 +138,5 @@ public class PriceList implements Serializable {
     public String toString() {
         return Tools.decide(this::getName,"Preisliste["+pid+"]");
     }
+
 }

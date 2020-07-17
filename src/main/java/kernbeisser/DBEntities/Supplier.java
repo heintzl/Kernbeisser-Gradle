@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Suppliers")
@@ -101,5 +102,33 @@ public class Supplier implements Serializable {
     @Override
     public String toString() {
         return Tools.decide(this::getName,"Lieferant["+sid+"]");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Supplier supplier = (Supplier) o;
+        return sid == supplier.sid &&
+               surcharge == supplier.surcharge &&
+               name.equals(supplier.name) &&
+               phoneNumber.equals(supplier.phoneNumber) &&
+               fax.equals(supplier.fax) &&
+               address.equals(supplier.address) &&
+               email.equals(supplier.email) &&
+               shortName.equals(supplier.shortName) &&
+               keeper.equals(supplier.keeper) &&
+               createDate.equals(supplier.createDate) &&
+               updateDate.equals(supplier.updateDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sid, name, phoneNumber, fax, address, email, shortName, surcharge, keeper, createDate,
+                            updateDate);
     }
 }

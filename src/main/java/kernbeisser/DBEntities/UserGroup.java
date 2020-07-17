@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Table
 @Entity
@@ -57,4 +58,22 @@ public class UserGroup {
         return v;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserGroup userGroup = (UserGroup) o;
+        return gid == userGroup.gid &&
+               Double.compare(userGroup.value, value) == 0 &&
+               interestThisYear == userGroup.interestThisYear;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gid, value, interestThisYear);
+    }
 }

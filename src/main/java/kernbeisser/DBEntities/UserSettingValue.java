@@ -12,6 +12,7 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -105,5 +106,25 @@ public class UserSettingValue {
                ", userSetting=" + userSetting +
                ", value='" + value + '\'' +
                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserSettingValue that = (UserSettingValue) o;
+        return id == that.id &&
+               user.equals(that.user) &&
+               userSetting == that.userSetting &&
+               value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, userSetting, value);
     }
 }
