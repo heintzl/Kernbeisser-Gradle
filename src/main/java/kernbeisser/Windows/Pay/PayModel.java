@@ -6,6 +6,7 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Reports.ReportManager;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 import net.sf.jasperreports.engine.JRException;
@@ -16,8 +17,6 @@ import javax.persistence.PersistenceException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import java.util.List;
-
-import static kernbeisser.Reports.ReportUtil.exportInvoicePDF;
 
 public class PayModel implements Model<PayController> {
     private final SaleSession saleSession;
@@ -107,9 +106,11 @@ public class PayModel implements Model<PayController> {
         return PrintServiceLookup.lookupPrintServices(null, null);
     }
 
-    void print(Purchase purchase, PrintService printService) {
+    void print(Purchase purchase) {
         try {
-            exportInvoicePDF(shoppingCart, purchase);
+            ReportManager invoice = new ReportManager();
+            invoice.initInvoicePrint(shoppingCart, purchase);
+            invoice.sendToPrinter();
         } catch (JRException e) {
             Tools.showUnexpectedErrorWarning(e);
         }

@@ -114,6 +114,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         keyCapture = new KeyCapture();
         keyCapture.add(KeyEvent.VK_F2, () -> setAmount("2"));
         keyCapture.add(KeyEvent.VK_F3, () -> setAmount("3"));
+        keyCapture.add(KeyEvent.VK_F4, () -> setAmount("4"));
+        keyCapture.add(KeyEvent.VK_F5, () -> setAmount("5"));
+        keyCapture.add(KeyEvent.VK_F6, () -> setAmount("6"));
+        keyCapture.add(KeyEvent.VK_F7, () -> setAmount("8"));
+        keyCapture.add(KeyEvent.VK_F8, () -> setAmount("10"));
+        keyCapture.add(KeyEvent.VK_INSERT, () -> optProduce.doClick());
+        keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
+        keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
     }
 
     private void doCancel() {}
@@ -135,7 +143,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         shoppingCartView = cartController.getView();
     }
 
-     void loadUserInfo(SaleSession saleSession) {
+    void loadUserInfo(SaleSession saleSession) {
         customerName.setText(saleSession.getCustomer().getFirstName() + " " + saleSession.getCustomer().getSurname());
         customerLoginName.setText(saleSession.getCustomer().getUsername());
         customerCredit.setText(format("{0, number, 0.00}\u20AC", saleSession.getCustomer().getUserGroup().getValue()));
@@ -159,7 +167,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         setKbNumber("");
         suppliersItemNumber.setVisible(type == 'a');
         setSuppliersItemNumber("");
-        price.setEnabled(type !='a');
+        price.setEnabled("dra".indexOf(type) == -1);
+        price.setVisible("dr".indexOf(type) == -1);
         setPrice("");
         priceUnit.setVisible("pbac".indexOf(type) != -1);
         setPriceUnit("€");
@@ -215,11 +224,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         articleName.setEnabled(type == 'c');
     }
 
-    void noArticleFound() {
-        JOptionPane.showMessageDialog(mainPanel,
-                                      "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
-    }
-
     void loadItemStats(Article article) {
         articleUnit.setText(MetricUnits.PIECE.getShortName());
         kbNumber.setText(article.getKbNumber() + "");
@@ -252,15 +256,24 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         articleUnit.setText("");
     }
 
+    void noArticleFound() {
+        java.awt.Toolkit.getDefaultToolkit().beep();
+        JOptionPane.showMessageDialog(mainPanel,
+                                      "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
+    }
+
     public void messageBarcodeNotFound(long barcode) {
+        java.awt.Toolkit.getDefaultToolkit().beep();
         JOptionPane.showMessageDialog( getContent(), "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden", "Artikel nicht gefunden", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void messageInvalidBarcode(String barcode) {
+        java.awt.Toolkit.getDefaultToolkit().beep();
         JOptionPane.showMessageDialog(getContent(), "Ungültiger Barcode: " + barcode,"Barcode Fehler", JOptionPane.WARNING_MESSAGE);
     }
 
     public void messageDepositStorno() {
+        java.awt.Toolkit.getDefaultToolkit().beep();
         JOptionPane.showMessageDialog(getContent(), "Pfand kann nicht storniert werden!","Storno" , JOptionPane.WARNING_MESSAGE);
         deposit.setText("");
     }
@@ -291,6 +304,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     public int confirmStorno() {
+        java.awt.Toolkit.getDefaultToolkit().beep();
         return JOptionPane.showConfirmDialog(
                 getContent(),"Soll die Ware wirklich storniert werden?", stornoMessageTitle, JOptionPane.YES_NO_OPTION
         );
@@ -416,6 +430,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         return optTaxLow.isSelected() ? VAT.LOW : VAT.HIGH;
     }
 
+    Dimension getShoppingListSize() {return shoppingListPanel.getSize();}
     public Controller getController() {
         return controller;
     }
