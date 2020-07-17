@@ -21,7 +21,7 @@ public class EditItemsController implements Controller<EditItemsView,EditItemsMo
         this.model = new EditItemsModel();
         objectViewController = new ObjectViewController<>(
                 EditItemController::new, Article::defaultSearch,
-                Column.create("Name", Article::getName),
+                true, Column.create("Name", Article::getName),
                 Column.create("Packungsgröße", e -> (e.getAmount()) + e.getMetricUnits().getShortName()),
                 Column.create("Ladennummer", Article::getKbNumber),
                 Column.create("Lieferantenummer", Article::getSuppliersItemNumber),

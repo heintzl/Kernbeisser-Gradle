@@ -514,4 +514,14 @@ public class Tools {
             e.printStackTrace();
         }
     }
+
+    public static <T> T invokeConstructor(Class<T> out){
+        try {
+            Constructor<T> constructor = out.getDeclaredConstructor(new Class[0]);
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            return Tools.createWithoutConstructor(out);
+        }
+    }
 }

@@ -21,7 +21,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     private final EditUserModel model;
 
     public EditUserController(User user, Mode mode){
-        model = new EditUserModel(mode == Mode.ADD ? Proxy.getSecureInstance(new User()) : user == null ? Proxy.getSecureInstance(new User()) : user, mode);
+        model = new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode);
         if (mode == Mode.REMOVE) {
             model.doAction(model.getUser());
             view = null;

@@ -380,4 +380,14 @@ public class User implements Serializable {
                             email, createDate, updateDate, userGroup, unreadable, lastPasswordChange,
                             forcePasswordChange);
     }
+
+    public User generateBeginnerUser(){
+        User user = new User();
+        user.permissions.add(PermissionConstants.BEGINNER.getPermission());
+        return user;
+    }
+
+    public int getIdWithoutPermission(){
+        return id;
+    }
 }

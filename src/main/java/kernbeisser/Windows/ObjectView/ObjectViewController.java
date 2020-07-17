@@ -17,14 +17,14 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
 
     private boolean openWindow = false;
 
-    public ObjectViewController(MaskLoader<T> loader, Searchable<T> items, Column<T>... columns) {
+    public ObjectViewController(MaskLoader<T> loader, Searchable<T> items,boolean copyAdd, Column<T>... columns) {
         searchBoxController = new SearchBoxController<T>(items, columns);
         searchBoxController.initView();
         searchBoxController.addSelectionListener(e -> select());
         searchBoxController.addDoubleClickListener(e -> edit());
         searchBoxController.addLostSelectionListener(this::putItems);
 
-        model = new ObjectViewModel<>(loader, items);
+        model = new ObjectViewModel<>(loader, items,copyAdd);
         view = new ObjectViewView<>(this);
     }
 

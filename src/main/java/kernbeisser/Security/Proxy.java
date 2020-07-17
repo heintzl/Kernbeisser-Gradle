@@ -3,6 +3,7 @@ package kernbeisser.Security;
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -146,14 +147,11 @@ public class Proxy {
         }
     }
 
-    public static <T> T overrideToString(T parent, Function<T,String> toString){
-        if (ProxyFactory.isProxyClass(parent.getClass()))return parent;
+    public static <T> T createProxyInstance(T parent,MethodHandler securityHandler){
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(parent.getClass());
-        factory.setFilter(m -> m.getName().equals("toSting"));
         try {
-            T proxy = (T) factory.create(new Class[0], new Object[0],
-                                         (self, thisMethod, proceed, args) -> toString.apply((T) self));
+            T proxy = (T) factory.create(new Class[0], new Object[0], securityHandler);
             Tools.copyInto(parent,proxy);
             return proxy;
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {

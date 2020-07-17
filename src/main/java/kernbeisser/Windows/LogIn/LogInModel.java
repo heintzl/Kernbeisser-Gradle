@@ -3,11 +3,14 @@ package kernbeisser.Windows.LogIn;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Main;
+import kernbeisser.Security.CustomKeySetSecurityHandler;
 import kernbeisser.Security.MasterPermissionSet;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -34,7 +37,7 @@ public class LogInModel implements Model {
                                   getSingleResult();
             if ( BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
                 if(!user.hasPermission(PermissionKey.ACTION_LOGIN))throw new PermissionRequired();
-                loggedIn = user;
+                loggedIn = Proxy.createProxyInstance(user,new CustomKeySetSecurityHandler(PermissionConstants.ON_OWN_USER.getPermission().getKeySet().toArray(new PermissionKey[0])));
                 MasterPermissionSet.loadPermission(user.getPermissions());
                 Main.logger.info("User with user id ["+user.getId()+"] has logged in");
             } else {

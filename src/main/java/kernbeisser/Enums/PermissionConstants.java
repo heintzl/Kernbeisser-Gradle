@@ -3,6 +3,7 @@ package kernbeisser.Enums;
 
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -24,7 +25,8 @@ public enum PermissionConstants {
             PermissionKey.ACTION_LOGIN,
             PermissionKey.GO_UNDER_MIN
     ),
-    APPLICATION(PermissionKey.values())
+    APPLICATION(PermissionKey.values()),
+    ON_OWN_USER(PermissionKey.find(User.class).toArray(new PermissionKey[0]))
     ;
 
     private final Permission bounded;
