@@ -4,6 +4,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.KeyCategory;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
@@ -28,7 +29,8 @@ public class PermissionModel implements Model<PermissionController> {
     Class<?>[] getAllKeyCategories() {
         HashSet<Class<?>> classes = new HashSet<>();
         for (PermissionKey value : PermissionKey.values()) {
-            classes.add(value.getClass());
+            if(value.getClazz()!=null)
+            classes.add(value.getClazz());
         }
         return classes.toArray(new Class[0]);
     }

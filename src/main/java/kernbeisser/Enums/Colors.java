@@ -16,7 +16,19 @@ public enum Colors {
             return UIManager.getColor("Label.background");
         }
     },
-    ;
+
+    COMBO_BOX_SELECTION_BACKGROUND(){
+        @Override
+        public Color getColor() {
+            return UIManager.getColor("ComboBox.selectionBackground");
+        }
+    },
+    COMBO_BOX_SELECTION_FOREGROUND(){
+        @Override
+        public Color getColor() {
+            return UIManager.getColor("ComboBox.selectionForeground");
+        }
+    };
 
     public Color getColor() {
         return null;

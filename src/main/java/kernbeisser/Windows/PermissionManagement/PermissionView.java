@@ -3,11 +3,13 @@ package kernbeisser.Windows.PermissionManagement;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.KeyCategory;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class PermissionView implements View<PermissionController> {
@@ -85,6 +87,14 @@ public class PermissionView implements View<PermissionController> {
         add.addActionListener(e -> controller.addPermission());
         delete.addActionListener(e -> controller.deletePermission());
         category.addActionListener(e -> controller.loadSolutions());
+        category.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                                                          boolean cellHasFocus) {
+
+                return super.getListCellRendererComponent(list, value instanceof Class<?> ? ((Class<?>)value).getSimpleName() : value, index, isSelected, cellHasFocus);
+            }
+        });
         back.addActionListener(e -> back());
     }
 

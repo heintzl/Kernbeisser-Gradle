@@ -2,6 +2,7 @@ package kernbeisser.DBEntities;
 
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
@@ -292,10 +293,7 @@ public class User implements Serializable {
             EntityTransaction et = em.getTransaction();
             et.begin();
             User kernbeisser = new User();
-            Permission admin = new Permission();
-            admin.getKeySet().addAll(Arrays.asList(PermissionKey.values()));
-            em.persist(admin);
-            kernbeisser.getPermissions().add(admin);
+            kernbeisser.getPermissions().add(PermissionConstants.APPLICATION.getPermission());
             kernbeisser.setPassword("CANNOT LOG IN");
             kernbeisser.setFirstName("Konto");
             kernbeisser.setSurname("Kernbeisser");

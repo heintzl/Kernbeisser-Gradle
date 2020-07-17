@@ -145,9 +145,6 @@ public class DataImportController implements Controller<DataImportView,DataImpor
     }
 
     private void createAdmin(){
-        Permission admin = new Permission();
-        admin.getKeySet().addAll(Arrays.asList(PermissionKey.values()));
-        admin.setName("Admin(System Created)");
         User user = new User();
         user.setFirstName("System");
         user.setSurname("Admin");
@@ -157,10 +154,9 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             password = view.requestPassword();
         } while (password.equals(""));
         user.setPassword(BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), password.toCharArray()));
-        user.getPermissions().add(admin);
+        user.getPermissions().add(PermissionConstants.ADMIN.getPermission());
         user.setUserGroup(new UserGroup());
         Tools.persist(user.getUserGroup());
-        Tools.persist(admin);
         Tools.persist(user);
     }
 

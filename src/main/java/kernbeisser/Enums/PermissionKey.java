@@ -370,6 +370,10 @@ public enum PermissionKey {
         return out;
     }
 
+    public Class<?> getClazz() {
+        return clazz;
+    }
+
     public static Collection<PermissionKey> find(Class<?> category, boolean read, boolean write){
         Collection<PermissionKey> out = new ArrayList<>();
         for (PermissionKey value : values()) {

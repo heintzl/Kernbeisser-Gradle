@@ -145,6 +145,6 @@ public class PermissionController implements Controller<PermissionView,Permissio
 
     @Override
     public PermissionKey[] getRequiredKeys() {
-        return new PermissionKey[0];
+        return PermissionKey.find(Permission.class).toArray(new PermissionKey[0]);
     }
 }

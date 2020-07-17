@@ -10,14 +10,10 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table
-@EqualsAndHashCode
 public class Permission {
     @Id
     @GeneratedValue
@@ -64,4 +60,22 @@ public class Permission {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Permission that = (Permission) o;
+        return id == that.id &&
+               name.equals(that.name) &&
+               keySet.equals(that.keySet);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, keySet);
+    }
 }

@@ -1,5 +1,6 @@
 package kernbeisser.Security;
 
+import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import kernbeisser.Exeptions.AccessDeniedException;
@@ -14,6 +15,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Function;
 
 public class Proxy {
 
@@ -141,6 +143,22 @@ public class Proxy {
                     out = original.invoke(proxy, args);
                 else throw new AccessDeniedException("User["+LogInModel.getLoggedIn().getId() + "] cannot access " + original + " because the user has not the required Keys:" + Arrays.toString(key.value()));
             return out;
+        }
+    }
+
+    public static <T> T overrideToString(T parent, Function<T,String> toString){
+        if (ProxyFactory.isProxyClass(parent.getClass()))return parent;
+        ProxyFactory factory = new ProxyFactory();
+        factory.setSuperclass(parent.getClass());
+        factory.setFilter(m -> m.getName().equals("toSting"));
+        try {
+            T proxy = (T) factory.create(new Class[0], new Object[0],
+                                         (self, thisMethod, proceed, args) -> toString.apply((T) self));
+            Tools.copyInto(parent,proxy);
+            return proxy;
+        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            e.printStackTrace();
+            return parent;
         }
     }
 }

@@ -23,7 +23,8 @@ public enum PermissionConstants {
     KEY_PERMISSION(
             PermissionKey.ACTION_LOGIN,
             PermissionKey.GO_UNDER_MIN
-    )
+    ),
+    APPLICATION(PermissionKey.values())
     ;
 
     private final Permission bounded;
@@ -42,14 +43,14 @@ public enum PermissionConstants {
     private static Permission loadOrCreate(PermissionConstants constants){
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("select p from Permission p where name like :pcn", Permission.class)
+            return em.createQuery("select p from Permission p where name like :pcn", Permission.class).setParameter("pcn","@"+constants.name())
                                    .getSingleResult();
         }catch (NoResultException e){
             EntityTransaction et = em.getTransaction();
             et.begin();
             Permission permission = new Permission();
             permission.getKeySet().addAll(Arrays.asList(constants.defaultPermissionKeys));
-            permission.setName(constants.name());
+            permission.setName("@"+constants.name());
             em.persist(permission);
             em.flush();
             et.commit();
