@@ -381,7 +381,7 @@ public class User implements Serializable {
                             forcePasswordChange);
     }
 
-    public User generateBeginnerUser(){
+    public static User generateBeginnerUser(){
         User user = new User();
         user.permissions.add(PermissionConstants.BEGINNER.getPermission());
         return user;

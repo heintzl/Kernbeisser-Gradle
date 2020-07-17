@@ -1,6 +1,7 @@
 package kernbeisser.Windows.Menu;
 
 import kernbeisser.CustomComponents.ControllerButton;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Main;
 import kernbeisser.StartUp.LogIn.DBLogInController;
@@ -50,6 +51,7 @@ public class MenuView implements View<MenuController> {
     private ControllerButton placeHolderControllerButton1;
     private ControllerButton placeHolderControllerButton2;
     private ControllerButton openSelfShoppingMask;
+    private ControllerButton addBeginner;
 
     @Override
     public void initialize(MenuController controller) {
@@ -89,5 +91,6 @@ public class MenuView implements View<MenuController> {
         //NOT IMPLEMENTED
         placeHolderControllerButton2 = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
         openSelfShoppingMask = new ControllerButton(new SoloShoppingMaskController(), controller -> controller.openTab("<PlaceHolder>"));
+        addBeginner = new ControllerButton(new EditUserController(User.generateBeginnerUser(),Mode.ADD),e -> e.openTab("Probemitglied aufnehmen"));
     }
 }
