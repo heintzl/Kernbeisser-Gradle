@@ -5,7 +5,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.AccessDeniedException;
@@ -20,8 +20,8 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     private final EditUserView view;
     private final EditUserModel model;
 
-    public EditUserController(User user, Mode mode) {
-        model = new EditUserModel(mode == Mode.ADD ? Proxy.getSecureInstance(new User()) : user == null ? Proxy.getSecureInstance(new User()) : user, mode);
+    public EditUserController(User user, Mode mode){
+        model = new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode);
         if (mode == Mode.REMOVE) {
             model.doAction(model.getUser());
             view = null;
@@ -56,9 +56,9 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     public void fillUI() {}
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[]{
-                Key.USER_USERNAME_READ,
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[]{
+                PermissionKey.USER_USERNAME_READ,
                 };
     }
 
@@ -88,10 +88,11 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                     return;
                 }
                 try {
-                    if (data.getPassword().equals("")) {
+                    if (data.getPassword()==null) {
                         requestChangePassword();
+                        data.setPassword(model.getUser().getPassword());
                     }
-                } catch (AccessDeniedException e) {
+                } catch (/*Access Denied exception TODO:*/Exception e) {
                     e.printStackTrace();
                 }
                 break;
@@ -105,29 +106,9 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
         if(model.getMode()==Mode.ADD) {
             User data = view.getObjectForm().getDataIgnoreWrongInput();
             if (data.getSurname() != null && data.getFirstName() != null) {
-                view.getObjectForm()
-                    .getOriginal()
-                    .setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ", ""),
+                view.setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ", ""),
                                                         data.getSurname().toLowerCase()).replace(" ", ""));
-                view.getObjectForm().pullData();
             }
-            view.setUsername(view.getObjectForm().getOriginal().getUsername());
         }
-    }
-
-    void openJobSelector() {
-        new SelectorController<>("Ausgewählte Jobs", model.getUser().getJobs(), Job::defaultSearch,
-                                 Column.create("Name", Job::getName, Key.JOB_NAME_READ),
-                                 Column.create("Beschreibung", Job::getDescription, Key.JOB_DESCRIPTION_READ)
-        ).openAsWindow(getView().getWindow(),
-                       SubWindow::new);
-    }
-
-    void openPermissionSelector(){
-        new SelectorController<>("Ausgewählte Berechtigungen", model.getUser().getPermissions(),
-                                 Permission::defaultSearch,
-                                 Column.create("Name", Permission::getName, Key.PERMISSION_NAME_READ)
-        ).openAsWindow(getView().getWindow(),
-                       SubWindow::new);
     }
 }

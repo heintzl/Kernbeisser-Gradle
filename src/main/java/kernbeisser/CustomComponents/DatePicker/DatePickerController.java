@@ -1,6 +1,6 @@
 package kernbeisser.CustomComponents.DatePicker;
 
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.WindowImpl.SubWindow;
@@ -82,8 +82,8 @@ public class DatePickerController implements Controller<DatePickerView,DatePicke
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public static void requestDate(JFrameWindow current, Consumer<LocalDate> select){

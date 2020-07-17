@@ -235,12 +235,12 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         articleAmount.setText(article.getAmount() + "");
         articleUnit.setText(article.getMetricUnits().getShortName());
         price.setText(String.format("%.2f", controller.getPrice(article)));
-        priceUnit.setText(article.isWeighAble() ? "€/kg" : "€");
-        amountUnit.setText(article.isWeighAble() ? "g" : "stk.");
-        isWeighable = article.isWeighAble();
-        articleAmount.setVisible(!article.isWeighAble());
-        articleAmountLabel.setForeground(article.isWeighAble() ? Color.WHITE : Color.BLACK);
-        articleUnit.setVisible(!article.isWeighAble());
+        priceUnit.setText(article.isWeighable() ? "€/kg" : "€");
+        amountUnit.setText(article.isWeighable() ? "g" : "stk.");
+        isWeighable = article.isWeighable();
+        articleAmount.setVisible(!article.isWeighable());
+        articleAmountLabel.setForeground(article.isWeighable() ? Color.WHITE : Color.BLACK);
+        articleUnit.setVisible(!article.isWeighable());
         optTaxLow.setSelected(article.getVat().getValue() == 0.07);
         optTaxStandard.setSelected(article.getVat().getValue() != 0.07);
     }

@@ -2,7 +2,7 @@ package kernbeisser.CustomComponents.ShoppingTable;
 
 import jdk.nashorn.internal.scripts.JO;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -95,8 +95,8 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
 }

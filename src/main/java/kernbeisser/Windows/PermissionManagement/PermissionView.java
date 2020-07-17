@@ -3,17 +3,19 @@ package kernbeisser.Windows.PermissionManagement;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.KeyCategory;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 
 public class PermissionView implements View<PermissionController> {
     private ObjectTable<Permission> permission;
     private JPanel main;
-    private JComboBox<KeyCategory> category;
+    private JComboBox<Object> category;
     private JButton back;
     private JButton add;
     private JButton delete;
@@ -64,15 +66,20 @@ public class PermissionView implements View<PermissionController> {
     }
 
 
-    void setCategories(KeyCategory[] categories) {
+    void setCategories(Class<?>[] categories) {
         category.removeAllItems();
-        for (KeyCategory keyCategory : categories) {
+        category.addItem("Aktionen");
+        for (Class<?> keyCategory : categories) {
             category.addItem(keyCategory);
         }
     }
 
-    public KeyCategory getCategory() {
-        return (KeyCategory) category.getSelectedItem();
+    public Class<?> getCategory() {
+        try{
+            return (Class<?>) category.getSelectedItem();
+        }catch (ClassCastException e){
+            return null;
+        }
     }
 
     @Override
@@ -80,6 +87,14 @@ public class PermissionView implements View<PermissionController> {
         add.addActionListener(e -> controller.addPermission());
         delete.addActionListener(e -> controller.deletePermission());
         category.addActionListener(e -> controller.loadSolutions());
+        category.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                                                          boolean cellHasFocus) {
+
+                return super.getListCellRendererComponent(list, value instanceof Class<?> ? ((Class<?>)value).getSimpleName() : value, index, isSelected, cellHasFocus);
+            }
+        });
         back.addActionListener(e -> back());
     }
 

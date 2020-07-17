@@ -1,7 +1,7 @@
 package kernbeisser.CustomComponents.SearchBox;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Searchable;
 import org.jetbrains.annotations.NotNull;
@@ -90,8 +90,8 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>,Searc
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public void refreshLoadSolutions() {

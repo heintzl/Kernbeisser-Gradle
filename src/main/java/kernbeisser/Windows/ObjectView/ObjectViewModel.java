@@ -2,6 +2,7 @@ package kernbeisser.Windows.ObjectView;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.*;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.WindowImpl.SubWindow;
@@ -12,9 +13,12 @@ public class ObjectViewModel<T> implements Model<ObjectViewController<T>> {
     private final MaskLoader<T> maskLoader;
     private final Searchable<T> itemSupplier;
 
-    ObjectViewModel(MaskLoader<T> maskLoader, Searchable<T> itemSupplier) {
+    private boolean copyValuesToAdd;
+
+    ObjectViewModel(MaskLoader<T> maskLoader, Searchable<T> itemSupplier, boolean copyValuesToAdd) {
         this.maskLoader = maskLoader;
         this.itemSupplier = itemSupplier;
+        this.copyValuesToAdd = copyValuesToAdd;
     }
 
     Window openEdit(Window window, T selected) {
@@ -26,7 +30,7 @@ public class ObjectViewModel<T> implements Model<ObjectViewController<T>> {
     }
 
     Window openAdd(Window window, T selected) {
-        return maskLoader.accept(selected, Mode.ADD).openAsWindow(window,SubWindow::new);
+        return maskLoader.accept(copyValuesToAdd ? selected : (T)Tools.invokeConstructor(selected.getClass()), Mode.ADD).openAsWindow(window, SubWindow::new);
     }
 
     void remove(T selected) {

@@ -164,6 +164,7 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
     public final static StringTransformer<Long> LONG_FORMER = new StringTransformer<Long>() {
         @Override
         public String toString(Long aLong) {
+            if(aLong==null)return "";
             return aLong.toString();
         }
 

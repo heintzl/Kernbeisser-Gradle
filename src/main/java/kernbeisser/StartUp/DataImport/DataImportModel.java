@@ -48,7 +48,7 @@ public class DataImportModel implements Model<DataImportController> {
         et.begin();
         int c = 0;
         for (Article t : articles) {
-            t.getSpecialPriceMonth().forEach(em::persist);
+            t.getOffers().forEach(em::persist);
             em.persist(t);
             c++;
             if (c % 20 == 0) {

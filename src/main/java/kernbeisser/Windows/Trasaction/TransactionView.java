@@ -8,7 +8,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -202,7 +202,7 @@ public class TransactionView implements View<TransactionController> {
                 }
             }
         });
-        info.setRequiredWriteKeys(Key.TRANSACTION_INFO_WRITE);
+        info.setRequiredWriteKeys(PermissionKey.TRANSACTION_INFO_WRITE);
                 formKBValue.addActionListener(e -> from.setEnabled(!formKBValue.isSelected()));
         //Sets the ActionListeners for the instant Transaction Buttons
         {

@@ -1,8 +1,9 @@
 package kernbeisser.Windows.EditSurchargeTable;
 
 import kernbeisser.DBEntities.SurchargeTable;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,12 +21,16 @@ public class EditSurchargeTableController implements Controller<EditSurchargeTab
             this.view = new EditSurchargeTableView(this);
         }
         view.setSuppliers(model.getAllSuppliers());
-        view.paste(model.getSurchargeTable());
     }
 
     public void commit() {
-        if (model.doAction(view.collect(model.getSurchargeTable()))) {
-            view.back();
+        try {
+            if (model.doAction(view.getObjectForm().getData())) {
+                view.back();
+            }
+        } catch (CannotParseException e) {
+            view.incorrectInput();
+            view.getObjectForm().markErrors();
         }
     }
 
@@ -45,7 +50,7 @@ public class EditSurchargeTableController implements Controller<EditSurchargeTab
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

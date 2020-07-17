@@ -30,7 +30,7 @@ public enum Setting {
     CONTAINER_SURCHARGE_REDUCTION ("0.5"),
     DEFAULT_THEME(Theme.LIGHT),
     INFO_LINE_LAST_CATALOG("notDefined"),
-    UPDATE_CATALOG_FROM_INTERNET("false"),
+    UPDATE_CATALOG_FROM_INTERNET("true"),
     MIN_PASSWORD_LENGTH("5"),
     MIN_REQUIRED_PASSWORD_STRENGTH("3"),
     HASH_COSTS("12"),
@@ -109,9 +109,7 @@ public enum Setting {
         int value = 0;
         try {
             value = KeyEvent.class.getDeclaredField(this.getStringValue()).getInt(null);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
         return value;

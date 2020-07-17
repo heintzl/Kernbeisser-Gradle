@@ -1,4 +1,4 @@
-package kernbeisser.DBEntities;
+package kernbeisser.Enums;
 
 public enum TransactionType {
     PURCHASE,

@@ -1,7 +1,6 @@
 package kernbeisser.Windows.Trasaction;
 
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.TransactionType;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.Model;

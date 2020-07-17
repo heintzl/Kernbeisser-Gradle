@@ -1,7 +1,7 @@
 package kernbeisser.Windows.SoloShoppingMask;
 
 import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
@@ -46,8 +46,8 @@ public class SoloShoppingMaskController implements Controller<SoloShoppingMaskVi
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public ShoppingMaskUIView getShoppingMaskView() {

@@ -1,7 +1,7 @@
 package kernbeisser.Windows.Setting;
 
 import kernbeisser.DBEntities.SettingValue;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Windows.Controller;
@@ -36,8 +36,8 @@ public class SettingController implements Controller<SettingView,SettingModel> {
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public void apply() {

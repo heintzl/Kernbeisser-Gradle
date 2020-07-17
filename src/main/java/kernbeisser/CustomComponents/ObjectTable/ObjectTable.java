@@ -101,7 +101,7 @@ public class ObjectTable<T> extends JTable {
 
     @SafeVarargs
     public final void setColumns(Column<T>... columns){
-        this.columns = new ArrayList<>(Arrays.asList(columns));
+        setColumns(Arrays.asList(columns));
     }
 
     public void addColumn(Column<T> column) {
@@ -139,6 +139,7 @@ public class ObjectTable<T> extends JTable {
     }
 
     public void add(T in) {
+        if(in == null) throw new NullPointerException("Cannot add null object to ObjectTable");
         objects.add(in);
         repaintUI();
     }

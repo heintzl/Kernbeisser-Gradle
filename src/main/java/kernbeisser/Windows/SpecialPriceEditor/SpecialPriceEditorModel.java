@@ -32,7 +32,7 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
         et.begin();
         Article i = em.find(Article.class, article.getId());
         Offer o = em.find(Offer.class,offer.getOid());
-        i.getSpecialPriceMonth().remove(o);
+        i.getOffers().remove(o);
         em.remove(o);
         em.persist(i);
         em.flush();
@@ -58,7 +58,7 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
         et.begin();
         Article i = em.createQuery("select i from Article i where id = :id", Article.class).setParameter("id", article.getId()).getSingleResult();
         em.persist(offer);
-        i.getSpecialPriceMonth().add(offer);
+        i.getOffers().add(offer);
         em.flush();
         et.commit();
         em.close();
@@ -67,7 +67,7 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
     public Collection<Article> searchArticle(String search,int maxResults,boolean onlyActionArticle){
         EntityManager em = DBConnection.getEntityManager();
         Collection<Article> out = em.createQuery(
-                "select i from Article i where (i.suppliersItemNumber = :n or kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n)"+(onlyActionArticle ?" and size(i.specialPriceMonth) > 0" : ""),
+                "select i from Article i where (i.suppliersItemNumber = :n or kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n)"+(onlyActionArticle ?" and size(i.offers) > 0" : ""),
                 Article.class
         )
                                     .setParameter("n", Tools.tryParseInteger(search))

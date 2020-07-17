@@ -1,23 +1,34 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Table
 @Entity
 public class UserGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter(onMethod_= {@Key(PermissionKey.USER_GROUP_GID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_GROUP_GID_WRITE)})
     private int gid;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.USER_GROUP_VALUE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_GROUP_VALUE_WRITE)})
     private double value;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.USER_GROUP_INTEREST_THIS_YEAR_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_GROUP_INTEREST_THIS_YEAR_WRITE)})
     private int interestThisYear;
 
 
@@ -25,25 +36,6 @@ public class UserGroup {
         return Tools.getAll(UserGroup.class, condition);
     }
 
-    public double getValue() {
-        return value;
-    }
-
-    private void setValue(double value) {
-        this.value = value;
-    }
-
-    public int getId() {
-        return gid;
-    }
-
-    public int getInterestThisYear() {
-        return interestThisYear;
-    }
-
-    public void setInterestThisYear(int interestThisYear) {
-        this.interestThisYear = interestThisYear;
-    }
 
     public Collection<User> getMembers() {
         EntityManager em = DBConnection.getEntityManager();
@@ -66,4 +58,22 @@ public class UserGroup {
         return v;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserGroup userGroup = (UserGroup) o;
+        return gid == userGroup.gid &&
+               Double.compare(userGroup.value, value) == 0 &&
+               interestThisYear == userGroup.interestThisYear;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gid, value, interestThisYear);
+    }
 }

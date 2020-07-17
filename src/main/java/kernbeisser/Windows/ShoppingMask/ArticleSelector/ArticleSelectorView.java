@@ -2,7 +2,7 @@ package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class ArticleSelectorView implements View<ArticleSelectorController> {
 
     private final ArticleSelectorController controller;
 
-    public ArticleSelectorView(ArticleSelectorController controller, Key... required) {
+    public ArticleSelectorView(ArticleSelectorController controller, PermissionKey... required) {
         this.controller = controller;
     }
 

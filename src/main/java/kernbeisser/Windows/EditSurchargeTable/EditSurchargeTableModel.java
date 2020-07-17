@@ -13,11 +13,11 @@ import javax.persistence.PersistenceException;
 import java.util.Collection;
 
 public class EditSurchargeTableModel implements Model<EditSurchargeTableController> {
-    private final SurchargeTable surchargeTable;
+    private final SurchargeTable source;
     private final Mode mode;
 
     public EditSurchargeTableModel(SurchargeTable surchargeTable, Mode mode) {
-        this.surchargeTable = surchargeTable;
+        this.source = surchargeTable;
         this.mode = mode;
     }
 
@@ -35,7 +35,8 @@ public class EditSurchargeTableModel implements Model<EditSurchargeTableControll
                     edit(table);
                     break;
                 case ADD:
-                    add(Tools.mergeWithoutId(surchargeTable));
+                    table.setStid(0);
+                    add(table);
                     break;
             }
             return true;
@@ -69,7 +70,7 @@ public class EditSurchargeTableModel implements Model<EditSurchargeTableControll
         em.close();
     }
 
-    public SurchargeTable getSurchargeTable() {
-        return surchargeTable;
+    public SurchargeTable getSource() {
+        return source;
     }
 }

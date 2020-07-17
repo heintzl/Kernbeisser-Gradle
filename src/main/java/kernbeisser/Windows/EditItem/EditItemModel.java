@@ -10,7 +10,6 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
-import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -19,7 +18,7 @@ import java.util.Collection;
 
 public class EditItemModel implements Model<EditItemController> {
     private final Mode mode;
-    private Article article;
+    private final Article article;
 
     EditItemModel(Article article, Mode mode) {
         this.mode = mode;
@@ -87,7 +86,8 @@ public class EditItemModel implements Model<EditItemController> {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.persist(article.newInstance());
+        article.setId(0);
+        em.persist(article.unwrapProxy());
         em.flush();
         et.commit();
         em.close();
@@ -127,7 +127,7 @@ public class EditItemModel implements Model<EditItemController> {
         return out;
     }
 
-    public boolean nameExists(String name) {
+    public static boolean nameExists(String name) {
         EntityManager em = DBConnection.getEntityManager();
         try {
             em.createQuery("select i from Article i where i.name like :name")

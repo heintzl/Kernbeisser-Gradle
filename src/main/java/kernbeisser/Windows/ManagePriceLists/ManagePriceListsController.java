@@ -1,7 +1,7 @@
 package kernbeisser.Windows.ManagePriceLists;
 
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -97,7 +97,7 @@ public class ManagePriceListsController implements Controller<ManagePriceListsVi
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 }

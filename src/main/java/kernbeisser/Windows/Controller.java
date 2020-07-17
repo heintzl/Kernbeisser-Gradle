@@ -1,7 +1,7 @@
 package kernbeisser.Windows;
 
 import jiconfont.IconCode;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.TabbedPanel.Tab;
@@ -39,7 +39,7 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
     /**
      * @return the required keys that are necessary to open this View
      */
-    Key[] getRequiredKeys();
+    PermissionKey[] getRequiredKeys();
 
     /**
      * get called if a window get closed
@@ -262,8 +262,8 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
         }
 
         @Override
-        public Key[] getRequiredKeys() {
-            return new Key[0];
+        public PermissionKey[] getRequiredKeys() {
+            return new PermissionKey[0];
         }
     }
 

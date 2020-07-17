@@ -1,10 +1,14 @@
 package kernbeisser.Windows.EditUser;
 
 import kernbeisser.CustomComponents.AccessChecking.*;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.Verifier.*;
+import kernbeisser.DBEntities.Job;
+import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +16,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class EditUserView implements View<EditUserController> {
     private JLabel lblVorname;
@@ -45,14 +52,14 @@ public class EditUserView implements View<EditUserController> {
     private JLabel grpGenossenschaft;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,Integer> shares;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,Double> solidarySupplement;
-    private kernbeisser.CustomComponents.PermissionButton chgJobs;
+    private AccessCheckingCollectionEditor<User,Set<Job>,Job> chgJobs;
     private JLabel lblDienste;
     private JPanel userDataPanel;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> extraJobs;
     private JButton cancel;
     private JButton submit;
     private JPanel buttonPanel;
-    private PermissionButton editPermission;
+    private AccessCheckingCollectionEditor<User,Set<Permission>,Permission> editPermission;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,Integer> keyNumber;
     private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User,String> email;
 
@@ -96,13 +103,14 @@ public class EditUserView implements View<EditUserController> {
                 solidarySupplement,
                 extraJobs,
                 keyNumber,
-                email
+                email,
+                chgJobs,
+                editPermission
         );
         chgPassword.addActionListener(e -> {
             controller.requestChangePassword();
 
         });
-        chgJobs.addActionListener(e -> controller.openJobSelector());
         submit.addActionListener(e -> controller.doAction());
         KeyAdapter refreshUsername = new KeyAdapter() {
             @Override
@@ -112,19 +120,16 @@ public class EditUserView implements View<EditUserController> {
         };
         firstName.addKeyListener(refreshUsername);
         lastName.addKeyListener(refreshUsername);
-        hasKey.addActionListener(e -> keyNumber.setEnabled(!keyNumber.isEnabled()));
-        editPermission.addActionListener(e -> controller.openPermissionSelector());
+        hasKey.addActionListener(e -> keyNumber.setEnabled(keyNumber.isEnabled()));
         cancel.addActionListener(e -> back());
         email.setInputVerifier(new EmailVerifier());
         phone1.setInputVerifier(new RegexVerifier(".+"));
         street.setInputVerifier(new NotNullVerifier());
         firstName.setInputVerifier(new NotNullVerifier());
         lastName.setInputVerifier(new NotNullVerifier());
-        chgPassword.setRequiredWriteKeys(Key.USER_PASSWORD_WRITE);
-        editPermission.setRequiredWriteKeys(Key.USER_PERMISSION_WRITE);
-        hasKey.setReadWrite(Key.USER_KERNBEISSER_KEY_READ);
-        chgJobs.setRequiredWriteKeys(Key.USER_JOBS_WRITE,Key.USER_JOBS_READ);
-        hasKey.setRequiredWriteKeys(Key.USER_KERNBEISSER_KEY_WRITE);
+        chgPassword.setRequiredWriteKeys(PermissionKey.USER_PASSWORD_WRITE);
+        hasKey.setReadWrite(PermissionKey.USER_KERNBEISSER_KEY_READ);
+        hasKey.setRequiredWriteKeys(PermissionKey.USER_KERNBEISSER_KEY_WRITE);
         shares.setInputVerifier(IntegerVerifier.from(1,1,3,10));
         submit.setVerifyInputWhenFocusTarget(true);
     }
@@ -161,8 +166,14 @@ public class EditUserView implements View<EditUserController> {
         shares = new AccessCheckingField<>(User::getShares,User::setShares,AccessCheckingField.INT_FORMER);
         solidarySupplement = new AccessCheckingField<>(User::getSolidaritySurcharge,User::setSolidaritySurcharge,AccessCheckingField.DOUBLE_FORMER);
         extraJobs = new AccessCheckingField<>(User::getExtraJobs,User::setExtraJobs,AccessCheckingField.NONE);
-        keyNumber = new AccessCheckingField<>(User::getKernbeisserKeyNumber, User::setKernbeisserKey, AccessCheckingField.INT_FORMER);
+        keyNumber = new AccessCheckingField<>(User::getKernbeisserKey, User::setKernbeisserKey, AccessCheckingField.INT_FORMER);
         email = new AccessCheckingField<>(User::getEmail,User::setEmail,AccessCheckingField.EMAIL_FORMER);
+        editPermission = new AccessCheckingCollectionEditor<>(
+                User::getPermissions
+                , User::setPermissions
+                , () -> Permission.getAll(null)
+                , Column.create("Name", Permission::getName));
+        chgJobs = new AccessCheckingCollectionEditor<>(User::getJobs,User::setJobs,() -> Job.getAll(null),Column.create("Name",Job::getName),Column.create("Beschreibung",Job::getDescription));
     }
 
     public void invalidInput() {
@@ -171,5 +182,6 @@ public class EditUserView implements View<EditUserController> {
 
     public void setUsername(String username) {
         this.username.setText(username);
+        this.username.inputChanged();
     }
 }

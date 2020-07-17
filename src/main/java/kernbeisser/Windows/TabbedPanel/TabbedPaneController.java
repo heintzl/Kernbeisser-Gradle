@@ -1,7 +1,7 @@
 package kernbeisser.Windows.TabbedPanel;
 
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
@@ -37,7 +37,7 @@ public class TabbedPaneController implements Controller<TabbedPaneView,TabbedPan
             model.addTab(tab);
             view.addTab(new DefaultTab(IconFontSwing.buildIcon(tab.getIcon(), 20, new Color(0x32C4A2)), tab.getTitle(),
                                        () -> closeTab(tab), () -> view.setSelected(model.indexOf(tab))).getMain(),
-                        tab.getController().getView().getWrappedContent(), model.indexOf(tab));
+                        tab.getController().getView().getContent(), model.indexOf(tab));
             view.setSelected(model.indexOf(tab));
         }else {
             view.setSelected(posIn);
@@ -88,8 +88,8 @@ public class TabbedPaneController implements Controller<TabbedPaneView,TabbedPan
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public boolean clear() {

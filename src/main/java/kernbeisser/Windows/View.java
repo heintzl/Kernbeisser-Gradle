@@ -4,6 +4,7 @@ package kernbeisser.Windows;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.ViewMainPanel;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,11 +18,18 @@ public interface View <C extends Controller<? extends View<? extends C>,? extend
 
     @NotNull JComponent getContent();
 
+
     @NotNull default Dimension getSize(){
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        dimension.setSize(
-                Math.min(dimension.getWidth(), Setting.APP_DEFAULT_WIDTH.getIntValue()),
-                Math.min(dimension.getHeight(), Setting.APP_DEFAULT_HEIGHT.getIntValue()));
+        if(DBConnection.isInitialized()) {
+            dimension.setSize(
+                    Math.min(dimension.getWidth(), Setting.APP_DEFAULT_WIDTH.getIntValue()),
+                    Math.min(dimension.getHeight(), Setting.APP_DEFAULT_HEIGHT.getIntValue()));
+        }else {
+            dimension.setSize(
+                    Math.min(dimension.getWidth(),Integer.parseInt( Setting.APP_DEFAULT_WIDTH.getDefaultValue())),
+                    Math.min(dimension.getHeight(), Integer.parseInt(Setting.APP_DEFAULT_HEIGHT.getDefaultValue())));
+        }
         return dimension;
     };
 

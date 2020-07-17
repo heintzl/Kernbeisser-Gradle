@@ -1,11 +1,13 @@
 package kernbeisser.Useful;
 
+import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
+import kernbeisser.Security.AccessSupplier;
 import kernbeisser.Security.Proxy;
 import org.apache.commons.beanutils.BeanUtils;
 import sun.misc.Unsafe;
@@ -363,9 +365,10 @@ public class Tools {
                 e.getComponent().removeFocusListener(this);
             }
         });
-        if(((JTextComponent)component).getText().replace(" ","").equals(""))
-            component.setBackground(new Color(0xFF9999));
-        else component.setForeground(new Color(0xFF00000));
+
+        if(component instanceof JTextComponent && !((JTextComponent)component).getText().replace(" ","").equals(""))
+            component.setForeground(new Color(0xFF00000));
+        else component.setBackground(new Color(0xFF9999));
 
     }
 
@@ -387,6 +390,7 @@ public class Tools {
         boolean isProxy = Proxy.isProxyInstance(source);
         while (!clazz.equals(Object.class)) {
             for (Field field : clazz.getDeclaredFields()) {
+                if(Modifier.isStatic(field.getModifiers())) continue;
                 if(isProxy && field.getName().equals("handler"))continue;
                 field.setAccessible(true);
                 try {
@@ -494,5 +498,31 @@ public class Tools {
                 return false;
             }
         });
+    }
+
+    public static <T> T decide(AccessSupplier<T> supplier, T t){
+        try {
+            return supplier.get();
+        } catch (AccessDeniedException e) {
+            return t;
+        }
+    }
+
+    public static <T> void tryIt(AccessConsumer<T> consumer, T t){
+        try {
+            consumer.accept(t);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static <T> T invokeConstructor(Class<T> out){
+        try {
+            Constructor<T> constructor = out.getDeclaredConstructor(new Class[0]);
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            return Tools.createWithoutConstructor(out);
+        }
     }
 }

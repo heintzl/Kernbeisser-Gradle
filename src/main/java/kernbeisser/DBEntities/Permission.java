@@ -1,61 +1,44 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table
 public class Permission {
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.PERMISSION_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.PERMISSION_ID_WRITE)})
     private int id;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
     private String name;
 
     @JoinColumn
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Key> keySet = new HashSet<>();
+    @Getter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
+    private Set<PermissionKey> keySet = new HashSet<>();
 
     public static List<Permission> getAll(String condition) {
         return Tools.getAll(Permission.class, condition);
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<Key> getKeySet() {
-        return keySet;
-    }
-
-    public void setKeySet(Set<Key> keySet) {
-        this.keySet = keySet;
-    }
-
-    public boolean contains(Key key) {
+    public boolean contains(PermissionKey key) {
         return keySet.contains(key);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 
     public static Collection<Permission> defaultSearch(String s, int max) {
@@ -72,30 +55,27 @@ public class Permission {
     }
 
     @Override
+    public String toString() {
+        return Tools.decide(this::getName,"Permission["+id+"]");
+    }
+
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Permission)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         Permission that = (Permission) o;
-
-        if (getId() != that.getId()) {
-            return false;
-        }
-        if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) {
-            return false;
-        }
-        return getKeySet() != null ? getKeySet().equals(that.getKeySet()) : that.getKeySet() == null;
+        return id == that.id &&
+               name.equals(that.name) &&
+               keySet.equals(that.keySet);
     }
 
     @Override
     public int hashCode() {
-        int result = getId();
-        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-        result = 31 * result + (getKeySet() != null ? getKeySet().hashCode() : 0);
-        return result;
+        return Objects.hash(id, name, keySet);
     }
 }

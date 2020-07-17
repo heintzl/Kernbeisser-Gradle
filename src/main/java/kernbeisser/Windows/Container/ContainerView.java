@@ -5,7 +5,7 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Container;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,19 +66,23 @@ public class ContainerView implements View<ContainerController> {
 
     private void createUIComponents() {
         lastContainers = new ObjectTable<>(
-                Column.create("Anzahl", Container::getAmount, Key.CONTAINER_AMOUNT_READ),
-                Column.create("Ladennummer", Container::getKBNumber,Key.CONTAINER_ITEM_READ,Key.ARTICLE_KB_NUMBER_READ),
-                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), Key.CONTAINER_ITEM_READ, Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
-                Column.create("Produktname", e -> e.getItem().getName(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_NAME_READ),
-                Column.create("Netto-Preis", e -> e.getNetPrice() + "€",Key.CONTAINER_ITEM_READ,Key.ARTICLE_NET_PRICE_READ),
+                Column.create("Anzahl", Container::getAmount, PermissionKey.CONTAINER_AMOUNT_READ),
+                Column.create("Ladennummer", Container::getKBNumber, PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_KB_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Produktname", e -> e.getItem().getName(), PermissionKey.CONTAINER_ITEM_READ,
+                              PermissionKey.ARTICLE_BASE_NAME_READ),
+                Column.create("Netto-Preis", e -> e.getNetPrice() + "€", PermissionKey.CONTAINER_ITEM_READ,
+                              PermissionKey.ARTICLE_BASE_NET_PRICE_READ),
                 Column.create("Verkaufspreis", e -> "notDefined" + "€")
         );
         unpaidContainers = new ObjectTable<>(
-                Column.create("Anzahl", Container::getAmount,Key.CONTAINER_AMOUNT_READ),
-                Column.create("Ladennummer", Container::getKBNumber,Key.CONTAINER_ITEM_READ,Key.ARTICLE_KB_NUMBER_READ),
-                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), Key.CONTAINER_ITEM_READ, Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
-                Column.create("Produktname", e -> e.getItem().getName(),Key.CONTAINER_ITEM_READ,Key.ARTICLE_NAME_READ),
-                Column.create("Netto-Preis", e -> e.getNetPrice() + "€",Key.CONTAINER_ITEM_READ,Key.ARTICLE_NET_PRICE_READ),
+                Column.create("Anzahl", Container::getAmount, PermissionKey.CONTAINER_AMOUNT_READ),
+                Column.create("Ladennummer", Container::getKBNumber, PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_KB_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Produktname", e -> e.getItem().getName(), PermissionKey.CONTAINER_ITEM_READ,
+                              PermissionKey.ARTICLE_BASE_NAME_READ),
+                Column.create("Netto-Preis", e -> e.getNetPrice() + "€", PermissionKey.CONTAINER_ITEM_READ,
+                              PermissionKey.ARTICLE_BASE_NET_PRICE_READ),
                 Column.create("Verkaufspreis", e -> "notDefined" + "€"),
                 new Column<Container>() {
                     @Override
