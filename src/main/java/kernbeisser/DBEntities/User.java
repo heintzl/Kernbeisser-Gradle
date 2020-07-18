@@ -162,6 +162,11 @@ public class User implements Serializable {
         }
     }
 
+    @kernbeisser.Security.Key(PermissionKey.USER_GROUP_VALUE_READ)
+    public double getRoundedValue() {
+        return Math.round(userGroup.getValue() * 100) / 100.0;
+    }
+
     public static void makeUserUnreadable(User user) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -355,22 +360,22 @@ public class User implements Serializable {
                townCode == user.townCode &&
                unreadable == user.unreadable &&
                forcePasswordChange == user.forcePasswordChange &&
-               permissions.equals(user.permissions) &&
-               extraJobs.equals(user.extraJobs) &&
-               jobs.equals(user.jobs) &&
-               username.equals(user.username) &&
-               password.equals(user.password) &&
-               firstName.equals(user.firstName) &&
-               surname.equals(user.surname) &&
-               phoneNumber1.equals(user.phoneNumber1) &&
-               phoneNumber2.equals(user.phoneNumber2) &&
-               street.equals(user.street) &&
-               town.equals(user.town) &&
-               email.equals(user.email) &&
-               createDate.equals(user.createDate) &&
-               updateDate.equals(user.updateDate) &&
-               userGroup.equals(user.userGroup) &&
-               lastPasswordChange.equals(user.lastPasswordChange);
+               Objects.equals(permissions, user.permissions) &&
+               Objects.equals(extraJobs, user.extraJobs) &&
+               Objects.equals(jobs, user.jobs) &&
+               Objects.equals(username, user.username) &&
+               Objects.equals(password, user.password) &&
+               Objects.equals(firstName, user.firstName) &&
+               Objects.equals(surname, user.surname) &&
+               Objects.equals(phoneNumber1, user.phoneNumber1) &&
+               Objects.equals(phoneNumber2, user.phoneNumber2) &&
+               Objects.equals(street, user.street) &&
+               Objects.equals(town, user.town) &&
+               Objects.equals(email, user.email) &&
+               Objects.equals(createDate, user.createDate) &&
+               Objects.equals(updateDate, user.updateDate) &&
+               Objects.equals(userGroup, user.userGroup) &&
+               Objects.equals(lastPasswordChange, user.lastPasswordChange);
     }
 
     @Override

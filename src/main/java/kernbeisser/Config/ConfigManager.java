@@ -23,7 +23,7 @@ public class ConfigManager {
 
     private static final File file = new File("config.json");
     private static final JSONObject config = new JSONObject(fileToString(StandardCharsets.UTF_8));
-    private static final byte[] dbPassword = {/*example: 0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66*/};
+    //private static final byte[] dbPassword = {/*example: 0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66*/};
 
     //Static only class
     private ConfigManager() {
@@ -55,7 +55,7 @@ public class ConfigManager {
         }
         if (configPassword == null || configPassword.isEmpty()) {
             logger.info("Using embedded password for DBConnection.");
-            return new String[]{obj.getString("URL"), obj.getString("Username"), new String(dbPassword)};
+            return new String[]{obj.getString("URL"), obj.getString("Username"), new String(IgnoreThis.ignoreMe)};
         } else {
             return new String[]{obj.getString("URL"), obj.getString("Username"), configPassword};
         }

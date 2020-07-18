@@ -256,10 +256,17 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         articleUnit.setText("");
     }
 
-    void noArticleFound() {
+    void messageNoArticleFound() {
         java.awt.Toolkit.getDefaultToolkit().beep();
         JOptionPane.showMessageDialog(mainPanel,
                                       "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
+    }
+
+    void messageInvalidDiscount() {
+        java.awt.Toolkit.getDefaultToolkit().beep();
+        JOptionPane.showMessageDialog(mainPanel,
+                                      "Rabatt muss zwischen 1 und 100 % liegen");
+        variablePercentage.setText("");
     }
 
     public void messageBarcodeNotFound(long barcode) {
@@ -461,6 +468,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         priceStandard.addItemListener(e -> variablePercentage.setEnabled(false));
         price50Percent.addItemListener(e -> variablePercentage.setEnabled(false));
         priceVariablePercentage.addItemListener(e -> {variablePercentage.setEnabled(true); variablePercentage.requestFocusInWindow();});
+        variablePercentage.addActionListener(e -> addToCart());
         kbNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {

@@ -10,9 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table
@@ -40,7 +38,9 @@ public class SettingValue {
     public static String getValue(Setting s){
         if(settingValueHashMap==null){
             settingValueHashMap = new HashMap<>();
-            getAll(null).forEach(e  -> settingValueHashMap.put(e.setting,e.value));
+            String[] allSettingNames = Arrays.stream(Setting.class.getEnumConstants()).map(Enum::name).toArray(String[]::new);
+            String condition = "where c.setting IN ('" + String.join("','", allSettingNames) + "')";
+            getAll(condition).forEach(e  -> settingValueHashMap.put(e.setting,e.value));
             logSettings();
         }
         String out = settingValueHashMap.get(s);
