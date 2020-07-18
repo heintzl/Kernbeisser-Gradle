@@ -92,5 +92,17 @@ public class MenuView implements View<MenuController> {
         placeHolderControllerButton2 = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
         openSelfShoppingMask = new ControllerButton(new SoloShoppingMaskController(), controller -> controller.openTab("<PlaceHolder>"));
         addBeginner = new ControllerButton(new EditUserController(User.generateBeginnerUser(),Mode.ADD),e -> e.openTab("Probemitglied aufnehmen"));
+        //TODO make focus on button work
+        openCashierShoppingMask.requestFocusInWindow();
+        //Releasesettings
+        printBonFromPast.setEnabled(false);
+        order.setEnabled(false);
+        editPriceList.setEnabled(false);
+        editSurchargeTables.setEnabled(false);
+        editUserSettings.setEnabled(false);
+        placeHolderControllerButton.setEnabled(false);
+        placeHolderControllerButton1.setEnabled(false);
+        placeHolderControllerButton2.setEnabled(false);
+        //Releasesettings
     }
 }
