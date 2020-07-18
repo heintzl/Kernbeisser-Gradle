@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.MessageFormat;
 
 
 public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,ShoppingMaskModel> {
@@ -72,6 +71,11 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         //good to have a return statement after the function already returned a value
         boolean piece = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
         try {
+            int discount = view.getDiscount();
+            if (discount < 1 || discount >100) {
+                view.messageInvalidDiscount();
+                return false;
+            }
             ShoppingItem item = extractShoppingItemFromUI();
             if (item.getItemMultiplier() != 0 && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece) )) {
                 shoppingCartController.addShoppingItem(item, piece);
@@ -79,7 +83,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             }
             return false;
         } catch (UndefinedInputException undefinedInputException) {
-            view.noArticleFound();
+            view.messageNoArticleFound();
             return false;
         }
     }
@@ -133,7 +137,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                         throw new UndefinedInputException();
                     }
                 }
-                ShoppingItem shoppingItem = new ShoppingItem(extractedArticle, view.getDiscount(),false);
+                view.messageInvalidDiscount();
+                ShoppingItem shoppingItem = new ShoppingItem(extractedArticle, view.getDiscount(), false);
                 view.setDiscount();
                 shoppingItem.setItemMultiplier((int) view.getAmount());
                 return shoppingItem;
