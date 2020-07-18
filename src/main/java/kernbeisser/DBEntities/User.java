@@ -162,6 +162,11 @@ public class User implements Serializable {
         }
     }
 
+    @kernbeisser.Security.Key(PermissionKey.USER_GROUP_VALUE_READ)
+    public double getRoundedValue() {
+        return Math.round(userGroup.getValue() * 100) / 100.0;
+    }
+
     public static void makeUserUnreadable(User user) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
