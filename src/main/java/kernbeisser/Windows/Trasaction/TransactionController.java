@@ -25,8 +25,9 @@ public class TransactionController implements Controller<TransactionView,Transac
         userSearchBoxController = new SearchBoxController<User>(User::defaultSearch,
                                                                 Column.create("Nachname", User::getSurname,
                                                                               PermissionKey.USER_SURNAME_READ),
-                                                            Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
-                                                            Column.create("Username", User::getUsername, PermissionKey.USER_USERNAME_READ)
+                                                                Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
+                                                                Column.create("Username", User::getUsername, PermissionKey.USER_USERNAME_READ),
+                                                                Column.create("Guthaben", User::getRoundedValue, PermissionKey.USER_GROUP_VALUE_READ)
                                                             );
         userSearchBoxController.initView();
         view = new TransactionView(this);
@@ -78,7 +79,7 @@ public class TransactionController implements Controller<TransactionView,Transac
 
     void addTransaction() {
         Transaction transaction = new Transaction();
-        if(view.getValue()==0){
+        if(view.getValue()<=0){
             view.invalidValue();
             return;
         }
