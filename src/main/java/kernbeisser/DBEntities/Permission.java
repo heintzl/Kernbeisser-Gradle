@@ -4,10 +4,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.*;
@@ -17,20 +15,20 @@ import java.util.*;
 public class Permission {
     @Id
     @GeneratedValue
-    @Getter(onMethod_= {@Key(PermissionKey.PERMISSION_ID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PERMISSION_ID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PERMISSION_ID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PERMISSION_ID_WRITE)})
     private int id;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PERMISSION_NAME_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
     private String name;
 
     @JoinColumn
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
-    @Getter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PERMISSION_NAME_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
     private Set<PermissionKey> keySet = new HashSet<>();
 
     public static List<Permission> getAll(String condition) {
@@ -47,16 +45,16 @@ public class Permission {
                 "select p from Permission p where p.name like :s",
                 Permission.class
         )
-                                .setParameter("s", s + "%")
-                                .setMaxResults(max)
-                                .getResultList();
+                                       .setParameter("s", s + "%")
+                                       .setMaxResults(max)
+                                       .getResultList();
         em.close();
         return out;
     }
 
     @Override
     public String toString() {
-        return Tools.decide(this::getName,"Permission["+id+"]");
+        return Tools.decide(this::getName, "Permission[" + id + "]");
     }
 
 

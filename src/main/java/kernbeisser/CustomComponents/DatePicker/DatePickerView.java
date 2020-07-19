@@ -24,7 +24,7 @@ public class DatePickerView implements View<DatePickerController> {
         this.controller = datePickerController;
     }
 
-    void setMoths(Month[] months){
+    void setMoths(Month[] months) {
         monthSelection.removeAllItems();
         for (Month month : months) {
             this.monthSelection.addItem(month.getDisplayName(TextStyle.FULL, Locale.GERMANY));
@@ -32,23 +32,25 @@ public class DatePickerView implements View<DatePickerController> {
         monthSelection.setSelectedIndex(0);
     }
 
-    int getSelectedDay(){
-        Object o = monthDays.getValueAt(monthDays.getSelectedRow(),monthDays.getSelectedColumn());
-        if(o!=null){
+    int getSelectedDay() {
+        Object o = monthDays.getValueAt(monthDays.getSelectedRow(), monthDays.getSelectedColumn());
+        if (o != null) {
             return (int) o;
-        }else return -1;
+        } else {
+            return -1;
+        }
     }
 
-    void setMonths(TableModel model){
+    void setMonths(TableModel model) {
         monthDays.setModel(model);
     }
 
-    void setSelectionButtonText(String s){
+    void setSelectionButtonText(String s) {
         chooseButton.setEnabled(true);
         chooseButton.setText(s + " Auswählen");
     }
 
-    int getSelectedMonth(){
+    int getSelectedMonth() {
         return monthSelection.getSelectedIndex();
     }
 
@@ -73,7 +75,6 @@ public class DatePickerView implements View<DatePickerController> {
     public @NotNull JComponent getContent() {
         return main;
     }
-
 
 
 }

@@ -5,17 +5,17 @@ import kernbeisser.Useful.Tools;
 
 import javax.swing.*;
 
-public class AccessCheckBox <P> extends JCheckBox implements Bounded<P,Boolean>{
+public class AccessCheckBox<P> extends JCheckBox implements Bounded<P,Boolean> {
 
     private boolean inputChanged = false;
 
     private final Setter<P,Boolean> setter;
     private final Getter<P,Boolean> getter;
 
-    public AccessCheckBox(Getter<P,Boolean> getter, Setter<P,Boolean> setter){
+    public AccessCheckBox(Getter<P,Boolean> getter, Setter<P,Boolean> setter) {
         this.getter = getter;
         this.setter = setter;
-        addActionListener(e -> inputChanged=true);
+        addActionListener(e -> inputChanged = true);
     }
 
     @Override
@@ -32,14 +32,16 @@ public class AccessCheckBox <P> extends JCheckBox implements Bounded<P,Boolean>{
     public void setObjectData(P data) {
         try {
             setSelected(getter.get(data));
-        } catch (AccessDeniedException ignored) {}
+        } catch (AccessDeniedException ignored) {
+        }
     }
 
     @Override
     public void writeInto(P p) {
         try {
-            setter.set(p,isSelected());
-        } catch (AccessDeniedException ignored) {}
+            setter.set(p, isSelected());
+        } catch (AccessDeniedException ignored) {
+        }
     }
 
     @Override
@@ -54,10 +56,10 @@ public class AccessCheckBox <P> extends JCheckBox implements Bounded<P,Boolean>{
 
     @Override
     public void setReadable(boolean b) {
-        if(!b){
+        if (!b) {
             setText(getText() + "[Unbekannt]");
-        }else {
-            setText(getText().replace("[Unbekannt]",""));
+        } else {
+            setText(getText().replace("[Unbekannt]", ""));
         }
     }
 

@@ -4,8 +4,7 @@ import java.awt.*;
 import java.util.Vector;
 
 public class FocusTraversal
-        extends FocusTraversalPolicy
-{
+        extends FocusTraversalPolicy {
     Vector<Component> order;
 
     private boolean getTabability(Component component) {
@@ -19,19 +18,17 @@ public class FocusTraversal
     }
 
     public Component getComponentAfter(Container focusCycleRoot,
-                                       Component component)
-    {
+                                       Component component) {
         int idx;
         do {
             idx = (order.indexOf(component) + 1) % order.size();
             component = order.get(idx);
-        } while(! getTabability(component) && idx <= order.size());
+        } while (!getTabability(component) && idx <= order.size());
         return component;
     }
 
     public Component getComponentBefore(Container focusCycleRoot,
-                                        Component component)
-    {
+                                        Component component) {
         int idx;
         do {
             idx = order.indexOf(component) - 1;
@@ -39,7 +36,7 @@ public class FocusTraversal
                 idx = order.size() - 1;
             }
             component = order.get(idx);
-        } while(! getTabability(component) && idx >= 0);
+        } while (!getTabability(component) && idx >= 0);
         return component;
     }
 

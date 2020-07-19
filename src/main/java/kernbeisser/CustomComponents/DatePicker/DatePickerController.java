@@ -20,25 +20,25 @@ public class DatePickerController implements Controller<DatePickerView,DatePicke
     private final DatePickerView view;
     private final DatePickerModel model;
 
-    public DatePickerController(){
+    public DatePickerController() {
         view = new DatePickerView(this);
         model = new DatePickerModel();
     }
 
-    void loadMonth(){
+    void loadMonth() {
         view.setMonths(createMonth(view.getSelectedMonth()));
     }
 
-    private TableModel createMonth(int monthIndex){
-        Month m = Month.of(monthIndex+1);
+    private TableModel createMonth(int monthIndex) {
+        Month m = Month.of(monthIndex + 1);
         YearMonth month = Year.now().atMonth(m);
         int firstDayOfWeek = month.atDay(1).getDayOfWeek().getValue();
-        Object[][] days = new Object[((m.maxLength()-3+firstDayOfWeek) / 7)+1][7];
+        Object[][] days = new Object[((m.maxLength() - 3 + firstDayOfWeek) / 7) + 1][7];
         for (int i = 1; i < m.maxLength(); i++) {
-            days[(firstDayOfWeek+i-2)/7][month.atDay(i).getDayOfWeek().getValue()-1] = i;
+            days[(firstDayOfWeek + i - 2) / 7][month.atDay(i).getDayOfWeek().getValue() - 1] = i;
         }
 
-        return new DefaultTableModel(days, new Object[]{"Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"}){
+        return new DefaultTableModel(days, new Object[]{"Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"}) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -47,23 +47,34 @@ public class DatePickerController implements Controller<DatePickerView,DatePicke
     }
 
     void select() {
-        if(view.getSelectedDay()==-1)return;
-        LocalDate date = Year.now().atMonth(view.getSelectedMonth()+1).atDay(view.getSelectedDay());
-        if(date.equals(model.getSelectedDate()))commit();
-        else model.setSelectedDate(date);
-        view.setSelectionButtonText(date.getDayOfWeek().getDisplayName(TextStyle.FULL_STANDALONE, Locale.GERMANY)+" "+date.getDayOfMonth()+" "+date.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMANY));
+        if (view.getSelectedDay() == -1) {
+            return;
+        }
+        LocalDate date = Year.now().atMonth(view.getSelectedMonth() + 1).atDay(view.getSelectedDay());
+        if (date.equals(model.getSelectedDate())) {
+            commit();
+        } else {
+            model.setSelectedDate(date);
+        }
+        view.setSelectionButtonText(date.getDayOfWeek()
+                                        .getDisplayName(TextStyle.FULL_STANDALONE,
+                                                        Locale.GERMANY) + " " + date.getDayOfMonth() + " " + date.getMonth()
+                                                                                                                 .getDisplayName(
+                                                                                                                         TextStyle.FULL,
+                                                                                                                         Locale.GERMANY));
     }
 
-    public LocalDate getSelectedValue(){
+    public LocalDate getSelectedValue() {
         return model.getSelectedDate();
     }
 
-    void commit(){
+    void commit() {
         view.back();
         finish();
     }
 
-    public void finish(){}
+    public void finish() {
+    }
 
     @Override
     public @NotNull DatePickerView getView() {
@@ -86,12 +97,12 @@ public class DatePickerController implements Controller<DatePickerView,DatePicke
         return new PermissionKey[0];
     }
 
-    public static void requestDate(JFrameWindow current, Consumer<LocalDate> select){
-            new DatePickerController() {
-                @Override
-                public void finish() {
-                    select.accept(getModel().getSelectedDate());
-                }
-            }.openAsWindow(current, SubWindow::new);
+    public static void requestDate(JFrameWindow current, Consumer<LocalDate> select) {
+        new DatePickerController() {
+            @Override
+            public void finish() {
+                select.accept(getModel().getSelectedDate());
+            }
+        }.openAsWindow(current, SubWindow::new);
     }
 }

@@ -16,17 +16,18 @@ import java.util.function.Function;
 
 public interface Graph {
     Iterable<Point2D.Double> getAllPoints();
+
     String getTitle();
 
     @NotNull
     @Contract(value = "_, _, _, _ -> new", pure = true)
-    static Graph getYearMonthGraph(String title, YearMonth from,  YearMonth to,  Function<YearMonth, Double> value){
+    static Graph getYearMonthGraph(String title, YearMonth from, YearMonth to, Function<YearMonth,Double> value) {
         return new Graph() {
             @Override
             public Iterable<Point2D.Double> getAllPoints() {
                 Collection<Point2D.Double> out = new ArrayList<>();
-                for(YearMonth month = from;month.isBefore(to);month = month.plusMonths(1)){
-                    out.add(new Point2D.Double(month.getMonthValue(),value.apply(month)));
+                for (YearMonth month = from; month.isBefore(to); month = month.plusMonths(1)) {
+                    out.add(new Point2D.Double(month.getMonthValue(), value.apply(month)));
                 }
                 return out;
             }
@@ -38,7 +39,7 @@ public interface Graph {
         };
     }
 
-    static JFreeChart generateChart(String title, String xName, String yName, Graph ... graphs){
+    static JFreeChart generateChart(String title, String xName, String yName, Graph... graphs) {
         XYSeriesCollection seriesCollection = new XYSeriesCollection();
         double xMin = 0;
         double xMax = 0;
@@ -47,18 +48,18 @@ public interface Graph {
         for (Graph graph : graphs) {
             XYSeries xySeries = new XYSeries(graph.getTitle());
             for (Point2D.Double t : graph.getAllPoints()) {
-                xMin = Math.min(t.x,xMin);
-                xMax = Math.max(t.x,xMax);
-                yMin = Math.min(t.y,yMin);
-                yMax = Math.max(t.y,yMax);
-                xySeries.add(t.x,t.y);
+                xMin = Math.min(t.x, xMin);
+                xMax = Math.max(t.x, xMax);
+                yMin = Math.min(t.y, yMin);
+                yMax = Math.max(t.y, yMax);
+                xySeries.add(t.x, t.y);
             }
             seriesCollection.addSeries(xySeries);
         }
         JFreeChart jFreeChart = ChartFactory.createXYLineChart(title, xName, yName, seriesCollection);
         XYPlot plot = jFreeChart.getXYPlot();
-        plot.getDomainAxis().setRange(xMin-1,xMax+1);
-        plot.getRangeAxis().setRange(yMin-1,yMax+1);
+        plot.getDomainAxis().setRange(xMin - 1, xMax + 1);
+        plot.getRangeAxis().setRange(yMin - 1, yMax + 1);
         return jFreeChart;
     }
 }

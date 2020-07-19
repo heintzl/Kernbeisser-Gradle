@@ -3,8 +3,6 @@ package kernbeisser.Windows.PermissionManagement;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.Colors;
-import kernbeisser.Enums.KeyCategory;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +18,7 @@ public class PermissionView implements View<PermissionController> {
     private JButton add;
     private JButton delete;
 
-    private PermissionController controller;
+    private final PermissionController controller;
 
     PermissionView(PermissionController controller) {
         this.controller = controller;
@@ -75,9 +73,9 @@ public class PermissionView implements View<PermissionController> {
     }
 
     public Class<?> getCategory() {
-        try{
+        try {
             return (Class<?>) category.getSelectedItem();
-        }catch (ClassCastException e){
+        } catch (ClassCastException e) {
             return null;
         }
     }
@@ -92,7 +90,9 @@ public class PermissionView implements View<PermissionController> {
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                                                           boolean cellHasFocus) {
 
-                return super.getListCellRendererComponent(list, value instanceof Class<?> ? ((Class<?>)value).getSimpleName() : value, index, isSelected, cellHasFocus);
+                return super.getListCellRendererComponent(list, value instanceof Class<?>
+                                                                ? ((Class<?>) value).getSimpleName()
+                                                                : value, index, isSelected, cellHasFocus);
             }
         });
         back.addActionListener(e -> back());

@@ -11,14 +11,15 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class ArticleDifference<T>{
+public class ArticleDifference<T> {
     private final ArticleBase kernbeisser, catalog;
     private final Function<ArticleBase,T> getValue;
     private final BiConsumer<ArticleBase,T> setValue;
     private final String name;
 
 
-    public ArticleDifference(ArticleBase kernbeisser, ArticleBase catalog, Function<ArticleBase,T> getValue, BiConsumer<ArticleBase,T> setValue, String name) {
+    public ArticleDifference(ArticleBase kernbeisser, ArticleBase catalog, Function<ArticleBase,T> getValue,
+                             BiConsumer<ArticleBase,T> setValue, String name) {
         this.getValue = getValue;
         this.kernbeisser = kernbeisser;
         this.catalog = catalog;
@@ -27,23 +28,23 @@ public class ArticleDifference<T>{
     }
 
 
-
-    void applyKernbeisser(){
+    void applyKernbeisser() {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        ArticleKornkraft articleKornkraft = em.find(ArticleKornkraft.class,catalog.getId());
+        ArticleKornkraft articleKornkraft = em.find(ArticleKornkraft.class, catalog.getId());
         articleKornkraft.setSynchronised(true);
         em.persist(articleKornkraft);
         em.flush();
         et.commit();
         em.close();
     }
-    void applyCatalog(){
+
+    void applyCatalog() {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        Article article = em.find(Article.class,kernbeisser.getId());
+        Article article = em.find(Article.class, kernbeisser.getId());
         setValue.accept(article, getValue.apply(catalog));
         em.persist(article);
         em.flush();
@@ -51,10 +52,11 @@ public class ArticleDifference<T>{
         em.close();
     }
 
-    public ArticleBase getKernbeisserArticle(){
+    public ArticleBase getKernbeisserArticle() {
         return kernbeisser;
     }
-    public ArticleBase getCatalogArticle(){
+
+    public ArticleBase getCatalogArticle() {
         return catalog;
     }
 

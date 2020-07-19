@@ -4,7 +4,7 @@ import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectForm <P>{
+public class ObjectForm<P> {
     private final Bounded<P,?>[] boundedFields;
 
     private P original;
@@ -20,18 +20,18 @@ public class ObjectForm <P>{
         return original;
     }
 
-    public void pullData(){
+    public void pullData() {
         setData(original);
     }
 
-    public void setSource(P data){
+    public void setSource(P data) {
         this.original = data;
         this.accessModel = Tools.clone(original);
         refreshAccess();
         setData(data);
     }
 
-    public P getData() throws CannotParseException{
+    public P getData() throws CannotParseException {
         P originalCopy = Tools.clone(original);
         for (Bounded<P,?> boundedField : boundedFields) {
             try {
@@ -45,7 +45,7 @@ public class ObjectForm <P>{
         return originalCopy;
     }
 
-    public P getDataIgnoreWrongInput(){
+    public P getDataIgnoreWrongInput() {
         P originalCopy = Tools.clone(original);
         for (Bounded<P,?> boundedField : boundedFields) {
             try {
@@ -64,17 +64,17 @@ public class ObjectForm <P>{
         }
     }
 
-    public void refreshAccess(){
+    public void refreshAccess() {
         for (Bounded<P,?> boundedField : boundedFields) {
             boundedField.setReadable(boundedField.canRead(accessModel));
             boundedField.setWriteable(boundedField.canWrite(accessModel));
         }
     }
 
-    public void markErrors(){
+    public void markErrors() {
         for (Bounded<P,?> field : boundedFields) {
             if (!field.validInput()) {
-                    field.markWrongInput();
+                field.markWrongInput();
             }
         }
     }

@@ -52,6 +52,7 @@ public class ShoppingCartModel implements Model<ShoppingCartController> {
     public void increaseItemSpace() {
         this.shoppingItems.ensureCapacity(shoppingItems.size() + 2);
     }
+
     @Nullable
     private ShoppingItem getShoppingItem(ShoppingItem newItem) {
         ShoppingItem current = null;

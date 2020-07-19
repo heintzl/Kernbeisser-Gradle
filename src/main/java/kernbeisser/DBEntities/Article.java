@@ -21,112 +21,112 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Article extends ArticleBase{
+public class Article extends ArticleBase {
     @Column(unique = true)
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_KB_NUMBER_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_KB_NUMBER_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_KB_NUMBER_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_KB_NUMBER_WRITE)})
     private int kbNumber;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_SURCHARGE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_SURCHARGE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SURCHARGE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SURCHARGE_WRITE)})
     private double surcharge;
 
     @ManyToOne
     @JoinColumn(name = "priceListId")
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_PRICE_LIST_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_PRICE_LIST_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRICE_LIST_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRICE_LIST_WRITE)})
     private PriceList priceList;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_WRITE)})
     private ContainerDefinition containerDef;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE)})
     private int suppliersItemNumber;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_WRITE)})
     private boolean weighable;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_LISTED_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_LISTED_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LISTED_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LISTED_WRITE)})
     private boolean listed;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_SHOW_IN_SHOP_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_SHOW_IN_SHOP_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOW_IN_SHOP_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOW_IN_SHOP_WRITE)})
     private boolean showInShop;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETED_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETED_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETED_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETED_WRITE)})
     private boolean deleted;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
     private boolean printAgain;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETE_ALLOWED_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETE_ALLOWED_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETE_ALLOWED_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETE_ALLOWED_WRITE)})
     private boolean deleteAllowed;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_LOSS_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_LOSS_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LOSS_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LOSS_WRITE)})
     private int loss;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_INFO_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_INFO_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_INFO_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_INFO_WRITE)})
     private String info;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_SOLD_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_SOLD_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SOLD_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SOLD_WRITE)})
     private int sold;
 
     @JoinColumn
     @OneToMany(fetch = FetchType.EAGER)
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_OFFERS_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_OFFERS_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_OFFERS_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_OFFERS_WRITE)})
     private List<Offer> offers = new ArrayList<>();
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_DELIVERED_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_DELIVERED_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELIVERED_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELIVERED_WRITE)})
     private int delivered;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_INTAKE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_INTAKE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_INTAKE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_INTAKE_WRITE)})
     private Instant intake;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_LAST_DELIVERY_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_LAST_DELIVERY_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LAST_DELIVERY_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LAST_DELIVERY_WRITE)})
     private Instant lastDelivery;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETED_DATE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_DELETED_DATE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETED_DATE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETED_DATE_WRITE)})
     private Instant deletedDate;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_COOLING_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_COOLING_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_COOLING_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_COOLING_WRITE)})
     private Cooling cooling;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_COVERED_INTAKE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_COVERED_INTAKE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_COVERED_INTAKE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_COVERED_INTAKE_WRITE)})
     private boolean coveredIntake;
 
     public static List<Article> getAll(String condition) {
@@ -147,15 +147,17 @@ public class Article extends ArticleBase{
                 Article.class
         )
                                     .setParameter("n", Tools.tryParseInteger(search))
-                                    .setParameter("bl", Tools.tryParseInteger(search)>0
-                                                        ?Math.pow(10,
-                                                                  Math.ceil(
-                                                                          Math.log10(Tools.tryParseInteger(search))))
-                                                        :1)
+                                    .setParameter("bl", Tools.tryParseInteger(search) > 0
+                                                        ? Math.pow(10,
+                                                                   Math.ceil(
+                                                                           Math.log10(Tools.tryParseInteger(search))))
+                                                        : 1)
                                     .setParameter("b", Tools.tryParseInteger(search))
                                     .setParameter("s", search + "%")
-                                    .setParameter("ds",(search.length()>3 ? "%"+search+"%" : search+"%").toUpperCase())
-                                    .setParameter("u",search.toUpperCase()+"%")
+                                    .setParameter("ds", (search.length() > 3
+                                                         ? "%" + search + "%"
+                                                         : search + "%").toUpperCase())
+                                    .setParameter("u", search.toUpperCase() + "%")
                                     .setMaxResults(maxResults)
                                     .getResultList();
         em.close();
@@ -226,13 +228,15 @@ public class Article extends ArticleBase{
 
     @Override
     public String toString() {
-        return Tools.decide(this::getName,"ArtikelBase["+super.toString()+"]");
+        return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");
     }
 
-    public Article unwrapProxy(){
-        if(!Proxy.isProxyInstance(this))return this;
+    public Article unwrapProxy() {
+        if (!Proxy.isProxyInstance(this)) {
+            return this;
+        }
         Article out = new Article();
-        Tools.copyInto(this,out);
+        Tools.copyInto(this, out);
         return out;
     }
 

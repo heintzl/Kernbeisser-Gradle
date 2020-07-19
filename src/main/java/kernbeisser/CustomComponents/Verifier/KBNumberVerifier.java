@@ -1,6 +1,6 @@
 package kernbeisser.CustomComponents.Verifier;
 
-public class KBNumberVerifier extends IntegerVerifier{
+public class KBNumberVerifier extends IntegerVerifier {
     @Override
     public Integer min() {
         return 0;
