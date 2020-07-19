@@ -104,8 +104,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
   static Vector<Component> traversalOrder = new Vector<Component>(1);
   static FocusTraversal traversalPolicy;
   @Getter private boolean preordered = false;
-  private final BarcodeCapture barcodeCapture;
-  private final KeyCapture keyCapture;
+  private BarcodeCapture barcodeCapture;
+  private KeyCapture keyCapture;
 
   public ShoppingMaskUIView(
       ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
