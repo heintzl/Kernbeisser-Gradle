@@ -9,102 +9,108 @@ import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectViewController<T> implements Controller<ObjectViewView<T>,ObjectViewModel<T>> {
-    private final ObjectViewModel<T> model;
-    private final ObjectViewView<T> view;
+public class ObjectViewController<T> implements Controller<ObjectViewView<T>, ObjectViewModel<T>> {
+  private final ObjectViewModel<T> model;
+  private final ObjectViewView<T> view;
 
-    private final SearchBoxController<T> searchBoxController;
+  private final SearchBoxController<T> searchBoxController;
 
-    private boolean openWindow = false;
+  private boolean openWindow = false;
 
-    public ObjectViewController(MaskLoader<T> loader, Searchable<T> items, boolean copyAdd, Column<T>... columns) {
-        searchBoxController = new SearchBoxController<T>(items, columns);
-        searchBoxController.initView();
-        searchBoxController.addSelectionListener(e -> select());
-        searchBoxController.addDoubleClickListener(e -> edit());
-        searchBoxController.addLostSelectionListener(this::putItems);
+  public ObjectViewController(
+      MaskLoader<T> loader, Searchable<T> items, boolean copyAdd, Column<T>... columns) {
+    searchBoxController = new SearchBoxController<T>(items, columns);
+    searchBoxController.initView();
+    searchBoxController.addSelectionListener(e -> select());
+    searchBoxController.addDoubleClickListener(e -> edit());
+    searchBoxController.addLostSelectionListener(this::putItems);
 
-        model = new ObjectViewModel<>(loader, items, copyAdd);
-        view = new ObjectViewView<>(this);
+    model = new ObjectViewModel<>(loader, items, copyAdd);
+    view = new ObjectViewView<>(this);
+  }
+
+  void select() {
+    if (openWindow) {
+      return;
     }
+    view.setEditAvailable(true);
+    view.setRemoveAvailable(true);
+  }
 
-    void select() {
-        if (openWindow) {
-            return;
-        }
-        view.setEditAvailable(true);
-        view.setRemoveAvailable(true);
+  private void putItems() {
+    view.setEditAvailable(false);
+    view.setRemoveAvailable(false);
+  }
+
+  void edit() {
+    model
+        .openEdit(view.getWindow(), searchBoxController.getSelectedObject())
+        .addCloseEventListener(
+            e -> {
+              search();
+              openWindow = false;
+              view.setAddAvailable(true);
+            });
+    view.setAddAvailable(false);
+    putItems();
+    openWindow = true;
+  }
+
+  void add() {
+    model
+        .openAdd(view.getWindow(), searchBoxController.getSelectedObject())
+        .addCloseEventListener(
+            e -> {
+              search();
+              openWindow = false;
+              view.setAddAvailable(true);
+            });
+    putItems();
+    view.setAddAvailable(false);
+    openWindow = true;
+  }
+
+  void delete() {
+    if (view.commitDelete()) {
+      model.remove(searchBoxController.getSelectedObject());
     }
+    search();
+    refresh();
+  }
 
-    private void putItems() {
-        view.setEditAvailable(false);
-        view.setRemoveAvailable(false);
-    }
+  public void refresh() {
+    putItems();
+  }
 
-    void edit() {
-        model.openEdit(view.getWindow(), searchBoxController.getSelectedObject()).addCloseEventListener(e -> {
-            search();
-            openWindow = false;
-            view.setAddAvailable(true);
-        });
-        view.setAddAvailable(false);
-        putItems();
-        openWindow = true;
-    }
+  @Override
+  public @NotNull ObjectViewView<T> getView() {
+    return view;
+  }
 
-    void add() {
-        model.openAdd(view.getWindow(), searchBoxController.getSelectedObject()).addCloseEventListener(e -> {
-            search();
-            openWindow = false;
-            view.setAddAvailable(true);
-        });
-        putItems();
-        view.setAddAvailable(false);
-        openWindow = true;
-    }
+  @Override
+  public @NotNull ObjectViewModel<T> getModel() {
+    return model;
+  }
 
-    void delete() {
-        if (view.commitDelete()) {
-            model.remove(searchBoxController.getSelectedObject());
-        }
-        search();
-        refresh();
-    }
+  @Override
+  public void fillUI() {
+    putItems();
+  }
 
-    public void refresh() {
-        putItems();
-    }
+  @Override
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[0];
+  }
 
-    @Override
-    public @NotNull ObjectViewView<T> getView() {
-        return view;
-    }
+  public SearchBoxView<T> getSearchBoxView() {
+    return searchBoxController.getView();
+  }
 
-    @Override
-    public @NotNull ObjectViewModel<T> getModel() {
-        return model;
-    }
+  public void setSearch(String s) {
+    searchBoxController.setSearch(s);
+  }
 
-    @Override
-    public void fillUI() {
-        putItems();
-    }
-
-    @Override
-    public PermissionKey[] getRequiredKeys() {
-        return new PermissionKey[0];
-    }
-
-    public SearchBoxView<T> getSearchBoxView() {
-        return searchBoxController.getView();
-    }
-
-    public void setSearch(String s) {
-        searchBoxController.setSearch(s);
-    }
-
-
-    public void search() {
-        searchBoxController.refreshLoadSolutions();
-    }
+  public void search() {
+    searchBoxController.refreshLoadSolutions();
+  }
 }

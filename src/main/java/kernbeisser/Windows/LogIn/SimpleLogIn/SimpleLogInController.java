@@ -1,5 +1,8 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
@@ -15,70 +18,61 @@ import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+public class SimpleLogInController implements Controller<SimpleLogInView, SimpleLogInModel> {
 
-public class SimpleLogInController implements Controller<SimpleLogInView,SimpleLogInModel> {
+  private final SimpleLogInView view;
+  private final SimpleLogInModel model;
 
-    private final SimpleLogInView view;
-    private final SimpleLogInModel model;
+  public SimpleLogInController() {
+    this.model = new SimpleLogInModel();
+    this.view = new SimpleLogInView(this);
+  }
 
-    public SimpleLogInController() {
-        this.model = new SimpleLogInModel();
-        this.view = new SimpleLogInView(this);
+  @Override
+  public @NotNull SimpleLogInView getView() {
+    return view;
+  }
+
+  @Override
+  public @NotNull SimpleLogInModel getModel() {
+    return model;
+  }
+
+  @Override
+  public void fillUI() {}
+
+  @Override
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[0];
+  }
+
+  public void logIn() {
+    try {
+      model.logIn(view.getUsername(), view.getPassword());
+      loadUserSettings();
+      if (LogInModel.getLoggedIn().getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS)
+          > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()) {
+        new ChangePasswordController(LogInModel.getLoggedIn(), true)
+            .openAsWindow(getView().getWindow(), SubWindow::new);
+      } else {
+        removeSelf();
+        new MenuController().openTab("Menu");
+      }
+    } catch (AccessDeniedException e) {
+      view.accessDenied();
+    } catch (PermissionRequired permissionRequired) {
+      view.permissionRequired();
     }
+  }
 
-
-    @Override
-    public @NotNull SimpleLogInView getView() {
-        return view;
+  private void loadUserSettings() {
+    try {
+      UIManager.setLookAndFeel(
+          UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
+      SwingUtilities.updateComponentTreeUI(
+          TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
+    } catch (UnsupportedLookAndFeelException e) {
+      Tools.showUnexpectedErrorWarning(e);
     }
-
-
-    @Override
-    public @NotNull SimpleLogInModel getModel() {
-        return model;
-    }
-
-    @Override
-    public void fillUI() {
-
-    }
-
-    @Override
-    public PermissionKey[] getRequiredKeys() {
-        return new PermissionKey[0];
-    }
-
-    public void logIn() {
-        try {
-            model.logIn(view.getUsername(), view.getPassword());
-            loadUserSettings();
-            if (LogInModel.getLoggedIn()
-                          .getLastPasswordChange()
-                          .until(Instant.now(), ChronoUnit.DAYS) > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()) {
-                new ChangePasswordController(LogInModel.getLoggedIn(), true).openAsWindow(getView().getWindow(),
-                                                                                          SubWindow::new);
-            } else {
-                removeSelf();
-                new MenuController().openTab("Menu");
-            }
-        } catch (AccessDeniedException e) {
-            view.accessDenied();
-        } catch (PermissionRequired permissionRequired) {
-            view.permissionRequired();
-        }
-    }
-
-
-    private void loadUserSettings() {
-        try {
-            UIManager.setLookAndFeel(
-                    UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
-            SwingUtilities.updateComponentTreeUI(TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
-        } catch (UnsupportedLookAndFeelException e) {
-            Tools.showUnexpectedErrorWarning(e);
-        }
-    }
+  }
 }

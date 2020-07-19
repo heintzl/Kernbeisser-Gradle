@@ -1,97 +1,97 @@
 package kernbeisser.Windows.ChangePassword;
 
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
 public class ChangePasswordView implements View<ChangePasswordController> {
-    private JPanel main;
-    private JButton changePassword;
-    private JPasswordField currentPassword;
-    private JPasswordField newPassword;
-    private JPasswordField repeatedNewPassword;
-    private JLabel message;
-    private JLabel passwordHint;
-    private JLabel currentPasswordLable;
+  private JPanel main;
+  private JButton changePassword;
+  private JPasswordField currentPassword;
+  private JPasswordField newPassword;
+  private JPasswordField repeatedNewPassword;
+  private JLabel message;
+  private JLabel passwordHint;
+  private JLabel currentPasswordLable;
 
-    @Override
-    public void initialize(ChangePasswordController controller) {
-        changePassword.addActionListener(e -> controller.changePassword());
-        newPassword.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                controller.refreshPasswordStrength();
-            }
+  @Override
+  public void initialize(ChangePasswordController controller) {
+    changePassword.addActionListener(e -> controller.changePassword());
+    newPassword.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            controller.refreshPasswordStrength();
+          }
         });
-    }
+  }
 
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    String getNewPassword() {
-        return new String(newPassword.getPassword());
-    }
+  String getNewPassword() {
+    return new String(newPassword.getPassword());
+  }
 
-    String getCurrentPassword() {
-        return new String(currentPassword.getPassword());
-    }
+  String getCurrentPassword() {
+    return new String(currentPassword.getPassword());
+  }
 
-    String getRepeatedPassword() {
-        return new String(repeatedNewPassword.getPassword());
-    }
+  String getRepeatedPassword() {
+    return new String(repeatedNewPassword.getPassword());
+  }
 
-    public void passwordsDontMatch() {
-        message.setText("Bitte Wiederholen sie das Passwort korrekt.");
-    }
+  public void passwordsDontMatch() {
+    message.setText("Bitte Wiederholen sie das Passwort korrekt.");
+  }
 
-    void setVerifyWithOldEnable(boolean enable) {
-        currentPasswordLable.setVisible(enable);
-        currentPassword.setVisible(enable);
-    }
+  void setVerifyWithOldEnable(boolean enable) {
+    currentPasswordLable.setVisible(enable);
+    currentPassword.setVisible(enable);
+  }
 
-    void setPasswordStrength(Strength strength) {
-        passwordHint.setText("Stärke: " + strength.getHint());
-        passwordHint.setForeground(strength.getColor());
-    }
+  void setPasswordStrength(Strength strength) {
+    passwordHint.setText("Stärke: " + strength.getHint());
+    passwordHint.setForeground(strength.getColor());
+  }
 
-    public void passwordsMatch() {
-        message.setText("");
-    }
+  public void passwordsMatch() {
+    message.setText("");
+  }
 
-    public void passwordCannotChanged() {
-        JOptionPane.showMessageDialog(getTopComponent(), "Das Password entspricht nicht den Vorraussetzungen");
-    }
+  public void passwordCannotChanged() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Das Password entspricht nicht den Vorraussetzungen");
+  }
 
-    public void passwordChanged() {
-        JOptionPane.showMessageDialog(getTopComponent(), "Das Password wurde erfolgreich geändert");
-    }
+  public void passwordChanged() {
+    JOptionPane.showMessageDialog(getTopComponent(), "Das Password wurde erfolgreich geändert");
+  }
 
-    public void currentPasswordEnteredWrong() {
-        JOptionPane.showMessageDialog(getTopComponent(),
-                                      "Um das Passwort zu ändern müssen\n sie ihr altes Passwort bestätigen");
-    }
+  public void currentPasswordEnteredWrong() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Um das Passwort zu ändern müssen\n sie ihr altes Passwort bestätigen");
+  }
 
-    @Override
-    public IconCode getTabIcon() {
-        return FontAwesome.KEY;
-    }
+  @Override
+  public IconCode getTabIcon() {
+    return FontAwesome.KEY;
+  }
 
-    @Override
-    public @NotNull Dimension getSize() {
-        return new Dimension(500, 500);
-    }
+  @Override
+  public @NotNull Dimension getSize() {
+    return new Dimension(500, 500);
+  }
 
-
-    @Override
-    public String getTitle() {
-        return "Passwort ändern";
-    }
+  @Override
+  public String getTitle() {
+    return "Passwort ändern";
+  }
 }

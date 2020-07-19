@@ -4,13 +4,13 @@ import jiconfont.IconCode;
 import kernbeisser.Windows.Controller;
 
 public interface Tab {
-    IconCode getIcon();
+  IconCode getIcon();
 
-    Controller<?,?> getController();
+  Controller<?, ?> getController();
 
-    String getTitle();
+  String getTitle();
 
-    default boolean commitClose() {
-        return true;
-    }
+  default boolean commitClose() {
+    return true;
+  }
 }

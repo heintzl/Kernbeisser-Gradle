@@ -1,27 +1,26 @@
 package kernbeisser.Windows.Purchase;
 
+import java.util.Collection;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.Model;
 
-import java.util.Collection;
-
 public class PurchaseModel implements Model<PurchaseController> {
-    private final Purchase loaded;
+  private final Purchase loaded;
 
-    PurchaseModel(Purchase loaded) {
-        this.loaded = loaded;
-    }
+  PurchaseModel(Purchase loaded) {
+    this.loaded = loaded;
+  }
 
-    Collection<ShoppingItem> getAllItems() {
-        return loaded.getAllItems();
-    }
+  Collection<ShoppingItem> getAllItems() {
+    return loaded.getAllItems();
+  }
 
-    double getSum() {
-        return loaded.getSum();
-    }
+  double getSum() {
+    return loaded.getSum();
+  }
 
-    public Purchase getLoaded() {
-        return loaded;
-    }
+  public Purchase getLoaded() {
+    return loaded;
+  }
 }

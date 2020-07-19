@@ -8,49 +8,48 @@ import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import org.jetbrains.annotations.NotNull;
 
-public class SoloShoppingMaskController implements Controller<SoloShoppingMaskView,SoloShoppingMaskModel> {
+public class SoloShoppingMaskController
+    implements Controller<SoloShoppingMaskView, SoloShoppingMaskModel> {
 
-    private final SoloShoppingMaskView view;
+  private final SoloShoppingMaskView view;
 
-    private final SoloShoppingMaskModel model;
+  private final SoloShoppingMaskModel model;
 
-    private final ShoppingMaskUIController shoppingMaskUIController;
+  private final ShoppingMaskUIController shoppingMaskUIController;
 
-    public SoloShoppingMaskController() {
-        SaleSession saleSession = new SaleSession();
-        saleSession.setCustomer(LogInModel.getLoggedIn());
-        saleSession.setSeller(LogInModel.getLoggedIn());
-        this.shoppingMaskUIController = new ShoppingMaskUIController(saleSession);
-        shoppingMaskUIController.initView();
-        this.model = new SoloShoppingMaskModel();
-        this.view = new SoloShoppingMaskView(this);
-    }
+  public SoloShoppingMaskController() {
+    SaleSession saleSession = new SaleSession();
+    saleSession.setCustomer(LogInModel.getLoggedIn());
+    saleSession.setSeller(LogInModel.getLoggedIn());
+    this.shoppingMaskUIController = new ShoppingMaskUIController(saleSession);
+    shoppingMaskUIController.initView();
+    this.model = new SoloShoppingMaskModel();
+    this.view = new SoloShoppingMaskView(this);
+  }
 
-    public void processBarcode(String barcode) {
-        shoppingMaskUIController.processBarcode(barcode);
-    }
+  public void processBarcode(String barcode) {
+    shoppingMaskUIController.processBarcode(barcode);
+  }
 
-    @Override
-    public @NotNull SoloShoppingMaskView getView() {
-        return view;
-    }
+  @Override
+  public @NotNull SoloShoppingMaskView getView() {
+    return view;
+  }
 
-    @Override
-    public @NotNull SoloShoppingMaskModel getModel() {
-        return model;
-    }
+  @Override
+  public @NotNull SoloShoppingMaskModel getModel() {
+    return model;
+  }
 
-    @Override
-    public void fillUI() {
+  @Override
+  public void fillUI() {}
 
-    }
+  @Override
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[0];
+  }
 
-    @Override
-    public PermissionKey[] getRequiredKeys() {
-        return new PermissionKey[0];
-    }
-
-    public ShoppingMaskUIView getShoppingMaskView() {
-        return shoppingMaskUIController.getView();
-    }
+  public ShoppingMaskUIView getShoppingMaskView() {
+    return shoppingMaskUIController.getView();
+  }
 }

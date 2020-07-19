@@ -7,8 +7,7 @@ import kernbeisser.Windows.Model;
 
 public class SimpleLogInModel implements Model<SimpleLogInController> {
 
-
-    void logIn(String username, char[] password) throws AccessDeniedException, PermissionRequired {
-        LogInModel.logIn(username, password);
-    }
+  void logIn(String username, char[] password) throws AccessDeniedException, PermissionRequired {
+    LogInModel.logIn(username, password);
+  }
 }

@@ -1,17 +1,16 @@
 package kernbeisser.Windows.CashierMenu;
 
-
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.Model;
 
 public class CashierMenuModel implements Model<CashierMenuController> {
-    private final User user;
+  private final User user;
 
-    CashierMenuModel(User user) {
-        this.user = user;
-    }
+  CashierMenuModel(User user) {
+    this.user = user;
+  }
 
-    User getUser() {
-        return user;
-    }
+  User getUser() {
+    return user;
+  }
 }
