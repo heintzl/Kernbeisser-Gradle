@@ -70,7 +70,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         boolean piece = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
         try {
             int discount = view.getDiscount();
-            if (discount < 1 || discount >100) {
+            if (discount < 0 || discount >100) {
                 view.messageInvalidDiscount();
                 return false;
             }
@@ -154,7 +154,6 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                         throw new UndefinedInputException();
                     }
                 }
-                view.messageInvalidDiscount();
                 ShoppingItem shoppingItem = new ShoppingItem(extractedArticle, view.getDiscount(), view.isPreordered());
                 return shoppingItem;
             case ShoppingMaskUIView.BAKED_GOODS:

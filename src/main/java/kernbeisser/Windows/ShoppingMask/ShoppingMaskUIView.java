@@ -274,7 +274,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     void messageInvalidDiscount() {
         java.awt.Toolkit.getDefaultToolkit().beep();
         JOptionPane.showMessageDialog(mainPanel,
-                                      "Rabatt muss zwischen 1 und 100 % liegen");
+                                      "Rabatt muss zwischen 0 und 100 % liegen");
         variablePercentage.setText("");
     }
 
