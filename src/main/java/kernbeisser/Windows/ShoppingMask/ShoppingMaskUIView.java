@@ -10,6 +10,7 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
@@ -237,11 +238,11 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                 ? new StringBuilder(article.getName()).replace(36, article.getName().length(), "...").toString()
                 : article.getName());
         price.setText(String.format("%.2f", controller.calculatePrice(article)));
-        priceUnit.setText(preordered && !article.isWeighAble() ? "€" : "€/kg");
+        priceUnit.setText(preordered && !article.isWeighable() ? "€" : "€/kg");
         netPrice.setText(String.format("%.2f", controller.calculateNetPrice(article)));
         netPriceUnit.setText(priceUnit.getText());
-        amountUnit.setText(preordered ? "Geb." : article.isWeighAble() ? "g" : "stk.");
-        isWeighable = article.isWeighAble();
+        amountUnit.setText(preordered ? "Geb." : article.isWeighable() ? "g" : "stk.");
+        isWeighable = article.isWeighable();
         containerSize.setText(new DecimalFormat("##.###").format(article.getContainerSize() * (isWeighable?1000:1)));
         containerUnit.setText((isWeighable?article.getMetricUnits():MetricUnits.PIECE).getShortName());
         optTaxLow.setSelected(article.getVat() == VAT.LOW);
