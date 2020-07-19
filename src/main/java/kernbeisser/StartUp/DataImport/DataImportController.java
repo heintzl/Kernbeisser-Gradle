@@ -190,30 +190,42 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             HashMap<String,Job> jobs = new HashMap<>();
             Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            String defaultPassword = BCrypt.withDefaults()
-                                           .hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray());
             for (String l : lines) {
                 String[] rawUserData = l.split(";");
+
                 User[] users = Users.parse(rawUserData, usernames, jobs);
+
                 UserGroup userGroup = Users.getUserGroup(rawUserData);
+
                 users[0].setUserGroup(userGroup);
                 users[1].setUserGroup(userGroup);
+
+                String defaultPassword = BCrypt.withDefaults()
+                                               .hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray());
                 users[0].setPassword(defaultPassword);
                 users[1].setPassword(defaultPassword);
+
                 Tools.persist(userGroup);
+
                 users[0].getPermissions().add(PermissionConstants.IMPORT.getPermission());
                 users[1].getPermissions().add(PermissionConstants.IMPORT.getPermission());
+
                 if (users[0].getKernbeisserKey() != -1) {
                     users[0].getPermissions().add(PermissionConstants.KEY_PERMISSION.getPermission());
                 }
+
                 Tools.persist(users[0]);
+
                 if (!users[1].getFirstName().equals("")) {
                     Tools.persist(users[1]);
                 }
+
                 MasterPermissionSet.addPermission(PermissionKey.GO_UNDER_MIN);
+
                 Transaction.doTransaction(User.getKernbeisserUser(), users[0], Users.getValue(rawUserData),
                                           TransactionType.INITIALIZE,
                                           "Übertrag des Guthaben des alten Kernbeisser Programmes");
+                
                 MasterPermissionSet.removePermission(PermissionKey.GO_UNDER_MIN);
             }
             view.setUserProgress(4);
