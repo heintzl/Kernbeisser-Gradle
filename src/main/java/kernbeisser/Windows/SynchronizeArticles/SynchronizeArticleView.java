@@ -23,11 +23,11 @@ public class SynchronizeArticleView implements View<SynchronizeArticleController
     public void initialize(SynchronizeArticleController controller) {
         back.addActionListener(e -> back());
         differences.setColumns(
-                Column.create("Artikel",e -> e.getKernbeisserArticle().getName()),
+                Column.create("Artikel", e -> e.getKernbeisserArticle().getName()),
                 Column.create("Unterschied", ArticleDifference::getDifferenceName),
                 Column.create("Kernbeisser", ArticleDifference::getKernbeisserVersion, controller::acceptKernbeisser),
                 Column.create("Katalog", ArticleDifference::getCatalogVersion, controller::acceptCatalog)
-                );
+        );
         correctSource.addItem("Katalog");
         correctSource.addItem("Kernbeisser");
         diffName.addItem("Preis");
@@ -47,11 +47,11 @@ public class SynchronizeArticleView implements View<SynchronizeArticleController
         differences = new ObjectTable<>();
     }
 
-    void setDifferences(Collection<ArticleDifference<?>> articleDifference){
+    void setDifferences(Collection<ArticleDifference<?>> articleDifference) {
         differences.setObjects(articleDifference);
     }
 
-    void remove(ArticleDifference<?> articleDifference){
+    void remove(ArticleDifference<?> articleDifference) {
         differences.remove(articleDifference);
     }
 

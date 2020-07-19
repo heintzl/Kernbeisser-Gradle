@@ -11,7 +11,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -23,30 +22,30 @@ public class PriceList implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(updatable = false, insertable = false, nullable = false)
-    @Getter(onMethod_= {@Key(PermissionKey.PRICE_LIST_PID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PRICE_LIST_PID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_WRITE)})
     private int pid;
 
     @PrimaryKeyJoinColumn
     @Column(nullable = false, unique = true)
-    @Getter(onMethod_= {@Key(PermissionKey.PRICE_LIST_NAME_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PRICE_LIST_NAME_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_NAME_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_NAME_WRITE)})
     private String name;
 
     @ManyToOne
     @JoinColumn
-    @Getter(onMethod_= {@Key(PermissionKey.PRICE_LIST_SUPER_PRICE_LIST_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PRICE_LIST_SUPER_PRICE_LIST_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_SUPER_PRICE_LIST_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_SUPER_PRICE_LIST_WRITE)})
     private PriceList superPriceList;
 
     @UpdateTimestamp
-    @Getter(onMethod_= {@Key(PermissionKey.PRICE_LIST_UPDATE_DATE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PRICE_LIST_UPDATE_DATE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_UPDATE_DATE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_UPDATE_DATE_WRITE)})
     private Instant updateDate;
 
     @CreationTimestamp
-    @Getter(onMethod_= {@Key(PermissionKey.PRICE_LIST_PID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PRICE_LIST_PID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_WRITE)})
     private Instant createDate;
 
     public static void savePriceList(String name) {
@@ -57,7 +56,7 @@ public class PriceList implements Serializable {
         PriceList p = new PriceList();
         p.setName(priceListName);
         p.setSuperPriceList(superPriceList);
-        Tools.runInSession(em ->  em.persist(p));
+        Tools.runInSession(em -> em.persist(p));
     }
 
     public static void deletePriceList(PriceList toDelete) {
@@ -107,7 +106,6 @@ public class PriceList implements Serializable {
     }
 
 
-
     @Override
     public int hashCode() {
         return name.hashCode();
@@ -115,8 +113,9 @@ public class PriceList implements Serializable {
 
     public Collection<PriceList> getAllPriceLists() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<PriceList> out = em.createQuery("select p from PriceList p where p.superPriceList = " + getPid()+" order by p.name asc",
-                                                   PriceList.class).getResultList();
+        Collection<PriceList> out = em.createQuery(
+                "select p from PriceList p where p.superPriceList = " + getPid() + " order by p.name asc",
+                PriceList.class).getResultList();
         em.close();
         return out;
     }
@@ -136,7 +135,7 @@ public class PriceList implements Serializable {
 
     @Override
     public String toString() {
-        return Tools.decide(this::getName,"Preisliste["+pid+"]");
+        return Tools.decide(this::getName, "Preisliste[" + pid + "]");
     }
 
 }

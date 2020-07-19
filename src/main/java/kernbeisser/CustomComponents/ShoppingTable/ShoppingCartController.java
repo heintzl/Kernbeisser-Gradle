@@ -1,18 +1,15 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
-import jdk.nashorn.internal.scripts.JO;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.text.MessageFormat;
 import java.util.List;
 
 public class ShoppingCartController implements Controller<ShoppingCartView,ShoppingCartModel> {
-    private ShoppingCartView view;
-    private ShoppingCartModel model;
+    private final ShoppingCartView view;
+    private final ShoppingCartModel model;
 
     public ShoppingCartController(double userValue, double userSurcharge, boolean editable) {
         model = new ShoppingCartModel(userValue, userSurcharge);

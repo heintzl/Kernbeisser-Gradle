@@ -1,12 +1,9 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,8 +17,8 @@ import java.util.Objects;
 public class ArticleKornkraft extends ArticleBase implements Serializable {
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_KORNKRAFT_SYNCHRONISED_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_KORNKRAFT_SYNCHRONISED_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_KORNKRAFT_SYNCHRONISED_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_KORNKRAFT_SYNCHRONISED_WRITE)})
     private boolean synchronised = false;
 
     public static List<ArticleKornkraft> getAll(String condition) {
@@ -31,7 +28,8 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
     public static ArticleKornkraft getByKkNumber(int kkNumber) {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("select k from ArticleKornkraft k where k.base.suppliersItemNumber = :n", ArticleKornkraft.class)
+            return em.createQuery("select k from ArticleKornkraft k where k.base.suppliersItemNumber = :n",
+                                  ArticleKornkraft.class)
                      .setParameter("n", kkNumber)
                      .getSingleResult();
         } catch (NoResultException e) {
@@ -76,7 +74,7 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
 
     @Override
     public String toString() {
-        return Tools.decide(this::getName,"ArtikelBase["+super.toString()+"]");
+        return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");
     }
 
 

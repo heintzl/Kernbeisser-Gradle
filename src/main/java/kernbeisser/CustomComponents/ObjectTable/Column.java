@@ -24,7 +24,9 @@ public interface Column<T> {
 
             @Override
             public Object getValue(T t) {
-                if(!read)return "***********";
+                if (!read) {
+                    return "***********";
+                }
                 try {
                     return v.get(t);
                 } catch (AccessDeniedException e) {
@@ -72,7 +74,9 @@ public interface Column<T> {
 
             @Override
             public Object getValue(T t) {
-                if(!read)return "***********";
+                if (!read) {
+                    return "***********";
+                }
                 try {
                     return v.get(t);
                 } catch (AccessDeniedException e) {
@@ -113,7 +117,7 @@ public interface Column<T> {
     default void onAction(T t) {
     }
 
-    default boolean isEditable(T t){
+    default boolean isEditable(T t) {
         return false;
     }
 }

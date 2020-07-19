@@ -15,10 +15,10 @@ public abstract class DBResultVerifier extends TextComponentVerifier {
     public boolean verify(JTextComponent component) {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            em.createQuery(getQuery()).setParameter("s",component.getText()).getSingleResult();
+            em.createQuery(getQuery()).setParameter("s", component.getText()).getSingleResult();
             em.close();
             return allowAlreadyExists();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             em.close();
             return !allowAlreadyExists();
         }
@@ -27,7 +27,7 @@ public abstract class DBResultVerifier extends TextComponentVerifier {
     @Override
     public boolean shouldYieldFocus(JComponent input) {
         boolean verified = verify(input);
-        if(!verified){
+        if (!verified) {
             JOptionPane.showMessageDialog(input, unexpectedResult());
         }
         return verified;

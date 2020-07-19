@@ -11,7 +11,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -23,58 +22,58 @@ public class Supplier implements Serializable {
     @Id
     @Column(updatable = false, insertable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_SID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_SID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SID_WRITE)})
     private int sid;
 
     @Column(unique = true)
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_NAME_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_NAME_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_NAME_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_NAME_WRITE)})
     private String name;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_PHONE_NUMBER_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_PHONE_NUMBER_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_PHONE_NUMBER_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_PHONE_NUMBER_WRITE)})
     private String phoneNumber;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_FAX_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_FAX_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_FAX_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_FAX_WRITE)})
     private String fax;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_ADDRESS_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_ADDRESS_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_ADDRESS_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_ADDRESS_WRITE)})
     private String address;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_EMAIL_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_EMAIL_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_EMAIL_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_EMAIL_WRITE)})
     private String email;
 
     @Column(unique = true)
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_SHORT_NAME_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_SHORT_NAME_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SHORT_NAME_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SHORT_NAME_WRITE)})
     private String shortName;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_SURCHARGE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_SURCHARGE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SURCHARGE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SURCHARGE_WRITE)})
     private int surcharge;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_KEEPER_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_KEEPER_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_KEEPER_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_KEEPER_WRITE)})
     private String keeper;
 
     @CreationTimestamp
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_CREATE_DATE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_CREATE_DATE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_CREATE_DATE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_CREATE_DATE_WRITE)})
     private Instant createDate;
 
     @UpdateTimestamp
-    @Getter(onMethod_= {@Key(PermissionKey.SUPPLIER_UPDATE_DATE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SUPPLIER_UPDATE_DATE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_UPDATE_DATE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_UPDATE_DATE_WRITE)})
     private Instant updateDate;
 
     public static Supplier getKKSupplier() {
@@ -101,7 +100,7 @@ public class Supplier implements Serializable {
 
     @Override
     public String toString() {
-        return Tools.decide(this::getName,"Lieferant["+sid+"]");
+        return Tools.decide(this::getName, "Lieferant[" + sid + "]");
     }
 
     @Override

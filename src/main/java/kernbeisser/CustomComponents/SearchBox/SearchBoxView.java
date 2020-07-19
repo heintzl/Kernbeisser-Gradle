@@ -13,28 +13,28 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-public class SearchBoxView <T> extends JPanel implements View<SearchBoxController<T>> {
+public class SearchBoxView<T> extends JPanel implements View<SearchBoxController<T>> {
     private JButton search;
     private JTextField searchInput;
     private ObjectTable<T> objects;
     private JPanel main;
 
-    private SearchBoxController<T> controller;
+    private final SearchBoxController<T> controller;
 
-    SearchBoxView(SearchBoxController<T> controller){
+    SearchBoxView(SearchBoxController<T> controller) {
         this.controller = controller;
     }
 
-    void setObjects(Collection<T> objects){
+    void setObjects(Collection<T> objects) {
         this.objects.setObjects(objects);
         repaint();
     }
 
-    void setColumns(Collection<Column<T>> columns){
+    void setColumns(Collection<Column<T>> columns) {
         objects.setColumns(columns);
     }
 
-    String getSearch(){
+    String getSearch() {
         return searchInput.getText();
     }
 
@@ -49,7 +49,7 @@ public class SearchBoxView <T> extends JPanel implements View<SearchBoxControlle
     @Override
     public void initialize(SearchBoxController<T> controller) {
         add(main);
-        search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH,14,new Color(0x757EFF)));
+        search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 14, new Color(0x757EFF)));
         objects.addSelectionListener(e -> controller.select());
         search.addActionListener(e -> controller.search());
         searchInput.addKeyListener(new KeyAdapter() {

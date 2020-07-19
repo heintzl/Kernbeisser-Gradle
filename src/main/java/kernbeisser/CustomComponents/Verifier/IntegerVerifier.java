@@ -10,9 +10,8 @@ public class IntegerVerifier extends ParseVerifier<Integer> {
     }
 
 
-
-    public static InputVerifier from(int from,int to){
-        return new IntegerVerifier(){
+    public static InputVerifier from(int from, int to) {
+        return new IntegerVerifier() {
             @Override
             public Integer max() {
                 return to;
@@ -25,8 +24,8 @@ public class IntegerVerifier extends ParseVerifier<Integer> {
         };
     }
 
-    public static IntegerVerifier from(int min,int usualMin,int usualMax,int max){
-        return new IntegerVerifier(){
+    public static IntegerVerifier from(int min, int usualMin, int usualMax, int max) {
+        return new IntegerVerifier() {
             @Override
             public Integer min() {
                 return min;

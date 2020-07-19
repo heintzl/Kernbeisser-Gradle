@@ -9,7 +9,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -20,24 +19,24 @@ import java.util.Objects;
 public class Purchase {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter(onMethod_= {@Key(PermissionKey.PURCHASE_SID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PURCHASE_SID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_SID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_SID_WRITE)})
     private int sid;
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    @Getter(onMethod_= {@Key(PermissionKey.PURCHASE_SESSION_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PURCHASE_SESSION_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_SESSION_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_SESSION_WRITE)})
     private SaleSession session;
 
     @CreationTimestamp
-    @Getter(onMethod_= {@Key(PermissionKey.PURCHASE_CREATE_DATE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PURCHASE_CREATE_DATE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_CREATE_DATE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_CREATE_DATE_WRITE)})
     private Instant createDate;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.PURCHASE_USER_SURCHARGE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.PURCHASE_USER_SURCHARGE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_USER_SURCHARGE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_USER_SURCHARGE_WRITE)})
     private double userSurcharge;
 
     public static List<Purchase> getAll(String condition) {

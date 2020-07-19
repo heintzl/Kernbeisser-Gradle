@@ -7,6 +7,6 @@ import java.time.YearMonth;
 
 public class BuyChart extends ChartPanel {
     public BuyChart(User user, YearMonth from, YearMonth to) {
-        super(Users.createBuyChart(user,from,to));
+        super(Users.createBuyChart(user, from, to));
     }
 }

@@ -10,13 +10,13 @@ import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
 
-public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V> {
+public class AccessCheckingField<P, V> extends JTextField implements Bounded<P,V> {
 
     private final FocusListener noReadPermissionMaker = new FocusAdapter() {
         @Override
         public void focusGained(FocusEvent e) {
-            e.getComponent().setForeground(UIManager.getColor ( "Label.foreground"));
-            ((JTextComponent)e.getComponent()).setText("");
+            e.getComponent().setForeground(UIManager.getColor("Label.foreground"));
+            ((JTextComponent) e.getComponent()).setText("");
             e.getComponent().removeFocusListener(this);
         }
     };
@@ -34,7 +34,7 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
     private final StringTransformer<V> stringTransformer;
 
     public AccessCheckingField(Getter<P,V> getter, Setter<P,V> setter,
-                               StringTransformer<V> stringTransformer){
+                               StringTransformer<V> stringTransformer) {
         this.getter = getter;
         this.setter = setter;
         this.stringTransformer = stringTransformer;
@@ -61,10 +61,11 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
             addFocusListener(noReadPermissionMaker);
         }
     }
+
     @Override
     public void writeInto(P p) throws CannotParseException {
         try {
-            setter.set(p,stringTransformer.fromString(getText()));
+            setter.set(p, stringTransformer.fromString(getText()));
         } catch (AccessDeniedException ignored) {
 
         }
@@ -80,17 +81,19 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
         return setter;
     }
 
-    public void setWriteable(boolean b){
+    public void setWriteable(boolean b) {
         setEnabled(b);
     }
 
-    public void setReadable(boolean b){
-        if(!b){
+    public void setReadable(boolean b) {
+        if (!b) {
             setText("Keine Leseberechtigung");
             setForeground(Color.RED);
             addFocusListener(noReadPermissionMaker);
-        }else {
-            if (getText().equals("Keine Leseberechtigung")) setText("");
+        } else {
+            if (getText().equals("Keine Leseberechtigung")) {
+                setText("");
+            }
             setForeground(Colors.LABEL_FOREGROUND.getColor());
             removeFocusListener(noReadPermissionMaker);
         }
@@ -112,8 +115,9 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
         }
     }
 
-    interface StringTransformer <V>{
+    interface StringTransformer<V> {
         String toString(V v);
+
         V fromString(String s) throws CannotParseException;
     }
 
@@ -127,7 +131,7 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
         public Integer fromString(String s) throws CannotParseException {
             try {
                 return Integer.parseInt(s);
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 throw new CannotParseException();
             }
         }
@@ -143,7 +147,7 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
         public Double fromString(String s) throws CannotParseException {
             try {
                 return Double.parseDouble(s);
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 throw new CannotParseException();
             }
         }
@@ -164,7 +168,9 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
     public final static StringTransformer<Long> LONG_FORMER = new StringTransformer<Long>() {
         @Override
         public String toString(Long aLong) {
-            if(aLong==null)return "";
+            if (aLong == null) {
+                return "";
+            }
             return aLong.toString();
         }
 
@@ -172,7 +178,7 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
         public Long fromString(String s) throws CannotParseException {
             try {
                 return Long.parseLong(s);
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 throw new CannotParseException();
             }
         }
@@ -186,8 +192,10 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
 
         @Override
         public String fromString(String s) throws CannotParseException {
-            if(!s.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"))
+            if (!s.matches(
+                    "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")) {
                 throw new CannotParseException();
+            }
             return s;
         }
     };
@@ -200,7 +208,9 @@ public class AccessCheckingField <P,V> extends JTextField implements Bounded<P,V
 
         @Override
         public String fromString(String s) throws CannotParseException {
-            if(s.replace(" ","").equals("")) throw new CannotParseException(this+" doesn't contain a value");
+            if (s.replace(" ", "").equals("")) {
+                throw new CannotParseException(this + " doesn't contain a value");
+            }
             return s;
         }
     };

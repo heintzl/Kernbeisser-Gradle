@@ -26,125 +26,125 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(updatable = false, insertable = false, nullable = false)
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_ID_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
     private int id;
 
     @JoinColumn
     @ManyToMany(fetch = FetchType.EAGER)
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
     private Set<Permission> permissions = new HashSet<>();
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_READ)})
     private int shares;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SOLIDARITY_SURCHARGE_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SOLIDARITY_SURCHARGE_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SOLIDARITY_SURCHARGE_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SOLIDARITY_SURCHARGE_READ)})
     private double solidaritySurcharge;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_READ)})
     private String extraJobs;
 
     @JoinColumn
     @ManyToMany(fetch = FetchType.EAGER)
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_JOBS_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_JOBS_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_JOBS_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_JOBS_READ)})
     private Set<Job> jobs = new HashSet<>();
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_KERNBEISSER_KEY_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_KERNBEISSER_KEY_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_KERNBEISSER_KEY_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_KERNBEISSER_KEY_READ)})
     private int kernbeisserKey;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EMPLOYEE_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EMPLOYEE_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EMPLOYEE_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EMPLOYEE_READ)})
     private boolean employee;
 
     @Column(unique = true, nullable = false)
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_READ)})
     private String username;
 
     @Column(nullable = false)
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
     private String password;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_FIRST_NAME_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_FIRST_NAME_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FIRST_NAME_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FIRST_NAME_READ)})
     private String firstName;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SURNAME_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_SURNAME_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SURNAME_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SURNAME_READ)})
     private String surname;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER1_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER1_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER1_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER1_READ)})
     private String phoneNumber1;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER2_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER2_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER2_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER2_READ)})
     private String phoneNumber2;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_STREET_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_STREET_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_STREET_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_STREET_READ)})
     private String street;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_READ)})
     private String town;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_READ)})
     private long townCode;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EMAIL_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_EMAIL_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EMAIL_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EMAIL_READ)})
     private String email;
 
     @CreationTimestamp
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_CREATE_DATE_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_CREATE_DATE_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_CREATE_DATE_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_CREATE_DATE_READ)})
     private Instant createDate;
 
     @UpdateTimestamp
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_READ)})
     private Instant updateDate;
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_READ)})
     private UserGroup userGroup;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_UNREADABLE_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_UNREADABLE_READ)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UNREADABLE_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UNREADABLE_READ)})
     private boolean unreadable = false;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_READ)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_WRITE)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_READ)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_WRITE)})
     private Instant lastPasswordChange;
 
     @Column
-    @Setter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
-    @Getter(onMethod_= {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
+    @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
+    @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
     private boolean forcePasswordChange = false;
 
     public static List<User> getAll(String condition) {
@@ -202,23 +202,18 @@ public class User implements Serializable {
     }
 
     public static User getById(int parseInt) {
-        return DBConnection.getEntityManager().find(User.class,parseInt);
+        return DBConnection.getEntityManager().find(User.class, parseInt);
     }
-
-
 
 
     @kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)
     public void setPassword(String password) {
-        if(!password.equals(this.password)) {
+        if (!password.equals(this.password)) {
             this.password = password;
             this.lastPasswordChange = Instant.now();
             this.forcePasswordChange = false;
         }
     }
-
-
-
 
 
     //changed from direct reference to getter to keep security
@@ -227,7 +222,7 @@ public class User implements Serializable {
     }
 
     public String toString() {
-        return Tools.decide(this::getUsername,"Benutzer["+id+"]");
+        return Tools.decide(this::getUsername, "Benutzer[" + id + "]");
     }
 
 
@@ -264,8 +259,9 @@ public class User implements Serializable {
 
     public Collection<Transaction> getAllValueChanges() {
         EntityManager em = DBConnection.getEntityManager();
-        Collection<Transaction> out = em.createQuery("select t from Transaction t where t.from.id = :uid or t.to.id = :uid order by date",
-                                  Transaction.class).setParameter("uid", id).getResultList();
+        Collection<Transaction> out = em.createQuery(
+                "select t from Transaction t where t.from.id = :uid or t.to.id = :uid order by date",
+                Transaction.class).setParameter("uid", id).getResultList();
         em.close();
         return out;
     }
@@ -288,13 +284,13 @@ public class User implements Serializable {
         return out;
     }
 
-    public static User getKernbeisserUser(){
+    public static User getKernbeisserUser() {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("select u from User u where u.username like 'kernbeisser'",User.class)
-                                 .setMaxResults(1)
-                                 .getSingleResult();
-        }catch (NoResultException e){
+            return em.createQuery("select u from User u where u.username like 'kernbeisser'", User.class)
+                     .setMaxResults(1)
+                     .getSingleResult();
+        } catch (NoResultException e) {
             EntityTransaction et = em.getTransaction();
             et.begin();
             User kernbeisser = new User();
@@ -310,7 +306,7 @@ public class User implements Serializable {
             em.flush();
             et.commit();
             return getKernbeisserUser();
-        }finally {
+        } finally {
             em.close();
         }
     }
@@ -386,13 +382,13 @@ public class User implements Serializable {
                             forcePasswordChange);
     }
 
-    public static User generateBeginnerUser(){
+    public static User generateBeginnerUser() {
         User user = new User();
         user.permissions.add(PermissionConstants.BEGINNER.getPermission());
         return user;
     }
 
-    public int getIdWithoutPermission(){
+    public int getIdWithoutPermission() {
         return id;
     }
 }

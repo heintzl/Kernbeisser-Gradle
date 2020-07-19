@@ -5,7 +5,6 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +23,8 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     private JPanel main;
     private ObjectTable<ShoppingItem> shoppingItems;
     private JLabel headerDelete;
-    private boolean editable;
+    private final boolean editable;
+
     ShoppingCartView(ShoppingCartController controller, boolean editable) {
         this.controller = controller;
         this.editable = editable;
@@ -45,11 +45,12 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     }
 
     void setValue(double s) {
-        value.setText(String.format("%.2f€",s));
+        value.setText(String.format("%.2f€", s));
     }
 
     public String inputNoOfContainers(ShoppingItem item, boolean retry) {
-        String initValue = MessageFormat.format("{0,number,0}", Math.floor(item.getItemMultiplier() / item.getContainerSize())).trim();
+        String initValue = MessageFormat.format("{0,number,0}",
+                                                Math.floor(item.getItemMultiplier() / item.getContainerSize())).trim();
         String message = MessageFormat.format(retry
                                               ? "Eingabe kann nicht verarbeitet werden, bitte noch einmal versuchen. Für wie viele {0,number,0}er Pfand-Gebinde soll Pfand berechnet werden?"
                                               : "Die eingegebene Menge passt in ein oder mehrere {0,number,0}er Pfand-Gebinde. Für wie viele Gebinde soll Pfand berechnet werden?",
@@ -64,7 +65,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
         }
         return response;
     }
-    
+
     private void createUIComponents() {
         int size = 20;
         Font gridFont = new Font("Arial", Font.PLAIN, size);
@@ -87,7 +88,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
                     return discount;
                 }),
                 Column.create("3", e -> {
-                    JLabel price = new JLabel(String.format("%.2f€",controller.getPrice(e)));
+                    JLabel price = new JLabel(String.format("%.2f€", controller.getPrice(e)));
                     price.setFont(gridFont);
                     price.setHorizontalAlignment(SwingConstants.RIGHT);
                     return price;
@@ -96,7 +97,9 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
                     JLabel amount = new JLabel(e.getItemMultiplier() + e.getMetricUnits().getShortName());
                     amount.setFont(gridFont);
                     amount.setHorizontalAlignment(SwingConstants.RIGHT);
-                    if (!editable) {amount.setBorder(new EmptyBorder(0,0,0,20));}
+                    if (!editable) {
+                        amount.setBorder(new EmptyBorder(0, 0, 0, 20));
+                    }
                     return amount;
                 })
         );

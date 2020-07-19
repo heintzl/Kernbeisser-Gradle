@@ -8,13 +8,10 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
-import kernbeisser.Enums.TransactionType;
 import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.Tasks.Catalog;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
-import kernbeisser.Windows.Window;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,6 +27,7 @@ import java.util.Collection;
 public class Main {
 
     public static final Logger logger = LogManager.getLogger(Main.class);
+
     /**
      * sets the Look and Feel to Windows standard,
      * sets the Image path,
@@ -48,13 +46,14 @@ public class Main {
             openLogIn();
         }
     }
+
     public static void checkCatalog() {
 
         logger.info("Checking Catalog ...");
         if (Setting.UPDATE_CATALOG_FROM_INTERNET.getBooleanValue()) {
             try {
                 String info = Catalog.getInfoLineFromWeb();
-                if(!Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(info)){
+                if (!Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(info)) {
                     logger.info("Refreshing Catalog ...");
                     Catalog.updateCatalogFromWeb();
                     Setting.INFO_LINE_LAST_CATALOG.setValue(info);
@@ -65,7 +64,7 @@ public class Main {
             }
         } else {
             String infoLine = ConfigManager.getCatalogInfoLine();
-            if (infoLine == null){
+            if (infoLine == null) {
                 logger.error("Cannot find Catalog File skipping Catalog refreshing");
                 return;
             }
@@ -78,16 +77,23 @@ public class Main {
         logger.info("Catalog up to Date!");
     }
 
-    public static void checkVersion(){
-        logger.info("Aktuelle DB Version: "+Setting.DB_VERSION.getStringValue()+" | Branch Version: "+Setting.DB_VERSION.getDefaultValue());
-        if (!Setting.DB_VERSION.getStringValue().equals(Setting.DB_VERSION.getDefaultValue())&&JOptionPane.showConfirmDialog(null,
-                                                                                                                             "Ihre Datenbankversion entspricht nicht der aktuellsten Version.\nAktuelle Version: "+
-                                                                                                                             Setting.DB_VERSION.getStringValue()+"\nNeuste Verstion: "+Setting.DB_VERSION.getDefaultValue()+ "\nWollen sie die Datenbank leeren und eine neue Datenbank instanz\nerstellen?"
-        )==0) updateDBVersion();
+    public static void checkVersion() {
+        logger.info(
+                "Aktuelle DB Version: " + Setting.DB_VERSION.getStringValue() + " | Branch Version: " + Setting.DB_VERSION
+                        .getDefaultValue());
+        if (!Setting.DB_VERSION.getStringValue()
+                               .equals(Setting.DB_VERSION.getDefaultValue()) && JOptionPane.showConfirmDialog(null,
+                                                                                                              "Ihre Datenbankversion entspricht nicht der aktuellsten Version.\nAktuelle Version: " +
+                                                                                                              Setting.DB_VERSION
+                                                                                                                      .getStringValue() + "\nNeuste Verstion: " + Setting.DB_VERSION
+                                                                                                                      .getDefaultValue() + "\nWollen sie die Datenbank leeren und eine neue Datenbank instanz\nerstellen?"
+        ) == 0) {
+            updateDBVersion();
+        }
 
     }
 
-    public static void updateDBVersion(){
+    public static void updateDBVersion() {
         DBConnection.updateDatabase();
     }
 
@@ -121,9 +127,9 @@ public class Main {
         em.close();
     }
 
-    public static void generateKeySet(Class<?> clazz){
+    public static void generateKeySet(Class<?> clazz) {
         for (Field field : clazz.getDeclaredFields()) {
-            if(!Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
+            if (!Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
                 String base = toEnumName(clazz.getSimpleName()).replaceFirst("_", "") + "_" + toEnumName(
                         field.getName());
                 System.out.println(base + "_READ(" + clazz.getSimpleName() + ".class),");
@@ -132,22 +138,23 @@ public class Main {
         }
     }
 
-    public static String toEnumName(String s){
+    public static String toEnumName(String s) {
         char[] charArray = s.toCharArray();
         Collection<String> parts = new ArrayList<>();
         int before = 0;
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
             if (Character.isUpperCase(c)) {
-                parts.add(s.substring(before,i));
+                parts.add(s.substring(before, i));
                 before = i;
             }
         }
-        parts.add(s.substring(before,charArray.length));
+        parts.add(s.substring(before, charArray.length));
         StringBuilder sb = new StringBuilder();
         parts.forEach(e -> sb.append(e.toUpperCase()).append("_"));
-        if(sb.length() > 0)
-        sb.deleteCharAt(sb.length()-1);
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
         return sb.toString();
     }
 }

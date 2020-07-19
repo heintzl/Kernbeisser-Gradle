@@ -53,20 +53,22 @@ public class ObjectTable<T> extends JTable {
                 T selected = objects.get(getSelectedRow());
                 ObjectTable.this.columns.get(getSelectedColumn()).onAction(selected);
                 invokeSelectionListeners(selected);
-                if(lastSelected!=null && lastSelected.equals(selected))
+                if (lastSelected != null && lastSelected.equals(selected)) {
                     invokeDoubleClickSelectionListeners(selected);
+                }
                 lastSelected = selected;
             }
         });
         repaintUI();
     }
 
-    private void invokeSelectionListeners(T t){
+    private void invokeSelectionListeners(T t) {
         for (ObjectSelectionListener<T> listener : selectionListeners) {
             listener.selected(t);
         }
     }
-    private void invokeDoubleClickSelectionListeners(T t){
+
+    private void invokeDoubleClickSelectionListeners(T t) {
         for (ObjectSelectionListener<T> listener : doubleClickListeners) {
             listener.selected(t);
         }
@@ -100,7 +102,7 @@ public class ObjectTable<T> extends JTable {
     }
 
     @SafeVarargs
-    public final void setColumns(Column<T>... columns){
+    public final void setColumns(Column<T>... columns) {
         setColumns(Arrays.asList(columns));
     }
 
@@ -139,7 +141,9 @@ public class ObjectTable<T> extends JTable {
     }
 
     public void add(T in) {
-        if(in == null) throw new NullPointerException("Cannot add null object to ObjectTable");
+        if (in == null) {
+            throw new NullPointerException("Cannot add null object to ObjectTable");
+        }
         objects.add(in);
         repaintUI();
     }
@@ -163,14 +167,14 @@ public class ObjectTable<T> extends JTable {
         for (int c = 0; c < columns.size(); c++) {
             boolean access = true;
             for (int i = 0; i < objects.size(); i++) {
-                if(access){
+                if (access) {
                     try {
                         values[i][c] = columns.get(c).getValue(objects.get(i));
                     } catch (AccessDeniedException e) {
                         access = false;
                         values[i][c] = "[Keine Leseberechtigung]";
                     }
-                }else {
+                } else {
                     values[i][c] = "[Keine Leseberechtigung]";
                 }
             }
@@ -205,6 +209,8 @@ public class ObjectTable<T> extends JTable {
 
     public void setSelectedObject(T value) {
         int index = objects.indexOf(value);
-        if(index!=-1)setRowSelectionInterval(index,index);
+        if (index != -1) {
+            setRowSelectionInterval(index, index);
+        }
     }
 }

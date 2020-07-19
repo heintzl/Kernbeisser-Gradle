@@ -52,18 +52,22 @@ public class SynchronizeArticleController implements Controller<SynchronizeArtic
         view.remove(articleDifference);
     }
 
-    void resolveConflicts(){
+    void resolveConflicts() {
         new Thread(() -> {
             view.setResolveConflictsEnabled(false);
-            double allowedDifference = view.getAllowedDifference()/100;
+            double allowedDifference = view.getAllowedDifference() / 100;
             String name = view.getDiffName();
             String source = view.getSource();
             model.getAllDifferences().removeIf(e -> {
-                if(e.getDifferenceName().equals(name)){
+                if (e.getDifferenceName().equals(name)) {
                     try {
                         ArticleDifference<Number> numberDifference = (ArticleDifference<Number>) e;
-                        if (Math.abs(numberDifference.getKernbeisserVersion().doubleValue() - numberDifference.getCatalogVersion().doubleValue()) < numberDifference.getKernbeisserVersion().doubleValue() * allowedDifference) {
-                            switch (source){
+                        if (Math.abs(numberDifference.getKernbeisserVersion()
+                                                     .doubleValue() - numberDifference.getCatalogVersion()
+                                                                                      .doubleValue()) < numberDifference
+                                                                                                                .getKernbeisserVersion()
+                                                                                                                .doubleValue() * allowedDifference) {
+                            switch (source) {
                                 case "Kernbeisser":
                                     numberDifference.applyKernbeisser();
                                     return true;
@@ -73,12 +77,16 @@ public class SynchronizeArticleController implements Controller<SynchronizeArtic
                                 default:
                                     return false;
                             }
-                        }else return false;
-                    }catch (ClassCastException exception){
+                        } else {
+                            return false;
+                        }
+                    } catch (ClassCastException exception) {
                         Tools.showUnexpectedErrorWarning(exception);
                         return false;
                     }
-                }else return false;
+                } else {
+                    return false;
+                }
             });
             fillUI();
             view.setResolveConflictsEnabled(true);

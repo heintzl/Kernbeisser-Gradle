@@ -5,17 +5,15 @@ import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
 
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-public class AccessCheckingComboBox <P,V> extends JComboBox<V> implements Bounded<P,V>{
+public class AccessCheckingComboBox<P, V> extends JComboBox<V> implements Bounded<P,V> {
     private boolean inputChanged = false;
 
     private final Setter<P,V> setter;
     private final Getter<P,V> getter;
 
-    public AccessCheckingComboBox(Getter<P,V> getter, Setter<P,V> setter){
+    public AccessCheckingComboBox(Getter<P,V> getter, Setter<P,V> setter) {
         this.getter = getter;
         this.setter = setter;
         addActionListener(e -> inputChanged = true);
@@ -26,7 +24,7 @@ public class AccessCheckingComboBox <P,V> extends JComboBox<V> implements Bounde
         inputChanged = true;
     }
 
-    public void setItems(Collection<V> values){
+    public void setItems(Collection<V> values) {
         removeAllItems();
         values.forEach(super::addItem);
     }
@@ -49,9 +47,9 @@ public class AccessCheckingComboBox <P,V> extends JComboBox<V> implements Bounde
     public void writeInto(P p) throws CannotParseException {
         try {
             int selectedIndex = getSelectedIndex();
-            if(selectedIndex>-1){
-                setter.set(p,getItemAt(selectedIndex));
-            }else {
+            if (selectedIndex > -1) {
+                setter.set(p, getItemAt(selectedIndex));
+            } else {
                 throw new CannotParseException();
             }
         } catch (AccessDeniedException ignored) {
@@ -70,7 +68,9 @@ public class AccessCheckingComboBox <P,V> extends JComboBox<V> implements Bounde
 
     @Override
     public void setReadable(boolean b) {
-        if(b) setSelectedItem(null);
+        if (b) {
+            setSelectedItem(null);
+        }
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.intellij.lang.annotations.Language;
 import javax.swing.text.JTextComponent;
 import java.util.regex.Pattern;
 
-public class RegexVerifier extends TextComponentVerifier{
+public class RegexVerifier extends TextComponentVerifier {
     private final Pattern regex;
 
     public RegexVerifier(@Language("RegExp") String regex) {

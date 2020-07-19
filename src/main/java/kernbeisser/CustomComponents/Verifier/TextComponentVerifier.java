@@ -9,7 +9,7 @@ import java.awt.*;
 public abstract class TextComponentVerifier extends InputVerifier {
     @Override
     public final boolean verify(JComponent input) {
-        return verify((JTextComponent)input);
+        return verify((JTextComponent) input);
     }
 
     public abstract boolean verify(JTextComponent component);
@@ -18,12 +18,13 @@ public abstract class TextComponentVerifier extends InputVerifier {
     public boolean shouldYieldFocus(JComponent input) {
         boolean isOkay = verify(input);
         input.setForeground(new Color(isOkay ? 0x0 : 0xFF0000));
-        if(!isOkay)
-        showHint(input);
+        if (!isOkay) {
+            showHint(input);
+        }
         return true;
     }
 
-    public void showHint(JComponent component){
+    public void showHint(JComponent component) {
         Tools.showHint(component);
     }
 }
