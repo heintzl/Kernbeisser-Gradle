@@ -83,6 +83,11 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
         refresh();
     }
 
+    public void emptyCart() {
+        model.getItems().clear();
+        refresh();
+    }
+
     public List<ShoppingItem> getItems() {
         return model.getItems();
     }

@@ -806,6 +806,12 @@
                           <text value="Einkauf abbrechen"/>
                         </properties>
                       </component>
+                      <component id="da6d3" class="javax.swing.JButton" binding="emptyShoppingCart">
+                        <constraints/>
+                        <properties>
+                          <text value="Alle Artikel löschen"/>
+                        </properties>
+                      </component>
                       <component id="5cf94" class="javax.swing.JButton" binding="checkout">
                         <constraints/>
                         <properties>

@@ -66,6 +66,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         return result;
     }
 
+    void emptyShoppingCart() {
+        shoppingCartController.emptyCart();
+    }
+
     boolean addToShoppingCart() {
         boolean piece = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
         try {
