@@ -170,6 +170,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     kbNumber.setVisible(type == 'a');
     setKbNumber("");
     suppliersItemNumber.setVisible(type == 'a');
+    suppliersItemNumber.setEnabled(preordered);
     setSuppliersItemNumber("");
     price.setEnabled(!preordered && "dra".indexOf(type) == -1);
     price.setVisible("dr".indexOf(type) == -1);
@@ -243,7 +244,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
   void loadItemStats(Article article) {
     supplier.getModel().setSelectedItem(article.getSupplier());
     grossNetRatio = controller.calculatePrice(article) / controller.calculateNetPrice(article);
-    kbNumber.setText(article.getKbNumber() + "");
+    kbNumber.setText(article.getKbNumber() != 0 ? article.getKbNumber() + "" : "");
     suppliersItemNumber.setText(article.getSuppliersItemNumber() + "");
     articleName.setText(
         article.getName().length() > 40
@@ -263,6 +264,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         (isWeighable ? article.getMetricUnits() : MetricUnits.PIECE).getShortName());
     optTaxLow.setSelected(article.getVat() == VAT.LOW);
     optTaxStandard.setSelected(article.getVat() == VAT.HIGH);
+    deposit.setText(String.format("%.2f", article.getSingleDeposit()));
   }
 
   private void recalculatePrice() {

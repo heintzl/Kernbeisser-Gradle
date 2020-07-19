@@ -112,10 +112,11 @@ public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
   }
 
   Article getBySupplierItemNumber(int suppliersNumber) {
+
     return Article.getBySuppliersItemNumber(suppliersNumber);
   }
 
-  Article getByBarcode(long barcode) {
-    return Article.getByBarcode(barcode);
+  Article getByBarcode(long barcode, boolean searchBaseArticle) {
+    return Article.getByBarcode(barcode, searchBaseArticle);
   }
 }

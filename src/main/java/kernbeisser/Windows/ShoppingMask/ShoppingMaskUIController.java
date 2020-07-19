@@ -123,7 +123,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
 
   void searchByBarcode(long barcode) {
     view.setOptArticleNo();
-    Article found = model.getByBarcode(barcode);
+    Article found = model.getByBarcode(barcode, view.isPreordered());
     if (found != null) {
       view.loadItemStats(found);
       if (!view.isPreordered()) {
