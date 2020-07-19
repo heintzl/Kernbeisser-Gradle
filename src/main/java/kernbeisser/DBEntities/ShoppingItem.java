@@ -82,7 +82,12 @@ public class ShoppingItem implements Serializable {
     this.vat = article.getVat().getValue();
     this.weighAble = article.isWeighable();
     this.unitAmount =
-        weighAble ? "" : article.getAmount() + article.getMetricUnits().getShortName();
+        weighAble
+                || article.getMetricUnits() == MetricUnits.NONE
+                || article.getMetricUnits() == MetricUnits.PIECE
+                || !(article.getAmount() > 0)
+            ? ""
+            : article.getAmount() + article.getMetricUnits().getShortName();
     this.surcharge =
         (hasContainerDiscount
             ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue()
@@ -186,6 +191,7 @@ public class ShoppingItem implements Serializable {
             }
           };
       out.addToRetailPrice(price);
+      out.name += (price < 0 ? " zurück" : "");
       return out;
     } catch (NoResultException e) {
       et.begin();
