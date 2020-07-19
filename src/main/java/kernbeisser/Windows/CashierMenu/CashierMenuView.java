@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class CashierMenuView  implements View<CashierMenuController> {
+public class CashierMenuView implements View<CashierMenuController> {
     private JButton editItems;
     private JButton editUser;
     private JButton changeSurchargeTable;
@@ -20,7 +20,7 @@ public class CashierMenuView  implements View<CashierMenuController> {
 
     private final CashierMenuController cashierMenuController;
 
-    CashierMenuView(CashierMenuController controller){
+    CashierMenuView(CashierMenuController controller) {
         this.cashierMenuController = controller;
     }
 
@@ -49,6 +49,6 @@ public class CashierMenuView  implements View<CashierMenuController> {
 
     @Override
     public @NotNull Dimension getSize() {
-        return new Dimension(900,600);
+        return new Dimension(900, 600);
     }
 }

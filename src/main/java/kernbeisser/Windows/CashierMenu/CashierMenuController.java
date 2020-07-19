@@ -15,8 +15,8 @@ public class CashierMenuController implements Controller<CashierMenuView,Cashier
     private final CashierMenuModel model;
     private final CashierMenuView view;
 
-    public CashierMenuController( User user) {
-        this.view = new CashierMenuView( this);
+    public CashierMenuController(User user) {
+        this.view = new CashierMenuView(this);
         model = new CashierMenuModel(user);
     }
 
@@ -31,7 +31,8 @@ public class CashierMenuController implements Controller<CashierMenuView,Cashier
     }
 
     @Override
-    public void fillUI() { }
+    public void fillUI() {
+    }
 
     @Override
     public PermissionKey[] getRequiredKeys() {
@@ -51,7 +52,7 @@ public class CashierMenuController implements Controller<CashierMenuView,Cashier
     }
 
     public void openManagePriceLists() {
-        new ManagePriceListsController().openTab("Preislisten bearbeiten");;
+        new ManagePriceListsController().openTab("Preislisten bearbeiten");
     }
 
     public void openCashierMask() {
@@ -59,6 +60,6 @@ public class CashierMenuController implements Controller<CashierMenuView,Cashier
     }
 
     public void openTransfer() {
-        new TransactionController(model.getUser()).openTab("Überweissungen tätigen");;
+        new TransactionController(model.getUser()).openTab("Überweissungen tätigen");
     }
 }

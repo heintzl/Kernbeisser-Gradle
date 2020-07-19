@@ -11,7 +11,7 @@ public class ChangePasswordController implements Controller<ChangePasswordView,C
     private final ChangePasswordModel model;
     private final ChangePasswordView view;
 
-    public ChangePasswordController(User user,boolean verifyWithOldPassword) {
+    public ChangePasswordController(User user, boolean verifyWithOldPassword) {
         model = new ChangePasswordModel(user, verifyWithOldPassword);
         view = new ChangePasswordView();
     }
@@ -33,33 +33,43 @@ public class ChangePasswordController implements Controller<ChangePasswordView,C
         view.setVerifyWithOldEnable(model.verifyWithOldPassword());
     }
 
-    private int getPasswordStrength(String password){
+    private int getPasswordStrength(String password) {
         int security = 0;
-        if(password.matches(".*[a-z].*"))security++;
-        if(password.matches(".*[A-Z].*"))security++;
-        if(password.matches(".*\\d.*"))security++;
-        if(password.matches(".*[@#$%^&*].*"))security++;
-        if(password.matches(".{8,}"))security++;
+        if (password.matches(".*[a-z].*")) {
+            security++;
+        }
+        if (password.matches(".*[A-Z].*")) {
+            security++;
+        }
+        if (password.matches(".*\\d.*")) {
+            security++;
+        }
+        if (password.matches(".*[@#$%^&*].*")) {
+            security++;
+        }
+        if (password.matches(".{8,}")) {
+            security++;
+        }
         return security;
     }
 
-    private boolean comparePasswords(){
+    private boolean comparePasswords() {
         return view.getNewPassword().equals(view.getRepeatedPassword());
     }
 
-    private boolean lengthValid(String password){
-        return !(password.length()<Setting.MIN_PASSWORD_LENGTH.getIntValue());
+    private boolean lengthValid(String password) {
+        return !(password.length() < Setting.MIN_PASSWORD_LENGTH.getIntValue());
     }
 
-    private boolean strengthValid(int strength){
-        return !(Setting.MIN_REQUIRED_PASSWORD_STRENGTH.getIntValue()>strength);
+    private boolean strengthValid(int strength) {
+        return !(Setting.MIN_REQUIRED_PASSWORD_STRENGTH.getIntValue() > strength);
     }
 
-    private boolean validOldPassword(String password){
+    private boolean validOldPassword(String password) {
         return model.checkPassword(password);
     }
 
-    void refreshPasswordStrength(){
+    void refreshPasswordStrength() {
         show(getPasswordStrength(view.getNewPassword()));
     }
 
@@ -87,25 +97,25 @@ public class ChangePasswordController implements Controller<ChangePasswordView,C
 
     }
 
-    boolean checkPassword(){
-        if(!((!model.verifyWithOldPassword())||validOldPassword(view.getCurrentPassword()))){
+    boolean checkPassword() {
+        if (!((!model.verifyWithOldPassword()) || validOldPassword(view.getCurrentPassword()))) {
             view.currentPasswordEnteredWrong();
             return false;
         }
         if (!comparePasswords()) {
             view.passwordsDontMatch();
             return false;
-        }else {
+        } else {
             view.passwordsMatch();
             int passwordStrength = getPasswordStrength(view.getNewPassword());
-            if(lengthValid(view.getNewPassword())) {
+            if (lengthValid(view.getNewPassword())) {
                 if (strengthValid(passwordStrength)) {
                     show(passwordStrength);
                 } else {
                     view.setPasswordStrength(Strength.TO_LOW);
                     return false;
                 }
-            }else {
+            } else {
                 view.setPasswordStrength(Strength.LENGTH_TO_SMALL);
                 return false;
             }
@@ -113,9 +123,11 @@ public class ChangePasswordController implements Controller<ChangePasswordView,C
         }
     }
 
-    void changePassword(){
+    void changePassword() {
         if (checkPassword()) {
-            model.changePassword(BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(),view.getNewPassword().toCharArray()));
+            model.changePassword(BCrypt.withDefaults()
+                                       .hashToString(Setting.HASH_COSTS.getIntValue(),
+                                                     view.getNewPassword().toCharArray()));
             view.passwordChanged();
             view.back();
         }

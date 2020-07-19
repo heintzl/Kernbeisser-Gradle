@@ -36,12 +36,13 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
     }
 
 
-    private void selectUser(User user){
-        if(user!=null){
+    private void selectUser(User user) {
+        if (user != null) {
             view.setOpenShoppingMaskEnabled(true);
             view.setStartFor(user.toString());
-        }else
-        view.setOpenShoppingMaskEnabled(false);
+        } else {
+            view.setOpenShoppingMaskEnabled(false);
+        }
     }
 
     public void openMaskWindow() {
@@ -55,10 +56,12 @@ public class CashierShoppingMaskController implements Controller<CashierShopping
                 return;
             }
         }
-        new ShoppingMaskUIController(saleSession).openTab("Einkauf für "+saleSession.getCustomer().getSurname()+", "+saleSession.getCustomer().getFirstName());
+        new ShoppingMaskUIController(saleSession).openTab(
+                "Einkauf für " + saleSession.getCustomer().getSurname() + ", " + saleSession.getCustomer()
+                                                                                            .getFirstName());
     }
 
-    public SearchBoxView<User> getSearchBoxView(){
+    public SearchBoxView<User> getSearchBoxView() {
         return searchBoxController.getView();
     }
 

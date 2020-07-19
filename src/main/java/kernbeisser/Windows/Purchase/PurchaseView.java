@@ -38,7 +38,7 @@ public class PurchaseView implements View<PurchaseController> {
     }
 
     void setSum(double sum) {
-        this.sum.setText(sum  + "€");
+        this.sum.setText(sum + "€");
     }
 
     void setItemCount(int c) {
@@ -53,8 +53,8 @@ public class PurchaseView implements View<PurchaseController> {
         items = new ObjectTable<ShoppingItem>(
                 Column.create("Artikelname", ShoppingItem::getName),
                 Column.create("Anzahl", ShoppingItem::getItemMultiplier),
-                Column.create("Verkaufs Preis", e -> controller.getPrice(e)  + "€"),
-                Column.create("Netto Preis", e -> controller.getPrice(e)  + "€")
+                Column.create("Verkaufs Preis", e -> controller.getPrice(e) + "€"),
+                Column.create("Netto Preis", e -> controller.getPrice(e) + "€")
         );
     }
 

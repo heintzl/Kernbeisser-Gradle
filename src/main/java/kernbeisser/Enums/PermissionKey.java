@@ -348,15 +348,15 @@ public enum PermissionKey {
         this.clazz = clazz;
     }
 
-    public PermissionKey getWriteKey(){
-        return valueOf(name().replace("READ","WRITE"));
+    public PermissionKey getWriteKey() {
+        return valueOf(name().replace("READ", "WRITE"));
     }
 
-    public PermissionKey getReadKey(){
-        return valueOf(name().replace("WRITE","READ"));
+    public PermissionKey getReadKey() {
+        return valueOf(name().replace("WRITE", "READ"));
     }
 
-    public boolean userHas(){
+    public boolean userHas() {
         return LogInModel.getLoggedIn().hasPermission(this);
     }
 
@@ -374,12 +374,13 @@ public enum PermissionKey {
         return clazz;
     }
 
-    public static Collection<PermissionKey> find(Class<?> category, boolean read, boolean write){
+    public static Collection<PermissionKey> find(Class<?> category, boolean read, boolean write) {
         Collection<PermissionKey> out = new ArrayList<>();
         for (PermissionKey value : values()) {
             if (value.clazz == category) {
-                if((read&&value.name().endsWith("READ"))||(write&&value.name().endsWith("WRITE")))
-                out.add(value);
+                if ((read && value.name().endsWith("READ")) || (write && value.name().endsWith("WRITE"))) {
+                    out.add(value);
+                }
             }
         }
         return out;

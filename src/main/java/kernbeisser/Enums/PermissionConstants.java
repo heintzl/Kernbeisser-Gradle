@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import java.util.Arrays;
-import java.util.HashMap;
 
 //Permissions which become automatically generated when the application
 //requires them to prevent the functionality from the application
@@ -26,38 +25,38 @@ public enum PermissionConstants {
             PermissionKey.GO_UNDER_MIN
     ),
     APPLICATION(PermissionKey.values()),
-    ON_OWN_USER(PermissionKey.find(User.class).toArray(new PermissionKey[0]))
-    ;
+    ON_OWN_USER(PermissionKey.find(User.class).toArray(new PermissionKey[0]));
 
     private final Permission bounded;
 
     final PermissionKey[] defaultPermissionKeys;
 
-    PermissionConstants(PermissionKey ... keys){
+    PermissionConstants(PermissionKey... keys) {
         this.defaultPermissionKeys = keys;
         this.bounded = loadOrCreate(this);
     }
 
-    public Permission getPermission(){
+    public Permission getPermission() {
         return bounded;
     }
 
-    private static Permission loadOrCreate(PermissionConstants constants){
+    private static Permission loadOrCreate(PermissionConstants constants) {
         EntityManager em = DBConnection.getEntityManager();
         try {
-            return em.createQuery("select p from Permission p where name like :pcn", Permission.class).setParameter("pcn","@"+constants.name())
-                                   .getSingleResult();
-        }catch (NoResultException e){
+            return em.createQuery("select p from Permission p where name like :pcn", Permission.class)
+                     .setParameter("pcn", "@" + constants.name())
+                     .getSingleResult();
+        } catch (NoResultException e) {
             EntityTransaction et = em.getTransaction();
             et.begin();
             Permission permission = new Permission();
             permission.getKeySet().addAll(Arrays.asList(constants.defaultPermissionKeys));
-            permission.setName("@"+constants.name());
+            permission.setName("@" + constants.name());
             em.persist(permission);
             em.flush();
             et.commit();
             return loadOrCreate(constants);
-        }finally {
+        } finally {
             em.close();
         }
     }

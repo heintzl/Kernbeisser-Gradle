@@ -15,7 +15,7 @@ public class CollectionModel<T> implements Model<CollectionController<T>> {
 
     private final boolean editable;
 
-    public CollectionModel(Collection<T> loaded,Collection<T> available,boolean editable, Column<T>[] columns) {
+    public CollectionModel(Collection<T> loaded, Collection<T> available, boolean editable, Column<T>[] columns) {
         this.columns = columns;
         this.loaded = loaded;
         this.editable = editable;

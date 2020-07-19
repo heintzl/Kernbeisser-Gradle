@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 public class ArticleSelectorModel implements Model<ArticleSelectorController> {
     private final Consumer<Article> consumer;
 
-    ArticleSelectorModel(Consumer<Article> consumer){
+    ArticleSelectorModel(Consumer<Article> consumer) {
         this.consumer = consumer;
     }
 

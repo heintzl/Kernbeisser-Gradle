@@ -20,7 +20,7 @@ public class DataImportView implements View<DataImportController> {
     private JLabel currentActionUser;
     private JCheckBox importStandardAdmin;
 
-    private DataImportController controller;
+    private final DataImportController controller;
 
     DataImportView(DataImportController controller) {
         this.controller = controller;
@@ -55,7 +55,9 @@ public class DataImportView implements View<DataImportController> {
     void setUserProgress(int i) {
         userProgress.setValue(i);
         currentActionUser.setVisible(true);
-        currentActionUser.setText("Benutzer: " + (i < 2 ? "Jobs" : "Benutzer") + " " + (i % 2 == 0 ? "zur Datenbank gespeichert" : "werden konvertiert") + "...");
+        currentActionUser.setText("Benutzer: " + (i < 2 ? "Jobs" : "Benutzer") + " " + (i % 2 == 0
+                                                                                        ? "zur Datenbank gespeichert"
+                                                                                        : "werden konvertiert") + "...");
         itemProgress.setValue(i);
         String target = "";
         String status = i % 2 == 1 ? "auf der Datenbank gespeichert" : "werden konvertiert";
@@ -111,15 +113,20 @@ public class DataImportView implements View<DataImportController> {
 
 
     void itemSourcesNotExists() {
-        JOptionPane.showMessageDialog(getTopComponent(), "Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Artikeldatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getTopComponent(),
+                                      "Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!",
+                                      "Artikeldatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
     }
 
     void userSourcesNotExists() {
-        JOptionPane.showMessageDialog(getTopComponent(), "Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!", "Nutzerdatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getTopComponent(),
+                                      "Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!",
+                                      "Nutzerdatensatz unvollst\u00e4ndig", JOptionPane.ERROR_MESSAGE);
     }
 
     String requestPassword() {
-        return JOptionPane.showInputDialog(getTopComponent(), "Bitte geben sie ein Password für den automatisch erzeugten Admin ein");
+        return JOptionPane.showInputDialog(getTopComponent(),
+                                           "Bitte geben sie ein Password für den automatisch erzeugten Admin ein");
     }
 
     @Override

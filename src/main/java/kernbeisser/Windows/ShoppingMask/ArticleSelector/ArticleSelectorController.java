@@ -17,7 +17,7 @@ public class ArticleSelectorController implements Controller<ArticleSelectorView
 
     private final SearchBoxController<Article> searchBoxController;
 
-    public ArticleSelectorController(Consumer<Article> consumer){
+    public ArticleSelectorController(Consumer<Article> consumer) {
         view = null;
         searchBoxController = new SearchBoxController<>((s, m) -> {
             Collection<Article> articles = Article.defaultSearch(s, m);
@@ -29,7 +29,10 @@ public class ArticleSelectorController implements Controller<ArticleSelectorView
                                                         Column.create("Name", Article::getName),
                                                         Column.create("Barcode", Article::getBarcode),
                                                         Column.create("KB-Nummer", Article::getKbNumber),
-                                                        Column.create("Lieferant", e -> e.getSupplier().getShortName() + (e.getSuppliersItemNumber()>0?" (" +e.getSuppliersItemNumber()+ ")":"")));
+                                                        Column.create("Lieferant", e -> e.getSupplier()
+                                                                                         .getShortName() + (e.getSuppliersItemNumber() > 0
+                                                                                                            ? " (" + e.getSuppliersItemNumber() + ")"
+                                                                                                            : "")));
         searchBoxController.initView();
         this.model = new ArticleSelectorModel(consumer);
         this.view = new ArticleSelectorView(this);

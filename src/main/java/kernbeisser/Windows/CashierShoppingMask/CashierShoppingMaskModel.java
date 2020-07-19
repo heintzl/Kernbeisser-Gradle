@@ -7,6 +7,6 @@ import java.util.Collection;
 
 public class CashierShoppingMaskModel implements Model<CashierShoppingMaskController> {
     public Collection<User> getUsers(String search) {
-        return User.defaultSearch(search,500);
+        return User.defaultSearch(search, 500);
     }
 }

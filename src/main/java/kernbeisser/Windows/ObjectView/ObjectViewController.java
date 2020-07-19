@@ -17,19 +17,21 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
 
     private boolean openWindow = false;
 
-    public ObjectViewController(MaskLoader<T> loader, Searchable<T> items,boolean copyAdd, Column<T>... columns) {
+    public ObjectViewController(MaskLoader<T> loader, Searchable<T> items, boolean copyAdd, Column<T>... columns) {
         searchBoxController = new SearchBoxController<T>(items, columns);
         searchBoxController.initView();
         searchBoxController.addSelectionListener(e -> select());
         searchBoxController.addDoubleClickListener(e -> edit());
         searchBoxController.addLostSelectionListener(this::putItems);
 
-        model = new ObjectViewModel<>(loader, items,copyAdd);
+        model = new ObjectViewModel<>(loader, items, copyAdd);
         view = new ObjectViewView<>(this);
     }
 
     void select() {
-        if(openWindow)return;
+        if (openWindow) {
+            return;
+        }
         view.setEditAvailable(true);
         view.setRemoveAvailable(true);
     }
@@ -40,7 +42,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
     }
 
     void edit() {
-        model.openEdit(view.getWindow(),searchBoxController.getSelectedObject()).addCloseEventListener(e -> {
+        model.openEdit(view.getWindow(), searchBoxController.getSelectedObject()).addCloseEventListener(e -> {
             search();
             openWindow = false;
             view.setAddAvailable(true);
@@ -51,7 +53,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
     }
 
     void add() {
-        model.openAdd(view.getWindow(),searchBoxController.getSelectedObject()).addCloseEventListener(e -> {
+        model.openAdd(view.getWindow(), searchBoxController.getSelectedObject()).addCloseEventListener(e -> {
             search();
             openWindow = false;
             view.setAddAvailable(true);
@@ -102,7 +104,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
     }
 
 
-    public void search(){
+    public void search() {
         searchBoxController.refreshLoadSolutions();
     }
 }

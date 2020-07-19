@@ -20,24 +20,25 @@ public class SimpleLogInView implements View<SimpleLogInController> {
 
     private final SimpleLogInController controller;
 
-    SimpleLogInView(SimpleLogInController controller){
+    SimpleLogInView(SimpleLogInController controller) {
         this.controller = controller;
     }
 
-    char[] getPassword(){
+    char[] getPassword() {
         return password.getPassword();
     }
 
-    String getUsername(){
+    String getUsername() {
         return username.getText();
     }
 
     public void accessDenied() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Zugriff verweigert. Anmeldedaten sind ungültig!");
+        JOptionPane.showMessageDialog(getTopComponent(), "Zugriff verweigert. Anmeldedaten sind ungültig!");
     }
 
     public void permissionRequired() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Zugriff verweigert.\nIhr Benutzerkonto hat leider nicht die Berechtigung sich anzumelden.\nSie können es bei einem Admin freischalten lassen.");
+        JOptionPane.showMessageDialog(getTopComponent(),
+                                      "Zugriff verweigert.\nIhr Benutzerkonto hat leider nicht die Berechtigung sich anzumelden.\nSie können es bei einem Admin freischalten lassen.");
     }
 
     @Override

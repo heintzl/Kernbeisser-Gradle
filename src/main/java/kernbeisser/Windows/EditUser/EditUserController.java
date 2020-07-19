@@ -1,26 +1,20 @@
 package kernbeisser.Windows.EditUser;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.DBEntities.Job;
-import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Selector.SelectorController;
-import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserController implements Controller<EditUserView,EditUserModel> {
     private final EditUserView view;
     private final EditUserModel model;
 
-    public EditUserController(User user, Mode mode){
+    public EditUserController(User user, Mode mode) {
         model = new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode);
         if (mode == Mode.REMOVE) {
             model.doAction(model.getUser());
@@ -31,12 +25,15 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     }
 
     private void changePassword(String to) {
-        model.getUser().setPassword(BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), to.toCharArray()));
+        model.getUser()
+             .setPassword(BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), to.toCharArray()));
     }
 
     void requestChangePassword() {
         String password = view.requestPassword();
-        if(password==null)return;
+        if (password == null) {
+            return;
+        }
         if (password.length() < 4) {
             view.passwordToShort();
             requestChangePassword();
@@ -53,7 +50,8 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
     }
 
     @Override
-    public void fillUI() {}
+    public void fillUI() {
+    }
 
     @Override
     public PermissionKey[] getRequiredKeys() {
@@ -88,7 +86,7 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
                     return;
                 }
                 try {
-                    if (data.getPassword()==null) {
+                    if (data.getPassword() == null) {
                         requestChangePassword();
                         data.setPassword(model.getUser().getPassword());
                     }
@@ -102,8 +100,8 @@ public class EditUserController implements Controller<EditUserView,EditUserModel
         }
     }
 
-    void refreshUsername(){
-        if(model.getMode()==Mode.ADD) {
+    void refreshUsername() {
+        if (model.getMode() == Mode.ADD) {
             User data = view.getObjectForm().getDataIgnoreWrongInput();
             if (data.getSurname() != null && data.getFirstName() != null) {
                 view.setUsername(model.generateUsername(data.getFirstName().toLowerCase().replace(" ", ""),

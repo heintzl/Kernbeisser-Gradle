@@ -28,21 +28,27 @@ public class CollectionView<T> implements View<CollectionController<T>> {
     public void initialize(CollectionController<T> controller) {
         available.addSelectionListener(new ObjectSelectionListener<T>() {
             T last;
+
             @Override
             public void selected(T e) {
-                if(e.equals(last))
-                controller.selectAvailable();
-                else last = e;
+                if (e.equals(last)) {
+                    controller.selectAvailable();
+                } else {
+                    last = e;
+                }
             }
         });
         chosen.addSelectionListener(
                 new ObjectSelectionListener<T>() {
                     T last;
+
                     @Override
                     public void selected(T e) {
-                        if(e.equals(last))
+                        if (e.equals(last)) {
                             controller.selectChosen();
-                        else last = e;
+                        } else {
+                            last = e;
+                        }
                     }
                 }
         );
@@ -54,7 +60,7 @@ public class CollectionView<T> implements View<CollectionController<T>> {
         cancel.addActionListener(e -> back());
     }
 
-    void setEditable(boolean editable){
+    void setEditable(boolean editable) {
         availableSec.setVisible(editable);
         moveSec.setVisible(editable);
     }
@@ -64,36 +70,36 @@ public class CollectionView<T> implements View<CollectionController<T>> {
         return main;
     }
 
-    T getSelectedChosenObject(){
+    T getSelectedChosenObject() {
         return chosen.getSelectedObject();
     }
 
-    T getSelectedAvailableObject(){
+    T getSelectedAvailableObject() {
         return available.getSelectedObject();
     }
 
-    void setColumns(Column<T>[] columns){
+    void setColumns(Column<T>[] columns) {
         available.setColumns(columns);
         chosen.setColumns(columns);
     }
 
-    void addChosen(T t){
+    void addChosen(T t) {
         chosen.add(t);
     }
 
-    void removeAvailable(T t){
+    void removeAvailable(T t) {
         available.remove(t);
     }
 
-    void addAvailable(T t){
+    void addAvailable(T t) {
         available.add(t);
     }
 
-    void removeChosen(T t){
+    void removeChosen(T t) {
         chosen.remove(t);
     }
 
-    void setAvailable(Collection<T> collection){
+    void setAvailable(Collection<T> collection) {
         available.setObjects(collection);
     }
 
@@ -106,7 +112,7 @@ public class CollectionView<T> implements View<CollectionController<T>> {
         chosen.setObjects(loaded);
     }
 
-    public Collection<T> getAllChosen(){
+    public Collection<T> getAllChosen() {
         return chosen.getItems();
     }
 }

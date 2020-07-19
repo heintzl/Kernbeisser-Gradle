@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class SelectorView <T> implements View<SelectorController<T>> {
+public class SelectorView<T> implements View<SelectorController<T>> {
     private JPanel mainPanel;
     private ObjectTable<T> selected;
     private JButton add;
@@ -29,21 +29,22 @@ public class SelectorView <T> implements View<SelectorController<T>> {
         selected = new ObjectTable<T>();
     }
 
-    void setColumns(Column<T>[] columns){
+    void setColumns(Column<T>[] columns) {
         selected.setColumns(Arrays.asList(columns));
     }
 
-    void setObjects(Collection<T> collection){
+    void setObjects(Collection<T> collection) {
         selected.setObjects(collection);
     }
 
-    T getSelectedValue(){
-       return selected.getSelectedObject();
+    T getSelectedValue() {
+        return selected.getSelectedObject();
     }
 
     public void addValue(T e) {
-        if(!selected.contains(e))
-        selected.add(e);
+        if (!selected.contains(e)) {
+            selected.add(e);
+        }
     }
 
     public void removeValue(T e) {

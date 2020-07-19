@@ -56,7 +56,7 @@ public class PayModel implements Model<PayController> {
             //Do money exchange
             try {
                 Transaction.doPurchaseTransaction(saleSession.getCustomer(), shoppingCartSum());
-            }catch (AccessDeniedException e) {
+            } catch (AccessDeniedException e) {
                 em.close();
                 throw new AccessDeniedException("The user has not enough value to buy these Articles");
             }
@@ -109,7 +109,7 @@ public class PayModel implements Model<PayController> {
     void print(Purchase purchase) {
         try {
             ReportManager invoice = new ReportManager();
-            invoice.initInvoicePrint(shoppingCart, purchase);
+            ReportManager.initInvoicePrint(shoppingCart, purchase);
             invoice.sendToPrinter();
         } catch (JRException e) {
             Tools.showUnexpectedErrorWarning(e);

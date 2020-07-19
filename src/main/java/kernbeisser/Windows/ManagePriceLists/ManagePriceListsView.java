@@ -28,7 +28,7 @@ public class ManagePriceListsView implements View<ManagePriceListsController> {
     private JPanel main;
     private PermissionButton delete;
 
-    private ManagePriceListsController controller;
+    private final ManagePriceListsController controller;
 
     public ManagePriceListsView(ManagePriceListsController controller) {
         this.controller = controller;

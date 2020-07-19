@@ -4,9 +4,9 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditUser.EditUserController;
@@ -28,7 +28,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         model = new ShoppingMaskModel(saleSession);
         this.shoppingCartController = new ShoppingCartController(model.getValue(), model.getSaleSession()
                                                                                         .getCustomer()
-                                                                                        .getSolidaritySurcharge(),true);
+                                                                                        .getSolidaritySurcharge(),
+                                                                 true);
         shoppingCartController.initView();
         this.view = new ShoppingMaskUIView(this, shoppingCartController);
     }
@@ -72,12 +73,13 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         boolean piece = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
         try {
             int discount = view.getDiscount();
-            if (discount < 1 || discount >100) {
+            if (discount < 1 || discount > 100) {
                 view.messageInvalidDiscount();
                 return false;
             }
             ShoppingItem item = extractShoppingItemFromUI();
-            if (item.getItemMultiplier() != 0 && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece) )) {
+            if (item.getItemMultiplier() != 0 && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(
+                    item, piece))) {
                 shoppingCartController.addShoppingItem(item, piece);
                 return true;
             }
@@ -93,7 +95,9 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         Article found = model.getByKbNumber(view.getKBArticleNumber());
         if (found != null) {
             view.loadItemStats(found);
-        } else  {view.setSuppliersItemNumber("");}
+        } else {
+            view.setSuppliersItemNumber("");
+        }
     }
 
     void searchBySupplierItemsNumber() {
@@ -101,7 +105,9 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         Article found = model.getBySupplierItemNumber(view.getSuppliersNumber());
         if (found != null) {
             view.loadItemStats(found);
-        } else { view.setKbNumber("");}
+        } else {
+            view.setKbNumber("");
+        }
     }
 
     void searchByBarcode(long barcode) {
@@ -112,11 +118,12 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             view.addToCart();
         } else {
             view.messageBarcodeNotFound(barcode);
-            view.setKbNumber("");}
+            view.setKbNumber("");
+        }
     }
 
     double getPrice(Article article) {
-        ShoppingItem shoppingItem = new ShoppingItem(article, 0,false);
+        ShoppingItem shoppingItem = new ShoppingItem(article, 0, false);
         return shoppingItem.getItemRetailPrice();
     }
 
@@ -152,7 +159,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 customArticle.setVat(view.getSelectedVAT());
                 customArticle.setNetPrice(view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
                 customArticle.setMetricUnits(MetricUnits.PIECE);
-                ShoppingItem customItem = new ShoppingItem(customArticle,0,false);
+                ShoppingItem customItem = new ShoppingItem(customArticle, 0, false);
                 customItem.setItemMultiplier((int) view.getAmount());
                 return customItem;
             case ShoppingMaskUIView.DEPOSIT:
@@ -198,11 +205,12 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     void startPay() {
         new PayController(model.getSaleSession(), shoppingCartController.getItems(), () -> {
             getView().back();
-        }, new Dimension(view.getShoppingListSize().width, view.getContent().getHeight())).openAsWindow(view.getWindow(), SubWindow::new);
+        }, new Dimension(view.getShoppingListSize().width, view.getContent().getHeight())).openAsWindow(
+                view.getWindow(), SubWindow::new);
     }
 
     void openSearchWindow() {
-        new ArticleSelectorController(this::searchWindowResult).openAsWindow(view.getWindow(),SubWindow::new);
+        new ArticleSelectorController(this::searchWindowResult).openAsWindow(view.getWindow(), SubWindow::new);
     }
 
     void searchWindowResult(Article article) {
@@ -211,7 +219,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     void editUserAction() {
-        new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT).openAsWindow(view.getWindow(),SubWindow::new);
+        new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT).openAsWindow(view.getWindow(),
+                                                                                             SubWindow::new);
     }
 
     public void processBarcode(String barcode) {

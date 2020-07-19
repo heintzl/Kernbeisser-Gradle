@@ -7,54 +7,67 @@ import java.awt.*;
 
 public interface Window {
     Image STANDARD_IMAGE = Images.getImage("Icon.png");
+
     void addCloseEventListener(WindowCloseEvent runnable);
+
     void simulateCloseEvent();
+
     void setIcon(Image image);
+
     void open();
+
     void close();
+
     void kill();
+
     void setTitle(String title);
+
     void setSize(Dimension dimension);
+
     boolean noAccess();
 
     Controller<?,?> getController();
 
-    default boolean commitClose(){
+    default boolean commitClose() {
         return getController() == null || getController().commitAllClose();
     }
 
-    default void back(){
+    default void back() {
         simulateCloseEvent();
     }
 
-    default <W extends Window> W openWindow(W window, boolean closeWindow){
+    default <W extends Window> W openWindow(W window, boolean closeWindow) {
         return openWindow(this, window, closeWindow);
     }
 
-    default void closeWindow(){
+    default void closeWindow() {
         close();
         kill();
     }
 
-    static <W extends Window> W openWindow(Window parent, W window, boolean closeWindow){
-        if ((!closeWindow||parent.commitClose())&&(LogInModel.getLoggedIn()==null || LogInModel.getLoggedIn().hasPermission(
-                window.getController().getRequiredKeys()) || parent.noAccess())) {
+    static <W extends Window> W openWindow(Window parent, W window, boolean closeWindow) {
+        if ((!closeWindow || parent.commitClose()) && (LogInModel.getLoggedIn() == null || LogInModel.getLoggedIn()
+                                                                                                     .hasPermission(
+                                                                                                             window.getController()
+                                                                                                                   .getRequiredKeys()) || parent
+                                                               .noAccess())) {
             window.setIcon(STANDARD_IMAGE);
             window.open();
             window.addCloseEventListener(e -> {
-                if (window.commitClose()){
+                if (window.commitClose()) {
                     window.closeWindow();
                     parent.open();
                 }
             });
-            if(closeWindow)
+            if (closeWindow) {
                 parent.close();
+            }
         }
         return window;
     }
 
 
-    static final Window NEW_VIEW_CONTAINER = new Window() {
+    Window NEW_VIEW_CONTAINER = new Window() {
         @Override
         public void addCloseEventListener(WindowCloseEvent runnable) {
 
@@ -92,13 +105,16 @@ public interface Window {
 
         @Override
         public Controller<?,?> getController() {
-               return null;
+            return null;
         }
 
         @Override
-        public void setContent(Controller<?,?> content) { }
+        public void setContent(Controller<?,?> content) {
+        }
+
         @Override
-        public void setSize(Dimension dimension) { }
+        public void setSize(Dimension dimension) {
+        }
     };
 
     void setContent(Controller<?,?> content);

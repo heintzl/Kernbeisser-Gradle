@@ -17,16 +17,18 @@ import java.lang.reflect.Modifier;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public interface Controller<V extends View<? extends Controller<? extends V,? extends M>>,M extends Model<? extends Controller<? extends V,? extends M>>>  {
+public interface Controller<V extends View<? extends Controller<? extends V,? extends M>>, M extends Model<? extends Controller<? extends V,? extends M>>> {
 
     @NotNull V getView();
+
     @NotNull M getModel();
 
     /**
      * return the view and initialized it
+     *
      * @return the initialized view
      */
-    default @NotNull V getInitializedView(){
+    default @NotNull V getInitializedView() {
         initView();
         return getView();
     }
@@ -43,18 +45,22 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
 
     /**
      * get called if a window get closed
+     *
      * @return true if the window close is allowed false when the window cannot get closed yet
      */
-    default boolean commitClose(){return true;}
+    default boolean commitClose() {
+        return true;
+    }
 
 
     /**
      * initialize the view of the controller by calling initialize function
      * then call the fillUi function in the controller to set values in the ui
+     *
      * @see Controller#fillUI()
      * @see View#initialize(Controller)
      */
-    default void initView(){
+    default void initView() {
         try {
             Method method = getView().getClass().getDeclaredMethod("initialize", Controller.class);
             method.setAccessible(true);
@@ -71,9 +77,10 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
 
     /**
      * returns the controller with initialized view
+     *
      * @return controller with initialized view
      */
-    default Controller<V,M> withInitializedView(){
+    default Controller<V,M> withInitializedView() {
         initView();
         return this;
     }
@@ -81,8 +88,9 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
 
     /**
      * sets default value for openAsWindow closeOld to true
-     * @see Controller#openAsWindow(Window, Function, boolean)
+     *
      * @return the result of openAsWindow(?,?,true)
+     * @see Controller#openAsWindow(Window, Function, boolean)
      */
     default <W extends Window> W openAsWindow(Window parent, Function<Controller<V,M>,W> windowFactory) {
         return openAsWindow(parent, windowFactory, true);
@@ -90,40 +98,44 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
 
     /**
      * base function for open windowing window
-     * @param parent current window which is the window which gets selected when this window gets closed
+     *
+     * @param parent        current window which is the window which gets selected when this window gets closed
      * @param windowFactory creates a window from the controller
-     * @param closeOld if true the parent window will be set invisible until the new window gets closed
-     * @param <W> any class that implements window
+     * @param closeOld      if true the parent window will be set invisible until the new window gets closed
+     * @param <W>           any class that implements window
      * @return a reference to the window which is now created and visible on the screen
      */
-    default <W extends Window> W openAsWindow(Window parent, Function<Controller<V,M>,W> windowFactory, boolean closeOld){
+    default <W extends Window> W openAsWindow(Window parent, Function<Controller<V,M>,W> windowFactory,
+                                              boolean closeOld) {
         W createWindow = windowFactory.apply(this);
         createWindow.getController().initView();
         createWindow.setContent(this);
         createWindow.setSize(getView().getSize());
         createWindow.setTitle(getView().getTitle());
-        parent.openWindow(createWindow,closeOld);
+        parent.openWindow(createWindow, closeOld);
         return createWindow;
     }
 
     /**
      * use for creating SubWindow of a existing window.
      * opens the controller as a window
-     * @param parent the parent of the window
+     *
+     * @param parent        the parent of the window
      * @param windowFactory calls a function that creates a window based on the owner and the controller
-     * @param <W> any class that implements Window
+     * @param <W>           any class that implements Window
      * @return the created window
      */
-    default <W extends Window> W openAsWindow(Window parent, BiFunction<Controller<V,M>,Window,W> windowFactory){
-        return openAsWindow(parent,(controller)-> windowFactory.apply(this, parent),false);
+    default <W extends Window> W openAsWindow(Window parent, BiFunction<Controller<V,M>,Window,W> windowFactory) {
+        return openAsWindow(parent, (controller) -> windowFactory.apply(this, parent), false);
     }
 
     /**
      * wraps the controller with tab interface
+     *
      * @param title the title of the created tab
      * @return the created Tab
      */
-    default Tab asTab(String title){
+    default Tab asTab(String title) {
         initView();
         return new Tab() {
             @Override
@@ -150,74 +162,84 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
 
     /**
      * open tab on specific tabbedPane
-     * @param title the title of the Tab
+     *
+     * @param title                the title of the Tab
      * @param tabbedPaneController the tabbedPaneController
-     * @see TabbedPaneController#openTab(String, TabbedPaneController)
      * @return the Window of the TabbedPane
+     * @see TabbedPaneController#openTab(String, TabbedPaneController)
      */
 
-    default Window openTab(String title,TabbedPaneController tabbedPaneController){
+    default Window openTab(String title, TabbedPaneController tabbedPaneController) {
         tabbedPaneController.addTab(asTab(title));
         return tabbedPaneController.getView().getWindow();
     }
 
     /**
      * removes this Tab from selected TabbedPaneController
+     *
+     * @param tabbedPaneController the controller from the tab container
      * @see TabbedPaneController#closeTab(Tab)
      * @see Controller#asTab(String)
-     * @param tabbedPaneController the controller from the tab container
      */
-    default void removeSelf(TabbedPaneController tabbedPaneController){
+    default void removeSelf(TabbedPaneController tabbedPaneController) {
         tabbedPaneController.closeTab(this.asTab(""));
     }
 
     /**
      * removes tab from this tab from DEFAULT_TABBED_PANE
+     *
      * @see Controller#removeSelf(TabbedPaneController)
      */
-    default void removeSelf(){
+    default void removeSelf() {
         removeSelf(TabbedPaneModel.DEFAULT_TABBED_PANE);
     }
 
     /**
      * open tab on default panel
-     * @see  TabbedPaneModel#DEFAULT_TABBED_PANE
-     * @see Controller#openTab(String, TabbedPaneController)
+     *
      * @param title the title of the Tab
      * @return the Window
+     * @see TabbedPaneModel#DEFAULT_TABBED_PANE
+     * @see Controller#openTab(String, TabbedPaneController)
      */
-    default Window openTab(String title){
+    default Window openTab(String title) {
         return openTab(title, TabbedPaneModel.DEFAULT_TABBED_PANE);
     }
 
 
     /**
      * calls commitCloseTree with this value
-     * @see Controller#commitCloseTree(Controller)
+     *
      * @return function result of commitCloseTree
+     * @see Controller#commitCloseTree(Controller)
      */
-    default boolean commitAllClose(){
+    default boolean commitAllClose() {
         return commitCloseTree(this);
     }
 
 
     /**
      * ask all components that are represented in the controller and all under controllers for closing
-     * @see Controller#commitClose()
+     *
      * @param controller the tree head
      * @return true if all components allow close
+     * @see Controller#commitClose()
      */
-    static boolean commitCloseTree(Controller<?,?> controller){
+    static boolean commitCloseTree(Controller<?,?> controller) {
         boolean b = true;
         for (Field field : controller.getClass().getDeclaredFields()) {
-            if(Modifier.isStatic(field.getModifiers()))continue;
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
             //Filter lambda super reference
-            if(field.getName().contains("$")&&field.getName().contains("this"))continue;
+            if (field.getName().contains("$") && field.getName().contains("this")) {
+                continue;
+            }
             for (Class<?> anInterface : field.getType().getInterfaces()) {
-                if(anInterface.equals(Controller.class)) {
+                if (anInterface.equals(Controller.class)) {
                     field.setAccessible(true);
                     try {
-                        b = b&&commitCloseTree((Controller<?,?>) field.get(controller));
+                        b = b && commitCloseTree((Controller<?,?>) field.get(controller));
                     } catch (IllegalAccessException e) {
                         Tools.showUnexpectedErrorWarning(e);
                         return false;
@@ -226,20 +248,20 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
                 }
             }
         }
-        return  b && controller.commitClose();
+        return b && controller.commitClose();
     }
 
-    public static Controller<?,?> createFakeController(JComponent content){
+    static Controller<?,?> createFakeController(JComponent content) {
         return new FakeController(content);
     }
 
-    class FakeController implements Controller<FakeView,FakeModel>{
+    class FakeController implements Controller<FakeView,FakeModel> {
 
 
         private final FakeView fakeView;
         private final FakeModel model;
 
-        FakeController(JComponent component){
+        FakeController(JComponent component) {
             this.fakeView = new FakeView(component);
             this.model = new FakeModel();
         }
@@ -267,11 +289,13 @@ public interface Controller<V extends View<? extends Controller<? extends V,? ex
         }
     }
 
-    class FakeView implements View<FakeController>{
+    class FakeView implements View<FakeController> {
         private final JComponent content;
-        FakeView(JComponent content){
+
+        FakeView(JComponent content) {
             this.content = content;
         }
+
         @Override
         public void initialize(FakeController controller) {
 

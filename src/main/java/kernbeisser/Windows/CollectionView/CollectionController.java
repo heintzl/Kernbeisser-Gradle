@@ -12,8 +12,8 @@ public class CollectionController<T> implements Controller<CollectionView<T>,Col
     private final CollectionView<T> view;
     private final CollectionModel<T> model;
 
-    public CollectionController(Collection<T> edit, Collection<T> available, boolean editable, Column<T>[] columns){
-        model = new CollectionModel<>(edit,available,editable,columns);
+    public CollectionController(Collection<T> edit, Collection<T> available, boolean editable, Column<T>[] columns) {
+        model = new CollectionModel<>(edit, available, editable, columns);
         view = new CollectionView<>();
     }
 
@@ -43,20 +43,24 @@ public class CollectionController<T> implements Controller<CollectionView<T>,Col
         return new PermissionKey[0];
     }
 
-    void commit(){
+    void commit() {
         model.getLoaded().clear();
         model.getLoaded().addAll(view.getAllChosen());
         view.back();
     }
 
     public void selectAvailable() {
-        if(view.getSelectedAvailableObject() == null)return;
+        if (view.getSelectedAvailableObject() == null) {
+            return;
+        }
         view.addChosen(view.getSelectedAvailableObject());
         view.removeAvailable(view.getSelectedAvailableObject());
     }
 
     public void selectChosen() {
-        if(view.getSelectedChosenObject() == null)return;
+        if (view.getSelectedChosenObject() == null) {
+            return;
+        }
         view.addAvailable(view.getSelectedChosenObject());
         view.removeChosen(view.getSelectedChosenObject());
     }

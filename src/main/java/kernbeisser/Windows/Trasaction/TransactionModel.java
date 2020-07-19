@@ -14,7 +14,7 @@ public class TransactionModel implements Model<TransactionController> {
 
     private final User owner;
 
-    TransactionModel(User owner){
+    TransactionModel(User owner) {
 
         this.owner = owner;
     }
@@ -26,8 +26,9 @@ public class TransactionModel implements Model<TransactionController> {
     }
 
     User findUser(String username) throws NoResultException {
-        if(username.matches("Benutzer[\\[]\\d+[]]"))
-            return User.getById(Integer.parseInt(username.replace("Benutzer[","").replace("]","")));
+        if (username.matches("Benutzer[\\[]\\d+[]]")) {
+            return User.getById(Integer.parseInt(username.replace("Benutzer[", "").replace("]", "")));
+        }
         return User.getByUsername(username);
     }
 
@@ -38,7 +39,7 @@ public class TransactionModel implements Model<TransactionController> {
     void transfer() throws AccessDeniedException {
         final boolean[] correct = {true};
         transactions.forEach(e -> correct[0] = correct[0] & Transaction.isValidTransaction(e));
-        if(!correct[0]){
+        if (!correct[0]) {
             throw new AccessDeniedException("Not all transactions have valid values");
         }
         for (Transaction transaction : transactions) {
@@ -47,11 +48,11 @@ public class TransactionModel implements Model<TransactionController> {
         }
     }
 
-    double getSum(){
+    double getSum() {
         return transactions.stream().mapToDouble(Transaction::getValue).sum();
     }
 
-    int getCount(){
+    int getCount() {
         return transactions.size();
     }
 
