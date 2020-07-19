@@ -147,7 +147,7 @@ public class ShoppingItem implements Serializable {
     try {
       ShoppingItem out =
           new ShoppingItem(
-              em.createQuery("select  i from Article i where name like 'Backware'", Article.class)
+              em.createQuery("select  i from Article i where name like 'Backwaren'", Article.class)
                   .getSingleResult(),
               0,
               false) {
@@ -161,7 +161,7 @@ public class ShoppingItem implements Serializable {
     } catch (NoResultException e) {
       et.begin();
       Article bakery = new Article();
-      bakery.setName("Backware");
+      bakery.setName("Backwaren");
       bakery.setKbNumber(-2);
       bakery.setMetricUnits(MetricUnits.PIECE);
       bakery.setDeleteAllowed(false);
