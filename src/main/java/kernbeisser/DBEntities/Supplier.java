@@ -78,17 +78,18 @@ public class Supplier implements Serializable {
   public static Supplier getKKSupplier() {
     EntityManager em = DBConnection.getEntityManager();
     try {
-      return em.createQuery("select s from Supplier s where s.name like 'KK'", Supplier.class)
+      return em.createQuery("select s from Supplier s where s.shortName like 'KK'", Supplier.class)
           .getSingleResult();
     } catch (NoResultException e) {
       EntityTransaction et = em.getTransaction();
       Supplier s = new Supplier();
-      s.setName("KK");
+      s.setName("Kornkraft Großhandel");
+      s.setShortName("KK");
       et.begin();
       em.persist(s);
       em.flush();
       et.commit();
-      return em.createQuery("select s from Supplier s where s.name like 'KK'", Supplier.class)
+      return em.createQuery("select s from Supplier s where s.shortName like 'KK'", Supplier.class)
           .getSingleResult();
     } finally {
       em.close();

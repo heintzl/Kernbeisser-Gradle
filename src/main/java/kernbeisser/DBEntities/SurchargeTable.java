@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class SurchargeTable implements Serializable, Cloneable {
     standard.to = -1;
     standard.name = "DEFAULT";
     standard.supplier = null;
-    standard.surcharge = 0.07;
+    standard.surcharge = Setting.SURCHARGE_DEFAULT.getDoubleValue();
     DEFAULT = standard;
   }
 

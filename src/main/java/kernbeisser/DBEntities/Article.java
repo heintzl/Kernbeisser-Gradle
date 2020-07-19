@@ -177,7 +177,8 @@ public class Article extends ArticleBase {
   public static Article getBySuppliersItemNumber(int suppliersNumber) {
     EntityManager em = DBConnection.getEntityManager();
     try {
-      return em.createQuery("select i from Article i where suppliersItemNumber = :n", Article.class)
+      return em.createQuery(
+              "select i from ArticleBase i where suppliersItemNumber = :n", Article.class)
           .setParameter("n", suppliersNumber)
           .getSingleResult();
     } catch (NoResultException e) {
@@ -187,33 +188,75 @@ public class Article extends ArticleBase {
     }
   }
 
-  public static Article getByBarcode(long barcode) {
+  public static Article getByBarcode(long barcode, boolean searchBaseArticle) {
     EntityManager em = DBConnection.getEntityManager();
     try {
-      return em.createQuery("select i from Article i where barcode = :n", Article.class)
-          .setParameter("n", barcode)
-          .getSingleResult();
+      Article result =
+          em.createQuery("select i from Article i where barcode = :n", Article.class)
+              .setParameter("n", barcode)
+              .getSingleResult();
+      return result;
     } catch (NoResultException e) {
-      return null;
+      if (!searchBaseArticle) return null;
+      try {
+        ArticleBase result =
+            em.createQuery("select i from ArticleBase i where barcode = :n", ArticleBase.class)
+                .setParameter("n", barcode)
+                .getSingleResult();
+        return articleFromBase(result);
+      } catch (NoResultException f) {
+        return null;
+      }
     } finally {
       em.close();
     }
   }
 
-  public SurchargeTable getSurchargeTable() {
-    // TODO really expensive!
-    EntityManager em = DBConnection.getEntityManager();
-    try {
-      return em.createQuery(
-              "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
-              SurchargeTable.class)
-          .setParameter("supplier", getSupplier() != null ? getSupplier().getSid() : -1)
-          .setParameter("number", getSuppliersItemNumber())
-          .setMaxResults(1)
-          .getSingleResult();
-    } catch (NoResultException e) {
-      return SurchargeTable.DEFAULT;
+  static Article articleFromBase(ArticleBase articleBase) {
+    Article result = new Article();
+    result.setAmount(articleBase.getAmount());
+    result.setBarcode(articleBase.getBarcode());
+    result.setContainerDeposit(articleBase.getContainerDeposit());
+    result.setContainerSize(articleBase.getContainerSize());
+    result.setMetricUnits(articleBase.getMetricUnits());
+    result.setName(articleBase.getName());
+    result.setNetPrice(articleBase.getNetPrice());
+    result.setProducer(articleBase.getProducer());
+    result.setSingleDeposit(articleBase.getSingleDeposit());
+    result.setSuppliersItemNumber(articleBase.getSuppliersItemNumber());
+    result.setVat(articleBase.getVat());
+    // TODO Supplier should be available from articleBase
+    result.setSupplier(
+        articleBase.getSupplier() == null ? Supplier.getKKSupplier() : articleBase.getSupplier());
+
+    result.kbNumber = 0;
+    result.containerDef = ContainerDefinition.UNKNOWN;
+    result.cooling = Cooling.NONE;
+    result.coveredIntake = false;
+    result.deleteAllowed = false;
+    result.deleted = false;
+    result.delivered = 0;
+    result.intake = Instant.now();
+    result.lastDelivery = Instant.now();
+    result.listed = true;
+    result.loss = 0;
+    result.showInShop = false;
+    result.sold = 0;
+    result.surcharge = calculateSurcharge(articleBase);
+    result.weighable = false;
+    return result;
+  }
+
+  private static double calculateSurcharge(ArticleBase articleBase) {
+    SurchargeTable surchargeTable = articleBase.getSurchargeTable();
+    double surcharge = articleBase.getSurchargeTable().getSurcharge();
+    if (surchargeTable != SurchargeTable.DEFAULT) {
+      double supplierSurcharge = articleBase.getSupplier().getSurcharge();
+      if (supplierSurcharge > 0) {
+        surcharge = supplierSurcharge;
+      }
     }
+    return surcharge;
   }
 
   @Override

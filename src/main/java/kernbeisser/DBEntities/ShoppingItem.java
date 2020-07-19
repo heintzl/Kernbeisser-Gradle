@@ -124,16 +124,17 @@ public class ShoppingItem implements Serializable {
       return out;
     } catch (NoResultException e) {
       et.begin();
-      Article deposit = new Article();
-      deposit.setName("Obst und Gem\u00fcse");
-      deposit.setKbNumber(-1);
-      deposit.setMetricUnits(MetricUnits.PIECE);
-      deposit.setDeleteAllowed(false);
-      deposit.setVat(VAT.LOW);
-      em.persist(deposit);
+      Article produce = new Article();
+      produce.setName("Obst und Gem\u00fcse");
+      produce.setKbNumber(-1);
+      produce.setMetricUnits(MetricUnits.PIECE);
+      produce.setDeleteAllowed(false);
+      produce.setVat(VAT.LOW);
+      produce.setSurcharge(Setting.SURCHARGE_PRODUCE.getDoubleValue());
+      em.persist(produce);
       em.flush();
       et.commit();
-      return createDeposit(price);
+      return createOrganic(price);
     } catch (NotSupportedException e) {
       Tools.showUnexpectedErrorWarning(e);
       return null;
@@ -159,16 +160,17 @@ public class ShoppingItem implements Serializable {
       return out;
     } catch (NoResultException e) {
       et.begin();
-      Article deposit = new Article();
-      deposit.setName("Backware");
-      deposit.setKbNumber(-2);
-      deposit.setMetricUnits(MetricUnits.PIECE);
-      deposit.setDeleteAllowed(false);
-      deposit.setVat(VAT.LOW);
-      em.persist(deposit);
+      Article bakery = new Article();
+      bakery.setName("Backware");
+      bakery.setKbNumber(-2);
+      bakery.setMetricUnits(MetricUnits.PIECE);
+      bakery.setDeleteAllowed(false);
+      bakery.setVat(VAT.LOW);
+      bakery.setSurcharge(Setting.SURCHARGE_BAKERY.getDoubleValue());
+      em.persist(bakery);
       em.flush();
       et.commit();
-      return createDeposit(price);
+      return createBakeryProduct(price);
     } catch (NotSupportedException e) {
       Tools.showUnexpectedErrorWarning(e);
       return null;

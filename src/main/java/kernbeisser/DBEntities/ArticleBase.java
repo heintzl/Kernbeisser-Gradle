@@ -2,6 +2,7 @@ package kernbeisser.DBEntities;
 
 import java.util.Objects;
 import javax.persistence.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.VAT;
@@ -94,6 +95,22 @@ public class ArticleBase {
     this.containerSize = other.containerSize;
     this.singleDeposit = other.singleDeposit;
     this.containerDeposit = other.containerDeposit;
+  }
+
+  public SurchargeTable getSurchargeTable() {
+    // TODO really expensive!
+    EntityManager em = DBConnection.getEntityManager();
+    try {
+      return em.createQuery(
+              "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
+              SurchargeTable.class)
+          .setParameter("supplier", getSupplier() != null ? getSupplier().getSid() : -1)
+          .setParameter("number", getSuppliersItemNumber())
+          .setMaxResults(1)
+          .getSingleResult();
+    } catch (NoResultException e) {
+      return SurchargeTable.DEFAULT;
+    }
   }
 
   @Override
