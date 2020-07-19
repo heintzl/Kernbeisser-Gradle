@@ -67,20 +67,31 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         return result;
     }
 
+    void emptyShoppingCart() {
+        shoppingCartController.emptyCart();
+    }
+
     boolean addToShoppingCart() {
-        //removed success variable sry for changing your code but I think it's not
-        //good to have a return statement after the function already returned a value
         boolean piece = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
         try {
             int discount = view.getDiscount();
-            if (discount < 1 || discount > 100) {
+            if (discount < 0 || discount > 100) {
                 view.messageInvalidDiscount();
                 return false;
             }
             ShoppingItem item = extractShoppingItemFromUI();
+            if (piece) {
+                double itemMultiplier = view.getAmount() * (item.isContainerDiscount() ? item.getContainerSize() : 1.0);
+                if (itemMultiplier % 1 != 0) {
+                    if (view.confirmRoundedMultiplier((int) Math.round(itemMultiplier)) != JOptionPane.YES_OPTION)
+                        ;
+                }
+                item.setItemMultiplier((int) Math.round(itemMultiplier));
+            }
             if (item.getItemMultiplier() != 0 && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(
                     item, piece))) {
                 shoppingCartController.addShoppingItem(item, piece);
+                view.setDiscount();
                 return true;
             }
             return false;
@@ -115,13 +126,28 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         Article found = model.getByBarcode(barcode);
         if (found != null) {
             view.loadItemStats(found);
-            view.addToCart();
+            if(!view.isPreordered()) {view.addToCart();}
         } else {
             view.messageBarcodeNotFound(barcode);
             view.setKbNumber("");
         }
     }
 
+    double calculatePrice(Article article) {
+        ShoppingItem shoppingItem = new ShoppingItem(article, 0,view.isPreordered());
+        return shoppingItem.getItemRetailPrice()* (view.isPreordered()?article.getContainerSize():1);
+    }
+
+    double calculateNetPrice(Article article) {
+        ShoppingItem shoppingItem = new ShoppingItem(article, 0,view.isPreordered());
+        return shoppingItem.getItemNetPrice() * (view.isPreordered()?article.getContainerSize():1);
+    }
+
+    public double recalculatePrice(double newNetPrice) throws UndefinedInputException {
+        ShoppingItem item = extractShoppingItemFromUI();
+        return newNetPrice/item.getItemNetPrice() * item.getItemRetailPrice();
+    }
+  
     double getPrice(Article article) {
         ShoppingItem shoppingItem = new ShoppingItem(article, 0, false);
         return shoppingItem.getItemRetailPrice();
@@ -144,10 +170,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                         throw new UndefinedInputException();
                     }
                 }
-                view.messageInvalidDiscount();
-                ShoppingItem shoppingItem = new ShoppingItem(extractedArticle, view.getDiscount(), false);
-                view.setDiscount();
-                shoppingItem.setItemMultiplier((int) view.getAmount());
+                ShoppingItem shoppingItem = new ShoppingItem(extractedArticle, view.getDiscount(), view.isPreordered());
                 return shoppingItem;
             case ShoppingMaskUIView.BAKED_GOODS:
                 return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded());
@@ -160,7 +183,6 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 customArticle.setNetPrice(view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
                 customArticle.setMetricUnits(MetricUnits.PIECE);
                 ShoppingItem customItem = new ShoppingItem(customArticle, 0, false);
-                customItem.setItemMultiplier((int) view.getAmount());
                 return customItem;
             case ShoppingMaskUIView.DEPOSIT:
                 if (view.getDeposit() < 0) {
@@ -203,10 +225,14 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     void startPay() {
-        new PayController(model.getSaleSession(), shoppingCartController.getItems(), () -> {
-            getView().back();
-        }, new Dimension(view.getShoppingListSize().width, view.getContent().getHeight())).openAsWindow(
-                view.getWindow(), SubWindow::new);
+        if (shoppingCartController.getItems().size() > 0) {
+            new PayController(model.getSaleSession(), shoppingCartController.getItems(), () -> {
+                getView().back();
+            }, new Dimension(view.getShoppingListSize().width, view.getContent().getHeight())).openAsWindow(
+                    view.getWindow(), SubWindow::new);
+        } else {
+            view.messageCartIsEmpty();
+        }
     }
 
     void openSearchWindow() {

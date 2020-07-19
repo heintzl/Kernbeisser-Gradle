@@ -31,7 +31,7 @@ public class PayView extends JPanel implements View<PayController> {
     }
 
     public void fillShoppingCart(List<ShoppingItem> items) {
-        items.forEach(e -> shoppingCartController.addShoppingItem(e, false));
+        shoppingCartController.getView().setObjects(items);
     }
 
     void setViewSize(Dimension size) {

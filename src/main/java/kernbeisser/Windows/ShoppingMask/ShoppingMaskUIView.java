@@ -10,16 +10,19 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Vector;
 
@@ -52,7 +55,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private kernbeisser.CustomComponents.TextFields.IntegerParseField suppliersItemNumber;
     private JTextField articleName;
     private kernbeisser.CustomComponents.TextFields.DoubleParseField price;
-    private kernbeisser.CustomComponents.TextFields.IntegerParseField articleAmount;
+    private kernbeisser.CustomComponents.TextFields.DoubleParseField netPrice;
+    private kernbeisser.CustomComponents.TextFields.DoubleParseField containerSize;
     private kernbeisser.CustomComponents.TextFields.DoubleParseField amount;
     private kernbeisser.CustomComponents.TextFields.DoubleParseField deposit;
     private JPanel westPanel;
@@ -67,12 +71,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private JRadioButton price50Percent;
     private JRadioButton priceVariablePercentage;
     private JLabel priceUnit;
+    private JLabel netPriceUnit;
     private JLabel amountUnit;
-    private JLabel articleUnit;
+    private JLabel containerUnit;
     private kernbeisser.CustomComponents.TextFields.IntegerParseField variablePercentage;
     private JCheckBox rememberReductionSetting;
     private JButton editUser;
     private JButton addPrice;
+    private JButton addNetPrice;
     private JButton addDeposit;
     private JButton addAmount;
     private JPanel shoppingCartPanel;
@@ -85,46 +91,32 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private JLabel salesPerson2;
     private JLabel depositUnit;
     private ShoppingCartView shoppingCartView;
-    private JLabel articleAmountLabel;
+    private JLabel containerSizeLabel;
     private JPanel productTypePanel;
     private JPanel reductionPanel;
+    private JComboBox supplier;
+    private JButton emptyShoppingCart;
     private ButtonGroup optGrpArticleType;
     private ButtonGroup optGrpReduction;
 
     private char currentArticleType;
     private boolean isWeighable;
+    private double grossNetRatio;
     static Vector<Component> traversalOrder = new Vector<Component>(1);
     static FocusTraversal traversalPolicy;
+    @Getter
+    private boolean preordered = false;
     private final BarcodeCapture barcodeCapture;
     private final KeyCapture keyCapture;
 
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
         this.controller = controller;
-        articleTypeChange('a');
-        traversalOrder.add(kbNumber);
-        traversalOrder.add(articleName);
-        traversalOrder.add(price);
-        traversalOrder.add(amount);
-        traversalOrder.add(suppliersItemNumber);
-        traversalOrder.add(deposit);
-        traversalPolicy = new FocusTraversal(traversalOrder);
-        westPanel.setFocusTraversalPolicy(traversalPolicy);
-        barcodeCapture = new BarcodeCapture(c -> controller.processBarcode(c));
-        keyCapture = new KeyCapture();
-        keyCapture.add(KeyEvent.VK_F2, () -> setAmount("2"));
-        keyCapture.add(KeyEvent.VK_F3, () -> setAmount("3"));
-        keyCapture.add(KeyEvent.VK_F4, () -> setAmount("4"));
-        keyCapture.add(KeyEvent.VK_F5, () -> setAmount("5"));
-        keyCapture.add(KeyEvent.VK_F6, () -> setAmount("6"));
-        keyCapture.add(KeyEvent.VK_F7, () -> setAmount("8"));
-        keyCapture.add(KeyEvent.VK_F8, () -> setAmount("10"));
-        keyCapture.add(KeyEvent.VK_INSERT, () -> optProduce.doClick());
-        keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
-        keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
     }
 
     private void doCancel() {
+        controller.emptyShoppingCart();
+        back();
     }
 
     private void doCheckout() {
@@ -165,91 +157,111 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     private void articleTypeInitialize(char type) {
         currentArticleType = type;
+        setPriceOptions(type);
         isWeighable = false;
+
         addAmount.setVisible(type == 'a');
-        addPrice.setVisible("pbc".indexOf(type) != -1);
+        addPrice.setVisible(!preordered && "pbc".indexOf(type) != -1);
+        addNetPrice.setVisible(preordered && "pbc".indexOf(type) != -1);
         addDeposit.setVisible("dr".indexOf(type) != -1);
+        supplier.setEnabled(preordered);
         kbNumber.setVisible(type == 'a');
         setKbNumber("");
         suppliersItemNumber.setVisible(type == 'a');
         setSuppliersItemNumber("");
-        price.setEnabled("dra".indexOf(type) == -1);
+        price.setEnabled(!preordered && "dra".indexOf(type) == -1);
         price.setVisible("dr".indexOf(type) == -1);
-        setPrice("");
+        price.setText("");
         priceUnit.setVisible("pbac".indexOf(type) != -1);
-        setPriceUnit("€");
+        priceUnit.setText("€");
+        netPrice.setEnabled(preordered);
+        netPrice.setVisible(preordered || price.isVisible());
+        netPrice.setText("");
+        netPriceUnit.setVisible(priceUnit.isVisible());
+        netPriceUnit.setText("€");
         amount.setVisible("ac".indexOf(type) != -1);
         amount.setText("1");
-        setAmountUnit("");
-        articleAmount.setVisible(type == 'a');
-        setArticleUnit("");
-        articleUnit.setVisible(type == 'a');
+        this.amountUnit.setText("");
+        containerSize.setVisible(type == 'a');
+        this.containerUnit.setText("");
+        containerUnit.setVisible(type == 'a');
         deposit.setEnabled("dr".indexOf(type) != -1);
         deposit.setVisible("adr".indexOf(type) != -1);
         depositUnit.setVisible("adr".indexOf(type) != -1);
         if ("dr".indexOf(type) != -1) {
-            setOptTaxStandard();
+            this.optTaxStandard.setSelected(true);
         } else {
-            setOptTaxLow();
+            this.optTaxLow.setSelected(true);
         }
         optTaxLow.setEnabled(type == 'c');
         optTaxStandard.setEnabled(type == 'c');
-        if (type == 'a') {
-            priceStandard.setEnabled(true);
-            price50Percent.setEnabled(true);
-            priceVariablePercentage.setEnabled(true);
-            pricePreordered.setEnabled(true);
-        } else {
-            priceStandard.setSelected(true);
-            priceStandard.setEnabled(false);
-            price50Percent.setEnabled(false);
-            priceVariablePercentage.setEnabled(false);
-            pricePreordered.setEnabled(false);
-        }
 
         variablePercentage.setEnabled(priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
         if (type == 'p') {
-            setArticleName("Obst & Gemüse");
+            this.articleName.setText("Obst & Gemüse");
             price.requestFocusInWindow();
         } else if (type == 'b') {
-            setArticleName("Backwaren");
+            this.articleName.setText("Backwaren");
             price.requestFocusInWindow();
         } else if (type == 'd') {
-            setArticleName("Pfand-Behälter");
+            this.articleName.setText("Pfand-Behälter");
             deposit.requestFocusInWindow();
         } else if (type == 'r') {
-            setArticleName("Pfand zurück");
+            this.articleName.setText("Pfand zurück");
             deposit.requestFocusInWindow();
         } else if (type == 'a') {
-            setArticleName("");
+            this.articleName.setText("");
             kbNumber.requestFocusInWindow();
         } else if (type == 'c') {
-            setArticleName("");
+            this.articleName.setText("");
             articleName.requestFocusInWindow();
         }
         articleName.setEnabled(type == 'c');
     }
 
+    private void setPriceOptions(char type) {
+        if ("dr".indexOf(type) == -1) {
+            pricePreordered.setEnabled(true);
+        } else {
+            pricePreordered.setEnabled(false);
+            preordered = false;
+        }
+        if(type== 'a') {
+            price50Percent.setEnabled(true);
+            priceVariablePercentage.setEnabled(true);
+        } else {
+            priceStandard.setSelected(!preordered);
+            pricePreordered.setSelected(preordered);
+            price50Percent.setEnabled(false);
+            priceVariablePercentage.setEnabled(false);
+        }
+    }
+
     void loadItemStats(Article article) {
-        articleUnit.setText(MetricUnits.PIECE.getShortName());
+        supplier.getModel().setSelectedItem(article.getSupplier());
+        grossNetRatio = controller.calculatePrice(article) / controller.calculateNetPrice(article);
         kbNumber.setText(article.getKbNumber() + "");
         suppliersItemNumber.setText(article.getSuppliersItemNumber() + "");
         articleName.setText(
                 article.getName().length() > 40
                 ? new StringBuilder(article.getName()).replace(36, article.getName().length(), "...").toString()
                 : article.getName());
-        articleAmount.setText(article.getAmount() + "");
-        articleUnit.setText(article.getMetricUnits().getShortName());
-        price.setText(String.format("%.2f", controller.getPrice(article)));
-        priceUnit.setText(article.isWeighable() ? "€/kg" : "€");
-        amountUnit.setText(article.isWeighable() ? "g" : "stk.");
+        price.setText(String.format("%.2f", controller.calculatePrice(article)));
+        priceUnit.setText(preordered && !article.isWeighable() ? "€" : "€/kg");
+        netPrice.setText(String.format("%.2f", controller.calculateNetPrice(article)));
+        netPriceUnit.setText(priceUnit.getText());
+        amountUnit.setText(preordered ? "Geb." : article.isWeighable() ? "g" : "stk.");
         isWeighable = article.isWeighable();
-        articleAmount.setVisible(!article.isWeighable());
-        articleAmountLabel.setForeground(article.isWeighable() ? Color.WHITE : Color.BLACK);
-        articleUnit.setVisible(!article.isWeighable());
-        optTaxLow.setSelected(article.getVat().getValue() == 0.07);
-        optTaxStandard.setSelected(article.getVat().getValue() != 0.07);
+        containerSize.setText(new DecimalFormat("##.###").format(article.getContainerSize() * (isWeighable?1000:1)));
+        containerUnit.setText((isWeighable?article.getMetricUnits():MetricUnits.PIECE).getShortName());
+        optTaxLow.setSelected(article.getVat() == VAT.LOW);
+        optTaxStandard.setSelected(article.getVat() == VAT.HIGH);
     }
+
+    private void recalculatePrice() {
+        price.setText(String.format("%.2f", netPrice.getSafeValue() * grossNetRatio));
+    }
+
 
     void defaultSettings() {
         price.setText("0.00");
@@ -259,7 +271,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         amount.setEnabled(true);
         articleName.setText("Kein Artikel gefunden!");
         amountUnit.setText("");
-        articleUnit.setText("");
+        containerUnit.setText("");
     }
 
     void messageNoArticleFound() {
@@ -271,7 +283,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     void messageInvalidDiscount() {
         java.awt.Toolkit.getDefaultToolkit().beep();
         JOptionPane.showMessageDialog(mainPanel,
-                                      "Rabatt muss zwischen 1 und 100 % liegen");
+                                      "Rabatt muss zwischen 0 und 100 % liegen");
         variablePercentage.setText("");
     }
 
@@ -292,6 +304,11 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         JOptionPane.showMessageDialog(getContent(), "Pfand kann nicht storniert werden!", "Storno",
                                       JOptionPane.WARNING_MESSAGE);
         deposit.setText("");
+    }
+
+    public void messageCartIsEmpty() {
+        java.awt.Toolkit.getDefaultToolkit().beep();
+        JOptionPane.showMessageDialog(getContent(), "Es gibt nichts zu bezahlen!","Storno" , JOptionPane.WARNING_MESSAGE);
     }
 
     public String inputStornoRetailPrice(double itemRetailPrice, boolean retry) {
@@ -319,13 +336,19 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         return response;
     }
 
-    public int confirmStorno() {
+   public int confirmStorno() {
         java.awt.Toolkit.getDefaultToolkit().beep();
         return JOptionPane.showConfirmDialog(
                 getContent(), "Soll die Ware wirklich storniert werden?", stornoMessageTitle, JOptionPane.YES_NO_OPTION
         );
     }
 
+    public int confirmRoundedMultiplier(int roundedMultiplier) {
+        java.awt.Toolkit.getDefaultToolkit().beep();
+        return JOptionPane.showConfirmDialog(
+                getContent(),"Die Menge an Artikeln muss ganzzahlig sein. Soll die Menge auf " + roundedMultiplier + "gerundet werden?", "Ungültige Mengenangabe", JOptionPane.YES_NO_OPTION
+        );
+    }
 
     public String getItemName() {
         return articleName.getText();
@@ -343,32 +366,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         this.suppliersItemNumber.setText(value);
     }
 
-    public void setArticleName(String value) {
-        this.articleName.setText(value);
-    }
-
-    public void setOptTaxLow() {
-        this.optTaxLow.setSelected(true);
-    }
-
-    public void setOptTaxStandard() {
-        this.optTaxStandard.setSelected(true);
-    }
-
     public void setOptArticleNo() {
         this.optArticleNo.setSelected(true);
-    }
-
-    public void setPriceUnit(String value) {
-        this.priceUnit.setText(value);
-    }
-
-    public void setAmountUnit(String value) {
-        this.amountUnit.setText(value);
-    }
-
-    public void setArticleUnit(String value) {
-        this.articleUnit.setText(value);
     }
 
     public double getAmount() {
@@ -398,7 +397,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     public void setDiscount() {
-        if (!rememberReductionSetting.isSelected()) {
+        if (!rememberReductionSetting.isSelected() && !preordered) {
             priceStandard.setSelected(true);
         }
     }
@@ -429,11 +428,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         return price.getSafeValue();
     }
 
-    public void setPrice(String value) {
-        this.price.setText(value);
-        this.kbNumber.setEnabled(!value.equals("--"));
-    }
-
     int getKBArticleNumber() {
         return kbNumber.getSafeValue();
     }
@@ -457,16 +451,19 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     @Override
     public void initialize(ShoppingMaskUIController controller) {
         checkout.addActionListener(e -> doCheckout());
+        emptyShoppingCart.addActionListener(e -> controller.emptyShoppingCart());
         cancelSalesSession.addActionListener(e -> doCancel());
         searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
         searchArticle.addActionListener(e -> openSearchWindow());
         addPrice.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addPrice.addActionListener(e -> addToCart());
+        addNetPrice.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
+        addNetPrice.addActionListener(e -> addToCart());
         addDeposit.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addDeposit.addActionListener(e -> addToCart());
         addAmount.setIcon(IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
         addAmount.addActionListener(e -> addToCart());
-        price.addActionListener(e -> addToCart());
+        price.addActionListener(e -> {if (!preordered) addToCart();});
         deposit.addActionListener(e -> addToCart());
         amount.addActionListener(e -> addToCart());
         editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
@@ -477,6 +474,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         optCustomProduct.addItemListener(e -> articleTypeChange('c'));
         optDeposit.addItemListener(e -> articleTypeChange('d'));
         optDepositReturn.addItemListener(e -> articleTypeChange('r'));
+        priceStandard.addItemListener(e -> {variablePercentage.setEnabled(false);disablePreordered();});
+        price50Percent.addItemListener(e -> {variablePercentage.setEnabled(false);disablePreordered();});
+        pricePreordered.addItemListener(e -> {variablePercentage.setEnabled(false);enablePreordered();});
+        priceVariablePercentage.addItemListener(e -> {variablePercentage.setEnabled(true); variablePercentage.requestFocusInWindow();;disablePreordered();});
         priceStandard.addItemListener(e -> variablePercentage.setEnabled(false));
         price50Percent.addItemListener(e -> variablePercentage.setEnabled(false));
         priceVariablePercentage.addItemListener(e -> {
@@ -504,9 +505,45 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                 controller.searchBySupplierItemsNumber();
             }
         });
-        articleTypeChange('a');
+        netPrice.addActionListener(e -> recalculatePrice());
+        Supplier.getAll(null).forEach(s -> supplier.addItem(s));
+        containerSize.setEnabled(false);
         optTaxLow.setText(VAT.LOW.getName());
         optTaxStandard.setText(VAT.HIGH.getName());
+        articleTypeChange('a');
+        traversalOrder.add(kbNumber);
+        traversalOrder.add(articleName);
+        traversalOrder.add(price);
+        traversalOrder.add(amount);
+        traversalOrder.add(suppliersItemNumber);
+        traversalOrder.add(deposit);
+        traversalPolicy = new FocusTraversal(traversalOrder);
+        westPanel.setFocusTraversalPolicy(traversalPolicy);
+        barcodeCapture = new BarcodeCapture(c -> controller.processBarcode(c));
+        keyCapture = new KeyCapture();
+        keyCapture.add(KeyEvent.VK_F2, () -> setAmount("2"));
+        keyCapture.add(KeyEvent.VK_F3, () -> setAmount("3"));
+        keyCapture.add(KeyEvent.VK_F4, () -> setAmount("4"));
+        keyCapture.add(KeyEvent.VK_F5, () -> setAmount("5"));
+        keyCapture.add(KeyEvent.VK_F6, () -> setAmount("6"));
+        keyCapture.add(KeyEvent.VK_F7, () -> setAmount("8"));
+        keyCapture.add(KeyEvent.VK_F8, () -> setAmount("10"));
+        keyCapture.add(KeyEvent.VK_INSERT, () -> optProduce.doClick());
+        keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
+        keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
+        articleTypeChange('a');
+    }
+
+    private void enablePreordered() {
+        preordered = true;
+        articleTypeInitialize(currentArticleType);
+    }
+
+    private void disablePreordered() {
+        if (preordered) {
+            preordered = false;
+            articleTypeInitialize(currentArticleType);
+        }
     }
 
     @Override

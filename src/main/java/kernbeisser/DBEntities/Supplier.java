@@ -115,12 +115,12 @@ public class Supplier implements Serializable {
         return sid == supplier.sid &&
                surcharge == supplier.surcharge &&
                name.equals(supplier.name) &&
-               phoneNumber.equals(supplier.phoneNumber) &&
-               fax.equals(supplier.fax) &&
-               address.equals(supplier.address) &&
-               email.equals(supplier.email) &&
+               Objects.equals(phoneNumber, supplier.phoneNumber) &&
+               Objects.equals(fax, supplier.fax) &&
+               Objects.equals(address, supplier.address) &&
+               Objects.equals(email, supplier.email) &&
                shortName.equals(supplier.shortName) &&
-               keeper.equals(supplier.keeper) &&
+               Objects.equals(keeper, supplier.keeper) &&
                createDate.equals(supplier.createDate) &&
                updateDate.equals(supplier.updateDate);
     }

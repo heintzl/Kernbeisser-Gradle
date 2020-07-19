@@ -32,7 +32,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
 
     }
 
-    void setObjects(Collection<ShoppingItem> items) {
+    public void setObjects(Collection<ShoppingItem> items) {
         shoppingItems.setObjects(items);
     }
 
@@ -94,6 +94,12 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
                     return price;
                 }),
                 Column.create("4", e -> {
+                    JLabel amount = new JLabel(e.getUnitAmount());
+                    amount.setFont(gridFont);
+                    amount.setHorizontalAlignment(SwingConstants.RIGHT);
+                    return amount;
+                }),
+                Column.create("5", e -> {
                     JLabel amount = new JLabel(e.getItemMultiplier() + e.getMetricUnits().getShortName());
                     amount.setFont(gridFont);
                     amount.setHorizontalAlignment(SwingConstants.RIGHT);

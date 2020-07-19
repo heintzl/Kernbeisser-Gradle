@@ -70,7 +70,7 @@ public interface View<C extends Controller<? extends View<? extends C>,? extends
             JOptionPane.showMessageDialog(getContent(), "In diesem Fenster ist keine Barcode-Eingabe möglich");
             return true;
         } else {
-            return e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getKeyEventValue();
+            return false;
         }
     }
 }
