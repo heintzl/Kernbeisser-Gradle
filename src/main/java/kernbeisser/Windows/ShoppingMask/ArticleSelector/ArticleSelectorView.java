@@ -13,6 +13,7 @@ public class ArticleSelectorView implements View<ArticleSelectorController> {
   private JButton chooseButton;
   private JCheckBox onlyWithoutBarcode;
   private SearchBoxView<Article> searchBox;
+  private JCheckBox showInShopArticles;
 
   private final ArticleSelectorController controller;
 
@@ -24,13 +25,26 @@ public class ArticleSelectorView implements View<ArticleSelectorController> {
     return onlyWithoutBarcode.isSelected();
   }
 
+  boolean searchOnlyShowInShop() {
+    return showInShopArticles.isSelected();
+  }
+
   private void createUIComponents() {
     searchBox = controller.getSearchBoxView();
   }
 
   @Override
   public void initialize(ArticleSelectorController controller) {
-    onlyWithoutBarcode.addActionListener(e -> controller.refreshLoadSolutions());
+    onlyWithoutBarcode.addActionListener(
+        e -> {
+          controller.refreshLoadSolutions();
+          showInShopArticles.setSelected(false);
+        });
+    showInShopArticles.addActionListener(
+        e -> {
+          controller.refreshLoadSolutions();
+          onlyWithoutBarcode.setSelected(false);
+        });
     chooseButton.addActionListener(e -> controller.choose());
   }
 
