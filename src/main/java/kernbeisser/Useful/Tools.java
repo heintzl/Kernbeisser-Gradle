@@ -1,10 +1,8 @@
 package kernbeisser.Useful;
 
-import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Exeptions.AccessDeniedException;
-import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
@@ -18,10 +16,13 @@ import javax.persistence.Id;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -29,7 +30,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Tools {
-    private static Toolkit toolkit = Toolkit.getDefaultToolkit();
+    private static final Toolkit toolkit = Toolkit.getDefaultToolkit();
 
     public static <A extends Annotation> Collection<Field> getWithAnnotation(Class pattern, Class<A> annotation) {
         ArrayList<Field> out = new ArrayList<>();
@@ -207,16 +208,16 @@ public class Tools {
     }
 
 
-
-    public static <T> T setId(T t,long id){
+    public static <T> T setId(T t, long id) {
         for (Field field : t.getClass().getDeclaredFields()) {
-            if(field.getAnnotation(Id.class)!=null){
+            if (field.getAnnotation(Id.class) != null) {
                 field.setAccessible(true);
                 try {
-                    if (field.getType().equals(Integer.TYPE) || field.getType().equals(int.class))
+                    if (field.getType().equals(Integer.TYPE) || field.getType().equals(int.class)) {
                         field.set(t, (int) id);
-                    else
+                    } else {
                         field.set(t, id);
+                    }
                 } catch (IllegalAccessException e) {
                     Tools.showUnexpectedErrorWarning(e);
                 }
@@ -228,8 +229,8 @@ public class Tools {
     public static <T> T mergeWithoutId(T in, T toOverride) {
         try {
             long before = getId(in);
-            BeanUtils.copyProperties(toOverride,in);
-            setId(in,before);
+            BeanUtils.copyProperties(toOverride, in);
+            setId(in, before);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -238,7 +239,7 @@ public class Tools {
 
     private static <T> long getId(T in) {
         for (Field declaredField : in.getClass().getDeclaredFields()) {
-            if(declaredField.getAnnotation(Id.class)!=null){
+            if (declaredField.getAnnotation(Id.class) != null) {
                 declaredField.setAccessible(true);
                 try {
                     return ((Number) declaredField.get(in)).longValue();
@@ -284,7 +285,8 @@ public class Tools {
         em.close();
     }
 
-    public static <O, V> void addToCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier, V value){
+    public static <O, V> void addToCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier,
+                                              V value) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -295,7 +297,10 @@ public class Tools {
         et.commit();
         em.close();
     }
-    public static <O, V> void addMultipleToCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier, Collection<V> value){
+
+    public static <O, V> void addMultipleToCollection(Class<O> c, Object key,
+                                                      Function<O,Collection<V>> collectionSupplier,
+                                                      Collection<V> value) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -306,7 +311,10 @@ public class Tools {
         et.commit();
         em.close();
     }
-    public static <O, V> void removeMultipleFromCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier, Collection<V> value){
+
+    public static <O, V> void removeMultipleFromCollection(Class<O> c, Object key,
+                                                           Function<O,Collection<V>> collectionSupplier,
+                                                           Collection<V> value) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -317,7 +325,9 @@ public class Tools {
         et.commit();
         em.close();
     }
-    public static <O, V> void removeFromCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier, V value){
+
+    public static <O, V> void removeFromCollection(Class<O> c, Object key, Function<O,Collection<V>> collectionSupplier,
+                                                   V value) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -329,19 +339,22 @@ public class Tools {
         em.close();
     }
 
-    public static void showUnexpectedErrorWarning(Exception e){
-        Main.logger.error(e.getMessage(),e);
-        JOptionPane.showMessageDialog(null,"Ein Unerwarteter Fehler ist aufgetreten, bitte melden\nsie den Fehler beim Entwiklerteam oder auf\nGithub: https://github.com/julikiller98/Kernbeisser-Gradle/\nFehler:\n"+e.toString(),"Es ist ein unerwarteter Fehler aufgetreten",JOptionPane.ERROR_MESSAGE);
+    public static void showUnexpectedErrorWarning(Exception e) {
+        Main.logger.error(e.getMessage(), e);
+        JOptionPane.showMessageDialog(null,
+                                      "Ein Unerwarteter Fehler ist aufgetreten, bitte melden\nsie den Fehler beim Entwiklerteam oder auf\nGithub: https://github.com/julikiller98/Kernbeisser-Gradle/\nFehler:\n" + e
+                                              .toString(), "Es ist ein unerwarteter Fehler aufgetreten",
+                                      JOptionPane.ERROR_MESSAGE);
     }
 
-    public static <T> T removeLambda(T from,Supplier<T> original){
+    public static <T> T removeLambda(T from, Supplier<T> original) {
         T out = original.get();
-        copyInto(from,out);
+        copyInto(from, out);
         return out;
     }
 
 
-    public static <T> void persist(T value){
+    public static <T> void persist(T value) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -353,8 +366,10 @@ public class Tools {
 
     public static int error = 0;
 
-    public static void showHint(JComponent component){
-        if(!component.isEnabled())return;
+    public static void showHint(JComponent component) {
+        if (!component.isEnabled()) {
+            return;
+        }
         Color originalColor = component.getForeground();
         Color originalBackgroundColor = component.getBackground();
         component.addFocusListener(new FocusAdapter() {
@@ -366,16 +381,20 @@ public class Tools {
             }
         });
 
-        if(component instanceof JTextComponent && !((JTextComponent)component).getText().replace(" ","").equals(""))
+        if (component instanceof JTextComponent && !((JTextComponent) component).getText()
+                                                                                .replace(" ", "")
+                                                                                .equals("")) {
             component.setForeground(new Color(0xFF00000));
-        else component.setBackground(new Color(0xFF9999));
+        } else {
+            component.setBackground(new Color(0xFF9999));
+        }
 
     }
 
-    public static boolean verify(JComponent ... components){
+    public static boolean verify(JComponent... components) {
         boolean result = true;
         for (JComponent component : components) {
-            if(component instanceof JTextComponent) {
+            if (component instanceof JTextComponent) {
                 if (component.getInputVerifier() != null && !component.getInputVerifier().verify(component)) {
                     result = false;
                     component.getInputVerifier().shouldYieldFocus(component);
@@ -385,13 +404,17 @@ public class Tools {
         return result;
     }
 
-    public static void copyInto(Object source,Object destination){
+    public static void copyInto(Object source, Object destination) {
         Class<?> clazz = source.getClass();
         boolean isProxy = Proxy.isProxyInstance(source);
         while (!clazz.equals(Object.class)) {
             for (Field field : clazz.getDeclaredFields()) {
-                if(Modifier.isStatic(field.getModifiers())) continue;
-                if(isProxy && field.getName().equals("handler"))continue;
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+                if (isProxy && field.getName().equals("handler")) {
+                    continue;
+                }
                 field.setAccessible(true);
                 try {
                     field.set(destination, field.get(source));
@@ -430,8 +453,12 @@ public class Tools {
         }
         while (!clazz.equals(Object.class)) {
             for (Field field : clazz.getDeclaredFields()) {
-                if(Modifier.isStatic(field.getModifiers()))continue;
-                if(Modifier.isFinal(field.getModifiers()))continue;
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+                if (Modifier.isFinal(field.getModifiers())) {
+                    continue;
+                }
                 field.setAccessible(true);
                 try {
                     field.set(instance, field.get(object));
@@ -444,7 +471,7 @@ public class Tools {
         return instance;
     }
 
-    public static <T> T createWithoutConstructor(Class<T> clazz){
+    public static <T> T createWithoutConstructor(Class<T> clazz) {
         try {
             return (T) unsafe.allocateInstance(clazz);
         } catch (InstantiationException e) {
@@ -456,32 +483,34 @@ public class Tools {
     public static void invokeWithDefault(AccessConsumer<Object> consumer) throws AccessDeniedException {
         Object[] primitiveObjects = new Object[]{
                 null,
-                (int)0,
-                (long)0,
-                (double)0,
-                (float)0,
-                (char)0,
-                (byte)0,
-                (short)0,
+                0,
+                (long) 0,
+                (double) 0,
+                (float) 0,
+                (char) 0,
+                (byte) 0,
+                (short) 0,
                 false,
                 };
         for (Object primitiveObject : primitiveObjects) {
             try {
                 consumer.accept(primitiveObject);
                 return;
-            }catch (NullPointerException | ClassCastException ignored ){}
+            } catch (NullPointerException | ClassCastException ignored) {
+            }
         }
     }
 
-    public static StackTraceElement getCallerStackTraceElement(int above){
-        return Thread.currentThread().getStackTrace()[2+above];
+    public static StackTraceElement getCallerStackTraceElement(int above) {
+        return Thread.currentThread().getStackTrace()[2 + above];
     }
 
     public static void activateKeyboardListener() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                ViewMainPanel viewMainPanel = (ViewMainPanel) SwingUtilities.getAncestorOfClass(ViewMainPanel.class, e.getComponent());
+                ViewMainPanel viewMainPanel = (ViewMainPanel) SwingUtilities.getAncestorOfClass(ViewMainPanel.class,
+                                                                                                e.getComponent());
                 if (viewMainPanel != null) {
                     return viewMainPanel.getView().processKeyboardInput(e);
                 } else {
@@ -500,7 +529,7 @@ public class Tools {
         });
     }
 
-    public static <T> T decide(AccessSupplier<T> supplier, T t){
+    public static <T> T decide(AccessSupplier<T> supplier, T t) {
         try {
             return supplier.get();
         } catch (AccessDeniedException e) {
@@ -508,7 +537,7 @@ public class Tools {
         }
     }
 
-    public static <T> void tryIt(AccessConsumer<T> consumer, T t){
+    public static <T> void tryIt(AccessConsumer<T> consumer, T t) {
         try {
             consumer.accept(t);
         } catch (AccessDeniedException e) {
@@ -516,9 +545,9 @@ public class Tools {
         }
     }
 
-    public static <T> T invokeConstructor(Class<T> out){
+    public static <T> T invokeConstructor(Class<T> out) {
         try {
-            Constructor<T> constructor = out.getDeclaredConstructor(new Class[0]);
+            Constructor<T> constructor = out.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {

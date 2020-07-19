@@ -1,30 +1,29 @@
 package kernbeisser.Enums;
 
-import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Named;
 
 public enum MetricUnits implements Named {
     GRAM("Gramm", "g") {},
-    KILOGRAM("Kilogramm", "kg"){
+    KILOGRAM("Kilogramm", "kg") {
         @Override
         public double getBaseFactor() {
             return 1;
         }
     },
-    LITER("Liter", "l"){
+    LITER("Liter", "l") {
         @Override
         public double getBaseFactor() {
             return 1;
         }
     },
     MILLILITER("Mililiter", "ml"),
-    PIECE("Stück", "stk"){
+    PIECE("Stück", "stk") {
         @Override
         public double getBaseFactor() {
             return 1;
         }
     },
-    NONE("Undefinierte-Einheit", "?"){
+    NONE("Undefinierte-Einheit", "?") {
         @Override
         public double getBaseFactor() {
             return 1;
@@ -40,7 +39,7 @@ public enum MetricUnits implements Named {
         this.shortName = shortName;
     }
 
-    public double getBaseFactor(){
+    public double getBaseFactor() {
         return 0.001;
     }
 
@@ -69,9 +68,13 @@ public enum MetricUnits implements Named {
         } else if (source.toUpperCase().contains("G")) {
             return MetricUnits.GRAM;
         }
-        if(source.toUpperCase().contains("ST"))return MetricUnits.PIECE;
+        if (source.toUpperCase().contains("ST")) {
+            return MetricUnits.PIECE;
+        }
         for (MetricUnits value : MetricUnits.values()) {
-            if(value.getShortName().equals(source)|| value.getName().equals(source))return value;
+            if (value.getShortName().equals(source) || value.getName().equals(source)) {
+                return value;
+            }
         }
         return MetricUnits.NONE;
     }

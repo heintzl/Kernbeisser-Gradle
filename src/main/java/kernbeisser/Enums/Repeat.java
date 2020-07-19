@@ -6,7 +6,8 @@ public enum Repeat implements Named {
     EVERY_YEAR("Jedes Jahr"),
     NONE("Einmalig");
     private final String name;
-    Repeat(String name){
+
+    Repeat(String name) {
         this.name = name;
     }
 

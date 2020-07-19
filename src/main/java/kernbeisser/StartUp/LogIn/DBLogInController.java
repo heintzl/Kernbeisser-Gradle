@@ -9,7 +9,7 @@ public class DBLogInController implements Controller<DBLogInView,DBLogInModel> {
     private final DBLogInView view;
     private final DBLogInModel model;
 
-    public DBLogInController(){
+    public DBLogInController() {
         this.model = new DBLogInModel();
         this.view = new DBLogInView(this);
     }

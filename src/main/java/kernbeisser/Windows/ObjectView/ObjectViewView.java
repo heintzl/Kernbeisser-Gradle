@@ -3,19 +3,12 @@ package kernbeisser.Windows.ObjectView;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
-import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.Collection;
 
 public class ObjectViewView<T> extends JPanel implements View<ObjectViewController<T>> {
     private JButton add;

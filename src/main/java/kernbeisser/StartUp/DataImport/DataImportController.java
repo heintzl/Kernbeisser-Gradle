@@ -2,7 +2,10 @@ package kernbeisser.StartUp.DataImport;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.*;
-import kernbeisser.Enums.*;
+import kernbeisser.Enums.PermissionConstants;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
@@ -106,9 +109,9 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             Setting.DB_INITIALIZED.setValue(true);
             if (view.importItems()) {
                 JSONObject itemPath = path.getJSONObject("ItemData");
-                File suppliers = new File(jsonPath,itemPath.getString("Suppliers"));
-                File priceLists = new File(jsonPath,itemPath.getString("PriceLists"));
-                File items = new File(jsonPath,itemPath.getString("Items"));
+                File suppliers = new File(jsonPath, itemPath.getString("Suppliers"));
+                File priceLists = new File(jsonPath, itemPath.getString("PriceLists"));
+                File items = new File(jsonPath, itemPath.getString("Items"));
                 if (suppliers.exists() && priceLists.exists() && items.exists()) {
                     new Thread(() -> {
                         view.setItemProgress(0);
@@ -125,8 +128,8 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             }
             if (view.importUser()) {
                 JSONObject userPath = path.getJSONObject("UserData");
-                File users = new File(jsonPath,userPath.getString("Users"));
-                File jobs = new File(jsonPath,userPath.getString("Jobs"));
+                File users = new File(jsonPath, userPath.getString("Users"));
+                File jobs = new File(jsonPath, userPath.getString("Jobs"));
                 if (jobs.exists() && users.exists()) {
                     new Thread(() -> {
                         view.setUserProgress(0);
@@ -139,12 +142,14 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                     view.userSourcesNotExists();
                 }
             }
-            if (view.createStandardAdmin()) createAdmin();
+            if (view.createStandardAdmin()) {
+                createAdmin();
+            }
         }
         MasterPermissionSet.setAllBits(false);
     }
 
-    private void createAdmin(){
+    private void createAdmin() {
         User user = new User();
         user.setFirstName("System");
         user.setSurname("Admin");
@@ -185,10 +190,11 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             HashMap<String,Job> jobs = new HashMap<>();
             Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
             List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-            String defaultPassword = BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray());
+            String defaultPassword = BCrypt.withDefaults()
+                                           .hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray());
             for (String l : lines) {
                 String[] rawUserData = l.split(";");
-                User[] users = Users.parse(rawUserData,usernames,jobs);
+                User[] users = Users.parse(rawUserData, usernames, jobs);
                 UserGroup userGroup = Users.getUserGroup(rawUserData);
                 users[0].setUserGroup(userGroup);
                 users[1].setUserGroup(userGroup);
@@ -197,14 +203,17 @@ public class DataImportController implements Controller<DataImportView,DataImpor
                 Tools.persist(userGroup);
                 users[0].getPermissions().add(PermissionConstants.IMPORT.getPermission());
                 users[1].getPermissions().add(PermissionConstants.IMPORT.getPermission());
-                if (users[0].getKernbeisserKey()!=-1) {
+                if (users[0].getKernbeisserKey() != -1) {
                     users[0].getPermissions().add(PermissionConstants.KEY_PERMISSION.getPermission());
                 }
                 Tools.persist(users[0]);
-                if(!users[1].getFirstName().equals(""))
-                Tools.persist(users[1]);
+                if (!users[1].getFirstName().equals("")) {
+                    Tools.persist(users[1]);
+                }
                 MasterPermissionSet.addPermission(PermissionKey.GO_UNDER_MIN);
-                Transaction.doTransaction(User.getKernbeisserUser(),users[0],Users.getValue(rawUserData),TransactionType.INITIALIZE,"Übertrag des Guthaben des alten Kernbeisser Programmes");
+                Transaction.doTransaction(User.getKernbeisserUser(), users[0], Users.getValue(rawUserData),
+                                          TransactionType.INITIALIZE,
+                                          "Übertrag des Guthaben des alten Kernbeisser Programmes");
                 MasterPermissionSet.removePermission(PermissionKey.GO_UNDER_MIN);
             }
             view.setUserProgress(4);
@@ -284,12 +293,12 @@ public class DataImportController implements Controller<DataImportView,DataImpor
             for (String l : lines) {
                 String[] columns = l.split(";");
                 try {
-                    articles.add(Articles.parse(columns,barcode,names,suppliers,priceListHashMap));
+                    articles.add(Articles.parse(columns, barcode, names, suppliers, priceListHashMap));
                 } catch (CannotParseException e) {
                     errorCollector.collect(e);
                 }
             }
-            Main.logger.warn("Ignored "+errorCollector.count()+" articles errors:");
+            Main.logger.warn("Ignored " + errorCollector.count() + " articles errors:");
             errorCollector.log();
             view.setItemProgress(5);
             model.saveAllItems(articles);

@@ -62,21 +62,21 @@ public class EditItemModel implements Model<EditItemController> {
         EntityManager em = DBConnection.getEntityManager();
         try {
             return em.createQuery("select id from Article where kbNumber = " + kbNumber, Integer.class)
-                              .getSingleResult();
-        }catch (NoResultException e){
+                     .getSingleResult();
+        } catch (NoResultException e) {
             return -1;
-        }finally {
+        } finally {
             em.close();
         }
     }
 
     int barcodeExists(long barcode) {
         EntityManager em = DBConnection.getEntityManager();
-        try{
-            return em.createQuery("select id from Article where barcode = " + barcode,Integer.class).getSingleResult();
-        }catch (NoResultException e){
+        try {
+            return em.createQuery("select id from Article where barcode = " + barcode, Integer.class).getSingleResult();
+        } catch (NoResultException e) {
             return -1;
-        }finally {
+        } finally {
             em.close();
         }
     }
@@ -119,10 +119,12 @@ public class EditItemModel implements Model<EditItemController> {
 
     public int nextUnusedArticleNumber(int kbNumber) {
         EntityManager em = DBConnection.getEntityManager();
-        int out = em.createQuery("select i.kbNumber from Article i where i.kbNumber > :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",Integer.class)
+        int out = em.createQuery(
+                "select i.kbNumber from Article i where i.kbNumber > :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",
+                Integer.class)
                     .setMaxResults(1)
-                    .setParameter("last",kbNumber)
-                    .getSingleResult()+1;
+                    .setParameter("last", kbNumber)
+                    .getSingleResult() + 1;
         em.close();
         return out;
     }
@@ -136,7 +138,7 @@ public class EditItemModel implements Model<EditItemController> {
               .getSingleResult();
             em.close();
             return true;
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             em.close();
             return false;
         }

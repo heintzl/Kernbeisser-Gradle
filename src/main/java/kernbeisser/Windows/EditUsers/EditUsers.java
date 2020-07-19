@@ -12,7 +12,8 @@ public class EditUsers extends ObjectViewController<User> {
               false, Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
               Column.create("Nachname", User::getSurname, PermissionKey.USER_SURNAME_READ),
               Column.create("Benutzername", User::getUsername, PermissionKey.USER_USERNAME_READ),
-              Column.create("Guthaben",u -> String.format("%.2f€",u.getUserGroup().getValue()), PermissionKey.USER_USER_GROUP_READ,
+              Column.create("Guthaben", u -> String.format("%.2f€", u.getUserGroup().getValue()),
+                            PermissionKey.USER_USER_GROUP_READ,
                             PermissionKey.USER_GROUP_VALUE_READ)
         );
     }

@@ -46,56 +46,67 @@ public class SettingController implements Controller<SettingView,SettingModel> {
                 try {
                     Integer.parseInt(view.getValue());
                 } catch (NumberFormatException e) {
-                    if(!view.commitType("ganze Zahl(-2147483648 bis +2147483647)"))return;
+                    if (!view.commitType("ganze Zahl(-2147483648 bis +2147483647)")) {
+                        return;
+                    }
                 }
                 break;
             case "Long":
                 try {
                     Long.parseLong(view.getValue());
                 } catch (NumberFormatException e) {
-                    if(!view.commitType("ganze Zahl(-9,223,372,036,854,775,808 bis +9,223,372,036,854,775,807)"))return;
+                    if (!view.commitType("ganze Zahl(-9,223,372,036,854,775,808 bis +9,223,372,036,854,775,807)")) {
+                        return;
+                    }
                 }
                 break;
             case "Double":
                 try {
                     Double.parseDouble(view.getValue());
                 } catch (NumberFormatException e) {
-                    if(!view.commitType("Kommazahl(-4.94065645841246544e-324d bis +1.79769313486231570e+308d)"))return;
+                    if (!view.commitType("Kommazahl(-4.94065645841246544e-324d bis +1.79769313486231570e+308d)")) {
+                        return;
+                    }
                 }
                 break;
             case "Float":
                 try {
                     Float.parseFloat(view.getValue());
                 } catch (NumberFormatException e) {
-                    if(!view.commitType("Kommazahl(1.40129846432481707e-45 bis 3.40282346638528860e+38)"))return;
+                    if (!view.commitType("Kommazahl(1.40129846432481707e-45 bis 3.40282346638528860e+38)")) {
+                        return;
+                    }
                 }
                 break;
             case "Boolean":
                 if (view.getValue().equals("false") || view.getValue().equals("true")) {
                     break;
-                }else {
-                    if(!view.commitType("Boolean wert(ja = true, nein = false)"))return;
+                } else {
+                    if (!view.commitType("Boolean wert(ja = true, nein = false)")) {
+                        return;
+                    }
                 }
                 break;
         }
         model.edit(view.getValue());
         view.setValues(SettingValue.getAll(null));
-        Main.logger.info("User["+LogInModel.getLoggedIn().getId()+"] set "+model.getSelectedSettingValue().toString()+" to '"+view.getValue()+"'");
+        Main.logger.info("User[" + LogInModel.getLoggedIn().getId() + "] set " + model.getSelectedSettingValue()
+                                                                                      .toString() + " to '" + view.getValue() + "'");
     }
 
     public void cancel() {
         view.back();
     }
 
-    public void resetAllSettings(){
-        if(view.commitResetSettings()){
+    public void resetAllSettings() {
+        if (view.commitResetSettings()) {
             for (Setting value : Setting.values()) {
-                if(value!=Setting.DB_INITIALIZED){
+                if (value != Setting.DB_INITIALIZED) {
                     value.setValue(value.getDefaultValue());
                 }
             }
             getView().setValues(SettingValue.getAll(null));
-            Main.logger.info("User["+LogInModel.getLoggedIn().getId()+"] set all settings to default");
+            Main.logger.info("User[" + LogInModel.getLoggedIn().getId() + "] set all settings to default");
         }
     }
 

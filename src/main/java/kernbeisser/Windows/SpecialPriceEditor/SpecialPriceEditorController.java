@@ -11,8 +11,8 @@ import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Main;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,39 +25,44 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
         Main.buildEnvironment();
         new SpecialPriceEditorController(null).openTab("IDK");
     }
+
     private SpecialPriceEditorView view;
     private final SpecialPriceEditorModel model;
 
     private final SearchBoxController<Article> searchBoxController;
-    SpecialPriceEditorController(Window current){
+
+    SpecialPriceEditorController(Window current) {
         this.model = new SpecialPriceEditorModel();
-        this.searchBoxController = new SearchBoxController<Article>((s,m) -> model.searchArticle(s, m, view != null && view.filterOnlyActionArticle()),
-                                                                    Column.create("Name", Article::getName),
-                                                                    Column.create("Packungsmenge",Article::getAmount),
-                                                                    Column.create("Lieferant",
-                                                                           Article::getSupplier),
-                                                                    Column.create("Lieferanten Nr.",Article::getSuppliersItemNumber),
-                                                                    Column.create("Kernbeissernummer",
-                                                                           Article::getKbNumber)
-        ){
+        this.searchBoxController = new SearchBoxController<Article>(
+                (s, m) -> model.searchArticle(s, m, view != null && view.filterOnlyActionArticle()),
+                Column.create("Name", Article::getName),
+                Column.create("Packungsmenge", Article::getAmount),
+                Column.create("Lieferant",
+                              Article::getSupplier),
+                Column.create("Lieferanten Nr.", Article::getSuppliersItemNumber),
+                Column.create("Kernbeissernummer",
+                              Article::getKbNumber)
+        ) {
             @Override
             public void search() {
                 super.search();
-                if(view!=null)
-                load(null);
+                if (view != null) {
+                    load(null);
+                }
             }
         };
         searchBoxController.initView();
         this.view = new SpecialPriceEditorView(this);
         searchBoxController.addSelectionListener(this::load);
     }
+
     void load(Article article) {
-        if(article==null){
+        if (article == null) {
             view.setOffers(CollectionUtils.EMPTY_COLLECTION);
             view.setAddEnable(false);
             view.setSelectedArticleIdentifier(null);
             view.setSelectedArticleNetPrice(0);
-        }else {
+        } else {
             view.setOffers(article.getOffers());
             view.setAddEnable(true);
             view.setSelectedArticleIdentifier(article.getName());
@@ -68,7 +73,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
         view.setEditEnable(false);
     }
 
-    void selectOffer(){
+    void selectOffer() {
         Offer o = view.getSelectedOffer();
         model.setSelectedOffer(o);
         view.setFrom(o.getFromDate().toLocalDate());
@@ -104,7 +109,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
         try {
             model.refreshItem();
             view.setOffers(model.getSelectedArticle().getOffers());
-            model.edit(model.getSelectedOffer().getOid(),collect());
+            model.edit(model.getSelectedOffer().getOid(), collect());
         } catch (IncorrectInput incorrectInput) {
             view.cannotParseDateFormat();
         }
@@ -120,7 +125,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
         DatePickerController.requestDate((JFrameWindow) view.getWindow(), view::setFrom);
     }
 
-    SearchBoxView<Article> getSearchBoxView(){
+    SearchBoxView<Article> getSearchBoxView() {
         return searchBoxController.getView();
     }
 
@@ -128,7 +133,7 @@ public class SpecialPriceEditorController implements Controller<SpecialPriceEdit
         DatePickerController.requestDate((JFrameWindow) view.getWindow(), view::setTo);
     }
 
-    void refreshSearchSolutions(){
+    void refreshSearchSolutions() {
         searchBoxController.refreshLoadSolutions();
     }
 

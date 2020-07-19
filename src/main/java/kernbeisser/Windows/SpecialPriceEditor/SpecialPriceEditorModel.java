@@ -18,20 +18,20 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
         this.selected = o;
     }
 
-    Offer getSelectedOffer(){
+    Offer getSelectedOffer() {
         return selected;
     }
 
-    void edit(int offerId, Offer offer){
-        Tools.edit(offerId,offer);
+    void edit(int offerId, Offer offer) {
+        Tools.edit(offerId, offer);
     }
 
-    void remove(Article article, Offer offer){
+    void remove(Article article, Offer offer) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
         Article i = em.find(Article.class, article.getId());
-        Offer o = em.find(Offer.class,offer.getOid());
+        Offer o = em.find(Offer.class, offer.getOid());
         i.getOffers().remove(o);
         em.remove(o);
         em.persist(i);
@@ -40,7 +40,7 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
         em.close();
     }
 
-    public void refreshItem(){
+    public void refreshItem() {
         selectedArticle = DBConnection.getEntityManager().find(Article.class, selectedArticle.getId());
     }
 
@@ -56,7 +56,9 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        Article i = em.createQuery("select i from Article i where id = :id", Article.class).setParameter("id", article.getId()).getSingleResult();
+        Article i = em.createQuery("select i from Article i where id = :id", Article.class)
+                      .setParameter("id", article.getId())
+                      .getSingleResult();
         em.persist(offer);
         i.getOffers().add(offer);
         em.flush();
@@ -64,10 +66,13 @@ public class SpecialPriceEditorModel implements Model<SpecialPriceEditorControll
         em.close();
     }
 
-    public Collection<Article> searchArticle(String search,int maxResults,boolean onlyActionArticle){
+    public Collection<Article> searchArticle(String search, int maxResults, boolean onlyActionArticle) {
         EntityManager em = DBConnection.getEntityManager();
         Collection<Article> out = em.createQuery(
-                "select i from Article i where (i.suppliersItemNumber = :n or kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n)"+(onlyActionArticle ?" and size(i.offers) > 0" : ""),
+                "select i from Article i where (i.suppliersItemNumber = :n or kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n)" + (
+                        onlyActionArticle
+                        ? " and size(i.offers) > 0"
+                        : ""),
                 Article.class
         )
                                     .setParameter("n", Tools.tryParseInteger(search))

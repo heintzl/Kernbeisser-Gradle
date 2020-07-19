@@ -28,7 +28,8 @@ public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
                      .getSingleResult();
         } catch (NoResultException e) {
             try {
-                return em.createQuery("select i from Article i where i.barcode like '%" + itemNumber + "'", Article.class)
+                return em.createQuery("select i from Article i where i.barcode like '%" + itemNumber + "'",
+                                      Article.class)
                          .setMaxResults(1)
                          .getSingleResult();
             } catch (NoResultException e1) {

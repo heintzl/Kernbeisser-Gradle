@@ -7,8 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -42,7 +40,7 @@ public class ChangePasswordView implements View<ChangePasswordController> {
         return new String(newPassword.getPassword());
     }
 
-    String getCurrentPassword(){
+    String getCurrentPassword() {
         return new String(currentPassword.getPassword());
     }
 
@@ -54,13 +52,13 @@ public class ChangePasswordView implements View<ChangePasswordController> {
         message.setText("Bitte Wiederholen sie das Passwort korrekt.");
     }
 
-    void setVerifyWithOldEnable(boolean enable){
+    void setVerifyWithOldEnable(boolean enable) {
         currentPasswordLable.setVisible(enable);
         currentPassword.setVisible(enable);
     }
 
-    void setPasswordStrength(Strength strength){
-        passwordHint.setText("Stärke: "+strength.getHint());
+    void setPasswordStrength(Strength strength) {
+        passwordHint.setText("Stärke: " + strength.getHint());
         passwordHint.setForeground(strength.getColor());
     }
 
@@ -69,15 +67,16 @@ public class ChangePasswordView implements View<ChangePasswordController> {
     }
 
     public void passwordCannotChanged() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Das Password entspricht nicht den Vorraussetzungen");
+        JOptionPane.showMessageDialog(getTopComponent(), "Das Password entspricht nicht den Vorraussetzungen");
     }
 
     public void passwordChanged() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Das Password wurde erfolgreich geändert");
+        JOptionPane.showMessageDialog(getTopComponent(), "Das Password wurde erfolgreich geändert");
     }
 
     public void currentPasswordEnteredWrong() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Um das Passwort zu ändern müssen\n sie ihr altes Passwort bestätigen");
+        JOptionPane.showMessageDialog(getTopComponent(),
+                                      "Um das Passwort zu ändern müssen\n sie ihr altes Passwort bestätigen");
     }
 
     @Override
@@ -87,7 +86,7 @@ public class ChangePasswordView implements View<ChangePasswordController> {
 
     @Override
     public @NotNull Dimension getSize() {
-        return new Dimension(500,500);
+        return new Dimension(500, 500);
     }
 
 

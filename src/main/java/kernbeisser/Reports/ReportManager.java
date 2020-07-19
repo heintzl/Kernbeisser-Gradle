@@ -8,19 +8,15 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
 import net.sf.jasperreports.engine.type.OrientationEnum;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.export.ExporterInput;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimplePrintServiceExporterConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import javax.print.attribute.Attribute;
-import javax.print.attribute.AttributeSet;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,8 +42,12 @@ public class ReportManager {
 
     private static PrintRequestAttributeSet getPageFormatFromReport(JasperPrint jpsPrint) {
         PrintRequestAttributeSet result = new HashPrintRequestAttributeSet();
-        result.add(jpsPrint.getOrientationValue() == OrientationEnum.PORTRAIT ? OrientationRequested.PORTRAIT : OrientationRequested.LANDSCAPE);
-        result.add(Math.max(jpsPrint.getPageWidth(), jpsPrint.getPageHeight()) <= 600?MediaSizeName.ISO_A5:MediaSizeName.ISO_A4);
+        result.add(jpsPrint.getOrientationValue() == OrientationEnum.PORTRAIT
+                   ? OrientationRequested.PORTRAIT
+                   : OrientationRequested.LANDSCAPE);
+        result.add(Math.max(jpsPrint.getPageWidth(), jpsPrint.getPageHeight()) <= 600
+                   ? MediaSizeName.ISO_A5
+                   : MediaSizeName.ISO_A4);
         return result;
     }
 
@@ -59,9 +59,9 @@ public class ReportManager {
         JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
         jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
         outFileName = String.format("%d_%s_%s_%s.pdf", purchase.getSid(),
-                                           purchase.getSession().getCustomer().getFirstName(),
-                                           purchase.getSession().getCustomer().getSurname(),
-                                           purchase.getCreateDate().toString());
+                                    purchase.getSession().getCustomer().getFirstName(),
+                                    purchase.getSession().getCustomer().getSurname(),
+                                    purchase.getCreateDate().toString());
     }
 
     public void sendToPrinter() throws JRException {
@@ -76,7 +76,8 @@ public class ReportManager {
     }
 
     public void exportPdf() throws JRException {
-        JasperExportManager.exportReportToPdfFile(jspPrint, getOutputFolder().resolve(outFileName.replaceAll("[\\\\/:*?\"<>|]", "_")).toAbsolutePath().toString());
+        JasperExportManager.exportReportToPdfFile(jspPrint, getOutputFolder().resolve(
+                outFileName.replaceAll("[\\\\/:*?\"<>|]", "_")).toAbsolutePath().toString());
     }
 
     @NotNull

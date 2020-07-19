@@ -21,7 +21,7 @@ public class ArticleSelectorView implements View<ArticleSelectorController> {
         this.controller = controller;
     }
 
-    boolean searchOnlyWithoutBarcode(){
+    boolean searchOnlyWithoutBarcode() {
         return onlyWithoutBarcode.isSelected();
     }
 
@@ -37,7 +37,7 @@ public class ArticleSelectorView implements View<ArticleSelectorController> {
 
     @Override
     public @NotNull Dimension getSize() {
-        return new Dimension(500,600);
+        return new Dimension(500, 600);
     }
 
     @Override

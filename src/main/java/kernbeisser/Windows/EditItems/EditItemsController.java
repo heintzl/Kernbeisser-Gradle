@@ -68,13 +68,14 @@ public class EditItemsController implements Controller<EditItemsView,EditItemsMo
 
 
     private Window w = null;
-    void openPriceListSelection(){
+
+    void openPriceListSelection() {
         PriceListTree pt = new PriceListTree();
         pt.addSelectionListener(e -> {
             objectViewController.setSearch(e.toString());
             objectViewController.search();
             w.back();
         });
-        w = Controller.createFakeController(pt).openAsWindow(getView().getWindow(),SubWindow::new);
+        w = Controller.createFakeController(pt).openAsWindow(getView().getWindow(), SubWindow::new);
     }
 }

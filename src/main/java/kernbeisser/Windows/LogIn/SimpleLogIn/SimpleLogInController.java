@@ -12,7 +12,6 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Menu.MenuController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
-import kernbeisser.Windows.View;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,14 +21,13 @@ import java.time.temporal.ChronoUnit;
 
 public class SimpleLogInController implements Controller<SimpleLogInView,SimpleLogInModel> {
 
-    private SimpleLogInView view;
-    private SimpleLogInModel model;
+    private final SimpleLogInView view;
+    private final SimpleLogInModel model;
 
-    public SimpleLogInController(){
+    public SimpleLogInController() {
         this.model = new SimpleLogInModel();
         this.view = new SimpleLogInView(this);
     }
-
 
 
     @Override
@@ -55,12 +53,14 @@ public class SimpleLogInController implements Controller<SimpleLogInView,SimpleL
 
     public void logIn() {
         try {
-            model.logIn(view.getUsername(),view.getPassword());
+            model.logIn(view.getUsername(), view.getPassword());
             loadUserSettings();
-            if (LogInModel.getLoggedIn().getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS) > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()) {
-                new ChangePasswordController(LogInModel.getLoggedIn(),true).openAsWindow(getView().getWindow(),
-                                                                                         SubWindow::new);
-            }else {
+            if (LogInModel.getLoggedIn()
+                          .getLastPasswordChange()
+                          .until(Instant.now(), ChronoUnit.DAYS) > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()) {
+                new ChangePasswordController(LogInModel.getLoggedIn(), true).openAsWindow(getView().getWindow(),
+                                                                                          SubWindow::new);
+            } else {
                 removeSelf();
                 new MenuController().openTab("Menu");
             }
@@ -72,9 +72,10 @@ public class SimpleLogInController implements Controller<SimpleLogInView,SimpleL
     }
 
 
-    private void loadUserSettings(){
+    private void loadUserSettings() {
         try {
-            UIManager.setLookAndFeel(UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
+            UIManager.setLookAndFeel(
+                    UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
             SwingUtilities.updateComponentTreeUI(TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
         } catch (UnsupportedLookAndFeelException e) {
             Tools.showUnexpectedErrorWarning(e);

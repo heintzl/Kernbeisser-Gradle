@@ -7,11 +7,11 @@ import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
-import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
+import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
 import kernbeisser.Windows.WindowImpl.SubWindow;
@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class UserMenuController implements Controller<UserMenuView,UserMenuModel> {
-    private UserMenuView view;
-    private UserMenuModel model;
+    private final UserMenuView view;
+    private final UserMenuModel model;
 
     public UserMenuController() {
         this.model = new UserMenuModel();
@@ -40,14 +40,15 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
 
     @Override
     public void fillUI() {
-        view.setUsername(LogInModel.getLoggedIn().getFirstName()+" "+LogInModel.getLoggedIn().getSurname());
+        view.setUsername(LogInModel.getLoggedIn().getFirstName() + " " + LogInModel.getLoggedIn().getSurname());
     }
 
     @Override
     public boolean commitClose() {
-        if (JOptionPane.showConfirmDialog(getView().getTopComponent(), "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen") == 0) {
+        if (JOptionPane.showConfirmDialog(getView().getTopComponent(),
+                                          "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen") == 0) {
             TabbedPaneModel.DEFAULT_TABBED_PANE.unsafeClose(asTab("Menu"));
-            if(TabbedPaneModel.DEFAULT_TABBED_PANE.clear()){
+            if (TabbedPaneModel.DEFAULT_TABBED_PANE.clear()) {
                 try {
                     Main.setSettingLAF();
                 } catch (UnsupportedLookAndFeelException e) {
@@ -55,7 +56,7 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
                 }
                 SwingUtilities.updateComponentTreeUI(TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
                 new SimpleLogInController().openTab("Log In");
-            }else {
+            } else {
                 new UserMenuController().openTab("Menu");
             }
         }
@@ -102,6 +103,6 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
     }
 
     public void changePassword() {
-        new ChangePasswordController(model.getOwner(),false).openAsWindow(getView().getWindow(), SubWindow::new);
+        new ChangePasswordController(model.getOwner(), false).openAsWindow(getView().getWindow(), SubWindow::new);
     }
 }
