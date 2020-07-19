@@ -19,7 +19,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
      *
      * @param userValue The users credit before purchase
      * @param userSurcharge The solidarity surcharge to apply to ShoppingItems
-     * @param editable true: cart can be used for shopping: items can be deleted from cart, addSoppingItem automatically adds deposit, false: cart is for display only
+     * @param editable true: cart can be used for shopping: items can be added and deleted, false: cart is for display only - use view.setObjects to render cart
      */
     public ShoppingCartController(double userValue, double userSurcharge, boolean editable) {
         model = new ShoppingCartModel(userValue, userSurcharge);
@@ -28,14 +28,16 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     }
 
     public void addShoppingItem(ShoppingItem item, boolean piece) {
+        //TODO should throw exception if !editable
+        if (!editable) return;
         int itemIndex = model.addItem(item, piece);
         if (item.getShoppingCartIndex() == 0) {
             item.setShoppingCartIndex(itemIndex);
         }
-        if (editable && item.getSingleDeposit() != 0) {
+        if (item.getSingleDeposit() != 0) {
             model.addItem(item.createItemDeposit(), true);
         }
-        if (editable && item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
+        if (item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
             if (Math.abs(item.getItemMultiplier()) >= item.getContainerSize()) {
                 int containers = 0;
                 boolean exit = false;
@@ -79,11 +81,15 @@ public class ShoppingCartController implements Controller<ShoppingCartView,Shopp
     }
 
     void delete(ShoppingItem i) {
+        //TODO should throw exception if !editable
+        if (!editable) return;
         model.getItems().remove(i);
         refresh();
     }
 
     public void emptyCart() {
+        //TODO should throw exception if !editable
+        if (!editable) return;
         model.getItems().clear();
         refresh();
     }
