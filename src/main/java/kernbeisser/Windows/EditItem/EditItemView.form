@@ -70,7 +70,7 @@
                       <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
-                  <component id="2f3c3" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="itemName">
+                  <component id="2b409" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="itemName" custom-create="true">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -86,7 +86,7 @@
                       <text value="Lieferant"/>
                     </properties>
                   </component>
-                  <component id="a16ea" class="kernbeisser.CustomComponents.PermissionComboBox" binding="supplier">
+                  <component id="addb6" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox" binding="supplier" custom-create="true">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -100,7 +100,7 @@
                       <text value="Netto-Preis"/>
                     </properties>
                   </component>
-                  <component id="41f2f" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="netPrice" custom-create="true">
+                  <component id="e61fb" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="netPrice" custom-create="true">
                     <constraints>
                       <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -114,7 +114,7 @@
                       <text value="Einzelpfand"/>
                     </properties>
                   </component>
-                  <component id="43552" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="deposit" custom-create="true">
+                  <component id="c4a6a" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="deposit" custom-create="true">
                     <constraints>
                       <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -142,7 +142,7 @@
                           <text value="Suchen"/>
                         </properties>
                       </component>
-                      <component id="ecf2d" class="kernbeisser.CustomComponents.PermissionComboBox" binding="priceList">
+                      <component id="7550" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox" binding="priceList" custom-create="true">
                         <constraints border-constraint="Center"/>
                         <properties/>
                       </component>
@@ -156,7 +156,7 @@
                       <text value="Packungs-Menge"/>
                     </properties>
                   </component>
-                  <component id="830f6" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="amount" custom-create="true">
+                  <component id="be5f0" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="amount" custom-create="true">
                     <constraints>
                       <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -170,7 +170,7 @@
                       <text value="Gebindegröße"/>
                     </properties>
                   </component>
-                  <component id="b83da" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="containerSize" custom-create="true">
+                  <component id="96e88" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="containerSize" custom-create="true">
                     <constraints>
                       <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -184,13 +184,13 @@
                       <text value="Barcode"/>
                     </properties>
                   </component>
-                  <component id="b4239" class="kernbeisser.CustomComponents.TextFields.PermissionField" binding="barcode">
+                  <component id="e7012" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="barcode" custom-create="true">
                     <constraints>
                       <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties/>
                   </component>
-                  <component id="d3964" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="showInShoppingMask">
+                  <component id="74035" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckBox" binding="showInShoppingMask" custom-create="true">
                     <constraints>
                       <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -198,7 +198,7 @@
                       <text value="Einblenden in der Einkaufsmaske"/>
                     </properties>
                   </component>
-                  <component id="c2180" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="weighable">
+                  <component id="83cc4" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckBox" binding="weighable" custom-create="true">
                     <constraints>
                       <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -224,7 +224,7 @@
                       <text value="Laden-Artikelnummer"/>
                     </properties>
                   </component>
-                  <component id="691f9" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="kbItemNumber" custom-create="true">
+                  <component id="15603" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="kbItemNumber" custom-create="true">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -238,7 +238,7 @@
                       <text value="Lieferanten-Artikelnummer"/>
                     </properties>
                   </component>
-                  <component id="3a625" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="supplierItemNumber" custom-create="true">
+                  <component id="890b2" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="supplierItemNumber" custom-create="true">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -252,7 +252,7 @@
                       <text value="Kistenpfand"/>
                     </properties>
                   </component>
-                  <component id="9b0eb" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="crateDeposit" custom-create="true">
+                  <component id="f204e" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="crateDeposit" custom-create="true">
                     <constraints>
                       <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -266,7 +266,7 @@
                       <text value="Einheit"/>
                     </properties>
                   </component>
-                  <component id="a7ded" class="kernbeisser.CustomComponents.PermissionComboBox" binding="metricUnits">
+                  <component id="c8192" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox" binding="metricUnits" custom-create="true">
                     <constraints>
                       <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -280,11 +280,13 @@
                       <text value="Gebinde-Definition"/>
                     </properties>
                   </component>
-                  <component id="624e5" class="kernbeisser.CustomComponents.PermissionComboBox" binding="containerDefinition">
+                  <component id="fd304" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox" binding="containerDefinition" custom-create="true">
                     <constraints>
                       <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <model/>
+                    </properties>
                   </component>
                   <component id="ba207" class="javax.swing.JLabel">
                     <constraints>
@@ -310,7 +312,7 @@
                       <text value="Mehrwert steuer"/>
                     </properties>
                   </component>
-                  <component id="7326e" class="kernbeisser.CustomComponents.PermissionComboBox" binding="vat">
+                  <component id="e281b" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox" binding="vat" custom-create="true">
                     <constraints>
                       <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>

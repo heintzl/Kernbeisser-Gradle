@@ -1,6 +1,6 @@
 package kernbeisser.CustomComponents;
 
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.LogIn.LogInModel;
 
 import javax.swing.*;
@@ -23,7 +23,7 @@ public class PermissionCheckBox extends JCheckBox implements RequiresPermission 
         setEnabled(b);
     }
 
-    public void setRequiredReadKeys(Key... keys) {
+    public void setRequiredReadKeys(PermissionKey... keys) {
         read = LogInModel.getLoggedIn().hasPermission(keys);
         if (!read) {
             setEnabled(false);

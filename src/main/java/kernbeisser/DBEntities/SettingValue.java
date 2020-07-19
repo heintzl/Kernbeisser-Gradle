@@ -1,13 +1,16 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table
@@ -17,40 +20,27 @@ public class SettingValue {
 
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_ID_WRITE)})
     private int id;
 
     @Column
     @Enumerated(value = EnumType.STRING)
+    @Getter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_SETTING_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_SETTING_WRITE)})
     private Setting setting;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_VALUE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SETTING_VALUE_VALUE_WRITE)})
     private String value;
-
-    public Setting getSetting() {
-        return setting;
-    }
-
-    private void setSetting(Setting setting) {
-        this.setting = setting;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    private void setValue(String value) {
-        this.value = value;
-
-    }
-
-    public int getId() {
-        return id;
-    }
 
     public static String getValue(Setting s){
         if(settingValueHashMap==null){
             settingValueHashMap = new HashMap<>();
-            getAll(null).forEach(e  -> settingValueHashMap.put(e.setting,e.value));
+            String[] allSettingNames = Arrays.stream(Setting.class.getEnumConstants()).map(Enum::name).toArray(String[]::new);
+            String condition = "where c.setting IN ('" + String.join("','", allSettingNames) + "')";
+            getAll(condition).forEach(e  -> settingValueHashMap.put(e.setting,e.value));
             logSettings();
         }
         String out = settingValueHashMap.get(s);
@@ -109,4 +99,32 @@ public class SettingValue {
         return Tools.getAll(SettingValue.class, condition);
     }
 
+
+    @Override
+    public String toString() {
+        return "SettingValue{" +
+               "id=" + id +
+               ", setting=" + setting +
+               ", value='" + value + '\'' +
+               '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SettingValue that = (SettingValue) o;
+        return id == that.id &&
+               setting == that.setting &&
+               value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, setting, value);
+    }
 }

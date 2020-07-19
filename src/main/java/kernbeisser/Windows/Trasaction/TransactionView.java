@@ -8,7 +8,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public class TransactionView implements View<TransactionController> {
     private JButton transferTransactions;
     private JTextField to;
     private JTextField from;
-    private JCheckBox formKBValue;
+    private JCheckBox fromKBValue;
     private DoubleParseField value;
     private ObjectTable<Transaction> transactions;
     private JButton addTransaction;
@@ -72,6 +72,7 @@ public class TransactionView implements View<TransactionController> {
     private JLabel sum;
     private JLabel count;
     private PermissionField info;
+    private JCheckBox toKBValue;
 
 
     private TransactionController controller;
@@ -102,12 +103,12 @@ public class TransactionView implements View<TransactionController> {
     }
 
     boolean isFromKB() {
-        return formKBValue.isSelected();
+        return fromKBValue.isSelected();
     }
 
     void setFromKBEnable(boolean b) {
-        formKBValue.setSelected(b);
-        formKBValue.setEnabled(b);
+        fromKBValue.setSelected(b);
+        fromKBValue.setEnabled(b);
         if(b) {
             from.setEnabled(false);
         }
@@ -165,7 +166,7 @@ public class TransactionView implements View<TransactionController> {
     }
 
     public void invalidValue() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Der eingegebene Betrag darf nicht 0.00€ betragen");
+        JOptionPane.showMessageDialog(getTopComponent(),"Der eingegebene Betrag muss größer als 0€ sein");
     }
 
     public boolean requestUserTransactionCommit() {
@@ -202,8 +203,8 @@ public class TransactionView implements View<TransactionController> {
                 }
             }
         });
-        info.setRequiredWriteKeys(Key.TRANSACTION_INFO_WRITE);
-                formKBValue.addActionListener(e -> from.setEnabled(!formKBValue.isSelected()));
+        info.setRequiredWriteKeys(PermissionKey.TRANSACTION_INFO_WRITE);
+                fromKBValue.addActionListener(e -> from.setEnabled(!fromKBValue.isSelected()));
         //Sets the ActionListeners for the instant Transaction Buttons
         {
             a10.addActionListener(e -> {

@@ -38,7 +38,7 @@ public class PriceListTree extends ObjectTree<PriceList> {
         if (optionToEdit) {
             PriceList p = new PriceList() {
                 @Override
-                public int getId() {
+                public int getPid() {
                     return Integer.MIN_VALUE;
                 }
             };
@@ -46,7 +46,7 @@ public class PriceListTree extends ObjectTree<PriceList> {
             getStartValues().add(p);
             refresh();
             addSelectionListener(e -> {
-                if (e.getId() == Integer.MIN_VALUE) {
+                if (e.getPid() == Integer.MIN_VALUE) {
                     new ManagePriceListsController() {
                         @Override
                         public void finish() {

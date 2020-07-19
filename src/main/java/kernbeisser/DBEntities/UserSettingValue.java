@@ -1,13 +1,18 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.UserSetting;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -17,54 +22,27 @@ public class UserSettingValue {
 
     @Id
     @GeneratedValue
+    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private int id;
 
     @JoinColumn
     @ManyToOne
+    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private User user;
 
     @Column
     @Enumerated(EnumType.STRING)
+    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private UserSetting userSetting;
 
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private String value;
 
-    public static User getLoaded() {
-        return loaded;
-    }
-
-    private static void setLoaded(User loaded) {
-        UserSettingValue.loaded = loaded;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    private void setUser(User user) {
-        this.user = user;
-    }
-
-    public UserSetting getUserSetting() {
-        return userSetting;
-    }
-
-    private void setUserSetting(UserSetting userSetting) {
-        this.userSetting = userSetting;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 
     public static List<UserSettingValue> getAll(String condition){
         return Tools.getAll(UserSettingValue.class, condition);
@@ -118,5 +96,35 @@ public class UserSettingValue {
         loaded = user;
         values = new HashMap<>(UserSetting.values().length);
         getAllForUser(user).forEach(e -> values.put(e.userSetting,e.value));
+    }
+
+    @Override
+    public String toString() {
+        return "UserSettingValue{" +
+               "id=" + id +
+               ", user=" + user +
+               ", userSetting=" + userSetting +
+               ", value='" + value + '\'' +
+               '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserSettingValue that = (UserSettingValue) o;
+        return id == that.id &&
+               user.equals(that.user) &&
+               userSetting == that.userSetting &&
+               value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, userSetting, value);
     }
 }

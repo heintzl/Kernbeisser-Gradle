@@ -2,7 +2,7 @@ package kernbeisser.Windows.PermissionManagement;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.KeyCategory;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
@@ -21,7 +21,7 @@ public class PermissionController implements Controller<PermissionView,Permissio
         this.model = new PermissionModel();
     }
 
-    private void change(Permission permission, Key key) {
+    private void change(Permission permission, PermissionKey key) {
         //if(LogInModel.getLoggedIn().hasPermission(Key.find(KeyCategory.PERMISSIONS)))
         if (permission.contains(key)) {
             if(permission.contains(key.getWriteKey())){
@@ -39,9 +39,9 @@ public class PermissionController implements Controller<PermissionView,Permissio
 
     void loadSolutions() {
         Column<Permission> nameColumn = Column.create("Berechtigung", Permission::getName);
-        Collection<Column<Permission>> keyColumns = view.getCategory() != KeyCategory.ACTION && view.getCategory() != KeyCategory.WINDOW ?
+        Collection<Column<Permission>> keyColumns = view.getCategory() != null ?
                                                     Tools.transform(
-                                                            Key.find(
+                                                            PermissionKey.find(
                                                                     view.getCategory()
                                                                     ,true,false)
                                                             , e -> Column.create(
@@ -49,24 +49,25 @@ public class PermissionController implements Controller<PermissionView,Permissio
                                                                     p -> {
 
                                                                         boolean read = p.contains(e);
-                                                                        boolean write = p.contains(Key.valueOf(e.name().replace("READ","WRITE")));
+                                                                        boolean write = p.contains(
+                                                                                PermissionKey.valueOf(e.name().replaceAll("_READ", "_WRITE")));
 
                                                                         return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
                                                                     },
                                                                     s -> change(s, e)))
                                                                                                                                          :
-                                                    Tools.transform(Key.find(view.getCategory()),
+                                                    Tools.transform(PermissionKey.find(view.getCategory()),
                                                                         e -> Column.create(
                                                                                 e.name().replace(e.name().split("_")[0]+"_",""),
                                                                                 permission -> permission.contains(e) ? "Ja":"Nein",
                                                                                 s -> soloChange(s, e)));
         ArrayList<Column<Permission>> columns = new ArrayList<>(keyColumns.size() + 2);
         columns.add(nameColumn);
-        if(view.getCategory() != KeyCategory.ACTION && view.getCategory() != KeyCategory.WINDOW)
+        if(view.getCategory() != null)
         columns.add(Column.create("Alle "+view.getCategory()+" Berechtigungen",permission -> {
                                       boolean read = true;
                                       boolean write = true;
-                                      for (Key key : Key.find(view.getCategory())) {
+                                      for (PermissionKey key : PermissionKey.find(view.getCategory())) {
                                           if(!permission.contains(key)){
                                               read = (read && (!key.name().endsWith("READ")));
                                               write = (write && (!key.name().endsWith("WRITE")));
@@ -78,10 +79,10 @@ public class PermissionController implements Controller<PermissionView,Permissio
                                       return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
                                   },
                                   permission -> {
-                                      Collection<Key> keys = Key.find(view.getCategory());
+                                      Collection<PermissionKey> keys = PermissionKey.find(view.getCategory());
                                       boolean read = true;
                                       boolean write = true;
-                                      for (Key key : keys) {
+                                      for (PermissionKey key : keys) {
                                           if(!permission.contains(key)){
                                               read = (read && (!key.name().endsWith("READ")));
                                               write = (write && (!key.name().endsWith("WRITE")));
@@ -105,7 +106,7 @@ public class PermissionController implements Controller<PermissionView,Permissio
         view.setColumns(columns);
     }
 
-    private void soloChange(Permission s, Key e) {
+    private void soloChange(Permission s, PermissionKey e) {
         if(s.contains(e))model.removeKey(s,e);
         else model.addKey(s,e);
         view.setValues(model.getAllPermissions());
@@ -143,7 +144,7 @@ public class PermissionController implements Controller<PermissionView,Permissio
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return PermissionKey.find(Permission.class).toArray(new PermissionKey[0]);
     }
 }

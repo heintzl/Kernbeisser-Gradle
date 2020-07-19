@@ -1,12 +1,17 @@
 package kernbeisser.DBEntities;
 
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Table
 @Entity
@@ -27,17 +32,34 @@ public class SurchargeTable implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_STID_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_STID_WRITE)})
     private int stid;
+
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_WRITE)})
     private double surcharge;
+
     @Column(name = "\"from\"")
+    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_FROM_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_FROM_WRITE)})
     private int from;
+
+    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_TO_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_TO_WRITE)})
     @Column(name = "\"to\"")
     private int to;
+
     @Column
+    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_NAME_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_NAME_WRITE)})
     private String name;
+
     @JoinColumn
     @ManyToOne
+    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_READ)})
+    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
     private Supplier supplier;
 
     public SurchargeTable() {
@@ -59,48 +81,25 @@ public class SurchargeTable implements Serializable, Cloneable {
         return out;
     }
 
-    public double getSurcharge() {
-        return surcharge;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SurchargeTable that = (SurchargeTable) o;
+        return stid == that.stid &&
+               Double.compare(that.surcharge, surcharge) == 0 &&
+               from == that.from &&
+               to == that.to &&
+               name.equals(that.name) &&
+               supplier.equals(that.supplier);
     }
 
-    public void setSurcharge(double surcharge) {
-        this.surcharge = surcharge;
+    @Override
+    public int hashCode() {
+        return Objects.hash(stid, surcharge, from, to, name, supplier);
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getStid() {
-        return stid;
-    }
-
-    public int getFrom() {
-        return from;
-    }
-
-    public void setFrom(int from) {
-        this.from = from;
-    }
-
-    public int getTo() {
-        return to;
-    }
-
-    public void setTo(int to) {
-        this.to = to;
-    }
-
-    public Supplier getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
-
 }

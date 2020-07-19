@@ -3,8 +3,9 @@ package kernbeisser.Windows.EditItem;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +14,7 @@ import java.awt.*;
 public class EditItemController implements Controller<EditItemView,EditItemModel> {
 
     private EditItemView view;
-    private EditItemModel model;
+    private final EditItemModel model;
 
     public EditItemController(Article article, Mode mode) {
         model = new EditItemModel(article != null ? article : new Article(), mode);
@@ -52,17 +53,25 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
         view.setUnits(model.getAllUnits());
         view.setContainerDefinitions(model.getAllContainerDefinitions());
         view.setVATs(model.getAllVATs());
-        view.pasteItem(model.getSource());
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     void doAction() {
-        if(!view.validate())return;
-        Article data = view.collectItem(model.getSource());
+        if(!view.validate()){
+            view.invalidInput();
+            return;
+        }
+        Article data;
+        try {
+            data = view.getArticleObjectForm().getData();
+        } catch (CannotParseException e) {
+            view.invalidInput();
+            return;
+        }
         if (model.getMode() == Mode.ADD) {
             if(model.nameExists(data.getName())){
                 view.nameAlreadyExists();
@@ -93,13 +102,15 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
                 }
                 return;
             }
-            int idOfBarcode = model.barcodeExists(data.getBarcode());
-            if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
-                view.barcodeAlreadyExists();
-                return;
+            if(data.getBarcode()!=null) {
+                int idOfBarcode = model.barcodeExists(data.getBarcode());
+                if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
+                    view.barcodeAlreadyExists();
+                    return;
+                }
             }
         }
-        if (model.doAction(view.collectItem(model.getSource()))) {
+        if (model.doAction(data.unwrapProxy())) {
             view.back();
         }
     }

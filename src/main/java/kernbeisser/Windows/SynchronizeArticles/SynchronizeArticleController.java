@@ -1,6 +1,6 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
@@ -36,8 +36,8 @@ public class SynchronizeArticleController implements Controller<SynchronizeArtic
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public void acceptKernbeisser(ArticleDifference<?> articleDifference) {

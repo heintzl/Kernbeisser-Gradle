@@ -3,7 +3,7 @@ package kernbeisser.Windows.EditItems;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditItem.EditItemController;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
@@ -19,19 +19,19 @@ public class EditItemsController implements Controller<EditItemsView,EditItemsMo
 
     public EditItemsController() {
         this.model = new EditItemsModel();
-        objectViewController = new ObjectViewController<Article>(
+        objectViewController = new ObjectViewController<>(
                 EditItemController::new, Article::defaultSearch,
-                Column.create("Name", Article::getName, Key.ARTICLE_NAME_READ),
-                Column.create("Packungsgröße",e -> (e.getAmount())+e.getMetricUnits().getShortName()),
-                Column.create("Ladennummer", Article::getKbNumber,Key.ARTICLE_KB_NUMBER_READ),
-                Column.create("Lieferantenummer", Article::getSuppliersItemNumber,Key.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
-                Column.create("Auswiegware", e -> e.isWeighAble() ?  "Ja" : "Nein",Key.ARTICLE_WEIGHABLE_READ),
-                Column.create("Nettopreis",e -> String.format("%.2f€",e.getNetPrice()),Key.ARTICLE_NET_PRICE_READ),
-                Column.create("Einzelpfand",e -> String.format("%.2f€",e.getSingleDeposit()),Key.ARTICLE_SINGLE_DEPOSIT_READ),
-                Column.create("MwSt.",e -> e.getVat().getName(),Key.ARTICLE_VAT_READ),
+                true, Column.create("Name", Article::getName),
+                Column.create("Packungsgröße", e -> (e.getAmount()) + e.getMetricUnits().getShortName()),
+                Column.create("Ladennummer", Article::getKbNumber),
+                Column.create("Lieferantenummer", Article::getSuppliersItemNumber),
+                Column.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein"),
+                Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice())),
+                Column.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit())),
+                Column.create("MwSt.", e -> e.getVat().getName()),
                 Column.create("Gebindegrösse.", Article::getContainerSize),
-                Column.create("Preisliste", Article::getPriceList,Key.ARTICLE_PRICE_LIST_READ),
-                Column.create("Barcode",Article::getBarcode,Key.ARTICLE_BARCODE_READ)
+                Column.create("Preisliste", Article::getPriceList),
+                Column.create("Barcode", Article::getBarcode)
         );
         objectViewController.initView();
         objectViewController.setSearch("");
@@ -58,8 +58,8 @@ public class EditItemsController implements Controller<EditItemsView,EditItemsMo
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public ObjectViewView<Article> getObjectView() {

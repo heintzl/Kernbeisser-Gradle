@@ -4,9 +4,9 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.TransactionType;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -23,9 +23,11 @@ public class TransactionController implements Controller<TransactionView,Transac
     public TransactionController(User user) {
         model = new TransactionModel(user);
         userSearchBoxController = new SearchBoxController<User>(User::defaultSearch,
-                                                                Column.create("Nachname",User::getSurname,Key.USER_SURNAME_READ),
-                                                            Column.create("Vorname",User::getFirstName,Key.USER_FIRST_NAME_READ),
-                                                            Column.create("Username", User::getUsername,Key.USER_USERNAME_READ)
+                                                                Column.create("Nachname", User::getSurname,
+                                                                              PermissionKey.USER_SURNAME_READ),
+                                                                Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
+                                                                Column.create("Username", User::getUsername, PermissionKey.USER_USERNAME_READ),
+                                                                Column.create("Guthaben", User::getRoundedValue, PermissionKey.USER_GROUP_VALUE_READ)
                                                             );
         userSearchBoxController.initView();
         view = new TransactionView(this);
@@ -44,15 +46,15 @@ public class TransactionController implements Controller<TransactionView,Transac
 
     @Override
     public void fillUI() {
-        view.setFromEnabled(model.getOwner().hasPermission(Key.ACTION_TRANSACTION_FROM_OTHER));
-        view.setFromKBEnable(model.getOwner().hasPermission(Key.ACTION_TRANSACTION_FROM_KB));
+        view.setFromEnabled(model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_OTHER));
+        view.setFromKBEnable(model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_KB));
         view.setFrom(LogInModel.getLoggedIn().getUsername());
         refreshTable();
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     void transfer() {
@@ -77,7 +79,7 @@ public class TransactionController implements Controller<TransactionView,Transac
 
     void addTransaction() {
         Transaction transaction = new Transaction();
-        if(view.getValue()==0){
+        if(view.getValue()<=0){
             view.invalidValue();
             return;
         }

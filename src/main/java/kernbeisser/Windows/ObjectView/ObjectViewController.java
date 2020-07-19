@@ -3,7 +3,7 @@ package kernbeisser.Windows.ObjectView;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
@@ -17,14 +17,14 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
 
     private boolean openWindow = false;
 
-    public ObjectViewController(MaskLoader<T> loader, Searchable<T> items, Column<T>... columns) {
+    public ObjectViewController(MaskLoader<T> loader, Searchable<T> items,boolean copyAdd, Column<T>... columns) {
         searchBoxController = new SearchBoxController<T>(items, columns);
         searchBoxController.initView();
         searchBoxController.addSelectionListener(e -> select());
         searchBoxController.addDoubleClickListener(e -> edit());
         searchBoxController.addLostSelectionListener(this::putItems);
 
-        model = new ObjectViewModel<>(loader, items);
+        model = new ObjectViewModel<>(loader, items,copyAdd);
         view = new ObjectViewView<>(this);
     }
 
@@ -89,8 +89,8 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>,Obj
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public SearchBoxView<T> getSearchBoxView() {

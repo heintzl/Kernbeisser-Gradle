@@ -10,10 +10,8 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import lombok.Getter;
@@ -266,10 +264,17 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         containerUnit.setText("");
     }
 
-    void noArticleFound() {
+    void messageNoArticleFound() {
         java.awt.Toolkit.getDefaultToolkit().beep();
         JOptionPane.showMessageDialog(mainPanel,
                                       "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
+    }
+
+    void messageInvalidDiscount() {
+        java.awt.Toolkit.getDefaultToolkit().beep();
+        JOptionPane.showMessageDialog(mainPanel,
+                                      "Rabatt muss zwischen 1 und 100 % liegen");
+        variablePercentage.setText("");
     }
 
     public void messageBarcodeNotFound(long barcode) {
@@ -456,6 +461,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         price50Percent.addItemListener(e -> {variablePercentage.setEnabled(false);disablePreordered();});
         pricePreordered.addItemListener(e -> {variablePercentage.setEnabled(false);enablePreordered();});
         priceVariablePercentage.addItemListener(e -> {variablePercentage.setEnabled(true); variablePercentage.requestFocusInWindow();;disablePreordered();});
+        priceStandard.addItemListener(e -> variablePercentage.setEnabled(false));
+        price50Percent.addItemListener(e -> variablePercentage.setEnabled(false));
+        priceVariablePercentage.addItemListener(e -> {variablePercentage.setEnabled(true); variablePercentage.requestFocusInWindow();});
+        variablePercentage.addActionListener(e -> addToCart());
         kbNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -467,7 +476,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                controller.searchBySupplierItemsNumber();}
+                controller.searchBySupplierItemsNumber();
+            }
         });
         netPrice.addActionListener(e -> recalculatePrice());
         Supplier.getAll(null).forEach(s -> supplier.addItem(s));

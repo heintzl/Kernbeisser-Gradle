@@ -2,7 +2,7 @@ package kernbeisser.Windows.Selector;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.Window;
@@ -41,8 +41,8 @@ public class SelectorController <T> implements Controller<SelectorView<T>,Select
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
 

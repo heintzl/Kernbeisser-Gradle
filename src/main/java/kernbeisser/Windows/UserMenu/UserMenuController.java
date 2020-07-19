@@ -1,6 +1,6 @@
 package kernbeisser.Windows.UserMenu;
 
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CashierMenu.CashierMenuController;
@@ -10,7 +10,6 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
@@ -64,8 +63,8 @@ public class UserMenuController implements Controller<UserMenuView,UserMenuModel
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     public void beginSelfShopping() {

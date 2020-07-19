@@ -26,7 +26,7 @@ public class ObjectForm <P>{
 
     public void setSource(P data){
         this.original = data;
-        this.accessModel = Tools.clone(data);
+        this.accessModel = Tools.clone(original);
         refreshAccess();
         setData(data);
     }

@@ -25,9 +25,6 @@ public class EditUserModel implements Model<EditUserController> {
     public EditUserModel(User user, Mode mode) {
         this.user = user;
         this.mode = mode;
-        if (mode == Mode.ADD) {
-            user.setPassword("");
-        }
     }
     
     boolean doAction(User user) {

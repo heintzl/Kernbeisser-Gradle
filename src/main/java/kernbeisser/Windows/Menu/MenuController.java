@@ -1,13 +1,11 @@
 package kernbeisser.Windows.Menu;
 
-import kernbeisser.DBEntities.SettingValue;
-import kernbeisser.Enums.Key;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
-import kernbeisser.Windows.UserMenu.UserMenuController;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -40,8 +38,8 @@ public class MenuController implements Controller<MenuView,MenuModel> {
     }
 
     @Override
-    public Key[] getRequiredKeys() {
-        return new Key[0];
+    public PermissionKey[] getRequiredKeys() {
+        return new PermissionKey[0];
     }
 
     @Override

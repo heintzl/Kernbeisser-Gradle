@@ -47,6 +47,7 @@ public interface Bounded <T,V>{
 
     default boolean canRead(T v){
         try {
+
             getGetter().get(v);
             return true;
         } catch (AccessDeniedException e) {
