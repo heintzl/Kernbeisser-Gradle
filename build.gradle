@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'idea'
     id "io.freefair.lombok" version "5.1.0"
+    id 'com.diffplug.gradle.spotless' version '4.0.1'
+    id 'com.github.jakemarsden.git-hooks' version '0.0.2'
 }
 
 group 'Kernbeisser'
@@ -14,6 +16,10 @@ repositories {
     maven {
         url "http://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/"
     }
+}
+
+gitHooks {
+    hooks = ['pre-commit': 'spotlessApply']
 }
 
 dependencies {
@@ -39,4 +45,10 @@ task fatJar(type: Jar) {
     archivesBaseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+    }
 }

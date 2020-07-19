@@ -1,121 +1,109 @@
 package kernbeisser.Windows;
 
+import java.awt.*;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInModel;
 
-import java.awt.*;
-
 public interface Window {
-    Image STANDARD_IMAGE = Images.getImage("Icon.png");
+  Image STANDARD_IMAGE = Images.getImage("Icon.png");
 
-    void addCloseEventListener(WindowCloseEvent runnable);
+  void addCloseEventListener(WindowCloseEvent runnable);
 
-    void simulateCloseEvent();
+  void simulateCloseEvent();
 
-    void setIcon(Image image);
+  void setIcon(Image image);
 
-    void open();
+  void open();
 
-    void close();
+  void close();
 
-    void kill();
+  void kill();
 
-    void setTitle(String title);
+  void setTitle(String title);
 
-    void setSize(Dimension dimension);
+  void setSize(Dimension dimension);
 
-    boolean noAccess();
+  boolean noAccess();
 
-    Controller<?,?> getController();
+  Controller<?, ?> getController();
 
-    default boolean commitClose() {
-        return getController() == null || getController().commitAllClose();
-    }
+  default boolean commitClose() {
+    return getController() == null || getController().commitAllClose();
+  }
 
-    default void back() {
-        simulateCloseEvent();
-    }
+  default void back() {
+    simulateCloseEvent();
+  }
 
-    default <W extends Window> W openWindow(W window, boolean closeWindow) {
-        return openWindow(this, window, closeWindow);
-    }
+  default <W extends Window> W openWindow(W window, boolean closeWindow) {
+    return openWindow(this, window, closeWindow);
+  }
 
-    default void closeWindow() {
-        close();
-        kill();
-    }
+  default void closeWindow() {
+    close();
+    kill();
+  }
 
-    static <W extends Window> W openWindow(Window parent, W window, boolean closeWindow) {
-        if ((!closeWindow || parent.commitClose()) && (LogInModel.getLoggedIn() == null || LogInModel.getLoggedIn()
-                                                                                                     .hasPermission(
-                                                                                                             window.getController()
-                                                                                                                   .getRequiredKeys()) || parent
-                                                               .noAccess())) {
-            window.setIcon(STANDARD_IMAGE);
-            window.open();
-            window.addCloseEventListener(e -> {
-                if (window.commitClose()) {
-                    window.closeWindow();
-                    parent.open();
-                }
-            });
-            if (closeWindow) {
-                parent.close();
+  static <W extends Window> W openWindow(Window parent, W window, boolean closeWindow) {
+    if ((!closeWindow || parent.commitClose())
+        && (LogInModel.getLoggedIn() == null
+            || LogInModel.getLoggedIn().hasPermission(window.getController().getRequiredKeys())
+            || parent.noAccess())) {
+      window.setIcon(STANDARD_IMAGE);
+      window.open();
+      window.addCloseEventListener(
+          e -> {
+            if (window.commitClose()) {
+              window.closeWindow();
+              parent.open();
             }
-        }
-        return window;
+          });
+      if (closeWindow) {
+        parent.close();
+      }
     }
+    return window;
+  }
 
-
-    Window NEW_VIEW_CONTAINER = new Window() {
+  Window NEW_VIEW_CONTAINER =
+      new Window() {
         @Override
-        public void addCloseEventListener(WindowCloseEvent runnable) {
-
-        }
-
-        @Override
-        public void simulateCloseEvent() {
-        }
+        public void addCloseEventListener(WindowCloseEvent runnable) {}
 
         @Override
-        public void setIcon(Image image) {
-        }
+        public void simulateCloseEvent() {}
 
         @Override
-        public void open() {
-        }
+        public void setIcon(Image image) {}
 
         @Override
-        public void close() {
-        }
+        public void open() {}
 
         @Override
-        public void kill() {
-        }
+        public void close() {}
 
         @Override
-        public void setTitle(String title) {
+        public void kill() {}
 
-        }
+        @Override
+        public void setTitle(String title) {}
 
         @Override
         public boolean noAccess() {
-            return false;
+          return false;
         }
 
         @Override
-        public Controller<?,?> getController() {
-            return null;
+        public Controller<?, ?> getController() {
+          return null;
         }
 
         @Override
-        public void setContent(Controller<?,?> content) {
-        }
+        public void setContent(Controller<?, ?> content) {}
 
         @Override
-        public void setSize(Dimension dimension) {
-        }
-    };
+        public void setSize(Dimension dimension) {}
+      };
 
-    void setContent(Controller<?,?> content);
+  void setContent(Controller<?, ?> content);
 }

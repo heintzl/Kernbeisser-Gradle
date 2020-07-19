@@ -1,66 +1,68 @@
 package kernbeisser.Windows.Trasaction;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.persistence.NoResultException;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.Model;
 
-import javax.persistence.NoResultException;
-import java.util.ArrayList;
-import java.util.Collection;
-
 public class TransactionModel implements Model<TransactionController> {
 
+  private final User owner;
 
-    private final User owner;
+  TransactionModel(User owner) {
 
-    TransactionModel(User owner) {
+    this.owner = owner;
+  }
 
-        this.owner = owner;
+  private final Collection<Transaction> transactions = new ArrayList<>();
+
+  void addTransaction(Transaction t) {
+    transactions.add(t);
+  }
+
+  User findUser(String username) throws NoResultException {
+    if (username.matches("Benutzer[\\[]\\d+[]]")) {
+      return User.getById(Integer.parseInt(username.replace("Benutzer[", "").replace("]", "")));
     }
+    return User.getByUsername(username);
+  }
 
-    private final Collection<Transaction> transactions = new ArrayList<>();
+  Collection<Transaction> getTransactions() {
+    return transactions;
+  }
 
-    void addTransaction(Transaction t) {
-        transactions.add(t);
+  void transfer() throws AccessDeniedException {
+    final boolean[] correct = {true};
+    transactions.forEach(e -> correct[0] = correct[0] & Transaction.isValidTransaction(e));
+    if (!correct[0]) {
+      throw new AccessDeniedException("Not all transactions have valid values");
     }
-
-    User findUser(String username) throws NoResultException {
-        if (username.matches("Benutzer[\\[]\\d+[]]")) {
-            return User.getById(Integer.parseInt(username.replace("Benutzer[", "").replace("]", "")));
-        }
-        return User.getByUsername(username);
+    for (Transaction transaction : transactions) {
+      Transaction.doTransaction(
+          transaction.getFrom(),
+          transaction.getTo(),
+          transaction.getValue(),
+          transaction.getTransactionType(),
+          transaction.getInfo());
     }
+  }
 
-    Collection<Transaction> getTransactions() {
-        return transactions;
-    }
+  double getSum() {
+    return transactions.stream().mapToDouble(Transaction::getValue).sum();
+  }
 
-    void transfer() throws AccessDeniedException {
-        final boolean[] correct = {true};
-        transactions.forEach(e -> correct[0] = correct[0] & Transaction.isValidTransaction(e));
-        if (!correct[0]) {
-            throw new AccessDeniedException("Not all transactions have valid values");
-        }
-        for (Transaction transaction : transactions) {
-            Transaction.doTransaction(transaction.getFrom(), transaction.getTo(), transaction.getValue(),
-                                      transaction.getTransactionType(), transaction.getInfo());
-        }
-    }
+  int getCount() {
+    return transactions.size();
+  }
 
-    double getSum() {
-        return transactions.stream().mapToDouble(Transaction::getValue).sum();
-    }
+  public void remove(Transaction selectedTransaction) {
+    transactions.remove(selectedTransaction);
+  }
 
-    int getCount() {
-        return transactions.size();
-    }
-
-    public void remove(Transaction selectedTransaction) {
-        transactions.remove(selectedTransaction);
-    }
-
-    public User getOwner() {
-        return owner;
-    }
+  public User getOwner() {
+    return owner;
+  }
 }
