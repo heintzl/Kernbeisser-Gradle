@@ -2,7 +2,8 @@ package kernbeisser.CustomComponents.Verifier;
 
 public class UsernameVerifier extends DBResultVerifier {
 
-    private UsernameVerifier(){}
+    private UsernameVerifier() {
+    }
 
     @Override
     public String getQuery() {
@@ -19,8 +20,8 @@ public class UsernameVerifier extends DBResultVerifier {
         return true;
     }
 
-    public static UsernameVerifier checkUsernameUnused(){
-        return new UsernameVerifier(){
+    public static UsernameVerifier checkUsernameUnused() {
+        return new UsernameVerifier() {
             @Override
             boolean allowAlreadyExists() {
                 return false;
@@ -33,8 +34,8 @@ public class UsernameVerifier extends DBResultVerifier {
         };
     }
 
-    public static UsernameVerifier checkUsernameExists(){
-        return new UsernameVerifier(){
+    public static UsernameVerifier checkUsernameExists() {
+        return new UsernameVerifier() {
             @Override
             boolean allowAlreadyExists() {
                 return true;
@@ -47,8 +48,8 @@ public class UsernameVerifier extends DBResultVerifier {
         };
     }
 
-    public static UsernameVerifier checkUsernameUnused(String allow){
-        return new UsernameVerifier(){
+    public static UsernameVerifier checkUsernameUnused(String allow) {
+        return new UsernameVerifier() {
             @Override
             boolean allowAlreadyExists() {
                 return false;
@@ -61,7 +62,7 @@ public class UsernameVerifier extends DBResultVerifier {
 
             @Override
             public String getQuery() {
-                return "select u from User u where u.username != '"+allow+"' and u.username like :s";
+                return "select u from User u where u.username != '" + allow + "' and u.username like :s";
             }
         };
     }

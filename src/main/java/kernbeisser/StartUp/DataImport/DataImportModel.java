@@ -1,7 +1,7 @@
 package kernbeisser.StartUp.DataImport;
 
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.Windows.Model;
 
 import javax.persistence.EntityManager;
@@ -10,7 +10,9 @@ import java.util.Collection;
 
 public class DataImportModel implements Model<DataImportController> {
     <T> void batchSaveAll(Collection<T> v) {
-        if (v.size() == 0) return;
+        if (v.size() == 0) {
+            return;
+        }
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -29,7 +31,9 @@ public class DataImportModel implements Model<DataImportController> {
     }
 
     <T> void saveAll(Collection<T> v) {
-        if (v.size() == 0) return;
+        if (v.size() == 0) {
+            return;
+        }
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -42,7 +46,9 @@ public class DataImportModel implements Model<DataImportController> {
     }
 
     void saveAllItems(Collection<Article> articles) {
-        if (articles.size() == 0) return;
+        if (articles.size() == 0) {
+            return;
+        }
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();

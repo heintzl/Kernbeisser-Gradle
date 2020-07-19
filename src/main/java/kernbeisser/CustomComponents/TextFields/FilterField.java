@@ -11,6 +11,7 @@ import javax.swing.text.DocumentFilter;
 
 public class FilterField<T> extends PermissionField {
     private final Transformable<T> transformer;
+
     FilterField(@NotNull Transformable<T> transformer, boolean allowWrongInput) {
         this.transformer = transformer;
         ((AbstractDocument) getDocument()).setDocumentFilter(new DocumentFilter() {
@@ -19,8 +20,11 @@ public class FilterField<T> extends PermissionField {
                     throws BadLocationException {
                 String before = getText();
                 fb.replace(offset, length, text, attrs);
-                if(!allowWrongInput)
-                if(!isValidInput())setText(before);
+                if (!allowWrongInput) {
+                    if (!isValidInput()) {
+                        setText(before);
+                    }
+                }
 
             }
 
@@ -28,16 +32,20 @@ public class FilterField<T> extends PermissionField {
             public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
                 String before = getText();
                 fb.remove(offset, length);
-                if(!allowWrongInput)
-                if(!isValidInput())setText(before);
+                if (!allowWrongInput) {
+                    if (!isValidInput()) {
+                        setText(before);
+                    }
+                }
             }
         });
     }
-    FilterField(Transformable<T> transformer){
-        this(transformer,false);
+
+    FilterField(Transformable<T> transformer) {
+        this(transformer, false);
     }
 
-    private boolean isValidInput(){
+    private boolean isValidInput() {
         try {
             transformer.toObject(getText());
             return true;
@@ -56,7 +64,7 @@ public class FilterField<T> extends PermissionField {
         }
     }
 
-    public T getUncheckedValue() throws IncorrectInput{
+    public T getUncheckedValue() throws IncorrectInput {
         return transformer.toObject(getText());
     }
 }

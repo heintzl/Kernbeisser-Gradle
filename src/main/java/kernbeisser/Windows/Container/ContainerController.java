@@ -97,13 +97,14 @@ public class ContainerController implements Controller<ContainerView,ContainerMo
 
     private void pasteData(Container c) {
         view.setItemSize(c.getItem().getContainerSize() + " x " + c.getItem().getAmount() + c.getItem()
-                                                                                             .getMetricUnits().getShortName());
+                                                                                             .getMetricUnits()
+                                                                                             .getShortName());
         view.setKbNumber(String.valueOf(c.getKBNumber()));
         view.setKkNumber(String.valueOf(c.getItem().getSuppliersItemNumber()));
-        view.setSellingPrice(0  + "€");
+        view.setSellingPrice(0 + "€");
         view.setItemName(c.getItem().getName());
         view.setAmount(String.valueOf(c.getAmount()));
-        view.setNetPrice(c.getNetPrice()  + "€");
+        view.setNetPrice(c.getNetPrice() + "€");
     }
 
     @Override

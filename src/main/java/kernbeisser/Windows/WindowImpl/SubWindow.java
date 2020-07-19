@@ -1,8 +1,6 @@
 package kernbeisser.Windows.WindowImpl;
 
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Pay.PayModel;
-import kernbeisser.Windows.Pay.PayView;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowCloseEvent;
 
@@ -58,7 +56,7 @@ public class SubWindow extends JDialog implements Window {
 
     @Override
     public boolean noAccess() {
-        JOptionPane.showMessageDialog(this,"Sie haben keine Berechtigung dieses Fenster zu öffen!");
+        JOptionPane.showMessageDialog(this, "Sie haben keine Berechtigung dieses Fenster zu öffen!");
         return false;
     }
 

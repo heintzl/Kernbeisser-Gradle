@@ -26,7 +26,7 @@ public class ManagePriceListsController implements Controller<ManagePriceListsVi
         view.setSuperPriceListName(view.getSelectedPriceList().getName());
     }
 
-    void saveAction(){
+    void saveAction() {
         String priceListName = view.getPriceListName();
         if (priceListName.equals("")) {
             JOptionPane.showMessageDialog(view.getTopComponent(), "Bitte w\u00e4hlen sie einen korrekten Namen");
@@ -62,7 +62,8 @@ public class ManagePriceListsController implements Controller<ManagePriceListsVi
                 model.deletePriceList(toDelete);
                 refresh();
             } catch (PersistenceException e) {
-                JOptionPane.showMessageDialog(view.getTopComponent(), "Preisliste konnte nicht gelöscht werden.\n Entweder hat diese Preisliste noch Unterpreislisten oder Artikel, die auf ihr stehen.");
+                JOptionPane.showMessageDialog(view.getTopComponent(),
+                                              "Preisliste konnte nicht gelöscht werden.\n Entweder hat diese Preisliste noch Unterpreislisten oder Artikel, die auf ihr stehen.");
             }
         }
     }
@@ -75,11 +76,12 @@ public class ManagePriceListsController implements Controller<ManagePriceListsVi
     }
 
     //Only to override
-    public void finish(){}
+    public void finish() {
+    }
 
     public void back() {
         view.back();
-    };
+    }
 
     @Override
     public @NotNull ManagePriceListsView getView() {

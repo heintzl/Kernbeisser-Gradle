@@ -17,13 +17,13 @@ public class SearchBoxModel<T> implements Model<SearchBoxController<T>> {
     private final ArrayList<Consumer<T>> doubleClickListener = new ArrayList<>();
     private final ArrayList<Runnable> lostSelectionListener = new ArrayList<>();
 
-    SearchBoxModel(Searchable<T> searchable){
+    SearchBoxModel(Searchable<T> searchable) {
         this.searchable = searchable;
     }
 
 
-    Collection<T> getValues(String s){
-        return searchable.search(s,Setting.DEFAULT_MAX_SEARCH.getIntValue());
+    Collection<T> getValues(String s) {
+        return searchable.search(s, Setting.DEFAULT_MAX_SEARCH.getIntValue());
     }
 
 

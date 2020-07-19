@@ -35,7 +35,7 @@ public class ContainerView implements View<ContainerController> {
         this.controller = controller;
     }
 
-    void setInsertSectionEnabled(boolean b){
+    void setInsertSectionEnabled(boolean b) {
         insertSection.setVisible(b);
         insertSectionLabel.setVisible(b);
     }
@@ -67,8 +67,10 @@ public class ContainerView implements View<ContainerController> {
     private void createUIComponents() {
         lastContainers = new ObjectTable<>(
                 Column.create("Anzahl", Container::getAmount, PermissionKey.CONTAINER_AMOUNT_READ),
-                Column.create("Ladennummer", Container::getKBNumber, PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_KB_NUMBER_READ),
-                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Ladennummer", Container::getKBNumber, PermissionKey.CONTAINER_ITEM_READ,
+                              PermissionKey.ARTICLE_KB_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(),
+                              PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
                 Column.create("Produktname", e -> e.getItem().getName(), PermissionKey.CONTAINER_ITEM_READ,
                               PermissionKey.ARTICLE_BASE_NAME_READ),
                 Column.create("Netto-Preis", e -> e.getNetPrice() + "€", PermissionKey.CONTAINER_ITEM_READ,
@@ -77,8 +79,10 @@ public class ContainerView implements View<ContainerController> {
         );
         unpaidContainers = new ObjectTable<>(
                 Column.create("Anzahl", Container::getAmount, PermissionKey.CONTAINER_AMOUNT_READ),
-                Column.create("Ladennummer", Container::getKBNumber, PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_KB_NUMBER_READ),
-                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(), PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                Column.create("Ladennummer", Container::getKBNumber, PermissionKey.CONTAINER_ITEM_READ,
+                              PermissionKey.ARTICLE_KB_NUMBER_READ),
+                Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber(),
+                              PermissionKey.CONTAINER_ITEM_READ, PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
                 Column.create("Produktname", e -> e.getItem().getName(), PermissionKey.CONTAINER_ITEM_READ,
                               PermissionKey.ARTICLE_BASE_NAME_READ),
                 Column.create("Netto-Preis", e -> e.getNetPrice() + "€", PermissionKey.CONTAINER_ITEM_READ,

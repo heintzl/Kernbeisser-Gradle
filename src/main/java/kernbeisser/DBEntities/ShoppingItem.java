@@ -260,7 +260,8 @@ public class ShoppingItem implements Serializable {
             em.close();
         }
     }
-    public ShoppingItem newInstance(){
+
+    public ShoppingItem newInstance() {
         return new ShoppingItem(this);
     }
 
@@ -318,6 +319,6 @@ public class ShoppingItem implements Serializable {
 
     @Override
     public String toString() {
-        return Tools.decide(this::getName,"Einkaufsartikel["+siid+"]");
+        return Tools.decide(this::getName, "Einkaufsartikel[" + siid + "]");
     }
 }

@@ -10,7 +10,7 @@ public class PermissionComboBox<T> extends JComboBox<T> implements RequiresPermi
         setRenderer(b
                     ? new DefaultListCellRenderer()
                     : (list, value, index, isSelected, cellHasFocus) -> new JLabel("**********")
-                    );
+        );
     }
 
     @Override

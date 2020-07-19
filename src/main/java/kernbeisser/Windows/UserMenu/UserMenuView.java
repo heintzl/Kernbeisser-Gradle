@@ -8,8 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class UserMenuView implements View<UserMenuController> {
     private JButton beginSelfShopping;
@@ -56,7 +54,7 @@ public class UserMenuView implements View<UserMenuController> {
 
     @Override
     public @NotNull Dimension getSize() {
-        return new Dimension(1200,900);
+        return new Dimension(1200, 900);
     }
 
     @Override

@@ -32,34 +32,34 @@ public class SurchargeTable implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_STID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_STID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_STID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_STID_WRITE)})
     private int stid;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_WRITE)})
     private double surcharge;
 
     @Column(name = "\"from\"")
-    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_FROM_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_FROM_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_FROM_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_FROM_WRITE)})
     private int from;
 
-    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_TO_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_TO_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_TO_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_TO_WRITE)})
     @Column(name = "\"to\"")
     private int to;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_NAME_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_NAME_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_NAME_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_NAME_WRITE)})
     private String name;
 
     @JoinColumn
     @ManyToOne
-    @Getter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
     private Supplier supplier;
 
     public SurchargeTable() {

@@ -44,9 +44,10 @@ public class MenuController implements Controller<MenuView,MenuModel> {
 
     @Override
     public boolean commitClose() {
-        if (JOptionPane.showConfirmDialog(getView().getTopComponent(), "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen") == 0) {
+        if (JOptionPane.showConfirmDialog(getView().getTopComponent(),
+                                          "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen") == 0) {
             TabbedPaneModel.DEFAULT_TABBED_PANE.unsafeClose(asTab("Menu"));
-            if(TabbedPaneModel.DEFAULT_TABBED_PANE.clear()){
+            if (TabbedPaneModel.DEFAULT_TABBED_PANE.clear()) {
                 try {
                     Main.setSettingLAF();
                 } catch (UnsupportedLookAndFeelException e) {
@@ -54,7 +55,7 @@ public class MenuController implements Controller<MenuView,MenuModel> {
                 }
                 SwingUtilities.updateComponentTreeUI(TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
                 new SimpleLogInController().openTab("Log In");
-            }else {
+            } else {
                 new MenuController().openTab("Menu");
             }
         }

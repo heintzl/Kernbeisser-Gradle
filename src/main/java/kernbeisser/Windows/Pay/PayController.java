@@ -8,7 +8,6 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.PersistenceException;
@@ -24,7 +23,8 @@ public class PayController implements Controller<PayView,PayModel> {
     public PayController(SaleSession saleSession, List<ShoppingItem> shoppingCart,
                          Runnable transferCompleted, Dimension windowSize) {
         model = new PayModel(saleSession, shoppingCart, transferCompleted);
-        view = new PayView(new ShoppingCartController(saleSession.getCustomer().getUserGroup().getValue(),saleSession.getCustomer().getSolidaritySurcharge(), false));
+        view = new PayView(new ShoppingCartController(saleSession.getCustomer().getUserGroup().getValue(),
+                                                      saleSession.getCustomer().getSolidaritySurcharge(), false));
         this.viewSize = windowSize;
     }
 
@@ -36,7 +36,9 @@ public class PayController implements Controller<PayView,PayModel> {
             try {
                 purchase = model.pay(model.getSaleSession(), model.getShoppingCart(),
                                      model.shoppingCartSum());
-                if (printReceipt) {model.print(purchase);}
+                if (printReceipt) {
+                    model.print(purchase);
+                }
             } catch (AccessDeniedException e) {
                 view.notEnoughValue();
             }

@@ -4,26 +4,26 @@ import javax.swing.*;
 import java.awt.*;
 
 public enum Colors {
-    LABEL_FOREGROUND(){
+    LABEL_FOREGROUND() {
         @Override
         public Color getColor() {
             return UIManager.getColor("Label.foreground");
         }
     },
-    LABEL_BACKGROUND(){
+    LABEL_BACKGROUND() {
         @Override
         public Color getColor() {
             return UIManager.getColor("Label.background");
         }
     },
 
-    COMBO_BOX_SELECTION_BACKGROUND(){
+    COMBO_BOX_SELECTION_BACKGROUND() {
         @Override
         public Color getColor() {
             return UIManager.getColor("ComboBox.selectionBackground");
         }
     },
-    COMBO_BOX_SELECTION_FOREGROUND(){
+    COMBO_BOX_SELECTION_FOREGROUND() {
         @Override
         public Color getColor() {
             return UIManager.getColor("ComboBox.selectionForeground");

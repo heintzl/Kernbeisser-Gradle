@@ -18,11 +18,13 @@ public class ChangePasswordModel implements Model<ChangePasswordController> {
         this.verifyWithOldPassword = verifyWithOldPassword;
     }
 
-    public boolean checkPassword(String password){
+    public boolean checkPassword(String password) {
         EntityManager em = DBConnection.getEntityManager();
-        String currentPassword = (String) em.createQuery("select u.password from User u where u.id = :uid").setParameter("uid", user.getId()).getSingleResult();
+        String currentPassword = (String) em.createQuery("select u.password from User u where u.id = :uid")
+                                            .setParameter("uid", user.getId())
+                                            .getSingleResult();
         em.close();
-        BCrypt.Result r = BCrypt.verifyer().verify(password.toCharArray(),(currentPassword.toCharArray()));
+        BCrypt.Result r = BCrypt.verifyer().verify(password.toCharArray(), (currentPassword.toCharArray()));
         return r.verified;
     }
 
@@ -31,8 +33,8 @@ public class ChangePasswordModel implements Model<ChangePasswordController> {
         EntityTransaction et = em.getTransaction();
         et.begin();
         em.createQuery("update User user set user.password = :password where user.id = :uid")
-          .setParameter("password",newPasswordHash)
-          .setParameter("uid",user.getId())
+          .setParameter("password", newPasswordHash)
+          .setParameter("uid", user.getId())
           .executeUpdate();
         em.flush();
         et.commit();

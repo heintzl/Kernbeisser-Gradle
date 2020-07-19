@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class ObjectTree<T> extends JTree {
-    private Collection<T> startValues;
+    private final Collection<T> startValues;
     private ChildFactory<T> childFactory;
-    private String name;
-    private ArrayList<NodeSelectionListener<T>> selectionListeners = new ArrayList<>();
+    private final String name;
+    private final ArrayList<NodeSelectionListener<T>> selectionListeners = new ArrayList<>();
 
     public ObjectTree(ChildFactory<T> factory, String name, Collection<T> startValues) {
         this.startValues = startValues;

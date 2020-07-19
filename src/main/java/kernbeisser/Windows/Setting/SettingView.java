@@ -25,31 +25,33 @@ public class SettingView implements View<SettingController> {
     @Override
     public void initialize(SettingController controller) {
         resetSettings.addActionListener(e -> controller.resetAllSettings());
-        resetSettings.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH,20,resetSettings.getForeground()));
+        resetSettings.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, resetSettings.getForeground()));
         resetSettings.setHorizontalTextPosition(SwingConstants.LEFT);
-        settingValues.setColumns(Column.create("Setting",SettingValue::getSetting),Column.create("Wert",SettingValue::getValue),Column.create("Standart",e -> e.getSetting().getDefaultValue()));
+        settingValues.setColumns(Column.create("Setting", SettingValue::getSetting),
+                                 Column.create("Wert", SettingValue::getValue),
+                                 Column.create("Standart", e -> e.getSetting().getDefaultValue()));
         settingValues.addSelectionListener(controller::select);
         applyChange.addActionListener(e -> controller.apply());
         cancel.addActionListener(e -> controller.cancel());
     }
 
-    void setValues(Collection<SettingValue> values){
+    void setValues(Collection<SettingValue> values) {
         settingValues.setObjects(values);
     }
 
-    void setValue(String s){
+    void setValue(String s) {
         value.setText(s);
     }
 
-    String getValue(){
+    String getValue() {
         return value.getText();
     }
 
-    void setSelectedSetting(Setting selectedSetting){
+    void setSelectedSetting(Setting selectedSetting) {
         setting.setText(selectedSetting.toString());
     }
 
-    SettingValue getSelectedValue(){
+    SettingValue getSelectedValue() {
         return settingValues.getSelectedObject();
     }
 
@@ -66,12 +68,14 @@ public class SettingView implements View<SettingController> {
         applyChange.setEnabled(b);
     }
 
-    boolean commitType(String type){
-        return JOptionPane.showConfirmDialog(getTopComponent(),"Der eingegebene Wert ist anders als erwartet\nErwartet: "+type+"\nSoll der Wert trotzdem verändert werden?(dies kann Fehler hervorrufen)")==0;
+    boolean commitType(String type) {
+        return JOptionPane.showConfirmDialog(getTopComponent(),
+                                             "Der eingegebene Wert ist anders als erwartet\nErwartet: " + type + "\nSoll der Wert trotzdem verändert werden?(dies kann Fehler hervorrufen)") == 0;
     }
 
     public boolean commitResetSettings() {
-        return JOptionPane.showConfirmDialog(getTopComponent(),"Sollen wirklich alle Einstellungen außer "+Setting.DB_INITIALIZED.name()+" zurückgesetzt werden?") == 0;
+        return JOptionPane.showConfirmDialog(getTopComponent(),
+                                             "Sollen wirklich alle Einstellungen außer " + Setting.DB_INITIALIZED.name() + " zurückgesetzt werden?") == 0;
     }
 
     @Override

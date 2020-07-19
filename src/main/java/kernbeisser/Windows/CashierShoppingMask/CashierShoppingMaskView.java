@@ -5,11 +5,9 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
-import javax.jws.soap.SOAPBinding;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
@@ -22,23 +20,23 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
 
     private final CashierShoppingMaskController controller;
 
-    CashierShoppingMaskView(CashierShoppingMaskController controller){
+    CashierShoppingMaskView(CashierShoppingMaskController controller) {
         this.controller = controller;
     }
 
     private void createUIComponents() {
-        searchBoxView =  controller.getSearchBoxView();
+        searchBoxView = controller.getSearchBoxView();
     }
 
-    void setSearchBoxView(SearchBoxView<User> userSearchBoxView){
+    void setSearchBoxView(SearchBoxView<User> userSearchBoxView) {
         this.searchBoxView = userSearchBoxView;
     }
 
     public void setStartFor(String username) {
-        openShoppingMask.setText("Einkauf für "+username+" beginnen");
+        openShoppingMask.setText("Einkauf für " + username + " beginnen");
     }
 
-    public User getSecondSeller(){
+    public User getSecondSeller() {
         return (User) secondSellerUsername.getSelectedItem();
     }
 
@@ -53,7 +51,7 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
 
     @Override
     public @NotNull Dimension getSize() {
-        return new Dimension(1440,950);
+        return new Dimension(1440, 950);
     }
 
     @Override
@@ -66,7 +64,7 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
         return FontAwesome.SHOPPING_CART;
     }
 
-    public void setAllSecondarySellers(Collection<User> users){
+    public void setAllSecondarySellers(Collection<User> users) {
         secondSellerUsername.removeAllItems();
         User user = new User();
         user.setUsername("Keiner");

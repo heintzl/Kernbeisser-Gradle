@@ -4,8 +4,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 
 public class FileReadException extends Exception {
-    private File file;
-    private Charset charset;
+    private final File file;
+    private final Charset charset;
 
     public FileReadException(File file, Charset charset) {
         this.file = file;

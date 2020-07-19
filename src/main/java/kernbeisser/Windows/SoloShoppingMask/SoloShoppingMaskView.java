@@ -2,7 +2,6 @@ package kernbeisser.Windows.SoloShoppingMask;
 
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
-import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,7 @@ public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
 
     private ShoppingMaskUIView shoppingMaskUIView;
 
-    private SoloShoppingMaskController controller;
+    private final SoloShoppingMaskController controller;
 
     public SoloShoppingMaskView(SoloShoppingMaskController controller) {
         this.controller = controller;
@@ -37,7 +36,7 @@ public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
 
     @Override
     public @NotNull Dimension getSize() {
-        return new Dimension(1500,1000);
+        return new Dimension(1500, 1000);
     }
 
     @Override

@@ -56,7 +56,7 @@ public class JFrameWindow extends JFrame implements Window {
 
     @Override
     public boolean noAccess() {
-        JOptionPane.showMessageDialog(this,"Sie haben keine Berechtigung dieses Fenster zu öffen!");
+        JOptionPane.showMessageDialog(this, "Sie haben keine Berechtigung dieses Fenster zu öffen!");
         return false;
     }
 

@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class InventoryMenuController implements Controller<InventoryMenuView,InventoryMenuModel> {
 
-    private InventoryMenuModel model;
-    private InventoryMenuView view;
+    private final InventoryMenuModel model;
+    private final InventoryMenuView view;
 
     InventoryMenuController(InventoryMenuView view) {
         this.view = view;

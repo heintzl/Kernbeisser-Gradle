@@ -4,9 +4,9 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditUser.EditUserController;
@@ -28,7 +28,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         model = new ShoppingMaskModel(saleSession);
         this.shoppingCartController = new ShoppingCartController(model.getValue(), model.getSaleSession()
                                                                                         .getCustomer()
-                                                                                        .getSolidaritySurcharge(),true);
+                                                                                        .getSolidaritySurcharge(),
+                                                                 true);
         shoppingCartController.initView();
         this.view = new ShoppingMaskUIView(this, shoppingCartController);
     }
@@ -74,7 +75,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         boolean piece = (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
         try {
             int discount = view.getDiscount();
-            if (discount < 0 || discount >100) {
+            if (discount < 0 || discount > 100) {
                 view.messageInvalidDiscount();
                 return false;
             }
@@ -87,7 +88,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 }
                 item.setItemMultiplier((int) Math.round(itemMultiplier));
             }
-            if (item.getItemMultiplier() != 0 && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece) )) {
+            if (item.getItemMultiplier() != 0 && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(
+                    item, piece))) {
                 shoppingCartController.addShoppingItem(item, piece);
                 view.setDiscount();
                 return true;
@@ -104,7 +106,9 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         Article found = model.getByKbNumber(view.getKBArticleNumber());
         if (found != null) {
             view.loadItemStats(found);
-        } else  {view.setSuppliersItemNumber("");}
+        } else {
+            view.setSuppliersItemNumber("");
+        }
     }
 
     void searchBySupplierItemsNumber() {
@@ -112,7 +116,9 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
         Article found = model.getBySupplierItemNumber(view.getSuppliersNumber());
         if (found != null) {
             view.loadItemStats(found);
-        } else { view.setKbNumber("");}
+        } else {
+            view.setKbNumber("");
+        }
     }
 
     void searchByBarcode(long barcode) {
@@ -123,7 +129,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
             if(!view.isPreordered()) {view.addToCart();}
         } else {
             view.messageBarcodeNotFound(barcode);
-            view.setKbNumber("");}
+            view.setKbNumber("");
+        }
     }
 
     double calculatePrice(Article article) {
@@ -139,6 +146,11 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     public double recalculatePrice(double newNetPrice) throws UndefinedInputException {
         ShoppingItem item = extractShoppingItemFromUI();
         return newNetPrice/item.getItemNetPrice() * item.getItemRetailPrice();
+    }
+  
+    double getPrice(Article article) {
+        ShoppingItem shoppingItem = new ShoppingItem(article, 0, false);
+        return shoppingItem.getItemRetailPrice();
     }
 
     private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
@@ -170,7 +182,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
                 customArticle.setVat(view.getSelectedVAT());
                 customArticle.setNetPrice(view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
                 customArticle.setMetricUnits(MetricUnits.PIECE);
-                ShoppingItem customItem = new ShoppingItem(customArticle,0,false);
+                ShoppingItem customItem = new ShoppingItem(customArticle, 0, false);
                 return customItem;
             case ShoppingMaskUIView.DEPOSIT:
                 if (view.getDeposit() < 0) {
@@ -224,7 +236,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     void openSearchWindow() {
-        new ArticleSelectorController(this::searchWindowResult).openAsWindow(view.getWindow(),SubWindow::new);
+        new ArticleSelectorController(this::searchWindowResult).openAsWindow(view.getWindow(), SubWindow::new);
     }
 
     void searchWindowResult(Article article) {
@@ -233,7 +245,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView,S
     }
 
     void editUserAction() {
-        new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT).openAsWindow(view.getWindow(),SubWindow::new);
+        new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT).openAsWindow(view.getWindow(),
+                                                                                             SubWindow::new);
     }
 
     public void processBarcode(String barcode) {

@@ -7,9 +7,9 @@ import javax.swing.*;
 
 public class InventoryMenuView implements View<InventoryMenuController> {
 
-    private InventoryMenuController controller;
+    private final InventoryMenuController controller;
 
-    public InventoryMenuView(InventoryMenuController controller){
+    public InventoryMenuView(InventoryMenuController controller) {
         this.controller = controller;
     }
 

@@ -3,8 +3,6 @@ package kernbeisser.DBEntities;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
-import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,55 +18,55 @@ import java.util.Objects;
 public class Container implements Serializable {
     @Id
     @GeneratedValue
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_ID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_ID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_ID_WRITE)})
     private int id;
 
     @ManyToOne
     @JoinColumn
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_ITEM_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_ITEM_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_WRITE)})
     private ArticleKornkraft item;
 
     @ManyToOne
     @JoinColumn
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_USER_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_USER_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_USER_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_USER_WRITE)})
     private User user;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_USER_SURCHARGE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_USER_SURCHARGE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_USER_SURCHARGE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_USER_SURCHARGE_WRITE)})
     private double userSurcharge;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_INFO_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_INFO_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_INFO_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_INFO_WRITE)})
     private String info;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_AMOUNT_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_AMOUNT_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_AMOUNT_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_AMOUNT_WRITE)})
     private int amount;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_NET_PRICE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_NET_PRICE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_NET_PRICE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_NET_PRICE_WRITE)})
     private double netPrice;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_PAYED_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_PAYED_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_PAYED_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_PAYED_WRITE)})
     private boolean payed;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
     private Instant delivery;
 
     @CreationTimestamp
-    @Getter(onMethod_= {@Key(PermissionKey.CONTAINER_CREATE_DATE_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.CONTAINER_CREATE_DATE_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATE_DATE_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATE_DATE_WRITE)})
     private Instant createDate;
 
     public static List<Container> getAll(String condition) {
@@ -86,7 +84,7 @@ public class Container implements Serializable {
 
     @Override
     public String toString() {
-        return "Container["+id+"]";
+        return "Container[" + id + "]";
     }
 
     @Override

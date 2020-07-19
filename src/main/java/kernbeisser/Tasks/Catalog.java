@@ -37,7 +37,8 @@ public class Catalog {
     }
 
     public static String getInfoLineFromWeb() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new URL(CATALOG_URL).openConnection().getInputStream()));
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(new URL(CATALOG_URL).openConnection().getInputStream()));
         String out = bufferedReader.readLine();
         bufferedReader.close();
         return out;
@@ -58,20 +59,20 @@ public class Catalog {
         //setDepositByReference();
     }
 
-    public static void updateCatalogFromKornKraftDefault(File file){
+    public static void updateCatalogFromKornKraftDefault(File file) {
         Collection<ArticleKornkraft> newCatalog = new ArrayList<>(1000);
         boolean infoLineSkipped = false;
         try {
             for (String line : Files.readAllLines(Paths.get(file.getPath()), Charset.forName("IBM850"))) {
-                if(!infoLineSkipped){
+                if (!infoLineSkipped) {
                     infoLineSkipped = true;
                     continue;
                 }
                 String[] parts = line.split(";");
                 try {
                     newCatalog.add(parseArticle(parts));
-                }catch (CannotParseException e) {
-                    Main.logger.warn("Ignored ArticleKornKraft because "+e.getMessage());
+                } catch (CannotParseException e) {
+                    Main.logger.warn("Ignored ArticleKornKraft because " + e.getMessage());
                 }
             }
         } catch (IOException e) {
@@ -83,7 +84,7 @@ public class Catalog {
         //setDepositByReference();
     }
 
-    public static void persistCatalog(Iterable<ArticleKornkraft> articles){
+    public static void persistCatalog(Iterable<ArticleKornkraft> articles) {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -91,7 +92,7 @@ public class Catalog {
         for (ArticleKornkraft article : articles) {
             em.persist(article);
             c++;
-            if(c % 20 == 0){
+            if (c % 20 == 0) {
                 System.out.println(c);
                 em.flush();
             }
@@ -101,7 +102,7 @@ public class Catalog {
         em.close();
     }
 
-    public static void clearCatalog(){
+    public static void clearCatalog() {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -125,13 +126,13 @@ public class Catalog {
             item.setSuppliersItemNumber(Integer.parseInt(source[0]));
             try {
                 item.setBarcode(Long.parseLong(source[4]));
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 item.setBarcode(null);
             }
             item.setName(source[6]);
             item.setProducer(source[10]);
             item.setContainerSize(Double.parseDouble(source[22].replaceAll(",", ".")));
-            item.setMetricUnits(MetricUnits.fromString(source[23].replaceAll("\\d","")));
+            item.setMetricUnits(MetricUnits.fromString(source[23].replaceAll("\\d", "")));
             item.setAmount(extractAmount(source[22].replaceAll("\\D", ""), item.getMetricUnits()));
             item.setVat(source[33].equals("1") ? VAT.LOW : VAT.HIGH);
             item.setNetPrice(Double.parseDouble(source[37].replace(",", ".")));
@@ -161,28 +162,30 @@ public class Catalog {
                     return (int) d;
             }
         } catch (NumberFormatException n) {
-            throw new CannotParseException("Can't parse amount from "+u+s);
+            throw new CannotParseException("Can't parse amount from " + u + s);
         }
     }
 
 
-    public static void setDepositByReference(){
+    public static void setDepositByReference() {
         EntityManager em = DBConnection.getEntityManager();
         EntityTransaction et = em.getTransaction();
         et.begin();
-        em.createQuery("update ArticleKornkraft c set c.singleDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.singleDeposit), c.containerDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.containerDeposit)").executeUpdate();
+        em.createQuery(
+                "update ArticleKornkraft c set c.singleDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.singleDeposit), c.containerDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.containerDeposit)")
+          .executeUpdate();
         et.commit();
         em.close();
     }
 
 
-    public static void setDeposit(Collection<ArticleKornkraft> catalog){
+    public static void setDeposit(Collection<ArticleKornkraft> catalog) {
         HashMap<Integer,Double> priceBySuppliersNumber = new HashMap<>();
-        catalog.forEach((a) -> priceBySuppliersNumber.put(a.getSuppliersItemNumber(),a.getNetPrice()));
+        catalog.forEach((a) -> priceBySuppliersNumber.put(a.getSuppliersItemNumber(), a.getNetPrice()));
         catalog.forEach(e -> {
-            Double singleDeposit = priceBySuppliersNumber.get((int)e.getSingleDeposit());
+            Double singleDeposit = priceBySuppliersNumber.get((int) e.getSingleDeposit());
             e.setSingleDeposit(singleDeposit == null ? 0 : singleDeposit);
-            Double crateDeposit = priceBySuppliersNumber.get((int)e.getContainerDeposit());
+            Double crateDeposit = priceBySuppliersNumber.get((int) e.getContainerDeposit());
             e.setContainerDeposit(crateDeposit == null ? 0 : crateDeposit);
         });
     }

@@ -1,15 +1,11 @@
 package kernbeisser.Windows.EditItems;
 
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Windows.EditItem.EditItemController;
-import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.ObjectView.ObjectViewView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class EditItemsView implements View<EditItemsController> {
 

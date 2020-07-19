@@ -1,20 +1,14 @@
 package kernbeisser.Windows.Pay;
 
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.View;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.print.PrintService;
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
 import java.util.List;
 
 public class PayView extends JPanel implements View<PayController> {
@@ -62,6 +56,8 @@ public class PayView extends JPanel implements View<PayController> {
     }
 
     public void notEnoughValue() {
-        JOptionPane.showMessageDialog(getTopComponent(), "Sie haben nicht die Berechtigung unter das minimale Guthaben von " + String.format("%.2f€",Setting.DEFAULT_MIN_VALUE.getDoubleValue()) +" zu gehen");
+        JOptionPane.showMessageDialog(getTopComponent(),
+                                      "Sie haben nicht die Berechtigung unter das minimale Guthaben von " + String.format(
+                                              "%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue()) + " zu gehen");
     }
 }

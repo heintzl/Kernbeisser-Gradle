@@ -1,6 +1,6 @@
 package kernbeisser.CustomComponents.Verifier;
 
-public class LongVerifier extends ParseVerifier<Long>{
+public class LongVerifier extends ParseVerifier<Long> {
 
     @Override
     public Long parse(String s) throws NumberFormatException {

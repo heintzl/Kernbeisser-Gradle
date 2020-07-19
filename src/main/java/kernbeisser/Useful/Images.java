@@ -43,11 +43,11 @@ public class Images {
      * @param name the Image name with extension
      * @return return the right image with the given name
      */
-    public static BufferedImage getImage(String name){
+    public static BufferedImage getImage(String name) {
         if (images.containsKey(name)) {
             return images.get(name);
         }
-        Main.logger.warn("requested Image '"+name+"' not found");
+        Main.logger.warn("requested Image '" + name + "' not found");
         return null;
     }
 
@@ -75,7 +75,8 @@ public class Images {
 
             }
         }
-        if(img!=0)
-        Main.logger.info("loaded "+img+ " images from "+dir.getAbsolutePath());
+        if (img != 0) {
+            Main.logger.info("loaded " + img + " images from " + dir.getAbsolutePath());
+        }
     }
 }

@@ -58,14 +58,16 @@ class EditSurchargeTableView implements View<EditSurchargeTableController> {
     }
 
     private void createUIComponents() {
-        supplier = new AccessCheckingComboBox<>(SurchargeTable::getSupplier,SurchargeTable::setSupplier);
-        name = new AccessCheckingField<>(SurchargeTable::getName,SurchargeTable::setName,AccessCheckingField.NONE);
-        from = new AccessCheckingField<>(SurchargeTable::getFrom,SurchargeTable::setFrom,AccessCheckingField.INT_FORMER);
-        to = new AccessCheckingField<>(SurchargeTable::getTo,SurchargeTable::setTo,AccessCheckingField.INT_FORMER);
-        surcharge = new AccessCheckingField<>(SurchargeTable::getSurcharge,SurchargeTable::setSurcharge,AccessCheckingField.DOUBLE_FORMER);
+        supplier = new AccessCheckingComboBox<>(SurchargeTable::getSupplier, SurchargeTable::setSupplier);
+        name = new AccessCheckingField<>(SurchargeTable::getName, SurchargeTable::setName, AccessCheckingField.NONE);
+        from = new AccessCheckingField<>(SurchargeTable::getFrom, SurchargeTable::setFrom,
+                                         AccessCheckingField.INT_FORMER);
+        to = new AccessCheckingField<>(SurchargeTable::getTo, SurchargeTable::setTo, AccessCheckingField.INT_FORMER);
+        surcharge = new AccessCheckingField<>(SurchargeTable::getSurcharge, SurchargeTable::setSurcharge,
+                                              AccessCheckingField.DOUBLE_FORMER);
     }
 
     public void incorrectInput() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Bitte überprüfen sie die eingaben auf Fehler");
+        JOptionPane.showMessageDialog(getTopComponent(), "Bitte überprüfen sie die eingaben auf Fehler");
     }
 }

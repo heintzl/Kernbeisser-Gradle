@@ -22,40 +22,41 @@ public class UserSettingValue {
 
     @Id
     @GeneratedValue
-    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private int id;
 
     @JoinColumn
     @ManyToOne
-    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private User user;
 
     @Column
     @Enumerated(EnumType.STRING)
-    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private UserSetting userSetting;
 
     @Column
-    @Getter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
-    @Setter(onMethod_= {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
+    @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
+    @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
     private String value;
 
 
-    public static List<UserSettingValue> getAll(String condition){
+    public static List<UserSettingValue> getAll(String condition) {
         return Tools.getAll(UserSettingValue.class, condition);
     }
 
-    private static String loadOrCreateSettingValue(UserSetting setting,User user){
+    private static String loadOrCreateSettingValue(UserSetting setting, User user) {
         EntityManager em = DBConnection.getEntityManager();
-        try{
-            return em.createQuery("select s from UserSettingValue s where userSetting = :sn and user.id = :uid",UserSettingValue.class)
-                     .setParameter("sn",setting)
-                     .setParameter("uid",user.getId())
+        try {
+            return em.createQuery("select s from UserSettingValue s where userSetting = :sn and user.id = :uid",
+                                  UserSettingValue.class)
+                     .setParameter("sn", setting)
+                     .setParameter("uid", user.getId())
                      .getSingleResult().value;
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             EntityTransaction et = em.getTransaction();
             et.begin();
             UserSettingValue value = new UserSettingValue();
@@ -65,37 +66,37 @@ public class UserSettingValue {
             em.persist(value);
             em.flush();
             et.commit();
-            return loadOrCreateSettingValue(setting,user);
-        }
-        finally {
+            return loadOrCreateSettingValue(setting, user);
+        } finally {
             em.close();
         }
     }
 
-    private static Collection<UserSettingValue> getAllForUser(User user){
+    private static Collection<UserSettingValue> getAllForUser(User user) {
         EntityManager em = DBConnection.getEntityManager();
-        List<UserSettingValue> out = em.createQuery("select u from UserSettingValue u where u.id = :uid",UserSettingValue.class)
-          .setParameter("uid",user.getId()).getResultList();
+        List<UserSettingValue> out = em.createQuery("select u from UserSettingValue u where u.id = :uid",
+                                                    UserSettingValue.class)
+                                       .setParameter("uid", user.getId()).getResultList();
         em.close();
         return out;
     }
 
-    public static String getValueFor(User user,UserSetting setting){
-        if(loaded==null || loaded.getId() != user.getId()){
+    public static String getValueFor(User user, UserSetting setting) {
+        if (loaded == null || loaded.getId() != user.getId()) {
             loadUser(user);
         }
         String out = values.get(setting);
-        if(out == null){
-            out = loadOrCreateSettingValue(setting,user);
-            values.put(setting,out);
+        if (out == null) {
+            out = loadOrCreateSettingValue(setting, user);
+            values.put(setting, out);
         }
         return out;
     }
 
-    private static void loadUser(User user){
+    private static void loadUser(User user) {
         loaded = user;
         values = new HashMap<>(UserSetting.values().length);
-        getAllForUser(user).forEach(e -> values.put(e.userSetting,e.value));
+        getAllForUser(user).forEach(e -> values.put(e.userSetting, e.value));
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-public class AccessCheckingCollectionEditor <P,C extends Collection<V>,V> extends JButton implements Bounded <P,C> {
+public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> extends JButton implements Bounded<P,C> {
     private final Getter<P,C> getter;
     private final Setter<P,C> setter;
     private boolean changed = false;
@@ -26,7 +26,8 @@ public class AccessCheckingCollectionEditor <P,C extends Collection<V>,V> extend
 
     private final Column<V>[] columns;
 
-    public AccessCheckingCollectionEditor(Getter<P,C> getter, Setter <P,C> setter, Supplier<Collection<V>> source, Column<V> ... columns){
+    public AccessCheckingCollectionEditor(Getter<P,C> getter, Setter<P,C> setter, Supplier<Collection<V>> source,
+                                          Column<V>... columns) {
         this.getter = getter;
         this.setter = setter;
         this.supplier = source;
@@ -35,9 +36,10 @@ public class AccessCheckingCollectionEditor <P,C extends Collection<V>,V> extend
     }
 
 
-    void trigger(ActionEvent event){
-        new CollectionController<V>(data,supplier.get(),editable,columns).openAsWindow((Window) SwingUtilities.getWindowAncestor(this),
-                                                                                       SubWindow::new);
+    void trigger(ActionEvent event) {
+        new CollectionController<V>(data, supplier.get(), editable, columns).openAsWindow(
+                (Window) SwingUtilities.getWindowAncestor(this),
+                SubWindow::new);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class AccessCheckingCollectionEditor <P,C extends Collection<V>,V> extend
     @Override
     public void writeInto(P p) throws CannotParseException {
         try {
-            setter.set(p,data);
+            setter.set(p, data);
         } catch (AccessDeniedException e) {
             e.printStackTrace();
         }

@@ -1,21 +1,18 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
-import jdk.nashorn.internal.scripts.JO;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.text.MessageFormat;
 import java.util.List;
 
 public class ShoppingCartController implements Controller<ShoppingCartView,ShoppingCartModel> {
-    private ShoppingCartView view;
-    private ShoppingCartModel model;
-    private boolean editable;
+    private final ShoppingCartView view;
+    private final ShoppingCartModel model;
+    private final boolean editable;
 
-    /**
+  /**
      *
      * @param userValue The users credit before purchase
      * @param userSurcharge The solidarity surcharge to apply to ShoppingItems

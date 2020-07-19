@@ -1,4 +1,4 @@
 package kernbeisser.Exeptions;
 
-public class PermissionRequired extends Exception{
+public class PermissionRequired extends Exception {
 }

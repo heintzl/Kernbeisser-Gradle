@@ -3,8 +3,6 @@ package kernbeisser.Windows.PermissionManagement;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Enums.KeyCategory;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
@@ -15,11 +13,11 @@ import java.util.HashSet;
 
 public class PermissionModel implements Model<PermissionController> {
     void addKey(Permission permission, PermissionKey key) {
-        Tools.addToCollection(Permission.class,permission.getId(),Permission::getKeySet,key);
+        Tools.addToCollection(Permission.class, permission.getId(), Permission::getKeySet, key);
     }
 
     void removeKey(Permission permission, PermissionKey key) {
-        Tools.removeFromCollection(Permission.class,permission.getId(),Permission::getKeySet,key);
+        Tools.removeFromCollection(Permission.class, permission.getId(), Permission::getKeySet, key);
     }
 
     Collection<Permission> getAllPermissions() {
@@ -29,8 +27,9 @@ public class PermissionModel implements Model<PermissionController> {
     Class<?>[] getAllKeyCategories() {
         HashSet<Class<?>> classes = new HashSet<>();
         for (PermissionKey value : PermissionKey.values()) {
-            if(value.getClazz()!=null)
-            classes.add(value.getClazz());
+            if (value.getClazz() != null) {
+                classes.add(value.getClazz());
+            }
         }
         return classes.toArray(new Class[0]);
     }
@@ -51,11 +50,11 @@ public class PermissionModel implements Model<PermissionController> {
         em.close();
     }
 
-    void removeKeys(Permission permission,Collection<PermissionKey> keys) {
-        Tools.removeMultipleFromCollection(Permission.class,permission.getId(),Permission::getKeySet,keys);
+    void removeKeys(Permission permission, Collection<PermissionKey> keys) {
+        Tools.removeMultipleFromCollection(Permission.class, permission.getId(), Permission::getKeySet, keys);
     }
 
-    void addKeys(Permission permission,Collection<PermissionKey> keys){
-        Tools.addMultipleToCollection(Permission.class,permission.getId(),Permission::getKeySet,keys);
+    void addKeys(Permission permission, Collection<PermissionKey> keys) {
+        Tools.addMultipleToCollection(Permission.class, permission.getId(), Permission::getKeySet, keys);
     }
 }

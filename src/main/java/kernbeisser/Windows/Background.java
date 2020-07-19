@@ -1,16 +1,12 @@
 package kernbeisser.Windows;
 
-import kernbeisser.Windows.Pay.PayModel;
-import kernbeisser.Windows.Pay.PayView;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 public class Background extends JPanel {
     private Container container;
-    private BufferedImage image;
+    private final BufferedImage image;
 
     public Background(BufferedImage image) {
         this(image, null);

@@ -75,7 +75,7 @@ public class TransactionView implements View<TransactionController> {
     private JCheckBox toKBValue;
 
 
-    private TransactionController controller;
+    private final TransactionController controller;
 
     TransactionView(TransactionController controller) {
         this.controller = controller;
@@ -109,7 +109,7 @@ public class TransactionView implements View<TransactionController> {
     void setFromKBEnable(boolean b) {
         fromKBValue.setSelected(b);
         fromKBValue.setEnabled(b);
-        if(b) {
+        if (b) {
             from.setEnabled(false);
         }
     }
@@ -121,9 +121,11 @@ public class TransactionView implements View<TransactionController> {
 
     private void createUIComponents() {
         transactions = new ObjectTable<>(
-                Column.create("Von", e -> e.getFrom() == null ? "Kernbeisser" : (e.getFrom().getSurname()+", "+e.getFrom().getFirstName())),
-                Column.create("An", e -> e.getTo().getSurname()+", "+e.getTo().getFirstName()),
-                Column.create("Überweissungsbetrag", e -> String.format("%.2f€",e.getValue())),
+                Column.create("Von", e -> e.getFrom() == null
+                                          ? "Kernbeisser"
+                                          : (e.getFrom().getSurname() + ", " + e.getFrom().getFirstName())),
+                Column.create("An", e -> e.getTo().getSurname() + ", " + e.getTo().getFirstName()),
+                Column.create("Überweissungsbetrag", e -> String.format("%.2f€", e.getValue())),
                 Column.create("Info", Transaction::getInfo)
         );
         searchBoxView = controller.getSearchBoxView();
@@ -134,7 +136,8 @@ public class TransactionView implements View<TransactionController> {
     }
 
     boolean confirm() {
-        return JOptionPane.showConfirmDialog(getTopComponent(), "Sollen die eingetragenen überweisungen getätigt werden?") == 0;
+        return JOptionPane.showConfirmDialog(getTopComponent(),
+                                             "Sollen die eingetragenen überweisungen getätigt werden?") == 0;
     }
 
     void invalidFrom() {
@@ -157,28 +160,32 @@ public class TransactionView implements View<TransactionController> {
         value.setText(s);
     }
 
-    void setCount(int count){
-        this.count.setText(count+" Überweisungen");
+    void setCount(int count) {
+        this.count.setText(count + " Überweisungen");
     }
 
-    void setSum(double sum){
-        this.sum.setText(String.format("%.2f€",sum));
+    void setSum(double sum) {
+        this.sum.setText(String.format("%.2f€", sum));
     }
 
     public void invalidValue() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Der eingegebene Betrag muss größer als 0€ sein");
+        JOptionPane.showMessageDialog(getTopComponent(), "Der eingegebene Betrag muss größer als 0€ sein");
     }
 
     public boolean requestUserTransactionCommit() {
-        return JOptionPane.showConfirmDialog(getTopComponent(), "Der angegebene Preis ist negativ, das entspricht einer Auszahlung.\nIst das korrekt?") == 0;
+        return JOptionPane.showConfirmDialog(getTopComponent(),
+                                             "Der angegebene Preis ist negativ, das entspricht einer Auszahlung.\nIst das korrekt?") == 0;
     }
 
     public int commitUnsavedTransactions() {
-        return JOptionPane.showConfirmDialog(getTopComponent(),"Sollen die eingegebenen Überweisungen getätigt werden?","Achtung: Überweisungen wurden noch nicht übernommen",JOptionPane.YES_NO_CANCEL_OPTION);
+        return JOptionPane.showConfirmDialog(getTopComponent(),
+                                             "Sollen die eingegebenen Überweisungen getätigt werden?",
+                                             "Achtung: Überweisungen wurden noch nicht übernommen",
+                                             JOptionPane.YES_NO_CANCEL_OPTION);
     }
 
     public void transactionsDeleted() {
-        JOptionPane.showMessageDialog(getTopComponent(),"Die eingegeben Überweisungen wurden nicht übernommen");
+        JOptionPane.showMessageDialog(getTopComponent(), "Die eingegeben Überweisungen wurden nicht übernommen");
     }
 
     public String getInfo() {
@@ -192,7 +199,7 @@ public class TransactionView implements View<TransactionController> {
         addTransaction.addActionListener(e -> controller.addTransaction());
         addTransaction.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, Color.GREEN));
         back.addActionListener(e -> back());
-        back.setIcon(IconFontSwing.buildIcon(FontAwesome.ARROW_LEFT,20,Color.ORANGE));
+        back.setIcon(IconFontSwing.buildIcon(FontAwesome.ARROW_LEFT, 20, Color.ORANGE));
         delete.addActionListener(e -> controller.remove());
         delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED));
         transactions.addKeyListener(new KeyAdapter() {
@@ -204,7 +211,7 @@ public class TransactionView implements View<TransactionController> {
             }
         });
         info.setRequiredWriteKeys(PermissionKey.TRANSACTION_INFO_WRITE);
-                fromKBValue.addActionListener(e -> from.setEnabled(!fromKBValue.isSelected()));
+        fromKBValue.addActionListener(e -> from.setEnabled(!fromKBValue.isSelected()));
         //Sets the ActionListeners for the instant Transaction Buttons
         {
             a10.addActionListener(e -> {
@@ -357,7 +364,9 @@ public class TransactionView implements View<TransactionController> {
     }
 
     public void userHasNotEnoughValue() {
-        JOptionPane.showMessageDialog(getTopComponent(), "Die eingegeben Überweissungen könnnen nicht getätight werden,\nda einige der Benutzer nicht die Berechtigung haben, unter das minimale\nGuthaben von " + String.format("%.2f€",
-                                                                                                                                                                                                                               Setting.DEFAULT_MIN_VALUE.getDoubleValue()) + " zu gehen");
+        JOptionPane.showMessageDialog(getTopComponent(),
+                                      "Die eingegeben Überweissungen könnnen nicht getätight werden,\nda einige der Benutzer nicht die Berechtigung haben, unter das minimale\nGuthaben von " + String
+                                              .format("%.2f€",
+                                                      Setting.DEFAULT_MIN_VALUE.getDoubleValue()) + " zu gehen");
     }
 }

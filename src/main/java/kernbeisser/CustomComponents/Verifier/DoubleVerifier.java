@@ -2,7 +2,7 @@ package kernbeisser.CustomComponents.Verifier;
 
 public class DoubleVerifier extends ParseVerifier<Double> {
     public static DoubleVerifier from(double from, double to) {
-        return new DoubleVerifier(){
+        return new DoubleVerifier() {
             @Override
             public Double min() {
                 return from;
@@ -15,8 +15,8 @@ public class DoubleVerifier extends ParseVerifier<Double> {
         };
     }
 
-    public static DoubleVerifier from(double min,double usualMin,double usualMax, double max) {
-        return new DoubleVerifier(){
+    public static DoubleVerifier from(double min, double usualMin, double usualMax, double max) {
+        return new DoubleVerifier() {
             @Override
             public Double min() {
                 return min;
@@ -39,15 +39,16 @@ public class DoubleVerifier extends ParseVerifier<Double> {
         };
     }
 
-    public Double min(){
+    public Double min() {
         return Double.NEGATIVE_INFINITY;
     }
-    public Double max(){
+
+    public Double max() {
         return Double.POSITIVE_INFINITY;
     }
 
     @Override
     public Double parse(String s) {
-        return Double.parseDouble(s.replace(",","."));
+        return Double.parseDouble(s.replace(",", "."));
     }
 }

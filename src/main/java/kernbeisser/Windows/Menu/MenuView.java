@@ -3,9 +3,7 @@ package kernbeisser.Windows.Menu;
 import kernbeisser.CustomComponents.ControllerButton;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Main;
 import kernbeisser.StartUp.LogIn.DBLogInController;
-import kernbeisser.Windows.CashierMenu.CashierMenuController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
@@ -66,32 +64,50 @@ public class MenuView implements View<MenuController> {
 
     private void createUIComponents() {
         infoPanel = new UserInfoController(LogInModel.getLoggedIn()).getInitializedView();
-        openCashierShoppingMask = new ControllerButton(new CashierShoppingMaskController(), controller -> controller.openTab("Ladendienst"));
+        openCashierShoppingMask = new ControllerButton(new CashierShoppingMaskController(),
+                                                       controller -> controller.openTab("Ladendienst"));
         //NOT IMPLEMENTED
-        printBonFromPast = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
-        editPriceList = new ControllerButton(new ManagePriceListsController(), controller -> controller.openTab("Preislisten bearbeiten"));
-        editArticles = new ControllerButton(new EditItemsController(), controller -> controller.openTab("Artikel bearbeiten"));
-        editSurchargeTables = new ControllerButton(new EditSurchargeTables(), controller -> controller.openTab("Zuschlagstabellen bearbeiten"));
-        changePassword = new ControllerButton(new ChangePasswordController(LogInModel.getLoggedIn(),true), controller -> controller.openTab("<PlaceHolder>"));
-        transactionHistory = new ControllerButton(new UserInfoController(LogInModel.getLoggedIn()), controller -> controller.openTab(""));
-        editOwnUser = new ControllerButton(new EditUserController(LogInModel.getLoggedIn(), Mode.EDIT),controller -> controller.openTab("<PlaceHolder>"));
+        printBonFromPast = new ControllerButton(Controller.createFakeController(new JPanel()),
+                                                controller -> controller.openTab("<PlaceHolder>"));
+        editPriceList = new ControllerButton(new ManagePriceListsController(),
+                                             controller -> controller.openTab("Preislisten bearbeiten"));
+        editArticles = new ControllerButton(new EditItemsController(),
+                                            controller -> controller.openTab("Artikel bearbeiten"));
+        editSurchargeTables = new ControllerButton(new EditSurchargeTables(),
+                                                   controller -> controller.openTab("Zuschlagstabellen bearbeiten"));
+        changePassword = new ControllerButton(new ChangePasswordController(LogInModel.getLoggedIn(), true),
+                                              controller -> controller.openTab("<PlaceHolder>"));
+        transactionHistory = new ControllerButton(new UserInfoController(LogInModel.getLoggedIn()),
+                                                  controller -> controller.openTab(""));
+        editOwnUser = new ControllerButton(new EditUserController(LogInModel.getLoggedIn(), Mode.EDIT),
+                                           controller -> controller.openTab("<PlaceHolder>"));
         //NOT IMPLEMENTED
-        editUserSettings = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
+        editUserSettings = new ControllerButton(Controller.createFakeController(new JPanel()),
+                                                controller -> controller.openTab("<PlaceHolder>"));
         editUsers = new ControllerButton(new EditUsers(), controller -> controller.openTab("<PlaceHolder>"));
-        doTransaction = new ControllerButton(new TransactionController(LogInModel.getLoggedIn()),controller -> controller.openTab("<PlaceHolder>"));
-        changePermissions = new ControllerButton(new PermissionController(), controller -> controller.openTab("<PlaceHolder>"));
+        doTransaction = new ControllerButton(new TransactionController(LogInModel.getLoggedIn()),
+                                             controller -> controller.openTab("<PlaceHolder>"));
+        changePermissions = new ControllerButton(new PermissionController(),
+                                                 controller -> controller.openTab("<PlaceHolder>"));
         //NOT IMPLEMENTED
-        placeHolderControllerButton = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
-        changeDBConnection = new ControllerButton(new DBLogInController(), controller -> controller.openTab("<PlaceHolder>"));
+        placeHolderControllerButton = new ControllerButton(Controller.createFakeController(new JPanel()),
+                                                           controller -> controller.openTab("<PlaceHolder>"));
+        changeDBConnection = new ControllerButton(new DBLogInController(),
+                                                  controller -> controller.openTab("<PlaceHolder>"));
         //NOT IMPLEMENTED
-        editApplicationSettings = new ControllerButton(new SettingController(),e -> e.openTab("Einstellungen"));
-        order = new ControllerButton(new ContainerController(LogInModel.getLoggedIn()), controller -> controller.openTab("<PlaceHolder>"));
+        editApplicationSettings = new ControllerButton(new SettingController(), e -> e.openTab("Einstellungen"));
+        order = new ControllerButton(new ContainerController(LogInModel.getLoggedIn()),
+                                     controller -> controller.openTab("<PlaceHolder>"));
         //NOT IMPLEMENTED
-        placeHolderControllerButton1 = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
+        placeHolderControllerButton1 = new ControllerButton(Controller.createFakeController(new JPanel()),
+                                                            controller -> controller.openTab("<PlaceHolder>"));
         //NOT IMPLEMENTED
-        placeHolderControllerButton2 = new ControllerButton(Controller.createFakeController(new JPanel()),controller -> controller.openTab("<PlaceHolder>"));
-        openSelfShoppingMask = new ControllerButton(new SoloShoppingMaskController(), controller -> controller.openTab("<PlaceHolder>"));
-        addBeginner = new ControllerButton(new EditUserController(User.generateBeginnerUser(),Mode.ADD),e -> e.openTab("Probemitglied aufnehmen"));
+        placeHolderControllerButton2 = new ControllerButton(Controller.createFakeController(new JPanel()),
+                                                            controller -> controller.openTab("<PlaceHolder>"));
+        openSelfShoppingMask = new ControllerButton(new SoloShoppingMaskController(),
+                                                    controller -> controller.openTab("<PlaceHolder>"));
+        addBeginner = new ControllerButton(new EditUserController(User.generateBeginnerUser(), Mode.ADD),
+                                           e -> e.openTab("Probemitglied aufnehmen"));
         //TODO make focus on button work
         openCashierShoppingMask.requestFocusInWindow();
         //Releasesettings

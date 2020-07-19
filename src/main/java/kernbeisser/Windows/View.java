@@ -12,50 +12,52 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public interface View <C extends Controller<? extends View<? extends C>,? extends Model<? extends C>>>{
+public interface View<C extends Controller<? extends View<? extends C>,? extends Model<? extends C>>> {
 
     void initialize(C controller);
 
     @NotNull JComponent getContent();
 
 
-    @NotNull default Dimension getSize(){
+    @NotNull
+    default Dimension getSize() {
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        if(DBConnection.isInitialized()) {
+        if (DBConnection.isInitialized()) {
             dimension.setSize(
                     Math.min(dimension.getWidth(), Setting.APP_DEFAULT_WIDTH.getIntValue()),
                     Math.min(dimension.getHeight(), Setting.APP_DEFAULT_HEIGHT.getIntValue()));
-        }else {
+        } else {
             dimension.setSize(
-                    Math.min(dimension.getWidth(),Integer.parseInt( Setting.APP_DEFAULT_WIDTH.getDefaultValue())),
+                    Math.min(dimension.getWidth(), Integer.parseInt(Setting.APP_DEFAULT_WIDTH.getDefaultValue())),
                     Math.min(dimension.getHeight(), Integer.parseInt(Setting.APP_DEFAULT_HEIGHT.getDefaultValue())));
         }
         return dimension;
-    };
+    }
 
-    default java.awt.Window getTopComponent(){
+    default java.awt.Window getTopComponent() {
         return SwingUtilities.getWindowAncestor(getContent());
     }
 
-    default IconCode getTabIcon(){
+    default IconCode getTabIcon() {
         return FontAwesome.WINDOW_MAXIMIZE;
     }
 
-    default Window getWindow(){
+    default Window getWindow() {
         return (Window) SwingUtilities.getWindowAncestor(getContent());
     }
 
-    default void back(){
+    default void back() {
         Window window = getWindow();
-        if(window != null)
+        if (window != null) {
             window.back();
+        }
     }
 
-    default String getTitle(){
+    default String getTitle() {
         return "";
     }
 
-    default boolean isStackable(){
+    default boolean isStackable() {
         return false;
     }
 

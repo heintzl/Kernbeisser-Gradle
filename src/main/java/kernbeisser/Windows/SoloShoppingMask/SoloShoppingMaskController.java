@@ -10,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class SoloShoppingMaskController implements Controller<SoloShoppingMaskView,SoloShoppingMaskModel> {
 
-    private SoloShoppingMaskView view;
+    private final SoloShoppingMaskView view;
 
-    private SoloShoppingMaskModel model;
+    private final SoloShoppingMaskModel model;
 
-    private ShoppingMaskUIController shoppingMaskUIController;
+    private final ShoppingMaskUIController shoppingMaskUIController;
 
-    public SoloShoppingMaskController(){
+    public SoloShoppingMaskController() {
         SaleSession saleSession = new SaleSession();
         saleSession.setCustomer(LogInModel.getLoggedIn());
         saleSession.setSeller(LogInModel.getLoggedIn());

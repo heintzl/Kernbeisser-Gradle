@@ -12,14 +12,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public class SelectorController <T> implements Controller<SelectorView<T>,SelectorModel<T>> {
+public class SelectorController<T> implements Controller<SelectorView<T>,SelectorModel<T>> {
     private final SelectorModel<T> model;
     private final SelectorView<T> view;
 
     @SafeVarargs
-    public SelectorController(String title, Collection<T> currentValues, Searchable<T> searchable, Column<T> ... columns) {
+    public SelectorController(String title, Collection<T> currentValues, Searchable<T> searchable,
+                              Column<T>... columns) {
         this.view = new SelectorView<T>(this);
-        this.model = new SelectorModel<T>(currentValues,title,searchable,columns);
+        this.model = new SelectorModel<T>(currentValues, title, searchable, columns);
     }
 
 
@@ -52,8 +53,11 @@ public class SelectorController <T> implements Controller<SelectorView<T>,Select
     }
 
     private Window selectionWindow;
+
     public void add() {
-        if(selectionWindow!=null)return;
+        if (selectionWindow != null) {
+            return;
+        }
         SearchBoxController<T> controller = new SearchBoxController<T>(model.getSearchable(), model.getColumns());
         Consumer<T> selection = e -> {
             view.addValue(e);

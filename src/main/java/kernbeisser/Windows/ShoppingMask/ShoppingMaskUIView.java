@@ -38,8 +38,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     static final int PRODUCE = 5;
     static final String stornoMessageTitle = "Storno";
 
-    private ShoppingMaskUIController controller;
-    private ShoppingCartController cartController;
+    private final ShoppingMaskUIController controller;
+    private final ShoppingCartController cartController;
 
     private JLabel customerName;
     private JPanel mainPanel;
@@ -104,10 +104,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     private double grossNetRatio;
     static Vector<Component> traversalOrder = new Vector<Component>(1);
     static FocusTraversal traversalPolicy;
-    private BarcodeCapture barcodeCapture;
-    private KeyCapture keyCapture;
     @Getter
     private boolean preordered = false;
+    private final BarcodeCapture barcodeCapture;
+    private final KeyCapture keyCapture;
 
     public ShoppingMaskUIView(ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
         this.cartController = shoppingCartController;
@@ -116,7 +116,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     private void doCancel() {
         controller.emptyShoppingCart();
-        back();}
+        back();
+    }
 
     private void doCheckout() {
         controller.startPay();
@@ -127,9 +128,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     public void addToCart() {
-        if (controller.addToShoppingCart()) {articleTypeInitialize(currentArticleType);};
+        if (controller.addToShoppingCart()) {
+            articleTypeInitialize(currentArticleType);
+        }
     }
-    private void editUserAction() {controller.editUserAction();}
+
+    private void editUserAction() {
+        controller.editUserAction();
+    }
 
     private void createUIComponents() {
         shoppingCartView = cartController.getView();
@@ -283,17 +289,20 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     public void messageBarcodeNotFound(long barcode) {
         java.awt.Toolkit.getDefaultToolkit().beep();
-        JOptionPane.showMessageDialog( getContent(), "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden", "Artikel nicht gefunden", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(getContent(), "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden",
+                                      "Artikel nicht gefunden", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void messageInvalidBarcode(String barcode) {
         java.awt.Toolkit.getDefaultToolkit().beep();
-        JOptionPane.showMessageDialog(getContent(), "Ungültiger Barcode: " + barcode,"Barcode Fehler", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(getContent(), "Ungültiger Barcode: " + barcode, "Barcode Fehler",
+                                      JOptionPane.WARNING_MESSAGE);
     }
 
     public void messageDepositStorno() {
         java.awt.Toolkit.getDefaultToolkit().beep();
-        JOptionPane.showMessageDialog(getContent(), "Pfand kann nicht storniert werden!","Storno" , JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(getContent(), "Pfand kann nicht storniert werden!", "Storno",
+                                      JOptionPane.WARNING_MESSAGE);
         deposit.setText("");
     }
 
@@ -330,7 +339,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
    public int confirmStorno() {
         java.awt.Toolkit.getDefaultToolkit().beep();
         return JOptionPane.showConfirmDialog(
-                getContent(),"Soll die Ware wirklich storniert werden?", stornoMessageTitle, JOptionPane.YES_NO_OPTION
+                getContent(), "Soll die Ware wirklich storniert werden?", stornoMessageTitle, JOptionPane.YES_NO_OPTION
         );
     }
 
@@ -431,7 +440,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         return optTaxLow.isSelected() ? VAT.LOW : VAT.HIGH;
     }
 
-    Dimension getShoppingListSize() {return shoppingListPanel.getSize();}
+    Dimension getShoppingListSize() {
+        return shoppingListPanel.getSize();
+    }
+
     public Controller getController() {
         return controller;
     }
@@ -468,7 +480,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         priceVariablePercentage.addItemListener(e -> {variablePercentage.setEnabled(true); variablePercentage.requestFocusInWindow();;disablePreordered();});
         priceStandard.addItemListener(e -> variablePercentage.setEnabled(false));
         price50Percent.addItemListener(e -> variablePercentage.setEnabled(false));
-        priceVariablePercentage.addItemListener(e -> {variablePercentage.setEnabled(true); variablePercentage.requestFocusInWindow();});
+        priceVariablePercentage.addItemListener(e -> {
+            variablePercentage.setEnabled(true);
+            variablePercentage.requestFocusInWindow();
+        });
         variablePercentage.addActionListener(e -> addToCart());
         kbNumber.addKeyListener(new KeyAdapter() {
             @Override
@@ -476,7 +491,13 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                 controller.searchByKbNumber();
             }
         });
-        kbNumber.addActionListener(e -> {if(isWeighable) {amount.setText("");}; amount.selectAll(); amount.requestFocusInWindow();});
+        kbNumber.addActionListener(e -> {
+            if (isWeighable) {
+                amount.setText("");
+            }
+            amount.selectAll();
+            amount.requestFocusInWindow();
+        });
         suppliersItemNumber.addActionListener(e -> addToCart());
         suppliersItemNumber.addKeyListener(new KeyAdapter() {
             @Override
@@ -542,6 +563,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     @Override
     public boolean processKeyboardInput(KeyEvent e) {
-        return barcodeCapture.processKeyEvent(e)?true:keyCapture.processKeyEvent(e);
+        return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
     }
+
 }

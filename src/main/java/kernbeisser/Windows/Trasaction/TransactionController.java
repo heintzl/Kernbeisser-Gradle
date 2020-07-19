@@ -4,9 +4,9 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.Enums.TransactionType;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -25,10 +25,13 @@ public class TransactionController implements Controller<TransactionView,Transac
         userSearchBoxController = new SearchBoxController<User>(User::defaultSearch,
                                                                 Column.create("Nachname", User::getSurname,
                                                                               PermissionKey.USER_SURNAME_READ),
-                                                                Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
-                                                                Column.create("Username", User::getUsername, PermissionKey.USER_USERNAME_READ),
-                                                                Column.create("Guthaben", User::getRoundedValue, PermissionKey.USER_GROUP_VALUE_READ)
-                                                            );
+                                                                Column.create("Vorname", User::getFirstName,
+                                                                              PermissionKey.USER_FIRST_NAME_READ),
+                                                                Column.create("Username", User::getUsername,
+                                                                              PermissionKey.USER_USERNAME_READ),
+                                                                Column.create("Guthaben", User::getRoundedValue,
+                                                                              PermissionKey.USER_GROUP_VALUE_READ)
+        );
         userSearchBoxController.initView();
         view = new TransactionView(this);
         userSearchBoxController.addSelectionListener(e -> view.setTo(e.toString()));
@@ -64,7 +67,7 @@ public class TransactionController implements Controller<TransactionView,Transac
         unsafeTransfer();
     }
 
-    void unsafeTransfer(){
+    void unsafeTransfer() {
         try {
             model.transfer();
         } catch (AccessDeniedException e) {
@@ -79,11 +82,11 @@ public class TransactionController implements Controller<TransactionView,Transac
 
     void addTransaction() {
         Transaction transaction = new Transaction();
-        if(view.getValue()<=0){
+        if (view.getValue() <= 0) {
             view.invalidValue();
             return;
         }
-        if(view.getValue()<0&&!view.requestUserTransactionCommit()){
+        if (view.getValue() < 0 && !view.requestUserTransactionCommit()) {
             return;
         }
         if (view.isFromKB()) {
@@ -92,14 +95,14 @@ public class TransactionController implements Controller<TransactionView,Transac
         } else {
             try {
                 transaction.setFrom(model.findUser(view.getFrom()));
-            }catch (NoResultException e){
+            } catch (NoResultException e) {
                 view.invalidFrom();
                 return;
             }
         }
         try {
             transaction.setTo(model.findUser(view.getTo()));
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             view.invalidTo();
             return;
         }
@@ -115,7 +118,7 @@ public class TransactionController implements Controller<TransactionView,Transac
         refreshTable();
     }
 
-    private void refreshTable(){
+    private void refreshTable() {
         view.setTransactions(model.getTransactions());
         view.setCount(model.getCount());
         view.setSum(model.getSum());
@@ -134,7 +137,7 @@ public class TransactionController implements Controller<TransactionView,Transac
     @Override
     public boolean commitClose() {
         if (model.getTransactions().size() > 0) {
-            switch (view.commitUnsavedTransactions()){
+            switch (view.commitUnsavedTransactions()) {
                 case 0:
                     unsafeTransfer();
                     return true;
@@ -146,6 +149,8 @@ public class TransactionController implements Controller<TransactionView,Transac
                 default:
                     return true;
             }
-        }else return true;
+        } else {
+            return true;
+        }
     }
 }
