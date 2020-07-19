@@ -140,7 +140,7 @@ public class Article extends ArticleBase {
                     + " or i.supplier.shortName like :s"
                     + " or i.supplier.name like :s"
                     + " or UPPER(i.name) like :ds"
-                    + " or mod(barcode,:bl) = :b"
+                    + " or mod(barcode,:bl) = :n"
                     + " or UPPER( i.priceList.name) like :u"
                     + " order by i.name asc",
                 Article.class)
@@ -150,7 +150,6 @@ public class Article extends ArticleBase {
                 Tools.tryParseInteger(search) > 0
                     ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInteger(search))))
                     : 1)
-            .setParameter("b", Tools.tryParseInteger(search))
             .setParameter("s", search + "%")
             .setParameter(
                 "ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
