@@ -17,7 +17,7 @@ public enum PermissionConstants {
     //the permission with all rights reserved
     ADMIN(PermissionKey.values()),
     //the default permission for all new users
-    BEGINNER,
+    BEGINNER(PermissionKey.ACTION_LOGIN),
     //the permission which is given to all imported users from the old application
     IMPORT,
     //the permission which is given to all users which has a key in the old application
