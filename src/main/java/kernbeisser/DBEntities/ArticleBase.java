@@ -40,7 +40,7 @@ public class ArticleBase {
     @Column
     @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_BASE_METRIC_UNITS_READ)})
     @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_BASE_METRIC_UNITS_WRITE)})
-    private MetricUnits metricUnits;
+    private MetricUnits metricUnits = MetricUnits.PIECE;
 
     @JoinColumn
     @ManyToOne
@@ -53,10 +53,10 @@ public class ArticleBase {
     @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_BASE_SUPPLIERS_ITEM_NUMBER_WRITE)})
     private int suppliersItemNumber;
 
-    @Column
+    @Column(nullable = false)
     @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_BASE_VAT_READ)})
     @Setter(onMethod_= {@Key(PermissionKey.ARTICLE_BASE_VAT_WRITE)})
-    private VAT vat;
+    private VAT vat = VAT.LOW;
 
     @Column
     @Getter(onMethod_= {@Key(PermissionKey.ARTICLE_BASE_AMOUNT_READ)})

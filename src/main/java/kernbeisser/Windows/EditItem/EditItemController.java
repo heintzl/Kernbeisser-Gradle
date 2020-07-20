@@ -91,7 +91,7 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
             }
         }
         if(model.getMode()== Mode.EDIT){
-            if((!data.getName().equals(model.getSource().getName()))&&model.nameExists(data.getName())){
+            if((!data.getName().equals(model.getSource().getName())) && EditItemModel.nameExists(data.getName())){
                 view.nameAlreadyExists();
                 return;
             }
