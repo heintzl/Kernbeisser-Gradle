@@ -72,6 +72,8 @@ public class ShoppingItem implements Serializable {
 
   @Transient private int superIndex;
 
+  @Transient private Supplier supplier;
+
   public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
     this.name = article.getName();
@@ -93,13 +95,42 @@ public class ShoppingItem implements Serializable {
             ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue()
             : article.getSurcharge());
     this.discount = discount;
-    if (article.getSupplier() != null) {
+    supplier = article.getSupplier();
+    if (supplier != null) {
       this.shortName = article.getSupplier().getShortName();
     }
     this.suppliersItemNumber = article.getSuppliersItemNumber();
     this.singleDeposit = article.getSingleDeposit();
     this.containerDeposit = article.getContainerDeposit();
     this.containerSize = article.getContainerSize();
+    this.itemRetailPrice = calculateItemRetailPrice();
+  }
+
+  public ShoppingItem(ArticleBase articleBase, int discount, boolean hasContainerDiscount) {
+    this.containerDiscount = hasContainerDiscount;
+    this.name = articleBase.getName();
+    this.amount = articleBase.getAmount();
+    this.itemNetPrice = articleBase.getNetPrice();
+    this.metricUnits = articleBase.getMetricUnits();
+    this.vat = articleBase.getVat().getValue();
+    this.unitAmount =
+        articleBase.getMetricUnits() == MetricUnits.NONE
+                || articleBase.getMetricUnits() == MetricUnits.PIECE
+                || !(articleBase.getAmount() > 0)
+            ? ""
+            : articleBase.getAmount() + articleBase.getMetricUnits().getShortName();
+    this.surcharge =
+        articleBase.calculateSurcharge()
+            * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
+    this.discount = discount;
+    supplier = articleBase.getSupplier();
+    if (supplier != null) {
+      this.shortName = articleBase.getSupplier().getShortName();
+    }
+    this.suppliersItemNumber = articleBase.getSuppliersItemNumber();
+    this.singleDeposit = articleBase.getSingleDeposit();
+    this.containerDeposit = articleBase.getContainerDeposit();
+    this.containerSize = articleBase.getContainerSize();
     this.itemRetailPrice = calculateItemRetailPrice();
   }
 

@@ -188,25 +188,14 @@ public class Article extends ArticleBase {
     }
   }
 
-  public static Article getByBarcode(long barcode, boolean searchBaseArticle) {
+  public static Article getByBarcode(long barcode) {
     EntityManager em = DBConnection.getEntityManager();
     try {
-      Article result =
-          em.createQuery("select i from Article i where barcode = :n", Article.class)
-              .setParameter("n", barcode)
-              .getSingleResult();
-      return result;
-    } catch (NoResultException e) {
-      if (!searchBaseArticle) return null;
-      try {
-        ArticleBase result =
-            em.createQuery("select i from ArticleBase i where barcode = :n", ArticleBase.class)
-                .setParameter("n", barcode)
-                .getSingleResult();
-        return articleFromBase(result);
-      } catch (NoResultException f) {
-        return null;
-      }
+      return em.createQuery("select i from Article i where barcode = :n", Article.class)
+          .setParameter("n", barcode)
+          .getSingleResult();
+    } catch (NoResultException f) {
+      return null;
     } finally {
       em.close();
     }

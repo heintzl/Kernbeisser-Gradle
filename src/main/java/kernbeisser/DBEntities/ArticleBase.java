@@ -99,17 +99,59 @@ public class ArticleBase {
 
   public SurchargeTable getSurchargeTable() {
     // TODO really expensive!
+    if (supplier == null) return SurchargeTable.DEFAULT;
     EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
               "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
               SurchargeTable.class)
-          .setParameter("supplier", getSupplier() != null ? getSupplier().getSid() : -1)
-          .setParameter("number", getSuppliersItemNumber())
+          .setParameter("supplier", supplier.getSid())
+          .setParameter("number", suppliersItemNumber)
           .setMaxResults(1)
           .getSingleResult();
     } catch (NoResultException e) {
       return SurchargeTable.DEFAULT;
+    }
+  }
+
+  public double calculateSurcharge() {
+    SurchargeTable surchargeTable = getSurchargeTable();
+    double surcharge = surchargeTable.getSurcharge();
+
+    if (surchargeTable == SurchargeTable.DEFAULT) {
+      double supplierSurcharge = supplier.getSurcharge();
+      if (supplierSurcharge > 0) {
+        surcharge = supplierSurcharge;
+      }
+    }
+
+    return surcharge;
+  }
+
+  public static ArticleBase getBySuppliersItemNumber(int suppliersNumber) {
+    EntityManager em = DBConnection.getEntityManager();
+    try {
+      return em.createQuery(
+              "select i from ArticleBase i where suppliersItemNumber = :n", ArticleBase.class)
+          .setParameter("n", suppliersNumber)
+          .getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    } finally {
+      em.close();
+    }
+  }
+
+  public static ArticleBase getByBarcode(long barcode) {
+    EntityManager em = DBConnection.getEntityManager();
+    try {
+      return em.createQuery("select i from Article i where barcode = :n", ArticleBase.class)
+          .setParameter("n", barcode)
+          .getSingleResult();
+    } catch (NoResultException f) {
+      return null;
+    } finally {
+      em.close();
     }
   }
 
