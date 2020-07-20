@@ -7,7 +7,9 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.Model;
 
 public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
@@ -107,16 +109,29 @@ public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
     this.saleSession = saleSession;
   }
 
-  Article getByKbNumber(int kbNumber) {
-    return Article.getByKbNumber(kbNumber);
+  ShoppingItem getByKbNumber(int kbNumber, int discount, boolean preordered) {
+    return new ShoppingItem(Article.getByKbNumber(kbNumber), discount, preordered);
   }
 
-  Article getBySupplierItemNumber(int suppliersNumber) {
+  ShoppingItem getBySupplierItemNumber(int suppliersNumber, int discount, boolean preordered) {
 
-    return Article.getBySuppliersItemNumber(suppliersNumber);
+    Article article = Article.getBySuppliersItemNumber(suppliersNumber);
+    if (article != null) {
+      return new ShoppingItem(article, discount, preordered);
+    }
+    return preordered
+        ? new ShoppingItem(
+            ArticleBase.getBySuppliersItemNumber(suppliersNumber), discount, preordered)
+        : null;
   }
 
-  Article getByBarcode(long barcode, boolean searchBaseArticle) {
-    return Article.getByBarcode(barcode, searchBaseArticle);
+  ShoppingItem getByBarcode(long barcode, int discount, boolean preordered) {
+    Article article = Article.getByBarcode(barcode);
+    if (article != null) {
+      return new ShoppingItem(article, discount, preordered);
+    }
+    return preordered
+        ? new ShoppingItem(ArticleBase.getByBarcode(barcode), discount, preordered)
+        : null;
   }
 }

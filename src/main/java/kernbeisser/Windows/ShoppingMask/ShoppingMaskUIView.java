@@ -17,8 +17,8 @@ import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
-import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
@@ -100,7 +100,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
   private char currentArticleType;
   private boolean isWeighable;
-  private double grossNetRatio;
+  private double retailNetRatio;
   static Vector<Component> traversalOrder = new Vector<Component>(1);
   static FocusTraversal traversalPolicy;
   @Getter private boolean preordered = false;
@@ -241,34 +241,38 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
   }
 
-  void loadItemStats(Article article) {
-    supplier.getModel().setSelectedItem(article.getSupplier());
-    grossNetRatio = controller.calculatePrice(article) / controller.calculateNetPrice(article);
-    kbNumber.setText(article.getKbNumber() != 0 ? article.getKbNumber() + "" : "");
-    suppliersItemNumber.setText(article.getSuppliersItemNumber() + "");
+  void loadItemStats(ShoppingItem shoppingItem) {
+    supplier.getModel().setSelectedItem(shoppingItem.getSupplier());
+    retailNetRatio = shoppingItem.getItemRetailPrice() / shoppingItem.getItemNetPrice();
+    kbNumber.setText(shoppingItem.getKbNumber() != 0 ? shoppingItem.getKbNumber() + "" : "");
+    suppliersItemNumber.setText(shoppingItem.getSuppliersItemNumber() + "");
     articleName.setText(
-        article.getName().length() > 40
-            ? new StringBuilder(article.getName())
-                .replace(36, article.getName().length(), "...")
+        shoppingItem.getName().length() > 40
+            ? new StringBuilder(shoppingItem.getName())
+                .replace(36, shoppingItem.getName().length(), "...")
                 .toString()
-            : article.getName());
-    price.setText(String.format("%.2f", controller.calculatePrice(article)));
-    priceUnit.setText(preordered && !article.isWeighable() ? "€" : "€/kg");
-    netPrice.setText(String.format("%.2f", controller.calculateNetPrice(article)));
+            : shoppingItem.getName());
+    price.setText(String.format("%.2f", shoppingItem.getItemRetailPrice()));
+    priceUnit.setText(preordered && !shoppingItem.isWeighAble() ? "€" : "€/kg");
+    netPrice.setText(String.format("%.2f", shoppingItem.getItemNetPrice()));
     netPriceUnit.setText(priceUnit.getText());
-    amountUnit.setText(preordered ? "Geb." : article.isWeighable() ? "g" : "stk.");
-    isWeighable = article.isWeighable();
+    amountUnit.setText(
+        preordered
+            ? "Geb."
+            : shoppingItem.isWeighAble() ? shoppingItem.getMetricUnits().getShortName() : "stk.");
+    isWeighable = shoppingItem.isWeighAble();
     containerSize.setText(
-        new DecimalFormat("##.###").format(article.getContainerSize() * (isWeighable ? 1000 : 1)));
+        new DecimalFormat("##.###")
+            .format(shoppingItem.getContainerSize() * (isWeighable ? 1000 : 1)));
     containerUnit.setText(
-        (isWeighable ? article.getMetricUnits() : MetricUnits.PIECE).getShortName());
-    optTaxLow.setSelected(article.getVat() == VAT.LOW);
-    optTaxStandard.setSelected(article.getVat() == VAT.HIGH);
-    deposit.setText(String.format("%.2f", article.getSingleDeposit()));
+        (isWeighable ? shoppingItem.getMetricUnits() : MetricUnits.PIECE).getShortName());
+    optTaxLow.setSelected(shoppingItem.getVat() == VAT.LOW.getValue());
+    optTaxStandard.setSelected(shoppingItem.getVat() == VAT.HIGH.getValue());
+    deposit.setText(String.format("%.2f", shoppingItem.getSingleDeposit()));
   }
 
   private void recalculatePrice() {
-    price.setText(String.format("%.2f", netPrice.getSafeValue() * grossNetRatio));
+    price.setText(String.format("%.2f", netPrice.getSafeValue() * retailNetRatio));
   }
 
   void defaultSettings() {
@@ -558,7 +562,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
             controller.searchBySupplierItemsNumber();
           }
         });
-    netPrice.addActionListener(e -> recalculatePrice());
+    netPrice.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            recalculatePrice();
+          }
+        });
+    netPrice.addActionListener(e -> addToCart());
     Supplier.getAll(null).forEach(s -> supplier.addItem(s));
     containerSize.setEnabled(false);
     optTaxLow.setText(VAT.LOW.getName());

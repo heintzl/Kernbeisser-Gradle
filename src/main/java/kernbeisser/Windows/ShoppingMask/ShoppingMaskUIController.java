@@ -102,18 +102,24 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
   }
 
   void searchByKbNumber() {
-    view.defaultSettings();
-    Article found = model.getByKbNumber(view.getKBArticleNumber());
-    if (found != null) {
-      view.loadItemStats(found);
-    } else {
-      view.setSuppliersItemNumber("");
+    int kbNumber = view.getKBArticleNumber();
+    if (kbNumber > 0) {
+      view.defaultSettings();
+      ShoppingItem found =
+          model.getByKbNumber(view.getKBArticleNumber(), view.getDiscount(), view.isPreordered());
+      if (found != null) {
+        view.loadItemStats(found);
+      } else {
+        view.setSuppliersItemNumber("");
+      }
     }
   }
 
   void searchBySupplierItemsNumber() {
     view.defaultSettings();
-    Article found = model.getBySupplierItemNumber(view.getSuppliersNumber());
+    ShoppingItem found =
+        model.getBySupplierItemNumber(
+            view.getSuppliersNumber(), view.getDiscount(), view.isPreordered());
     if (found != null) {
       view.loadItemStats(found);
     } else {
@@ -123,7 +129,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
 
   void searchByBarcode(long barcode) {
     view.setOptArticleNo();
-    Article found = model.getByBarcode(barcode, view.isPreordered());
+    ShoppingItem found = model.getByBarcode(barcode, view.getDiscount(), view.isPreordered());
     if (found != null) {
       view.loadItemStats(found);
       if (!view.isPreordered()) {
@@ -159,23 +165,17 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
   private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
     switch (view.getOption()) {
       case ShoppingMaskUIView.ARTICLE_NUMBER:
-        Article extractedArticle = null;
+        int discount = view.getDiscount();
+        boolean preordered = view.isPreordered();
         int kbArticleNumber = view.getKBArticleNumber();
         if (kbArticleNumber != 0) {
-          extractedArticle = model.getByKbNumber(kbArticleNumber);
+          return model.getByKbNumber(kbArticleNumber, discount, preordered);
         }
-        if (extractedArticle == null) {
-          int supplier = view.getSuppliersNumber();
-          if (supplier != 0) {
-            extractedArticle = model.getBySupplierItemNumber(supplier);
-          }
-          if (extractedArticle == null) {
-            throw new UndefinedInputException();
-          }
+        int supplier = view.getSuppliersNumber();
+        if (supplier != 0) {
+          return model.getBySupplierItemNumber(supplier, discount, preordered);
         }
-        ShoppingItem shoppingItem =
-            new ShoppingItem(extractedArticle, view.getDiscount(), view.isPreordered());
-        return shoppingItem;
+        throw new UndefinedInputException();
       case ShoppingMaskUIView.BAKED_GOODS:
         return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded());
       case ShoppingMaskUIView.PRODUCE:
@@ -250,7 +250,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
 
   void searchWindowResult(Article article) {
     view.setOptArticleNo();
-    view.loadItemStats(article);
+    view.loadItemStats(new ShoppingItem(article, view.getDiscount(), view.isPreordered()));
   }
 
   void editUserAction() {
