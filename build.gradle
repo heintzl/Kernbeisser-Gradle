@@ -19,7 +19,7 @@ repositories {
 }
 
 gitHooks {
-    hooks = ['pre-commit': 'spotlessCheck']
+    hooks = ['pre-commit': 'spotlessApply']
 }
 
 dependencies {
