@@ -23,8 +23,12 @@ public class ArticleSelectorController
         new SearchBoxController<>(
             (s, m) -> {
               Collection<Article> articles = Article.defaultSearch(s, m);
-              if (view != null && view.searchOnlyWithoutBarcode()) {
-                articles.removeIf(e -> e.getBarcode() != null);
+              if (view != null) {
+                if (view.searchOnlyWithoutBarcode()) {
+                  articles.removeIf(e -> e.getBarcode() != null);
+                } else if (view.searchOnlyShowInShop()) {
+                  articles.removeIf(e -> !e.isShowInShop());
+                }
               }
               return articles;
             },
