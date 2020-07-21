@@ -160,9 +160,12 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     if (getOption() == CUSTOM_PRODUCT) {
       articleName.setEnabled(knownSupplier);
-      loadItemStats(new ShoppingItem());
-      netPrice.setEnabled(knownSupplier);
+      loadItemStats(controller.createCustomItem((Supplier) supplier.getSelectedItem()));
       amount.setEnabled(knownSupplier);
+      netPrice.setEnabled(knownSupplier);
+      if (knownSupplier) {
+        optTaxLow.requestFocusInWindow();
+      }
     }
   }
 
@@ -182,6 +185,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     addPrice.setVisible(!preordered && "pbc".indexOf(type) != -1);
     addNetPrice.setVisible(preordered && "pbc".indexOf(type) != -1);
     addDeposit.setVisible("dr".indexOf(type) != -1);
+    supplier.getModel().setSelectedItem(null);
     supplier.setEnabled(preordered);
     kbNumber.setVisible(type == 'a');
     setKbNumber("");
@@ -263,12 +267,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     supplier.getModel().setSelectedItem(shoppingItem.getSupplier());
     kbNumber.setText(shoppingItem.getKbNumber() != 0 ? shoppingItem.getKbNumber() + "" : "");
     suppliersItemNumber.setText(shoppingItem.getSuppliersItemNumber() + "");
-    articleName.setText(
-        shoppingItem.getName().length() > 40
-            ? new StringBuilder(shoppingItem.getName())
-                .replace(36, shoppingItem.getName().length(), "...")
-                .toString()
-            : shoppingItem.getName());
+    if (shoppingItem.getName() != null) {
+      articleName.setText(
+          shoppingItem.getName().length() > 40
+              ? new StringBuilder(shoppingItem.getName())
+                  .replace(36, shoppingItem.getName().length(), "...")
+                  .toString()
+              : shoppingItem.getName());
+    }
     price.setText(String.format("%.2f", shoppingItem.getItemRetailPrice()));
     priceUnit.setText(preordered && !shoppingItem.isWeighAble() ? "€" : "€/kg");
     netPrice.setText(String.format("%.2f", shoppingItem.getItemNetPrice()));
@@ -517,7 +523,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     addAmount.setIcon(
         IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
     addAmount.addActionListener(e -> addToCart());
-    supplier.addActionListener(e -> supplierChange());
     price.addActionListener(e -> addToCart());
     deposit.addActionListener(e -> addToCart());
     amount.addActionListener(e -> addToCart());
@@ -583,16 +588,19 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         });
     netPrice.addActionListener(e -> addToCart());
     Supplier.getAll(null).forEach(s -> supplier.addItem(s));
+    supplier.addActionListener(e -> supplierChange());
     containerSize.setEnabled(false);
     optTaxLow.setText(VAT.LOW.getName());
     optTaxStandard.setText(VAT.HIGH.getName());
     articleTypeChange('a');
     traversalOrder.add(kbNumber);
     traversalOrder.add(articleName);
+    traversalOrder.add(netPrice);
     traversalOrder.add(price);
     traversalOrder.add(amount);
     traversalOrder.add(suppliersItemNumber);
     traversalOrder.add(deposit);
+    traversalOrder.add(supplier);
     traversalPolicy = new FocusTraversal(traversalOrder);
     westPanel.setFocusTraversalPolicy(traversalPolicy);
     barcodeCapture = new BarcodeCapture(c -> controller.processBarcode(c));

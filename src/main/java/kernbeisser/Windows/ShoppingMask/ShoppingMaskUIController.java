@@ -3,9 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
@@ -162,9 +160,18 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
     return shoppingItem.getItemRetailPrice();
   }
 
+  ShoppingItem createCustomItem(Supplier supplier) {
+    ArticleBase articleBase = new ArticleBase();
+    articleBase.setSupplier(supplier);
+    articleBase.setVat(view.getSelectedVAT());
+    return new ShoppingItem(articleBase, view.getDiscount(), view.isPreordered());
+  }
+
   private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
+    ShoppingItem shoppingItem = view.getCurrentItem();
     switch (view.getOption()) {
       case ShoppingMaskUIView.ARTICLE_NUMBER:
+        if (shoppingItem != null) return shoppingItem;
         int discount = view.getDiscount();
         boolean preordered = view.isPreordered();
         int kbArticleNumber = view.getKBArticleNumber();
