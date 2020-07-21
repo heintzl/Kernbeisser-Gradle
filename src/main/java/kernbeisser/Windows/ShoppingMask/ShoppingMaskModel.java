@@ -110,7 +110,11 @@ public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
   }
 
   ShoppingItem getByKbNumber(int kbNumber, int discount, boolean preordered) {
-    return new ShoppingItem(Article.getByKbNumber(kbNumber), discount, preordered);
+    Article article = Article.getByKbNumber(kbNumber);
+    if (article != null) {
+      return new ShoppingItem(article, discount, preordered);
+    }
+    return null;
   }
 
   ShoppingItem getBySupplierItemNumber(int suppliersNumber, int discount, boolean preordered) {
@@ -119,10 +123,13 @@ public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
     if (article != null) {
       return new ShoppingItem(article, discount, preordered);
     }
-    return preordered
-        ? new ShoppingItem(
-            ArticleBase.getBySuppliersItemNumber(suppliersNumber), discount, preordered)
-        : null;
+    if (preordered) {
+      ArticleBase articleBase = ArticleBase.getBySuppliersItemNumber(suppliersNumber);
+      if (articleBase != null) {
+        return new ShoppingItem(articleBase, discount, preordered);
+      }
+    }
+    return null;
   }
 
   ShoppingItem getByBarcode(long barcode, int discount, boolean preordered) {
@@ -130,8 +137,12 @@ public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
     if (article != null) {
       return new ShoppingItem(article, discount, preordered);
     }
-    return preordered
-        ? new ShoppingItem(ArticleBase.getByBarcode(barcode), discount, preordered)
-        : null;
+    if (preordered) {
+      ArticleBase articleBase = ArticleBase.getByBarcode(barcode);
+      if (articleBase != null) {
+        return new ShoppingItem(articleBase, discount, preordered);
+      }
+    }
+    return null;
   }
 }
