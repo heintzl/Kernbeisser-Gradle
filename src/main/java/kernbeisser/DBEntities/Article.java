@@ -177,7 +177,7 @@ public class Article extends ArticleBase {
     EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
-              "select i from ArticleBase i where suppliersItemNumber = :n", Article.class)
+              "select i from Article i where suppliersItemNumber = :n", Article.class)
           .setParameter("n", suppliersNumber)
           .getSingleResult();
     } catch (NoResultException e) {
@@ -198,53 +198,6 @@ public class Article extends ArticleBase {
     } finally {
       em.close();
     }
-  }
-
-  static Article articleFromBase(ArticleBase articleBase) {
-    Article result = new Article();
-    result.setAmount(articleBase.getAmount());
-    result.setBarcode(articleBase.getBarcode());
-    result.setContainerDeposit(articleBase.getContainerDeposit());
-    result.setContainerSize(articleBase.getContainerSize());
-    result.setMetricUnits(articleBase.getMetricUnits());
-    result.setName(articleBase.getName());
-    result.setNetPrice(articleBase.getNetPrice());
-    result.setProducer(articleBase.getProducer());
-    result.setSingleDeposit(articleBase.getSingleDeposit());
-    result.setSuppliersItemNumber(articleBase.getSuppliersItemNumber());
-    result.setVat(articleBase.getVat());
-    // TODO Supplier should be available from articleBase
-    result.setSupplier(
-        articleBase.getSupplier() == null ? Supplier.getKKSupplier() : articleBase.getSupplier());
-
-    result.kbNumber = 0;
-    result.containerDef = ContainerDefinition.UNKNOWN;
-    result.cooling = Cooling.NONE;
-    result.coveredIntake = false;
-    result.deleteAllowed = false;
-    result.deleted = false;
-    result.delivered = 0;
-    result.intake = Instant.now();
-    result.lastDelivery = Instant.now();
-    result.listed = true;
-    result.loss = 0;
-    result.showInShop = false;
-    result.sold = 0;
-    result.surcharge = calculateSurcharge(articleBase);
-    result.weighable = false;
-    return result;
-  }
-
-  private static double calculateSurcharge(ArticleBase articleBase) {
-    SurchargeTable surchargeTable = articleBase.getSurchargeTable();
-    double surcharge = articleBase.getSurchargeTable().getSurcharge();
-    if (surchargeTable != SurchargeTable.DEFAULT) {
-      double supplierSurcharge = articleBase.getSupplier().getSurcharge();
-      if (supplierSurcharge > 0) {
-        surcharge = supplierSurcharge;
-      }
-    }
-    return surcharge;
   }
 
   @Override
