@@ -74,38 +74,12 @@ public class ShoppingItem implements Serializable {
 
   @Transient private Supplier supplier;
 
-  public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
-    this.containerDiscount = hasContainerDiscount;
-    this.name = article.getName();
-    this.kbNumber = article.getKbNumber();
-    this.amount = article.getAmount();
-    this.itemNetPrice = article.getNetPrice();
-    this.metricUnits = article.isWeighable() ? article.getMetricUnits() : MetricUnits.PIECE;
-    this.vat = article.getVat().getValue();
-    this.weighAble = article.isWeighable();
-    this.unitAmount =
-        weighAble
-                || article.getMetricUnits() == MetricUnits.NONE
-                || article.getMetricUnits() == MetricUnits.PIECE
-                || !(article.getAmount() > 0)
-            ? ""
-            : article.getAmount() + article.getMetricUnits().getShortName();
-    this.surcharge =
-        (hasContainerDiscount
-            ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue()
-            : article.getSurcharge());
-    this.discount = discount;
-    supplier = article.getSupplier();
-    if (supplier != null) {
-      this.shortName = article.getSupplier().getShortName();
-    }
-    this.suppliersItemNumber = article.getSuppliersItemNumber();
-    this.singleDeposit = article.getSingleDeposit();
-    this.containerDeposit = article.getContainerDeposit();
-    this.containerSize = article.getContainerSize();
-    this.itemRetailPrice = calculateItemRetailPrice();
-  }
-
+  /**
+   * @param articleBase most ShoppingItem properties are copied from given article. surcharge gets
+   *     calculated
+   * @param discount percentage of netprice reduction
+   * @param hasContainerDiscount if true reduced surcharge is applied
+   */
   public ShoppingItem(ArticleBase articleBase, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
     this.name = articleBase.getName();
@@ -131,7 +105,30 @@ public class ShoppingItem implements Serializable {
     this.singleDeposit = articleBase.getSingleDeposit();
     this.containerDeposit = articleBase.getContainerDeposit();
     this.containerSize = articleBase.getContainerSize();
-    this.itemRetailPrice = calculateItemRetailPrice();
+    this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
+  }
+
+  /**
+   * @param article Article constructor provides some more fields than ArticleBase. surcharge is
+   *     taken directly from article
+   * @param discount percentage of netprice reduction
+   * @param hasContainerDiscount if true reduced surcharge is applied
+   */
+  public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
+    this((ArticleBase) article, discount, hasContainerDiscount);
+    this.kbNumber = article.getKbNumber();
+    this.metricUnits = article.isWeighable() ? article.getMetricUnits() : MetricUnits.PIECE;
+    this.weighAble = article.isWeighable();
+    this.unitAmount =
+        weighAble
+                || article.getMetricUnits() == MetricUnits.NONE
+                || article.getMetricUnits() == MetricUnits.PIECE
+                || !(article.getAmount() > 0)
+            ? ""
+            : article.getAmount() + article.getMetricUnits().getShortName();
+    this.surcharge =
+        article.getSurcharge()
+            * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
   }
 
   public static ShoppingItem createOrganic(double price) {
@@ -258,10 +255,8 @@ public class ShoppingItem implements Serializable {
     return itemRetailPrice * metricUnits.getBaseFactor() * itemMultiplier;
   }
 
-  private double calculateItemRetailPrice() {
-    return Math.round(100 * itemNetPrice * (1 + vat) * (1 + surcharge))
-        / 100.
-        * (1 - discount / 100.);
+  public double calculateItemRetailPrice(double netPrice) {
+    return Math.round(100 * netPrice * (1 + vat) * (1 + surcharge)) / 100. * (1 - discount / 100.);
   }
 
   public ShoppingItem createItemDeposit() {
