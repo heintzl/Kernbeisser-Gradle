@@ -106,6 +106,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
   @Getter private boolean preordered = false;
   private BarcodeCapture barcodeCapture;
   private KeyCapture keyCapture;
+  @Getter private ShoppingItem currentItem;
 
   public ShoppingMaskUIView(
       ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
@@ -151,6 +152,20 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         saleSession.getSecondSeller() != null ? saleSession.getSecondSeller().getUsername() : "");
   }
 
+  private void supplierChange() {
+    boolean knownSupplier = supplier.getSelectedItem() != null;
+    if (getOption() == ARTICLE_NUMBER) {
+      suppliersItemNumber.setEnabled(knownSupplier);
+    }
+
+    if (getOption() == CUSTOM_PRODUCT) {
+      articleName.setEnabled(knownSupplier);
+      loadItemStats(new ShoppingItem());
+      netPrice.setEnabled(knownSupplier);
+      amount.setEnabled(knownSupplier);
+    }
+  }
+
   private void articleTypeChange(char type) {
     if (currentArticleType != type) {
       articleTypeInitialize(type);
@@ -161,6 +176,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     currentArticleType = type;
     setPriceOptions(type);
     isWeighable = false;
+    netPrice.setEnabled(false);
 
     addAmount.setVisible(type == 'a');
     addPrice.setVisible(!preordered && "pbc".indexOf(type) != -1);
@@ -177,7 +193,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     price.setText("");
     priceUnit.setVisible("pbac".indexOf(type) != -1);
     priceUnit.setText("€");
-    netPrice.setEnabled(preordered);
     netPrice.setVisible(preordered || price.isVisible());
     netPrice.setText("");
     netPriceUnit.setVisible(priceUnit.isVisible());
@@ -202,9 +217,11 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     variablePercentage.setEnabled(
         priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
     if (type == 'p') {
+      loadItemStats(new ShoppingItem().createOrganic(0.0));
       this.articleName.setText("Obst & Gemüse");
       price.requestFocusInWindow();
     } else if (type == 'b') {
+      loadItemStats(new ShoppingItem().createBakeryProduct(0.0));
       this.articleName.setText("Backwaren");
       price.requestFocusInWindow();
     } else if (type == 'd') {
@@ -242,8 +259,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
   }
 
   void loadItemStats(ShoppingItem shoppingItem) {
+    currentItem = shoppingItem;
     supplier.getModel().setSelectedItem(shoppingItem.getSupplier());
-    retailNetRatio = shoppingItem.getItemRetailPrice() / shoppingItem.getItemNetPrice();
     kbNumber.setText(shoppingItem.getKbNumber() != 0 ? shoppingItem.getKbNumber() + "" : "");
     suppliersItemNumber.setText(shoppingItem.getSuppliersItemNumber() + "");
     articleName.setText(
@@ -255,6 +272,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     price.setText(String.format("%.2f", shoppingItem.getItemRetailPrice()));
     priceUnit.setText(preordered && !shoppingItem.isWeighAble() ? "€" : "€/kg");
     netPrice.setText(String.format("%.2f", shoppingItem.getItemNetPrice()));
+    netPrice.setEnabled(preordered);
     netPriceUnit.setText(priceUnit.getText());
     amountUnit.setText(
         preordered
@@ -272,11 +290,14 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
   }
 
   private void recalculatePrice() {
-    price.setText(String.format("%.2f", netPrice.getSafeValue() * retailNetRatio));
+    price.setText(
+        String.format("%.2f", currentItem.calculateItemRetailPrice(netPrice.getSafeValue())));
   }
 
   void defaultSettings() {
     price.setText("0.00");
+    netPrice.setText("0.00");
+    netPrice.setEnabled(false);
     depositUnit.setText("€");
     priceUnit.setText("€");
     amount.setText("1");
@@ -284,6 +305,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     articleName.setText("Kein Artikel gefunden!");
     amountUnit.setText("");
     containerUnit.setText("");
+    currentItem = null;
   }
 
   void messageNoArticleFound() {
@@ -495,10 +517,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     addAmount.setIcon(
         IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
     addAmount.addActionListener(e -> addToCart());
-    price.addActionListener(
-        e -> {
-          if (!preordered) addToCart();
-        });
+    supplier.addActionListener(e -> supplierChange());
+    price.addActionListener(e -> addToCart());
     deposit.addActionListener(e -> addToCart());
     amount.addActionListener(e -> addToCart());
     editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
@@ -528,15 +548,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         e -> {
           variablePercentage.setEnabled(true);
           variablePercentage.requestFocusInWindow();
-          ;
           disablePreordered();
-        });
-    priceStandard.addItemListener(e -> variablePercentage.setEnabled(false));
-    price50Percent.addItemListener(e -> variablePercentage.setEnabled(false));
-    priceVariablePercentage.addItemListener(
-        e -> {
-          variablePercentage.setEnabled(true);
-          variablePercentage.requestFocusInWindow();
         });
     variablePercentage.addActionListener(e -> addToCart());
     kbNumber.addKeyListener(
