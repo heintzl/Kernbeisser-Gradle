@@ -176,8 +176,7 @@ public class Article extends ArticleBase {
   public static Article getBySuppliersItemNumber(int suppliersNumber) {
     EntityManager em = DBConnection.getEntityManager();
     try {
-      return em.createQuery(
-              "select i from Article i where suppliersItemNumber = :n", Article.class)
+      return em.createQuery("select i from Article i where suppliersItemNumber = :n", Article.class)
           .setParameter("n", suppliersNumber)
           .getSingleResult();
     } catch (NoResultException e) {
