@@ -87,7 +87,9 @@ public class ShoppingItem implements Serializable {
     this.itemNetPrice = articleBase.getNetPrice();
     this.metricUnits = articleBase.getMetricUnits();
     VAT vat = articleBase.getVat();
-    if (vat != null) {this.vat = vat.getValue();}
+    if (vat != null) {
+      this.vat = vat.getValue();
+    }
     this.unitAmount =
         articleBase.getMetricUnits() == MetricUnits.NONE
                 || articleBase.getMetricUnits() == MetricUnits.PIECE
