@@ -62,7 +62,7 @@ public class Articles {
     article.setContainerSize(Double.parseDouble(rawArticleValues[15].replaceAll(",", ".")));
     article.setSuppliersItemNumber(Integer.parseInt(rawArticleValues[16]));
     article.setWeighable(!Boolean.parseBoolean(rawArticleValues[17]));
-    article.setListed(Boolean.parseBoolean(rawArticleValues[18]));
+    article.setListed(!Boolean.parseBoolean(rawArticleValues[18]));
     article.setShowInShop(Boolean.parseBoolean(rawArticleValues[19]));
     article.setDeleted(Boolean.parseBoolean(rawArticleValues[20]));
     article.setPrintAgain(Boolean.parseBoolean(rawArticleValues[21]));
