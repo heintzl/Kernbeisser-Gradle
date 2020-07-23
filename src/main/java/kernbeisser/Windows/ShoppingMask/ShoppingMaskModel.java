@@ -7,7 +7,9 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.Model;
 
 public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
@@ -107,15 +109,40 @@ public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
     this.saleSession = saleSession;
   }
 
-  Article getByKbNumber(int kbNumber) {
-    return Article.getByKbNumber(kbNumber);
+  ShoppingItem getByKbNumber(int kbNumber, int discount, boolean preordered) {
+    Article article = Article.getByKbNumber(kbNumber);
+    if (article != null) {
+      return new ShoppingItem(article, discount, preordered);
+    }
+    return null;
   }
 
-  Article getBySupplierItemNumber(int suppliersNumber) {
-    return Article.getBySuppliersItemNumber(suppliersNumber);
+  ShoppingItem getBySupplierItemNumber(int suppliersNumber, int discount, boolean preordered) {
+
+    Article article = Article.getBySuppliersItemNumber(suppliersNumber);
+    if (article != null) {
+      return new ShoppingItem(article, discount, preordered);
+    }
+    if (preordered) {
+      ArticleBase articleBase = ArticleBase.getBySuppliersItemNumber(suppliersNumber);
+      if (articleBase != null) {
+        return new ShoppingItem(articleBase, discount, preordered);
+      }
+    }
+    return null;
   }
 
-  Article getByBarcode(long barcode) {
-    return Article.getByBarcode(barcode);
+  ShoppingItem getByBarcode(long barcode, int discount, boolean preordered) {
+    Article article = Article.getByBarcode(barcode);
+    if (article != null) {
+      return new ShoppingItem(article, discount, preordered);
+    }
+    if (preordered) {
+      ArticleBase articleBase = ArticleBase.getByBarcode(barcode);
+      if (articleBase != null) {
+        return new ShoppingItem(articleBase, discount, preordered);
+      }
+    }
+    return null;
   }
 }

@@ -3,9 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
@@ -102,18 +100,24 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
   }
 
   void searchByKbNumber() {
-    view.defaultSettings();
-    Article found = model.getByKbNumber(view.getKBArticleNumber());
-    if (found != null) {
-      view.loadItemStats(found);
-    } else {
-      view.setSuppliersItemNumber("");
+    int kbNumber = view.getKBArticleNumber();
+    if (kbNumber > 0) {
+      view.defaultSettings();
+      ShoppingItem found =
+          model.getByKbNumber(view.getKBArticleNumber(), view.getDiscount(), view.isPreordered());
+      if (found != null) {
+        view.loadItemStats(found);
+      } else {
+        view.setSuppliersItemNumber("");
+      }
     }
   }
 
   void searchBySupplierItemsNumber() {
     view.defaultSettings();
-    Article found = model.getBySupplierItemNumber(view.getSuppliersNumber());
+    ShoppingItem found =
+        model.getBySupplierItemNumber(
+            view.getSuppliersNumber(), view.getDiscount(), view.isPreordered());
     if (found != null) {
       view.loadItemStats(found);
     } else {
@@ -123,7 +127,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
 
   void searchByBarcode(long barcode) {
     view.setOptArticleNo();
-    Article found = model.getByBarcode(barcode);
+    ShoppingItem found = model.getByBarcode(barcode, view.getDiscount(), view.isPreordered());
     if (found != null) {
       view.loadItemStats(found);
       if (!view.isPreordered()) {
@@ -156,26 +160,29 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
     return shoppingItem.getItemRetailPrice();
   }
 
+  ShoppingItem createCustomItem(Supplier supplier) {
+    ArticleBase articleBase = new ArticleBase();
+    articleBase.setSupplier(supplier);
+    articleBase.setVat(view.getSelectedVAT());
+    return new ShoppingItem(articleBase, view.getDiscount(), view.isPreordered());
+  }
+
   private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
+    ShoppingItem shoppingItem = view.getCurrentItem();
     switch (view.getOption()) {
       case ShoppingMaskUIView.ARTICLE_NUMBER:
-        Article extractedArticle = null;
+        if (shoppingItem != null) return shoppingItem;
+        int discount = view.getDiscount();
+        boolean preordered = view.isPreordered();
         int kbArticleNumber = view.getKBArticleNumber();
         if (kbArticleNumber != 0) {
-          extractedArticle = model.getByKbNumber(kbArticleNumber);
+          return model.getByKbNumber(kbArticleNumber, discount, preordered);
         }
-        if (extractedArticle == null) {
-          int supplier = view.getSuppliersNumber();
-          if (supplier != 0) {
-            extractedArticle = model.getBySupplierItemNumber(supplier);
-          }
-          if (extractedArticle == null) {
-            throw new UndefinedInputException();
-          }
+        int supplier = view.getSuppliersNumber();
+        if (supplier != 0) {
+          return model.getBySupplierItemNumber(supplier, discount, preordered);
         }
-        ShoppingItem shoppingItem =
-            new ShoppingItem(extractedArticle, view.getDiscount(), view.isPreordered());
-        return shoppingItem;
+        throw new UndefinedInputException();
       case ShoppingMaskUIView.BAKED_GOODS:
         return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded());
       case ShoppingMaskUIView.PRODUCE:
@@ -250,7 +257,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
 
   void searchWindowResult(Article article) {
     view.setOptArticleNo();
-    view.loadItemStats(article);
+    view.loadItemStats(new ShoppingItem(article, view.getDiscount(), view.isPreordered()));
   }
 
   void editUserAction() {

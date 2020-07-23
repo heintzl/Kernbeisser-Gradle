@@ -72,30 +72,66 @@ public class ShoppingItem implements Serializable {
 
   @Transient private int superIndex;
 
-  public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
+  @Transient private Supplier supplier;
+
+  /**
+   * @param articleBase most ShoppingItem properties are copied from given article. surcharge gets
+   *     calculated
+   * @param discount percentage of netprice reduction
+   * @param hasContainerDiscount if true reduced surcharge is applied
+   */
+  public ShoppingItem(ArticleBase articleBase, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
-    this.name = article.getName();
+    this.name = articleBase.getName();
+    this.amount = articleBase.getAmount();
+    this.itemNetPrice = articleBase.getNetPrice();
+    this.metricUnits = articleBase.getMetricUnits();
+    VAT vat = articleBase.getVat();
+    if (vat != null) {
+      this.vat = vat.getValue();
+    }
+    this.unitAmount =
+        articleBase.getMetricUnits() == MetricUnits.NONE
+                || articleBase.getMetricUnits() == MetricUnits.PIECE
+                || !(articleBase.getAmount() > 0)
+            ? ""
+            : articleBase.getAmount() + articleBase.getMetricUnits().getShortName();
+    this.surcharge =
+        articleBase.calculateSurcharge()
+            * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
+    this.discount = discount;
+    supplier = articleBase.getSupplier();
+    if (supplier != null) {
+      this.shortName = articleBase.getSupplier().getShortName();
+    }
+    this.suppliersItemNumber = articleBase.getSuppliersItemNumber();
+    this.singleDeposit = articleBase.getSingleDeposit();
+    this.containerDeposit = articleBase.getContainerDeposit();
+    this.containerSize = articleBase.getContainerSize();
+    this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
+  }
+
+  /**
+   * @param article Article constructor provides some more fields than ArticleBase. surcharge is
+   *     taken directly from article
+   * @param discount percentage of netprice reduction
+   * @param hasContainerDiscount if true reduced surcharge is applied
+   */
+  public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
+    this((ArticleBase) article, discount, hasContainerDiscount);
     this.kbNumber = article.getKbNumber();
-    this.amount = article.getAmount();
-    this.itemNetPrice = article.getNetPrice();
     this.metricUnits = article.isWeighable() ? article.getMetricUnits() : MetricUnits.PIECE;
-    this.vat = article.getVat().getValue();
     this.weighAble = article.isWeighable();
     this.unitAmount =
-        weighAble ? "" : article.getAmount() + article.getMetricUnits().getShortName();
+        weighAble
+                || article.getMetricUnits() == MetricUnits.NONE
+                || article.getMetricUnits() == MetricUnits.PIECE
+                || !(article.getAmount() > 0)
+            ? ""
+            : article.getAmount() + article.getMetricUnits().getShortName();
     this.surcharge =
-        (hasContainerDiscount
-            ? article.getSurcharge() * Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue()
-            : article.getSurcharge());
-    this.discount = discount;
-    if (article.getSupplier() != null) {
-      this.shortName = article.getSupplier().getShortName();
-    }
-    this.suppliersItemNumber = article.getSuppliersItemNumber();
-    this.singleDeposit = article.getSingleDeposit();
-    this.containerDeposit = article.getContainerDeposit();
-    this.containerSize = article.getContainerSize();
-    this.itemRetailPrice = calculateItemRetailPrice();
+        article.getSurcharge()
+            * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
   }
 
   public static ShoppingItem createOrganic(double price) {
@@ -119,16 +155,17 @@ public class ShoppingItem implements Serializable {
       return out;
     } catch (NoResultException e) {
       et.begin();
-      Article deposit = new Article();
-      deposit.setName("Obst und Gem\u00fcse");
-      deposit.setKbNumber(-1);
-      deposit.setMetricUnits(MetricUnits.PIECE);
-      deposit.setDeleteAllowed(false);
-      deposit.setVat(VAT.LOW);
-      em.persist(deposit);
+      Article produce = new Article();
+      produce.setName("Obst und Gem\u00fcse");
+      produce.setKbNumber(-1);
+      produce.setMetricUnits(MetricUnits.PIECE);
+      produce.setDeleteAllowed(false);
+      produce.setVat(VAT.LOW);
+      produce.setSurcharge(Setting.SURCHARGE_PRODUCE.getDoubleValue());
+      em.persist(produce);
       em.flush();
       et.commit();
-      return createDeposit(price);
+      return createOrganic(price);
     } catch (NotSupportedException e) {
       Tools.showUnexpectedErrorWarning(e);
       return null;
@@ -141,7 +178,7 @@ public class ShoppingItem implements Serializable {
     try {
       ShoppingItem out =
           new ShoppingItem(
-              em.createQuery("select  i from Article i where name like 'Backware'", Article.class)
+              em.createQuery("select  i from Article i where name like 'Backwaren'", Article.class)
                   .getSingleResult(),
               0,
               false) {
@@ -154,16 +191,17 @@ public class ShoppingItem implements Serializable {
       return out;
     } catch (NoResultException e) {
       et.begin();
-      Article deposit = new Article();
-      deposit.setName("Backware");
-      deposit.setKbNumber(-2);
-      deposit.setMetricUnits(MetricUnits.PIECE);
-      deposit.setDeleteAllowed(false);
-      deposit.setVat(VAT.LOW);
-      em.persist(deposit);
+      Article bakery = new Article();
+      bakery.setName("Backwaren");
+      bakery.setKbNumber(-2);
+      bakery.setMetricUnits(MetricUnits.PIECE);
+      bakery.setDeleteAllowed(false);
+      bakery.setVat(VAT.LOW);
+      bakery.setSurcharge(Setting.SURCHARGE_BAKERY.getDoubleValue());
+      em.persist(bakery);
       em.flush();
       et.commit();
-      return createDeposit(price);
+      return createBakeryProduct(price);
     } catch (NotSupportedException e) {
       Tools.showUnexpectedErrorWarning(e);
       return null;
@@ -186,6 +224,7 @@ public class ShoppingItem implements Serializable {
             }
           };
       out.addToRetailPrice(price);
+      out.name += (price < 0 ? " zurück" : "");
       return out;
     } catch (NoResultException e) {
       et.begin();
@@ -219,10 +258,8 @@ public class ShoppingItem implements Serializable {
     return itemRetailPrice * metricUnits.getBaseFactor() * itemMultiplier;
   }
 
-  private double calculateItemRetailPrice() {
-    return Math.round(100 * itemNetPrice * (1 + vat) * (1 + surcharge))
-        / 100.
-        * (1 - discount / 100.);
+  public double calculateItemRetailPrice(double netPrice) {
+    return Math.round(100 * netPrice * (1 + vat) * (1 + surcharge)) / 100. * (1 - discount / 100.);
   }
 
   public ShoppingItem createItemDeposit() {
