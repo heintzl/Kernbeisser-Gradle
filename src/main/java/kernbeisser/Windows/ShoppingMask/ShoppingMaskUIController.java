@@ -178,9 +178,9 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         if (kbArticleNumber != 0) {
           return model.getByKbNumber(kbArticleNumber, discount, preordered);
         }
-        int supplier = view.getSuppliersNumber();
-        if (supplier != 0) {
-          return model.getBySupplierItemNumber(supplier, discount, preordered);
+        int suppliersNumber = view.getSuppliersNumber();
+        if (suppliersNumber != 0) {
+          return model.getBySupplierItemNumber(suppliersNumber, discount, preordered);
         }
         throw new UndefinedInputException();
 
@@ -191,17 +191,20 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         return ShoppingItem.createOrganic(view.getPriceVATIncluded(), view.isPreordered());
 
       case ShoppingMaskUIView.CUSTOM_PRODUCT:
-        Article customArticle = new Article();
+        ArticleBase customArticle = new Article();
+
         customArticle.setName(view.getItemName());
-        customArticle.setSurcharge(SurchargeTable.DEFAULT.getSurcharge());
+        customArticle.setSupplier(view.getSupplier());
         customArticle.setVat(view.getSelectedVAT());
         customArticle.setNetPrice(
             view.isPreordered()
                 ? view.getNetPrice()
                 : view.getPriceVATIncluded()
                     / (1. + view.getSelectedVAT().getValue())
-                    / (1. + customArticle.getSurcharge()));
+                    / (1. + customArticle.calculateSurcharge()));
         customArticle.setMetricUnits(MetricUnits.PIECE);
+        customArticle.setContainerSize(1.);
+
         ShoppingItem customItem = new ShoppingItem(customArticle, 0, view.isPreordered());
         return customItem;
 

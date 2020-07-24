@@ -7,6 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.Objects;
 import java.util.Vector;
 import javax.swing.*;
 import jiconfont.IconCode;
@@ -114,6 +115,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     this.controller = controller;
   }
 
+  private boolean isEmptyArticleName() {
+    return articleName.getText().equals("");
+  }
+
   private void doCancel() {
     controller.emptyShoppingCart();
     back();
@@ -159,12 +164,27 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
 
     if (getOption() == CUSTOM_PRODUCT) {
-      articleName.setEnabled(knownSupplier);
+      articleName.setEnabled(knownSupplier || !preordered);
       loadItemStats(controller.createCustomItem((Supplier) supplier.getSelectedItem()));
       amount.setEnabled(knownSupplier);
-      netPrice.setEnabled(knownSupplier);
+      netPrice.setEnabled(knownSupplier && !isEmptyArticleName());
     }
   }
+
+  private void articleNameChange() {
+    netPrice.setEnabled(preordered && !isEmptyArticleName());
+    price.setEnabled(!preordered && !isEmptyArticleName());
+    if (articleName.isEnabled() && !isEmptyArticleName()) {
+      if (preordered) {
+        netPrice.selectAll();
+        netPrice.requestFocusInWindow();
+      } else {
+        price.selectAll();
+        price.requestFocusInWindow();
+      }
+    }
+  }
+
 
   private void articleTypeChange(char type) {
     if (currentArticleType != type) {
@@ -182,14 +202,16 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     addPrice.setVisible(!preordered && "pbc".indexOf(type) != -1);
     addNetPrice.setVisible(preordered && "pbc".indexOf(type) != -1);
     addDeposit.setVisible("dr".indexOf(type) != -1);
+
     supplier.getModel().setSelectedItem(null);
-    supplier.setEnabled(preordered);
+    supplier.setEnabled(preordered || type == 'c');
+    suppliersItemNumber.setVisible(type == 'a');
+    setSuppliersItemNumber("");
+    supplierChange();
+
     kbNumber.setVisible(type == 'a');
     setKbNumber("");
-    suppliersItemNumber.setVisible(type == 'a');
-    if (preordered) supplierChange();
-    setSuppliersItemNumber("");
-    price.setEnabled(!preordered && "dra".indexOf(type) == -1);
+
     price.setVisible("dr".indexOf(type) == -1);
     price.setText("");
     priceUnit.setVisible("pbac".indexOf(type) != -1);
@@ -198,15 +220,19 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     netPrice.setText("");
     netPriceUnit.setVisible(priceUnit.isVisible());
     netPriceUnit.setText("€");
+
     amount.setVisible("ac".indexOf(type) != -1);
     amount.setText("1");
     this.amountUnit.setText("");
+
     containerSize.setVisible(type == 'a');
     this.containerUnit.setText("");
     containerUnit.setVisible(type == 'a');
+
     deposit.setEnabled("dr".indexOf(type) != -1);
     deposit.setVisible("adr".indexOf(type) != -1);
     depositUnit.setVisible("adr".indexOf(type) != -1);
+
     if ("dr".indexOf(type) != -1) {
       this.optTaxStandard.setSelected(true);
     } else {
@@ -217,12 +243,15 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     variablePercentage.setEnabled(
         priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
+
     if (type == 'p') {
-      loadItemStats(new ShoppingItem().createOrganic(0.0, preordered));
+      loadItemStats(Objects.requireNonNull(ShoppingItem.createOrganic(0.0, preordered)));
       this.articleName.setText("Obst & Gemüse");
+      price.selectAll();
       price.requestFocusInWindow();
     } else if (type == 'b') {
-      loadItemStats(new ShoppingItem().createBakeryProduct(0.0, preordered));
+      loadItemStats(Objects.requireNonNull(ShoppingItem.createBakeryProduct(0.0, preordered)));
+      price.selectAll();
       this.articleName.setText("Backwaren");
       price.requestFocusInWindow();
     } else if (type == 'd') {
@@ -242,7 +271,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         supplier.requestFocusInWindow();
       }
     }
-    // articleName.setEnabled(type == 'c');
+    articleName.setEnabled(type == 'c');
+    price.setEnabled(!preordered && "dra".indexOf(type) == -1 && !isEmptyArticleName());
   }
 
   private void setPriceOptions(char type) {
@@ -276,10 +306,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                   .toString()
               : shoppingItem.getName());
     }
-    price.setText(String.format("%.2f", shoppingItem.getItemRetailPrice()));
-    priceUnit.setText(preordered && !shoppingItem.isWeighAble() ? "€" : "€/kg");
-    netPrice.setText(String.format("%.2f", shoppingItem.getItemNetPrice()));
-    netPrice.setEnabled(preordered);
+    price.setText(String.format("%.2f", shoppingItem.getItemRetailPrice() * (preordered?shoppingItem.getContainerSize():1.0)));
+    priceUnit.setText(preordered?"€/Geb.":shoppingItem.isWeighAble() ? "€/kg" : "€");
+    netPrice.setText(String.format("%.2f", shoppingItem.getItemNetPrice() * (preordered?shoppingItem.getContainerSize():1.0)));
+    netPrice.setEnabled(preordered && !isEmptyArticleName());
     netPriceUnit.setText(priceUnit.getText());
     amountUnit.setText(
         preordered
@@ -497,6 +527,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     return suppliersItemNumber.getSafeValue();
   }
 
+  Supplier getSupplier() {
+    return (Supplier) supplier.getSelectedItem();
+  }
+
   VAT getSelectedVAT() {
     return optTaxLow.isSelected() ? VAT.LOW : VAT.HIGH;
   }
@@ -621,18 +655,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
     keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
     articleTypeChange('a');
-  }
-
-  private void articleNameChange() {
-    if (articleName.isEnabled() && articleName.getText() != "") {
-      if (preordered) {
-        netPrice.selectAll();
-        netPrice.requestFocusInWindow();
-      } else {
-        price.selectAll();
-        price.requestFocusInWindow();
-      }
-    }
   }
 
   private void enablePreordered() {
