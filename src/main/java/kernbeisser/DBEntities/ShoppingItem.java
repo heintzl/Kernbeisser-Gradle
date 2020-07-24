@@ -261,7 +261,7 @@ public class ShoppingItem implements Serializable {
   }
 
   public double calculateItemRetailPrice(double netPrice) {
-    return Math.round(100. * netPrice * (1 + vat) * (1 + surcharge)* (1 - discount / 100.))/ 100. ;
+    return Math.round(100. * netPrice * (1 + vat) * (1 + surcharge) * (1 - discount / 100.)) / 100.;
   }
 
   public ShoppingItem createItemDeposit() {

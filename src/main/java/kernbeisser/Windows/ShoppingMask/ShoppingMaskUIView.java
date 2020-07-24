@@ -185,7 +185,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     }
   }
 
-
   private void articleTypeChange(char type) {
     if (currentArticleType != type) {
       articleTypeInitialize(type);
@@ -306,9 +305,16 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
                   .toString()
               : shoppingItem.getName());
     }
-    price.setText(String.format("%.2f", shoppingItem.getItemRetailPrice() * (preordered?shoppingItem.getContainerSize():1.0)));
-    priceUnit.setText(preordered?"€/Geb.":shoppingItem.isWeighAble() ? "€/kg" : "€");
-    netPrice.setText(String.format("%.2f", shoppingItem.getItemNetPrice() * (preordered?shoppingItem.getContainerSize():1.0)));
+    price.setText(
+        String.format(
+            "%.2f",
+            shoppingItem.getItemRetailPrice()
+                * (preordered ? shoppingItem.getContainerSize() : 1.0)));
+    priceUnit.setText(preordered ? "€/Geb." : shoppingItem.isWeighAble() ? "€/kg" : "€");
+    netPrice.setText(
+        String.format(
+            "%.2f",
+            shoppingItem.getItemNetPrice() * (preordered ? shoppingItem.getContainerSize() : 1.0)));
     netPrice.setEnabled(preordered && !isEmptyArticleName());
     netPriceUnit.setText(priceUnit.getText());
     amountUnit.setText(
