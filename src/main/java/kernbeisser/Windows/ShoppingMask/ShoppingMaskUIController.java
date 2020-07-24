@@ -183,19 +183,28 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
           return model.getBySupplierItemNumber(supplier, discount, preordered);
         }
         throw new UndefinedInputException();
+
       case ShoppingMaskUIView.BAKED_GOODS:
-        return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded());
+        return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded(), view.isPreordered());
+
       case ShoppingMaskUIView.PRODUCE:
-        return ShoppingItem.createOrganic(view.getPriceVATIncluded());
+        return ShoppingItem.createOrganic(view.getPriceVATIncluded(), view.isPreordered());
+
       case ShoppingMaskUIView.CUSTOM_PRODUCT:
         Article customArticle = new Article();
         customArticle.setName(view.getItemName());
+        customArticle.setSurcharge(SurchargeTable.DEFAULT.getSurcharge());
         customArticle.setVat(view.getSelectedVAT());
         customArticle.setNetPrice(
-            view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
+            view.isPreordered()
+                ? view.getNetPrice()
+                : view.getPriceVATIncluded()
+                    / (1. + view.getSelectedVAT().getValue())
+                    / (1. + customArticle.getSurcharge()));
         customArticle.setMetricUnits(MetricUnits.PIECE);
-        ShoppingItem customItem = new ShoppingItem(customArticle, 0, false);
+        ShoppingItem customItem = new ShoppingItem(customArticle, 0, view.isPreordered());
         return customItem;
+
       case ShoppingMaskUIView.DEPOSIT:
         if (view.getDeposit() < 0) {
           view.messageDepositStorno();
@@ -203,6 +212,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         } else {
           return ShoppingItem.createDeposit(view.getDeposit());
         }
+
       case ShoppingMaskUIView.RETURN_DEPOSIT:
         if (view.getDeposit() < 0) {
           view.messageDepositStorno();

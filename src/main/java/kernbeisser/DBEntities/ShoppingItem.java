@@ -134,7 +134,7 @@ public class ShoppingItem implements Serializable {
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
   }
 
-  public static ShoppingItem createOrganic(double price) {
+  public static ShoppingItem createOrganic(double price, boolean hasContainerDiscount) {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     try {
@@ -152,6 +152,7 @@ public class ShoppingItem implements Serializable {
             }
           };
       out.addToRetailPrice(price);
+      out.containerDiscount = hasContainerDiscount;
       return out;
     } catch (NoResultException e) {
       et.begin();
@@ -165,14 +166,14 @@ public class ShoppingItem implements Serializable {
       em.persist(produce);
       em.flush();
       et.commit();
-      return createOrganic(price);
+      return createOrganic(price, hasContainerDiscount);
     } catch (NotSupportedException e) {
       Tools.showUnexpectedErrorWarning(e);
       return null;
     }
   }
 
-  public static ShoppingItem createBakeryProduct(double price) {
+  public static ShoppingItem createBakeryProduct(double price, boolean hasContainerDiscount) {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     try {
@@ -188,6 +189,7 @@ public class ShoppingItem implements Serializable {
             }
           };
       out.addToRetailPrice(price);
+      out.containerDiscount = hasContainerDiscount;
       return out;
     } catch (NoResultException e) {
       et.begin();
@@ -201,7 +203,7 @@ public class ShoppingItem implements Serializable {
       em.persist(bakery);
       em.flush();
       et.commit();
-      return createBakeryProduct(price);
+      return createBakeryProduct(price, hasContainerDiscount);
     } catch (NotSupportedException e) {
       Tools.showUnexpectedErrorWarning(e);
       return null;

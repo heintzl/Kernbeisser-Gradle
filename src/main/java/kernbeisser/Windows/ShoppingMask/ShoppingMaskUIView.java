@@ -163,9 +163,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
       loadItemStats(controller.createCustomItem((Supplier) supplier.getSelectedItem()));
       amount.setEnabled(knownSupplier);
       netPrice.setEnabled(knownSupplier);
-      if (knownSupplier) {
-        optTaxLow.requestFocusInWindow();
-      }
     }
   }
 
@@ -190,7 +187,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     kbNumber.setVisible(type == 'a');
     setKbNumber("");
     suppliersItemNumber.setVisible(type == 'a');
-    suppliersItemNumber.setEnabled(preordered);
+    if (preordered) supplierChange();
     setSuppliersItemNumber("");
     price.setEnabled(!preordered && "dra".indexOf(type) == -1);
     price.setVisible("dr".indexOf(type) == -1);
@@ -221,11 +218,11 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     variablePercentage.setEnabled(
         priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
     if (type == 'p') {
-      loadItemStats(new ShoppingItem().createOrganic(0.0));
+      loadItemStats(new ShoppingItem().createOrganic(0.0, preordered));
       this.articleName.setText("Obst & Gemüse");
       price.requestFocusInWindow();
     } else if (type == 'b') {
-      loadItemStats(new ShoppingItem().createBakeryProduct(0.0));
+      loadItemStats(new ShoppingItem().createBakeryProduct(0.0, preordered));
       this.articleName.setText("Backwaren");
       price.requestFocusInWindow();
     } else if (type == 'd') {
@@ -239,9 +236,13 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
       kbNumber.requestFocusInWindow();
     } else if (type == 'c') {
       this.articleName.setText("");
-      articleName.requestFocusInWindow();
+      if (articleName.isEnabled()) {
+        articleName.requestFocusInWindow();
+      } else {
+        supplier.requestFocusInWindow();
+      }
     }
-    articleName.setEnabled(type == 'c');
+    // articleName.setEnabled(type == 'c');
   }
 
   private void setPriceOptions(char type) {
@@ -480,6 +481,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     return -1;
   }
 
+  double getNetPrice() {
+    return netPrice.getSafeValue();
+  }
+
   double getPriceVATIncluded() {
     return price.getSafeValue();
   }
@@ -523,6 +528,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     addAmount.setIcon(
         IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
     addAmount.addActionListener(e -> addToCart());
+    articleName.addActionListener(e -> articleNameChange());
     price.addActionListener(e -> addToCart());
     deposit.addActionListener(e -> addToCart());
     amount.addActionListener(e -> addToCart());
@@ -592,7 +598,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     containerSize.setEnabled(false);
     optTaxLow.setText(VAT.LOW.getName());
     optTaxStandard.setText(VAT.HIGH.getName());
-    articleTypeChange('a');
     traversalOrder.add(kbNumber);
     traversalOrder.add(articleName);
     traversalOrder.add(netPrice);
@@ -616,6 +621,18 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
     keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
     articleTypeChange('a');
+  }
+
+  private void articleNameChange() {
+    if (articleName.isEnabled() && articleName.getText() != "") {
+      if (preordered) {
+        netPrice.selectAll();
+        netPrice.requestFocusInWindow();
+      } else {
+        price.selectAll();
+        price.requestFocusInWindow();
+      }
+    }
   }
 
   private void enablePreordered() {
