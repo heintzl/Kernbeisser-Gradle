@@ -124,10 +124,12 @@ public class ShoppingItem implements Serializable {
   public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
     this((ArticleBase) article, discount, hasContainerDiscount);
     this.kbNumber = article.getKbNumber();
-    // this.metricUnits = article.isWeighable() ? article.getMetricUnits() : MetricUnits.PIECE;
     this.weighAble = article.isWeighable();
+    if (!this.weighAble && this.metricUnits != MetricUnits.NONE) {
+      this.metricUnits = MetricUnits.PIECE;
+    }
     this.unitAmount =
-        weighAble
+        this.weighAble
                 || article.getMetricUnits() == MetricUnits.NONE
                 || article.getMetricUnits() == MetricUnits.PIECE
                 || !(article.getAmount() > 0)
@@ -219,7 +221,7 @@ public class ShoppingItem implements Serializable {
   public double getRetailPrice() {
     return itemRetailPrice
         * itemMultiplier
-        * (isContainerDiscount() ? 1.0 : metricUnits.getBaseFactor());
+        * (isContainerDiscount() || !weighAble ? 1.0 : metricUnits.getBaseFactor());
   }
 
   public double calculatePreciseRetailPrice(double netPrice) {

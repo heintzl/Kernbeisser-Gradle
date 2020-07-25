@@ -29,6 +29,12 @@ public class PayView extends JPanel implements View<PayController> {
   }
 
   public void fillShoppingCart(List<ShoppingItem> items) {
+    double sum = 0;
+    for (ShoppingItem item : items) {
+      sum += item.getRetailPrice();
+    }
+
+    shoppingCartController.getView().setSum(sum);
     shoppingCartController.getView().setObjects(items);
   }
 
