@@ -3,6 +3,8 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import static java.text.MessageFormat.format;
 
 import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.text.MessageFormat;
 import java.util.Collection;
 import javax.swing.*;
@@ -22,7 +24,9 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
   private JPanel main;
   private ObjectTable<ShoppingItem> shoppingItems;
   private JLabel headerDelete;
+  private JScrollPane tablePanel;
   private final boolean editable;
+  private boolean autoScrollDown;
 
   ShoppingCartView(ShoppingCartController controller, boolean editable) {
     this.controller = controller;
@@ -31,6 +35,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
   }
 
   public void setObjects(Collection<ShoppingItem> items) {
+    autoScrollDown = true;
     shoppingItems.setObjects(items);
   }
 
@@ -46,7 +51,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     value.setText(String.format("%.2f€", s));
   }
 
-  public String inputNoOfContainers(ShoppingItem item, boolean retry) {
+  String inputNoOfContainers(ShoppingItem item, boolean retry) {
     String initValue =
         MessageFormat.format(
                 "{0,number,0}", Math.floor(item.getItemMultiplier() / item.getContainerSize()))
@@ -146,6 +151,16 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
   @Override
   public void initialize(ShoppingCartController controller) {
     add(main);
+    tablePanel
+        .getVerticalScrollBar()
+        .addAdjustmentListener(
+            new AdjustmentListener() {
+              @Override
+              public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (autoScrollDown) e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                autoScrollDown = false;
+              }
+            });
   }
 
   @Override
