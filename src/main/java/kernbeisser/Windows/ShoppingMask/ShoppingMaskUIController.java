@@ -77,9 +77,14 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         return false;
       }
       ShoppingItem item = extractShoppingItemFromUI();
+      if (!(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() > 0)) return false;
+      if (view.isPreordered() && view.getNetPrice() > 0) {
+        item.setItemNetPrice(view.getNetPrice() / (item.isWeighAble()?1: item.getContainerSize()));
+        item.setItemRetailPrice(item.calculateItemRetailPrice(item.getItemNetPrice()));
+      }
       if (piece) {
         double itemMultiplier =
-            view.getAmount() * (item.isContainerDiscount() ? item.getContainerSize() : 1.0);
+            view.getAmount() * (item.isContainerDiscount() && !item.isWeighAble() ? item.getContainerSize() : 1.0);
         if (itemMultiplier % 1 != 0) {
           if (view.confirmRoundedMultiplier((int) Math.round(itemMultiplier))
               != JOptionPane.YES_OPTION) ;

@@ -39,7 +39,7 @@ public class ShoppingCartController implements Controller<ShoppingCartView, Shop
         boolean exit = false;
         String response = view.inputNoOfContainers(item, false);
         do {
-          if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
+          if (response == null || response.equals("")) {
             exit = true;
           } else {
             try {
