@@ -11,6 +11,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class PayController implements Controller<PayView, PayModel> {
@@ -18,19 +19,19 @@ public class PayController implements Controller<PayView, PayModel> {
   private final PayModel model;
   private final PayView view;
   private final Dimension viewSize;
+  @Getter private final double userValue;
 
   public PayController(
       SaleSession saleSession,
       List<ShoppingItem> shoppingCart,
       Runnable transferCompleted,
       Dimension windowSize) {
+    userValue = saleSession.getCustomer().getUserGroup().getValue();
     model = new PayModel(saleSession, shoppingCart, transferCompleted);
     view =
         new PayView(
             new ShoppingCartController(
-                saleSession.getCustomer().getUserGroup().getValue(),
-                saleSession.getCustomer().getSolidaritySurcharge(),
-                false));
+                userValue, saleSession.getCustomer().getSolidaritySurcharge(), false));
     this.viewSize = windowSize;
   }
 
