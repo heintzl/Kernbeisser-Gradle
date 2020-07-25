@@ -211,7 +211,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     addDeposit.setVisible("dr".indexOf(type) != -1);
 
     supplier.getModel().setSelectedItem(null);
-    supplier.setEnabled(preordered || "ac".indexOf(type)!=-1);
+    supplier.setEnabled(preordered || "ac".indexOf(type) != -1);
     suppliersItemNumber.setVisible(type == 'a');
     setSuppliersItemNumber("");
     supplierChange();

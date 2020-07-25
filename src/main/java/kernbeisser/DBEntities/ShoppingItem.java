@@ -85,7 +85,7 @@ public class ShoppingItem implements Serializable {
     this.name = articleBase.getName();
     this.amount = articleBase.getAmount();
     this.itemNetPrice = articleBase.getNetPrice();
-    this.metricUnits = (isContainerDiscount()?MetricUnits.PIECE:articleBase.getMetricUnits());
+    this.metricUnits = (isContainerDiscount() ? MetricUnits.PIECE : articleBase.getMetricUnits());
     VAT vat = articleBase.getVat();
     if (vat != null) {
       this.vat = vat.getValue();
@@ -257,7 +257,9 @@ public class ShoppingItem implements Serializable {
   }
 
   public double getRetailPrice() {
-    return itemRetailPrice * itemMultiplier * (isContainerDiscount()?1.0: metricUnits.getBaseFactor());
+    return itemRetailPrice
+        * itemMultiplier
+        * (isContainerDiscount() ? 1.0 : metricUnits.getBaseFactor());
   }
 
   public double calculateItemRetailPrice(double netPrice) {
