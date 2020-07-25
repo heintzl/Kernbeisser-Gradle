@@ -13,6 +13,8 @@ import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.VAT;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -96,12 +98,17 @@ public class ReportManager {
 
   @NotNull
   private static Map<String, Object> getInvoiceParams(Purchase purchase) {
+    double credit = purchase.getSession().getCustomer().getUserGroup().getValue();
     Map<String, Object> reportParams = new HashMap<>();
     reportParams.put("BonNo", purchase.getSid());
     reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
     reportParams.put("Seller", purchase.getSession().getSeller().getFullName());
-    reportParams.put("Credit", purchase.getSession().getCustomer().getUserGroup().getValue());
+    reportParams.put("Credit", credit);
     reportParams.put("PurchaseDate", purchase.getCreateDate());
+    reportParams.put("CreditWarning", credit <= Setting.CREDIT_WARNING_THRESHOLD.getDoubleValue());
+    reportParams.put("VatValueLow", VAT.LOW.getValue());
+    reportParams.put("VatValueHigh", VAT.HIGH.getValue());
+
     return reportParams;
   }
 }

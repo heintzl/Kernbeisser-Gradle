@@ -14,9 +14,12 @@
 	<style name="Bold" markup="none" isBold="true"/>
 	<parameter name="BonNo" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="Customer" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="CreditWarning" class="java.lang.Boolean"/>
 	<parameter name="Credit" class="java.lang.Double"/>
 	<parameter name="PurchaseDate" class="java.time.Instant"/>
 	<parameter name="Seller" class="java.lang.String"/>
+	<parameter name="VatValueLow" class="java.lang.Double"/>
+	<parameter name="VatValueHigh" class="java.lang.Double"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -33,10 +36,10 @@
 		<variableExpression><![CDATA[$F{retailPrice}]]></variableExpression>
 	</variable>
 	<variable name="SumOfVatHi" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{vat} == 0.19 ? ($F{retailPrice}-$F{retailPrice}/(1 +$F{vat})) :0]]></variableExpression>
+		<variableExpression><![CDATA[$F{vat} == $P{VatValueHigh} ? ($F{retailPrice}-$F{retailPrice}/(1 +$F{vat})) :0]]></variableExpression>
 	</variable>
 	<variable name="SumOfVatLow" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{vat} == 0.07 ? ($F{retailPrice}-$F{retailPrice}/(1 +$F{vat})) :0]]></variableExpression>
+		<variableExpression><![CDATA[$F{vat} == $P{VatValueLow} ? ($F{retailPrice}-$F{retailPrice}/(1 +$F{vat})) :0]]></variableExpression>
 	</variable>
 	<variable name="Credit" class="java.lang.Double">
 		<variableExpression><![CDATA[$P{Credit} - $V{SumTotal}]]></variableExpression>
@@ -233,16 +236,16 @@
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{SumOfVatLow}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="220" y="14" width="90" height="13" uuid="68e1f14a-26dc-4c62-916f-1ca86bfde6e4"/>
+			<textField>
+				<reportElement x="220" y="14" width="90" height="13" uuid="ff75376c-cc8f-448c-a572-305d945e14c2"/>
 				<textElement textAlignment="Right"/>
-				<text><![CDATA[darin MWSt. 7%:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="220" y="27" width="90" height="13" uuid="f9971a55-a07d-467e-a406-d7baaecd4411"/>
+				<textFieldExpression><![CDATA["darin MWSt. " + (int) 100 * $P{VatValueLow} +"%:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="27" width="90" height="13" uuid="ab0fdcb8-dc57-4086-b9b3-63230439cc22"/>
 				<textElement textAlignment="Right"/>
-				<text><![CDATA[darin MWSt. 19%:]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA["darin MWSt. " + (int) 100 * $P{VatValueHigh} +"%:"]]></textFieldExpression>
+			</textField>
 			<textField pattern="#,##0.00¤;-#,##0.00¤">
 				<reportElement x="310" y="27" width="70" height="13" uuid="0104bd2f-17a3-48e4-9dd8-2e0dc5f1cdc0"/>
 				<textElement textAlignment="Right"/>
@@ -265,7 +268,7 @@
 				<textElement textAlignment="Right">
 					<font isBold="true" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($V{Credit} < 10?"Bitte auf das Guthaben einzahlen!":"")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{CreditWarning}?"Bitte auf das Guthaben einzahlen!":""]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
