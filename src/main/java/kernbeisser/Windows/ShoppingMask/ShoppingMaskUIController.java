@@ -163,7 +163,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
   ShoppingItem createCustomItem(Supplier supplier) {
     ArticleBase articleBase = new ArticleBase();
     articleBase.setSupplier(supplier);
-    articleBase.setVat(view.getSelectedVAT());
+    articleBase.setVat(view.getVat());
     return new ShoppingItem(articleBase, view.getDiscount(), view.isPreordered());
   }
 
@@ -195,12 +195,12 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
 
         customArticle.setName(view.getItemName());
         customArticle.setSupplier(view.getSupplier());
-        customArticle.setVat(view.getSelectedVAT());
+        customArticle.setVat(view.getVat());
         customArticle.setNetPrice(
             view.isPreordered()
                 ? view.getNetPrice()
                 : view.getPriceVATIncluded()
-                    / (1. + view.getSelectedVAT().getValue())
+                    / (1. + view.getVat().getValue())
                     / (1. + customArticle.calculateSurcharge()));
         customArticle.setMetricUnits(MetricUnits.PIECE);
         customArticle.setContainerSize(1.);
