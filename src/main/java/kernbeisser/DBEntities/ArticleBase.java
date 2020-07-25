@@ -119,7 +119,7 @@ public class ArticleBase {
     double surcharge = surchargeTable.getSurcharge();
 
     if (surchargeTable == SurchargeTable.DEFAULT && supplier != null) {
-      double supplierSurcharge = supplier.getSurcharge();
+      double supplierSurcharge = supplier.getSurcharge() / 100.0;
       if (supplierSurcharge > 0) {
         surcharge = supplierSurcharge;
       }

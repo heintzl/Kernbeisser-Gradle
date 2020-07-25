@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
@@ -137,6 +138,7 @@ public class Catalog {
       item.setAmount(extractAmount(source[22].replaceAll("\\D", ""), item.getMetricUnits()));
       item.setVat(source[33].equals("1") ? VAT.LOW : VAT.HIGH);
       item.setNetPrice(Double.parseDouble(source[37].replace(",", ".")));
+      item.setSupplier(Supplier.getKKSupplier());
       if (!source[26].equals("")) {
         item.setSingleDeposit(Integer.parseInt(source[26]));
       }

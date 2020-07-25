@@ -29,6 +29,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
     this.view = new ShoppingMaskUIView(this, shoppingCartController);
   }
 
+  private double getRelevantPrice() {
+    return view.isPreordered() ? view.getNetPrice() : view.getPrice();
+  }
+
   private boolean checkStorno(ShoppingItem item, boolean piece) {
     boolean result = true;
     boolean exit = true;
@@ -77,18 +81,31 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         return false;
       }
       ShoppingItem item = extractShoppingItemFromUI();
+      if (!(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() != 0))
+        return false;
+
       if (piece) {
+        if (view.isPreordered() && view.getNetPrice() > 0) {
+          item.setItemNetPrice(
+              view.getNetPrice() / (item.isWeighAble() ? 1 : item.getContainerSize()));
+          item.setItemRetailPrice(item.calculateItemRetailPrice(item.getItemNetPrice()));
+        }
+
         double itemMultiplier =
-            view.getAmount() * (item.isContainerDiscount() ? item.getContainerSize() : 1.0);
+            view.getAmount()
+                * (item.isContainerDiscount() && !item.isWeighAble()
+                    ? item.getContainerSize()
+                    : 1.0);
         if (itemMultiplier % 1 != 0) {
           if (view.confirmRoundedMultiplier((int) Math.round(itemMultiplier))
               != JOptionPane.YES_OPTION) ;
         }
         item.setItemMultiplier((int) Math.round(itemMultiplier));
       }
+
       if (item.getItemMultiplier() != 0
           && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece))) {
-        shoppingCartController.addShoppingItem(item, piece);
+        shoppingCartController.addShoppingItem(item);
         view.setDiscount();
         return true;
       }
@@ -163,7 +180,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
   ShoppingItem createCustomItem(Supplier supplier) {
     ArticleBase articleBase = new ArticleBase();
     articleBase.setSupplier(supplier);
-    articleBase.setVat(view.getSelectedVAT());
+    articleBase.setVat(view.getVat());
     return new ShoppingItem(articleBase, view.getDiscount(), view.isPreordered());
   }
 
@@ -178,24 +195,36 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         if (kbArticleNumber != 0) {
           return model.getByKbNumber(kbArticleNumber, discount, preordered);
         }
-        int supplier = view.getSuppliersNumber();
-        if (supplier != 0) {
-          return model.getBySupplierItemNumber(supplier, discount, preordered);
+        int suppliersNumber = view.getSuppliersNumber();
+        if (suppliersNumber != 0) {
+          return model.getBySupplierItemNumber(suppliersNumber, discount, preordered);
         }
         throw new UndefinedInputException();
+
       case ShoppingMaskUIView.BAKED_GOODS:
-        return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded());
+        return ShoppingItem.createBakeryProduct(getRelevantPrice(), view.isPreordered());
+
       case ShoppingMaskUIView.PRODUCE:
-        return ShoppingItem.createOrganic(view.getPriceVATIncluded());
+        return ShoppingItem.createProduce(getRelevantPrice(), view.isPreordered());
+
       case ShoppingMaskUIView.CUSTOM_PRODUCT:
-        Article customArticle = new Article();
+        ArticleBase customArticle = new Article();
+
         customArticle.setName(view.getItemName());
-        customArticle.setVat(view.getSelectedVAT());
+        customArticle.setSupplier(view.getSupplier());
+        customArticle.setVat(view.getVat());
         customArticle.setNetPrice(
-            view.getPriceVATIncluded() / (1. + view.getSelectedVAT().getValue()));
+            view.isPreordered()
+                ? view.getNetPrice()
+                : view.getPrice()
+                    / (1. + view.getVat().getValue())
+                    / (1. + customArticle.calculateSurcharge()));
         customArticle.setMetricUnits(MetricUnits.PIECE);
-        ShoppingItem customItem = new ShoppingItem(customArticle, 0, false);
+        customArticle.setContainerSize(1.);
+
+        ShoppingItem customItem = new ShoppingItem(customArticle, 0, view.isPreordered());
         return customItem;
+
       case ShoppingMaskUIView.DEPOSIT:
         if (view.getDeposit() < 0) {
           view.messageDepositStorno();
@@ -203,6 +232,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         } else {
           return ShoppingItem.createDeposit(view.getDeposit());
         }
+
       case ShoppingMaskUIView.RETURN_DEPOSIT:
         if (view.getDeposit() < 0) {
           view.messageDepositStorno();

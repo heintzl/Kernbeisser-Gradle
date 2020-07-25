@@ -23,15 +23,15 @@ public class ShoppingCartController implements Controller<ShoppingCartView, Shop
     this.editable = editable;
   }
 
-  public void addShoppingItem(ShoppingItem item, boolean piece) {
+  public void addShoppingItem(ShoppingItem item) {
     // TODO should throw exception if !editable
     if (!editable) return;
-    int itemIndex = model.addItem(item, piece);
+    int itemIndex = model.addItem(item);
     if (item.getShoppingCartIndex() == 0) {
       item.setShoppingCartIndex(itemIndex);
     }
     if (item.getSingleDeposit() != 0) {
-      model.addItem(item.createItemDeposit(), true);
+      model.addItem(item.createSingleDeposit());
     }
     if (item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
       if (Math.abs(item.getItemMultiplier()) >= item.getContainerSize()) {
@@ -39,13 +39,13 @@ public class ShoppingCartController implements Controller<ShoppingCartView, Shop
         boolean exit = false;
         String response = view.inputNoOfContainers(item, false);
         do {
-          if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
+          if (response == null || response.equals("")) {
             exit = true;
           } else {
             try {
               containers = Integer.parseInt(response);
               if (Math.signum(containers) == Math.signum(item.getItemMultiplier())) {
-                model.addItemBehind(item.createContainerDeposit(containers), item, true);
+                model.addItemBehind(item.createContainerDeposit(containers), item);
                 exit = true;
               } else {
                 throw (new NumberFormatException());

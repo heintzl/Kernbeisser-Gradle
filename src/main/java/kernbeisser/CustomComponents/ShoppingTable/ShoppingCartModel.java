@@ -2,9 +2,7 @@ package kernbeisser.CustomComponents.ShoppingTable;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.transaction.NotSupportedException;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,29 +16,21 @@ public class ShoppingCartModel implements Model<ShoppingCartController> {
     this.userSurcharge = userSurcharge;
   }
 
-  int addItem(ShoppingItem newItem, boolean piece) {
-    return addItemAtIndex(newItem, piece, shoppingItems.size());
+  int addItem(ShoppingItem newItem) {
+    return addItemAtIndex(newItem, shoppingItems.size());
   }
 
-  int addItemBehind(ShoppingItem newItem, ShoppingItem behindItem, boolean piece) {
-    return addItemAtIndex(newItem, piece, shoppingItems.indexOf(getShoppingItem(behindItem)) + 1);
+  int addItemBehind(ShoppingItem newItem, ShoppingItem behindItem) {
+    return addItemAtIndex(newItem, shoppingItems.indexOf(getShoppingItem(behindItem)) + 1);
   }
 
-  int addItemAtIndex(ShoppingItem newItem, boolean piece, int atIndex) {
+  int addItemAtIndex(ShoppingItem newItem, int atIndex) {
     int index = atIndex;
     ShoppingItem existingItem = getShoppingItem(newItem);
     if (existingItem != null) {
       index = existingItem.getShoppingCartIndex();
-      if (piece) {
-        existingItem.setItemMultiplier(
-            newItem.getItemMultiplier() + existingItem.getItemMultiplier());
-      } else {
-        try {
-          existingItem.addToRetailPrice(newItem.getRetailPrice());
-        } catch (NotSupportedException e) {
-          Tools.showUnexpectedErrorWarning(e);
-        }
-      }
+      existingItem.setItemMultiplier(
+          newItem.getItemMultiplier() + existingItem.getItemMultiplier());
     } else {
       newItem.setShoppingCartIndex(atIndex);
       shoppingItems.add(atIndex, newItem);

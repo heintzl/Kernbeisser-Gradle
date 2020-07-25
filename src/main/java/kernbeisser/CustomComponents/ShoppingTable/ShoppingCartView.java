@@ -3,6 +3,8 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import static java.text.MessageFormat.format;
 
 import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.text.MessageFormat;
 import java.util.Collection;
 import javax.swing.*;
@@ -12,6 +14,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +25,9 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
   private JPanel main;
   private ObjectTable<ShoppingItem> shoppingItems;
   private JLabel headerDelete;
+  private JScrollPane tablePanel;
   private final boolean editable;
+  private boolean autoScrollDown;
 
   ShoppingCartView(ShoppingCartController controller, boolean editable) {
     this.controller = controller;
@@ -31,6 +36,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
   }
 
   public void setObjects(Collection<ShoppingItem> items) {
+    autoScrollDown = true;
     shoppingItems.setObjects(items);
   }
 
@@ -46,7 +52,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
     value.setText(String.format("%.2f€", s));
   }
 
-  public String inputNoOfContainers(ShoppingItem item, boolean retry) {
+  String inputNoOfContainers(ShoppingItem item, boolean retry) {
     String initValue =
         MessageFormat.format(
                 "{0,number,0}", Math.floor(item.getItemMultiplier() / item.getContainerSize()))
@@ -101,16 +107,19 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
             Column.create(
                 "4",
                 e -> {
-                  JLabel amount = new JLabel(e.getUnitAmount());
-                  amount.setFont(gridFont);
-                  amount.setHorizontalAlignment(SwingConstants.RIGHT);
-                  return amount;
+                  JLabel content = new JLabel(e.getUnitAmount());
+                  content.setFont(gridFont);
+                  content.setHorizontalAlignment(SwingConstants.RIGHT);
+                  return content;
                 }),
             Column.create(
                 "5",
                 e -> {
                   JLabel amount =
-                      new JLabel(e.getItemMultiplier() + e.getMetricUnits().getShortName());
+                      new JLabel(
+                          e.getMetricUnits() == MetricUnits.NONE
+                              ? ""
+                              : e.getItemMultiplier() + e.getMetricUnits().getShortName());
                   amount.setFont(gridFont);
                   amount.setHorizontalAlignment(SwingConstants.RIGHT);
                   if (!editable) {
@@ -146,6 +155,16 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
   @Override
   public void initialize(ShoppingCartController controller) {
     add(main);
+    tablePanel
+        .getVerticalScrollBar()
+        .addAdjustmentListener(
+            new AdjustmentListener() {
+              @Override
+              public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (autoScrollDown) e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                autoScrollDown = false;
+              }
+            });
   }
 
   @Override

@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.transaction.NotSupportedException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.RawPrice;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
@@ -60,7 +61,7 @@ public class ShoppingItem implements Serializable {
 
   @Column @Setter private double itemRetailPrice;
 
-  @Column private double itemNetPrice;
+  @Column @Setter private double itemNetPrice;
 
   @Column @Setter private int shoppingCartIndex;
 
@@ -85,7 +86,10 @@ public class ShoppingItem implements Serializable {
     this.name = articleBase.getName();
     this.amount = articleBase.getAmount();
     this.itemNetPrice = articleBase.getNetPrice();
-    this.metricUnits = articleBase.getMetricUnits();
+    this.metricUnits =
+        (isContainerDiscount() && articleBase.getMetricUnits() != MetricUnits.NONE
+            ? MetricUnits.PIECE
+            : articleBase.getMetricUnits());
     VAT vat = articleBase.getVat();
     if (vat != null) {
       this.vat = vat.getValue();
@@ -120,7 +124,7 @@ public class ShoppingItem implements Serializable {
   public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
     this((ArticleBase) article, discount, hasContainerDiscount);
     this.kbNumber = article.getKbNumber();
-    this.metricUnits = article.isWeighable() ? article.getMetricUnits() : MetricUnits.PIECE;
+    // this.metricUnits = article.isWeighable() ? article.getMetricUnits() : MetricUnits.PIECE;
     this.weighAble = article.isWeighable();
     this.unitAmount =
         weighAble
@@ -134,148 +138,116 @@ public class ShoppingItem implements Serializable {
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
   }
 
-  public static ShoppingItem createOrganic(double price) {
+  public static ShoppingItem createRawPriceProduct(
+      String name,
+      double price,
+      VAT vat,
+      int kbNumber,
+      double surcharge,
+      boolean hasContainerDiscount) {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     try {
       ShoppingItem out =
           new ShoppingItem(
-              em.createQuery(
-                      "select  i from Article i where name like 'Obst und Gem\u00fcse'",
-                      Article.class)
+              em.createQuery("select  i from Article i where name = :n", Article.class)
+                  .setParameter("n", name)
                   .getSingleResult(),
               0,
-              false) {
-            @Override
-            public void addToRetailPrice(double addedRetailPrice) {
-              ShoppingItem.addToRetailPrice(this, addedRetailPrice);
-            }
-          };
-      out.addToRetailPrice(price);
+              hasContainerDiscount);
+      if (hasContainerDiscount) {
+        out.setItemNetPrice(0.01);
+        out.setItemRetailPrice(0.01 * out.calculatePreciseRetailPrice(1.0));
+      } else {
+        out.setItemRetailPrice(0.01);
+        out.setItemNetPrice(0.01 / out.calculatePreciseRetailPrice(1.0));
+      }
+      out.setItemMultiplier((int) (price * 100));
       return out;
     } catch (NoResultException e) {
       et.begin();
-      Article produce = new Article();
-      produce.setName("Obst und Gem\u00fcse");
-      produce.setKbNumber(-1);
-      produce.setMetricUnits(MetricUnits.PIECE);
-      produce.setDeleteAllowed(false);
-      produce.setVat(VAT.LOW);
-      produce.setSurcharge(Setting.SURCHARGE_PRODUCE.getDoubleValue());
-      em.persist(produce);
+      Article article = new Article();
+      article.setName(name);
+      article.setKbNumber(kbNumber);
+      article.setMetricUnits(MetricUnits.NONE);
+      article.setDeleteAllowed(false);
+      article.setVat(vat);
+      article.setSurcharge(surcharge);
+      em.persist(article);
       em.flush();
       et.commit();
-      return createOrganic(price);
-    } catch (NotSupportedException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      return null;
+      return createRawPriceProduct(name, price, vat, kbNumber, surcharge, hasContainerDiscount);
     }
   }
 
-  public static ShoppingItem createBakeryProduct(double price) {
-    EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    try {
-      ShoppingItem out =
-          new ShoppingItem(
-              em.createQuery("select  i from Article i where name like 'Backwaren'", Article.class)
-                  .getSingleResult(),
-              0,
-              false) {
-            @Override
-            public void addToRetailPrice(double addedRetailPrice) {
-              ShoppingItem.addToRetailPrice(this, addedRetailPrice);
-            }
-          };
-      out.addToRetailPrice(price);
-      return out;
-    } catch (NoResultException e) {
-      et.begin();
-      Article bakery = new Article();
-      bakery.setName("Backwaren");
-      bakery.setKbNumber(-2);
-      bakery.setMetricUnits(MetricUnits.PIECE);
-      bakery.setDeleteAllowed(false);
-      bakery.setVat(VAT.LOW);
-      bakery.setSurcharge(Setting.SURCHARGE_BAKERY.getDoubleValue());
-      em.persist(bakery);
-      em.flush();
-      et.commit();
-      return createBakeryProduct(price);
-    } catch (NotSupportedException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      return null;
-    }
+  public static ShoppingItem createProduce(double price, boolean hasContainerDiscount) {
+    return createRawPriceProduct(
+        RawPrice.PRODUCE.getName(),
+        price,
+        VAT.LOW,
+        -1,
+        Setting.SURCHARGE_PRODUCE.getDoubleValue(),
+        hasContainerDiscount);
+  }
+
+  public static ShoppingItem createBakeryProduct(double price, boolean hasContainerDiscount) {
+    return createRawPriceProduct(
+        RawPrice.BAKERY.getName(),
+        price,
+        VAT.LOW,
+        -2,
+        Setting.SURCHARGE_BAKERY.getDoubleValue(),
+        hasContainerDiscount);
   }
 
   public static ShoppingItem createDeposit(double price) {
-    EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    try {
-      ShoppingItem out =
-          new ShoppingItem(
-              em.createQuery("select  i from Article i where name like 'Pfand'", Article.class)
-                  .getSingleResult(),
-              0,
-              false) {
-            @Override
-            public void addToRetailPrice(double addedRetailPrice) {
-              ShoppingItem.addToRetailPrice(this, addedRetailPrice);
-            }
-          };
-      out.addToRetailPrice(price);
-      out.name += (price < 0 ? " zurück" : "");
-      return out;
-    } catch (NoResultException e) {
-      et.begin();
-      Article deposit = new Article();
-      deposit.setName("Pfand");
-      deposit.setKbNumber(-3);
-      deposit.setMetricUnits(MetricUnits.PIECE);
-      deposit.setDeleteAllowed(false);
-      deposit.setVat(VAT.HIGH);
-      em.persist(deposit);
-      em.flush();
-      et.commit();
-      return createDeposit(price);
-    } catch (NotSupportedException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      return null;
-    }
-    // TODO wie wird der Pfand verbucht? Als NetPrice oder irgendwie anders?
+    ShoppingItem deposit =
+        createRawPriceProduct(RawPrice.DEPOSIT.getName(), price, VAT.HIGH, -3, 0, false);
+    deposit.name += price < 0 ? " zurück" : "";
+    return deposit;
   }
 
   public static List<ShoppingItem> getAll(String condition) {
     return Tools.getAll(ShoppingItem.class, condition);
   }
 
-  private static void addToRetailPrice(ShoppingItem item, double addRetailPrice) {
+  /*private static void addToRetailPrice(ShoppingItem item, double addRetailPrice) {
     item.itemRetailPrice += Math.round(addRetailPrice * 100) / 100.;
     item.itemNetPrice = item.itemRetailPrice / (1 + item.surcharge) / (1 + item.vat);
-  }
+  }*/
 
   public double getRetailPrice() {
-    return itemRetailPrice * metricUnits.getBaseFactor() * itemMultiplier;
+    return itemRetailPrice
+        * itemMultiplier
+        * (isContainerDiscount() ? 1.0 : metricUnits.getBaseFactor());
+  }
+
+  public double calculatePreciseRetailPrice(double netPrice) {
+    return netPrice * (1 + vat) * (1 + surcharge) * (1 - discount / 100.);
   }
 
   public double calculateItemRetailPrice(double netPrice) {
-    return Math.round(100 * netPrice * (1 + vat) * (1 + surcharge)) / 100. * (1 - discount / 100.);
+    return Math.round(100. * calculatePreciseRetailPrice(netPrice)) / 100.;
   }
 
-  public ShoppingItem createItemDeposit() {
-    ShoppingItem deposit = createDeposit(this.singleDeposit);
-    deposit.name = "    > Einzelpfand";
-    deposit.superIndex = this.getShoppingCartIndex();
-    deposit.itemMultiplier = this.itemMultiplier;
-    return deposit;
-  }
-
-  public ShoppingItem createContainerDeposit(int number) {
-    ShoppingItem deposit = createDeposit(this.containerDeposit);
-    deposit.name = "    > Gebindepfand";
+  public ShoppingItem createItemDeposit(int number, boolean isContainer) {
+    double itemDeposit = isContainer ? containerDeposit : singleDeposit;
+    ShoppingItem deposit = createDeposit(itemDeposit);
+    deposit.name = (isContainer ? RawPrice.CONTAINERDEPOSIT : RawPrice.ITEMDEPOSIT).getName();
+    deposit.metricUnits = MetricUnits.PIECE;
+    deposit.setItemRetailPrice(itemDeposit);
+    deposit.setItemNetPrice(itemDeposit / deposit.calculatePreciseRetailPrice(1.0));
     deposit.superIndex = this.getShoppingCartIndex();
     deposit.itemMultiplier = number;
     return deposit;
+  }
+
+  public ShoppingItem createSingleDeposit() {
+    return createItemDeposit(this.itemMultiplier, false);
+  }
+
+  public ShoppingItem createContainerDeposit(int number) {
+    return createItemDeposit(number, true);
   }
 
   public Article extractArticle() {
