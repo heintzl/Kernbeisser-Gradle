@@ -101,7 +101,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
   private char currentArticleType;
   private boolean isWeighable;
-  private double retailNetRatio;
   static Vector<Component> traversalOrder = new Vector<Component>(1);
   static FocusTraversal traversalPolicy;
   @Getter private boolean preordered = false;
@@ -249,7 +248,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
         priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
 
     if (type == 'p') {
-      loadItemStats(Objects.requireNonNull(ShoppingItem.createOrganic(0.0, preordered)));
+      loadItemStats(Objects.requireNonNull(ShoppingItem.createProduce(0.0, preordered)));
       this.articleName.setText("Obst & Gemüse");
       price.selectAll();
       price.requestFocusInWindow();
@@ -532,7 +531,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     return netPrice.getSafeValue();
   }
 
-  double getPriceVATIncluded() {
+  double getPrice() {
     return price.getSafeValue();
   }
 

@@ -29,6 +29,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
     this.view = new ShoppingMaskUIView(this, shoppingCartController);
   }
 
+  private double getRelevantPrice() {
+    return view.isPreordered() ? view.getNetPrice() : view.getPrice();
+  }
+
   private boolean checkStorno(ShoppingItem item, boolean piece) {
     boolean result = true;
     boolean exit = true;
@@ -77,14 +81,16 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         return false;
       }
       ShoppingItem item = extractShoppingItemFromUI();
-      if (!(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() > 0))
+      if (!(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() != 0))
         return false;
-      if (view.isPreordered() && view.getNetPrice() > 0) {
-        item.setItemNetPrice(
-            view.getNetPrice() / (item.isWeighAble() ? 1 : item.getContainerSize()));
-        item.setItemRetailPrice(item.calculateItemRetailPrice(item.getItemNetPrice()));
-      }
+
       if (piece) {
+        if (view.isPreordered() && view.getNetPrice() > 0) {
+          item.setItemNetPrice(
+              view.getNetPrice() / (item.isWeighAble() ? 1 : item.getContainerSize()));
+          item.setItemRetailPrice(item.calculateItemRetailPrice(item.getItemNetPrice()));
+        }
+
         double itemMultiplier =
             view.getAmount()
                 * (item.isContainerDiscount() && !item.isWeighAble()
@@ -96,9 +102,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         }
         item.setItemMultiplier((int) Math.round(itemMultiplier));
       }
+
       if (item.getItemMultiplier() != 0
           && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece))) {
-        shoppingCartController.addShoppingItem(item, piece);
+        shoppingCartController.addShoppingItem(item);
         view.setDiscount();
         return true;
       }
@@ -195,10 +202,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         throw new UndefinedInputException();
 
       case ShoppingMaskUIView.BAKED_GOODS:
-        return ShoppingItem.createBakeryProduct(view.getPriceVATIncluded(), view.isPreordered());
+        return ShoppingItem.createBakeryProduct(getRelevantPrice(), view.isPreordered());
 
       case ShoppingMaskUIView.PRODUCE:
-        return ShoppingItem.createOrganic(view.getPriceVATIncluded(), view.isPreordered());
+        return ShoppingItem.createProduce(getRelevantPrice(), view.isPreordered());
 
       case ShoppingMaskUIView.CUSTOM_PRODUCT:
         ArticleBase customArticle = new Article();
@@ -209,7 +216,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         customArticle.setNetPrice(
             view.isPreordered()
                 ? view.getNetPrice()
-                : view.getPriceVATIncluded()
+                : view.getPrice()
                     / (1. + view.getVat().getValue())
                     / (1. + customArticle.calculateSurcharge()));
         customArticle.setMetricUnits(MetricUnits.PIECE);

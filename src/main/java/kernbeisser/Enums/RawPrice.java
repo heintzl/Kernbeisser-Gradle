@@ -3,9 +3,11 @@ package kernbeisser.Enums;
 import kernbeisser.Useful.Named;
 
 public enum RawPrice implements Named {
-  ORGANIC("Obst und Gemüse"),
-  BACKER("Backware"),
-  DEPOSIT("Pfand");
+  PRODUCE("Obst und Gemüse"),
+  BAKERY("Backwaren"),
+  DEPOSIT("Pfand"),
+  ITEMDEPOSIT("    > Einzelpfand"),
+  CONTAINERDEPOSIT("    > Gebindepfand");
 
   private final String name;
 
