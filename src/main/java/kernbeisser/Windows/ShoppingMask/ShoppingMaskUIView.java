@@ -23,12 +23,10 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.View;
 import lombok.Getter;
-import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
@@ -551,14 +549,16 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
   private void setVat(double vatValue) throws InvalidVATValueException {
     boolean found = false;
-    for (VAT vatEnum: VAT.values()) {
+    for (VAT vatEnum : VAT.values()) {
       if (vatEnum.getValue() == vatValue) {
         vat.getModel().setSelectedItem(vatEnum);
         found = true;
         break;
       }
     }
-    if (!found) {throw new InvalidVATValueException(vatValue);}
+    if (!found) {
+      throw new InvalidVATValueException(vatValue);
+    }
   }
 
   Dimension getShoppingListSize() {
@@ -665,10 +665,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     Supplier.getAll(null).forEach(s -> supplier.addItem(s));
     supplier.addActionListener(e -> supplierChange());
 
-    for (VAT val : VAT.values())
-    {
+    for (VAT val : VAT.values()) {
       vat.addItem(val);
-    };
+    }
+    ;
 
     containerSize.setEnabled(false);
 
