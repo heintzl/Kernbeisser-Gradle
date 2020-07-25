@@ -14,6 +14,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -106,16 +107,19 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
             Column.create(
                 "4",
                 e -> {
-                  JLabel amount = new JLabel(e.getUnitAmount());
-                  amount.setFont(gridFont);
-                  amount.setHorizontalAlignment(SwingConstants.RIGHT);
-                  return amount;
+                  JLabel content = new JLabel(e.getUnitAmount());
+                  content.setFont(gridFont);
+                  content.setHorizontalAlignment(SwingConstants.RIGHT);
+                  return content;
                 }),
             Column.create(
                 "5",
                 e -> {
                   JLabel amount =
-                      new JLabel(e.getItemMultiplier() + e.getMetricUnits().getShortName());
+                      new JLabel(
+                          e.getMetricUnits() == MetricUnits.NONE
+                              ? ""
+                              : e.getItemMultiplier() + e.getMetricUnits().getShortName());
                   amount.setFont(gridFont);
                   amount.setHorizontalAlignment(SwingConstants.RIGHT);
                   if (!editable) {

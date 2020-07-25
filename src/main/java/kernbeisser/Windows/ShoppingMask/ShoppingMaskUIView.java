@@ -314,8 +314,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     price.setText(
         String.format(
             "%.2f",
-            shoppingItem.getItemRetailPrice()
-                * (preordered ? shoppingItem.getContainerSize() : 1.0)));
+            (preordered
+                ? shoppingItem.calculateItemRetailPrice(shoppingItem.getItemNetPrice())
+                    * shoppingItem.getContainerSize()
+                : shoppingItem.getItemRetailPrice())));
     priceUnit.setText(preordered ? "€/Geb." : shoppingItem.isWeighAble() ? "€/kg" : "€");
     netPrice.setText(
         String.format(
