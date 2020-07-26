@@ -182,7 +182,7 @@ public class DataImportController implements Controller<DataImportView, DataImpo
         jobs.add(job);
       }
       view.setUserProgress(1);
-      model.batchSaveAll(jobs);
+      model.batchMergeAll(jobs);
       view.setUserProgress(2);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
@@ -290,11 +290,13 @@ public class DataImportController implements Controller<DataImportView, DataImpo
         supplier.setPhoneNumber(columns[2]);
         supplier.setEmail(columns[3]);
         supplier.setAddress(columns[4] + ";" + columns[5]);
-        supplier.setKeeper(columns[6]);
+        supplier.setFax(columns[6]);
+        supplier.setKeeper(columns[7]);
+        supplier.setSurcharge(Integer.parseInt(columns[8]));
         suppliers.add(supplier);
       }
       view.setItemProgress(1);
-      model.batchSaveAll(suppliers);
+      model.batchMergeAll(suppliers);
       view.setItemProgress(2);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
