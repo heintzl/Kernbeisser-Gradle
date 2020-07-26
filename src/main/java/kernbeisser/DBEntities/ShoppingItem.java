@@ -1,6 +1,7 @@
 package kernbeisser.DBEntities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.*;
 import javax.transaction.NotSupportedException;
@@ -124,10 +125,12 @@ public class ShoppingItem implements Serializable {
   public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
     this((ArticleBase) article, discount, hasContainerDiscount);
     this.kbNumber = article.getKbNumber();
-    // this.metricUnits = article.isWeighable() ? article.getMetricUnits() : MetricUnits.PIECE;
     this.weighAble = article.isWeighable();
+    if (!this.weighAble && this.metricUnits != MetricUnits.NONE) {
+      this.metricUnits = MetricUnits.PIECE;
+    }
     this.unitAmount =
-        weighAble
+        this.weighAble
                 || article.getMetricUnits() == MetricUnits.NONE
                 || article.getMetricUnits() == MetricUnits.PIECE
                 || !(article.getAmount() > 0)
@@ -162,7 +165,7 @@ public class ShoppingItem implements Serializable {
         out.setItemRetailPrice(0.01);
         out.setItemNetPrice(0.01 / out.calculatePreciseRetailPrice(1.0));
       }
-      out.setItemMultiplier((int) (price * 100));
+      out.setItemMultiplier((int) Math.round(price * 100.0));
       return out;
     } catch (NoResultException e) {
       et.begin();
@@ -219,7 +222,7 @@ public class ShoppingItem implements Serializable {
   public double getRetailPrice() {
     return itemRetailPrice
         * itemMultiplier
-        * (isContainerDiscount() ? 1.0 : metricUnits.getBaseFactor());
+        * (isContainerDiscount() || !weighAble ? 1.0 : metricUnits.getBaseFactor());
   }
 
   public double calculatePreciseRetailPrice(double netPrice) {
@@ -260,6 +263,21 @@ public class ShoppingItem implements Serializable {
     } finally {
       em.close();
     }
+  }
+
+  public static double[] getSums(Collection<ShoppingItem> items) {
+    double sum = 0;
+    double vatLowSum = 0;
+    double vatLowFactor = (1 - 1 / (1 + VAT.LOW.getValue()));
+    double vatHighFactor = (1 - 1 / (1 + VAT.HIGH.getValue()));
+    double vatHighSum = 0;
+    for (ShoppingItem item : items) {
+      double retailPrice = item.getRetailPrice();
+      sum += retailPrice;
+      if (item.getVat() == VAT.LOW.getValue()) vatLowSum += retailPrice * vatLowFactor;
+      if (item.getVat() == VAT.HIGH.getValue()) vatHighSum += retailPrice * vatHighFactor;
+    }
+    return new double[] {sum, vatLowSum, vatHighSum};
   }
 
   public ShoppingItem newInstance() {

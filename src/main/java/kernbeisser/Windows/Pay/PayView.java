@@ -18,6 +18,7 @@ public class PayView extends JPanel implements View<PayController> {
   private JCheckBox printReceipt;
   private JButton commitPayment;
   private JButton cancel;
+  private PayController controller;
   private final ShoppingCartController shoppingCartController;
 
   public PayView(ShoppingCartController cartController) {
@@ -29,6 +30,13 @@ public class PayView extends JPanel implements View<PayController> {
   }
 
   public void fillShoppingCart(List<ShoppingItem> items) {
+    double sum = 0;
+    for (ShoppingItem item : items) {
+      sum += item.getRetailPrice();
+    }
+
+    shoppingCartController.getView().setSum(sum);
+    shoppingCartController.getView().setValue(controller.getUserValue() - sum);
     shoppingCartController.getView().setObjects(items);
   }
 
@@ -38,6 +46,7 @@ public class PayView extends JPanel implements View<PayController> {
 
   @Override
   public void initialize(PayController controller) {
+    this.controller = controller;
     printReceipt.setSelected(true);
     commitPayment.addActionListener(
         e -> {

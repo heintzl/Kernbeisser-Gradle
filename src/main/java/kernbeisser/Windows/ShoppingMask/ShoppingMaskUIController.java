@@ -81,7 +81,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         return false;
       }
       ShoppingItem item = extractShoppingItemFromUI();
-      if (!(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() != 0))
+      if (item == null
+          || !(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() != 0))
         return false;
 
       if (piece) {
@@ -105,6 +106,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
 
       if (item.getItemMultiplier() != 0
           && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece))) {
+
         shoppingCartController.addShoppingItem(item);
         view.setDiscount();
         return true;
@@ -185,10 +187,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
   }
 
   private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
-    ShoppingItem shoppingItem = view.getCurrentItem();
     switch (view.getOption()) {
       case ShoppingMaskUIView.ARTICLE_NUMBER:
-        if (shoppingItem != null) return shoppingItem;
         int discount = view.getDiscount();
         boolean preordered = view.isPreordered();
         int kbArticleNumber = view.getKBArticleNumber();
