@@ -8,7 +8,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.Windows.Model;
 
 public class DataImportModel implements Model<DataImportController> {
-  <T> void batchSaveAll(Collection<T> v) {
+  <T> void batchMergeAll(Collection<T> v) {
     if (v.size() == 0) {
       return;
     }
@@ -17,7 +17,7 @@ public class DataImportModel implements Model<DataImportController> {
     et.begin();
     int c = 0;
     for (T t : v) {
-      em.persist(t);
+      em.merge(t);
       c++;
       if (c % 20 == 0) {
         em.flush();
