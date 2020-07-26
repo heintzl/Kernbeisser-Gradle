@@ -165,7 +165,7 @@ public class ShoppingItem implements Serializable {
         out.setItemRetailPrice(0.01);
         out.setItemNetPrice(0.01 / out.calculatePreciseRetailPrice(1.0));
       }
-      out.setItemMultiplier((int) (price * 100));
+      out.setItemMultiplier((int) Math.round(price * 100.0));
       return out;
     } catch (NoResultException e) {
       et.begin();
