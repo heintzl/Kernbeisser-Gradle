@@ -81,7 +81,8 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
         return false;
       }
       ShoppingItem item = extractShoppingItemFromUI();
-      if (!(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() != 0))
+      if (item == null
+          || !(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() != 0))
         return false;
 
       if (piece) {
