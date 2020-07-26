@@ -119,12 +119,12 @@ public class ArticleBase {
                Double.compare(that.containerSize, containerSize) == 0 &&
                Double.compare(that.singleDeposit, singleDeposit) == 0 &&
                Double.compare(that.containerDeposit, containerDeposit) == 0 &&
-               name.equals(that.name) &&
-               producer.equals(that.producer) &&
+               Objects.equals(name, that.name) &&
+               Objects.equals(producer, that.producer) &&
                metricUnits == that.metricUnits &&
-               supplier.equals(that.supplier) &&
+               Objects.equals(supplier, that.supplier) &&
                vat == that.vat &&
-               barcode.equals(that.barcode);
+               Objects.equals(barcode, that.barcode);
     }
 
     @Override

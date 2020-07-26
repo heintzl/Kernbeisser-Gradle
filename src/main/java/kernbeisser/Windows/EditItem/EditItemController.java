@@ -73,7 +73,7 @@ public class EditItemController implements Controller<EditItemView,EditItemModel
             return;
         }
         if (model.getMode() == Mode.ADD) {
-            if(model.nameExists(data.getName())){
+            if(EditItemModel.nameExists(data.getName())){
                 view.nameAlreadyExists();
                 return;
             }
