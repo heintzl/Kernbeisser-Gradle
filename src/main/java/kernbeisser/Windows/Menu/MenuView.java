@@ -66,7 +66,7 @@ public class MenuView implements View<MenuController> {
     printBonFromPast =
         new ControllerButton(
             Controller.createFakeController(new JPanel()),
-            controller -> controller.openTab("<PlaceHolder>"));
+            controller -> controller.openTab("Bon ausdrucken"));
     editPriceList =
         new ControllerButton(
             new ManagePriceListsController(),
@@ -81,28 +81,29 @@ public class MenuView implements View<MenuController> {
     changePassword =
         new ControllerButton(
             new ChangePasswordController(LogInModel.getLoggedIn(), true),
-            controller -> controller.openTab("<PlaceHolder>"));
+            controller -> controller.openTab("Passwort"));
     transactionHistory =
         new ControllerButton(
             new UserInfoController(LogInModel.getLoggedIn()), controller -> controller.openTab(""));
     editOwnUser =
         new ControllerButton(
             new EditUserController(LogInModel.getLoggedIn(), Mode.EDIT),
-            controller -> controller.openTab("<PlaceHolder>"));
+            controller -> controller.openTab("Persönliche Information"));
     // NOT IMPLEMENTED
     editUserSettings =
         new ControllerButton(
             Controller.createFakeController(new JPanel()),
             controller -> controller.openTab("<PlaceHolder>"));
     editUsers =
-        new ControllerButton(new EditUsers(), controller -> controller.openTab("<PlaceHolder>"));
+        new ControllerButton(
+            new EditUsers(), controller -> controller.openTab("Benutzer bearbeiten"));
     doTransaction =
         new ControllerButton(
             new TransactionController(LogInModel.getLoggedIn()),
-            controller -> controller.openTab("<PlaceHolder>"));
+            controller -> controller.openTab("Überweisungen"));
     changePermissions =
         new ControllerButton(
-            new PermissionController(), controller -> controller.openTab("<PlaceHolder>"));
+            new PermissionController(), controller -> controller.openTab("Berechtigungen"));
     // NOT IMPLEMENTED
     placeHolderControllerButton =
         new ControllerButton(
@@ -110,7 +111,7 @@ public class MenuView implements View<MenuController> {
             controller -> controller.openTab("<PlaceHolder>"));
     changeDBConnection =
         new ControllerButton(
-            new DBLogInController(), controller -> controller.openTab("<PlaceHolder>"));
+            new DBLogInController(), controller -> controller.openTab("Datenbankverbindung"));
     // NOT IMPLEMENTED
     editApplicationSettings =
         new ControllerButton(new SettingController(), e -> e.openTab("Einstellungen"));
@@ -130,7 +131,7 @@ public class MenuView implements View<MenuController> {
             controller -> controller.openTab("<PlaceHolder>"));
     openSelfShoppingMask =
         new ControllerButton(
-            new SoloShoppingMaskController(), controller -> controller.openTab("<PlaceHolder>"));
+            new SoloShoppingMaskController(), controller -> controller.openTab("Selbsteinkauf"));
     addBeginner =
         new ControllerButton(
             new EditUserController(User.generateBeginnerUser(), Mode.ADD),
