@@ -20,6 +20,9 @@
 	<parameter name="Seller" class="java.lang.String"/>
 	<parameter name="VatValueLow" class="java.lang.Double"/>
 	<parameter name="VatValueHigh" class="java.lang.Double"/>
+	<parameter name="VatSumLow" class="java.lang.Double"/>
+	<parameter name="VatSumHigh" class="java.lang.Double"/>
+	<parameter name="SumTotal" class="java.lang.Double"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -32,20 +35,17 @@
 	<field name="itemRetailPrice" class="java.lang.Double"/>
 	<field name="discount" class="java.lang.Integer"/>
 	<field name="containerDiscount" class="java.lang.Boolean"/>
-	<variable name="SumTotal" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{retailPrice}]]></variableExpression>
-	</variable>
-	<variable name="SumOfVatHi" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{vat} == $P{VatValueHigh} ? ($F{retailPrice}-$F{retailPrice}/(1 +$F{vat})) :0]]></variableExpression>
-	</variable>
-	<variable name="SumOfVatLow" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{vat} == $P{VatValueLow} ? ($F{retailPrice}-$F{retailPrice}/(1 +$F{vat})) :0]]></variableExpression>
-	</variable>
-	<variable name="Credit" class="java.lang.Double">
-		<variableExpression><![CDATA[$P{Credit} - $V{SumTotal}]]></variableExpression>
-	</variable>
 	<background>
-		<band height="21" splitType="Stretch"/>
+		<band height="400" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="15" y="100" width="350" height="210" forecolor="#919191" uuid="63ddc39a-4af5-4884-be67-c3bf92680ce9"/>
+				<textElement>
+					<font fontName="Arial Black" size="42"/>
+				</textElement>
+				<text><![CDATA[Muster! kein Kernbeisser Einkaufsbeleg]]></text>
+			</staticText>
+		</band>
 	</background>
 	<title>
 		<band height="28" splitType="Stretch">
@@ -161,7 +161,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="15" splitType="Stretch">
+		<band height="16" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="30" height="14" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
@@ -222,7 +222,7 @@
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{SumTotal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{SumTotal}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="250" y="0" width="60" height="14" uuid="016f79ff-2dc9-4b21-a680-fb871f7fee6d"/>
@@ -234,22 +234,22 @@
 			<textField pattern="#,##0.00¤;-#,##0.00¤">
 				<reportElement x="310" y="14" width="70" height="13" uuid="edd4b967-44b9-4ad7-92a5-8317fce81ec0"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{SumOfVatLow}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{VatSumLow}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="220" y="14" width="90" height="13" uuid="ff75376c-cc8f-448c-a572-305d945e14c2"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["darin MWSt. " + (int) 100 * $P{VatValueLow} +"%:"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["darin MWSt. " + ($P{VatValueLow} * 100) +"%:"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="220" y="27" width="90" height="13" uuid="ab0fdcb8-dc57-4086-b9b3-63230439cc22"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["darin MWSt. " + (int) 100 * $P{VatValueHigh} +"%:"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["darin MWSt. " + ($P{VatValueHigh} * 100) +"%:"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00¤;-#,##0.00¤">
 				<reportElement x="310" y="27" width="70" height="13" uuid="0104bd2f-17a3-48e4-9dd8-2e0dc5f1cdc0"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{SumOfVatHi}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{VatSumHigh}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="110" y="45" width="200" height="13" uuid="1d8505d7-b1a4-4d12-ba6c-c1d07ce7cceb"/>
@@ -261,7 +261,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{Credit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{Credit}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="160" y="57" width="220" height="16" uuid="be65bb8b-4b64-456f-8739-93e431107163"/>

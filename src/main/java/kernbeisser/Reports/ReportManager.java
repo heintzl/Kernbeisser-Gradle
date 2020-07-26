@@ -98,7 +98,8 @@ public class ReportManager {
 
   @NotNull
   private static Map<String, Object> getInvoiceParams(Purchase purchase) {
-    double credit = purchase.getSession().getCustomer().getUserGroup().getValue();
+    double[] sums = ShoppingItem.getSums(purchase.getAllItems());
+    double credit = purchase.getSession().getCustomer().getUserGroup().getValue() - sums[0];
     Map<String, Object> reportParams = new HashMap<>();
     reportParams.put("BonNo", purchase.getSid());
     reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
@@ -108,6 +109,9 @@ public class ReportManager {
     reportParams.put("CreditWarning", credit <= Setting.CREDIT_WARNING_THRESHOLD.getDoubleValue());
     reportParams.put("VatValueLow", VAT.LOW.getValue());
     reportParams.put("VatValueHigh", VAT.HIGH.getValue());
+    reportParams.put("SumTotal", sums[0]);
+    reportParams.put("VatSumLow", sums[1]);
+    reportParams.put("VatSumHigh", sums[2]);
 
     return reportParams;
   }

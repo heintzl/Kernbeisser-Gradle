@@ -1,6 +1,7 @@
 package kernbeisser.DBEntities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.*;
 import javax.transaction.NotSupportedException;
@@ -262,6 +263,21 @@ public class ShoppingItem implements Serializable {
     } finally {
       em.close();
     }
+  }
+
+  public static double[] getSums(Collection<ShoppingItem> items) {
+    double sum = 0;
+    double vatLowSum = 0;
+    double vatLowFactor = (1 - 1 / (1 + VAT.LOW.getValue()));
+    double vatHighFactor = (1 - 1 / (1 + VAT.HIGH.getValue()));
+    double vatHighSum = 0;
+    for (ShoppingItem item : items) {
+      double retailPrice = item.getRetailPrice();
+      sum += retailPrice;
+      if (item.getVat() == VAT.LOW.getValue()) vatLowSum += retailPrice * vatLowFactor;
+      if (item.getVat() == VAT.HIGH.getValue()) vatHighSum += retailPrice * vatHighFactor;
+    }
+    return new double[] {sum, vatLowSum, vatHighSum};
   }
 
   public ShoppingItem newInstance() {
