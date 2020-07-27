@@ -18,6 +18,7 @@ import kernbeisser.Windows.Model;
 import net.sf.jasperreports.engine.JRException;
 
 public class PayModel implements Model<PayController> {
+  private boolean successful = false;
   private final SaleSession saleSession;
   private final List<ShoppingItem> shoppingCart;
   private final Runnable transferCompleted;
@@ -83,6 +84,7 @@ public class PayModel implements Model<PayController> {
       et.commit();
 
       // Success
+      successful = true;
       return purchase;
     } finally {
       // Undo transaction
@@ -126,5 +128,9 @@ public class PayModel implements Model<PayController> {
 
   PrintService getDefaultPrinter() {
     return PrintServiceLookup.lookupDefaultPrintService();
+  }
+
+  public boolean wasSuccessful(){
+    return successful;
   }
 }

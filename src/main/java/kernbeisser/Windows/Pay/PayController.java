@@ -46,6 +46,7 @@ public class PayController implements Controller<PayView, PayModel> {
         if (printReceipt) {
           model.print(purchase);
         }
+        view.back();
       } catch (AccessDeniedException e) {
         view.notEnoughValue();
       }

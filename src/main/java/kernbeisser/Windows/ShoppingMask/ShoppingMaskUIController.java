@@ -12,6 +12,7 @@ import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
+import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
@@ -267,7 +268,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
 
   void startPay() {
     if (shoppingCartController.getItems().size() > 0) {
-      new PayController(
+      Window window = new PayController(
               model.getSaleSession(),
               shoppingCartController.getItems(),
               () -> {
@@ -275,6 +276,12 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
               },
               new Dimension(view.getShoppingListSize().width, view.getContent().getHeight()))
           .openAsWindow(view.getWindow(), SubWindow::new);
+      window.addCloseEventListener(e -> {
+        PayController controller = (PayController)window.getController();
+        if (controller.getModel().wasSuccessful()) {
+          view.back();
+        }
+      });
     } else {
       view.messageCartIsEmpty();
     }
