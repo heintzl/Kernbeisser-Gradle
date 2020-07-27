@@ -12,69 +12,69 @@ import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class EditItemsController implements Controller<EditItemsView,EditItemsModel> {
-    private final EditItemsView view;
-    private final EditItemsModel model;
-    private final ObjectViewController<Article> objectViewController;
+public class EditItemsController implements Controller<EditItemsView, EditItemsModel> {
+  private final EditItemsView view;
+  private final EditItemsModel model;
+  private final ObjectViewController<Article> objectViewController;
 
-    public EditItemsController() {
-        this.model = new EditItemsModel();
-        objectViewController = new ObjectViewController<>(
-                EditItemController::new, Article::defaultSearch,
-                true, Column.create("Name", Article::getName),
-                Column.create("Packungsgröße", e -> (e.getAmount()) + e.getMetricUnits().getShortName()),
-                Column.create("Ladennummer", Article::getKbNumber),
-                Column.create("Lieferantenummer", Article::getSuppliersItemNumber),
-                Column.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein"),
-                Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice())),
-                Column.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit())),
-                Column.create("MwSt.", e -> e.getVat().getName()),
-                Column.create("Gebindegrösse.", Article::getContainerSize),
-                Column.create("Preisliste", Article::getPriceList),
-                Column.create("Barcode", Article::getBarcode)
-        );
-        objectViewController.initView();
-        objectViewController.setSearch("");
-        this.view = new EditItemsView(this);
+  public EditItemsController() {
+    this.model = new EditItemsModel();
+    objectViewController =
+        new ObjectViewController<>(
+            EditItemController::new,
+            Article::defaultSearch,
+            true,
+            Column.create("Name", Article::getName),
+            Column.create(
+                "Packungsgröße", e -> (e.getAmount()) + e.getMetricUnits().getShortName()),
+            Column.create("Ladennummer", Article::getKbNumber),
+            Column.create("Lieferantenummer", Article::getSuppliersItemNumber),
+            Column.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein"),
+            Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice())),
+            Column.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit())),
+            Column.create("MwSt.", e -> e.getVat().getName()),
+            Column.create("Gebindegrösse.", Article::getContainerSize),
+            Column.create("Preisliste", Article::getPriceList),
+            Column.create("Barcode", Article::getBarcode));
+    objectViewController.initView();
+    objectViewController.setSearch("");
+    this.view = new EditItemsView(this);
+  }
 
-    }
+  @NotNull
+  @Override
+  public EditItemsView getView() {
+    return view;
+  }
 
+  @NotNull
+  @Override
+  public EditItemsModel getModel() {
+    return model;
+  }
 
-    @NotNull
-    @Override
-    public EditItemsView getView() {
-        return view;
-    }
+  @Override
+  public void fillUI() {}
 
-    @NotNull
-    @Override
-    public EditItemsModel getModel() {
-        return model;
-    }
+  @Override
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[0];
+  }
 
-    @Override
-    public void fillUI() {
+  public ObjectViewView<Article> getObjectView() {
+    return objectViewController.getView();
+  }
 
-    }
+  private Window w = null;
 
-    @Override
-    public PermissionKey[] getRequiredKeys() {
-        return new PermissionKey[0];
-    }
-
-    public ObjectViewView<Article> getObjectView() {
-        return objectViewController.getView();
-    }
-
-
-    private Window w = null;
-    void openPriceListSelection(){
-        PriceListTree pt = new PriceListTree();
-        pt.addSelectionListener(e -> {
-            objectViewController.setSearch(e.toString());
-            objectViewController.search();
-            w.back();
+  void openPriceListSelection() {
+    PriceListTree pt = new PriceListTree();
+    pt.addSelectionListener(
+        e -> {
+          objectViewController.setSearch(e.toString());
+          objectViewController.search();
+          w.back();
         });
-        w = Controller.createFakeController(pt).openAsWindow(getView().getWindow(),SubWindow::new);
-    }
+    w = Controller.createFakeController(pt).openAsWindow(getView().getWindow(), SubWindow::new);
+  }
 }

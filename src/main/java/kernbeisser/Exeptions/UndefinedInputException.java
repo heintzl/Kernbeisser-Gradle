@@ -1,5 +1,3 @@
 package kernbeisser.Exeptions;
 
-public class UndefinedInputException extends Exception {
-
-}
+public class UndefinedInputException extends Exception {}

@@ -1,5 +1,9 @@
 package kernbeisser.Windows.EditItem;
 
+import java.util.Collection;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
@@ -11,134 +15,133 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import java.util.Collection;
-
 public class EditItemModel implements Model<EditItemController> {
-    private final Mode mode;
-    private final Article article;
+  private final Mode mode;
+  private final Article article;
 
-    EditItemModel(Article article, Mode mode) {
-        this.mode = mode;
-        this.article = article;
+  EditItemModel(Article article, Mode mode) {
+    this.mode = mode;
+    this.article = article;
+  }
+
+  Article getSource() {
+    return article;
+  }
+
+  boolean doAction(Article article) {
+    try {
+      switch (mode) {
+        case ADD:
+          addItem(article);
+          break;
+        case EDIT:
+          editItem(article);
+          break;
+        case REMOVE:
+          removeItem(article);
+          break;
+      }
+      return true;
+    } catch (Exception e) {
+      Tools.showUnexpectedErrorWarning(e);
+      return false;
     }
+  }
 
-    Article getSource() {
-        return article;
+  private void removeItem(Article article) {
+    Tools.delete(Article.class, article.getId());
+  }
+
+  private void editItem(Article article) {
+    Tools.edit(article.getId(), article);
+  }
+
+  int kbNumberExists(int kbNumber) {
+    EntityManager em = DBConnection.getEntityManager();
+    try {
+      return em.createQuery("select id from Article where kbNumber = " + kbNumber, Integer.class)
+          .getSingleResult();
+    } catch (NoResultException e) {
+      return -1;
+    } finally {
+      em.close();
     }
+  }
 
-    boolean doAction(Article article) {
-        try {
-            switch (mode) {
-                case ADD:
-                    addItem(article);
-                    break;
-                case EDIT:
-                    editItem(article);
-                    break;
-                case REMOVE:
-                    removeItem(article);
-                    break;
-            }
-            return true;
-        } catch (Exception e) {
-            Tools.showUnexpectedErrorWarning(e);
-            return false;
-        }
-
+  int barcodeExists(long barcode) {
+    EntityManager em = DBConnection.getEntityManager();
+    try {
+      return em.createQuery("select id from Article where barcode = " + barcode, Integer.class)
+          .getSingleResult();
+    } catch (NoResultException e) {
+      return -1;
+    } finally {
+      em.close();
     }
+  }
 
-    private void removeItem(Article article) {
-        Tools.delete(Article.class, article.getId());
-    }
+  private void addItem(Article article) {
+    article.setSurcharge(article.getSurchargeTable().getSurcharge());
+    EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    article.setId(0);
+    em.persist(article.unwrapProxy());
+    em.flush();
+    et.commit();
+    em.close();
+  }
 
-    private void editItem(Article article) {
-        Tools.edit(article.getId(), article);
-    }
+  MetricUnits[] getAllUnits() {
+    return MetricUnits.values();
+  }
 
-    int kbNumberExists(int kbNumber) {
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            return em.createQuery("select id from Article where kbNumber = " + kbNumber, Integer.class)
-                              .getSingleResult();
-        }catch (NoResultException e){
-            return -1;
-        }finally {
-            em.close();
-        }
-    }
+  ContainerDefinition[] getAllContainerDefinitions() {
+    return ContainerDefinition.values();
+  }
 
-    int barcodeExists(long barcode) {
-        EntityManager em = DBConnection.getEntityManager();
-        try{
-            return em.createQuery("select id from Article where barcode = " + barcode,Integer.class).getSingleResult();
-        }catch (NoResultException e){
-            return -1;
-        }finally {
-            em.close();
-        }
-    }
+  VAT[] getAllVATs() {
+    return VAT.values();
+  }
 
-    private void addItem(Article article) {
-        article.setSurcharge(article.getSurchargeTable().getSurcharge());
-        EntityManager em = DBConnection.getEntityManager();
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        article.setId(0);
-        em.persist(article.unwrapProxy());
-        em.flush();
-        et.commit();
-        em.close();
-    }
+  Collection<Supplier> getAllSuppliers() {
+    return Supplier.getAll(null);
+  }
 
-    MetricUnits[] getAllUnits() {
-        return MetricUnits.values();
-    }
+  Collection<PriceList> getAllPriceLists() {
+    return PriceList.getAll(null);
+  }
 
-    ContainerDefinition[] getAllContainerDefinitions() {
-        return ContainerDefinition.values();
-    }
+  public Mode getMode() {
+    return mode;
+  }
 
-    VAT[] getAllVATs() {
-        return VAT.values();
-    }
+  public int nextUnusedArticleNumber(int kbNumber) {
+    EntityManager em = DBConnection.getEntityManager();
+    int out =
+        em.createQuery(
+                    "select i.kbNumber from Article i where i.kbNumber > :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",
+                    Integer.class)
+                .setMaxResults(1)
+                .setParameter("last", kbNumber)
+                .getSingleResult()
+            + 1;
+    em.close();
+    return out;
+  }
 
-    Collection<Supplier> getAllSuppliers() {
-        return Supplier.getAll(null);
+  public static boolean nameExists(String name) {
+    EntityManager em = DBConnection.getEntityManager();
+    try {
+      em.createQuery("select i from Article i where i.name like :name")
+          .setMaxResults(1)
+          .setParameter("name", name)
+          .getSingleResult();
+      em.close();
+      return true;
+    } catch (NoResultException e) {
+      em.close();
+      return false;
     }
-
-    Collection<PriceList> getAllPriceLists() {
-        return PriceList.getAll(null);
-    }
-
-    public Mode getMode() {
-        return mode;
-    }
-
-    public int nextUnusedArticleNumber(int kbNumber) {
-        EntityManager em = DBConnection.getEntityManager();
-        int out = em.createQuery("select i.kbNumber from Article i where i.kbNumber > :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",Integer.class)
-                    .setMaxResults(1)
-                    .setParameter("last",kbNumber)
-                    .getSingleResult()+1;
-        em.close();
-        return out;
-    }
-
-    public static boolean nameExists(String name) {
-        EntityManager em = DBConnection.getEntityManager();
-        try {
-            em.createQuery("select i from Article i where i.name like :name")
-              .setMaxResults(1)
-              .setParameter("name", name)
-              .getSingleResult();
-            em.close();
-            return true;
-        }catch (NoResultException e){
-            em.close();
-            return false;
-        }
-    }
+  }
 }

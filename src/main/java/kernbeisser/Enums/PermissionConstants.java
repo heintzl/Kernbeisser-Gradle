@@ -1,18 +1,15 @@
 package kernbeisser.Enums;
 
-
+import java.util.Arrays;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import java.util.Arrays;
-import java.util.HashMap;
-
-//Permissions which become automatically generated when the application
-//requires them to prevent the functionality from the application
+// Permissions which become automatically generated when the application
+// requires them to prevent the functionality from the application
 public enum PermissionConstants {
     //the permission with all rights reserved
     ADMIN(PermissionKey.values()),
@@ -61,4 +58,5 @@ public enum PermissionConstants {
             em.close();
         }
     }
+  }
 }

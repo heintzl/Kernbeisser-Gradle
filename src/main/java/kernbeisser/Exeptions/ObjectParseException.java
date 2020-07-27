@@ -1,16 +1,16 @@
 package kernbeisser.Exeptions;
 
 public class ObjectParseException extends Exception {
-    private String source;
-    private Class to;
+  private final String source;
+  private final Class to;
 
-    public ObjectParseException(String source, Class to) {
-        this.source = source;
-        this.to = to;
-    }
+  public ObjectParseException(String source, Class to) {
+    this.source = source;
+    this.to = to;
+  }
 
-    @Override
-    public String getMessage() {
-        return "Cannot parse \"" + source + "\" to " + to.getName();
-    }
+  @Override
+  public String getMessage() {
+    return "Cannot parse \"" + source + "\" to " + to.getName();
+  }
 }

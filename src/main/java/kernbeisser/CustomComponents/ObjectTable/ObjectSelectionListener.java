@@ -1,5 +1,5 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
 public interface ObjectSelectionListener<T> {
-    void selected(T t);
+  void selected(T t);
 }

@@ -186,8 +186,14 @@ gradle-app.setting
 ### Gradle Patch ###
 **/build/
 
-# End of https://www.gitignore.io/api/java,linux,gradle,windows,intellij
+# reports
 /reports/*.jrprint
 /reports/*.pdf
+/reports/*.jasper
+
+#misc
 /importPath.txt
 /testUser.txt
+/src/main/java/kernbeisser/Config/IgnoreThis.java
+
+# End of https://www.gitignore.io/api/java,linux,gradle,windows,intellij

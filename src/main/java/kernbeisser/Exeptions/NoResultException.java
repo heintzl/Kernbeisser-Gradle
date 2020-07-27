@@ -1,4 +1,3 @@
 package kernbeisser.Exeptions;
 
-public class NoResultException {
-}
+public class NoResultException {}
