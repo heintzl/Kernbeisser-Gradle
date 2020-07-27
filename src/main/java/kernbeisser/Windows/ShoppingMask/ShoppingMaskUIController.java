@@ -268,20 +268,22 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
 
   void startPay() {
     if (shoppingCartController.getItems().size() > 0) {
-      Window window = new PayController(
-              model.getSaleSession(),
-              shoppingCartController.getItems(),
-              () -> {
-                getView().back();
-              },
-              new Dimension(view.getShoppingListSize().width, view.getContent().getHeight()))
-          .openAsWindow(view.getWindow(), SubWindow::new);
-      window.addCloseEventListener(e -> {
-        PayController controller = (PayController)window.getController();
-        if (controller.getModel().wasSuccessful()) {
-          view.back();
-        }
-      });
+      Window window =
+          new PayController(
+                  model.getSaleSession(),
+                  shoppingCartController.getItems(),
+                  () -> {
+                    getView().back();
+                  },
+                  new Dimension(view.getShoppingListSize().width, view.getContent().getHeight()))
+              .openAsWindow(view.getWindow(), SubWindow::new);
+      window.addCloseEventListener(
+          e -> {
+            PayController controller = (PayController) window.getController();
+            if (controller.getModel().wasSuccessful()) {
+              view.back();
+            }
+          });
     } else {
       view.messageCartIsEmpty();
     }

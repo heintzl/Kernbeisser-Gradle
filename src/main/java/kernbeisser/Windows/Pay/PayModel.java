@@ -130,7 +130,7 @@ public class PayModel implements Model<PayController> {
     return PrintServiceLookup.lookupDefaultPrintService();
   }
 
-  public boolean wasSuccessful(){
+  public boolean wasSuccessful() {
     return successful;
   }
 }
