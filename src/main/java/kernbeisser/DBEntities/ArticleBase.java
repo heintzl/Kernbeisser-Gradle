@@ -117,14 +117,12 @@ public class ArticleBase {
   public double calculateSurcharge() {
     SurchargeTable surchargeTable = getSurchargeTable();
     double surcharge = surchargeTable.getSurcharge();
-
     if (surchargeTable == SurchargeTable.DEFAULT && supplier != null) {
       double supplierSurcharge = supplier.getSurcharge() / 100.0;
       if (supplierSurcharge > 0) {
         surcharge = supplierSurcharge;
       }
     }
-
     return surcharge;
   }
 
@@ -161,28 +159,28 @@ public class ArticleBase {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ArticleBase that = (ArticleBase) o;
+        return id == that.id &&
+               Double.compare(that.netPrice, netPrice) == 0 &&
+               suppliersItemNumber == that.suppliersItemNumber &&
+               amount == that.amount &&
+               Double.compare(that.containerSize, containerSize) == 0 &&
+               Double.compare(that.singleDeposit, singleDeposit) == 0 &&
+               Double.compare(that.containerDeposit, containerDeposit) == 0 &&
+               Objects.equals(name, that.name) &&
+               Objects.equals(producer, that.producer) &&
+               metricUnits == that.metricUnits &&
+               Objects.equals(supplier, that.supplier) &&
+               vat == that.vat &&
+               Objects.equals(barcode, that.barcode);
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    ArticleBase that = (ArticleBase) o;
-    return id == that.id
-        && Double.compare(that.netPrice, netPrice) == 0
-        && suppliersItemNumber == that.suppliersItemNumber
-        && amount == that.amount
-        && Double.compare(that.containerSize, containerSize) == 0
-        && Double.compare(that.singleDeposit, singleDeposit) == 0
-        && Double.compare(that.containerDeposit, containerDeposit) == 0
-        && name.equals(that.name)
-        && producer.equals(that.producer)
-        && metricUnits == that.metricUnits
-        && supplier.equals(that.supplier)
-        && vat == that.vat
-        && barcode.equals(that.barcode);
-  }
 
   @Override
   public int hashCode() {
