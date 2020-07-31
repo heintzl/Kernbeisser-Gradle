@@ -159,28 +159,28 @@ public class ArticleBase {
   }
 
   @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ArticleBase that = (ArticleBase) o;
-        return id == that.id &&
-               Double.compare(that.netPrice, netPrice) == 0 &&
-               suppliersItemNumber == that.suppliersItemNumber &&
-               amount == that.amount &&
-               Double.compare(that.containerSize, containerSize) == 0 &&
-               Double.compare(that.singleDeposit, singleDeposit) == 0 &&
-               Double.compare(that.containerDeposit, containerDeposit) == 0 &&
-               Objects.equals(name, that.name) &&
-               Objects.equals(producer, that.producer) &&
-               metricUnits == that.metricUnits &&
-               Objects.equals(supplier, that.supplier) &&
-               vat == that.vat &&
-               Objects.equals(barcode, that.barcode);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ArticleBase that = (ArticleBase) o;
+    return id == that.id
+        && Double.compare(that.netPrice, netPrice) == 0
+        && suppliersItemNumber == that.suppliersItemNumber
+        && amount == that.amount
+        && Double.compare(that.containerSize, containerSize) == 0
+        && Double.compare(that.singleDeposit, singleDeposit) == 0
+        && Double.compare(that.containerDeposit, containerDeposit) == 0
+        && Objects.equals(name, that.name)
+        && Objects.equals(producer, that.producer)
+        && metricUnits == that.metricUnits
+        && Objects.equals(supplier, that.supplier)
+        && vat == that.vat
+        && Objects.equals(barcode, that.barcode);
+  }
 
   @Override
   public int hashCode() {

@@ -37,14 +37,6 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>, Sear
     if (view.getSelectedObject() == null) {
       return;
     }
-  }
-
-  public void search(){
-        view.setObjects(model.getValues(view.getSearch()));
-        if(model.getLastSelectedObject()!=null){
-            view.setSelectedObject(model.getLastSelectedObject());
-        }
-        runLostSelectionListener();
     if (model.getLastSelectedObject() != null
         && view.getSelectedObject().equals(model.getLastSelectedObject())) {
       runDoubleClickListener(view.getSelectedObject());

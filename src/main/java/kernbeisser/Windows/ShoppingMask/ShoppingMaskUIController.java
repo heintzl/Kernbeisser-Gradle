@@ -187,7 +187,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
     return new ShoppingItem(articleBase, view.getDiscount(), view.isPreordered());
   }
 
-  private ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
+  ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
     switch (view.getOption()) {
       case ShoppingMaskUIView.ARTICLE_NUMBER:
         int discount = view.getDiscount();

@@ -81,42 +81,43 @@ public class EditItemController implements Controller<EditItemView, EditItemMode
           view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
         }
         if (model.getMode() == Mode.ADD) {
-            if(EditItemModel.nameExists(data.getName())){
-                view.nameAlreadyExists();
-                return;
+          if (EditItemModel.nameExists(data.getName())) {
+            view.nameAlreadyExists();
+            return;
+          }
+          if (model.kbNumberExists(data.getKbNumber()) > -1) {
+            if (view.kbNumberAlreadyExists()) {
+              view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
             }
-            if (model.kbNumberExists(data.getKbNumber())>-1) {
-                if(view.kbNumberAlreadyExists()){
-                    view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
-                }
-                return;
+            return;
+          }
+          if (data.getBarcode() != null) {
+            if (model.barcodeExists(data.getBarcode()) > -1) {
+              view.barcodeAlreadyExists();
+              return;
             }
-            if (data.getBarcode() != null) {
-                if (model.barcodeExists(data.getBarcode())>-1) {
-                    view.barcodeAlreadyExists();
-                    return;
-                }
-            }
+          }
         }
-        if(model.getMode()== Mode.EDIT){
-            if((!data.getName().equals(model.getSource().getName())) && EditItemModel.nameExists(data.getName())){
-                view.nameAlreadyExists();
-                return;
+        if (model.getMode() == Mode.EDIT) {
+          if ((!data.getName().equals(model.getSource().getName()))
+              && EditItemModel.nameExists(data.getName())) {
+            view.nameAlreadyExists();
+            return;
+          }
+          int idOfKBNumber = model.kbNumberExists(data.getKbNumber());
+          if (idOfKBNumber != -1 && idOfKBNumber != model.getSource().getId()) {
+            if (view.kbNumberAlreadyExists()) {
+              view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
             }
-            int idOfKBNumber = model.kbNumberExists(data.getKbNumber());
-            if (idOfKBNumber != -1 && idOfKBNumber != model.getSource().getId()) {
-                if(view.kbNumberAlreadyExists()){
-                    view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
-                }
-                return;
+            return;
+          }
+          if (data.getBarcode() != null) {
+            int idOfBarcode = model.barcodeExists(data.getBarcode());
+            if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
+              view.barcodeAlreadyExists();
+              return;
             }
-            if(data.getBarcode()!=null) {
-                int idOfBarcode = model.barcodeExists(data.getBarcode());
-                if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
-                    view.barcodeAlreadyExists();
-                    return;
-                }
-            }
+          }
         }
         return;
       }
