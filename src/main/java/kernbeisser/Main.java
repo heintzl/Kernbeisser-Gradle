@@ -40,7 +40,6 @@ public class Main {
       Tools.activateKeyboardListener();
       openLogIn();
     }
-
   }
 
   public static void checkCatalog() {

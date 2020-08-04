@@ -1,6 +1,5 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
-import java.util.Collection;
 import javax.swing.*;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
@@ -10,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements Bounded<P, V> {
   private boolean inputChanged = false;
 
-  private final static Object NO_READ_PERMISSION = "<Keine Leseberechtigung>";
+  private static final Object NO_READ_PERMISSION = "<Keine Leseberechtigung>";
 
   private final Setter<P, V> setter;
   private final Getter<P, V> getter;
@@ -44,7 +43,9 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
   @Override
   public Object getSelectedItem() {
     Object selectedItem = super.getSelectedItem();
-    return selectedItem != null ? selectedItem.equals(NO_READ_PERMISSION) ? null : selectedItem : null;
+    return selectedItem != null
+        ? selectedItem.equals(NO_READ_PERMISSION) ? null : selectedItem
+        : null;
   }
 
   @Override
@@ -76,30 +77,29 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
       super.removeItem(NO_READ_PERMISSION);
       super.addItem(NO_READ_PERMISSION);
       setSelectedItem(NO_READ_PERMISSION);
-    }else {
+    } else {
       super.removeItem(NO_READ_PERMISSION);
     }
   }
 
-  public void addValue(V v){
+  public void addValue(V v) {
     super.addItem(v);
   }
 
   @SafeVarargs
-  public final void setItems(V... v){
+  public final void setItems(V... v) {
     super.removeAllItems();
     for (V x : v) {
       addValue(x);
     }
   }
 
-  public void setItems(Iterable<V> v){
+  public void setItems(Iterable<V> v) {
     super.removeAllItems();
     for (V x : v) {
       addValue(x);
     }
   }
-
 
   @Override
   @Deprecated

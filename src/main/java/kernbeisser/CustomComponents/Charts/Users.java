@@ -6,7 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.User;
@@ -15,7 +14,6 @@ import org.jfree.chart.JFreeChart;
 
 public class Users {
 
-
   public static JFreeChart createBuyChart(User user, YearMonth from, YearMonth to) {
     EntityManager em = DBConnection.getEntityManager();
     HashMap<YearMonth, Integer> result = new HashMap<>();
@@ -23,20 +21,14 @@ public class Users {
     CriteriaQuery<Purchase> criteriaQuery = cb.createQuery(Purchase.class);
     Root<Purchase> root = criteriaQuery.from(Purchase.class);
     criteriaQuery
-            .select(root)
-            .where(
-                    cb.and(
-                            cb.between(
-                                    root.get("createDate"),
-                                    Tools.toDate(from).toInstant(),
-                                    Tools.toDate(to).toInstant()
-                            ),
-                            cb.equal(
-                                    root.get("sid"),
-                                    user.getId()
-                            )
-                    )
-            );
+        .select(root)
+        .where(
+            cb.and(
+                cb.between(
+                    root.get("createDate"),
+                    Tools.toDate(from).toInstant(),
+                    Tools.toDate(to).toInstant()),
+                cb.equal(root.get("sid"), user.getId())));
 
     for (Purchase purchase : em.createQuery(criteriaQuery).getResultList()) {
       YearMonth month = YearMonth.from(purchase.getCreateDate());

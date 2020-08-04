@@ -24,24 +24,19 @@ import javax.swing.*;
 import javax.swing.text.*;
 import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
 import kernbeisser.Security.Proxy;
 import org.apache.commons.beanutils.BeanUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
 import sun.misc.Unsafe;
 
 public class Tools {
   private static final Toolkit toolkit = Toolkit.getDefaultToolkit();
 
   public static <A extends Annotation> Collection<Field> getWithAnnotation(
-          Class pattern, Class<A> annotation) {
+      Class pattern, Class<A> annotation) {
     ArrayList<Field> out = new ArrayList<>();
     for (Field field : pattern.getDeclaredFields()) {
       field.setAccessible(true);
@@ -101,42 +96,42 @@ public class Tools {
 
   public static void setDoubleFilter(JTextComponent c) {
     ((AbstractDocument) c.getDocument())
-            .setDocumentFilter(
-                    new DocumentFilter() {
-                      @Override
-                      public void replace(
-                              FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
-                              throws BadLocationException {
-                        if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".")
-                              && text.matches("[,.]"))) {
-                          fb.replace(
-                                  offset,
-                                  length,
-                                  text.replaceAll("[\\D&&[^,.]]", "").replaceAll(",", "."),
-                                  attrs);
-                        }
-                      }
-                    });
+        .setDocumentFilter(
+            new DocumentFilter() {
+              @Override
+              public void replace(
+                  FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                  throws BadLocationException {
+                if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".")
+                    && text.matches("[,.]"))) {
+                  fb.replace(
+                      offset,
+                      length,
+                      text.replaceAll("[\\D&&[^,.]]", "").replaceAll(",", "."),
+                      attrs);
+                }
+              }
+            });
   }
 
   public static void setRealNumberFilter(JTextComponent c) {
     ((AbstractDocument) c.getDocument())
-            .setDocumentFilter(
-                    new DocumentFilter() {
-                      @Override
-                      public void replace(
-                              FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
-                              throws BadLocationException {
-                        if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".")
-                              && text.matches("[,.]"))) {
-                          fb.replace(offset, length, text.replaceAll("[^\\d]", ""), attrs);
-                        }
-                      }
-                    });
+        .setDocumentFilter(
+            new DocumentFilter() {
+              @Override
+              public void replace(
+                  FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                  throws BadLocationException {
+                if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".")
+                    && text.matches("[,.]"))) {
+                  fb.replace(offset, length, text.replaceAll("[^\\d]", ""), attrs);
+                }
+              }
+            });
   }
 
   public static <T, O extends Collection<T>> O extract(
-          Supplier<O> supplier, String s, String separator, Function<String, T> method) {
+      Supplier<O> supplier, String s, String separator, Function<String, T> method) {
     String[] columns = s.split(separator);
     O out = supplier.get();
     for (String column : columns) {
@@ -146,7 +141,7 @@ public class Tools {
   }
 
   public static <T> T[] extract(
-          Class<T> c, String s, String separator, Function<String, T> method) {
+      Class<T> c, String s, String separator, Function<String, T> method) {
     return extract(ArrayList::new, s, separator, method).toArray((T[]) Array.newInstance(c, 0));
   }
 
@@ -211,9 +206,9 @@ public class Tools {
   public static <T> List<T> getAll(Class<T> c, String condition) {
     EntityManager em = DBConnection.getEntityManager();
     List<T> out =
-            em.createQuery(
-                    "select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
-              .getResultList();
+        em.createQuery(
+                "select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
+            .getResultList();
     em.close();
     return Proxy.getSecureInstances(out);
   }
@@ -222,9 +217,9 @@ public class Tools {
     try {
       return mergeWithoutId(in, (T) in.getClass().getDeclaredConstructor().newInstance());
     } catch (InstantiationException
-            | IllegalAccessException
-            | InvocationTargetException
-            | NoSuchMethodException e) {
+        | IllegalAccessException
+        | InvocationTargetException
+        | NoSuchMethodException e) {
       Tools.showUnexpectedErrorWarning(e);
       return null;
     }
@@ -308,7 +303,7 @@ public class Tools {
   }
 
   public static <O, V> void addToCollection(
-          Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, V value) {
+      Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, V value) {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
@@ -321,7 +316,7 @@ public class Tools {
   }
 
   public static <O, V> void addMultipleToCollection(
-          Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, Collection<V> value) {
+      Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, Collection<V> value) {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
@@ -334,7 +329,7 @@ public class Tools {
   }
 
   public static <O, V> void removeMultipleFromCollection(
-          Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, Collection<V> value) {
+      Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, Collection<V> value) {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
@@ -347,7 +342,7 @@ public class Tools {
   }
 
   public static <O, V> void removeFromCollection(
-          Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, V value) {
+      Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, V value) {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
@@ -362,11 +357,11 @@ public class Tools {
   public static void showUnexpectedErrorWarning(Exception e) {
     Main.logger.error(e.getMessage(), e);
     JOptionPane.showMessageDialog(
-            null,
-            "Ein Unerwarteter Fehler ist aufgetreten, bitte melden\nsie den Fehler beim Entwiklerteam oder auf\nGithub: https://github.com/julikiller98/Kernbeisser-Gradle/\nFehler:\n"
+        null,
+        "Ein Unerwarteter Fehler ist aufgetreten, bitte melden\nsie den Fehler beim Entwiklerteam oder auf\nGithub: https://github.com/julikiller98/Kernbeisser-Gradle/\nFehler:\n"
             + e.toString(),
-            "Es ist ein unerwarteter Fehler aufgetreten",
-            JOptionPane.ERROR_MESSAGE);
+        "Es ist ein unerwarteter Fehler aufgetreten",
+        JOptionPane.ERROR_MESSAGE);
   }
 
   public static <T> T removeLambda(T from, Supplier<T> original) {
@@ -394,14 +389,14 @@ public class Tools {
     Color originalColor = component.getForeground();
     Color originalBackgroundColor = component.getBackground();
     component.addFocusListener(
-            new FocusAdapter() {
-              @Override
-              public void focusGained(FocusEvent e) {
-                e.getComponent().setForeground(originalColor);
-                e.getComponent().setBackground(originalBackgroundColor);
-                e.getComponent().removeFocusListener(this);
-              }
-            });
+        new FocusAdapter() {
+          @Override
+          public void focusGained(FocusEvent e) {
+            e.getComponent().setForeground(originalColor);
+            e.getComponent().setBackground(originalBackgroundColor);
+            e.getComponent().removeFocusListener(this);
+          }
+        });
 
     if (component instanceof JTextComponent
         && !((JTextComponent) component).getText().replace(" ", "").equals("")) {
@@ -500,11 +495,11 @@ public class Tools {
   }
 
   public static void invokeWithDefault(AccessConsumer<Object> consumer)
-          throws AccessDeniedException {
+      throws AccessDeniedException {
     Object[] primitiveObjects =
-            new Object[] {
-                    null, 0, (long) 0, (double) 0, (float) 0, (char) 0, (byte) 0, (short) 0, false,
-                    };
+        new Object[] {
+          null, 0, (long) 0, (double) 0, (float) 0, (char) 0, (byte) 0, (short) 0, false,
+        };
     for (Object primitiveObject : primitiveObjects) {
       try {
         consumer.accept(primitiveObject);
@@ -520,31 +515,31 @@ public class Tools {
 
   public static void activateKeyboardListener() {
     KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                        .addKeyEventDispatcher(
-                                new KeyEventDispatcher() {
-                                  @Override
-                                  public boolean dispatchKeyEvent(KeyEvent e) {
-                                    ViewMainPanel viewMainPanel =
-                                            (ViewMainPanel)
-                                                    SwingUtilities.getAncestorOfClass(ViewMainPanel.class, e.getComponent());
-                                    if (viewMainPanel != null) {
-                                      return viewMainPanel.getView().processKeyboardInput(e);
-                                    } else {
-                                      return false;
-                                    }
-                                  }
-                                });
+        .addKeyEventDispatcher(
+            new KeyEventDispatcher() {
+              @Override
+              public boolean dispatchKeyEvent(KeyEvent e) {
+                ViewMainPanel viewMainPanel =
+                    (ViewMainPanel)
+                        SwingUtilities.getAncestorOfClass(ViewMainPanel.class, e.getComponent());
+                if (viewMainPanel != null) {
+                  return viewMainPanel.getView().processKeyboardInput(e);
+                } else {
+                  return false;
+                }
+              }
+            });
   }
 
   public static void deactivateKeyboardListener() {
     KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                        .addKeyEventDispatcher(
-                                new KeyEventDispatcher() {
-                                  @Override
-                                  public boolean dispatchKeyEvent(KeyEvent e) {
-                                    return false;
-                                  }
-                                });
+        .addKeyEventDispatcher(
+            new KeyEventDispatcher() {
+              @Override
+              public boolean dispatchKeyEvent(KeyEvent e) {
+                return false;
+              }
+            });
   }
 
   public static <T> T decide(AccessSupplier<T> supplier, T t) {
@@ -569,23 +564,23 @@ public class Tools {
       constructor.setAccessible(true);
       return constructor.newInstance();
     } catch (NoSuchMethodException
-            | InstantiationException
-            | IllegalAccessException
-            | InvocationTargetException e) {
+        | InstantiationException
+        | IllegalAccessException
+        | InvocationTargetException e) {
       return Tools.createWithoutConstructor(out);
     }
   }
 
-  public static <T> void persistIfNotUnique(Class<T> clazz,Collection<T> collection){
+  public static <T> void persistIfNotUnique(Class<T> clazz, Collection<T> collection) {
     Collection<Field> uniqueFields = new HashSet<>();
     for (Field field : clazz.getDeclaredFields()) {
-      if(isUnique(field)){
+      if (isUnique(field)) {
         field.setAccessible(true);
         uniqueFields.add(field);
       }
     }
     Field[] uniqueFieldsArray = uniqueFields.toArray(new Field[0]);
-    Object[][] uniqueValues = getAllValues(clazz,uniqueFieldsArray);
+    Object[][] uniqueValues = getAllValues(clazz, uniqueFieldsArray);
     HashSet<?>[] hashSets = new HashSet<?>[uniqueFieldsArray.length];
     for (int i = 0; i < hashSets.length; i++) {
       hashSets[i] = new HashSet<>(Arrays.asList(uniqueValues[i]));
@@ -593,47 +588,55 @@ public class Tools {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
-    collection.forEach((value) -> {
-      boolean passed = true;
-      for (int i = 0; i < uniqueFieldsArray.length; i++) {
-        try {
-          if(hashSets[i].contains(uniqueFieldsArray[i].get(value))){
-            Main.logger.info("Ignored "+clazz+" because unique field "+uniqueFieldsArray[i]+" contained the value "+ uniqueFieldsArray[i].get(value)+" which is already taken");
-            passed = false;
-            break;
+    collection.forEach(
+        (value) -> {
+          boolean passed = true;
+          for (int i = 0; i < uniqueFieldsArray.length; i++) {
+            try {
+              if (hashSets[i].contains(uniqueFieldsArray[i].get(value))) {
+                Main.logger.info(
+                    "Ignored "
+                        + clazz
+                        + " because unique field "
+                        + uniqueFieldsArray[i]
+                        + " contained the value "
+                        + uniqueFieldsArray[i].get(value)
+                        + " which is already taken");
+                passed = false;
+                break;
+              }
+            } catch (IllegalAccessException e) {
+              e.printStackTrace();
+            }
           }
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
-        }
-      }
-      if(passed){
-        em.persist(value);
-      }
-    });
+          if (passed) {
+            em.persist(value);
+          }
+        });
     et.commit();
     em.close();
     System.out.println("persistence finished");
   }
 
-
-  public static boolean isUnique(Field f){
-    if(f.getAnnotation(Id.class)!=null)return false;
+  public static boolean isUnique(Field f) {
+    if (f.getAnnotation(Id.class) != null) return false;
     for (Annotation annotation : f.getAnnotations()) {
       try {
         Method uniqueCheck = annotation.annotationType().getDeclaredMethod("unique");
         uniqueCheck.setAccessible(true);
         return (boolean) uniqueCheck.invoke(annotation);
-      } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {}
+      } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+      }
     }
     return false;
   }
 
-  public static <P> Object[][] getAllValues(Class<P> parent, Field ... fields){
+  public static <P> Object[][] getAllValues(Class<P> parent, Field... fields) {
     EntityManager em = DBConnection.getEntityManager();
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<Object> query = cb.createQuery(Object.class);
     Root<P> root = query.from(parent);
-    query.multiselect(Tools.transform(fields,Selection.class,field -> root.get(field.getName())));
+    query.multiselect(Tools.transform(fields, Selection.class, field -> root.get(field.getName())));
     List<Object> queryReturn = em.createQuery(query).getResultList();
     Object[][] out = new Object[fields.length][queryReturn.size()];
     int index = 0;
@@ -646,7 +649,7 @@ public class Tools {
     return out;
   }
 
-  public static Date toDate(YearMonth yearMonth){
+  public static Date toDate(YearMonth yearMonth) {
     return java.util.Date.from(yearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
 }
