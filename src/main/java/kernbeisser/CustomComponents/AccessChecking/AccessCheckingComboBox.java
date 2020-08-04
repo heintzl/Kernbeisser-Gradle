@@ -1,13 +1,15 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
-import java.util.Collection;
 import javax.swing.*;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
+import org.jetbrains.annotations.Nullable;
 
-public class AccessCheckingComboBox<P, V> extends JComboBox<V> implements Bounded<P, V> {
+public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements Bounded<P, V> {
   private boolean inputChanged = false;
+
+  private static final Object NO_READ_PERMISSION = "<Keine Leseberechtigung>";
 
   private final Setter<P, V> setter;
   private final Getter<P, V> getter;
@@ -21,11 +23,6 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<V> implements Bounde
   @Override
   public void inputChanged() {
     inputChanged = true;
-  }
-
-  public void setItems(Collection<V> values) {
-    removeAllItems();
-    values.forEach(super::addItem);
   }
 
   @Override
@@ -42,12 +39,21 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<V> implements Bounde
     }
   }
 
+  @Nullable
+  @Override
+  public Object getSelectedItem() {
+    Object selectedItem = super.getSelectedItem();
+    return selectedItem != null
+        ? selectedItem.equals(NO_READ_PERMISSION) ? null : selectedItem
+        : null;
+  }
+
   @Override
   public void writeInto(P p) throws CannotParseException {
     try {
       int selectedIndex = getSelectedIndex();
       if (selectedIndex > -1) {
-        setter.set(p, getItemAt(selectedIndex));
+        setter.set(p, (V) getSelectedItem());
       } else {
         throw new CannotParseException();
       }
@@ -68,8 +74,37 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<V> implements Bounde
   @Override
   public void setReadable(boolean b) {
     if (b) {
-      setSelectedItem(null);
+      super.removeItem(NO_READ_PERMISSION);
+      super.addItem(NO_READ_PERMISSION);
+      setSelectedItem(NO_READ_PERMISSION);
+    } else {
+      super.removeItem(NO_READ_PERMISSION);
     }
+  }
+
+  public void addValue(V v) {
+    super.addItem(v);
+  }
+
+  @SafeVarargs
+  public final void setItems(V... v) {
+    super.removeAllItems();
+    for (V x : v) {
+      addValue(x);
+    }
+  }
+
+  public void setItems(Iterable<V> v) {
+    super.removeAllItems();
+    for (V x : v) {
+      addValue(x);
+    }
+  }
+
+  @Override
+  @Deprecated
+  public void addItem(Object item) {
+    throw new UnsupportedOperationException("unchecked use of addItem");
   }
 
   @Override

@@ -6,16 +6,20 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.Date;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 import javax.swing.*;
 import javax.swing.text.*;
 import kernbeisser.CustomComponents.ViewMainPanel;
@@ -565,5 +569,87 @@ public class Tools {
         | InvocationTargetException e) {
       return Tools.createWithoutConstructor(out);
     }
+  }
+
+  public static <T> void persistIfNotUnique(Class<T> clazz, Collection<T> collection) {
+    Collection<Field> uniqueFields = new HashSet<>();
+    for (Field field : clazz.getDeclaredFields()) {
+      if (isUnique(field)) {
+        field.setAccessible(true);
+        uniqueFields.add(field);
+      }
+    }
+    Field[] uniqueFieldsArray = uniqueFields.toArray(new Field[0]);
+    Object[][] uniqueValues = getAllValues(clazz, uniqueFieldsArray);
+    HashSet<?>[] hashSets = new HashSet<?>[uniqueFieldsArray.length];
+    for (int i = 0; i < hashSets.length; i++) {
+      hashSets[i] = new HashSet<>(Arrays.asList(uniqueValues[i]));
+    }
+    EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    collection.forEach(
+        (value) -> {
+          boolean passed = true;
+          for (int i = 0; i < uniqueFieldsArray.length; i++) {
+            try {
+              if (hashSets[i].contains(uniqueFieldsArray[i].get(value))) {
+                Main.logger.info(
+                    "Ignored "
+                        + clazz
+                        + " because unique field "
+                        + uniqueFieldsArray[i]
+                        + " contained the value "
+                        + uniqueFieldsArray[i].get(value)
+                        + " which is already taken");
+                passed = false;
+                break;
+              }
+            } catch (IllegalAccessException e) {
+              e.printStackTrace();
+            }
+          }
+          if (passed) {
+            em.persist(value);
+          }
+        });
+    et.commit();
+    em.close();
+    System.out.println("persistence finished");
+  }
+
+  public static boolean isUnique(Field f) {
+    if (f.getAnnotation(Id.class) != null) return false;
+    for (Annotation annotation : f.getAnnotations()) {
+      try {
+        Method uniqueCheck = annotation.annotationType().getDeclaredMethod("unique");
+        uniqueCheck.setAccessible(true);
+        return (boolean) uniqueCheck.invoke(annotation);
+      } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+      }
+    }
+    return false;
+  }
+
+  public static <P> Object[][] getAllValues(Class<P> parent, Field... fields) {
+    EntityManager em = DBConnection.getEntityManager();
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<Object> query = cb.createQuery(Object.class);
+    Root<P> root = query.from(parent);
+    query.multiselect(Tools.transform(fields, Selection.class, field -> root.get(field.getName())));
+    List<Object> queryReturn = em.createQuery(query).getResultList();
+    Object[][] out = new Object[fields.length][queryReturn.size()];
+    int index = 0;
+    for (Object objects : queryReturn) {
+      for (int field = 0; field < fields.length; field++) {
+        out[field][index] = ((Object[]) objects)[field];
+      }
+    }
+    em.close();
+    return out;
+  }
+
+  public static Date toDate(YearMonth yearMonth) {
+    return java.util.Date.from(yearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
 }
