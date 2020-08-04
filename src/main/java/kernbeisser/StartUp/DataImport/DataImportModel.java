@@ -1,17 +1,17 @@
 package kernbeisser.StartUp.DataImport;
 
+import java.time.Instant;
 import java.util.Collection;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Model;
+import org.hibernate.Session;
 
 public class DataImportModel implements Model<DataImportController> {
   <T> void batchMergeAll(Collection<T> v) {
-    if (v.size() == 0) {
-      return;
-    }
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();

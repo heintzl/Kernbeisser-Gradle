@@ -33,17 +33,17 @@ public class Main {
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
     buildEnvironment();
     checkVersion();
-    checkCatalog();
     if (!Setting.DB_INITIALIZED.getBooleanValue()) {
       SwingUtilities.invokeLater(() -> new DataImportController().openTab("Daten importieren"));
     } else {
+      checkCatalog();
       Tools.activateKeyboardListener();
       openLogIn();
     }
+
   }
 
   public static void checkCatalog() {
-
     logger.info("Checking Catalog ...");
     if (Setting.UPDATE_CATALOG_FROM_INTERNET.getBooleanValue()) {
       try {
