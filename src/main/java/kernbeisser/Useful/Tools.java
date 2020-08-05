@@ -227,12 +227,12 @@ public class Tools {
 
   public static <T> T setId(T t, Object id) {
     Class<?> clazz = t.getClass();
-    while (!clazz.equals(Object.class)){
+    while (!clazz.equals(Object.class)) {
       for (Field declaredField : clazz.getDeclaredFields()) {
         if (declaredField.getAnnotation(Id.class) != null) {
           declaredField.setAccessible(true);
           try {
-            declaredField.set(t,id);
+            declaredField.set(t, id);
             return t;
           } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -646,7 +646,7 @@ public class Tools {
 
   public static Object getId(Object o) {
     Class<?> clazz = o.getClass();
-    while (!clazz.equals(Object.class)){
+    while (!clazz.equals(Object.class)) {
       for (Field declaredField : clazz.getDeclaredFields()) {
         if (declaredField.getAnnotation(Id.class) != null) {
           declaredField.setAccessible(true);

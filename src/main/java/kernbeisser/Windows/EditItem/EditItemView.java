@@ -17,7 +17,6 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +65,10 @@ public class EditItemView implements View<EditItemController> {
         new AccessCheckingField<>(
             ArticleBase::getName, ArticleBase::setName, controller::validateName);
     amount =
-        new AccessCheckingField<>(ArticleBase::getAmount,ArticleBase::setAmount, AccessCheckingField.combine(controller::displayAmount,controller::validateAmount));
+        new AccessCheckingField<>(
+            ArticleBase::getAmount,
+            ArticleBase::setAmount,
+            AccessCheckingField.combine(controller::displayAmount, controller::validateAmount));
     netPrice =
         new AccessCheckingField<>(
             ArticleBase::getNetPrice, ArticleBase::setNetPrice, AccessCheckingField.DOUBLE_FORMER);

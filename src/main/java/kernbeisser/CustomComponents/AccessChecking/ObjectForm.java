@@ -32,7 +32,8 @@ public class ObjectForm<P> {
     P originalCopy = Tools.clone(original);
     for (Bounded<P, ?> boundedField : boundedFields) {
       try {
-        if ((boundedField.isInputChanged() || boundedField.canRead(accessModel)) && boundedField.canWrite(accessModel)) {
+        if ((boundedField.isInputChanged() || boundedField.canRead(accessModel))
+            && boundedField.canWrite(accessModel)) {
           boundedField.writeInto(originalCopy);
         }
       } catch (CannotParseException e) {
@@ -55,8 +56,13 @@ public class ObjectForm<P> {
     return originalCopy;
   }
 
-  private boolean isValidInput(Bounded<P,?> bounded){
-    boolean out = bounded.validInput()&&(!checkInputVerifier || !(bounded instanceof JComponent) || ((JComponent) bounded).getInputVerifier() == null || ((JComponent) bounded).getInputVerifier().verify((JComponent) bounded));
+  private boolean isValidInput(Bounded<P, ?> bounded) {
+    boolean out =
+        bounded.validInput()
+            && (!checkInputVerifier
+                || !(bounded instanceof JComponent)
+                || ((JComponent) bounded).getInputVerifier() == null
+                || ((JComponent) bounded).getInputVerifier().verify((JComponent) bounded));
     return out;
   }
 

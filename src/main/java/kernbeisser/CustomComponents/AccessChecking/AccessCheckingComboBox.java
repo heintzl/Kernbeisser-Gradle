@@ -105,7 +105,7 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
   @Deprecated
   public void addItem(Object item) {
     addValue((V) item);
-    //throw new UnsupportedOperationException("unchecked use of addItem");
+    // throw new UnsupportedOperationException("unchecked use of addItem");
   }
 
   @Override

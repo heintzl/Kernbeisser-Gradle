@@ -116,9 +116,9 @@ public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, 
     }
   }
 
-    public interface StringTransformer<V> {
-    default String toString(V v){
-        return String.valueOf(v);
+  public interface StringTransformer<V> {
+    default String toString(V v) {
+      return String.valueOf(v);
     }
 
     V fromString(String s) throws CannotParseException;
@@ -224,21 +224,22 @@ public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, 
         }
       };
 
-  public interface StringParser<T>{
-      T fromString(String s) throws CannotParseException;
+  public interface StringParser<T> {
+    T fromString(String s) throws CannotParseException;
   }
 
-  public static <T> StringTransformer<T> combine(Function<T,String> toString,StringParser<T> fromString){
-      return new StringTransformer<T>() {
-          @Override
-          public String toString(T t) {
-              return toString.apply(t);
-          }
+  public static <T> StringTransformer<T> combine(
+      Function<T, String> toString, StringParser<T> fromString) {
+    return new StringTransformer<T>() {
+      @Override
+      public String toString(T t) {
+        return toString.apply(t);
+      }
 
-          @Override
-          public T fromString(String s) throws CannotParseException {
-              return fromString.fromString(s);
-          }
-      };
+      @Override
+      public T fromString(String s) throws CannotParseException {
+        return fromString.fromString(s);
+      }
+    };
   }
 }

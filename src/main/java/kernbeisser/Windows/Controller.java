@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import javax.swing.*;
@@ -21,45 +20,23 @@ public interface Controller<
     V extends View<? extends Controller<? extends V, ? extends M>>,
     M extends Model<? extends Controller<? extends V, ? extends M>>> {
 
-
-  /**default void initView(){
-    try {
-      Field viewField = this.getClass().getDeclaredField("view");
-      viewField.setAccessible(true);
-      V view = (V) Tools.createWithoutConstructor(getView().getClass());
-      try {
-        Collection<Field> fields = Tools.getWithAnnotation(view.getClass(),PreLoaded.class);
-        fields.forEach(e -> {
-          if(e.getType().equals(view.getClass())){
-            e.setAccessible(true);
-            try {
-              e.set(view,this);
-            } catch (IllegalAccessException illegalAccessException) {
-              illegalAccessException.printStackTrace();
-            }
-          }
-        });
-        Method setUpUiComponents = view.getClass().getDeclaredMethod("$$$setupUI$$$", Controller.class);
-        setUpUiComponents.setAccessible(true);
-        setUpUiComponents.invoke(view);
-        Method initMethod = view.getClass().getDeclaredMethod("initialize", Controller.class);
-        initMethod.setAccessible(true);
-        initMethod.invoke(view, this);
-      } catch (IllegalAccessException e) {
-        Tools.showUnexpectedErrorWarning(e);
-      } catch (InvocationTargetException e) {
-        e.getCause().printStackTrace();
-      } catch (NoSuchMethodException e) {
-        Main.logger.error(
-                "failed to initialize view cannot find initialize(" + this.getClass() + ")");
-      }
-      viewField.set(this,view);
-      fillUI();
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw new NullPointerException("No Field 'view' found in ");
-    }
-  };**/
-
+  /**
+   * default void initView(){ try { Field viewField = this.getClass().getDeclaredField("view");
+   * viewField.setAccessible(true); V view = (V)
+   * Tools.createWithoutConstructor(getView().getClass()); try { Collection<Field> fields =
+   * Tools.getWithAnnotation(view.getClass(),PreLoaded.class); fields.forEach(e -> {
+   * if(e.getType().equals(view.getClass())){ e.setAccessible(true); try { e.set(view,this); } catch
+   * (IllegalAccessException illegalAccessException) { illegalAccessException.printStackTrace(); } }
+   * }); Method setUpUiComponents = view.getClass().getDeclaredMethod("$$$setupUI$$$",
+   * Controller.class); setUpUiComponents.setAccessible(true); setUpUiComponents.invoke(view);
+   * Method initMethod = view.getClass().getDeclaredMethod("initialize", Controller.class);
+   * initMethod.setAccessible(true); initMethod.invoke(view, this); } catch (IllegalAccessException
+   * e) { Tools.showUnexpectedErrorWarning(e); } catch (InvocationTargetException e) {
+   * e.getCause().printStackTrace(); } catch (NoSuchMethodException e) { Main.logger.error( "failed
+   * to initialize view cannot find initialize(" + this.getClass() + ")"); }
+   * viewField.set(this,view); fillUI(); } catch (NoSuchFieldException | IllegalAccessException e) {
+   * throw new NullPointerException("No Field 'view' found in "); } };*
+   */
   @NotNull
   V getView();
 
