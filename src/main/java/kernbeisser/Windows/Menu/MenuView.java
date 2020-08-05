@@ -10,6 +10,7 @@ import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditItems.EditItemsController;
+import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.EditUsers.EditUsers;
@@ -48,8 +49,9 @@ public class MenuView implements View<MenuController> {
   private ControllerButton placeHolderControllerButton2;
   private ControllerButton openSelfShoppingMask;
   private ControllerButton addBeginner;
+    private ControllerButton editJobs;
 
-  @Override
+    @Override
   public void initialize(MenuController controller) {}
 
   @Override
@@ -112,7 +114,9 @@ public class MenuView implements View<MenuController> {
     changeDBConnection =
         new ControllerButton(
             new DBLogInController(), controller -> controller.openTab("Datenbankverbindung"));
-    // NOT IMPLEMENTED
+    editJobs =
+            new ControllerButton(
+                    new EditJobs(), controller -> controller.openTab("Jobs bearbeiten"));
     editApplicationSettings =
         new ControllerButton(new SettingController(), e -> e.openTab("Einstellungen"));
     order =

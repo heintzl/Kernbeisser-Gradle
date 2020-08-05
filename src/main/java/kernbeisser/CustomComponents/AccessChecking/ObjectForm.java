@@ -1,8 +1,12 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
+import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class ObjectForm<P> {
   private final Bounded<P, ?>[] boundedFields;
@@ -85,5 +89,39 @@ public class ObjectForm<P> {
       valid = valid && field.validInput();
     }
     return valid;
+  }
+
+  public void persistAsNewEntity(){
+    try {
+      Tools.add(Proxy.removeProxy(getData()));
+      JOptionPane.showMessageDialog(null,"Das Objeckt wurde erfolgreich persistiert");
+    } catch (CannotParseException e) {
+      markErrors();
+      JOptionPane.showMessageDialog(null,"Die folgenden Felder wurden nicht korrekt ausgefüllt");
+    }
+  }
+
+  public void persistChanges(){
+    try {
+      P data = getData();
+      Tools.edit(Tools.getId(original),(Proxy.removeProxy(data)));
+    } catch (CannotParseException e) {
+      markErrors();
+      JOptionPane.showMessageDialog(null,"Die folgenden Felder wurden nicht korrekt ausgefüllt");
+    }
+  }
+
+  public void applyMode(Mode mode) {
+    switch (mode){
+      case REMOVE:
+        Tools.delete(original.getClass(),Tools.getId(original));
+        break;
+      case EDIT:
+        persistChanges();
+        break;
+      case ADD:
+        persistAsNewEntity();
+        break;
+    }
   }
 }

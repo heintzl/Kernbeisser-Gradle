@@ -225,16 +225,12 @@ public class Tools {
     }
   }
 
-  public static <T> T setId(T t, long id) {
+  public static <T> T setId(T t, Object id) {
     for (Field field : t.getClass().getDeclaredFields()) {
       if (field.getAnnotation(Id.class) != null) {
         field.setAccessible(true);
         try {
-          if (field.getType().equals(Integer.TYPE) || field.getType().equals(int.class)) {
-            field.set(t, (int) id);
-          } else {
-            field.set(t, id);
-          }
+          field.set(t,id);
         } catch (IllegalAccessException e) {
           Tools.showUnexpectedErrorWarning(e);
         }
@@ -245,7 +241,7 @@ public class Tools {
 
   public static <T> T mergeWithoutId(T in, T toOverride) {
     try {
-      long before = getId(in);
+      Object before = getId(in);
       BeanUtils.copyProperties(toOverride, in);
       setId(in, before);
     } catch (IllegalAccessException | InvocationTargetException e) {
@@ -254,19 +250,6 @@ public class Tools {
     return toOverride;
   }
 
-  private static <T> long getId(T in) {
-    for (Field declaredField : in.getClass().getDeclaredFields()) {
-      if (declaredField.getAnnotation(Id.class) != null) {
-        declaredField.setAccessible(true);
-        try {
-          return ((Number) declaredField.get(in)).longValue();
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-    return Long.MIN_VALUE;
-  }
 
   public static long tryParseLong(String s) {
     try {
@@ -290,6 +273,11 @@ public class Tools {
 
   public static <T> void edit(Object key, T to) {
     runInSession(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
+  }
+
+  public static void add(Object o){
+    Tools.setId(o,Tools.getId(Tools.createWithoutConstructor(o.getClass())));
+    persist(o);
   }
 
   public static void runInSession(Consumer<EntityManager> dbAction) {
@@ -571,7 +559,7 @@ public class Tools {
     }
   }
 
-  public static <T> void persistIfNotUnique(Class<T> clazz, Collection<T> collection) {
+  public static  Collection<Field> getAllUniqueFields(Class<?> clazz){
     Collection<Field> uniqueFields = new HashSet<>();
     for (Field field : clazz.getDeclaredFields()) {
       if (isUnique(field)) {
@@ -579,7 +567,11 @@ public class Tools {
         uniqueFields.add(field);
       }
     }
-    Field[] uniqueFieldsArray = uniqueFields.toArray(new Field[0]);
+    return uniqueFields;
+  }
+
+  public static <T> void persistIfNotUnique(Class<T> clazz, Collection<T> collection) {
+    Field[] uniqueFieldsArray = getAllUniqueFields(clazz).toArray(new Field[0]);
     Object[][] uniqueValues = getAllValues(clazz, uniqueFieldsArray);
     HashSet<?>[] hashSets = new HashSet<?>[uniqueFieldsArray.length];
     for (int i = 0; i < hashSets.length; i++) {
@@ -647,6 +639,20 @@ public class Tools {
     }
     em.close();
     return out;
+  }
+
+  public static Object getId(Object o){
+    for (Field declaredField : o.getClass().getDeclaredFields()) {
+      if (declaredField.getAnnotation(Id.class)!=null) {
+        declaredField.setAccessible(true);
+        try {
+          return declaredField.get(o);
+        } catch (IllegalAccessException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return null;
   }
 
   public static Date toDate(YearMonth yearMonth) {
