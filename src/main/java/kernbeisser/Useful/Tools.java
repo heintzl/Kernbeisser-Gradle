@@ -36,7 +36,7 @@ public class Tools {
   private static final Toolkit toolkit = Toolkit.getDefaultToolkit();
 
   public static <A extends Annotation> Collection<Field> getWithAnnotation(
-      Class pattern, Class<A> annotation) {
+      Class<?> pattern, Class<A> annotation) {
     ArrayList<Field> out = new ArrayList<>();
     for (Field field : pattern.getDeclaredFields()) {
       field.setAccessible(true);
@@ -226,15 +226,20 @@ public class Tools {
   }
 
   public static <T> T setId(T t, Object id) {
-    for (Field field : t.getClass().getDeclaredFields()) {
-      if (field.getAnnotation(Id.class) != null) {
-        field.setAccessible(true);
-        try {
-          field.set(t, id);
-        } catch (IllegalAccessException e) {
-          Tools.showUnexpectedErrorWarning(e);
+    Class<?> clazz = t.getClass();
+    while (!clazz.equals(Object.class)){
+      for (Field declaredField : clazz.getDeclaredFields()) {
+        if (declaredField.getAnnotation(Id.class) != null) {
+          declaredField.setAccessible(true);
+          try {
+            declaredField.set(t,id);
+            return t;
+          } catch (IllegalAccessException e) {
+            e.printStackTrace();
+          }
         }
       }
+      clazz = clazz.getSuperclass();
     }
     return t;
   }
@@ -400,7 +405,6 @@ public class Tools {
         if (component.getInputVerifier() != null
             && !component.getInputVerifier().verify(component)) {
           result = false;
-          component.getInputVerifier().shouldYieldFocus(component);
         }
       }
     }
@@ -641,15 +645,19 @@ public class Tools {
   }
 
   public static Object getId(Object o) {
-    for (Field declaredField : o.getClass().getDeclaredFields()) {
-      if (declaredField.getAnnotation(Id.class) != null) {
-        declaredField.setAccessible(true);
-        try {
-          return declaredField.get(o);
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
+    Class<?> clazz = o.getClass();
+    while (!clazz.equals(Object.class)){
+      for (Field declaredField : clazz.getDeclaredFields()) {
+        if (declaredField.getAnnotation(Id.class) != null) {
+          declaredField.setAccessible(true);
+          try {
+            return declaredField.get(o);
+          } catch (IllegalAccessException e) {
+            e.printStackTrace();
+          }
         }
       }
+      clazz = clazz.getSuperclass();
     }
     return null;
   }

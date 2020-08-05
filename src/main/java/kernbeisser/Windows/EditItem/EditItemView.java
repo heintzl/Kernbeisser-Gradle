@@ -38,7 +38,7 @@ public class EditItemView implements View<EditItemController> {
   private kernbeisser.CustomComponents.PermissionButton search;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article, PriceList>
       priceList;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Double> amount;
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Integer> amount;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Double>
       containerSize;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article, MetricUnits>
@@ -55,15 +55,18 @@ public class EditItemView implements View<EditItemController> {
 
   private ObjectForm<Article> articleObjectForm;
 
+  private EditItemController controller;
+
+  public EditItemView(EditItemController editItemController) {
+    this.controller = editItemController;
+  }
+
   private void createUIComponents() {
     itemName =
         new AccessCheckingField<>(
-            ArticleBase::getName, ArticleBase::setName, AccessCheckingField.NOT_NULL);
+            ArticleBase::getName, ArticleBase::setName, controller::validateName);
     amount =
-        new AccessCheckingField<>(
-            e -> e.getAmount() * e.getMetricUnits().getBaseFactor(),
-            (a, b) -> a.setAmount((int) (b * a.getMetricUnits().getBaseFactor())),
-            AccessCheckingField.DOUBLE_FORMER);
+        new AccessCheckingField<>(ArticleBase::getAmount,ArticleBase::setAmount, AccessCheckingField.combine(controller::displayAmount,controller::validateAmount));
     netPrice =
         new AccessCheckingField<>(
             ArticleBase::getNetPrice, ArticleBase::setNetPrice, AccessCheckingField.DOUBLE_FORMER);
@@ -74,7 +77,7 @@ public class EditItemView implements View<EditItemController> {
             AccessCheckingField.DOUBLE_FORMER);
     kbItemNumber =
         new AccessCheckingField<>(
-            Article::getKbNumber, Article::setKbNumber, AccessCheckingField.INT_FORMER);
+            Article::getKbNumber, Article::setKbNumber, controller::validateKBNumber);
     supplierItemNumber =
         new AccessCheckingField<>(
             ArticleBase::getSuppliersItemNumber,
@@ -98,7 +101,7 @@ public class EditItemView implements View<EditItemController> {
         new AccessCheckingComboBox<>(Article::getContainerDef, Article::setContainerDef);
     barcode =
         new AccessCheckingField<>(
-            ArticleBase::getBarcode, ArticleBase::setBarcode, AccessCheckingField.LONG_FORMER);
+            ArticleBase::getBarcode, ArticleBase::setBarcode, controller::validateBarcode);
     showInShoppingMask = new AccessCheckBox<>(Article::isShowInShop, Article::setShowInShop);
     weighable = new AccessCheckBox<>(Article::isWeighable, Article::setWeighable);
     vat = new AccessCheckingComboBox<>(ArticleBase::getVat, ArticleBase::setVat);
@@ -152,6 +155,7 @@ public class EditItemView implements View<EditItemController> {
 
   @Override
   public void initialize(EditItemController controller) {
+    this.controller = controller;
     cancel.addActionListener((e) -> back());
     commit.addActionListener((e) -> controller.doAction());
     itemName.setInputVerifier(new NotNullVerifier());
@@ -173,35 +177,13 @@ public class EditItemView implements View<EditItemController> {
             supplierItemNumber,
             crateDeposit,
             priceList,
-            amount,
             containerSize,
             metricUnits,
+            amount,
             containerDefinition,
             barcode,
             showInShoppingMask,
             weighable);
-  }
-
-  boolean validate() {
-    return Tools.verify(
-        itemName,
-        supplier,
-        netPrice,
-        deposit,
-        kbItemNumber,
-        supplierItemNumber,
-        crateDeposit,
-        search,
-        priceList,
-        amount,
-        containerSize,
-        metricUnits,
-        containerDefinition,
-        barcode,
-        showInShoppingMask,
-        weighable,
-        extraInfo,
-        vat);
   }
 
   void setActionTitle(String s) {
@@ -230,5 +212,9 @@ public class EditItemView implements View<EditItemController> {
 
   public void invalidInput() {
     JOptionPane.showMessageDialog(getTopComponent(), "Bitte füllen sie alle Werte korrekt aus");
+  }
+
+  public MetricUnits getMetricUnits() {
+    return (MetricUnits) metricUnits.getSelectedItem();
   }
 }

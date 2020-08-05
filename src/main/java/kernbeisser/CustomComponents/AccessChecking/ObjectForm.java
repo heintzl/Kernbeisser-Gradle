@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public class ObjectForm<P> {
   private final Bounded<P, ?>[] boundedFields;
 
+  private boolean checkInputVerifier = true;
+
   private P original;
   private P accessModel;
 
@@ -17,14 +19,6 @@ public class ObjectForm<P> {
   public ObjectForm(P original, Bounded<P, ?>... boundedFields) {
     this.boundedFields = boundedFields;
     setSource(original);
-  }
-
-  public P getOriginal() {
-    return original;
-  }
-
-  public void pullData() {
-    setData(original);
   }
 
   public void setSource(P data) {
@@ -38,7 +32,7 @@ public class ObjectForm<P> {
     P originalCopy = Tools.clone(original);
     for (Bounded<P, ?> boundedField : boundedFields) {
       try {
-        if (boundedField.isInputChanged() && boundedField.canWrite(accessModel)) {
+        if ((boundedField.isInputChanged() || boundedField.canRead(accessModel)) && boundedField.canWrite(accessModel)) {
           boundedField.writeInto(originalCopy);
         }
       } catch (CannotParseException e) {
@@ -61,6 +55,11 @@ public class ObjectForm<P> {
     return originalCopy;
   }
 
+  private boolean isValidInput(Bounded<P,?> bounded){
+    boolean out = bounded.validInput()&&(!checkInputVerifier || !(bounded instanceof JComponent) || ((JComponent) bounded).getInputVerifier() == null || ((JComponent) bounded).getInputVerifier().verify((JComponent) bounded));
+    return out;
+  }
+
   private void setData(@NotNull P data) {
     for (Bounded<P, ?> boundedField : boundedFields) {
       boundedField.setObjectData(data);
@@ -76,7 +75,7 @@ public class ObjectForm<P> {
 
   public void markErrors() {
     for (Bounded<P, ?> field : boundedFields) {
-      if (!field.validInput()) {
+      if (!isValidInput(field)) {
         field.markWrongInput();
       }
     }
@@ -122,5 +121,13 @@ public class ObjectForm<P> {
         persistAsNewEntity();
         break;
     }
+  }
+
+  public boolean isCheckInputVerifier() {
+    return checkInputVerifier;
+  }
+
+  public void setCheckInputVerifier(boolean checkInputVerifier) {
+    this.checkInputVerifier = checkInputVerifier;
   }
 }

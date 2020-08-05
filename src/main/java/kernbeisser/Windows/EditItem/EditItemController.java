@@ -4,6 +4,7 @@ import java.awt.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
@@ -21,7 +22,7 @@ public class EditItemController implements Controller<EditItemView, EditItemMode
       model.doAction(article);
       return;
     } else {
-      this.view = new EditItemView();
+      this.view = new EditItemView(this);
     }
     switch (mode) {
       case ADD:
@@ -59,78 +60,78 @@ public class EditItemController implements Controller<EditItemView, EditItemMode
     return new PermissionKey[0];
   }
 
-  void doAction() {
-    if (!view.validate()) {
-      view.invalidInput();
-      return;
+  String validateName(String name) throws CannotParseException{
+    switch (model.getMode()){
+      case EDIT:
+        if(name.equals(model.getSource().getName()))return name;
+      case ADD:
+        if (EditItemModel.nameExists(name)) {
+          view.nameAlreadyExists();
+          throw new CannotParseException("Name already taken");
+        }else return name;
+      default:
+        throw new CannotParseException("No mode is selected");
     }
-    Article data;
+  }
+
+  int validateKBNumber(String input)throws CannotParseException{
     try {
-      data = view.getArticleObjectForm().getData();
-    } catch (CannotParseException e) {
-      view.invalidInput();
-      return;
-    }
-    if (model.getMode() == Mode.ADD) {
-      if (EditItemModel.nameExists(data.getName())) {
-        view.nameAlreadyExists();
-        return;
+      int number = Integer.parseInt(input);
+      switch (model.getMode()){
+        case EDIT:
+          if(model.getSource().getKbNumber()==number)return number;
+        case ADD:
+          if(!(model.kbNumberExists(number) > -1 ))
+            return number;
+          else if(view.kbNumberAlreadyExists()){
+            return model.nextUnusedArticleNumber(number);
+          }else {
+            throw new CannotParseException("Number is already taken");
+          }
+        default:
+          throw new CannotParseException("No mode is selected");
       }
-      if (model.kbNumberExists(data.getKbNumber()) > -1) {
-        if (view.kbNumberAlreadyExists()) {
-          view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
-        }
-        if (model.getMode() == Mode.ADD) {
-          if (EditItemModel.nameExists(data.getName())) {
-            view.nameAlreadyExists();
-            return;
-          }
-          if (model.kbNumberExists(data.getKbNumber()) > -1) {
-            if (view.kbNumberAlreadyExists()) {
-              view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
-            }
-            return;
-          }
-          if (data.getBarcode() != null) {
-            if (model.barcodeExists(data.getBarcode()) > -1) {
-              view.barcodeAlreadyExists();
-              return;
-            }
-          }
-        }
-        if (model.getMode() == Mode.EDIT) {
-          if ((!data.getName().equals(model.getSource().getName()))
-              && EditItemModel.nameExists(data.getName())) {
-            view.nameAlreadyExists();
-            return;
-          }
-          int idOfKBNumber = model.kbNumberExists(data.getKbNumber());
-          if (idOfKBNumber != -1 && idOfKBNumber != model.getSource().getId()) {
-            if (view.kbNumberAlreadyExists()) {
-              view.setKbNumber(model.nextUnusedArticleNumber(data.getKbNumber()));
-            }
-            return;
-          }
-          if (data.getBarcode() != null) {
-            int idOfBarcode = model.barcodeExists(data.getBarcode());
-            if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
-              view.barcodeAlreadyExists();
-              return;
-            }
-          }
-        }
-        return;
-      }
-      if (data.getBarcode() != null) {
-        int idOfBarcode = model.barcodeExists(data.getBarcode());
-        if (idOfBarcode != -1 && idOfBarcode != model.getSource().getId()) {
-          view.barcodeAlreadyExists();
-          return;
-        }
-      }
+    }catch (NumberFormatException e){
+      throw new CannotParseException(input+" is not a number");
     }
-    if (model.doAction(data.unwrapProxy())) {
-      view.back();
+  }
+
+  Long validateBarcode(String input) throws CannotParseException{
+    if(input.replace("null","").equals(""))
+      return null;
+    try {
+      long barcode = Long.parseLong(input);
+      switch (model.getMode()){
+        case EDIT:
+          if(model.getSource().getBarcode()==barcode)return barcode;
+        case ADD:
+          if(!(model.barcodeExists(barcode) > -1 ))
+            return barcode;
+          else {
+            view.barcodeAlreadyExists();
+            throw new CannotParseException("Barcode is already taken");
+          }
+        default:
+          throw new CannotParseException("No mode is selected");
+      }
+    }catch (NumberFormatException e){
+      throw new CannotParseException(input+" is not a barcode");
     }
+  }
+
+  void doAction() {
+    view.getArticleObjectForm().applyMode(model.getMode());
+  }
+
+  public int validateAmount(String s) {
+    MetricUnits unit = view.getMetricUnits();
+    if(unit != null){
+      return (int)(Double.parseDouble(s.replace(",",".")) / view.getMetricUnits().getBaseFactor());
+    }else throw new NullPointerException();
+  }
+
+  public String displayAmount(int amount){
+
+    return amount * (view.getMetricUnits() !=null ? view.getMetricUnits().getBaseFactor() : model.getSource().getMetricUnits().getBaseFactor())+"";
   }
 }
