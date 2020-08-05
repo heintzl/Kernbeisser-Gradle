@@ -230,7 +230,7 @@ public class Tools {
       if (field.getAnnotation(Id.class) != null) {
         field.setAccessible(true);
         try {
-          field.set(t,id);
+          field.set(t, id);
         } catch (IllegalAccessException e) {
           Tools.showUnexpectedErrorWarning(e);
         }
@@ -249,7 +249,6 @@ public class Tools {
     }
     return toOverride;
   }
-
 
   public static long tryParseLong(String s) {
     try {
@@ -275,8 +274,8 @@ public class Tools {
     runInSession(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
   }
 
-  public static void add(Object o){
-    Tools.setId(o,Tools.getId(Tools.createWithoutConstructor(o.getClass())));
+  public static void add(Object o) {
+    Tools.setId(o, Tools.getId(Tools.createWithoutConstructor(o.getClass())));
     persist(o);
   }
 
@@ -559,7 +558,7 @@ public class Tools {
     }
   }
 
-  public static  Collection<Field> getAllUniqueFields(Class<?> clazz){
+  public static Collection<Field> getAllUniqueFields(Class<?> clazz) {
     Collection<Field> uniqueFields = new HashSet<>();
     for (Field field : clazz.getDeclaredFields()) {
       if (isUnique(field)) {
@@ -641,9 +640,9 @@ public class Tools {
     return out;
   }
 
-  public static Object getId(Object o){
+  public static Object getId(Object o) {
     for (Field declaredField : o.getClass().getDeclaredFields()) {
-      if (declaredField.getAnnotation(Id.class)!=null) {
+      if (declaredField.getAnnotation(Id.class) != null) {
         declaredField.setAccessible(true);
         try {
           return declaredField.get(o);

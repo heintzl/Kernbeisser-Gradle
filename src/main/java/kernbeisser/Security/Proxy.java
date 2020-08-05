@@ -190,13 +190,14 @@ public class Proxy {
     }
   }
 
-  public static <T> T removeProxy(T t){
-    if(!isProxyInstance(t))return t;
+  public static <T> T removeProxy(T t) {
+    if (!isProxyInstance(t)) return t;
     Class<?> proxyClass = t.getClass();
-    String normalName = proxyClass.getName().substring(0,proxyClass.getName().indexOf("_"));
+    String normalName = proxyClass.getName().substring(0, proxyClass.getName().indexOf("_"));
     try {
-      T out = (T) Tools.createWithoutConstructor(t.getClass().getClassLoader().loadClass(normalName));
-      Tools.copyInto(t,out);
+      T out =
+          (T) Tools.createWithoutConstructor(t.getClass().getClassLoader().loadClass(normalName));
+      Tools.copyInto(t, out);
       return out;
     } catch (ClassNotFoundException e) {
       e.printStackTrace();

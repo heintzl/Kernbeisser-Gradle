@@ -49,9 +49,9 @@ public class MenuView implements View<MenuController> {
   private ControllerButton placeHolderControllerButton2;
   private ControllerButton openSelfShoppingMask;
   private ControllerButton addBeginner;
-    private ControllerButton editJobs;
+  private ControllerButton editJobs;
 
-    @Override
+  @Override
   public void initialize(MenuController controller) {}
 
   @Override
@@ -115,8 +115,7 @@ public class MenuView implements View<MenuController> {
         new ControllerButton(
             new DBLogInController(), controller -> controller.openTab("Datenbankverbindung"));
     editJobs =
-            new ControllerButton(
-                    new EditJobs(), controller -> controller.openTab("Jobs bearbeiten"));
+        new ControllerButton(new EditJobs(), controller -> controller.openTab("Jobs bearbeiten"));
     editApplicationSettings =
         new ControllerButton(new SettingController(), e -> e.openTab("Einstellungen"));
     order =

@@ -1,7 +1,6 @@
 package kernbeisser;
 
 import java.io.IOException;
-import java.lang.invoke.LambdaMetafactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -20,10 +19,8 @@ import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.Tasks.Catalog;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
-import net.bytebuddy.agent.builder.LambdaFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.LambdaUtil;
 
 public class Main {
 
