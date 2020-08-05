@@ -5,19 +5,19 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.Model;
 
 public class EditJobModel implements Model<EditJobController> {
-    private final Job job;
-    private final Mode mode;
+  private final Job job;
+  private final Mode mode;
 
-    public EditJobModel(Job job, Mode mode) {
-        this.job = job;
-        this.mode = mode;
-    }
+  public EditJobModel(Job job, Mode mode) {
+    this.job = job;
+    this.mode = mode;
+  }
 
-    public Mode getMode() {
-        return mode;
-    }
+  public Mode getMode() {
+    return mode;
+  }
 
-    public Job getJob() {
-        return job;
-    }
+  public Job getJob() {
+    return job;
+  }
 }
