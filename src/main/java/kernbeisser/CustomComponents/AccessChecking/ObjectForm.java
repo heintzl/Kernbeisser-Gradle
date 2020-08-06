@@ -8,6 +8,8 @@ import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectForm<P> {
+  private ObjectValidator<P> objectValidator;
+
   private final Bounded<P, ?>[] boundedFields;
 
   private boolean checkInputVerifier = true;
@@ -103,7 +105,13 @@ public class ObjectForm<P> {
 
   public boolean persistAsNewEntity() {
     try {
-      Tools.add(Proxy.removeProxy(getData(true)));
+      P data = getData(true);
+      try {
+        objectValidator.validate(data);
+      }catch (CannotParseException e){
+        return false;
+      }
+      Tools.add(Proxy.removeProxy(data));
       JOptionPane.showMessageDialog(null, "Das Objeckt wurde erfolgreich persistiert");
       return true;
     } catch (CannotParseException e) {
@@ -115,6 +123,11 @@ public class ObjectForm<P> {
   public boolean persistChanges() {
     try {
       P data = getData(true);
+      try {
+        objectValidator.validate(data);
+      }catch (CannotParseException e){
+        return false;
+      }
       Tools.edit(Tools.getId(original), (Proxy.removeProxy(data)));
       return true;
     } catch (CannotParseException e) {
@@ -143,5 +156,13 @@ public class ObjectForm<P> {
 
   public void setCheckInputVerifier(boolean checkInputVerifier) {
     this.checkInputVerifier = checkInputVerifier;
+  }
+
+  public ObjectValidator<P> getObjectValidator() {
+    return objectValidator;
+  }
+
+  public void setObjectValidator(ObjectValidator<P> objectValidator) {
+    this.objectValidator = objectValidator;
   }
 }

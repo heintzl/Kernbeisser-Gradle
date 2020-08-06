@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.Searchable;
 import org.jetbrains.annotations.NotNull;
@@ -26,11 +27,11 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>, Sear
   }
 
   public void search() {
+    Object lastId = getSelectedObject() != null ? Tools.getId(getSelectedObject()) : null;
     view.setObjects(model.getValues(view.getSearch()));
-    if (model.getLastSelectedObject() == null) {
-      view.setSelectedObject(model.getLastSelectedObject());
+    if (!view.setSelectedObjectId(lastId)) {
+      runLostSelectionListener();
     }
-    runLostSelectionListener();
   }
 
   void select() {
@@ -99,5 +100,9 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>, Sear
 
   public void setSearch(String s) {
     view.setSearch(s);
+  }
+
+  public void setSelectedObject(T t) {
+    view.setSelectedObject(t);
   }
 }

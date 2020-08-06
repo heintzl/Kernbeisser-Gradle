@@ -18,6 +18,7 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Windows.PreLoaded;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,13 +37,11 @@ public class EditUserView implements View<EditUserController> {
   private JLabel lblTelefon2;
   private JLabel grpLogin;
   private JLabel lblUsername;
-  private JLabel lblPasswort;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, Long> postalCode;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, String> town;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, String> phone1;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, String> phone2;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, String> username;
-  private kernbeisser.CustomComponents.PermissionButton chgPassword;
   private JLabel lblRolle;
   private JLabel lblHasKey;
   private JLabel lblIsEmployee;
@@ -64,6 +63,9 @@ public class EditUserView implements View<EditUserController> {
   private AccessCheckingCollectionEditor<User, Set<Permission>, Permission> editPermission;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, Integer> keyNumber;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, String> email;
+
+  @PreLoaded
+  private EditUserController controller;
 
   private ObjectForm<User> objectForm;
 
@@ -109,10 +111,6 @@ public class EditUserView implements View<EditUserController> {
             email,
             chgJobs,
             editPermission);
-    chgPassword.addActionListener(
-        e -> {
-          controller.requestChangePassword();
-        });
     submit.addActionListener(e -> controller.doAction());
     KeyAdapter refreshUsername =
         new KeyAdapter() {
@@ -130,7 +128,6 @@ public class EditUserView implements View<EditUserController> {
     street.setInputVerifier(new NotNullVerifier());
     firstName.setInputVerifier(new NotNullVerifier());
     lastName.setInputVerifier(new NotNullVerifier());
-    chgPassword.setRequiredWriteKeys(PermissionKey.USER_PASSWORD_WRITE);
     hasKey.setReadWrite(PermissionKey.USER_KERNBEISSER_KEY_READ);
     hasKey.setRequiredWriteKeys(PermissionKey.USER_KERNBEISSER_KEY_WRITE);
     shares.setInputVerifier(IntegerVerifier.from(1, 1, 3, 10));
@@ -178,7 +175,7 @@ public class EditUserView implements View<EditUserController> {
             User::getPhoneNumber2, User::setPhoneNumber2, AccessCheckingField.NONE);
     username =
         new AccessCheckingField<>(
-            User::getUsername, User::setUsername, AccessCheckingField.NOT_NULL);
+            User::getUsername, User::setUsername, controller::validateUsername);
     isEmployee = new AccessCheckBox<>(User::isEmployee, User::setEmployee);
     shares =
         new AccessCheckingField<>(User::getShares, User::setShares, AccessCheckingField.INT_FORMER);

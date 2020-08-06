@@ -644,17 +644,12 @@ public class Tools {
     return out;
   }
 
-  public static Object getId(Object o) {
-    Class<?> clazz = o.getClass();
+  public static Field getIdField(Class<?> clazz){
     while (!clazz.equals(Object.class)) {
       for (Field declaredField : clazz.getDeclaredFields()) {
         if (declaredField.getAnnotation(Id.class) != null) {
           declaredField.setAccessible(true);
-          try {
-            return declaredField.get(o);
-          } catch (IllegalAccessException e) {
-            e.printStackTrace();
-          }
+          return declaredField;
         }
       }
       clazz = clazz.getSuperclass();
@@ -662,7 +657,29 @@ public class Tools {
     return null;
   }
 
+  public static Object getId(Object o) {
+    try {
+      return getIdField(o.getClass()).get(o);
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
   public static Date toDate(YearMonth yearMonth) {
     return java.util.Date.from(yearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+  }
+
+  public static <T> T findById(Collection<T> collection,Object id){
+    if(collection.size() == 0)return null;
+    Field field = getIdField(collection.iterator().next().getClass());
+    for (T t : collection) {
+      try {
+        if(field.get(t).equals(id))return t;
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      }
+    }
+    return null;
   }
 }

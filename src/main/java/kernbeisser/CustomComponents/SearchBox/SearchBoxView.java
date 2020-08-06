@@ -9,6 +9,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,5 +77,11 @@ public class SearchBoxView<T> extends JPanel implements View<SearchBoxController
 
   public void setSelectedObject(T value) {
     objects.setSelectedObject(value);
+  }
+
+  public boolean setSelectedObjectId(Object o) {
+    T t = Tools.findById(objects.getItems(),o);
+    objects.setSelectedObject(t);
+    return t != null;
   }
 }

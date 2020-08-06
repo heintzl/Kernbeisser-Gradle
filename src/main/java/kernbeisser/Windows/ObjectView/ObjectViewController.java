@@ -43,6 +43,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>, Ob
   }
 
   void edit() {
+    if(openWindow)return;
     model
         .openEdit(view.getWindow(), searchBoxController.getSelectedObject())
         .addCloseEventListener(
@@ -57,6 +58,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>, Ob
   }
 
   void add() {
+    if(openWindow)return;
     model
         .openAdd(view.getWindow(), searchBoxController.getSelectedObject())
         .addCloseEventListener(
@@ -111,6 +113,10 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>, Ob
   }
 
   public void search() {
+    T t = searchBoxController.getSelectedObject();
     searchBoxController.refreshLoadSolutions();
+    if(t != null){
+      searchBoxController.setSelectedObject(t);
+    }
   }
 }
