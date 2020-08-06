@@ -29,6 +29,11 @@ public class ObjectForm<P> {
   }
 
   public P getData() throws CannotParseException {
+    return getData(false);
+  }
+
+  public P getData(boolean pingErrors) throws CannotParseException {
+    boolean success = true;
     P originalCopy = Tools.clone(original);
     for (Bounded<P, ?> boundedField : boundedFields) {
       try {
@@ -37,9 +42,13 @@ public class ObjectForm<P> {
           boundedField.writeInto(originalCopy);
         }
       } catch (CannotParseException e) {
-        throw new CannotParseException();
+        success = false;
+        if(pingErrors)
+          boundedField.markWrongInput();
       }
     }
+    if(!success)
+      throw new CannotParseException();
     return originalCopy;
   }
 
@@ -47,7 +56,8 @@ public class ObjectForm<P> {
     P originalCopy = Tools.clone(original);
     for (Bounded<P, ?> boundedField : boundedFields) {
       try {
-        if (boundedField.isInputChanged() && boundedField.canWrite(accessModel)) {
+        if ((boundedField.isInputChanged() || boundedField.canRead(accessModel))
+                && boundedField.canWrite(accessModel)) {
           boundedField.writeInto(originalCopy);
         }
       } catch (CannotParseException ignored) {
@@ -57,13 +67,11 @@ public class ObjectForm<P> {
   }
 
   private boolean isValidInput(Bounded<P, ?> bounded) {
-    boolean out =
-        bounded.validInput()
-            && (!checkInputVerifier
-                || !(bounded instanceof JComponent)
-                || ((JComponent) bounded).getInputVerifier() == null
-                || ((JComponent) bounded).getInputVerifier().verify((JComponent) bounded));
-    return out;
+    return bounded.validInput()
+        && (!checkInputVerifier
+            || !(bounded instanceof JComponent)
+            || ((JComponent) bounded).getInputVerifier() == null
+            || ((JComponent) bounded).getInputVerifier().verify((JComponent) bounded));
   }
 
   private void setData(@NotNull P data) {
@@ -95,37 +103,39 @@ public class ObjectForm<P> {
     return valid;
   }
 
-  public void persistAsNewEntity() {
+  public boolean persistAsNewEntity() {
     try {
-      Tools.add(Proxy.removeProxy(getData()));
+      Tools.add(Proxy.removeProxy(getData(true)));
       JOptionPane.showMessageDialog(null, "Das Objeckt wurde erfolgreich persistiert");
+      return true;
     } catch (CannotParseException e) {
-      markErrors();
       JOptionPane.showMessageDialog(null, "Die folgenden Felder wurden nicht korrekt ausgefüllt");
+      return false;
     }
   }
 
-  public void persistChanges() {
+  public boolean persistChanges() {
     try {
-      P data = getData();
+      P data = getData(true);
       Tools.edit(Tools.getId(original), (Proxy.removeProxy(data)));
+      return true;
     } catch (CannotParseException e) {
-      markErrors();
       JOptionPane.showMessageDialog(null, "Die folgenden Felder wurden nicht korrekt ausgefüllt");
+      return false;
     }
   }
 
-  public void applyMode(Mode mode) {
+  public boolean applyMode(Mode mode) {
     switch (mode) {
       case REMOVE:
         Tools.delete(original.getClass(), Tools.getId(original));
-        break;
+        return true;
       case EDIT:
-        persistChanges();
-        break;
+        return persistChanges();
       case ADD:
-        persistAsNewEntity();
-        break;
+        return persistAsNewEntity();
+      default:
+        throw new UnsupportedOperationException(mode+" is not supported by applyMode");
     }
   }
 
