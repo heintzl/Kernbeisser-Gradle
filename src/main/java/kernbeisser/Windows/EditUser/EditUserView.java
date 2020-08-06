@@ -64,8 +64,7 @@ public class EditUserView implements View<EditUserController> {
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, Integer> keyNumber;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, String> email;
 
-  @PreLoaded
-  private EditUserController controller;
+  @PreLoaded private EditUserController controller;
 
   private ObjectForm<User> objectForm;
 

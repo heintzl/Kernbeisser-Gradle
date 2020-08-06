@@ -1,6 +1,7 @@
 package kernbeisser.Windows.EditUser;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
@@ -10,16 +11,12 @@ import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.AutoInitialize;
-import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
 @AutoInitialize
 public class EditUserController implements Controller<EditUserView, EditUserModel> {
-  @AutoInitialize
-  private EditUserView view;
+  @AutoInitialize private EditUserView view;
   private final EditUserModel model;
 
   public EditUserController(User user, Mode mode) {
@@ -46,9 +43,11 @@ public class EditUserController implements Controller<EditUserView, EditUserMode
     view.getObjectForm().setObjectValidator(this::validateUser);
   }
 
-  private User validateUser(User user) throws CannotParseException{
-    if(model.getMode()==Mode.ADD){
-      user.setPassword(BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(),"start".toCharArray()));
+  private User validateUser(User user) throws CannotParseException {
+    if (model.getMode() == Mode.ADD) {
+      user.setPassword(
+          BCrypt.withDefaults()
+              .hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray()));
       user.setForcePasswordChange(true);
       user.setUserGroup(new UserGroup());
       Tools.persist(user.getUserGroup());
@@ -88,22 +87,20 @@ public class EditUserController implements Controller<EditUserView, EditUserMode
     }
   }
 
-  public String validateUsername(String s) throws CannotParseException{
-    switch (model.getMode()){
+  public String validateUsername(String s) throws CannotParseException {
+    switch (model.getMode()) {
       case EDIT:
         if (model.getUser().getUsername().equals(s)) {
           return s;
         }
       case ADD:
-        if(model.usernameExists(s)) {
+        if (model.usernameExists(s)) {
           view.usernameAlreadyExists();
           throw new CannotParseException("username already exists");
-        }
-        else return s;
+        } else return s;
       default:
-        throw new UnsupportedOperationException(model.getMode()+"is not a supported mode for this form");
+        throw new UnsupportedOperationException(
+            model.getMode() + "is not a supported mode for this form");
     }
   }
-
-
 }

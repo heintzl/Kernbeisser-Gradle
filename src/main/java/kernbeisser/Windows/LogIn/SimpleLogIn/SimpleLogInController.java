@@ -53,7 +53,8 @@ public class SimpleLogInController implements Controller<SimpleLogInView, Simple
       model.logIn(view.getUsername(), view.getPassword());
       loadUserSettings();
       if (LogInModel.getLoggedIn().getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS)
-          > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue() || LogInModel.getLoggedIn().isForcePasswordChange()) {
+              > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()
+          || LogInModel.getLoggedIn().isForcePasswordChange()) {
         new ChangePasswordController(LogInModel.getLoggedIn(), true)
             .openAsWindow(getView().getWindow(), SubWindow::new);
       } else {

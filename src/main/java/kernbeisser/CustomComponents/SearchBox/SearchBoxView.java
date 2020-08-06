@@ -80,7 +80,7 @@ public class SearchBoxView<T> extends JPanel implements View<SearchBoxController
   }
 
   public boolean setSelectedObjectId(Object o) {
-    T t = Tools.findById(objects.getItems(),o);
+    T t = Tools.findById(objects.getItems(), o);
     objects.setSelectedObject(t);
     return t != null;
   }

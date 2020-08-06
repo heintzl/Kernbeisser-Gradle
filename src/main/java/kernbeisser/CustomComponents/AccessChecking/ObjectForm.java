@@ -108,7 +108,7 @@ public class ObjectForm<P> {
       P data = getData(true);
       try {
         objectValidator.validate(data);
-      }catch (CannotParseException e){
+      } catch (CannotParseException e) {
         return false;
       }
       Tools.add(Proxy.removeProxy(data));
@@ -125,7 +125,7 @@ public class ObjectForm<P> {
       P data = getData(true);
       try {
         objectValidator.validate(data);
-      }catch (CannotParseException e){
+      } catch (CannotParseException e) {
         return false;
       }
       Tools.edit(Tools.getId(original), (Proxy.removeProxy(data)));

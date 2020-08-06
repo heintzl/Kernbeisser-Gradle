@@ -644,7 +644,7 @@ public class Tools {
     return out;
   }
 
-  public static Field getIdField(Class<?> clazz){
+  public static Field getIdField(Class<?> clazz) {
     while (!clazz.equals(Object.class)) {
       for (Field declaredField : clazz.getDeclaredFields()) {
         if (declaredField.getAnnotation(Id.class) != null) {
@@ -670,12 +670,12 @@ public class Tools {
     return java.util.Date.from(yearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
 
-  public static <T> T findById(Collection<T> collection,Object id){
-    if(collection.size() == 0)return null;
+  public static <T> T findById(Collection<T> collection, Object id) {
+    if (collection.size() == 0) return null;
     Field field = getIdField(collection.iterator().next().getClass());
     for (T t : collection) {
       try {
-        if(field.get(t).equals(id))return t;
+        if (field.get(t).equals(id)) return t;
       } catch (IllegalAccessException e) {
         e.printStackTrace();
       }

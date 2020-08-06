@@ -34,7 +34,7 @@ public class ChangePasswordModel implements Model<ChangePasswordController> {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
-    User db = em.find(User.class,user.getId());
+    User db = em.find(User.class, user.getId());
     db.setPassword(newPasswordHash);
     em.persist(db);
     em.flush();
