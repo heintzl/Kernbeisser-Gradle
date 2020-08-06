@@ -43,12 +43,10 @@ public class ObjectForm<P> {
         }
       } catch (CannotParseException e) {
         success = false;
-        if(pingErrors)
-          boundedField.markWrongInput();
+        if (pingErrors) boundedField.markWrongInput();
       }
     }
-    if(!success)
-      throw new CannotParseException();
+    if (!success) throw new CannotParseException();
     return originalCopy;
   }
 
@@ -57,7 +55,7 @@ public class ObjectForm<P> {
     for (Bounded<P, ?> boundedField : boundedFields) {
       try {
         if ((boundedField.isInputChanged() || boundedField.canRead(accessModel))
-                && boundedField.canWrite(accessModel)) {
+            && boundedField.canWrite(accessModel)) {
           boundedField.writeInto(originalCopy);
         }
       } catch (CannotParseException ignored) {
@@ -135,7 +133,7 @@ public class ObjectForm<P> {
       case ADD:
         return persistAsNewEntity();
       default:
-        throw new UnsupportedOperationException(mode+" is not supported by applyMode");
+        throw new UnsupportedOperationException(mode + " is not supported by applyMode");
     }
   }
 

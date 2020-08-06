@@ -117,8 +117,7 @@ public class EditItemController implements Controller<EditItemView, EditItemMode
   }
 
   void doAction() {
-    if(view.getArticleObjectForm().applyMode(model.getMode()))
-      view.back();
+    if (view.getArticleObjectForm().applyMode(model.getMode())) view.back();
   }
 
   public int validateAmount(String s) {
