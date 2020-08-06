@@ -4,18 +4,20 @@ import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.AutoInitialize;
 import kernbeisser.Windows.Controller;
 import org.jetbrains.annotations.NotNull;
 
+@AutoInitialize
 public class SynchronizeArticleController
     implements Controller<SynchronizeArticleView, SynchronizeArticleModel> {
 
   private final SynchronizeArticleModel model;
-  private final SynchronizeArticleView view;
+  @AutoInitialize
+  private SynchronizeArticleView view;
 
   public SynchronizeArticleController() {
     model = new SynchronizeArticleModel();
-    view = new SynchronizeArticleView();
   }
 
   @NotNull

@@ -17,6 +17,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Windows.PreLoaded;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,11 +40,8 @@ public class SpecialPriceEditorView implements View<SpecialPriceEditorController
   private PermissionCheckBox filterActionArticle;
   private JLabel selectedArticleNetPrice;
 
-  private final SpecialPriceEditorController controller;
-
-  public SpecialPriceEditorView(SpecialPriceEditorController controller) {
-    this.controller = controller;
-  }
+  @PreLoaded
+  private SpecialPriceEditorController controller;
 
   void fillRepeat(Repeat[] repeats) {
     repeat.removeAllItems();

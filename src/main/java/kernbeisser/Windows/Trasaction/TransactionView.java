@@ -13,8 +13,10 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Windows.PreLoaded;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,17 +69,14 @@ public class TransactionView implements View<TransactionController> {
   private JButton a900;
   private JButton a1000;
 
-  private SearchBoxView searchBoxView;
+  private SearchBoxView<User> searchBoxView;
   private JLabel sum;
   private JLabel count;
   private PermissionField info;
   private JCheckBox toKBValue;
 
-  private final TransactionController controller;
-
-  TransactionView(TransactionController controller) {
-    this.controller = controller;
-  }
+  @PreLoaded
+  private TransactionController controller;
 
   void setTransactions(Collection<Transaction> transactions) {
     this.transactions.setObjects(transactions);

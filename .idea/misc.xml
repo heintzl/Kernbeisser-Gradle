@@ -4,6 +4,7 @@
     <writeAnnotations>
       <writeAnnotation name="javax.persistence.Id" />
       <writeAnnotation name="org.hibernate.annotations.CreationTimestamp" />
+      <writeAnnotation name="kernbeisser.Windows.AutoInitialize" />
     </writeAnnotations>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />

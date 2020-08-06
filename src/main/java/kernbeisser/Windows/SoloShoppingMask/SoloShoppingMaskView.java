@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.Windows.PreLoaded;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
@@ -17,19 +18,18 @@ public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
 
   private ShoppingMaskUIView shoppingMaskUIView;
 
-  private final SoloShoppingMaskController controller;
 
-  public SoloShoppingMaskView(SoloShoppingMaskController controller) {
-    this.controller = controller;
-    //        this.barcodeCapture = new BarcodeCapture(c->controller.processBarcode(c));
-  }
+  @PreLoaded
+  private SoloShoppingMaskController controller;
 
   private void createUIComponents() {
     shoppingMaskUIView = controller.getShoppingMaskView();
   }
 
   @Override
-  public void initialize(SoloShoppingMaskController controller) {}
+  public void initialize(SoloShoppingMaskController controller) {
+    //        this.barcodeCapture = new BarcodeCapture(c->controller.processBarcode(c));
+  }
 
   @Override
   public @NotNull Dimension getSize() {

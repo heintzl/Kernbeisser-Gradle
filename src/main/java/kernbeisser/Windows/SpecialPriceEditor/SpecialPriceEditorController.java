@@ -11,8 +11,8 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Main;
+import kernbeisser.Windows.AutoInitialize;
 import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -23,15 +23,16 @@ public class SpecialPriceEditorController
       throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
           IllegalAccessException {
     Main.buildEnvironment();
-    new SpecialPriceEditorController(null).openTab("IDK");
+    new SpecialPriceEditorController().openTab("IDK");
   }
 
+  @AutoInitialize
   private SpecialPriceEditorView view;
   private final SpecialPriceEditorModel model;
 
   private final SearchBoxController<Article> searchBoxController;
 
-  SpecialPriceEditorController(Window current) {
+  SpecialPriceEditorController() {
     this.model = new SpecialPriceEditorModel();
     this.searchBoxController =
         new SearchBoxController<Article>(
@@ -50,7 +51,6 @@ public class SpecialPriceEditorController
           }
         };
     searchBoxController.initView();
-    this.view = new SpecialPriceEditorView(this);
     searchBoxController.addSelectionListener(this::load);
   }
 
