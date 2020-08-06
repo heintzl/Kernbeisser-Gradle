@@ -13,8 +13,7 @@ public class SynchronizeArticleController
     implements Controller<SynchronizeArticleView, SynchronizeArticleModel> {
 
   private final SynchronizeArticleModel model;
-  @AutoInitialize
-  private SynchronizeArticleView view;
+  @AutoInitialize private SynchronizeArticleView view;
 
   public SynchronizeArticleController() {
     model = new SynchronizeArticleModel();

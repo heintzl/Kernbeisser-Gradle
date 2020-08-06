@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -19,30 +18,32 @@ import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
 public interface Controller<
-        V extends View<? extends Controller<? extends V, ? extends M>>,
-        M extends Model<? extends Controller<? extends V, ? extends M>>> {
+    V extends View<? extends Controller<? extends V, ? extends M>>,
+    M extends Model<? extends Controller<? extends V, ? extends M>>> {
 
-
-  default void initView(){
+  default void initView() {
     if (this.getClass().getAnnotation(AutoInitialize.class) != null) {
-      Collection<Field> autoInitializeFields = Tools.getWithAnnotation(this.getClass(),AutoInitialize.class);
-      if(autoInitializeFields.size() != 1){
-        throw new UnsupportedOperationException("No or multiple AutoInitialize annotations are in "+this.getClass()+" is defined");
+      Collection<Field> autoInitializeFields =
+          Tools.getWithAnnotation(this.getClass(), AutoInitialize.class);
+      if (autoInitializeFields.size() != 1) {
+        throw new UnsupportedOperationException(
+            "No or multiple AutoInitialize annotations are in " + this.getClass() + " is defined");
       }
       Field viewField = autoInitializeFields.iterator().next();
       viewField.setAccessible(true);
       V view = (V) Tools.createWithoutConstructor(viewField.getType());
-        Collection<Field> fields = Tools.getWithAnnotation(view.getClass(), PreLoaded.class);
-        fields.forEach(e -> {
-          if (e.getType().equals(this.getClass())) {
-            e.setAccessible(true);
-            try {
-              e.set(view, this);
-            } catch (IllegalAccessException illegalAccessException) {
-              illegalAccessException.printStackTrace();
+      Collection<Field> fields = Tools.getWithAnnotation(view.getClass(), PreLoaded.class);
+      fields.forEach(
+          e -> {
+            if (e.getType().equals(this.getClass())) {
+              e.setAccessible(true);
+              try {
+                e.set(view, this);
+              } catch (IllegalAccessException illegalAccessException) {
+                illegalAccessException.printStackTrace();
+              }
             }
-          }
-        });
+          });
       try {
         Method setUpUiComponents = view.getClass().getDeclaredMethod("$$$setupUI$$$");
         setUpUiComponents.setAccessible(true);
@@ -63,19 +64,19 @@ public interface Controller<
     }
     V view = getView();
     try {
-        Method initMethod = view.getClass().getDeclaredMethod("initialize", Controller.class);
-        initMethod.setAccessible(true);
-        initMethod.invoke(view, this);
-      } catch (IllegalAccessException e) {
-        Tools.showUnexpectedErrorWarning(e);
-      } catch (InvocationTargetException e) {
-        e.getCause().printStackTrace();
-      } catch (NoSuchMethodException e) {
-        Main.logger.error( "failed to initialize view cannot find initialize(" + this.getClass() + ")");
-      }
+      Method initMethod = view.getClass().getDeclaredMethod("initialize", Controller.class);
+      initMethod.setAccessible(true);
+      initMethod.invoke(view, this);
+    } catch (IllegalAccessException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    } catch (InvocationTargetException e) {
+      e.getCause().printStackTrace();
+    } catch (NoSuchMethodException e) {
+      Main.logger.error(
+          "failed to initialize view cannot find initialize(" + this.getClass() + ")");
+    }
 
-      fillUI();
-
+    fillUI();
   }
 
   @NotNull
@@ -150,7 +151,7 @@ public interface Controller<
    * @see Controller#openAsWindow(Window, Function, boolean)
    */
   default <W extends Window> W openAsWindow(
-          Window parent, Function<Controller<V, M>, W> windowFactory) {
+      Window parent, Function<Controller<V, M>, W> windowFactory) {
     return openAsWindow(parent, windowFactory, true);
   }
 
@@ -166,7 +167,7 @@ public interface Controller<
    * @return a reference to the window which is now created and visible on the screen
    */
   default <W extends Window> W openAsWindow(
-          Window parent, Function<Controller<V, M>, W> windowFactory, boolean closeOld) {
+      Window parent, Function<Controller<V, M>, W> windowFactory, boolean closeOld) {
     W createWindow = windowFactory.apply(this);
     createWindow.getController().initView();
     createWindow.setContent(this);
@@ -186,7 +187,7 @@ public interface Controller<
    * @return the created window
    */
   default <W extends Window> W openAsWindow(
-          Window parent, BiFunction<Controller<V, M>, Window, W> windowFactory) {
+      Window parent, BiFunction<Controller<V, M>, Window, W> windowFactory) {
     return openAsWindow(parent, (controller) -> windowFactory.apply(this, parent), false);
   }
 

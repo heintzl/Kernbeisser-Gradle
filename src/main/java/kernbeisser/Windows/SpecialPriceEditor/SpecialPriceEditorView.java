@@ -40,8 +40,7 @@ public class SpecialPriceEditorView implements View<SpecialPriceEditorController
   private PermissionCheckBox filterActionArticle;
   private JLabel selectedArticleNetPrice;
 
-  @PreLoaded
-  private SpecialPriceEditorController controller;
+  @PreLoaded private SpecialPriceEditorController controller;
 
   void fillRepeat(Repeat[] repeats) {
     repeat.removeAllItems();

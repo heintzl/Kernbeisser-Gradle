@@ -14,13 +14,10 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import org.jetbrains.annotations.NotNull;
 
-
-
 @AutoInitialize
 public class UserInfoController implements Controller<UserInfoView, UserInfoModel> {
 
-  @AutoInitialize
-  private UserInfoView view;
+  @AutoInitialize private UserInfoView view;
 
   private final UserInfoModel model;
 

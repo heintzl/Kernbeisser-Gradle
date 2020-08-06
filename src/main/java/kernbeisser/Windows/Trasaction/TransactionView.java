@@ -75,8 +75,7 @@ public class TransactionView implements View<TransactionController> {
   private PermissionField info;
   private JCheckBox toKBValue;
 
-  @PreLoaded
-  private TransactionController controller;
+  @PreLoaded private TransactionController controller;
 
   void setTransactions(Collection<Transaction> transactions) {
     this.transactions.setObjects(transactions);

@@ -22,8 +22,7 @@ import org.jetbrains.annotations.NotNull;
 @AutoInitialize
 public class SimpleLogInController implements Controller<SimpleLogInView, SimpleLogInModel> {
 
-  @AutoInitialize
-  private SimpleLogInView view;
+  @AutoInitialize private SimpleLogInView view;
 
   private final SimpleLogInModel model;
 

@@ -15,7 +15,7 @@ import kernbeisser.Windows.PreLoaded;
 import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
-public class UserInfoView  implements View<UserInfoController> {
+public class UserInfoView implements View<UserInfoController> {
 
   private JPanel main;
   private JTabbedPane tabbedPane;
@@ -40,8 +40,7 @@ public class UserInfoView  implements View<UserInfoController> {
   private JLabel key;
   private JLabel city;
 
-  @PreLoaded
-  private UserInfoController controller;
+  @PreLoaded private UserInfoController controller;
 
   void setUserGroupMembers(Collection<User> users) {
     userGroup.setObjects(users);

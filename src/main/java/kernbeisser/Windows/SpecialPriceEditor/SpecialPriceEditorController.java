@@ -26,8 +26,7 @@ public class SpecialPriceEditorController
     new SpecialPriceEditorController().openTab("IDK");
   }
 
-  @AutoInitialize
-  private SpecialPriceEditorView view;
+  @AutoInitialize private SpecialPriceEditorView view;
   private final SpecialPriceEditorModel model;
 
   private final SearchBoxController<Article> searchBoxController;

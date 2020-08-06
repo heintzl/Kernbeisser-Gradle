@@ -13,9 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class SoloShoppingMaskController
     implements Controller<SoloShoppingMaskView, SoloShoppingMaskModel> {
 
-
-  @AutoInitialize
-  private SoloShoppingMaskView view;
+  @AutoInitialize private SoloShoppingMaskView view;
 
   private final SoloShoppingMaskModel model;
 

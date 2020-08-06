@@ -18,9 +18,7 @@ public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
 
   private ShoppingMaskUIView shoppingMaskUIView;
 
-
-  @PreLoaded
-  private SoloShoppingMaskController controller;
+  @PreLoaded private SoloShoppingMaskController controller;
 
   private void createUIComponents() {
     shoppingMaskUIView = controller.getShoppingMaskView();

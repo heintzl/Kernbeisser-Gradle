@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 @AutoInitialize
 public class TransactionController implements Controller<TransactionView, TransactionModel> {
   private final TransactionModel model;
-  @AutoInitialize
-  private TransactionView view;
+  @AutoInitialize private TransactionView view;
 
   private final SearchBoxController<User> userSearchBoxController;
 
