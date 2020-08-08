@@ -1,16 +1,14 @@
 package kernbeisser.Windows.MVC;
 
+import static kernbeisser.Windows.MVC.ViewFactory.initializeView;
+
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import javax.swing.*;
 import jiconfont.IconCode;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.TabbedPanel.Tab;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
@@ -18,21 +16,19 @@ import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
-import static kernbeisser.Windows.MVC.ViewFactory.initializeView;
-
 public interface Controller<
     V extends View<? extends Controller<? extends V, ? extends M>>,
     M extends Model<? extends Controller<? extends V, ? extends M>>> {
 
   @NotNull
-  default V getView(){
+  default V getView() {
     try {
       V view = (V) Utils.getLinkedViewField(this.getClass()).get(this);
-      if(view==null){
+      if (view == null) {
         initializeView(this);
         fillUI();
         return getView();
-      }else return view;
+      } else return view;
     } catch (IllegalAccessException e) {
       Tools.showUnexpectedErrorWarning(e);
       throw new UnsupportedOperationException("cannot access linked view field");
