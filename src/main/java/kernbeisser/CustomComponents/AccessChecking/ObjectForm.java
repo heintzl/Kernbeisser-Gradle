@@ -8,7 +8,7 @@ import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectForm<P> {
-  private ObjectValidator<P> objectValidator;
+  private ObjectValidator<P> objectValidator = input -> input;
 
   private final Bounded<P, ?>[] boundedFields;
 

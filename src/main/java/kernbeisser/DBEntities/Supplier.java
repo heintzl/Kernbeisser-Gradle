@@ -2,6 +2,7 @@ package kernbeisser.DBEntities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
@@ -141,5 +142,14 @@ public class Supplier implements Serializable {
         keeper,
         createDate,
         updateDate);
+  }
+
+  public static Collection<Supplier> defaultSearch(String s, int max) {
+    EntityManager em = DBConnection.getEntityManager();
+    Collection<Supplier> suppliers =
+            em.createQuery(
+                    "select s from Supplier s where s.name like :n or keeper like :n or s.phoneNumber like :n or s.fax like :n or email like :n",Supplier.class).setParameter("n","%"+s+"%").setMaxResults(max).getResultList();
+    em.close();
+    return suppliers;
   }
 }
