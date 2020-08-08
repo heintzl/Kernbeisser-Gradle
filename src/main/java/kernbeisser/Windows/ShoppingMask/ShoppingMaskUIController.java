@@ -10,6 +10,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.Window;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, ShoppingMaskModel> {
   private ShoppingMaskUIView view;
   private final ShoppingMaskModel model;
+  @Linked
   private final ShoppingCartController shoppingCartController;
 
   public ShoppingMaskUIController(SaleSession saleSession) {
@@ -26,7 +28,6 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
     this.shoppingCartController =
         new ShoppingCartController(
             model.getValue(), model.getSaleSession().getCustomer().getSolidaritySurcharge(), true);
-    this.view = new ShoppingMaskUIView(this, shoppingCartController);
   }
 
   private double getRelevantPrice() {
