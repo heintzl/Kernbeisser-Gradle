@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.swing.*;
+
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Supplier;
@@ -23,7 +25,7 @@ import kernbeisser.Useful.Tools;
 public class Catalog {
 
   public static String CATALOG_URL =
-      "https://shop.kornkraft.com/files/cms_download/PL_2005_20200424.BNN";
+          "https://shop.kornkraft.com/files/cms_download/PL_2005_20200424.BNN";
 
   public static String updateCatalogFromWeb() throws IOException {
     URL url;
@@ -39,8 +41,8 @@ public class Catalog {
 
   public static String getInfoLineFromWeb() throws IOException {
     BufferedReader bufferedReader =
-        new BufferedReader(
-            new InputStreamReader(new URL(CATALOG_URL).openConnection().getInputStream()));
+            new BufferedReader(
+                    new InputStreamReader(new URL(CATALOG_URL).openConnection().getInputStream()));
     String out = bufferedReader.readLine();
     bufferedReader.close();
     return out;
@@ -62,28 +64,42 @@ public class Catalog {
   }
 
   public static void updateCatalogFromKornKraftDefault(File file) {
-    Collection<ArticleKornkraft> newCatalog = new ArrayList<>(1000);
-    boolean infoLineSkipped = false;
-    try {
-      for (String line : Files.readAllLines(Paths.get(file.getPath()), Charset.forName("IBM850"))) {
-        if (!infoLineSkipped) {
-          infoLineSkipped = true;
-          continue;
+    new Thread(() -> {
+      Collection<ArticleKornkraft> newCatalog = new ArrayList<>(10000);
+      boolean infoLineSkipped = false;
+      try {
+        Collection<String> lines = Files.readAllLines(Paths.get(file.getPath()), Charset.forName("IBM850"));
+        ProgressMonitor pm = new ProgressMonitor(null,"Aktualiesiere Katalog","interpretiere Aktikel ",0,2*lines.size()+3);
+        int p = 0;
+        for (String line : lines) {
+          if (!infoLineSkipped) {
+            infoLineSkipped = true;
+            continue;
+          }
+          String[] parts = line.split(";");
+          try {
+            newCatalog.add(parseArticle(parts));
+          } catch (CannotParseException e) {
+            Main.logger.warn("Ignored ArticleKornKraft because " + e.getMessage());
+          }
+          pm.setProgress(++p);
+          pm.setNote("Interpretiere Artikel "+p);
         }
-        String[] parts = line.split(";");
-        try {
-          newCatalog.add(parseArticle(parts));
-        } catch (CannotParseException e) {
-          Main.logger.warn("Ignored ArticleKornKraft because " + e.getMessage());
-        }
+        pm.setNote("Alter Katalog wird gelöscht");
+        pm.setProgress(++p);
+        clearCatalog();
+        pm.setNote("Pfand wird gesetzt");
+        pm.setProgress(++p);
+        setDeposit(newCatalog);
+        pm.setNote("Neuer Katalog wird gespeichert");
+        pm.setProgress(++p);
+        persistCatalog(newCatalog,pm,p);
+        pm.close();
+        // setDepositByReference();
+      }catch (IOException e) {
+        Tools.showUnexpectedErrorWarning(e);
       }
-    } catch (IOException e) {
-      Tools.showUnexpectedErrorWarning(e);
-    }
-    clearCatalog();
-    setDeposit(newCatalog);
-    persistCatalog(newCatalog);
-    // setDepositByReference();
+    }).start();
   }
 
   public static void persistCatalog(Iterable<ArticleKornkraft> articles) {
@@ -104,13 +120,29 @@ public class Catalog {
     em.close();
   }
 
+  public static void persistCatalog(Iterable<ArticleKornkraft> articles,ProgressMonitor pm,int before) {
+    EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    int c = 0;
+    for (ArticleKornkraft article : articles) {
+      pm.setProgress(++before);
+      pm.setNote("Artikel "+c+" wird auf der Datenbank gespeichert");
+      em.persist(article);
+      c++;
+    }
+    em.flush();
+    et.commit();
+    em.close();
+  }
+
   public static void clearCatalog() {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     for (ArticleKornkraft articleKornkraft :
-        em.createQuery("select c from ArticleKornkraft c", ArticleKornkraft.class)
-            .getResultList()) {
+            em.createQuery("select c from ArticleKornkraft c", ArticleKornkraft.class)
+                    .getResultList()) {
       em.detach(articleKornkraft);
     }
     em.flush();
@@ -123,7 +155,7 @@ public class Catalog {
     try {
       if (source.length < 42) {
         throw new CannotParseException(
-            "Article doesn't has at least 42 columns:\n" + Arrays.toString(source));
+                "Article doesn't has at least 42 columns:\n" + Arrays.toString(source));
       }
       item.setSuppliersItemNumber(Integer.parseInt(source[0]));
       try {
@@ -175,7 +207,7 @@ public class Catalog {
     et.begin();
     em.createQuery(
             "update ArticleKornkraft c set c.singleDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.singleDeposit), c.containerDeposit = (select a.netPrice from ArticleKornkraft a where a.suppliersItemNumber = c.containerDeposit)")
-        .executeUpdate();
+            .executeUpdate();
     et.commit();
     em.close();
   }
@@ -184,11 +216,11 @@ public class Catalog {
     HashMap<Integer, Double> priceBySuppliersNumber = new HashMap<>();
     catalog.forEach((a) -> priceBySuppliersNumber.put(a.getSuppliersItemNumber(), a.getNetPrice()));
     catalog.forEach(
-        e -> {
-          Double singleDeposit = priceBySuppliersNumber.get((int) e.getSingleDeposit());
-          e.setSingleDeposit(singleDeposit == null ? 0 : singleDeposit);
-          Double crateDeposit = priceBySuppliersNumber.get((int) e.getContainerDeposit());
-          e.setContainerDeposit(crateDeposit == null ? 0 : crateDeposit);
-        });
+            e -> {
+              Double singleDeposit = priceBySuppliersNumber.get((int) e.getSingleDeposit());
+              e.setSingleDeposit(singleDeposit == null ? 0 : singleDeposit);
+              Double crateDeposit = priceBySuppliersNumber.get((int) e.getContainerDeposit());
+              e.setContainerDeposit(crateDeposit == null ? 0 : crateDeposit);
+            });
   }
 }
