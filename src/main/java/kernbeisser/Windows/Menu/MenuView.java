@@ -10,6 +10,7 @@ import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.EditItems.EditItemsController;
 import kernbeisser.Windows.EditJobs.EditJobs;
+import kernbeisser.Windows.EditSuppliers.EditSuppliers;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.EditUsers.EditUsers;
@@ -50,6 +51,7 @@ public class MenuView implements View<MenuController> {
   private ControllerButton openSelfShoppingMask;
   private ControllerButton addBeginner;
   private ControllerButton editJobs;
+  private ControllerButton editSuppliers;
 
   @Override
   public void initialize(MenuController controller) {}
@@ -139,6 +141,9 @@ public class MenuView implements View<MenuController> {
         new ControllerButton(
             new EditUserController(User.generateBeginnerUser(), Mode.ADD),
             e -> e.openTab("Probemitglied aufnehmen"));
+    editSuppliers =
+        new ControllerButton(
+            new EditSuppliers(), controller -> controller.openTab("Lieferanten bearbeiten"));
     // TODO make focus on button work
     openCashierShoppingMask.requestFocusInWindow();
     // Releasesettings

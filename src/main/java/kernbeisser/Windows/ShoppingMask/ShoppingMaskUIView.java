@@ -26,6 +26,7 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MVC.View;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +40,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
   static final int RETURN_DEPOSIT = 4;
   static final int PRODUCE = 5;
   static final String stornoMessageTitle = "Storno";
-
-  private final ShoppingMaskUIController controller;
-  private final ShoppingCartController cartController;
 
   private JLabel customerName;
   private JPanel mainPanel;
@@ -100,6 +98,9 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
+  @Linked private ShoppingMaskUIController controller;
+  @Linked private ShoppingCartController cartController;
+
   private char currentArticleType;
   private boolean isWeighable;
   static Vector<Component> traversalOrder = new Vector<Component>(1);
@@ -108,12 +109,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
   private BarcodeCapture barcodeCapture;
   private KeyCapture keyCapture;
   @Getter private ShoppingItem currentItem;
-
-  public ShoppingMaskUIView(
-      ShoppingMaskUIController controller, ShoppingCartController shoppingCartController) {
-    this.cartController = shoppingCartController;
-    this.controller = controller;
-  }
 
   private boolean isEmptyArticleName() {
     return articleName.getText().equals("");
