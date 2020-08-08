@@ -8,7 +8,7 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.TableModel;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class DatePickerView implements View<DatePickerController> {

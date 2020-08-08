@@ -36,15 +36,9 @@ public class Tools {
   private static final Toolkit toolkit = Toolkit.getDefaultToolkit();
 
   public static <A extends Annotation> Collection<Field> getWithAnnotation(
-      Class pattern, Class<A> annotation) {
+      Class<?> pattern, Class<A> annotation) {
     ArrayList<Field> out = new ArrayList<>();
-    for (Field field : pattern.getDeclaredFields()) {
-      field.setAccessible(true);
-      if (field.isAnnotationPresent(annotation)) {
-        out.add(field);
-      }
-    }
-    for (Field field : pattern.getSuperclass().getDeclaredFields()) {
+    for (Field field : Tools.getAllFields(pattern)) {
       field.setAccessible(true);
       if (field.isAnnotationPresent(annotation)) {
         out.add(field);
@@ -225,47 +219,34 @@ public class Tools {
     }
   }
 
-  public static <T> T setId(T t, long id) {
-    for (Field field : t.getClass().getDeclaredFields()) {
-      if (field.getAnnotation(Id.class) != null) {
-        field.setAccessible(true);
-        try {
-          if (field.getType().equals(Integer.TYPE) || field.getType().equals(int.class)) {
-            field.set(t, (int) id);
-          } else {
-            field.set(t, id);
+  public static <T> T setId(T t, Object id) {
+    Class<?> clazz = t.getClass();
+    while (!clazz.equals(Object.class)) {
+      for (Field declaredField : clazz.getDeclaredFields()) {
+        if (declaredField.getAnnotation(Id.class) != null) {
+          declaredField.setAccessible(true);
+          try {
+            declaredField.set(t, id);
+            return t;
+          } catch (IllegalAccessException e) {
+            e.printStackTrace();
           }
-        } catch (IllegalAccessException e) {
-          Tools.showUnexpectedErrorWarning(e);
         }
       }
+      clazz = clazz.getSuperclass();
     }
     return t;
   }
 
   public static <T> T mergeWithoutId(T in, T toOverride) {
     try {
-      long before = getId(in);
+      Object before = getId(in);
       BeanUtils.copyProperties(toOverride, in);
       setId(in, before);
     } catch (IllegalAccessException | InvocationTargetException e) {
       e.printStackTrace();
     }
     return toOverride;
-  }
-
-  private static <T> long getId(T in) {
-    for (Field declaredField : in.getClass().getDeclaredFields()) {
-      if (declaredField.getAnnotation(Id.class) != null) {
-        declaredField.setAccessible(true);
-        try {
-          return ((Number) declaredField.get(in)).longValue();
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-    return Long.MIN_VALUE;
   }
 
   public static long tryParseLong(String s) {
@@ -290,6 +271,11 @@ public class Tools {
 
   public static <T> void edit(Object key, T to) {
     runInSession(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
+  }
+
+  public static void add(Object o) {
+    Tools.setId(o, Tools.getId(Tools.createWithoutConstructor(o.getClass())));
+    persist(o);
   }
 
   public static void runInSession(Consumer<EntityManager> dbAction) {
@@ -413,7 +399,6 @@ public class Tools {
         if (component.getInputVerifier() != null
             && !component.getInputVerifier().verify(component)) {
           result = false;
-          component.getInputVerifier().shouldYieldFocus(component);
         }
       }
     }
@@ -490,7 +475,7 @@ public class Tools {
       return (T) unsafe.allocateInstance(clazz);
     } catch (InstantiationException e) {
       Tools.showUnexpectedErrorWarning(e);
-      return null;
+      throw new UnsupportedOperationException("cannot create instance without constructor :(");
     }
   }
 
@@ -571,7 +556,7 @@ public class Tools {
     }
   }
 
-  public static <T> void persistIfNotUnique(Class<T> clazz, Collection<T> collection) {
+  public static Collection<Field> getAllUniqueFields(Class<?> clazz) {
     Collection<Field> uniqueFields = new HashSet<>();
     for (Field field : clazz.getDeclaredFields()) {
       if (isUnique(field)) {
@@ -579,7 +564,11 @@ public class Tools {
         uniqueFields.add(field);
       }
     }
-    Field[] uniqueFieldsArray = uniqueFields.toArray(new Field[0]);
+    return uniqueFields;
+  }
+
+  public static <T> void persistIfNotUnique(Class<T> clazz, Collection<T> collection) {
+    Field[] uniqueFieldsArray = getAllUniqueFields(clazz).toArray(new Field[0]);
     Object[][] uniqueValues = getAllValues(clazz, uniqueFieldsArray);
     HashSet<?>[] hashSets = new HashSet<?>[uniqueFieldsArray.length];
     for (int i = 0; i < hashSets.length; i++) {
@@ -649,7 +638,64 @@ public class Tools {
     return out;
   }
 
+  public static Field getIdField(Class<?> clazz) {
+    while (!clazz.equals(Object.class)) {
+      for (Field declaredField : clazz.getDeclaredFields()) {
+        if (declaredField.getAnnotation(Id.class) != null) {
+          declaredField.setAccessible(true);
+          return declaredField;
+        }
+      }
+      clazz = clazz.getSuperclass();
+    }
+    return null;
+  }
+
+  public static Object getId(Object o) {
+    try {
+      return getIdField(o.getClass()).get(o);
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
   public static Date toDate(YearMonth yearMonth) {
     return java.util.Date.from(yearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+  }
+
+  public static <T> T findById(Collection<T> collection, Object id) {
+    if (collection.size() == 0) return null;
+    Field field = getIdField(collection.iterator().next().getClass());
+    for (T t : collection) {
+      try {
+        if (field.get(t).equals(id)) return t;
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      }
+    }
+    return null;
+  }
+
+  public static Field findInAllSuperClasses(Class<?> clazz, String name)
+      throws NoSuchFieldException {
+    while (!clazz.equals(Object.class)) {
+      try {
+        return clazz.getDeclaredField(name);
+      } catch (NoSuchFieldException ignored) {
+      }
+      clazz = clazz.getSuperclass();
+    }
+    throw new NoSuchFieldException("cannot find Field " + name);
+  }
+
+  public static Collection<Field> getAllFields(Class<?> clazz) {
+    ArrayList<Field> out = new ArrayList<Field>(Arrays.asList(clazz.getDeclaredFields()));
+    clazz = clazz.getSuperclass();
+    while (!clazz.equals(Object.class)) {
+      out.addAll(Arrays.asList(clazz.getDeclaredFields()));
+      clazz = clazz.getSuperclass();
+    }
+    return out;
   }
 }

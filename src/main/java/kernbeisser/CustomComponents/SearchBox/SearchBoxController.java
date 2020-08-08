@@ -4,21 +4,18 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
 import org.jetbrains.annotations.NotNull;
 
 public class SearchBoxController<T> implements Controller<SearchBoxView<T>, SearchBoxModel<T>> {
-
-  private final SearchBoxView<T> view;
+  private SearchBoxView<T> view;
   private final SearchBoxModel<T> model;
 
   @SafeVarargs
   public SearchBoxController(Searchable<T> searchFunction, Column<T>... columns) {
-    this.model = new SearchBoxModel<>(searchFunction);
-    this.view = new SearchBoxView<>(this);
-    view.setColumns(Arrays.asList(columns));
-    search();
+    this.model = new SearchBoxModel<>(searchFunction, columns);
   }
 
   public T getSelectedObject() {
@@ -26,11 +23,11 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>, Sear
   }
 
   public void search() {
+    Object lastId = getSelectedObject() != null ? Tools.getId(getSelectedObject()) : null;
     view.setObjects(model.getValues(view.getSearch()));
-    if (model.getLastSelectedObject() == null) {
-      view.setSelectedObject(model.getLastSelectedObject());
+    if (!view.setSelectedObjectId(lastId)) {
+      runLostSelectionListener();
     }
-    runLostSelectionListener();
   }
 
   void select() {
@@ -64,17 +61,15 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>, Sear
   }
 
   @Override
-  public @NotNull SearchBoxView<T> getView() {
-    return view;
-  }
-
-  @Override
   public @NotNull SearchBoxModel<T> getModel() {
     return model;
   }
 
   @Override
-  public void fillUI() {}
+  public void fillUI() {
+    view.setColumns(Arrays.asList(model.getColumns()));
+    search();
+  }
 
   public void addDoubleClickListener(Consumer<T> action) {
     model.getDoubleClickListener().add(action);
@@ -99,5 +94,9 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>, Sear
 
   public void setSearch(String s) {
     view.setSearch(s);
+  }
+
+  public void setSelectedObject(T t) {
+    view.setSelectedObject(t);
   }
 }

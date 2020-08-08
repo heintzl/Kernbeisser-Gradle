@@ -4,23 +4,16 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangePasswordController
     implements Controller<ChangePasswordView, ChangePasswordModel> {
   private final ChangePasswordModel model;
-  private final ChangePasswordView view;
+  private ChangePasswordView view;
 
   public ChangePasswordController(User user, boolean verifyWithOldPassword) {
     model = new ChangePasswordModel(user, verifyWithOldPassword);
-    view = new ChangePasswordView();
-  }
-
-  @NotNull
-  @Override
-  public ChangePasswordView getView() {
-    return view;
   }
 
   @NotNull

@@ -5,7 +5,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class DataImportModel implements Model<DataImportController> {
   <T> void batchMergeAll(Collection<T> v) {

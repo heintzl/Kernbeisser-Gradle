@@ -8,7 +8,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class ContainerModel implements Model<ContainerController> {
   private final Collection<Container> newContainers = new ArrayList<>();

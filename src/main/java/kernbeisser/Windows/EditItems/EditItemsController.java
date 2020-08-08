@@ -4,8 +4,8 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditItem.EditItemController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
 import kernbeisser.Windows.ObjectView.ObjectViewView;
 import kernbeisser.Windows.Window;
@@ -13,7 +13,8 @@ import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class EditItemsController implements Controller<EditItemsView, EditItemsModel> {
-  private final EditItemsView view;
+
+  private EditItemsView view;
   private final EditItemsModel model;
   private final ObjectViewController<Article> objectViewController;
 
@@ -36,15 +37,6 @@ public class EditItemsController implements Controller<EditItemsView, EditItemsM
             Column.create("Gebindegrösse.", Article::getContainerSize),
             Column.create("Preisliste", Article::getPriceList),
             Column.create("Barcode", Article::getBarcode));
-    objectViewController.initView();
-    objectViewController.setSearch("");
-    this.view = new EditItemsView(this);
-  }
-
-  @NotNull
-  @Override
-  public EditItemsView getView() {
-    return view;
   }
 
   @NotNull
@@ -54,7 +46,9 @@ public class EditItemsController implements Controller<EditItemsView, EditItemsM
   }
 
   @Override
-  public void fillUI() {}
+  public void fillUI() {
+    objectViewController.setSearch("");
+  }
 
   @Override
   public PermissionKey[] getRequiredKeys() {

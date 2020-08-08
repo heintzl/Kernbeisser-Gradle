@@ -13,7 +13,7 @@ import kernbeisser.Main;
 import kernbeisser.Security.CustomKeySetSecurityHandler;
 import kernbeisser.Security.MasterPermissionSet;
 import kernbeisser.Security.Proxy;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class LogInModel implements Model {
 

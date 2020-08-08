@@ -1,7 +1,7 @@
 package kernbeisser.CustomComponents.DatePicker;
 
 import java.time.LocalDate;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class DatePickerModel implements Model<DatePickerController> {
   private LocalDate selectedDate;

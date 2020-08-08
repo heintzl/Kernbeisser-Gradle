@@ -1,19 +1,19 @@
-package kernbeisser.Windows;
+package kernbeisser.Windows.MVC;
+
+import static kernbeisser.Windows.MVC.ViewFactory.initializeView;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import javax.swing.*;
 import jiconfont.IconCode;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.TabbedPanel.Tab;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
+import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
 public interface Controller<
@@ -21,20 +21,22 @@ public interface Controller<
     M extends Model<? extends Controller<? extends V, ? extends M>>> {
 
   @NotNull
-  V getView();
+  default V getView() {
+    try {
+      V view = (V) Utils.getLinkedViewField(this.getClass()).get(this);
+      if (view == null) {
+        initializeView(this);
+        fillUI();
+        return getView();
+      } else return view;
+    } catch (IllegalAccessException e) {
+      Tools.showUnexpectedErrorWarning(e);
+      throw new UnsupportedOperationException("cannot access linked view field");
+    }
+  }
 
   @NotNull
   M getModel();
-
-  /**
-   * return the view and initialized it
-   *
-   * @return the initialized view
-   */
-  default @NotNull V getInitializedView() {
-    initView();
-    return getView();
-  }
 
   /** fills the UI with data after the view and the controller already initialized */
   void fillUI();
@@ -58,7 +60,7 @@ public interface Controller<
    * @see Controller#fillUI()
    * @see View#initialize(Controller)
    */
-  default void initView() {
+  /*default void initView() {
     try {
       Method method = getView().getClass().getDeclaredMethod("initialize", Controller.class);
       method.setAccessible(true);
@@ -69,20 +71,11 @@ public interface Controller<
       e.getCause().printStackTrace();
     } catch (NoSuchMethodException e) {
       Main.logger.error(
-          "failed to initialize view cannot find initialize(" + this.getClass() + ")");
+              "failed to initialize view cannot find initialize(" + this.getClass() + ")");
     }
     fillUI();
   }
-
-  /**
-   * returns the controller with initialized view
-   *
-   * @return controller with initialized view
    */
-  default Controller<V, M> withInitializedView() {
-    initView();
-    return this;
-  }
 
   /**
    * sets default value for openAsWindow closeOld to true
@@ -109,7 +102,6 @@ public interface Controller<
   default <W extends Window> W openAsWindow(
       Window parent, Function<Controller<V, M>, W> windowFactory, boolean closeOld) {
     W createWindow = windowFactory.apply(this);
-    createWindow.getController().initView();
     createWindow.setContent(this);
     createWindow.setSize(getView().getSize());
     createWindow.setTitle(getView().getTitle());
@@ -138,7 +130,6 @@ public interface Controller<
    * @return the created Tab
    */
   default Tab asTab(String title) {
-    initView();
     return new Tab() {
       @Override
       public IconCode getIcon() {

@@ -7,17 +7,18 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import org.jetbrains.annotations.NotNull;
 
 public class CashierShoppingMaskController
     implements Controller<CashierShoppingMaskView, CashierShoppingMaskModel> {
   private final CashierShoppingMaskModel model;
-  private final CashierShoppingMaskView view;
+  private CashierShoppingMaskView view;
 
-  private final SearchBoxController<User> searchBoxController;
+  @Linked private final SearchBoxController<User> searchBoxController;
 
   public CashierShoppingMaskController() {
     this.searchBoxController =
@@ -26,11 +27,10 @@ public class CashierShoppingMaskController
             Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
             Column.create("Nachname", User::getSurname, PermissionKey.USER_SURNAME_READ),
             Column.create("Benutzername", User::getUsername, PermissionKey.USER_USERNAME_READ));
-    searchBoxController.initView();
+    searchBoxController.getView();
     searchBoxController.addLostSelectionListener(() -> selectUser(null));
     searchBoxController.addSelectionListener(this::selectUser);
     model = new CashierShoppingMaskModel();
-    this.view = new CashierShoppingMaskView(this);
   }
 
   private void selectUser(User user) {
@@ -63,11 +63,6 @@ public class CashierShoppingMaskController
 
   public SearchBoxView<User> getSearchBoxView() {
     return searchBoxController.getView();
-  }
-
-  @Override
-  public @NotNull CashierShoppingMaskView getView() {
-    return view;
   }
 
   @Override

@@ -3,7 +3,7 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import java.util.ArrayList;
 import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 import org.jetbrains.annotations.Nullable;
 
 public class ShoppingCartModel implements Model<ShoppingCartController> {

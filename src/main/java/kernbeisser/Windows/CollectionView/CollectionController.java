@@ -4,23 +4,16 @@ import java.util.Collection;
 import java.util.HashSet;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class CollectionController<T> implements Controller<CollectionView<T>, CollectionModel<T>> {
-  private final CollectionView<T> view;
+  private CollectionView<T> view;
   private final CollectionModel<T> model;
 
   public CollectionController(
       Collection<T> edit, Collection<T> available, boolean editable, Column<T>[] columns) {
     model = new CollectionModel<>(edit, available, editable, columns);
-    view = new CollectionView<>();
-  }
-
-  @NotNull
-  @Override
-  public CollectionView<T> getView() {
-    return view;
   }
 
   @NotNull

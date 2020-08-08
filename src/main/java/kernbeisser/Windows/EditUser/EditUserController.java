@@ -2,46 +2,24 @@ package kernbeisser.Windows.EditUser;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Security.Proxy;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserController implements Controller<EditUserView, EditUserModel> {
-  private final EditUserView view;
+  private EditUserView view;
   private final EditUserModel model;
 
   public EditUserController(User user, Mode mode) {
     model = new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode);
     if (mode == Mode.REMOVE) {
       model.doAction(model.getUser());
-      view = null;
-    } else {
-      this.view = new EditUserView();
-    }
-  }
-
-  private void changePassword(String to) {
-    model
-        .getUser()
-        .setPassword(
-            BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), to.toCharArray()));
-  }
-
-  void requestChangePassword() {
-    String password = view.requestPassword();
-    if (password == null) {
-      return;
-    }
-    if (password.length() < 4) {
-      view.passwordToShort();
-      requestChangePassword();
-    } else {
-      changePassword(password);
-      view.passwordChanged();
     }
   }
 
@@ -51,7 +29,21 @@ public class EditUserController implements Controller<EditUserView, EditUserMode
   }
 
   @Override
-  public void fillUI() {}
+  public void fillUI() {
+    view.getObjectForm().setObjectValidator(this::validateUser);
+  }
+
+  private User validateUser(User user) throws CannotParseException {
+    if (model.getMode() == Mode.ADD) {
+      user.setPassword(
+          BCrypt.withDefaults()
+              .hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray()));
+      user.setForcePasswordChange(true);
+      user.setUserGroup(new UserGroup());
+      Tools.persist(user.getUserGroup());
+    }
+    return user;
+  }
 
   @Override
   public PermissionKey[] getRequiredKeys() {
@@ -60,42 +52,8 @@ public class EditUserController implements Controller<EditUserView, EditUserMode
     };
   }
 
-  @Override
-  public @NotNull EditUserView getView() {
-    return view;
-  }
-
   void doAction() {
-    User data;
-    try {
-      data = view.getObjectForm().getData();
-    } catch (CannotParseException e) {
-      view.invalidInput();
-      view.getObjectForm().markErrors();
-      return;
-    }
-    switch (model.getMode()) {
-      case ADD:
-        if (!view.getObjectForm().isValid()) {
-          view.invalidInput();
-          view.getObjectForm().markErrors();
-          return;
-        }
-        if (model.usernameExists(data.getUsername())) {
-          view.usernameAlreadyExists();
-          return;
-        }
-        try {
-          if (data.getPassword() == null) {
-            requestChangePassword();
-            data.setPassword(model.getUser().getPassword());
-          }
-        } catch (/*Access Denied exception TODO:*/ Exception e) {
-          e.printStackTrace();
-        }
-        break;
-    }
-    if (model.doAction(data)) {
+    if (view.getObjectForm().applyMode(model.getMode())) {
       view.back();
     }
   }
@@ -111,6 +69,23 @@ public class EditUserController implements Controller<EditUserView, EditUserMode
                     data.getSurname().toLowerCase())
                 .replace(" ", ""));
       }
+    }
+  }
+
+  public String validateUsername(String s) throws CannotParseException {
+    switch (model.getMode()) {
+      case EDIT:
+        if (model.getUser().getUsername().equals(s)) {
+          return s;
+        }
+      case ADD:
+        if (model.usernameExists(s)) {
+          view.usernameAlreadyExists();
+          throw new CannotParseException("username already exists");
+        } else return s;
+      default:
+        throw new UnsupportedOperationException(
+            model.getMode() + "is not a supported mode for this form");
     }
   }
 }

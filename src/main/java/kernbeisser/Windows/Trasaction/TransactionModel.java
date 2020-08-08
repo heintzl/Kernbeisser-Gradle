@@ -6,7 +6,7 @@ import javax.persistence.NoResultException;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class TransactionModel implements Model<TransactionController> {
 

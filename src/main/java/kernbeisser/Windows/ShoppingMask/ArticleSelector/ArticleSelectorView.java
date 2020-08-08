@@ -2,10 +2,11 @@ package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 
 import java.awt.*;
 import javax.swing.*;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class ArticleSelectorView implements View<ArticleSelectorController> {
@@ -15,11 +16,7 @@ public class ArticleSelectorView implements View<ArticleSelectorController> {
   private SearchBoxView<Article> searchBox;
   private JCheckBox showInShopArticles;
 
-  private final ArticleSelectorController controller;
-
-  public ArticleSelectorView(ArticleSelectorController controller, PermissionKey... required) {
-    this.controller = controller;
-  }
+  @Linked private SearchBoxController<Article> searchBoxController;
 
   boolean searchOnlyWithoutBarcode() {
     return onlyWithoutBarcode.isSelected();
@@ -30,7 +27,7 @@ public class ArticleSelectorView implements View<ArticleSelectorController> {
   }
 
   private void createUIComponents() {
-    searchBox = controller.getSearchBoxView();
+    searchBox = searchBoxController.getView();
   }
 
   @Override

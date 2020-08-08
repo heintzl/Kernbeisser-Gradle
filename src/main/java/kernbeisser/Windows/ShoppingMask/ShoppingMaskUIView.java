@@ -25,8 +25,8 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.UndefinedInputException;
-import kernbeisser.Windows.Controller;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.View;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

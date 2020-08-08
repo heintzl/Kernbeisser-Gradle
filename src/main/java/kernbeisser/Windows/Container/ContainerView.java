@@ -10,7 +10,8 @@ import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class ContainerView implements View<ContainerController> {
@@ -28,11 +29,7 @@ public class ContainerView implements View<ContainerController> {
   private JLabel insertSectionLabel;
   private IntegerParseField suppliersItemNumber;
 
-  private final ContainerController controller;
-
-  ContainerView(ContainerController controller) {
-    this.controller = controller;
-  }
+  @Linked private ContainerController controller;
 
   void setInsertSectionEnabled(boolean b) {
     insertSection.setVisible(b);

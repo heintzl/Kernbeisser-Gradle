@@ -2,6 +2,7 @@ package kernbeisser.CustomComponents.AccessChecking;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import kernbeisser.Enums.Colors;
@@ -115,8 +116,10 @@ public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, 
     }
   }
 
-  interface StringTransformer<V> {
-    String toString(V v);
+  public interface StringTransformer<V> {
+    default String toString(V v) {
+      return String.valueOf(v);
+    }
 
     V fromString(String s) throws CannotParseException;
   }
@@ -220,4 +223,23 @@ public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, 
           return s;
         }
       };
+
+  public interface StringParser<T> {
+    T fromString(String s) throws CannotParseException;
+  }
+
+  public static <T> StringTransformer<T> combine(
+      Function<T, String> toString, StringParser<T> fromString) {
+    return new StringTransformer<T>() {
+      @Override
+      public String toString(T t) {
+        return toString.apply(t);
+      }
+
+      @Override
+      public T fromString(String s) throws CannotParseException {
+        return fromString.fromString(s);
+      }
+    };
+  }
 }

@@ -11,10 +11,11 @@ import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class UserInfoView extends JPanel implements View<UserInfoController> {
+public class UserInfoView implements View<UserInfoController> {
 
   private JPanel main;
   private JTabbedPane tabbedPane;
@@ -39,11 +40,7 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
   private JLabel key;
   private JLabel city;
 
-  private final UserInfoController controller;
-
-  public UserInfoView(UserInfoController userInfoController) {
-    this.controller = userInfoController;
-  }
+  @Linked private UserInfoController controller;
 
   void setUserGroupMembers(Collection<User> users) {
     userGroup.setObjects(users);
@@ -178,7 +175,6 @@ public class UserInfoView extends JPanel implements View<UserInfoController> {
 
   @Override
   public void initialize(UserInfoController controller) {
-    add(main);
     for (Component component : firstName.getParent().getComponents()) {
       if (component instanceof JLabel) {
         component.setForeground(Colors.LABEL_FOREGROUND.getColor());

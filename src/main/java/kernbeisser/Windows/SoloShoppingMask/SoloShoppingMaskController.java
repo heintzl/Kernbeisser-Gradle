@@ -2,8 +2,9 @@ package kernbeisser.Windows.SoloShoppingMask;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import org.jetbrains.annotations.NotNull;
@@ -11,29 +12,22 @@ import org.jetbrains.annotations.NotNull;
 public class SoloShoppingMaskController
     implements Controller<SoloShoppingMaskView, SoloShoppingMaskModel> {
 
-  private final SoloShoppingMaskView view;
+  private SoloShoppingMaskView view;
 
   private final SoloShoppingMaskModel model;
 
-  private final ShoppingMaskUIController shoppingMaskUIController;
+  @Linked private final ShoppingMaskUIController shoppingMaskUIController;
 
   public SoloShoppingMaskController() {
     SaleSession saleSession = new SaleSession();
     saleSession.setCustomer(LogInModel.getLoggedIn());
     saleSession.setSeller(LogInModel.getLoggedIn());
     this.shoppingMaskUIController = new ShoppingMaskUIController(saleSession);
-    shoppingMaskUIController.initView();
     this.model = new SoloShoppingMaskModel();
-    this.view = new SoloShoppingMaskView(this);
   }
 
   public void processBarcode(String barcode) {
     shoppingMaskUIController.processBarcode(barcode);
-  }
-
-  @Override
-  public @NotNull SoloShoppingMaskView getView() {
-    return view;
   }
 
   @Override

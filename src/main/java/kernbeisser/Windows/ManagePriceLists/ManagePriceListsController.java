@@ -4,7 +4,7 @@ import javax.persistence.PersistenceException;
 import javax.swing.*;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsController
@@ -84,11 +84,6 @@ public class ManagePriceListsController
 
   public void back() {
     view.back();
-  }
-
-  @Override
-  public @NotNull ManagePriceListsView getView() {
-    return view;
   }
 
   @Override

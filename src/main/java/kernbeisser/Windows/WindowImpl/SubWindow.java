@@ -3,7 +3,7 @@ package kernbeisser.Windows.WindowImpl;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowCloseEvent;
 

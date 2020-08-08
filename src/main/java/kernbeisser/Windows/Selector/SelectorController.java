@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
@@ -13,18 +13,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class SelectorController<T> implements Controller<SelectorView<T>, SelectorModel<T>> {
   private final SelectorModel<T> model;
-  private final SelectorView<T> view;
+  private SelectorView<T> view;
 
   @SafeVarargs
   public SelectorController(
       String title, Collection<T> currentValues, Searchable<T> searchable, Column<T>... columns) {
-    this.view = new SelectorView<T>(this);
     this.model = new SelectorModel<T>(currentValues, title, searchable, columns);
-  }
-
-  @Override
-  public @NotNull SelectorView<T> getView() {
-    return view;
   }
 
   @Override

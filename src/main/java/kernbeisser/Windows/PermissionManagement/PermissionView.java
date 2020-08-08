@@ -6,7 +6,8 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class PermissionView implements View<PermissionController> {
@@ -17,11 +18,7 @@ public class PermissionView implements View<PermissionController> {
   private JButton add;
   private JButton delete;
 
-  private final PermissionController controller;
-
-  PermissionView(PermissionController controller) {
-    this.controller = controller;
-  }
+  @Linked private PermissionController controller;
 
   Permission getSelectedObject() {
     return permission.getSelectedObject();

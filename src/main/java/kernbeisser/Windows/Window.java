@@ -3,6 +3,7 @@ package kernbeisser.Windows;
 import java.awt.*;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
 
 public interface Window {
   Image STANDARD_IMAGE = Images.getImage("Icon.png");

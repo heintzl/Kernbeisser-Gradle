@@ -7,15 +7,14 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class PermissionController implements Controller<PermissionView, PermissionModel> {
-  private final PermissionView view;
+  private PermissionView view;
   private final PermissionModel model;
 
   public PermissionController() {
-    this.view = new PermissionView(this);
     this.model = new PermissionModel();
   }
 
@@ -136,11 +135,6 @@ public class PermissionController implements Controller<PermissionView, Permissi
   public void deletePermission() {
     model.deletePermission(view.getSelectedObject());
     view.setValues(model.getAllPermissions());
-  }
-
-  @Override
-  public @NotNull PermissionView getView() {
-    return view;
   }
 
   @Override

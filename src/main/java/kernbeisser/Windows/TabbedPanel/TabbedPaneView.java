@@ -2,7 +2,7 @@ package kernbeisser.Windows.TabbedPanel;
 
 import java.awt.*;
 import javax.swing.*;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class TabbedPaneView implements View<TabbedPaneController> {

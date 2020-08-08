@@ -8,7 +8,8 @@ import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleLogInView implements View<SimpleLogInController> {
@@ -17,11 +18,7 @@ public class SimpleLogInView implements View<SimpleLogInController> {
   private JTextField username;
   private JPanel main;
 
-  private final SimpleLogInController controller;
-
-  SimpleLogInView(SimpleLogInController controller) {
-    this.controller = controller;
-  }
+  @Linked private SimpleLogInController controller;
 
   char[] getPassword() {
     return password.getPassword();

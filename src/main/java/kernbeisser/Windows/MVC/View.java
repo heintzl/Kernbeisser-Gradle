@@ -1,4 +1,4 @@
-package kernbeisser.Windows;
+package kernbeisser.Windows.MVC;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -44,12 +44,12 @@ public interface View<
     return FontAwesome.WINDOW_MAXIMIZE;
   }
 
-  default Window getWindow() {
-    return (Window) SwingUtilities.getWindowAncestor(getContent());
+  default kernbeisser.Windows.Window getWindow() {
+    return (kernbeisser.Windows.Window) SwingUtilities.getWindowAncestor(getContent());
   }
 
   default void back() {
-    Window window = getWindow();
+    kernbeisser.Windows.Window window = getWindow();
     if (window != null) {
       window.back();
     }

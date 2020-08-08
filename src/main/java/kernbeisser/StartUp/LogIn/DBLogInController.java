@@ -1,7 +1,7 @@
 package kernbeisser.StartUp.LogIn;
 
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class DBLogInController implements Controller<DBLogInView, DBLogInModel> {
@@ -12,11 +12,6 @@ public class DBLogInController implements Controller<DBLogInView, DBLogInModel> 
   public DBLogInController() {
     this.model = new DBLogInModel();
     this.view = new DBLogInView(this);
-  }
-
-  @Override
-  public @NotNull DBLogInView getView() {
-    return view;
   }
 
   @Override

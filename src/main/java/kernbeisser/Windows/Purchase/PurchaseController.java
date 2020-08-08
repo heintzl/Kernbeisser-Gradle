@@ -5,25 +5,19 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Date;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class PurchaseController implements Controller<PurchaseView, PurchaseModel> {
   private final PurchaseModel model;
-  private final PurchaseView view;
+  private PurchaseView view;
 
   public PurchaseController(Purchase purchase) {
     model = new PurchaseModel(purchase);
-    view = new PurchaseView(this);
   }
 
   double getPrice(ShoppingItem item) {
     return item.getRetailPrice();
-  }
-
-  @Override
-  public @NotNull PurchaseView getView() {
-    return view;
   }
 
   @Override

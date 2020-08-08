@@ -8,12 +8,14 @@ import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.EditItems.EditItemsController;
+import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.View;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.Setting.SettingController;
@@ -21,7 +23,6 @@ import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
-import kernbeisser.Windows.View;
 import org.jetbrains.annotations.NotNull;
 
 public class MenuView implements View<MenuController> {
@@ -48,6 +49,7 @@ public class MenuView implements View<MenuController> {
   private ControllerButton placeHolderControllerButton2;
   private ControllerButton openSelfShoppingMask;
   private ControllerButton addBeginner;
+  private ControllerButton editJobs;
 
   @Override
   public void initialize(MenuController controller) {}
@@ -58,7 +60,7 @@ public class MenuView implements View<MenuController> {
   }
 
   private void createUIComponents() {
-    infoPanel = new UserInfoController(LogInModel.getLoggedIn()).getInitializedView();
+    infoPanel = new UserInfoController(LogInModel.getLoggedIn()).getView();
     openCashierShoppingMask =
         new ControllerButton(
             new CashierShoppingMaskController(), controller -> controller.openTab("Ladendienst"));
@@ -112,7 +114,8 @@ public class MenuView implements View<MenuController> {
     changeDBConnection =
         new ControllerButton(
             new DBLogInController(), controller -> controller.openTab("Datenbankverbindung"));
-    // NOT IMPLEMENTED
+    editJobs =
+        new ControllerButton(new EditJobs(), controller -> controller.openTab("Jobs bearbeiten"));
     editApplicationSettings =
         new ControllerButton(new SettingController(), e -> e.openTab("Einstellungen"));
     order =

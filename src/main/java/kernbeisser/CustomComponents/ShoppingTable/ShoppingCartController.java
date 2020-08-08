@@ -3,7 +3,7 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingCartController implements Controller<ShoppingCartView, ShoppingCartModel> {
@@ -92,11 +92,6 @@ public class ShoppingCartController implements Controller<ShoppingCartView, Shop
 
   public List<ShoppingItem> getItems() {
     return model.getItems();
-  }
-
-  @Override
-  public @NotNull ShoppingCartView getView() {
-    return view;
   }
 
   @Override

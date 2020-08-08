@@ -9,13 +9,16 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class TransactionView implements View<TransactionController> {
@@ -67,17 +70,13 @@ public class TransactionView implements View<TransactionController> {
   private JButton a900;
   private JButton a1000;
 
-  private SearchBoxView searchBoxView;
+  private SearchBoxView<User> searchBoxView;
   private JLabel sum;
   private JLabel count;
   private PermissionField info;
   private JCheckBox toKBValue;
 
-  private final TransactionController controller;
-
-  TransactionView(TransactionController controller) {
-    this.controller = controller;
-  }
+  @Linked private SearchBoxController<User> userSearchBoxController;
 
   void setTransactions(Collection<Transaction> transactions) {
     this.transactions.setObjects(transactions);
@@ -113,7 +112,7 @@ public class TransactionView implements View<TransactionController> {
 
   void setFromEnabled(boolean b) {
     from.setEnabled(b);
-    searchBoxView.setVisible(b);
+    searchBoxView.getContent().setVisible(b);
   }
 
   private void createUIComponents() {
@@ -128,7 +127,7 @@ public class TransactionView implements View<TransactionController> {
             Column.create("An", e -> e.getTo().getSurname() + ", " + e.getTo().getFirstName()),
             Column.create("Überweissungsbetrag", e -> String.format("%.2f€", e.getValue())),
             Column.create("Info", Transaction::getInfo));
-    searchBoxView = controller.getSearchBoxView();
+    searchBoxView = userSearchBoxController.getView();
   }
 
   void success() {

@@ -8,24 +8,19 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import org.jetbrains.annotations.NotNull;
 
 public class UserInfoController implements Controller<UserInfoView, UserInfoModel> {
 
-  private final UserInfoView view;
+  private UserInfoView view;
+
   private final UserInfoModel model;
 
   public UserInfoController(User user) {
     this.model = new UserInfoModel(user);
-    this.view = new UserInfoView(this);
-  }
-
-  @Override
-  public @NotNull UserInfoView getView() {
-    return view;
   }
 
   @Override

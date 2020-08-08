@@ -7,10 +7,11 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class PayView extends JPanel implements View<PayController> {
+public class PayView implements View<PayController> {
   private JPanel main;
   private JPanel shoppingListPanel;
   private ShoppingCartView shoppingCartView;
@@ -19,14 +20,11 @@ public class PayView extends JPanel implements View<PayController> {
   private JButton commitPayment;
   private JButton cancel;
   private PayController controller;
-  private final ShoppingCartController shoppingCartController;
 
-  public PayView(ShoppingCartController cartController) {
-    this.shoppingCartController = cartController;
-  }
+  @Linked private ShoppingCartController shoppingCartController;
 
   private void createUIComponents() {
-    shoppingCartView = shoppingCartController.getInitializedView();
+    shoppingCartView = shoppingCartController.getView();
   }
 
   public void fillShoppingCart(List<ShoppingItem> items) {
@@ -41,7 +39,7 @@ public class PayView extends JPanel implements View<PayController> {
   }
 
   void setViewSize(Dimension size) {
-    this.setSize(size);
+    main.setSize(size);
   }
 
   @Override

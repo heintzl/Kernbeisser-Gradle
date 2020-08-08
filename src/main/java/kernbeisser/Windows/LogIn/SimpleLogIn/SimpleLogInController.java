@@ -11,8 +11,8 @@ import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
-import kernbeisser.Windows.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Menu.MenuController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.WindowImpl.SubWindow;
@@ -20,17 +20,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class SimpleLogInController implements Controller<SimpleLogInView, SimpleLogInModel> {
 
-  private final SimpleLogInView view;
+  private SimpleLogInView view;
+
   private final SimpleLogInModel model;
 
   public SimpleLogInController() {
     this.model = new SimpleLogInModel();
-    this.view = new SimpleLogInView(this);
-  }
-
-  @Override
-  public @NotNull SimpleLogInView getView() {
-    return view;
   }
 
   @Override
@@ -51,7 +46,8 @@ public class SimpleLogInController implements Controller<SimpleLogInView, Simple
       model.logIn(view.getUsername(), view.getPassword());
       loadUserSettings();
       if (LogInModel.getLoggedIn().getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS)
-          > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()) {
+              > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()
+          || LogInModel.getLoggedIn().isForcePasswordChange()) {
         new ChangePasswordController(LogInModel.getLoggedIn(), true)
             .openAsWindow(getView().getWindow(), SubWindow::new);
       } else {

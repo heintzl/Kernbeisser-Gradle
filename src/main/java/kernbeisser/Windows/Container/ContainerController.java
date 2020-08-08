@@ -6,16 +6,15 @@ import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class ContainerController implements Controller<ContainerView, ContainerModel> {
-  private final ContainerView view;
+  private ContainerView view;
   private final ContainerModel model;
 
   public ContainerController(User user) {
     model = new ContainerModel(user);
-    view = new ContainerView(this);
   }
 
   private void refreshUnpaidContainers() {
@@ -105,11 +104,6 @@ public class ContainerController implements Controller<ContainerView, ContainerM
     view.setItemName(c.getItem().getName());
     view.setAmount(String.valueOf(c.getAmount()));
     view.setNetPrice(c.getNetPrice() + "€");
-  }
-
-  @Override
-  public @NotNull ContainerView getView() {
-    return view;
   }
 
   @Override

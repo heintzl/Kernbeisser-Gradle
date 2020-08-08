@@ -8,7 +8,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class PermissionModel implements Model<PermissionController> {
   void addKey(Permission permission, PermissionKey key) {

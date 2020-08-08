@@ -1,7 +1,7 @@
 package kernbeisser.Windows.UserInfo;
 
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class UserInfoModel implements Model<UserInfoController> {
 
