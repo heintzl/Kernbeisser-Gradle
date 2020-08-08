@@ -289,8 +289,9 @@ public class DataImportController implements Controller<DataImportView, DataImpo
         supplier.setName(columns[1]);
         supplier.setPhoneNumber(columns[2]);
         supplier.setEmail(columns[3]);
-        supplier.setAddress(columns[4] + ";" + columns[5]);
-        supplier.setFax(columns[6]);
+        supplier.setFax(columns[4]);
+        supplier.setStreet(columns[5]);
+        supplier.setLocation(columns[6]);
         supplier.setKeeper(columns[7]);
         supplier.setSurcharge(Integer.parseInt(columns[8]));
         suppliers.add(supplier);
