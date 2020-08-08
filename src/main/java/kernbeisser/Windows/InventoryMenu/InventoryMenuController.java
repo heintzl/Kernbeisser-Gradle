@@ -1,7 +1,7 @@
 package kernbeisser.Windows.InventoryMenu;
 
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class InventoryMenuController implements Controller<InventoryMenuView, InventoryMenuModel> {
@@ -14,10 +14,6 @@ public class InventoryMenuController implements Controller<InventoryMenuView, In
     model = new InventoryMenuModel();
   }
 
-  @Override
-  public @NotNull InventoryMenuView getView() {
-    return view;
-  }
 
   @Override
   public @NotNull InventoryMenuModel getModel() {

@@ -8,7 +8,7 @@ import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.EditItems.EditItemsController;
 import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
@@ -22,7 +22,7 @@ import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class MenuView implements View<MenuController> {
@@ -60,7 +60,7 @@ public class MenuView implements View<MenuController> {
   }
 
   private void createUIComponents() {
-    infoPanel = new UserInfoController(LogInModel.getLoggedIn()).getInitializedView();
+    infoPanel = new UserInfoController(LogInModel.getLoggedIn()).getView();
     openCashierShoppingMask =
         new ControllerButton(
             new CashierShoppingMaskController(), controller -> controller.openTab("Ladendienst"));

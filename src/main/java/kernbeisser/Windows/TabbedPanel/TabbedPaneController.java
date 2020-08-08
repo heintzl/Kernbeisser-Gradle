@@ -3,24 +3,18 @@ package kernbeisser.Windows.TabbedPanel;
 import java.awt.*;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.ViewFactory;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class TabbedPaneController implements Controller<TabbedPaneView, TabbedPaneModel> {
   private final TabbedPaneModel model;
-  private final TabbedPaneView view;
+  private TabbedPaneView view;
 
   public TabbedPaneController() {
     model = new TabbedPaneModel();
-    view = new TabbedPaneView();
-  }
-
-  @NotNull
-  @Override
-  public TabbedPaneView getView() {
-    return view;
   }
 
   @NotNull
@@ -36,18 +30,18 @@ public class TabbedPaneController implements Controller<TabbedPaneView, TabbedPa
     int posIn = model.getIndexOfControllerClass(tab);
     if (tab.getController().getView().isStackable() || posIn == -1) {
       model.addTab(tab);
-      view.addTab(
+      getView().addTab(
           new DefaultTab(
                   IconFontSwing.buildIcon(tab.getIcon(), 20, new Color(0x32C4A2)),
                   tab.getTitle(),
                   () -> closeTab(tab),
-                  () -> view.setSelected(model.indexOf(tab)))
+                  () -> getView().setSelected(model.indexOf(tab)))
               .getMain(),
           tab.getController().getView().getWrappedContent(),
           model.indexOf(tab));
-      view.setSelected(model.indexOf(tab));
+      getView().setSelected(model.indexOf(tab));
     } else {
-      view.setSelected(posIn);
+      getView().setSelected(posIn);
     }
   }
 

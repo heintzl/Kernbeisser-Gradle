@@ -5,11 +5,13 @@ import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectViewView<T> extends JPanel implements View<ObjectViewController<T>> {
+public class ObjectViewView<T> implements View<ObjectViewController<T>> {
   private JButton add;
   private JButton edit;
   private JButton back;
@@ -17,12 +19,12 @@ public class ObjectViewView<T> extends JPanel implements View<ObjectViewControll
   private SearchBoxView<T> searchBoxView;
   private JPanel main;
 
-  private final ObjectViewController<T> controller;
+  @Linked
+  private ObjectViewController<T> controller;
 
-  ObjectViewView(ObjectViewController<T> controller) {
-    this.controller = controller;
-    this.add(main);
-  }
+  @Linked
+  private SearchBoxController<T> searchBoxController;
+
 
   void setEditAvailable(boolean s) {
     edit.setEnabled(s);
@@ -37,12 +39,12 @@ public class ObjectViewView<T> extends JPanel implements View<ObjectViewControll
   }
 
   private void createUIComponents() {
-    searchBoxView = controller.getSearchBoxView();
+    searchBoxView = searchBoxController.getView();
   }
 
   boolean commitDelete() {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Soll dieses Object wirklich gelöschst werden?")
+            getTopComponent(), "Soll dieses Object wirklich gelöscht werden?")
         == 0;
   }
 

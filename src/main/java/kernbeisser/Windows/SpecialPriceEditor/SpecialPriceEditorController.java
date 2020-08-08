@@ -11,8 +11,8 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Main;
-import kernbeisser.Windows.AutoInitialize;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +26,10 @@ public class SpecialPriceEditorController
     new SpecialPriceEditorController().openTab("IDK");
   }
 
-  @AutoInitialize private SpecialPriceEditorView view;
+  private SpecialPriceEditorView view;
   private final SpecialPriceEditorModel model;
 
+  @Linked
   private final SearchBoxController<Article> searchBoxController;
 
   SpecialPriceEditorController() {
@@ -49,7 +50,6 @@ public class SpecialPriceEditorController
             }
           }
         };
-    searchBoxController.initView();
     searchBoxController.addSelectionListener(this::load);
   }
 
@@ -131,11 +131,6 @@ public class SpecialPriceEditorController
 
   void refreshSearchSolutions() {
     searchBoxController.refreshLoadSolutions();
-  }
-
-  @Override
-  public @NotNull SpecialPriceEditorView getView() {
-    return view;
   }
 
   @Override

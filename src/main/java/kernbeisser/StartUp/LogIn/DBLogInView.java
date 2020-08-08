@@ -3,7 +3,7 @@ package kernbeisser.StartUp.LogIn;
 import javax.swing.*;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 

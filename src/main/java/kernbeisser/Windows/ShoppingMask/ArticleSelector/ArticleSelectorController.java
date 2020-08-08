@@ -7,7 +7,8 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ArticleSelectorController
@@ -15,23 +16,13 @@ public class ArticleSelectorController
   private final ArticleSelectorModel model;
   private ArticleSelectorView view;
 
+  @Linked
   private final SearchBoxController<Article> searchBoxController;
 
   public ArticleSelectorController(Consumer<Article> consumer) {
-    view = null;
     searchBoxController =
         new SearchBoxController<>(
-            (s, m) -> {
-              Collection<Article> articles = Article.defaultSearch(s, m);
-              if (view != null) {
-                if (view.searchOnlyWithoutBarcode()) {
-                  articles.removeIf(e -> e.getBarcode() != null);
-                } else if (view.searchOnlyShowInShop()) {
-                  articles.removeIf(e -> !e.isShowInShop());
-                }
-              }
-              return articles;
-            },
+            this::search,
             Column.create("Name", Article::getName),
             Column.create("Barcode", Article::getBarcode),
             Column.create("KB-Nummer", Article::getKbNumber),
@@ -42,19 +33,24 @@ public class ArticleSelectorController
                         + (e.getSuppliersItemNumber() > 0
                             ? " (" + e.getSuppliersItemNumber() + ")"
                             : "")));
-    searchBoxController.initView();
     this.model = new ArticleSelectorModel(consumer);
-    this.view = new ArticleSelectorView(this);
+  }
+
+  private Collection<Article> search(String query, int max){
+    Collection<Article> articles = Article.defaultSearch(query, max);
+    if (view != null) {
+      if (view.searchOnlyWithoutBarcode()) {
+        articles.removeIf(e -> e.getBarcode() != null);
+      } else if (view.searchOnlyShowInShop()) {
+        articles.removeIf(e -> !e.isShowInShop());
+      }
+    }
+    return articles;
   }
 
   public void choose() {
     model.getConsumer().accept(searchBoxController.getSelectedObject());
     view.back();
-  }
-
-  @Override
-  public @NotNull ArticleSelectorView getView() {
-    return view;
   }
 
   @Override

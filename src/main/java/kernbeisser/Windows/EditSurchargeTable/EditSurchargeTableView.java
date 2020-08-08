@@ -7,7 +7,8 @@ import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeTable;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 class EditSurchargeTableView implements View<EditSurchargeTableController> {
@@ -26,11 +27,6 @@ class EditSurchargeTableView implements View<EditSurchargeTableController> {
       surcharge;
   private JPanel main;
 
-  private final EditSurchargeTableController controller;
-
-  EditSurchargeTableView(EditSurchargeTableController controller) {
-    this.controller = controller;
-  }
 
   private ObjectForm<SurchargeTable> objectForm;
 

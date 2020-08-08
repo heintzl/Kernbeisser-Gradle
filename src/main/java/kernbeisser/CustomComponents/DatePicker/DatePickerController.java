@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
@@ -73,11 +73,6 @@ public class DatePickerController implements Controller<DatePickerView, DatePick
   }
 
   public void finish() {}
-
-  @Override
-  public @NotNull DatePickerView getView() {
-    return view;
-  }
 
   @Override
   public @NotNull DatePickerModel getModel() {

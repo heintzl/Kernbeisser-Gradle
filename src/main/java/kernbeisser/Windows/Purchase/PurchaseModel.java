@@ -3,7 +3,7 @@ package kernbeisser.Windows.Purchase;
 import java.util.Collection;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class PurchaseModel implements Model<PurchaseController> {
   private final Purchase loaded;

@@ -8,7 +8,7 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.UndefinedInputException;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
@@ -17,7 +17,7 @@ import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, ShoppingMaskModel> {
-  private final ShoppingMaskUIView view;
+  private ShoppingMaskUIView view;
   private final ShoppingMaskModel model;
   private final ShoppingCartController shoppingCartController;
 
@@ -26,7 +26,6 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
     this.shoppingCartController =
         new ShoppingCartController(
             model.getValue(), model.getSaleSession().getCustomer().getSolidaritySurcharge(), true);
-    shoppingCartController.initView();
     this.view = new ShoppingMaskUIView(this, shoppingCartController);
   }
 
@@ -244,11 +243,6 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
       default:
         return null;
     }
-  }
-
-  @Override
-  public @NotNull ShoppingMaskUIView getView() {
-    return view;
   }
 
   @Override

@@ -18,8 +18,8 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.PreLoaded;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserView implements View<EditUserController> {
@@ -64,7 +64,8 @@ public class EditUserView implements View<EditUserController> {
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, Integer> keyNumber;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, String> email;
 
-  @PreLoaded private EditUserController controller;
+  @Linked
+  private EditUserController controller;
 
   private ObjectForm<User> objectForm;
 

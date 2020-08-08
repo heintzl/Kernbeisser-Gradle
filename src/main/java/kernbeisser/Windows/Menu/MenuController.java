@@ -4,7 +4,7 @@ import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
@@ -12,17 +12,10 @@ import org.jetbrains.annotations.NotNull;
 public class MenuController implements Controller<MenuView, MenuModel> {
 
   private final MenuModel model;
-  private final MenuView view;
+  private MenuView view;
 
   public MenuController() {
     model = new MenuModel();
-    view = new MenuView();
-  }
-
-  @NotNull
-  @Override
-  public MenuView getView() {
-    return view;
   }
 
   @NotNull

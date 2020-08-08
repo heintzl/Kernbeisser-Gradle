@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangePasswordView implements View<ChangePasswordController> {

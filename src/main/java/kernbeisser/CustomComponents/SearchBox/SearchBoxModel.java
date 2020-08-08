@@ -3,12 +3,15 @@ package kernbeisser.CustomComponents.SearchBox;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
+
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 import kernbeisser.Windows.Searchable;
 
 public class SearchBoxModel<T> implements Model<SearchBoxController<T>> {
   private final Searchable<T> searchable;
+  private final Column<T>[] columns;
 
   private T lastSelectedObject = null;
 
@@ -16,8 +19,9 @@ public class SearchBoxModel<T> implements Model<SearchBoxController<T>> {
   private final ArrayList<Consumer<T>> doubleClickListener = new ArrayList<>();
   private final ArrayList<Runnable> lostSelectionListener = new ArrayList<>();
 
-  SearchBoxModel(Searchable<T> searchable) {
+  SearchBoxModel(Searchable<T> searchable, Column<T>[] columns) {
     this.searchable = searchable;
+    this.columns = columns;
   }
 
   Collection<T> getValues(String s) {
@@ -42,5 +46,9 @@ public class SearchBoxModel<T> implements Model<SearchBoxController<T>> {
 
   public void setLastSelectedObject(T lastSelectedObject) {
     this.lastSelectedObject = lastSelectedObject;
+  }
+
+  public Column<T>[] getColumns() {
+    return columns;
   }
 }

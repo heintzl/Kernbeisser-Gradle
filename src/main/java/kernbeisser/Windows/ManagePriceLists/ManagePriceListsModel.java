@@ -5,7 +5,7 @@ import javax.swing.tree.TreeModel;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 import org.hibernate.Session;
 
 public class ManagePriceListsModel implements Model<ManagePriceListsController> {

@@ -4,7 +4,7 @@ import java.util.Collection;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MaskLoader;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;

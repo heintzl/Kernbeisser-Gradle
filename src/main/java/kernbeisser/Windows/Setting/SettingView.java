@@ -9,7 +9,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class SettingView implements View<SettingController> {

@@ -10,7 +10,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
   private Article selected = null;

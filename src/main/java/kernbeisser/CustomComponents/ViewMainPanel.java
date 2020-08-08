@@ -2,7 +2,7 @@ package kernbeisser.CustomComponents;
 
 import java.awt.*;
 import javax.swing.*;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.View;
 
 public class ViewMainPanel extends JPanel {
 

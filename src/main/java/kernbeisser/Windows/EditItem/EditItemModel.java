@@ -13,7 +13,7 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class EditItemModel implements Model<EditItemController> {
   private final Mode mode;

@@ -17,7 +17,8 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class EditItemView implements View<EditItemController> {
@@ -54,11 +55,8 @@ public class EditItemView implements View<EditItemController> {
 
   private ObjectForm<Article> articleObjectForm;
 
+  @Linked
   private EditItemController controller;
-
-  public EditItemView(EditItemController editItemController) {
-    this.controller = editItemController;
-  }
 
   private void createUIComponents() {
     itemName =
@@ -157,7 +155,6 @@ public class EditItemView implements View<EditItemController> {
 
   @Override
   public void initialize(EditItemController controller) {
-    this.controller = controller;
     cancel.addActionListener((e) -> back());
     commit.addActionListener((e) -> controller.doAction());
     itemName.setInputVerifier(new NotNullVerifier());

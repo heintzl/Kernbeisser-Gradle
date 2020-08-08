@@ -9,7 +9,7 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class EditSurchargeTableModel implements Model<EditSurchargeTableController> {
   private final SurchargeTable source;

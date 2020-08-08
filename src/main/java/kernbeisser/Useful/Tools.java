@@ -38,13 +38,7 @@ public class Tools {
   public static <A extends Annotation> Collection<Field> getWithAnnotation(
       Class<?> pattern, Class<A> annotation) {
     ArrayList<Field> out = new ArrayList<>();
-    for (Field field : pattern.getDeclaredFields()) {
-      field.setAccessible(true);
-      if (field.isAnnotationPresent(annotation)) {
-        out.add(field);
-      }
-    }
-    for (Field field : pattern.getSuperclass().getDeclaredFields()) {
+    for (Field field : Tools.getAllFields(pattern)) {
       field.setAccessible(true);
       if (field.isAnnotationPresent(annotation)) {
         out.add(field);
@@ -481,7 +475,7 @@ public class Tools {
       return (T) unsafe.allocateInstance(clazz);
     } catch (InstantiationException e) {
       Tools.showUnexpectedErrorWarning(e);
-      return null;
+      throw new UnsupportedOperationException("cannot create instance without constructor :(");
     }
   }
 
@@ -681,5 +675,25 @@ public class Tools {
       }
     }
     return null;
+  }
+
+  public static Field findInAllSuperClasses(Class<?> clazz,String name) throws NoSuchFieldException {
+    while (!clazz.equals(Object.class)){
+      try {
+        return clazz.getDeclaredField(name);
+      } catch (NoSuchFieldException ignored) {}
+      clazz = clazz.getSuperclass();
+    }
+    throw new NoSuchFieldException("cannot find Field "+name);
+  }
+
+  public static Collection<Field> getAllFields(Class<?> clazz){
+    ArrayList<Field> out = new ArrayList<Field>(Arrays.asList(clazz.getDeclaredFields()));
+    clazz = clazz.getSuperclass();
+    while (!clazz.equals(Object.class)){
+      out.addAll(Arrays.asList(clazz.getDeclaredFields()));
+      clazz = clazz.getSuperclass();
+    }
+    return out;
   }
 }

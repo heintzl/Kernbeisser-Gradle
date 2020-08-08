@@ -1,7 +1,6 @@
 package kernbeisser.Windows.EditUser;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
@@ -10,13 +9,11 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.AutoInitialize;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-@AutoInitialize
 public class EditUserController implements Controller<EditUserView, EditUserModel> {
-  @AutoInitialize private EditUserView view;
+  private EditUserView view;
   private final EditUserModel model;
 
   public EditUserController(User user, Mode mode) {
@@ -24,13 +21,6 @@ public class EditUserController implements Controller<EditUserView, EditUserMode
     if (mode == Mode.REMOVE) {
       model.doAction(model.getUser());
     }
-  }
-
-  private void changePassword(String to) {
-    model
-        .getUser()
-        .setPassword(
-            BCrypt.withDefaults().hashToString(Setting.HASH_COSTS.getIntValue(), to.toCharArray()));
   }
 
   @Override
@@ -60,11 +50,6 @@ public class EditUserController implements Controller<EditUserView, EditUserMode
     return new PermissionKey[] {
       PermissionKey.USER_USERNAME_READ,
     };
-  }
-
-  @Override
-  public @NotNull EditUserView getView() {
-    return view;
   }
 
   void doAction() {

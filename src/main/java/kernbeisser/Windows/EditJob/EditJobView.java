@@ -4,7 +4,7 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
 import kernbeisser.DBEntities.Job;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class EditJobView implements View<EditJobController> {

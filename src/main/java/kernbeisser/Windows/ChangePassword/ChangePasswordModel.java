@@ -5,7 +5,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class ChangePasswordModel implements Model<ChangePasswordController> {
 

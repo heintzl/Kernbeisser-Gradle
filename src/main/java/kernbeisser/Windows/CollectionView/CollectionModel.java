@@ -2,7 +2,7 @@ package kernbeisser.Windows.CollectionView;
 
 import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class CollectionModel<T> implements Model<CollectionController<T>> {
 

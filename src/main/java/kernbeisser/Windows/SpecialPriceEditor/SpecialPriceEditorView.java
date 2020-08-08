@@ -10,6 +10,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.PermissionCheckBox;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DateParseField;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
@@ -17,8 +18,8 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Windows.PreLoaded;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class SpecialPriceEditorView implements View<SpecialPriceEditorController> {
@@ -40,7 +41,8 @@ public class SpecialPriceEditorView implements View<SpecialPriceEditorController
   private PermissionCheckBox filterActionArticle;
   private JLabel selectedArticleNetPrice;
 
-  @PreLoaded private SpecialPriceEditorController controller;
+  @Linked
+  private SearchBoxController<Article> searchBoxController;
 
   void fillRepeat(Repeat[] repeats) {
     repeat.removeAllItems();
@@ -90,7 +92,7 @@ public class SpecialPriceEditorView implements View<SpecialPriceEditorController
   }
 
   private void createUIComponents() {
-    searchBox = controller.getSearchBoxView();
+    searchBox = searchBoxController.getView();
     offers =
         new ObjectTable<>(
             Column.create("Von", Offer::getFromDate),

@@ -2,7 +2,7 @@ package kernbeisser.Windows.TabbedPanel;
 
 import java.util.ArrayList;
 import java.util.List;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 

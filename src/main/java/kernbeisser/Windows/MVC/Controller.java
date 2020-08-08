@@ -1,4 +1,4 @@
-package kernbeisser.Windows;
+package kernbeisser.Windows.MVC;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -15,85 +15,32 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.TabbedPanel.Tab;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
+import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
+
+import static kernbeisser.Windows.MVC.ViewFactory.initializeView;
 
 public interface Controller<
     V extends View<? extends Controller<? extends V, ? extends M>>,
     M extends Model<? extends Controller<? extends V, ? extends M>>> {
 
-  default void initView() {
-    if (this.getClass().getAnnotation(AutoInitialize.class) != null) {
-      Collection<Field> autoInitializeFields =
-          Tools.getWithAnnotation(this.getClass(), AutoInitialize.class);
-      if (autoInitializeFields.size() != 1) {
-        throw new UnsupportedOperationException(
-            "No or multiple AutoInitialize annotations are in " + this.getClass() + " is defined");
-      }
-      Field viewField = autoInitializeFields.iterator().next();
-      viewField.setAccessible(true);
-      V view = (V) Tools.createWithoutConstructor(viewField.getType());
-      Collection<Field> fields = Tools.getWithAnnotation(view.getClass(), PreLoaded.class);
-      fields.forEach(
-          e -> {
-            if (e.getType().equals(this.getClass())) {
-              e.setAccessible(true);
-              try {
-                e.set(view, this);
-              } catch (IllegalAccessException illegalAccessException) {
-                illegalAccessException.printStackTrace();
-              }
-            }
-          });
-      try {
-        Method setUpUiComponents = view.getClass().getDeclaredMethod("$$$setupUI$$$");
-        setUpUiComponents.setAccessible(true);
-        try {
-          setUpUiComponents.invoke(view);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-          e.printStackTrace();
-        }
-      } catch (NoSuchMethodException e) {
-        e.printStackTrace();
-      }
-
-      try {
-        viewField.set(this, view);
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      }
-    }
-    V view = getView();
+  @NotNull
+  default V getView(){
     try {
-      Method initMethod = view.getClass().getDeclaredMethod("initialize", Controller.class);
-      initMethod.setAccessible(true);
-      initMethod.invoke(view, this);
+      V view = (V) Utils.getLinkedViewField(this.getClass()).get(this);
+      if(view==null){
+        initializeView(this);
+        fillUI();
+        return getView();
+      }else return view;
     } catch (IllegalAccessException e) {
       Tools.showUnexpectedErrorWarning(e);
-    } catch (InvocationTargetException e) {
-      e.getCause().printStackTrace();
-    } catch (NoSuchMethodException e) {
-      Main.logger.error(
-          "failed to initialize view cannot find initialize(" + this.getClass() + ")");
+      throw new UnsupportedOperationException("cannot access linked view field");
     }
-
-    fillUI();
   }
-
-  @NotNull
-  V getView();
 
   @NotNull
   M getModel();
-
-  /**
-   * return the view and initialized it
-   *
-   * @return the initialized view
-   */
-  default @NotNull V getInitializedView() {
-    initView();
-    return getView();
-  }
 
   /** fills the UI with data after the view and the controller already initialized */
   void fillUI();
@@ -135,16 +82,6 @@ public interface Controller<
    */
 
   /**
-   * returns the controller with initialized view
-   *
-   * @return controller with initialized view
-   */
-  default Controller<V, M> withInitializedView() {
-    initView();
-    return this;
-  }
-
-  /**
    * sets default value for openAsWindow closeOld to true
    *
    * @return the result of openAsWindow(?,?,true)
@@ -169,7 +106,6 @@ public interface Controller<
   default <W extends Window> W openAsWindow(
       Window parent, Function<Controller<V, M>, W> windowFactory, boolean closeOld) {
     W createWindow = windowFactory.apply(this);
-    createWindow.getController().initView();
     createWindow.setContent(this);
     createWindow.setSize(getView().getSize());
     createWindow.setTitle(getView().getTitle());
@@ -198,7 +134,6 @@ public interface Controller<
    * @return the created Tab
    */
   default Tab asTab(String title) {
-    initView();
     return new Tab() {
       @Override
       public IconCode getIcon() {

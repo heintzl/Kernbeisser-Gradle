@@ -12,7 +12,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 
 public class SynchronizeArticleModel implements Model<SynchronizeArticleController> {
 

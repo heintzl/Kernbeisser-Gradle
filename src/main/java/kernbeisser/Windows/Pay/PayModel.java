@@ -14,7 +14,7 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Reports.ReportManager;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Model;
+import kernbeisser.Windows.MVC.Model;
 import net.sf.jasperreports.engine.JRException;
 
 public class PayModel implements Model<PayController> {

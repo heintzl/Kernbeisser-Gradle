@@ -4,7 +4,7 @@ import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class EditSurchargeTableController
@@ -19,11 +19,7 @@ public class EditSurchargeTableController
             surchargeTable == null ? new SurchargeTable() : surchargeTable, mode);
     if (mode == Mode.REMOVE) {
       model.doAction(surchargeTable);
-      return;
-    } else {
-      this.view = new EditSurchargeTableView(this);
     }
-    view.setSuppliers(model.getAllSuppliers());
   }
 
   public void commit() {
@@ -38,17 +34,14 @@ public class EditSurchargeTableController
   }
 
   @Override
-  public @NotNull EditSurchargeTableView getView() {
-    return view;
-  }
-
-  @Override
   public @NotNull EditSurchargeTableModel getModel() {
     return model;
   }
 
   @Override
-  public void fillUI() {}
+  public void fillUI() {
+    view.setSuppliers(model.getAllSuppliers());
+  }
 
   @Override
   public PermissionKey[] getRequiredKeys() {

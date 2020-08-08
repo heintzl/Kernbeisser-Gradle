@@ -10,16 +10,20 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class PayController implements Controller<PayView, PayModel> {
 
   private final PayModel model;
-  private final PayView view;
+  private PayView view;
   private final Dimension viewSize;
   @Getter private final double userValue;
+
+  @Linked
+  private final ShoppingCartController cartController;
 
   public PayController(
       SaleSession saleSession,
@@ -27,11 +31,9 @@ public class PayController implements Controller<PayView, PayModel> {
       Runnable transferCompleted,
       Dimension windowSize) {
     userValue = saleSession.getCustomer().getUserGroup().getValue();
+    cartController = new ShoppingCartController(
+            userValue, saleSession.getCustomer().getSolidaritySurcharge(), false);
     model = new PayModel(saleSession, shoppingCart, transferCompleted);
-    view =
-        new PayView(
-            new ShoppingCartController(
-                userValue, saleSession.getCustomer().getSolidaritySurcharge(), false));
     this.viewSize = windowSize;
   }
 
@@ -60,10 +62,6 @@ public class PayController implements Controller<PayView, PayModel> {
     return item.getItemRetailPrice();
   }
 
-  @Override
-  public @NotNull PayView getView() {
-    return view;
-  }
 
   @Override
   public @NotNull PayModel getModel() {

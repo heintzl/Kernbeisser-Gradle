@@ -4,7 +4,8 @@ import java.awt.*;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class CashierMenuView implements View<CashierMenuController> {
@@ -17,11 +18,8 @@ public class CashierMenuView implements View<CashierMenuController> {
   private JPanel main;
   private JButton transfer;
 
-  private final CashierMenuController cashierMenuController;
-
-  CashierMenuView(CashierMenuController controller) {
-    this.cashierMenuController = controller;
-  }
+  @Linked
+  private CashierMenuController cashierMenuController;
 
   @Override
   public void initialize(CashierMenuController controller) {

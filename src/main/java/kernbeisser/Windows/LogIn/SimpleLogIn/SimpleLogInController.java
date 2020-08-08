@@ -10,29 +10,22 @@ import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.AutoInitialize;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.Menu.MenuController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-@AutoInitialize
 public class SimpleLogInController implements Controller<SimpleLogInView, SimpleLogInModel> {
 
-  @AutoInitialize private SimpleLogInView view;
+  private SimpleLogInView view;
 
   private final SimpleLogInModel model;
 
   public SimpleLogInController() {
     this.model = new SimpleLogInModel();
-  }
-
-  @Override
-  public @NotNull SimpleLogInView getView() {
-    return view;
   }
 
   @Override

@@ -21,7 +21,7 @@ import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -343,10 +343,7 @@ public class DataImportController implements Controller<DataImportView, DataImpo
     return true;
   }
 
-  @Override
-  public @NotNull DataImportView getView() {
-    return view;
-  }
+
 
   @Override
   public @NotNull DataImportModel getModel() {

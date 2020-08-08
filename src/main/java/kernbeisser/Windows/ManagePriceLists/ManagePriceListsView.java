@@ -11,7 +11,7 @@ import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsView implements View<ManagePriceListsController> {

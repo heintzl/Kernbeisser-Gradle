@@ -6,9 +6,11 @@ import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.PermissionButton;
+import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.View;
+import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class CashierShoppingMaskView implements View<CashierShoppingMaskController> {
@@ -17,14 +19,14 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
   private PermissionButton openShoppingMask;
   private kernbeisser.CustomComponents.PermissionComboBox<User> secondSellerUsername;
 
-  private final CashierShoppingMaskController controller;
+  @Linked
+  private CashierShoppingMaskController controller;
 
-  CashierShoppingMaskView(CashierShoppingMaskController controller) {
-    this.controller = controller;
-  }
+  @Linked
+  private SearchBoxController<User> searchBoxController;
 
   private void createUIComponents() {
-    searchBoxView = controller.getSearchBoxView();
+    searchBoxView = searchBoxController.getView();
   }
 
   void setSearchBoxView(SearchBoxView<User> userSearchBoxView) {

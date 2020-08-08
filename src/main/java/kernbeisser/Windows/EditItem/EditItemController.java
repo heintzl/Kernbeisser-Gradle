@@ -8,7 +8,7 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Windows.Controller;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class EditItemController implements Controller<EditItemView, EditItemModel> {
@@ -18,27 +18,16 @@ public class EditItemController implements Controller<EditItemView, EditItemMode
 
   public EditItemController(Article article, Mode mode) {
     model = new EditItemModel(article != null ? article : new Article(), mode);
-    if (mode == Mode.REMOVE) {
-      model.doAction(article);
-      return;
-    } else {
-      this.view = new EditItemView(this);
-    }
     switch (mode) {
       case ADD:
-        view.setActionTitle("Als neuen Artikel aufnehmen");
-        view.setActionIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
+        getView().setActionTitle("Als neuen Artikel aufnehmen");
+        getView().setActionIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
         break;
       case EDIT:
-        view.setActionTitle("Änderungen übernehmen");
-        view.setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(0x0000BB)));
+        getView().setActionTitle("Änderungen übernehmen");
+        getView().setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(0x0000BB)));
         break;
     }
-  }
-
-  @Override
-  public @NotNull EditItemView getView() {
-    return view;
   }
 
   @Override
@@ -129,9 +118,8 @@ public class EditItemController implements Controller<EditItemView, EditItemMode
   }
 
   public String displayAmount(int amount) {
-
     return amount
-            * (view.getMetricUnits() != null
+            * (getView().getMetricUnits() != null
                 ? view.getMetricUnits().getBaseFactor()
                 : model.getSource().getMetricUnits().getBaseFactor())
         + "";
