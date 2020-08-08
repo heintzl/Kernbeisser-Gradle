@@ -142,7 +142,8 @@ public class MenuView implements View<MenuController> {
             new EditUserController(User.generateBeginnerUser(), Mode.ADD),
             e -> e.openTab("Probemitglied aufnehmen"));
     editSuppliers =
-            new ControllerButton(new EditSuppliers(),controller -> controller.openTab("Lieferanten bearbeiten"));
+        new ControllerButton(
+            new EditSuppliers(), controller -> controller.openTab("Lieferanten bearbeiten"));
     // TODO make focus on button work
     openCashierShoppingMask.requestFocusInWindow();
     // Releasesettings
