@@ -42,9 +42,14 @@ public class Supplier implements Serializable {
   private String fax;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_ADDRESS_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_ADDRESS_WRITE)})
-  private String address;
+  @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_STREET_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_STREET_WRITE)})
+  private String street;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_STREET_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_STREET_WRITE)})
+  private String location;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_EMAIL_READ)})
@@ -108,19 +113,16 @@ public class Supplier implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
     Supplier supplier = (Supplier) o;
     return sid == supplier.sid
         && surcharge == supplier.surcharge
         && Objects.equals(name, supplier.name)
         && Objects.equals(phoneNumber, supplier.phoneNumber)
         && Objects.equals(fax, supplier.fax)
-        && Objects.equals(address, supplier.address)
+        && Objects.equals(street, supplier.street)
+        && Objects.equals(location, supplier.location)
         && Objects.equals(email, supplier.email)
         && Objects.equals(shortName, supplier.shortName)
         && Objects.equals(keeper, supplier.keeper)
@@ -135,7 +137,8 @@ public class Supplier implements Serializable {
         name,
         phoneNumber,
         fax,
-        address,
+        street,
+        location,
         email,
         shortName,
         surcharge,

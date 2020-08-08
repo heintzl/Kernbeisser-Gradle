@@ -15,13 +15,14 @@ public class EditSupplierView implements View<EditSupplierController> {
   private JPanel main;
   private JButton commit;
   private JButton cancel;
-  private AccessCheckingField<Supplier, String> address;
+  private AccessCheckingField<Supplier, String> location;
   private AccessCheckingField<Supplier, String> keeper;
   private AccessCheckingField<Supplier, String> phoneNumber;
   private AccessCheckingField<Supplier, String> fax;
   private AccessCheckingField<Supplier, String> name;
   private AccessCheckingField<Supplier, String> shortName;
   private AccessCheckingField<Supplier, Integer> surcharge;
+  private AccessCheckingField<Supplier, String> street;
 
   private ObjectForm<Supplier> objectForm;
 
@@ -30,7 +31,8 @@ public class EditSupplierView implements View<EditSupplierController> {
     objectForm =
         new ObjectForm<>(
             controller.getModel().getSupplier(),
-            address,
+            street,
+            location,
             keeper,
             phoneNumber,
             fax,
@@ -47,9 +49,12 @@ public class EditSupplierView implements View<EditSupplierController> {
   }
 
   private void createUIComponents() {
-    address =
+    street =
         new AccessCheckingField<>(
-            Supplier::getAddress, Supplier::setAddress, AccessCheckingField.NONE);
+            Supplier::getStreet, Supplier::setStreet, AccessCheckingField.NONE);
+    location =
+        new AccessCheckingField<>(
+            Supplier::getLocation, Supplier::setLocation, AccessCheckingField.NONE);
     keeper =
         new AccessCheckingField<>(
             Supplier::getKeeper, Supplier::setKeeper, AccessCheckingField.NONE);

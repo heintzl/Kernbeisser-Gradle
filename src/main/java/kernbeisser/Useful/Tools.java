@@ -265,6 +265,10 @@ public class Tools {
     }
   }
 
+  public static <T> void delete(Object o) {
+    delete(o.getClass(), getId(o));
+  }
+
   public static <T> void delete(Class<T> t, Object key) {
     runInSession(em -> em.remove(em.find(t, key)));
   }
@@ -697,5 +701,20 @@ public class Tools {
       clazz = clazz.getSuperclass();
     }
     return out;
+  }
+
+  public static <T> Collection<T> collect(Object target, Class<T> clazz) {
+    ArrayList<T> values = new ArrayList<>();
+    for (Field declaredField : target.getClass().getDeclaredFields()) {
+      if (clazz.isAssignableFrom(declaredField.getType())) {
+        declaredField.setAccessible(true);
+        try {
+          values.add((T) declaredField.get(target));
+        } catch (IllegalAccessException e) {
+          Tools.showUnexpectedErrorWarning(e);
+        }
+      }
+    }
+    return values;
   }
 }

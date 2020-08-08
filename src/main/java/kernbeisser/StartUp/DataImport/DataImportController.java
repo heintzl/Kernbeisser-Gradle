@@ -27,11 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class DataImportController implements Controller<DataImportView, DataImportModel> {
-  private final DataImportView view;
+  private DataImportView view;
   private final DataImportModel model;
 
   public DataImportController() {
-    this.view = new DataImportView(this);
     model = new DataImportModel();
   }
 
@@ -283,14 +282,15 @@ public class DataImportController implements Controller<DataImportView, DataImpo
       List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
       Collection<Supplier> suppliers = new ArrayList<>(lines.size());
       for (String l : lines) {
-        String[] columns = l.split(";");
+        String[] columns = l.replace("NULL", "").split(";");
         Supplier supplier = new Supplier();
         supplier.setShortName(columns[0]);
         supplier.setName(columns[1]);
         supplier.setPhoneNumber(columns[2]);
         supplier.setEmail(columns[3]);
-        supplier.setAddress(columns[4] + ";" + columns[5]);
-        supplier.setFax(columns[6]);
+        supplier.setFax(columns[4]);
+        supplier.setStreet(columns[5]);
+        supplier.setLocation(columns[6]);
         supplier.setKeeper(columns[7]);
         supplier.setSurcharge(Integer.parseInt(columns[8]));
         suppliers.add(supplier);

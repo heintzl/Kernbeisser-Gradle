@@ -3,6 +3,7 @@ package kernbeisser.StartUp.LogIn;
 import javax.swing.*;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -15,11 +16,7 @@ public class DBLogInView implements View<DBLogInController> {
   private JButton cancel;
   private JPanel main;
 
-  private final DBLogInController controller;
-
-  public DBLogInView(DBLogInController controller) {
-    this.controller = controller;
-  }
+  @Linked private DBLogInController controller;
 
   @Override
   public void initialize(DBLogInController controller) {

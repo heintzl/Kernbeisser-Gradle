@@ -1,10 +1,12 @@
 package kernbeisser.Windows.Menu;
 
+import java.util.Collection;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ControllerButton;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.StartUp.LogIn.DBLogInController;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
@@ -54,7 +56,40 @@ public class MenuView implements View<MenuController> {
   private ControllerButton editSuppliers;
 
   @Override
-  public void initialize(MenuController controller) {}
+  public void initialize(MenuController controller) {
+    new Thread(
+            () -> {
+              Collection<ControllerButton> buttons = Tools.collect(this, ControllerButton.class);
+              ProgressMonitor pm =
+                  new ProgressMonitor(
+                      getTopComponent(), "Initzailiesiere GUI", "startet", 0, buttons.size());
+              // decide after 100 millis whether to show popup or not
+              pm.setMillisToDecideToPopup(100);
+              // after deciding if predicted time is longer than 100 show popup
+              pm.setMillisToPopup(100);
+              int p = 0;
+              for (ControllerButton button : buttons) {
+                button.loadUI();
+                pm.setProgress(++p);
+                pm.setNote(
+                    "Initzialiesiere "
+                        + button.getController().getClass().getSimpleName()
+                        + " view");
+              }
+              pm.setNote("Fertig");
+              // Releasesettings
+              printBonFromPast.setEnabled(false);
+              order.setEnabled(false);
+              editPriceList.setEnabled(false);
+              editSurchargeTables.setEnabled(false);
+              editUserSettings.setEnabled(false);
+              placeHolderControllerButton.setEnabled(false);
+              placeHolderControllerButton1.setEnabled(false);
+              placeHolderControllerButton2.setEnabled(false);
+              // Releasesettings
+            })
+        .start();
+  }
 
   @Override
   public @NotNull JComponent getContent() {
@@ -146,15 +181,5 @@ public class MenuView implements View<MenuController> {
             new EditSuppliers(), controller -> controller.openTab("Lieferanten bearbeiten"));
     // TODO make focus on button work
     openCashierShoppingMask.requestFocusInWindow();
-    // Releasesettings
-    printBonFromPast.setEnabled(false);
-    order.setEnabled(false);
-    editPriceList.setEnabled(false);
-    editSurchargeTables.setEnabled(false);
-    editUserSettings.setEnabled(false);
-    placeHolderControllerButton.setEnabled(false);
-    placeHolderControllerButton1.setEnabled(false);
-    placeHolderControllerButton2.setEnabled(false);
-    // Releasesettings
   }
 }
