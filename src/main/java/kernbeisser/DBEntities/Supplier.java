@@ -116,18 +116,18 @@ public class Supplier implements Serializable {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Supplier supplier = (Supplier) o;
-    return sid == supplier.sid &&
-            surcharge == supplier.surcharge &&
-            Objects.equals(name, supplier.name) &&
-            Objects.equals(phoneNumber, supplier.phoneNumber) &&
-            Objects.equals(fax, supplier.fax) &&
-            Objects.equals(street, supplier.street) &&
-            Objects.equals(location, supplier.location) &&
-            Objects.equals(email, supplier.email) &&
-            Objects.equals(shortName, supplier.shortName) &&
-            Objects.equals(keeper, supplier.keeper) &&
-            Objects.equals(createDate, supplier.createDate) &&
-            Objects.equals(updateDate, supplier.updateDate);
+    return sid == supplier.sid
+        && surcharge == supplier.surcharge
+        && Objects.equals(name, supplier.name)
+        && Objects.equals(phoneNumber, supplier.phoneNumber)
+        && Objects.equals(fax, supplier.fax)
+        && Objects.equals(street, supplier.street)
+        && Objects.equals(location, supplier.location)
+        && Objects.equals(email, supplier.email)
+        && Objects.equals(shortName, supplier.shortName)
+        && Objects.equals(keeper, supplier.keeper)
+        && Objects.equals(createDate, supplier.createDate)
+        && Objects.equals(updateDate, supplier.updateDate);
   }
 
   @Override
