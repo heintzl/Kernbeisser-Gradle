@@ -106,7 +106,6 @@ public class ContainerController implements Controller<ContainerView, ContainerM
     view.setNetPrice(c.getNetPrice() + "€");
   }
 
-
   @Override
   public @NotNull ContainerModel getModel() {
     return model;

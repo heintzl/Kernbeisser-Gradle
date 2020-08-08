@@ -19,8 +19,7 @@ public class PurchaseView implements View<PurchaseController> {
   private JLabel customer;
   private JPanel main;
 
-  @Linked
-  private PurchaseController controller;
+  @Linked private PurchaseController controller;
 
   void setDate(String date) {
     this.date.setText(date);

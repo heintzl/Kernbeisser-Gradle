@@ -677,20 +677,22 @@ public class Tools {
     return null;
   }
 
-  public static Field findInAllSuperClasses(Class<?> clazz,String name) throws NoSuchFieldException {
-    while (!clazz.equals(Object.class)){
+  public static Field findInAllSuperClasses(Class<?> clazz, String name)
+      throws NoSuchFieldException {
+    while (!clazz.equals(Object.class)) {
       try {
         return clazz.getDeclaredField(name);
-      } catch (NoSuchFieldException ignored) {}
+      } catch (NoSuchFieldException ignored) {
+      }
       clazz = clazz.getSuperclass();
     }
-    throw new NoSuchFieldException("cannot find Field "+name);
+    throw new NoSuchFieldException("cannot find Field " + name);
   }
 
-  public static Collection<Field> getAllFields(Class<?> clazz){
+  public static Collection<Field> getAllFields(Class<?> clazz) {
     ArrayList<Field> out = new ArrayList<Field>(Arrays.asList(clazz.getDeclaredFields()));
     clazz = clazz.getSuperclass();
-    while (!clazz.equals(Object.class)){
+    while (!clazz.equals(Object.class)) {
       out.addAll(Arrays.asList(clazz.getDeclaredFields()));
       clazz = clazz.getSuperclass();
     }

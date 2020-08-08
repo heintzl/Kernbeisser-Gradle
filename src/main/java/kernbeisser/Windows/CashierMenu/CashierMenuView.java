@@ -18,8 +18,7 @@ public class CashierMenuView implements View<CashierMenuController> {
   private JPanel main;
   private JButton transfer;
 
-  @Linked
-  private CashierMenuController cashierMenuController;
+  @Linked private CashierMenuController cashierMenuController;
 
   @Override
   public void initialize(CashierMenuController controller) {

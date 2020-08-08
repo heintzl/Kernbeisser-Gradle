@@ -29,8 +29,7 @@ public class ContainerView implements View<ContainerController> {
   private JLabel insertSectionLabel;
   private IntegerParseField suppliersItemNumber;
 
-  @Linked
-  private ContainerController controller;
+  @Linked private ContainerController controller;
 
   void setInsertSectionEnabled(boolean b) {
     insertSection.setVisible(b);

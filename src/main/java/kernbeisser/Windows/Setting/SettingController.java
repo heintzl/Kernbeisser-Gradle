@@ -4,8 +4,8 @@ import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
-import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class SettingController implements Controller<SettingView, SettingModel> {

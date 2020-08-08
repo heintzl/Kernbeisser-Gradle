@@ -18,8 +18,7 @@ public class SimpleLogInView implements View<SimpleLogInController> {
   private JTextField username;
   private JPanel main;
 
-  @Linked
-  private SimpleLogInController controller;
+  @Linked private SimpleLogInController controller;
 
   char[] getPassword() {
     return password.getPassword();

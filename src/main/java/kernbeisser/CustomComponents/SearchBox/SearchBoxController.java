@@ -15,7 +15,7 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>, Sear
 
   @SafeVarargs
   public SearchBoxController(Searchable<T> searchFunction, Column<T>... columns) {
-    this.model = new SearchBoxModel<>(searchFunction,columns);
+    this.model = new SearchBoxModel<>(searchFunction, columns);
   }
 
   public T getSelectedObject() {
@@ -59,8 +59,6 @@ public class SearchBoxController<T> implements Controller<SearchBoxView<T>, Sear
       runnable.run();
     }
   }
-
-
 
   @Override
   public @NotNull SearchBoxModel<T> getModel() {

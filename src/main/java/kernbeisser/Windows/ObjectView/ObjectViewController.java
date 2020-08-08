@@ -14,8 +14,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>, Ob
   private final ObjectViewModel<T> model;
   private ObjectViewView<T> view;
 
-  @Linked
-  private final SearchBoxController<T> searchBoxController;
+  @Linked private final SearchBoxController<T> searchBoxController;
 
   private boolean openWindow = false;
 
@@ -29,7 +28,7 @@ public class ObjectViewController<T> implements Controller<ObjectViewView<T>, Ob
     checkSelectedObject();
   }
 
-  void checkSelectedObject(){
+  void checkSelectedObject() {
     view.setAddAvailable(!openWindow);
     if (openWindow || searchBoxController.getSelectedObject() == null) {
       view.setEditAvailable(false);

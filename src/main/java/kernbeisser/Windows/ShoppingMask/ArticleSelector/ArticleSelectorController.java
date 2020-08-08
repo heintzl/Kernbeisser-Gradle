@@ -16,8 +16,7 @@ public class ArticleSelectorController
   private final ArticleSelectorModel model;
   private ArticleSelectorView view;
 
-  @Linked
-  private final SearchBoxController<Article> searchBoxController;
+  @Linked private final SearchBoxController<Article> searchBoxController;
 
   public ArticleSelectorController(Consumer<Article> consumer) {
     searchBoxController =
@@ -36,7 +35,7 @@ public class ArticleSelectorController
     this.model = new ArticleSelectorModel(consumer);
   }
 
-  private Collection<Article> search(String query, int max){
+  private Collection<Article> search(String query, int max) {
     Collection<Article> articles = Article.defaultSearch(query, max);
     if (view != null) {
       if (view.searchOnlyWithoutBarcode()) {

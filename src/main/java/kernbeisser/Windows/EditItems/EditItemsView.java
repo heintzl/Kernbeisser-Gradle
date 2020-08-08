@@ -3,8 +3,8 @@ package kernbeisser.Windows.EditItems;
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.ObjectView.ObjectViewView;
 import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.ObjectView.ObjectViewView;
 import org.jetbrains.annotations.NotNull;
 
 public class EditItemsView implements View<EditItemsController> {
@@ -13,8 +13,7 @@ public class EditItemsView implements View<EditItemsController> {
   private JButton choosePriceList;
   private ObjectViewView<Article> objectView;
 
-  @Linked
-  private EditItemsController controller;
+  @Linked private EditItemsController controller;
 
   @Override
   public void initialize(EditItemsController controller) {

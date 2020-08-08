@@ -25,7 +25,8 @@ public class EditItemController implements Controller<EditItemView, EditItemMode
         break;
       case EDIT:
         getView().setActionTitle("Änderungen übernehmen");
-        getView().setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(0x0000BB)));
+        getView()
+            .setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(0x0000BB)));
         break;
     }
   }

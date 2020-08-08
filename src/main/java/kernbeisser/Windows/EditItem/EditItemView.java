@@ -55,8 +55,7 @@ public class EditItemView implements View<EditItemController> {
 
   private ObjectForm<Article> articleObjectForm;
 
-  @Linked
-  private EditItemController controller;
+  @Linked private EditItemController controller;
 
   private void createUIComponents() {
     itemName =

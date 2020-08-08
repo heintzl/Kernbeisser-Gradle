@@ -8,13 +8,14 @@ import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
-import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.EditItems.EditItemsController;
 import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.View;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.Setting.SettingController;
@@ -22,7 +23,6 @@ import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class MenuView implements View<MenuController> {

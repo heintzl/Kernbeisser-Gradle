@@ -14,8 +14,6 @@ public class DBLogInController implements Controller<DBLogInView, DBLogInModel> 
     this.view = new DBLogInView(this);
   }
 
-
-
   @Override
   public @NotNull DBLogInModel getModel() {
     return model;

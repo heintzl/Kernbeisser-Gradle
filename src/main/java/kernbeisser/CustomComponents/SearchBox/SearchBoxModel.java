@@ -3,7 +3,6 @@ package kernbeisser.CustomComponents.SearchBox;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
-
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.Model;

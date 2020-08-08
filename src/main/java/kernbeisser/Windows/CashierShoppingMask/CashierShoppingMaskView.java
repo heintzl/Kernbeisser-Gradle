@@ -19,11 +19,9 @@ public class CashierShoppingMaskView implements View<CashierShoppingMaskControll
   private PermissionButton openShoppingMask;
   private kernbeisser.CustomComponents.PermissionComboBox<User> secondSellerUsername;
 
-  @Linked
-  private CashierShoppingMaskController controller;
+  @Linked private CashierShoppingMaskController controller;
 
-  @Linked
-  private SearchBoxController<User> searchBoxController;
+  @Linked private SearchBoxController<User> searchBoxController;
 
   private void createUIComponents() {
     searchBoxView = searchBoxController.getView();

@@ -19,8 +19,7 @@ public class SelectorView<T> implements View<SelectorController<T>> {
   private JButton remove;
   private JLabel title;
 
-  @Linked
-  private SelectorController<T> controller;
+  @Linked private SelectorController<T> controller;
 
   private void createUIComponents() {
     selected = new ObjectTable<T>();

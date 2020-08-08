@@ -21,8 +21,7 @@ public class PayView implements View<PayController> {
   private JButton cancel;
   private PayController controller;
 
-  @Linked
-  private ShoppingCartController shoppingCartController;
+  @Linked private ShoppingCartController shoppingCartController;
 
   private void createUIComponents() {
     shoppingCartView = shoppingCartController.getView();

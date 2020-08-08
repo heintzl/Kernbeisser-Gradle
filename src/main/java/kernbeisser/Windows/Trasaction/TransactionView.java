@@ -19,7 +19,6 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MVC.View;
-import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 
 public class TransactionView implements View<TransactionController> {
@@ -77,10 +76,9 @@ public class TransactionView implements View<TransactionController> {
   private PermissionField info;
   private JCheckBox toKBValue;
 
-    @Linked
-    private SearchBoxController<User> userSearchBoxController;
+  @Linked private SearchBoxController<User> userSearchBoxController;
 
-    void setTransactions(Collection<Transaction> transactions) {
+  void setTransactions(Collection<Transaction> transactions) {
     this.transactions.setObjects(transactions);
   }
 

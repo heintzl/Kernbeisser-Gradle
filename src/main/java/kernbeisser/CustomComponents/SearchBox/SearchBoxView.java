@@ -20,8 +20,7 @@ public class SearchBoxView<T> implements View<SearchBoxController<T>> {
   private ObjectTable<T> objects;
   private JPanel main;
 
-  @Linked
-  private SearchBoxController<T> controller;
+  @Linked private SearchBoxController<T> controller;
 
   void setObjects(Collection<T> objects) {
     this.objects.setObjects(objects);

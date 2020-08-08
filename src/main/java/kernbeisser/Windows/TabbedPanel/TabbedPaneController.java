@@ -4,7 +4,6 @@ import java.awt.*;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
-import kernbeisser.Windows.MVC.ViewFactory;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.jetbrains.annotations.NotNull;
@@ -30,15 +29,16 @@ public class TabbedPaneController implements Controller<TabbedPaneView, TabbedPa
     int posIn = model.getIndexOfControllerClass(tab);
     if (tab.getController().getView().isStackable() || posIn == -1) {
       model.addTab(tab);
-      getView().addTab(
-          new DefaultTab(
-                  IconFontSwing.buildIcon(tab.getIcon(), 20, new Color(0x32C4A2)),
-                  tab.getTitle(),
-                  () -> closeTab(tab),
-                  () -> getView().setSelected(model.indexOf(tab)))
-              .getMain(),
-          tab.getController().getView().getWrappedContent(),
-          model.indexOf(tab));
+      getView()
+          .addTab(
+              new DefaultTab(
+                      IconFontSwing.buildIcon(tab.getIcon(), 20, new Color(0x32C4A2)),
+                      tab.getTitle(),
+                      () -> closeTab(tab),
+                      () -> getView().setSelected(model.indexOf(tab)))
+                  .getMain(),
+              tab.getController().getView().getWrappedContent(),
+              model.indexOf(tab));
       getView().setSelected(model.indexOf(tab));
     } else {
       getView().setSelected(posIn);

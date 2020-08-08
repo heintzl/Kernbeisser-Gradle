@@ -29,8 +29,7 @@ public class SpecialPriceEditorController
   private SpecialPriceEditorView view;
   private final SpecialPriceEditorModel model;
 
-  @Linked
-  private final SearchBoxController<Article> searchBoxController;
+  @Linked private final SearchBoxController<Article> searchBoxController;
 
   SpecialPriceEditorController() {
     this.model = new SpecialPriceEditorModel();

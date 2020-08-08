@@ -3,10 +3,10 @@ package kernbeisser.Windows.CashierMenu;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
-import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.EditItems.EditItemsController;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUsers.EditUsers;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +18,6 @@ public class CashierMenuController implements Controller<CashierMenuView, Cashie
   public CashierMenuController(User user) {
     model = new CashierMenuModel(user);
   }
-
-
 
   @Override
   public @NotNull CashierMenuModel getModel() {

@@ -14,7 +14,6 @@ public class InventoryMenuController implements Controller<InventoryMenuView, In
     model = new InventoryMenuModel();
   }
 
-
   @Override
   public @NotNull InventoryMenuModel getModel() {
     return model;

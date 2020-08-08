@@ -40,8 +40,7 @@ public class UserInfoView implements View<UserInfoController> {
   private JLabel key;
   private JLabel city;
 
-  @Linked
-  private UserInfoController controller;
+  @Linked private UserInfoController controller;
 
   void setUserGroupMembers(Collection<User> users) {
     userGroup.setObjects(users);

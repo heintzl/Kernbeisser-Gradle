@@ -16,7 +16,6 @@ public class CollectionController<T> implements Controller<CollectionView<T>, Co
     model = new CollectionModel<>(edit, available, editable, columns);
   }
 
-
   @NotNull
   @Override
   public CollectionModel<T> getModel() {

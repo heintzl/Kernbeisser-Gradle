@@ -7,8 +7,8 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +18,7 @@ public class CashierShoppingMaskController
   private final CashierShoppingMaskModel model;
   private CashierShoppingMaskView view;
 
-  @Linked
-  private final SearchBoxController<User> searchBoxController;
+  @Linked private final SearchBoxController<User> searchBoxController;
 
   public CashierShoppingMaskController() {
     this.searchBoxController =
@@ -65,8 +64,6 @@ public class CashierShoppingMaskController
   public SearchBoxView<User> getSearchBoxView() {
     return searchBoxController.getView();
   }
-
-
 
   @Override
   public @NotNull CashierShoppingMaskModel getModel() {

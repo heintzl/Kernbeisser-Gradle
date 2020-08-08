@@ -22,8 +22,7 @@ public class PayController implements Controller<PayView, PayModel> {
   private final Dimension viewSize;
   @Getter private final double userValue;
 
-  @Linked
-  private final ShoppingCartController cartController;
+  @Linked private final ShoppingCartController cartController;
 
   public PayController(
       SaleSession saleSession,
@@ -31,7 +30,8 @@ public class PayController implements Controller<PayView, PayModel> {
       Runnable transferCompleted,
       Dimension windowSize) {
     userValue = saleSession.getCustomer().getUserGroup().getValue();
-    cartController = new ShoppingCartController(
+    cartController =
+        new ShoppingCartController(
             userValue, saleSession.getCustomer().getSolidaritySurcharge(), false);
     model = new PayModel(saleSession, shoppingCart, transferCompleted);
     this.viewSize = windowSize;
@@ -61,7 +61,6 @@ public class PayController implements Controller<PayView, PayModel> {
   double getPrice(ShoppingItem item) {
     return item.getItemRetailPrice();
   }
-
 
   @Override
   public @NotNull PayModel getModel() {

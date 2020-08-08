@@ -9,8 +9,8 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.AccessDeniedException;
-import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,8 +18,7 @@ public class TransactionController implements Controller<TransactionView, Transa
   private final TransactionModel model;
   private TransactionView view;
 
-  @Linked
-  private final SearchBoxController<User> userSearchBoxController;
+  @Linked private final SearchBoxController<User> userSearchBoxController;
 
   public TransactionController(User user) {
     model = new TransactionModel(user);
@@ -32,7 +31,6 @@ public class TransactionController implements Controller<TransactionView, Transa
             Column.create("Guthaben", User::getRoundedValue, PermissionKey.USER_GROUP_VALUE_READ));
     userSearchBoxController.addSelectionListener(e -> view.setTo(e.toString()));
   }
-
 
   @Override
   public @NotNull TransactionModel getModel() {

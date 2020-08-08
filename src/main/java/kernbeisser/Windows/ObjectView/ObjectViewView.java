@@ -19,12 +19,9 @@ public class ObjectViewView<T> implements View<ObjectViewController<T>> {
   private SearchBoxView<T> searchBoxView;
   private JPanel main;
 
-  @Linked
-  private ObjectViewController<T> controller;
+  @Linked private ObjectViewController<T> controller;
 
-  @Linked
-  private SearchBoxController<T> searchBoxController;
-
+  @Linked private SearchBoxController<T> searchBoxController;
 
   void setEditAvailable(boolean s) {
     edit.setEnabled(s);

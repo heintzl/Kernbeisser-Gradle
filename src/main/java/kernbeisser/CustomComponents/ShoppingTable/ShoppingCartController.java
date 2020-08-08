@@ -94,8 +94,6 @@ public class ShoppingCartController implements Controller<ShoppingCartView, Shop
     return model.getItems();
   }
 
-
-
   @Override
   public @NotNull ShoppingCartModel getModel() {
     return model;

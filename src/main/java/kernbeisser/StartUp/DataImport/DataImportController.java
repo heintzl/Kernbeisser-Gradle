@@ -21,8 +21,8 @@ import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -342,8 +342,6 @@ public class DataImportController implements Controller<DataImportView, DataImpo
     new SimpleLogInController().openTab("Log In");
     return true;
   }
-
-
 
   @Override
   public @NotNull DataImportModel getModel() {

@@ -18,8 +18,7 @@ public class PermissionView implements View<PermissionController> {
   private JButton add;
   private JButton delete;
 
-  @Linked
-  private PermissionController controller;
+  @Linked private PermissionController controller;
 
   Permission getSelectedObject() {
     return permission.getSelectedObject();

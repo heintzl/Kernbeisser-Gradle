@@ -2,8 +2,8 @@ package kernbeisser.Windows.SoloShoppingMask;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
@@ -16,8 +16,7 @@ public class SoloShoppingMaskController
 
   private final SoloShoppingMaskModel model;
 
-  @Linked
-  private final ShoppingMaskUIController shoppingMaskUIController;
+  @Linked private final ShoppingMaskUIController shoppingMaskUIController;
 
   public SoloShoppingMaskController() {
     SaleSession saleSession = new SaleSession();

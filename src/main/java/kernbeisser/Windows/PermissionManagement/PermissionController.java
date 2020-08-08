@@ -137,7 +137,6 @@ public class PermissionController implements Controller<PermissionView, Permissi
     view.setValues(model.getAllPermissions());
   }
 
-
   @Override
   public @NotNull PermissionModel getModel() {
     return model;

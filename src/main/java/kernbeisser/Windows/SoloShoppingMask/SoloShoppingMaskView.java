@@ -6,9 +6,9 @@ import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.MVC.View;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
 public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
@@ -19,9 +19,7 @@ public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
 
   private ShoppingMaskUIView shoppingMaskUIView;
 
-  @Linked
-  private ShoppingMaskUIController shoppingMaskUIController;
-
+  @Linked private ShoppingMaskUIController shoppingMaskUIController;
 
   private void createUIComponents() {
     shoppingMaskUIView = shoppingMaskUIController.getView();

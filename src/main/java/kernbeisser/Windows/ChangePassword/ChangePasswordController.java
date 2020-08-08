@@ -5,7 +5,6 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.Controller;
-import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangePasswordController
@@ -16,7 +15,6 @@ public class ChangePasswordController
   public ChangePasswordController(User user, boolean verifyWithOldPassword) {
     model = new ChangePasswordModel(user, verifyWithOldPassword);
   }
-
 
   @NotNull
   @Override
