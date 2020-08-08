@@ -15,7 +15,8 @@ public class EditSuppliers extends ObjectViewController<Supplier> {
         Column.create("Kurzname", Supplier::getShortName),
         Column.create("Zuschlag", Supplier::getSurcharge),
         Column.create("Betreuer", Supplier::getKeeper),
-        Column.create("Adresse", Supplier::getAddress),
+        Column.create("Straße", Supplier::getStreet),
+        Column.create("Ort", Supplier::getLocation),
         Column.create("Email", Supplier::getEmail),
         Column.create("Telefonnummer", Supplier::getPhoneNumber),
         Column.create("Fax", Supplier::getFax));

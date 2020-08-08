@@ -27,11 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class DataImportController implements Controller<DataImportView, DataImportModel> {
-  private final DataImportView view;
+  private DataImportView view;
   private final DataImportModel model;
 
   public DataImportController() {
-    this.view = new DataImportView(this);
     model = new DataImportModel();
   }
 
