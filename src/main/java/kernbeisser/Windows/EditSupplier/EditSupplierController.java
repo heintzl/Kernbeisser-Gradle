@@ -4,6 +4,7 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,10 @@ public class EditSupplierController implements Controller<EditSupplierView, Edit
 
   public EditSupplierController(Supplier supplier, Mode mode) {
     model = new EditSupplierModel(supplier, mode);
+    if(mode.equals(Mode.REMOVE)){
+      Tools.delete(supplier);
+      view.back();
+    }
   }
 
   @NotNull

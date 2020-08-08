@@ -282,7 +282,7 @@ public class DataImportController implements Controller<DataImportView, DataImpo
       List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
       Collection<Supplier> suppliers = new ArrayList<>(lines.size());
       for (String l : lines) {
-        String[] columns = l.split(";");
+        String[] columns = l.replace("NULL","").split(";");
         Supplier supplier = new Supplier();
         supplier.setShortName(columns[0]);
         supplier.setName(columns[1]);
