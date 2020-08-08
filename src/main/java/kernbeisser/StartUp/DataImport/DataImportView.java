@@ -2,7 +2,6 @@ package kernbeisser.StartUp.DataImport;
 
 import java.awt.*;
 import javax.swing.*;
-
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +20,7 @@ public class DataImportView implements View<DataImportController> {
   private JLabel currentActionUser;
   private JCheckBox importStandardAdmin;
 
-  @Linked
-  private DataImportController controller;
+  @Linked private DataImportController controller;
 
   boolean createStandardAdmin() {
     return importStandardAdmin.isSelected();

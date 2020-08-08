@@ -16,8 +16,7 @@ public class DBLogInView implements View<DBLogInController> {
   private JButton cancel;
   private JPanel main;
 
-  @Linked
-  private DBLogInController controller;
+  @Linked private DBLogInController controller;
 
   @Override
   public void initialize(DBLogInController controller) {

@@ -22,7 +22,7 @@ public class EditSupplierView implements View<EditSupplierController> {
   private AccessCheckingField<Supplier, String> name;
   private AccessCheckingField<Supplier, String> shortName;
   private AccessCheckingField<Supplier, Integer> surcharge;
-  private AccessCheckingField<Supplier,String> street;
+  private AccessCheckingField<Supplier, String> street;
 
   private ObjectForm<Supplier> objectForm;
 
@@ -31,8 +31,8 @@ public class EditSupplierView implements View<EditSupplierController> {
     objectForm =
         new ObjectForm<>(
             controller.getModel().getSupplier(),
-                street,
-                location,
+            street,
+            location,
             keeper,
             phoneNumber,
             fax,
@@ -49,7 +49,9 @@ public class EditSupplierView implements View<EditSupplierController> {
   }
 
   private void createUIComponents() {
-    street = new AccessCheckingField<>(Supplier::getStreet,Supplier::setStreet,AccessCheckingField.NONE);
+    street =
+        new AccessCheckingField<>(
+            Supplier::getStreet, Supplier::setStreet, AccessCheckingField.NONE);
     location =
         new AccessCheckingField<>(
             Supplier::getLocation, Supplier::setLocation, AccessCheckingField.NONE);
