@@ -9,7 +9,7 @@ import kernbeisser.Windows.MVC.Controller;
 
 public class ControllerButton extends JButton {
 
-  private final Controller<?,?> controller;
+  private final Controller<?, ?> controller;
 
   public <V extends Controller<?, ?>> ControllerButton(V controller, Consumer<V> action) {
     this.controller = controller;
@@ -18,12 +18,12 @@ public class ControllerButton extends JButton {
     setHorizontalAlignment(SwingConstants.LEFT);
   }
 
-  public void loadUI(){
+  public void loadUI() {
     setIcon(IconFontSwing.buildIcon(controller.getView().getTabIcon(), 20, new Color(0xFF00CCFF)));
     setEnabled(MasterPermissionSet.hasPermissions(controller.getRequiredKeys()));
   }
 
-  public Controller<?,?> getController() {
+  public Controller<?, ?> getController() {
     return controller;
   }
 }

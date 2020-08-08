@@ -15,7 +15,7 @@ public class EditSupplierController implements Controller<EditSupplierView, Edit
 
   public EditSupplierController(Supplier supplier, Mode mode) {
     model = new EditSupplierModel(supplier, mode);
-    if(mode.equals(Mode.REMOVE)){
+    if (mode.equals(Mode.REMOVE)) {
       Tools.delete(supplier);
       view.back();
     }
