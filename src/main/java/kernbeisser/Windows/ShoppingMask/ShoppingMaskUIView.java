@@ -98,10 +98,8 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
-  @Linked
-  private ShoppingMaskUIController controller;
-  @Linked
-  private ShoppingCartController cartController;
+  @Linked private ShoppingMaskUIController controller;
+  @Linked private ShoppingCartController cartController;
 
   private char currentArticleType;
   private boolean isWeighable;

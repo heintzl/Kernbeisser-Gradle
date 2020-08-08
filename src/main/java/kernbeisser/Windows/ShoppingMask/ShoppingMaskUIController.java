@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, ShoppingMaskModel> {
   private ShoppingMaskUIView view;
   private final ShoppingMaskModel model;
-  @Linked
-  private final ShoppingCartController shoppingCartController;
+  @Linked private final ShoppingCartController shoppingCartController;
 
   public ShoppingMaskUIController(SaleSession saleSession) {
     model = new ShoppingMaskModel(saleSession);
