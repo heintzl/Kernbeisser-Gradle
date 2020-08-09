@@ -118,9 +118,9 @@ public class Catalog {
     for (ArticleKornkraft article : articles) {
       em.persist(article);
       c++;
-      if (c % 20 == 0) {
-        System.out.println(c);
+      if (c % 200 == 0) {
         em.flush();
+        em.clear();
       }
     }
     em.flush();
@@ -139,6 +139,10 @@ public class Catalog {
       pm.setNote("Artikel " + c + " wird auf der Datenbank gespeichert");
       em.persist(article);
       c++;
+      if (c % 200 == 0) {
+        em.flush();
+        em.clear();
+      }
     }
     em.flush();
     et.commit();
