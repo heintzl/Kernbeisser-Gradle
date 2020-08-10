@@ -13,6 +13,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
@@ -59,6 +60,7 @@ public class Catalog {
               persistCatalog(newCatalog, pm, p);
               pm.close();
               // setDepositByReference();
+              Setting.INFO_LINE_LAST_CATALOG.setValue(ConfigManager.getCatalogInfoLine());
             })
         .start();
   }

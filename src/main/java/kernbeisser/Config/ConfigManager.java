@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.*;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
@@ -98,12 +99,17 @@ public class ConfigManager {
   }
 
   public static boolean isCatalogUpToDate() {
+    return Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(getCatalogInfoLine());
+  }
+
+  public static String getCatalogInfoLine(){
     try {
-      return Setting.INFO_LINE_LAST_CATALOG
-          .getStringValue()
-          .equals(getCatalogInternetStream().readLine());
+      BufferedReader stream = getCatalogInternetStream();
+      String line = stream.readLine();
+      stream.close();
+      return line;
     } catch (IOException e) {
-      return Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(getCatalogFileInfoLine());
+      return getCatalogFileInfoLine();
     }
   }
 
