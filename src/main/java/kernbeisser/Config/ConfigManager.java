@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -93,7 +94,7 @@ public class ConfigManager {
   }
 
   public static File getCatalogFile() {
-    return getFile(getHeader(), "CatalogSource");
+    return getFile(getHeader(), "CatalogSource",false);
   }
 
   public static boolean isCatalogUpToDate() {
@@ -120,11 +121,14 @@ public class ConfigManager {
     }
     try {
       return Files.readAllLines(
-          getFile(getHeader(), "CatalogSource").toPath(), Charset.forName("IBM850"));
+          getFile(getHeader(), "CatalogSource",false).toPath(), Charset.forName("IBM850"));
     } catch (IOException e) {
       if (e instanceof FileNotFoundException) {
         return Collections.EMPTY_LIST;
-      } else {
+      }else if(e instanceof AccessDeniedException){
+        return Collections.EMPTY_LIST;
+      }
+      else {
         throw e;
       }
     }
@@ -196,14 +200,14 @@ public class ConfigManager {
     return Paths.get(getConfigSub(subCategory).getString(key));
   }
 
-  public static File getFile(JSONObject parent, String key) {
+  public static File getFile(JSONObject parent, String key, boolean allowDir) {
     String fileData = parent.getString(key);
     File relative = new File(file.getAbsoluteFile().getParentFile(), fileData);
-    if (relative.exists()) {
+    if (relative.exists() && (!relative.isDirectory()||allowDir)) {
       return relative;
     }
     File absolute = new File(fileData);
-    if (absolute.exists()) {
+    if (absolute.exists() && (!relative.isDirectory()||allowDir)) {
       return absolute;
     }
     JFileChooser jFileChooser = new JFileChooser();
