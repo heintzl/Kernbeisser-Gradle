@@ -1,14 +1,23 @@
 package kernbeisser.Config;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import javax.swing.*;
+
+import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -22,6 +31,10 @@ public class ConfigManager {
 
   private static final File file = new File("config.json");
   private static final JSONObject config = new JSONObject(fileToString(StandardCharsets.UTF_8));
+
+  static {
+    Runtime.getRuntime().addShutdownHook(new Thread(ConfigManager::updateFile));
+  }
   // private static final byte[] dbPassword = {/*example: 0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65,
   // 0x66*/};
 
@@ -85,7 +98,37 @@ public class ConfigManager {
     return getFile(getHeader(), "CatalogSource");
   }
 
-  public static String getCatalogInfoLine() {
+  public static boolean isCatalogUpToDate(){
+    try {
+      return Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(getCatalogInternetStream().readLine());
+    } catch (IOException e) {
+      return Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(getCatalogFileInfoLine());
+    }
+  }
+
+
+
+  public static BufferedReader getCatalogInternetStream() throws IOException {
+    return new BufferedReader(new InputStreamReader(new URL(getHeader().getString("CatalogSource")).openConnection().getInputStream()));
+  }
+
+  @SneakyThrows
+  public static Collection<String> getCatalogSource(){
+    try {
+      return getCatalogInternetStream().lines().collect(Collectors.toCollection(ArrayList::new));
+    } catch (IOException ignored) {}
+    try {
+      return Files.readAllLines(getFile(getHeader(),"CatalogSource").toPath(),Charset.forName("IBM850"));
+    } catch (IOException e) {
+      if(e instanceof FileNotFoundException) {
+        return Collections.EMPTY_LIST;
+      }else {
+        throw e;
+      }
+    }
+  }
+
+  public static String getCatalogFileInfoLine() {
     try {
       File catFile = getCatalogFile();
       if (catFile.exists() && !catFile.isDirectory()) {

@@ -44,31 +44,10 @@ public class Main {
 
   public static void checkCatalog() {
     logger.info("Checking Catalog ...");
-    if (Setting.UPDATE_CATALOG_FROM_INTERNET.getBooleanValue()) {
-      try {
-        String info = Catalog.getInfoLineFromWeb();
-        if (!Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(info)) {
-          logger.info("Refreshing Catalog ...");
-          Catalog.updateCatalogFromWeb();
-          Setting.INFO_LINE_LAST_CATALOG.setValue(info);
-        }
-      } catch (IOException e) {
-        logger.error("Cannot build connection to web skipping Catalog refreshing");
-        Tools.showUnexpectedErrorWarning(e);
-      }
-    } else {
-      String infoLine = ConfigManager.getCatalogInfoLine();
-      if (infoLine == null) {
-        logger.error("Cannot find Catalog File skipping Catalog refreshing");
-        return;
-      }
-      if (!infoLine.equals(Setting.INFO_LINE_LAST_CATALOG.getStringValue())) {
-        logger.info("Refreshing Catalog ...");
-        Catalog.updateCatalogFromKornKraftDefault(ConfigManager.getCatalogFile());
-        Setting.INFO_LINE_LAST_CATALOG.setValue(infoLine);
-      }
-    }
-    logger.info("Catalog up to Date!");
+    if (ConfigManager.isCatalogUpToDate()) {
+      logger.info("Catalog up to Date!");
+    }else Catalog.updateCatalog();
+
   }
 
   public static void checkVersion() {

@@ -12,6 +12,8 @@ import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
+
+import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Supplier;
@@ -23,109 +25,48 @@ import kernbeisser.Useful.Tools;
 
 public class Catalog {
 
-  public static String CATALOG_URL =
-      "https://shop.kornkraft.com/files/cms_download/PL_2005_20200424.BNN";
-
-  public static String updateCatalogFromWeb() throws IOException {
-    URL url;
-    url = new URL(CATALOG_URL);
-    InputStream in = url.openConnection().getInputStream();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-    ArrayList<String[]> articleRawData = new ArrayList<>();
-    String infoLine = reader.readLine();
-    reader.lines().forEach(e -> articleRawData.add(e.split(";")));
-    updateCatalog(articleRawData);
-    return infoLine;
-  }
-
-  public static String getInfoLineFromWeb() throws IOException {
-    BufferedReader bufferedReader =
-        new BufferedReader(
-            new InputStreamReader(new URL(CATALOG_URL).openConnection().getInputStream()));
-    String out = bufferedReader.readLine();
-    bufferedReader.close();
-    return out;
-  }
-
-  public static void updateCatalog(Iterable<String[]> s) {
-    Collection<ArticleKornkraft> newCatalog = new ArrayList<>(1000);
-    for (String[] value : s) {
-      try {
-        newCatalog.add(parseArticle(value));
-      } catch (CannotParseException e) {
-        Main.logger.warn("Ignored ArticleKornKraft because " + e.getMessage());
-      }
-    }
-    clearCatalog();
-    setDeposit(newCatalog);
-    persistCatalog(newCatalog);
-    // setDepositByReference();
-  }
-
-  public static void updateCatalogFromKornKraftDefault(File file) {
+  public static void updateCatalog() {
+    Main.logger.info("Updating catalog");
     new Thread(
             () -> {
               Collection<ArticleKornkraft> newCatalog = new ArrayList<>(10000);
               boolean infoLineSkipped = false;
-              try {
-                Collection<String> lines =
-                    Files.readAllLines(Paths.get(file.getPath()), Charset.forName("IBM850"));
-                ProgressMonitor pm =
-                    new ProgressMonitor(
-                        null,
-                        "Aktualiesiere Katalog",
-                        "interpretiere Aktikel ",
-                        0,
-                        2 * lines.size() + 3);
-                int p = 0;
-                for (String line : lines) {
-                  if (!infoLineSkipped) {
-                    infoLineSkipped = true;
-                    continue;
-                  }
-                  String[] parts = line.split(";");
-                  try {
-                    newCatalog.add(parseArticle(parts));
-                  } catch (CannotParseException e) {
-                    Main.logger.warn("Ignored ArticleKornKraft because " + e.getMessage());
-                  }
-                  pm.setProgress(++p);
-                  pm.setNote("Interpretiere Artikel " + p);
+              Collection<String> lines = ConfigManager.getCatalogSource();
+              ProgressMonitor pm =
+                  new ProgressMonitor(
+                      null,
+                      "Aktualiesiere Katalog",
+                      "interpretiere Aktikel ",
+                      0,
+                      2 * lines.size() + 3);
+              int p = 0;
+              for (String line : lines) {
+                if (!infoLineSkipped) {
+                  infoLineSkipped = true;
+                  continue;
                 }
-                pm.setNote("Alter Katalog wird gelöscht");
+                String[] parts = line.split(";");
+                try {
+                  newCatalog.add(parseArticle(parts));
+                } catch (CannotParseException e) {
+                  Main.logger.warn("Ignored ArticleKornKraft because " + e.getMessage());
+                }
                 pm.setProgress(++p);
-                clearCatalog();
-                pm.setNote("Pfand wird gesetzt");
-                pm.setProgress(++p);
-                setDeposit(newCatalog);
-                pm.setNote("Neuer Katalog wird gespeichert");
-                pm.setProgress(++p);
-                persistCatalog(newCatalog, pm, p);
-                pm.close();
-                // setDepositByReference();
-              } catch (IOException e) {
-                Tools.showUnexpectedErrorWarning(e);
+                pm.setNote("Interpretiere Artikel " + p);
               }
+              pm.setNote("Alter Katalog wird gelöscht");
+              pm.setProgress(++p);
+              clearCatalog();
+              pm.setNote("Pfand wird gesetzt");
+              pm.setProgress(++p);
+              setDeposit(newCatalog);
+              pm.setNote("Neuer Katalog wird gespeichert");
+              pm.setProgress(++p);
+              persistCatalog(newCatalog, pm, p);
+              pm.close();
+              // setDepositByReference();
             })
         .start();
-  }
-
-  public static void persistCatalog(Iterable<ArticleKornkraft> articles) {
-    EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    int c = 0;
-    for (ArticleKornkraft article : articles) {
-      em.persist(article);
-      c++;
-      if (c % 200 == 0) {
-        em.flush();
-        em.clear();
-      }
-    }
-    em.flush();
-    et.commit();
-    em.close();
   }
 
   public static void persistCatalog(
