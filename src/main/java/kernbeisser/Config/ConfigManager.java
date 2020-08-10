@@ -94,7 +94,7 @@ public class ConfigManager {
   }
 
   public static File getCatalogFile() {
-    return getFile(getHeader(), "CatalogSource",false);
+    return getFile(getHeader(), "CatalogSource", false);
   }
 
   public static boolean isCatalogUpToDate() {
@@ -121,14 +121,13 @@ public class ConfigManager {
     }
     try {
       return Files.readAllLines(
-          getFile(getHeader(), "CatalogSource",false).toPath(), Charset.forName("IBM850"));
+          getFile(getHeader(), "CatalogSource", false).toPath(), Charset.forName("IBM850"));
     } catch (IOException e) {
       if (e instanceof FileNotFoundException) {
         return Collections.EMPTY_LIST;
-      }else if(e instanceof AccessDeniedException){
+      } else if (e instanceof AccessDeniedException) {
         return Collections.EMPTY_LIST;
-      }
-      else {
+      } else {
         throw e;
       }
     }
@@ -203,11 +202,11 @@ public class ConfigManager {
   public static File getFile(JSONObject parent, String key, boolean allowDir) {
     String fileData = parent.getString(key);
     File relative = new File(file.getAbsoluteFile().getParentFile(), fileData);
-    if (relative.exists() && (!relative.isDirectory()||allowDir)) {
+    if (relative.exists() && (!relative.isDirectory() || allowDir)) {
       return relative;
     }
     File absolute = new File(fileData);
-    if (absolute.exists() && (!relative.isDirectory()||allowDir)) {
+    if (absolute.exists() && (!relative.isDirectory() || allowDir)) {
       return absolute;
     }
     JFileChooser jFileChooser = new JFileChooser();
