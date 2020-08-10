@@ -1,6 +1,5 @@
 package kernbeisser;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -46,8 +45,7 @@ public class Main {
     logger.info("Checking Catalog ...");
     if (ConfigManager.isCatalogUpToDate()) {
       logger.info("Catalog up to Date!");
-    }else Catalog.updateCatalog();
-
+    } else Catalog.updateCatalog();
   }
 
   public static void checkVersion() {

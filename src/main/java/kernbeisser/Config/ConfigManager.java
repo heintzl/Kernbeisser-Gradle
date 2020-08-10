@@ -1,7 +1,6 @@
 package kernbeisser.Config;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 import javax.swing.*;
-
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
@@ -98,31 +96,35 @@ public class ConfigManager {
     return getFile(getHeader(), "CatalogSource");
   }
 
-  public static boolean isCatalogUpToDate(){
+  public static boolean isCatalogUpToDate() {
     try {
-      return Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(getCatalogInternetStream().readLine());
+      return Setting.INFO_LINE_LAST_CATALOG
+          .getStringValue()
+          .equals(getCatalogInternetStream().readLine());
     } catch (IOException e) {
       return Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(getCatalogFileInfoLine());
     }
   }
 
-
-
   public static BufferedReader getCatalogInternetStream() throws IOException {
-    return new BufferedReader(new InputStreamReader(new URL(getHeader().getString("CatalogSource")).openConnection().getInputStream()));
+    return new BufferedReader(
+        new InputStreamReader(
+            new URL(getHeader().getString("CatalogSource")).openConnection().getInputStream()));
   }
 
   @SneakyThrows
-  public static Collection<String> getCatalogSource(){
+  public static Collection<String> getCatalogSource() {
     try {
       return getCatalogInternetStream().lines().collect(Collectors.toCollection(ArrayList::new));
-    } catch (IOException ignored) {}
+    } catch (IOException ignored) {
+    }
     try {
-      return Files.readAllLines(getFile(getHeader(),"CatalogSource").toPath(),Charset.forName("IBM850"));
+      return Files.readAllLines(
+          getFile(getHeader(), "CatalogSource").toPath(), Charset.forName("IBM850"));
     } catch (IOException e) {
-      if(e instanceof FileNotFoundException) {
+      if (e instanceof FileNotFoundException) {
         return Collections.EMPTY_LIST;
-      }else {
+      } else {
         throw e;
       }
     }
