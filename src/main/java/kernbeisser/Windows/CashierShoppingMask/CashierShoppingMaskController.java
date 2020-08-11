@@ -30,6 +30,7 @@ public class CashierShoppingMaskController
     searchBoxController.getView();
     searchBoxController.addLostSelectionListener(() -> selectUser(null));
     searchBoxController.addSelectionListener(this::selectUser);
+    searchBoxController.addDoubleClickListener(e -> openMaskWindow());
     model = new CashierShoppingMaskModel();
   }
 
