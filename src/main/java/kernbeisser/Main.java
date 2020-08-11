@@ -30,6 +30,7 @@ public class Main {
    * PriceLists and as least shows the LogIn Window
    */
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
+    logger.info("Free memory at start "+Runtime.getRuntime().freeMemory()/1048576+"MB");
     buildEnvironment();
     checkVersion();
     if (!Setting.DB_INITIALIZED.getBooleanValue()) {

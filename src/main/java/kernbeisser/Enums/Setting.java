@@ -44,7 +44,9 @@ public enum Setting {
   SCANNER_SUFFIX_KEY("VK_END"),
   SCANNER_TIMEOUT("50"),
   APP_DEFAULT_WIDTH("1600"),
-  APP_DEFAULT_HEIGHT("1000");
+  APP_DEFAULT_HEIGHT("1000"),
+  CATALOG_RUN_GC_UNDER("20")
+  ;
 
   // defines the type to like in java style
   // Value: Type:

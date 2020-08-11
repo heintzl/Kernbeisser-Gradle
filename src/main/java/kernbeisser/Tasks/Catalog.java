@@ -70,15 +70,19 @@ public class Catalog {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
+    int runGCUnder = Setting.CATALOG_RUN_GC_UNDER.getIntValue();
     int c = 0;
     for (ArticleKornkraft article : articles) {
       pm.setProgress(++before);
       pm.setNote("Artikel " + c + " wird auf der Datenbank gespeichert");
       em.persist(article);
       c++;
-      if (c % 200 == 0) {
+      if (c % 200 == 0&&Runtime.getRuntime().freeMemory()/1048576<runGCUnder) {
+        Main.logger.info("Memory fall under "+runGCUnder+" mb flushing catalog and running gc");
+        Runtime.getRuntime().gc();
         em.flush();
         em.clear();
+        Main.logger.info("Flushed catalog current memory "+Runtime.getRuntime().freeMemory()/1048576+"MB");
       }
     }
     em.flush();
