@@ -1,7 +1,10 @@
 package kernbeisser;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.EntityManager;
@@ -31,6 +34,8 @@ public class Main {
    */
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
     logger.info("Free memory at start " + Runtime.getRuntime().freeMemory() / 1048576 + "MB");
+    //Runs the jar with more memory if not enough is reserved
+    checkRequiredMemory(args);
     buildEnvironment();
     checkVersion();
     if (!Setting.DB_INITIALIZED.getBooleanValue()) {
@@ -39,6 +44,22 @@ public class Main {
       checkCatalog();
       Tools.activateKeyboardListener();
       openLogIn();
+    }
+  }
+
+  public static void checkRequiredMemory(String[] args){
+    try {
+      String currentPath = Main.class
+              .getProtectionDomain()
+              .getCodeSource().getLocation()
+              .toURI().getPath()
+              .replace('/', File.separator.charAt(0)).substring(1);
+      if(args.length==0 && Runtime.getRuntime().maxMemory()/1024/1024<980) {
+        Runtime.getRuntime().exec("java -Xmx1024m -jar "+currentPath+" restart");
+        System.exit(0);
+      }
+    } catch (URISyntaxException | IOException e) {
+      e.printStackTrace();
     }
   }
 
