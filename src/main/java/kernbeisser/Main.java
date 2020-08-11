@@ -34,7 +34,7 @@ public class Main {
    */
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
     logger.info("Free memory at start " + Runtime.getRuntime().freeMemory() / 1048576 + "MB");
-    //Runs the jar with more memory if not enough is reserved
+    // Runs the jar with more memory if not enough is reserved
     checkRequiredMemory(args);
     buildEnvironment();
     checkVersion();
@@ -47,15 +47,19 @@ public class Main {
     }
   }
 
-  public static void checkRequiredMemory(String[] args){
+  public static void checkRequiredMemory(String[] args) {
     try {
-      String currentPath = Main.class
+      String currentPath =
+          Main.class
               .getProtectionDomain()
-              .getCodeSource().getLocation()
-              .toURI().getPath()
-              .replace('/', File.separator.charAt(0)).substring(1);
-      if(args.length==0 && Runtime.getRuntime().maxMemory()/1024/1024<980) {
-        Runtime.getRuntime().exec("java -Xmx1024m -jar "+currentPath+" restart");
+              .getCodeSource()
+              .getLocation()
+              .toURI()
+              .getPath()
+              .replace('/', File.separator.charAt(0))
+              .substring(1);
+      if (args.length == 0 && Runtime.getRuntime().maxMemory() / 1024 / 1024 < 980) {
+        Runtime.getRuntime().exec("java -Xmx1024m -jar " + currentPath + " restart");
         System.exit(0);
       }
     } catch (URISyntaxException | IOException e) {
