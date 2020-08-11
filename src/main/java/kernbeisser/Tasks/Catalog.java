@@ -77,12 +77,13 @@ public class Catalog {
       pm.setNote("Artikel " + c + " wird auf der Datenbank gespeichert");
       em.persist(article);
       c++;
-      if (c % 200 == 0&&Runtime.getRuntime().freeMemory()/1048576<runGCUnder) {
-        Main.logger.info("Memory fall under "+runGCUnder+" mb flushing catalog and running gc");
+      if (c % 200 == 0 && Runtime.getRuntime().freeMemory() / 1048576 < runGCUnder) {
+        Main.logger.info("Memory fall under " + runGCUnder + " mb flushing catalog and running gc");
         Runtime.getRuntime().gc();
         em.flush();
         em.clear();
-        Main.logger.info("Flushed catalog current memory "+Runtime.getRuntime().freeMemory()/1048576+"MB");
+        Main.logger.info(
+            "Flushed catalog current memory " + Runtime.getRuntime().freeMemory() / 1048576 + "MB");
       }
     }
     em.flush();
