@@ -28,6 +28,7 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
   private JScrollPane tablePanel;
   private final boolean editable;
   private boolean autoScrollDown;
+  private boolean isInitialized = false;
 
   ShoppingCartView(ShoppingCartController controller, boolean editable) {
     this.controller = controller;
@@ -36,8 +37,25 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
   }
 
   public void setObjects(Collection<ShoppingItem> items) {
+    if (!isInitialized) {
+      initScrollListener();
+      isInitialized = true;
+    }
     autoScrollDown = true;
     shoppingItems.setObjects(items);
+  }
+
+  private void initScrollListener() {
+    tablePanel
+        .getVerticalScrollBar()
+        .addAdjustmentListener(
+            new AdjustmentListener() {
+              @Override
+              public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (autoScrollDown) e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                autoScrollDown = false;
+              }
+            });
   }
 
   void clearNodes() {
@@ -155,16 +173,6 @@ public class ShoppingCartView extends JPanel implements View<ShoppingCartControl
   @Override
   public void initialize(ShoppingCartController controller) {
     add(main);
-    tablePanel
-        .getVerticalScrollBar()
-        .addAdjustmentListener(
-            new AdjustmentListener() {
-              @Override
-              public void adjustmentValueChanged(AdjustmentEvent e) {
-                if (autoScrollDown) e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-                autoScrollDown = false;
-              }
-            });
   }
 
   @Override
