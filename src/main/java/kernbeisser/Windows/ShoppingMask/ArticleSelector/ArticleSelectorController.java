@@ -37,15 +37,15 @@ public class ArticleSelectorController
 
   private Collection<Article> search(String query, int max) {
     Collection<Article> articles = Article.defaultSearch(query, max);
-/* TODO make checkbox work again
-    if (view != null) {
-      if (view.searchOnlyWithoutBarcode()) {
-        articles.removeIf(e -> e.getBarcode() != null);
-      } else if (view.searchOnlyShowInShop()) {
-        articles.removeIf(e -> !e.isShowInShop());
-      }
-    }
-*/
+    /* TODO make checkbox work again
+        if (view != null) {
+          if (view.searchOnlyWithoutBarcode()) {
+            articles.removeIf(e -> e.getBarcode() != null);
+          } else if (view.searchOnlyShowInShop()) {
+            articles.removeIf(e -> !e.isShowInShop());
+          }
+        }
+    */
     return articles;
   }
 
