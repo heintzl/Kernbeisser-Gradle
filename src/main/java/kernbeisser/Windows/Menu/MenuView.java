@@ -72,9 +72,7 @@ public class MenuView implements View<MenuController> {
                 button.loadUI();
                 pm.setProgress(++p);
                 pm.setNote(
-                    "Initialisiere "
-                        + button.getController().getClass().getSimpleName()
-                        + " view");
+                    "Initialisiere " + button.getController().getClass().getSimpleName() + " view");
               }
               pm.setNote("Fertig");
               // Releasesettings
