@@ -53,6 +53,7 @@ public class BarcodeCapture {
       timeoutTimer.restart();
       if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getKeyEventValue()) {
         if (e.getID() == KeyEvent.KEY_RELEASED) {
+          timeoutTimer.stop();
           barcodeConsumer.accept(barcode);
           barcode = "";
           isBarcodeInput = false;
