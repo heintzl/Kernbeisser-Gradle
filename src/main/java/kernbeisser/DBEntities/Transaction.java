@@ -118,7 +118,8 @@ public class Transaction {
         return false;
       }
     }
-    if (transaction.getTo().getUserGroup().getValue() - transaction.getValue() < minValue) {
+    if (transaction.getValue() < 0
+        && transaction.getTo().getUserGroup().getValue() - transaction.getValue() < minValue) {
       return transaction.getTo().hasPermission(PermissionKey.GO_UNDER_MIN);
     }
     return true;
