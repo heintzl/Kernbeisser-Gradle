@@ -62,7 +62,7 @@ public class MenuView implements View<MenuController> {
               Collection<ControllerButton> buttons = Tools.collect(this, ControllerButton.class);
               ProgressMonitor pm =
                   new ProgressMonitor(
-                      getTopComponent(), "Initzailiesiere GUI", "startet", 0, buttons.size());
+                      getTopComponent(), "Initialisiere GUI", "startet", 0, buttons.size());
               // decide after 100 millis whether to show popup or not
               pm.setMillisToDecideToPopup(100);
               // after deciding if predicted time is longer than 100 show popup
@@ -72,9 +72,7 @@ public class MenuView implements View<MenuController> {
                 button.loadUI();
                 pm.setProgress(++p);
                 pm.setNote(
-                    "Initzialiesiere "
-                        + button.getController().getClass().getSimpleName()
-                        + " view");
+                    "Initialisiere " + button.getController().getClass().getSimpleName() + " view");
               }
               pm.setNote("Fertig");
               // Releasesettings
