@@ -167,13 +167,13 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{itemMultiplier}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{metricUnits.shortName}=="?"?"":$F{itemMultiplier}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement x="50" y="0" width="200" height="14" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{name} + ($F{itemMultiplier} == 1? "": " à " + java.text.MessageFormat.format("{0, number,0.00}€",$F{itemRetailPrice}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{name} + (($F{itemMultiplier} == 1 || $F{metricUnits.shortName}=="?")? "": " à " + java.text.MessageFormat.format("{0, number,0.00}€",$F{itemRetailPrice}))]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,###.##%;(#,###.##">
 				<reportElement x="280" y="0" width="30" height="14" uuid="6efcde95-291f-43d1-b62e-72f55da53670">
@@ -192,7 +192,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Left"/>
-				<textFieldExpression><![CDATA[$F{metricUnits.shortName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{metricUnits.shortName}=="?"?"":$F{metricUnits.shortName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="250" y="0" width="30" height="14" uuid="4d55fdb3-630e-4955-85f9-f412af812df3">
