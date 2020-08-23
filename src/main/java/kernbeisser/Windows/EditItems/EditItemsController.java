@@ -20,8 +20,7 @@ public class EditItemsController implements Controller<EditItemsView, EditItemsM
   private final EditItemsModel model;
   private final ObjectViewController<Article> objectViewController;
 
-  @Linked
-  private final BarcodeCapture capture;
+  @Linked private final BarcodeCapture capture;
 
   public EditItemsController() {
     this.model = new EditItemsModel();
@@ -44,10 +43,12 @@ public class EditItemsController implements Controller<EditItemsView, EditItemsM
             Column.create("Preisliste", Article::getPriceList),
             Column.create("Barcode", Article::getBarcode));
 
-    this.capture = new BarcodeCapture(e -> {
-      objectViewController.setSearch(e);
-      objectViewController.search();
-    });
+    this.capture =
+        new BarcodeCapture(
+            e -> {
+              objectViewController.setSearch(e);
+              objectViewController.search();
+            });
   }
 
   @NotNull

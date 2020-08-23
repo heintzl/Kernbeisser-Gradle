@@ -1,15 +1,13 @@
 package kernbeisser.Windows.EditItems;
 
+import java.awt.event.KeyEvent;
 import javax.swing.*;
-
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MVC.View;
 import kernbeisser.Windows.ObjectView.ObjectViewView;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.event.KeyEvent;
 
 public class EditItemsView implements View<EditItemsController> {
 
