@@ -128,7 +128,8 @@ public class MenuView implements View<MenuController> {
             controller -> controller.openTab("Persönliche Information"));
     // NOT IMPLEMENTED
     editUserSettings =
-        new ControllerButton(new EditUserSettingController(LogInModel.getLoggedIn()),
+        new ControllerButton(
+            new EditUserSettingController(LogInModel.getLoggedIn()),
             controller -> controller.openTab("<PlaceHolder>"));
     editUsers =
         new ControllerButton(

@@ -52,14 +52,13 @@ public enum UserSetting {
     return Float.parseFloat(UserSettingValue.getValueFor(user, this));
   }
 
-  public void setValue(User user,String value){
-    UserSettingValue.setValue(user,this,value);
+  public void setValue(User user, String value) {
+    UserSettingValue.setValue(user, this, value);
   }
 
-  public void setValue(User user,Object value){
-    UserSettingValue.setValue(user,this,String.valueOf(value));
+  public void setValue(User user, Object value) {
+    UserSettingValue.setValue(user, this, String.valueOf(value));
   }
-
 
   public <T extends Enum<T>> T getEnumValue(Class<T> c, User user) {
     return Enum.valueOf(c, UserSettingValue.getValueFor(user, this));
