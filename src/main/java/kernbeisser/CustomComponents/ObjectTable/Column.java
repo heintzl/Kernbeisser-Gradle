@@ -5,9 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.*;
 import kernbeisser.CustomComponents.AccessChecking.Getter;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
-import kernbeisser.Security.MasterPermissionSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

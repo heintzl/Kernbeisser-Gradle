@@ -78,8 +78,7 @@ public class UserInfoController implements Controller<UserInfoView, UserInfoMode
                 }));
         columns.add(Column.create("Betrag", e -> String.format("%.2f€", e.getValue())));
         columns.add(generateAfterValueChangeColumn());
-        columns.add(
-            Column.create("Info", Transaction::getInfo));
+        columns.add(Column.create("Info", Transaction::getInfo));
         columns.add(Column.create("Datum", Transaction::getDate));
         view.setValueHistoryColumns(columns);
         view.setValueHistory(model.getUser().getAllValueChanges());

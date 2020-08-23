@@ -1,5 +1,7 @@
 package kernbeisser.Windows.EditSupplier;
 
+import javax.persistence.PersistenceException;
+import javax.swing.*;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
@@ -9,9 +11,6 @@ import kernbeisser.Windows.MVC.Controller;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.PersistenceException;
-import javax.swing.*;
-
 public class EditSupplierController implements Controller<EditSupplierView, EditSupplierModel> {
 
   private final EditSupplierModel model;
@@ -19,12 +18,14 @@ public class EditSupplierController implements Controller<EditSupplierView, Edit
 
   public EditSupplierController(Supplier supplier, Mode mode) {
     model = new EditSupplierModel(supplier, mode);
-    if(mode.equals(Mode.REMOVE)){
+    if (mode.equals(Mode.REMOVE)) {
       try {
         Tools.delete(supplier);
-      }catch (PersistenceException e){
+      } catch (PersistenceException e) {
         if (e.getCause() instanceof ConstraintViolationException) {
-          JOptionPane.showMessageDialog(null,"Der Lieferant kann nicht gelöscht werden, da dieser noch auf andere Objekte verweisst");
+          JOptionPane.showMessageDialog(
+              null,
+              "Der Lieferant kann nicht gelöscht werden, da dieser noch auf andere Objekte verweisst");
         }
       }
     }

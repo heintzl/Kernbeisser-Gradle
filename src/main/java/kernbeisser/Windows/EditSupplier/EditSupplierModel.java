@@ -48,7 +48,5 @@ public class EditSupplierModel implements Model<EditSupplierController> {
     }
   }
 
-  public void hasUsage(Supplier supplier) {
-
-  }
+  public void hasUsage(Supplier supplier) {}
 }

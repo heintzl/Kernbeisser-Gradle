@@ -69,9 +69,7 @@ public class UserInfoView implements View<UserInfoController> {
   public void createUIComponents() {
     valueHistory = new ObjectTable<Transaction>();
     buyChart = controller.createBuyChart();
-    permissions =
-        new ObjectTable<>(
-            Column.create("Name", Permission::getName));
+    permissions = new ObjectTable<>(Column.create("Name", Permission::getName));
     userGroup =
         new ObjectTable<User>(
             Column.create("Benutzername", User::getUsername),

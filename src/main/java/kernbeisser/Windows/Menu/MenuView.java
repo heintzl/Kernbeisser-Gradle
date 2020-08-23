@@ -81,7 +81,7 @@ public class MenuView implements View<MenuController> {
               printBonFromPast.setEnabled(false);
               order.setEnabled(false);
               editPriceList.setEnabled(false);
-              //editSurchargeTables.setEnabled(false);
+              // editSurchargeTables.setEnabled(false);
               editUserSettings.setEnabled(false);
               placeHolderControllerButton.setEnabled(false);
               placeHolderControllerButton1.setEnabled(false);
