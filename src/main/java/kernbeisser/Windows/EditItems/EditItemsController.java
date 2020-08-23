@@ -1,11 +1,13 @@
 package kernbeisser.Windows.EditItems;
 
+import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.EditItem.EditItemController;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
 import kernbeisser.Windows.ObjectView.ObjectViewView;
 import kernbeisser.Windows.Window;
@@ -17,6 +19,9 @@ public class EditItemsController implements Controller<EditItemsView, EditItemsM
   private EditItemsView view;
   private final EditItemsModel model;
   private final ObjectViewController<Article> objectViewController;
+
+  @Linked
+  private final BarcodeCapture capture;
 
   public EditItemsController() {
     this.model = new EditItemsModel();
@@ -38,6 +43,11 @@ public class EditItemsController implements Controller<EditItemsView, EditItemsM
             Column.create("Gebindegrösse.", Article::getContainerSize),
             Column.create("Preisliste", Article::getPriceList),
             Column.create("Barcode", Article::getBarcode));
+
+    this.capture = new BarcodeCapture(e -> {
+      objectViewController.setSearch(e);
+      objectViewController.search();
+    });
   }
 
   @NotNull
