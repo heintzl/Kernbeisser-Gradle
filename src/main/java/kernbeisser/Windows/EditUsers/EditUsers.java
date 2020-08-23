@@ -12,13 +12,12 @@ public class EditUsers extends ObjectViewController<User> {
         (user, mode) -> new EditUserController(user, mode),
         User::defaultSearch,
         false,
-        Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
-        Column.create("Nachname", User::getSurname, PermissionKey.USER_SURNAME_READ),
-        Column.create("Benutzername", User::getUsername, PermissionKey.USER_USERNAME_READ),
+        Column.create("Vorname", User::getFirstName),
+        Column.create("Nachname", User::getSurname),
+        Column.create("Benutzername", User::getUsername),
         Column.create(
             "Guthaben",
-            u -> String.format("%.2f€", u.getUserGroup().getValue()),
-            PermissionKey.USER_USER_GROUP_READ,
-            PermissionKey.USER_GROUP_VALUE_READ));
+            u -> String.format("%.2f€", u.getUserGroup().getValue())
+            ));
   }
 }

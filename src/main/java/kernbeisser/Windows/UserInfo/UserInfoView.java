@@ -71,16 +71,16 @@ public class UserInfoView implements View<UserInfoController> {
     buyChart = controller.createBuyChart();
     permissions =
         new ObjectTable<>(
-            Column.create("Name", Permission::getName, PermissionKey.PERMISSION_NAME_READ));
+            Column.create("Name", Permission::getName));
     userGroup =
         new ObjectTable<User>(
-            Column.create("Benutzername", User::getUsername, PermissionKey.USER_USERNAME_READ),
-            Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
-            Column.create("Nachname", User::getSurname, PermissionKey.USER_SURNAME_READ));
+            Column.create("Benutzername", User::getUsername),
+            Column.create("Vorname", User::getFirstName),
+            Column.create("Nachname", User::getSurname));
     jobs =
         new ObjectTable<Job>(
-            Column.create("Name", Job::getName, PermissionKey.JOB_NAME_READ),
-            Column.create("Beschreibung", Job::getDescription, PermissionKey.JOB_DESCRIPTION_READ));
+            Column.create("Name", Job::getName),
+            Column.create("Beschreibung", Job::getDescription));
     shoppingHistory =
         new ObjectTable<Purchase>(
             Column.create("Datum", e -> Date.INSTANT_FORMAT.format(e.getCreateDate())),

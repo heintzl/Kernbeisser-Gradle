@@ -65,8 +65,7 @@ public class UserInfoController implements Controller<UserInfoView, UserInfoMode
                   } else {
                     return e.getFrom().getUsername();
                   }
-                },
-                PermissionKey.USER_USERNAME_READ));
+                }));
         columns.add(
             Column.create(
                 "An",
@@ -76,12 +75,11 @@ public class UserInfoController implements Controller<UserInfoView, UserInfoMode
                   } else {
                     return e.getTo().getUsername();
                   }
-                },
-                PermissionKey.USER_USERNAME_READ));
+                }));
         columns.add(Column.create("Betrag", e -> String.format("%.2f€", e.getValue())));
         columns.add(generateAfterValueChangeColumn());
         columns.add(
-            Column.create("Info", Transaction::getInfo, PermissionKey.TRANSACTION_INFO_READ));
+            Column.create("Info", Transaction::getInfo));
         columns.add(Column.create("Datum", Transaction::getDate));
         view.setValueHistoryColumns(columns);
         view.setValueHistory(model.getUser().getAllValueChanges());

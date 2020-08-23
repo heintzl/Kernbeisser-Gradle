@@ -92,24 +92,6 @@ public interface Column<T> {
     };
   }
 
-  @NotNull
-  @Contract(value = "_, _, _ -> new", pure = true)
-  static <T> Column<T> create(String s, Function<T, Object> v, PermissionKey... keys) {
-    return new Column<T>() {
-      final boolean read = MasterPermissionSet.hasPermissions(keys);
-
-      @Override
-      public String getName() {
-        return s;
-      }
-
-      @Override
-      public Object getValue(T t) {
-        return read ? v.apply(t) : "***********";
-      }
-    };
-  }
-
   String getName();
 
   Object getValue(T t) throws AccessDeniedException;

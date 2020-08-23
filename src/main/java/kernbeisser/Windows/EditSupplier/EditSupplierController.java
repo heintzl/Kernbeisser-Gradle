@@ -6,7 +6,11 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
+import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.PersistenceException;
+import javax.swing.*;
 
 public class EditSupplierController implements Controller<EditSupplierView, EditSupplierModel> {
 
@@ -15,9 +19,14 @@ public class EditSupplierController implements Controller<EditSupplierView, Edit
 
   public EditSupplierController(Supplier supplier, Mode mode) {
     model = new EditSupplierModel(supplier, mode);
-    if (mode.equals(Mode.REMOVE)) {
-      Tools.delete(supplier);
-      view.back();
+    if(mode.equals(Mode.REMOVE)){
+      try {
+        Tools.delete(supplier);
+      }catch (PersistenceException e){
+        if (e.getCause() instanceof ConstraintViolationException) {
+          JOptionPane.showMessageDialog(null,"Der Lieferant kann nicht gelöscht werden, da dieser noch auf andere Objekte verweisst");
+        }
+      }
     }
   }
 

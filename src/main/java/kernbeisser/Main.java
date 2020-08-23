@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
@@ -33,6 +34,7 @@ public class Main {
    * PriceLists and as least shows the LogIn Window
    */
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
+    Locale.setDefault(Locale.GERMAN);
     logger.info("Free memory at start " + Runtime.getRuntime().freeMemory() / 1048576 + "MB");
     // Runs the jar with more memory if not enough is reserved
     checkRequiredMemory(args);

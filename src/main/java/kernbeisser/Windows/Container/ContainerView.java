@@ -63,51 +63,39 @@ public class ContainerView implements View<ContainerController> {
   private void createUIComponents() {
     lastContainers =
         new ObjectTable<>(
-            Column.create("Anzahl", Container::getAmount, PermissionKey.CONTAINER_AMOUNT_READ),
+            Column.create("Anzahl", Container::getAmount),
             Column.create(
                 "Ladennummer",
-                Container::getKBNumber,
-                PermissionKey.CONTAINER_ITEM_READ,
-                PermissionKey.ARTICLE_KB_NUMBER_READ),
+                Container::getKBNumber
+                ),
             Column.create(
                 "Kornkraftnummer",
-                e -> e.getItem().getSuppliersItemNumber(),
-                PermissionKey.CONTAINER_ITEM_READ,
-                PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                e -> e.getItem().getSuppliersItemNumber()
+                ),
             Column.create(
                 "Produktname",
-                e -> e.getItem().getName(),
-                PermissionKey.CONTAINER_ITEM_READ,
-                PermissionKey.ARTICLE_BASE_NAME_READ),
+                e -> e.getItem().getName()),
             Column.create(
                 "Netto-Preis",
-                e -> e.getNetPrice() + "€",
-                PermissionKey.CONTAINER_ITEM_READ,
-                PermissionKey.ARTICLE_BASE_NET_PRICE_READ),
+                e -> e.getNetPrice() + "€"),
             Column.create("Verkaufspreis", e -> "notDefined" + "€"));
     unpaidContainers =
         new ObjectTable<>(
-            Column.create("Anzahl", Container::getAmount, PermissionKey.CONTAINER_AMOUNT_READ),
+            Column.create("Anzahl", Container::getAmount),
             Column.create(
                 "Ladennummer",
-                Container::getKBNumber,
-                PermissionKey.CONTAINER_ITEM_READ,
-                PermissionKey.ARTICLE_KB_NUMBER_READ),
+                Container::getKBNumber
+                ),
             Column.create(
                 "Kornkraftnummer",
-                e -> e.getItem().getSuppliersItemNumber(),
-                PermissionKey.CONTAINER_ITEM_READ,
-                PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ),
+                e -> e.getItem().getSuppliersItemNumber()
+                ),
             Column.create(
                 "Produktname",
-                e -> e.getItem().getName(),
-                PermissionKey.CONTAINER_ITEM_READ,
-                PermissionKey.ARTICLE_BASE_NAME_READ),
+                e -> e.getItem().getName()),
             Column.create(
                 "Netto-Preis",
-                e -> e.getNetPrice() + "€",
-                PermissionKey.CONTAINER_ITEM_READ,
-                PermissionKey.ARTICLE_BASE_NET_PRICE_READ),
+                e -> e.getNetPrice() + "€"),
             Column.create("Verkaufspreis", e -> "notDefined" + "€"),
             new Column<Container>() {
               @Override

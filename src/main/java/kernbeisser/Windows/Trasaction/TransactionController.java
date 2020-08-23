@@ -25,10 +25,10 @@ public class TransactionController implements Controller<TransactionView, Transa
     userSearchBoxController =
         new SearchBoxController<User>(
             User::defaultSearch,
-            Column.create("Nachname", User::getSurname, PermissionKey.USER_SURNAME_READ),
-            Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
-            Column.create("Username", User::getUsername, PermissionKey.USER_USERNAME_READ),
-            Column.create("Guthaben", User::getRoundedValue, PermissionKey.USER_GROUP_VALUE_READ));
+            Column.create("Nachname", User::getSurname),
+            Column.create("Vorname", User::getFirstName),
+            Column.create("Username", User::getUsername),
+            Column.create("Guthaben", User::getRoundedValue));
     userSearchBoxController.addSelectionListener(e -> view.setTo(e.toString()));
   }
 

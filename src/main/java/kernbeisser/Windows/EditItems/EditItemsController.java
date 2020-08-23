@@ -29,6 +29,7 @@ public class EditItemsController implements Controller<EditItemsView, EditItemsM
             Column.create(
                 "Packungsgröße", e -> (e.getAmount()) + e.getMetricUnits().getShortName()),
             Column.create("Ladennummer", Article::getKbNumber),
+            Column.create("Lieferant",Article::getSupplier),
             Column.create("Lieferantenummer", Article::getSuppliersItemNumber),
             Column.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein"),
             Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice())),

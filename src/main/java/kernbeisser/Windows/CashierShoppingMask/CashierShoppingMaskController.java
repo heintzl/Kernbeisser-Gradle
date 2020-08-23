@@ -24,9 +24,9 @@ public class CashierShoppingMaskController
     this.searchBoxController =
         new SearchBoxController<>(
             User::defaultSearch,
-            Column.create("Vorname", User::getFirstName, PermissionKey.USER_FIRST_NAME_READ),
-            Column.create("Nachname", User::getSurname, PermissionKey.USER_SURNAME_READ),
-            Column.create("Benutzername", User::getUsername, PermissionKey.USER_USERNAME_READ));
+            Column.create("Vorname", User::getFirstName),
+            Column.create("Nachname", User::getSurname),
+            Column.create("Benutzername", User::getUsername));
     searchBoxController.getView();
     searchBoxController.addLostSelectionListener(() -> selectUser(null));
     searchBoxController.addSelectionListener(this::selectUser);
