@@ -122,10 +122,10 @@ public class TransactionView implements View<TransactionController> {
                 "Von",
                 e ->
                     e.getFrom() == null
-                        ? "Kernbeisser"
+                        ? "Kernbeißer"
                         : (e.getFrom().getSurname() + ", " + e.getFrom().getFirstName())),
             Column.create("An", e -> e.getTo().getSurname() + ", " + e.getTo().getFirstName()),
-            Column.create("Überweissungsbetrag", e -> String.format("%.2f€", e.getValue())),
+            Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
             Column.create("Info", Transaction::getInfo));
     searchBoxView = userSearchBoxController.getView();
   }
@@ -408,7 +408,7 @@ public class TransactionView implements View<TransactionController> {
   public void userHasNotEnoughValue() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Die eingegeben Überweissungen könnnen nicht getätight werden,\nda einige der Benutzer nicht die Berechtigung haben, unter das minimale\nGuthaben von "
+        "Die eingegeben Überweisungen könnnen nicht getätigt werden,\nda einige der Benutzer nicht die Berechtigung haben, unter das minimale\nGuthaben von "
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
             + " zu gehen");
   }
