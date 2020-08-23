@@ -1,5 +1,6 @@
 package kernbeisser;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -7,10 +8,12 @@ import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
+
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
@@ -104,6 +107,21 @@ public class Main {
     setSettingLAF();
     logger.info("register FontAwesome");
     IconFontSwing.register(FontAwesome.getIconFont());
+    try {
+      setSize(Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
+    }catch (NumberFormatException ignored){}
+  }
+
+  private static void setSize(float scaleFactor){
+    Enumeration<Object> keys = UIManager.getDefaults().keys();
+    while (keys.hasMoreElements()){
+      Object key = keys.nextElement();
+      Font before = UIManager.getFont(key);
+      if(key.toString().endsWith(".font")){
+        UIManager.put(key,new Font(before.getName(),before.getStyle(), Math.round (before.getSize()*scaleFactor)));
+      }
+    }
+    System.out.println(UIManager.get("Table.font"));
   }
 
   public static void setSettingLAF() throws UnsupportedLookAndFeelException {

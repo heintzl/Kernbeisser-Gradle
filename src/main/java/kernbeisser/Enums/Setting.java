@@ -45,7 +45,8 @@ public enum Setting {
   SCANNER_TIMEOUT("50"),
   APP_DEFAULT_WIDTH("1600"),
   APP_DEFAULT_HEIGHT("1000"),
-  CATALOG_RUN_GC_UNDER("20");
+  CATALOG_RUN_GC_UNDER("20"),
+  LABEL_SCALE_FACTOR("1.");
 
   // defines the type to like in java style
   // Value: Type:
