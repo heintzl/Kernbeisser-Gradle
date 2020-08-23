@@ -10,13 +10,16 @@ import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 @Table
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ArticleBase {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(generator = "increment")
+  @GenericGenerator(name = "increment", strategy = "increment")
+  @Column(name = "id", nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_BASE_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_BASE_ID_WRITE)})
   private int id;

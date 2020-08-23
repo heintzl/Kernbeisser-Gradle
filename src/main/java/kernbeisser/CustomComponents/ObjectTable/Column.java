@@ -5,9 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.*;
 import kernbeisser.CustomComponents.AccessChecking.Getter;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
-import kernbeisser.Security.MasterPermissionSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -88,24 +86,6 @@ public interface Column<T> {
       @Override
       public void onAction(T t) {
         action.accept(t);
-      }
-    };
-  }
-
-  @NotNull
-  @Contract(value = "_, _, _ -> new", pure = true)
-  static <T> Column<T> create(String s, Function<T, Object> v, PermissionKey... keys) {
-    return new Column<T>() {
-      final boolean read = MasterPermissionSet.hasPermissions(keys);
-
-      @Override
-      public String getName() {
-        return s;
-      }
-
-      @Override
-      public Object getValue(T t) {
-        return read ? v.apply(t) : "***********";
       }
     };
   }

@@ -33,7 +33,7 @@ public enum Setting {
   SURCHARGE_PRODUCE("0.22"),
   DEFAULT_THEME(Theme.LIGHT),
   INFO_LINE_LAST_CATALOG("notDefined"),
-  UPDATE_CATALOG_FROM_INTERNET("true"),
+  UPDATE_CATALOG_FROM_INTERNET("false"),
   MIN_PASSWORD_LENGTH("5"),
   MIN_REQUIRED_PASSWORD_STRENGTH("3"),
   HASH_COSTS("12"),
@@ -44,7 +44,8 @@ public enum Setting {
   SCANNER_SUFFIX_KEY("VK_END"),
   SCANNER_TIMEOUT("50"),
   APP_DEFAULT_WIDTH("1600"),
-  APP_DEFAULT_HEIGHT("1000");
+  APP_DEFAULT_HEIGHT("1000"),
+  CATALOG_RUN_GC_UNDER("20");
 
   // defines the type to like in java style
   // Value: Type:

@@ -47,4 +47,6 @@ public class EditSupplierModel implements Model<EditSupplierController> {
       return false;
     }
   }
+
+  public void hasUsage(Supplier supplier) {}
 }
