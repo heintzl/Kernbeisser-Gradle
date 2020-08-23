@@ -13,7 +13,6 @@ import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
-
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
@@ -109,16 +108,20 @@ public class Main {
     IconFontSwing.register(FontAwesome.getIconFont());
     try {
       setSize(Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
-    }catch (NumberFormatException ignored){}
+    } catch (NumberFormatException ignored) {
+    }
   }
 
-  private static void setSize(float scaleFactor){
+  private static void setSize(float scaleFactor) {
     Enumeration<Object> keys = UIManager.getDefaults().keys();
-    while (keys.hasMoreElements()){
+    while (keys.hasMoreElements()) {
       Object key = keys.nextElement();
       Font before = UIManager.getFont(key);
-      if(key.toString().endsWith(".font")){
-        UIManager.put(key,new Font(before.getName(),before.getStyle(), Math.round (before.getSize()*scaleFactor)));
+      if (key.toString().endsWith(".font")) {
+        UIManager.put(
+            key,
+            new Font(
+                before.getName(), before.getStyle(), Math.round(before.getSize() * scaleFactor)));
       }
     }
     System.out.println(UIManager.get("Table.font"));
