@@ -107,25 +107,12 @@ public class Main {
     logger.info("register FontAwesome");
     IconFontSwing.register(FontAwesome.getIconFont());
     try {
-      setSize(Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
+      Tools.scaleLabelSize(Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
     } catch (NumberFormatException ignored) {
     }
   }
 
-  private static void setSize(float scaleFactor) {
-    Enumeration<Object> keys = UIManager.getDefaults().keys();
-    while (keys.hasMoreElements()) {
-      Object key = keys.nextElement();
-      Font before = UIManager.getFont(key);
-      if (key.toString().endsWith(".font")) {
-        UIManager.put(
-            key,
-            new Font(
-                before.getName(), before.getStyle(), Math.round(before.getSize() * scaleFactor)));
-      }
-    }
-    System.out.println(UIManager.get("Table.font"));
-  }
+
 
   public static void setSettingLAF() throws UnsupportedLookAndFeelException {
     UIManager.setLookAndFeel(Setting.DEFAULT_THEME.getEnumValue(Theme.class).getLookAndFeel());

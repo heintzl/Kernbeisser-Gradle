@@ -681,6 +681,21 @@ public class Tools {
     return null;
   }
 
+  public static void scaleLabelSize(float scaleFactor) {
+    Enumeration<Object> keys = UIManager.getDefaults().keys();
+    while (keys.hasMoreElements()) {
+      Object key = keys.nextElement();
+      Font before = UIManager.getFont(key);
+      if (key.toString().endsWith(".font")) {
+        UIManager.put(
+                key,
+                new Font(
+                        before.getName(), before.getStyle(), Math.round(before.getSize() * scaleFactor)));
+      }
+    }
+    System.out.println(UIManager.get("Table.font"));
+  }
+
   public static Field findInAllSuperClasses(Class<?> clazz, String name)
       throws NoSuchFieldException {
     while (!clazz.equals(Object.class)) {
