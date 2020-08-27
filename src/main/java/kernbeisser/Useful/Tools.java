@@ -688,9 +688,9 @@ public class Tools {
       Font before = UIManager.getFont(key);
       if (key.toString().endsWith(".font")) {
         UIManager.put(
-                key,
-                new Font(
-                        before.getName(), before.getStyle(), Math.round(before.getSize() * scaleFactor)));
+            key,
+            new Font(
+                before.getName(), before.getStyle(), Math.round(before.getSize() * scaleFactor)));
       }
     }
     System.out.println(UIManager.get("Table.font"));

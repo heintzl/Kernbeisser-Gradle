@@ -14,12 +14,11 @@ import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 
-
 /*
-  extends from the main article structure ArticleBase which extends Article and ArticleKornkraft
-  the Article class contains additional statistic fields which aren't required for the all Articles
-  and only used for Articles which are constantly in use of Kernbeisser
- */
+ extends from the main article structure ArticleBase which extends Article and ArticleKornkraft
+ the Article class contains additional statistic fields which aren't required for the all Articles
+ and only used for Articles which are constantly in use of Kernbeisser
+*/
 @Entity
 @Table
 @Data
@@ -153,28 +152,28 @@ public class Article extends ArticleBase {
   public static Collection<Article> defaultSearch(String search, int maxResults) {
     EntityManager em = DBConnection.getEntityManager();
     Collection<Article> out =
-            em.createQuery(
-                    "select i from Article i where kbNumber = :n"
-                            + " or suppliersItemNumber = :n"
-                            + " or i.supplier.shortName like :s"
-                            + " or i.supplier.name like :s"
-                            + " or UPPER(i.name) like :ds"
-                            + " or mod(barcode,:bl) = :n"
-                            + " or UPPER( i.priceList.name) like :u"
-                            + " order by i.name asc",
-                    Article.class)
-                    .setParameter("n", Tools.tryParseInteger(search))
-                    .setParameter(
-                            "bl",
-                            Tools.tryParseInteger(search) > 0
-                                    ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInteger(search))))
-                                    : 1)
-                    .setParameter("s", search + "%")
-                    .setParameter(
-                            "ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
-                    .setParameter("u", search.toUpperCase() + "%")
-                    .setMaxResults(maxResults)
-                    .getResultList();
+        em.createQuery(
+                "select i from Article i where kbNumber = :n"
+                    + " or suppliersItemNumber = :n"
+                    + " or i.supplier.shortName like :s"
+                    + " or i.supplier.name like :s"
+                    + " or UPPER(i.name) like :ds"
+                    + " or mod(barcode,:bl) = :n"
+                    + " or UPPER( i.priceList.name) like :u"
+                    + " order by i.name asc",
+                Article.class)
+            .setParameter("n", Tools.tryParseInteger(search))
+            .setParameter(
+                "bl",
+                Tools.tryParseInteger(search) > 0
+                    ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInteger(search))))
+                    : 1)
+            .setParameter("s", search + "%")
+            .setParameter(
+                "ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
+            .setParameter("u", search.toUpperCase() + "%")
+            .setMaxResults(maxResults)
+            .getResultList();
     em.close();
     return Proxy.getSecureInstances(out);
   }
@@ -183,8 +182,8 @@ public class Article extends ArticleBase {
     EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select i from Article i where kbNumber = :n", Article.class)
-              .setParameter("n", kbNumber)
-              .getSingleResult();
+          .setParameter("n", kbNumber)
+          .getSingleResult();
     } catch (NoResultException e) {
       return null;
     } finally {
@@ -196,8 +195,8 @@ public class Article extends ArticleBase {
     EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select i from Article i where suppliersItemNumber = :n", Article.class)
-              .setParameter("n", suppliersNumber)
-              .getSingleResult();
+          .setParameter("n", suppliersNumber)
+          .getSingleResult();
     } catch (NoResultException e) {
       return null;
     } finally {
@@ -209,8 +208,8 @@ public class Article extends ArticleBase {
     EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select i from Article i where barcode = :n", Article.class)
-              .setParameter("n", barcode)
-              .getSingleResult();
+          .setParameter("n", barcode)
+          .getSingleResult();
     } catch (NoResultException f) {
       return null;
     } finally {
@@ -250,25 +249,25 @@ public class Article extends ArticleBase {
     }
     Article article = (Article) o;
     return kbNumber == article.kbNumber
-            && Double.compare(article.surcharge, surcharge) == 0
-            && suppliersItemNumber == article.suppliersItemNumber
-            && weighable == article.weighable
-            && listed == article.listed
-            && showInShop == article.showInShop
-            && deleted == article.deleted
-            && printAgain == article.printAgain
-            && deleteAllowed == article.deleteAllowed
-            && loss == article.loss
-            && sold == article.sold
-            && delivered == article.delivered
-            && coveredIntake == article.coveredIntake
-            && priceList.equals(article.priceList)
-            && containerDef == article.containerDef
-            && info.equals(article.info)
-            && offers.equals(article.offers)
-            && intake.equals(article.intake)
-            && lastDelivery.equals(article.lastDelivery)
-            && deletedDate.equals(article.deletedDate)
-            && cooling == article.cooling;
+        && Double.compare(article.surcharge, surcharge) == 0
+        && suppliersItemNumber == article.suppliersItemNumber
+        && weighable == article.weighable
+        && listed == article.listed
+        && showInShop == article.showInShop
+        && deleted == article.deleted
+        && printAgain == article.printAgain
+        && deleteAllowed == article.deleteAllowed
+        && loss == article.loss
+        && sold == article.sold
+        && delivered == article.delivered
+        && coveredIntake == article.coveredIntake
+        && priceList.equals(article.priceList)
+        && containerDef == article.containerDef
+        && info.equals(article.info)
+        && offers.equals(article.offers)
+        && intake.equals(article.intake)
+        && lastDelivery.equals(article.lastDelivery)
+        && deletedDate.equals(article.deletedDate)
+        && cooling == article.cooling;
   }
 }

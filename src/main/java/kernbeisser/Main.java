@@ -8,7 +8,6 @@ import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -111,8 +110,6 @@ public class Main {
     } catch (NumberFormatException ignored) {
     }
   }
-
-
 
   public static void setSettingLAF() throws UnsupportedLookAndFeelException {
     UIManager.setLookAndFeel(Setting.DEFAULT_THEME.getEnumValue(Theme.class).getLookAndFeel());
