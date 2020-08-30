@@ -207,6 +207,16 @@ public class Tools {
     return Proxy.getSecureInstances(out);
   }
 
+  public static <T> List<T> getAllUnProxy(Class<T> c){
+    EntityManager em = DBConnection.getEntityManager();
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<T> cq = cb.createQuery(c);
+    Root<T> rootEntry = cq.from(c);
+    CriteriaQuery<T> all = cq.select(rootEntry);
+    TypedQuery<T> allQuery = em.createQuery(all);
+    return allQuery.getResultList();
+  }
+
   public static <T> T mergeWithoutId(T in) {
     try {
       return mergeWithoutId(in, (T) in.getClass().getDeclaredConstructor().newInstance());

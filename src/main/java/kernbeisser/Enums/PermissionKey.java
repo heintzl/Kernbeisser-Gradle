@@ -32,8 +32,6 @@ public enum PermissionKey {
   ARTICLE_PRICE_LIST_WRITE(Article.class),
   ARTICLE_CONTAINER_DEF_READ(Article.class),
   ARTICLE_CONTAINER_DEF_WRITE(Article.class),
-  ARTICLE_SUPPLIERS_ITEM_NUMBER_READ(Article.class),
-  ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE(Article.class),
   ARTICLE_WEIGH_ABLE_READ(Article.class),
   ARTICLE_WEIGH_ABLE_WRITE(Article.class),
   ARTICLE_LISTED_READ(Article.class),

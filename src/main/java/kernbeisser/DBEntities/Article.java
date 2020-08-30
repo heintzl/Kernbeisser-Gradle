@@ -60,11 +60,6 @@ public class Article extends ArticleBase {
   private ContainerDefinition containerDef;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE)})
-  private int suppliersItemNumber;
-
-  @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_WRITE)})
   private boolean weighable;
@@ -250,7 +245,6 @@ public class Article extends ArticleBase {
     Article article = (Article) o;
     return kbNumber == article.kbNumber
         && Double.compare(article.surcharge, surcharge) == 0
-        && suppliersItemNumber == article.suppliersItemNumber
         && weighable == article.weighable
         && listed == article.listed
         && showInShop == article.showInShop

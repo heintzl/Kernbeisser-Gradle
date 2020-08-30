@@ -19,7 +19,6 @@ import org.hibernate.annotations.Where;
 @Entity
 @Table
 @NoArgsConstructor
-@Where(clause = "unreadable = false")
 public class User implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -191,7 +190,7 @@ public class User implements Serializable {
     EntityManager em = DBConnection.getEntityManager();
     Collection<User> out =
         em.createQuery(
-                "select u from User u where (u.firstName like :search or u.surname like :search or u.username like :search) order by u.firstName ASC",
+                "select u from User u where u.unreadable = false and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
                 User.class)
             .setParameter("search", s + "%")
             .setMaxResults(max)
