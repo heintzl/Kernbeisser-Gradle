@@ -207,7 +207,7 @@ public class Tools {
     return Proxy.getSecureInstances(out);
   }
 
-  public static <T> List<T> getAllUnProxy(Class<T> c){
+  public static <T> List<T> getAllUnProxy(Class<T> c) {
     EntityManager em = DBConnection.getEntityManager();
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<T> cq = cb.createQuery(c);

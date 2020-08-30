@@ -3,13 +3,11 @@ package kernbeisser.DBEntities;
 import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.*;
-
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
 
 @Entity
 @Table
