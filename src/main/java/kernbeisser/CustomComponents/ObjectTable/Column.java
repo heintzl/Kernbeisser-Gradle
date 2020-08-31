@@ -95,8 +95,4 @@ public interface Column<T> {
   Object getValue(T t) throws AccessDeniedException;
 
   default void onAction(T t) {}
-
-  default boolean isEditable(T t) {
-    return false;
-  }
 }

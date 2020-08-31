@@ -18,13 +18,15 @@ public class EditJobController implements Controller<EditJobView, EditJobModel> 
 
   public EditJobController(Job job, Mode mode) {
     model = new EditJobModel(job != null ? job : Proxy.getSecureInstance(new Job()), mode);
-    try {
-      Tools.delete(job);
-    } catch (PersistenceException e) {
-      if (e.getCause() instanceof ConstraintViolationException) {
-        JOptionPane.showMessageDialog(
-            null,
-            "Der Job kann nicht gelöscht werden, da dieser noch auf andere Objekte verweisst");
+    if(mode == Mode.REMOVE) {
+      try {
+        Tools.delete(job);
+      } catch (PersistenceException e) {
+        if (e.getCause() instanceof ConstraintViolationException) {
+          JOptionPane.showMessageDialog(
+                  null,
+                  "Der Job kann nicht gelöscht werden, da dieser noch auf andere Objekte verweisst");
+        }
       }
     }
   }

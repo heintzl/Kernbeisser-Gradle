@@ -29,6 +29,7 @@ import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
 import kernbeisser.Security.Proxy;
+import lombok.SneakyThrows;
 import org.apache.commons.beanutils.BeanUtils;
 import sun.misc.Unsafe;
 
@@ -665,6 +666,15 @@ public class Tools {
     return null;
   }
 
+  public static <I,O> O[] transformToArray(Collection<I> input,Class<O> outClass,Function<I,O> transformer){
+    O[] out = (O[]) Array.newInstance(outClass,input.size());
+    int c = 0;
+    for (I i : input) {
+      out[c++]=transformer.apply(i);
+    }
+    return out;
+  }
+
   public static Object getId(Object o) {
     try {
       return getIdField(o.getClass()).get(o);
@@ -678,11 +688,13 @@ public class Tools {
     return java.util.Date.from(yearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
 
-  public static <T> T findById(Collection<T> collection, Object id) {
-    if (collection.size() == 0) return null;
+  public static <T> T findById(Iterable<T> collection, Object id) {
+    Iterator<T> iterator = collection.iterator();
+    if (!iterator.hasNext()) return null;
     Field field = getIdField(collection.iterator().next().getClass());
-    for (T t : collection) {
+    while (iterator.hasNext()){
       try {
+        T t = iterator.next();
         if (field.get(t).equals(id)) return t;
       } catch (IllegalAccessException e) {
         e.printStackTrace();
@@ -741,5 +753,12 @@ public class Tools {
       }
     }
     return values;
+  }
+
+  @SneakyThrows
+  public static Object callPrivateFunction(Class<?> clazz, Object obj, String name, Object ... args){
+    Method method = clazz.getDeclaredMethod(name,Tools.transform(args,Class.class,Object::getClass));
+    method.setAccessible(true);
+    return method.invoke(obj,args);
   }
 }
