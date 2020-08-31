@@ -666,11 +666,12 @@ public class Tools {
     return null;
   }
 
-  public static <I,O> O[] transformToArray(Collection<I> input,Class<O> outClass,Function<I,O> transformer){
-    O[] out = (O[]) Array.newInstance(outClass,input.size());
+  public static <I, O> O[] transformToArray(
+      Collection<I> input, Class<O> outClass, Function<I, O> transformer) {
+    O[] out = (O[]) Array.newInstance(outClass, input.size());
     int c = 0;
     for (I i : input) {
-      out[c++]=transformer.apply(i);
+      out[c++] = transformer.apply(i);
     }
     return out;
   }
@@ -692,7 +693,7 @@ public class Tools {
     Iterator<T> iterator = collection.iterator();
     if (!iterator.hasNext()) return null;
     Field field = getIdField(collection.iterator().next().getClass());
-    while (iterator.hasNext()){
+    while (iterator.hasNext()) {
       try {
         T t = iterator.next();
         if (field.get(t).equals(id)) return t;
@@ -756,9 +757,11 @@ public class Tools {
   }
 
   @SneakyThrows
-  public static Object callPrivateFunction(Class<?> clazz, Object obj, String name, Object ... args){
-    Method method = clazz.getDeclaredMethod(name,Tools.transform(args,Class.class,Object::getClass));
+  public static Object callPrivateFunction(
+      Class<?> clazz, Object obj, String name, Object... args) {
+    Method method =
+        clazz.getDeclaredMethod(name, Tools.transform(args, Class.class, Object::getClass));
     method.setAccessible(true);
-    return method.invoke(obj,args);
+    return method.invoke(obj, args);
   }
 }
