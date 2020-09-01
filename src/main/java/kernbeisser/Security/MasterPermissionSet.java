@@ -46,7 +46,8 @@ public final class MasterPermissionSet {
    * @param key the key which should added to the permission set
    */
   public static void addPermission(PermissionKey key) {
-    bits[key.ordinal() / Long.SIZE] = (bits[key.ordinal() / Long.SIZE] | (1 << (key.ordinal() % Long.SIZE)));
+    bits[key.ordinal() / Long.SIZE] =
+        (bits[key.ordinal() / Long.SIZE] | (1 << (key.ordinal() % Long.SIZE)));
   }
 
   /**
@@ -55,7 +56,8 @@ public final class MasterPermissionSet {
    * @param key the key which should be removed
    */
   public static void removePermission(PermissionKey key) {
-    bits[key.ordinal() / Long.SIZE]=(bits[key.ordinal() / Long.SIZE]&(~(1 << (key.ordinal() % Long.SIZE))));
+    bits[key.ordinal() / Long.SIZE] =
+        (bits[key.ordinal() / Long.SIZE] & (~(1 << (key.ordinal() % Long.SIZE))));
   }
 
   /**
