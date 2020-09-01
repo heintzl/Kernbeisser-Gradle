@@ -234,7 +234,7 @@ public class Tools {
     Class<?> clazz = t.getClass();
     while (!clazz.equals(Object.class)) {
       for (Field declaredField : clazz.getDeclaredFields()) {
-        if (declaredField.getAnnotation(Id.class) != null) {
+        if (declaredField.isAnnotationPresent(Id.class)) {
           declaredField.setAccessible(true);
           try {
             declaredField.set(t, id);
@@ -623,7 +623,7 @@ public class Tools {
   }
 
   public static boolean isUnique(Field f) {
-    if (f.getAnnotation(Id.class) != null) return false;
+    if (f.isAnnotationPresent(Id.class)) return true;
     for (Annotation annotation : f.getAnnotations()) {
       try {
         Method uniqueCheck = annotation.annotationType().getDeclaredMethod("unique");
@@ -656,7 +656,7 @@ public class Tools {
   public static Field getIdField(Class<?> clazz) {
     while (!clazz.equals(Object.class)) {
       for (Field declaredField : clazz.getDeclaredFields()) {
-        if (declaredField.getAnnotation(Id.class) != null) {
+        if (declaredField.isAnnotationPresent(Id.class)) {
           declaredField.setAccessible(true);
           return declaredField;
         }
