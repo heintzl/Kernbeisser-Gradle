@@ -7,8 +7,6 @@ import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
-
 public class ObjectForm<P> {
   private ObjectValidator<P> objectValidator = input -> input;
 
