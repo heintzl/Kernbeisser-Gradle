@@ -3,12 +3,12 @@ package kernbeisser.Windows.TabbedPanel;
 import java.awt.*;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class TabbedPaneController implements Controller<TabbedPaneView, TabbedPaneModel> {
+public class TabbedPaneController implements IController<TabbedPaneView, TabbedPaneModel> {
   private final TabbedPaneModel model;
   private TabbedPaneView view;
 

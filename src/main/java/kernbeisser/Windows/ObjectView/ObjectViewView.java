@@ -7,11 +7,11 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectViewView<T> implements View<ObjectViewController<T>> {
+public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
   private JButton add;
   private JButton edit;
   private JButton back;

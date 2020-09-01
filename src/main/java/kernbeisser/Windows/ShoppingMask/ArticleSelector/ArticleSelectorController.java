@@ -7,12 +7,12 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ArticleSelectorController
-    implements Controller<ArticleSelectorView, ArticleSelectorModel> {
+    implements IController<ArticleSelectorView, ArticleSelectorModel> {
   private final ArticleSelectorModel model;
   private ArticleSelectorView view;
 

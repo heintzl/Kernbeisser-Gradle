@@ -1,5 +1,5 @@
 package kernbeisser.Windows.InventoryMenu;
 
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class InventoryMenuModel implements Model<InventoryMenuController> {}
+public class InventoryMenuModel implements IModel<InventoryMenuController> {}

@@ -5,10 +5,10 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.PermissionComboBox;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-public class SynchronizeArticleView implements View<SynchronizeArticleController> {
+public class SynchronizeArticleView implements IView<SynchronizeArticleController> {
 
   private JPanel main;
   private JButton back;

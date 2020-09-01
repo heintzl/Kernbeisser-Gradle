@@ -13,9 +13,9 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class EditItemModel implements Model<EditItemController> {
+public class EditItemModel implements IModel<EditItemController> {
   private final Mode mode;
   private final Article article;
 

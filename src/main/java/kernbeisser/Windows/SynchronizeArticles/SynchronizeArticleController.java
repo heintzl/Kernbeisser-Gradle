@@ -4,11 +4,11 @@ import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
 public class SynchronizeArticleController
-    implements Controller<SynchronizeArticleView, SynchronizeArticleModel> {
+    implements IController<SynchronizeArticleView, SynchronizeArticleModel> {
 
   private final SynchronizeArticleModel model;
   private SynchronizeArticleView view;

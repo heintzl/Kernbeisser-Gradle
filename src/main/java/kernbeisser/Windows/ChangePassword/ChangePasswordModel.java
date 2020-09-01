@@ -5,9 +5,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class ChangePasswordModel implements Model<ChangePasswordController> {
+public class ChangePasswordModel implements IModel<ChangePasswordController> {
 
   private final User user;
   private final boolean verifyWithOldPassword;

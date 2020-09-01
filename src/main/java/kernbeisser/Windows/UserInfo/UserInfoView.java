@@ -11,11 +11,11 @@ import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class UserInfoView implements View<UserInfoController> {
+public class UserInfoView implements IView<UserInfoController> {
 
   private JPanel main;
   private JTabbedPane tabbedPane;

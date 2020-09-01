@@ -8,10 +8,10 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.TableModel;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-public class DatePickerView implements View<DatePickerController> {
+public class DatePickerView implements IView<DatePickerController> {
   private JButton chooseButton;
   private JPanel main;
   private JComboBox<String> monthSelection;

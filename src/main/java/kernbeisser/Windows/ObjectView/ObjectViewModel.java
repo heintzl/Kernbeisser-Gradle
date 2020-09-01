@@ -3,13 +3,13 @@ package kernbeisser.Windows.ObjectView;
 import java.util.Collection;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 
-public class ObjectViewModel<T> implements Model<ObjectViewController<T>> {
+public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
   private final MaskLoader<T> maskLoader;
   private final Searchable<T> itemSupplier;
 

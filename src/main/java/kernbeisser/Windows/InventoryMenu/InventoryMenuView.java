@@ -1,11 +1,11 @@
 package kernbeisser.Windows.InventoryMenu;
 
 import javax.swing.*;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class InventoryMenuView implements View<InventoryMenuController> {
+public class InventoryMenuView implements IView<InventoryMenuController> {
 
   @Linked private InventoryMenuController controller;
 

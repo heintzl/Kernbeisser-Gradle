@@ -10,12 +10,12 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-public class PayController implements Controller<PayView, PayModel> {
+public class PayController implements IController<PayView, PayModel> {
 
   private final PayModel model;
   private PayView view;

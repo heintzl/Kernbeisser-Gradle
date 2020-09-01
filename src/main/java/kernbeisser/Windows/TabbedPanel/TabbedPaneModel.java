@@ -2,11 +2,11 @@ package kernbeisser.Windows.TabbedPanel;
 
 import java.util.ArrayList;
 import java.util.List;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 
-public class TabbedPaneModel implements Model<TabbedPaneController> {
+public class TabbedPaneModel implements IModel<TabbedPaneController> {
   public static TabbedPaneController DEFAULT_TABBED_PANE =
       new TabbedPaneController() {
         boolean firstTab = true;

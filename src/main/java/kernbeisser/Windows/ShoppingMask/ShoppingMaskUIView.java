@@ -25,13 +25,13 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.UndefinedInputException;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
+public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   // TODO: create Enum
   static final int ARTICLE_NUMBER = 0;
   static final int BAKED_GOODS = 1;
@@ -578,7 +578,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     return shoppingListPanel.getSize();
   }
 
-  public Controller getController() {
+  public IController getController() {
     return controller;
   }
 

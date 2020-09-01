@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class CollectionController<T> implements Controller<CollectionView<T>, CollectionModel<T>> {
+public class CollectionController<T> implements IController<CollectionView<T>, CollectionModel<T>> {
   private CollectionView<T> view;
   private final CollectionModel<T> model;
 

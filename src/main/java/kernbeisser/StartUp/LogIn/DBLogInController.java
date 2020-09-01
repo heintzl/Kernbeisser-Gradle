@@ -1,10 +1,10 @@
 package kernbeisser.StartUp.LogIn;
 
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class DBLogInController implements Controller<DBLogInView, DBLogInModel> {
+public class DBLogInController implements IController<DBLogInView, DBLogInModel> {
 
   private DBLogInView view;
   private final DBLogInModel model;

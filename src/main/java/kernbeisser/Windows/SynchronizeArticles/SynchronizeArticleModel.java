@@ -12,9 +12,9 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class SynchronizeArticleModel implements Model<SynchronizeArticleController> {
+public class SynchronizeArticleModel implements IModel<SynchronizeArticleController> {
 
   private final Collection<ArticleDifference<?>> allDifferences = loadAllDifferences();
 

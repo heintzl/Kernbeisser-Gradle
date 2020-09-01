@@ -4,11 +4,11 @@ import javax.persistence.PersistenceException;
 import javax.swing.*;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsController
-    implements Controller<ManagePriceListsView, ManagePriceListsModel> {
+    implements IController<ManagePriceListsView, ManagePriceListsModel> {
   private final ManagePriceListsModel model;
   private final ManagePriceListsView view;
 

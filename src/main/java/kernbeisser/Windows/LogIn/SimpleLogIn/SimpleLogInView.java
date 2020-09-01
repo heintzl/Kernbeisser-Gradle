@@ -8,11 +8,11 @@ import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class SimpleLogInView implements View<SimpleLogInController> {
+public class SimpleLogInView implements IView<SimpleLogInController> {
   private JButton logIn;
   private JPasswordField password;
   private JTextField username;

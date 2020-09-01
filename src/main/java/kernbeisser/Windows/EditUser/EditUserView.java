@@ -18,11 +18,11 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class EditUserView implements View<EditUserController> {
+public class EditUserView implements IView<EditUserController> {
   private JLabel lblVorname;
   private JLabel lblNachname;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, String> firstName;

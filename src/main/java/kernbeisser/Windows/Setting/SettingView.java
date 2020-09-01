@@ -9,10 +9,10 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-public class SettingView implements View<SettingController> {
+public class SettingView implements IView<SettingController> {
   private ObjectTable<SettingValue> settingValues;
   private JButton cancel;
   private JPanel main;

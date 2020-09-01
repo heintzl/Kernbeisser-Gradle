@@ -4,10 +4,10 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
 import kernbeisser.DBEntities.Job;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-public class EditJobView implements View<EditJobController> {
+public class EditJobView implements IView<EditJobController> {
 
   private JButton commit;
   private JButton cancel;

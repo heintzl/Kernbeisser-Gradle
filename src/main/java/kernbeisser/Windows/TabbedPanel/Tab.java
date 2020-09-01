@@ -1,12 +1,12 @@
 package kernbeisser.Windows.TabbedPanel;
 
 import jiconfont.IconCode;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 
 public interface Tab {
   IconCode getIcon();
 
-  Controller<?, ?> getController();
+  IController<?, ?> getController();
 
   String getTitle();
 

@@ -10,8 +10,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import org.jetbrains.annotations.NotNull;
 
-public interface View<
-    C extends Controller<? extends View<? extends C>, ? extends Model<? extends C>>> {
+public interface IView<
+    C extends IController<? extends IView<? extends C>, ? extends IModel<? extends C>>> {
 
   void initialize(C controller);
 

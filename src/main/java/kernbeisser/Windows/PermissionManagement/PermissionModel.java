@@ -8,9 +8,9 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class PermissionModel implements Model<PermissionController> {
+public class PermissionModel implements IModel<PermissionController> {
   void addKey(Permission permission, PermissionKey key) {
     Tools.addToCollection(Permission.class, permission.getId(), Permission::getKeySet, key);
   }

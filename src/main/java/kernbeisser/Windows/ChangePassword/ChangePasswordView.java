@@ -6,10 +6,10 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-public class ChangePasswordView implements View<ChangePasswordController> {
+public class ChangePasswordView implements IView<ChangePasswordController> {
   private JPanel main;
   private JButton changePassword;
   private JPasswordField currentPassword;

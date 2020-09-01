@@ -8,11 +8,11 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class SelectorView<T> implements View<SelectorController<T>> {
+public class SelectorView<T> implements IView<SelectorController<T>> {
   private JPanel mainPanel;
   private ObjectTable<T> selected;
   private JButton add;

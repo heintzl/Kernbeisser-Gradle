@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.function.Consumer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.Searchable;
 
-public class SearchBoxModel<T> implements Model<SearchBoxController<T>> {
+public class SearchBoxModel<T> implements IModel<SearchBoxController<T>> {
   private final Searchable<T> searchable;
   private final Column<T>[] columns;
 

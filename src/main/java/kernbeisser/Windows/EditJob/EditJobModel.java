@@ -2,9 +2,9 @@ package kernbeisser.Windows.EditJob;
 
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class EditJobModel implements Model<EditJobController> {
+public class EditJobModel implements IModel<EditJobController> {
   private final Job job;
   private final Mode mode;
 

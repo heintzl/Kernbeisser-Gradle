@@ -6,10 +6,10 @@ import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class ContainerController implements Controller<ContainerView, ContainerModel> {
+public class ContainerController implements IController<ContainerView, ContainerModel> {
   private ContainerView view;
   private final ContainerModel model;
 

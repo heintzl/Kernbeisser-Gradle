@@ -10,11 +10,11 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class SearchBoxView<T> implements View<SearchBoxController<T>> {
+public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   private JButton search;
   private JTextField searchInput;
   private ObjectTable<T> objects;

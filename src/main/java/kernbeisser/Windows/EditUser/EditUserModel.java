@@ -9,9 +9,9 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class EditUserModel implements Model<EditUserController> {
+public class EditUserModel implements IModel<EditUserController> {
 
   private final User user;
   private final Mode mode;

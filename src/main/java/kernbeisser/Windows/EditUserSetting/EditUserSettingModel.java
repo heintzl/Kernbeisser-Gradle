@@ -3,9 +3,9 @@ package kernbeisser.Windows.EditUserSetting;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class EditUserSettingModel implements Model<EditUserSettingController> {
+public class EditUserSettingModel implements IModel<EditUserSettingController> {
   private final User user;
 
   public EditUserSettingModel(User user) {

@@ -6,11 +6,11 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class PermissionView implements View<PermissionController> {
+public class PermissionView implements IView<PermissionController> {
   private ObjectTable<Permission> permission;
   private JPanel main;
   private JComboBox<Object> category;

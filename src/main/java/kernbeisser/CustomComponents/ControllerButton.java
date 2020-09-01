@@ -5,13 +5,13 @@ import java.util.function.Consumer;
 import javax.swing.*;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Security.MasterPermissionSet;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 
 public class ControllerButton extends JButton {
 
-  private final Controller<?, ?> controller;
+  private final IController<?, ?> controller;
 
-  public <V extends Controller<?, ?>> ControllerButton(V controller, Consumer<V> action) {
+  public <V extends IController<?, ?>> ControllerButton(V controller, Consumer<V> action) {
     this.controller = controller;
     setEnabled(false);
     addActionListener(e -> action.accept(controller));
@@ -23,7 +23,7 @@ public class ControllerButton extends JButton {
     setEnabled(MasterPermissionSet.hasPermissions(controller.getRequiredKeys()));
   }
 
-  public Controller<?, ?> getController() {
+  public IController<?, ?> getController() {
     return controller;
   }
 }

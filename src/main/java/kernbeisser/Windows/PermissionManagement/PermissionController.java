@@ -7,10 +7,10 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class PermissionController implements Controller<PermissionView, PermissionModel> {
+public class PermissionController implements IController<PermissionView, PermissionModel> {
   private PermissionView view;
   private final PermissionModel model;
 

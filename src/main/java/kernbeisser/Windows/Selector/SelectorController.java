@@ -5,13 +5,13 @@ import java.util.function.Consumer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class SelectorController<T> implements Controller<SelectorView<T>, SelectorModel<T>> {
+public class SelectorController<T> implements IController<SelectorView<T>, SelectorModel<T>> {
   private final SelectorModel<T> model;
   private SelectorView<T> view;
 

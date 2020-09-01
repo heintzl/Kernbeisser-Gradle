@@ -10,12 +10,12 @@ import java.util.function.Consumer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class DatePickerController implements Controller<DatePickerView, DatePickerModel> {
+public class DatePickerController implements IController<DatePickerView, DatePickerModel> {
   private final DatePickerView view;
   private final DatePickerModel model;
 

@@ -7,9 +7,9 @@ import java.util.Collection;
 import kernbeisser.Useful.Tools;
 
 public class ViewFactory {
-  public static void initializeView(Controller<?, ?> controller) {
+  public static void initializeView(IController<?, ?> controller) {
     Field viewField = Utils.getLinkedViewField(controller.getClass());
-    View<?> v = (View<?>) Tools.createWithoutConstructor(viewField.getType());
+    IView<?> v = (IView<?>) Tools.createWithoutConstructor(viewField.getType());
     linkViewControllerFields(v, controller);
     try {
       viewField.set(controller, v);
@@ -20,7 +20,7 @@ public class ViewFactory {
     callInitializeMethod(v, controller);
   }
 
-  private static void linkViewControllerFields(View<?> view, Controller<?, ?> controller) {
+  private static void linkViewControllerFields(IView<?> view, IController<?, ?> controller) {
     Collection<Field> fields = Tools.getWithAnnotation(controller.getClass(), Linked.class);
     for (Field declaredField : Tools.getAllFields(view.getClass())) {
       if (declaredField.isAnnotationPresent(Linked.class)) {
@@ -46,9 +46,9 @@ public class ViewFactory {
     }
   }
 
-  private static void callInitializeMethod(View<?> view, Controller<?, ?> controller) {
+  private static void callInitializeMethod(IView<?> view, IController<?, ?> controller) {
     try {
-      Method initMethod = view.getClass().getDeclaredMethod("initialize", Controller.class);
+      Method initMethod = view.getClass().getDeclaredMethod("initialize", IController.class);
       initMethod.setAccessible(true);
       initMethod.invoke(view, controller);
     } catch (NoSuchMethodException | IllegalAccessException e) {
@@ -58,7 +58,7 @@ public class ViewFactory {
     }
   }
 
-  private static void callSetupUiMethod(View<?> view) {
+  private static void callSetupUiMethod(IView<?> view) {
     try {
       Method setUpUiComponents = view.getClass().getDeclaredMethod("$$$setupUI$$$");
       setUpUiComponents.setAccessible(true);

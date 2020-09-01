@@ -9,7 +9,7 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.EditUser.EditUserController;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
@@ -17,7 +17,8 @@ import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, ShoppingMaskModel> {
+public class ShoppingMaskUIController
+    implements IController<ShoppingMaskUIView, ShoppingMaskModel> {
   private ShoppingMaskUIView view;
   private final ShoppingMaskModel model;
   @Linked private final ShoppingCartController shoppingCartController;

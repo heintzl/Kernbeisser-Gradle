@@ -4,11 +4,11 @@ import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
 public class EditSurchargeTableController
-    implements Controller<EditSurchargeTableView, EditSurchargeTableModel> {
+    implements IController<EditSurchargeTableView, EditSurchargeTableModel> {
 
   private final EditSurchargeTableModel model;
   private EditSurchargeTableView view;

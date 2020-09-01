@@ -14,10 +14,10 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Reports.ReportManager;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 import net.sf.jasperreports.engine.JRException;
 
-public class PayModel implements Model<PayController> {
+public class PayModel implements IModel<PayController> {
   private boolean successful = false;
   private final SaleSession saleSession;
   private final List<ShoppingItem> shoppingCart;

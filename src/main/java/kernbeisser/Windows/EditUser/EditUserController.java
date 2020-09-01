@@ -9,10 +9,10 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class EditUserController implements Controller<EditUserView, EditUserModel> {
+public class EditUserController implements IController<EditUserView, EditUserModel> {
   private EditUserView view;
   private final EditUserModel model;
 

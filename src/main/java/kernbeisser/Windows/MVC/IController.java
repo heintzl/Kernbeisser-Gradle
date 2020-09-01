@@ -16,9 +16,9 @@ import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.Window;
 import org.jetbrains.annotations.NotNull;
 
-public interface Controller<
-    V extends View<? extends Controller<? extends V, ? extends M>>,
-    M extends Model<? extends Controller<? extends V, ? extends M>>> {
+public interface IController<
+    V extends IView<? extends IController<? extends V, ? extends M>>,
+    M extends IModel<? extends IController<? extends V, ? extends M>>> {
 
   @NotNull
   default V getView() {
@@ -57,8 +57,8 @@ public interface Controller<
    * initialize the view of the controller by calling initialize function then call the fillUi
    * function in the controller to set values in the ui
    *
-   * @see Controller#fillUI()
-   * @see View#initialize(Controller)
+   * @see IController#fillUI()
+   * @see IView#initialize(IController)
    */
   /*default void initView() {
     try {
@@ -81,10 +81,10 @@ public interface Controller<
    * sets default value for openAsWindow closeOld to true
    *
    * @return the result of openAsWindow(?,?,true)
-   * @see Controller#openAsWindow(Window, Function, boolean)
+   * @see IController#openAsWindow(Window, Function, boolean)
    */
   default <W extends Window> W openAsWindow(
-      Window parent, Function<Controller<V, M>, W> windowFactory) {
+      Window parent, Function<IController<V, M>, W> windowFactory) {
     return openAsWindow(parent, windowFactory, true);
   }
 
@@ -100,7 +100,7 @@ public interface Controller<
    * @return a reference to the window which is now created and visible on the screen
    */
   default <W extends Window> W openAsWindow(
-      Window parent, Function<Controller<V, M>, W> windowFactory, boolean closeOld) {
+      Window parent, Function<IController<V, M>, W> windowFactory, boolean closeOld) {
     W createWindow = windowFactory.apply(this);
     createWindow.setContent(this);
     createWindow.setSize(getView().getSize());
@@ -119,7 +119,7 @@ public interface Controller<
    * @return the created window
    */
   default <W extends Window> W openAsWindow(
-      Window parent, BiFunction<Controller<V, M>, Window, W> windowFactory) {
+      Window parent, BiFunction<IController<V, M>, Window, W> windowFactory) {
     return openAsWindow(parent, (controller) -> windowFactory.apply(this, parent), false);
   }
 
@@ -137,8 +137,8 @@ public interface Controller<
       }
 
       @Override
-      public Controller<?, ?> getController() {
-        return Controller.this;
+      public IController<?, ?> getController() {
+        return IController.this;
       }
 
       @Override
@@ -148,7 +148,7 @@ public interface Controller<
 
       @Override
       public boolean commitClose() {
-        return Controller.this.commitAllClose();
+        return IController.this.commitAllClose();
       }
     };
   }
@@ -171,7 +171,7 @@ public interface Controller<
    *
    * @param tabbedPaneController the controller from the tab container
    * @see TabbedPaneController#closeTab(Tab)
-   * @see Controller#asTab(String)
+   * @see IController#asTab(String)
    */
   default void removeSelf(TabbedPaneController tabbedPaneController) {
     tabbedPaneController.closeTab(this.asTab(""));
@@ -180,7 +180,7 @@ public interface Controller<
   /**
    * removes tab from this tab from DEFAULT_TABBED_PANE
    *
-   * @see Controller#removeSelf(TabbedPaneController)
+   * @see IController#removeSelf(TabbedPaneController)
    */
   default void removeSelf() {
     removeSelf(TabbedPaneModel.DEFAULT_TABBED_PANE);
@@ -192,7 +192,7 @@ public interface Controller<
    * @param title the title of the Tab
    * @return the Window
    * @see TabbedPaneModel#DEFAULT_TABBED_PANE
-   * @see Controller#openTab(String, TabbedPaneController)
+   * @see IController#openTab(String, TabbedPaneController)
    */
   default Window openTab(String title) {
     return openTab(title, TabbedPaneModel.DEFAULT_TABBED_PANE);
@@ -202,7 +202,7 @@ public interface Controller<
    * calls commitCloseTree with this value
    *
    * @return function result of commitCloseTree
-   * @see Controller#commitCloseTree(Controller)
+   * @see IController#commitCloseTree(IController)
    */
   default boolean commitAllClose() {
     return commitCloseTree(this);
@@ -213,9 +213,9 @@ public interface Controller<
    *
    * @param controller the tree head
    * @return true if all components allow close
-   * @see Controller#commitClose()
+   * @see IController#commitClose()
    */
-  static boolean commitCloseTree(Controller<?, ?> controller) {
+  static boolean commitCloseTree(IController<?, ?> controller) {
     boolean b = true;
     for (Field field : controller.getClass().getDeclaredFields()) {
       if (Modifier.isStatic(field.getModifiers())) {
@@ -226,10 +226,10 @@ public interface Controller<
         continue;
       }
       for (Class<?> anInterface : field.getType().getInterfaces()) {
-        if (anInterface.equals(Controller.class)) {
+        if (anInterface.equals(IController.class)) {
           field.setAccessible(true);
           try {
-            b = b && commitCloseTree((Controller<?, ?>) field.get(controller));
+            b = b && commitCloseTree((IController<?, ?>) field.get(controller));
           } catch (IllegalAccessException e) {
             Tools.showUnexpectedErrorWarning(e);
             return false;
@@ -241,11 +241,11 @@ public interface Controller<
     return b && controller.commitClose();
   }
 
-  static Controller<?, ?> createFakeController(JComponent content) {
+  static IController<?, ?> createFakeController(JComponent content) {
     return new FakeController(content);
   }
 
-  class FakeController implements Controller<FakeView, FakeModel> {
+  class FakeController implements IController<FakeView, FakeModel> {
 
     private final FakeView fakeView;
     private final FakeModel model;
@@ -276,7 +276,7 @@ public interface Controller<
     }
   }
 
-  class FakeView implements View<FakeController> {
+  class FakeView implements IView<FakeController> {
     private final JComponent content;
 
     FakeView(JComponent content) {
@@ -292,5 +292,5 @@ public interface Controller<
     }
   }
 
-  class FakeModel implements Model<FakeController> {}
+  class FakeModel implements IModel<FakeController> {}
 }

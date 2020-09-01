@@ -6,7 +6,7 @@ import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.EditItem.EditItemController;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
 import kernbeisser.Windows.ObjectView.ObjectViewView;
@@ -14,7 +14,7 @@ import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class EditItemsController implements Controller<EditItemsView, EditItemsModel> {
+public class EditItemsController implements IController<EditItemsView, EditItemsModel> {
 
   private EditItemsView view;
   private final EditItemsModel model;
@@ -81,6 +81,6 @@ public class EditItemsController implements Controller<EditItemsView, EditItemsM
           objectViewController.search();
           w.back();
         });
-    w = Controller.createFakeController(pt).openAsWindow(getView().getWindow(), SubWindow::new);
+    w = IController.createFakeController(pt).openAsWindow(getView().getWindow(), SubWindow::new);
   }
 }

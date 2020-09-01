@@ -3,15 +3,15 @@ package kernbeisser.Windows.WindowImpl;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowCloseEvent;
 
 public class SubWindow extends JDialog implements Window {
 
-  private final Controller<?, ?> controller;
+  private final IController<?, ?> controller;
 
-  public SubWindow(Controller<?, ?> controller, Window window) {
+  public SubWindow(IController<?, ?> controller, Window window) {
     super(window.getController().getView().getTopComponent());
     this.controller = controller;
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -60,12 +60,12 @@ public class SubWindow extends JDialog implements Window {
   }
 
   @Override
-  public Controller<?, ?> getController() {
+  public IController<?, ?> getController() {
     return controller;
   }
 
   @Override
-  public void setContent(Controller<?, ?> content) {
+  public void setContent(IController<?, ?> content) {
     add(content.getView().getWrappedContent());
   }
 

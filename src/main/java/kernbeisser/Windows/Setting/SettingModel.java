@@ -1,9 +1,9 @@
 package kernbeisser.Windows.Setting;
 
 import kernbeisser.DBEntities.SettingValue;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class SettingModel implements Model<SettingController> {
+public class SettingModel implements IModel<SettingController> {
   private SettingValue settingValue;
 
   public void edit(String value) {

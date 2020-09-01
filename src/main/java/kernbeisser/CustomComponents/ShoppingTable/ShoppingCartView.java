@@ -15,10 +15,10 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-public class ShoppingCartView extends JPanel implements View<ShoppingCartController> {
+public class ShoppingCartView extends JPanel implements IView<ShoppingCartController> {
   private final ShoppingCartController controller;
   private JLabel sum;
   private JLabel value;

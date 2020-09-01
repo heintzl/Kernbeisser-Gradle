@@ -5,11 +5,11 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
-public class MenuController implements Controller<MenuView, MenuModel> {
+public class MenuController implements IController<MenuView, MenuModel> {
 
   private final MenuModel model;
   private MenuView view;

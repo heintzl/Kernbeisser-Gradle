@@ -17,11 +17,11 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class EditItemView implements View<EditItemController> {
+public class EditItemView implements IView<EditItemController> {
   private JButton commit;
   private JButton cancel;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, String> itemName;

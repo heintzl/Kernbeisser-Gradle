@@ -17,11 +17,11 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class TransactionView implements View<TransactionController> {
+public class TransactionView implements IView<TransactionController> {
   private JButton transferTransactions;
   private JTextField to;
   private JTextField from;

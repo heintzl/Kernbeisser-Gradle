@@ -3,10 +3,10 @@ package kernbeisser.Windows.EditUserSetting;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.Enums.Theme;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-public class EditUserSettingView implements View<EditUserSettingController> {
+public class EditUserSettingView implements IView<EditUserSettingController> {
   private JButton commit;
   private JComboBox<Theme> themes;
   private JSlider fontSize;

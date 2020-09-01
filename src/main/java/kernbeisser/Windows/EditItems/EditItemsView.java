@@ -4,12 +4,12 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import kernbeisser.Windows.ObjectView.ObjectViewView;
 import org.jetbrains.annotations.NotNull;
 
-public class EditItemsView implements View<EditItemsController> {
+public class EditItemsView implements IView<EditItemsController> {
 
   private JPanel main;
   private JButton choosePriceList;

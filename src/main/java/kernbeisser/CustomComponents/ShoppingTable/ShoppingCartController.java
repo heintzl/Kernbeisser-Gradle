@@ -3,10 +3,10 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class ShoppingCartController implements Controller<ShoppingCartView, ShoppingCartModel> {
+public class ShoppingCartController implements IController<ShoppingCartView, ShoppingCartModel> {
   private final ShoppingCartView view;
   private final ShoppingCartModel model;
   private final boolean editable;
