@@ -64,7 +64,10 @@ public class Tools {
   }
 
   public static <T, O extends Collection<T>> O extract(
-      Supplier<O> outputContainerSupplier, String sourceString, String separator, Function<String, T> stringTransformer) {
+      Supplier<O> outputContainerSupplier,
+      String sourceString,
+      String separator,
+      Function<String, T> stringTransformer) {
     String[] columns = sourceString.split(separator);
     O out = outputContainerSupplier.get();
     for (String column : columns) {
@@ -74,8 +77,12 @@ public class Tools {
   }
 
   public static <T> T[] extract(
-      Class<T> outputClass, String arrayString, String separator, Function<String, T> stringValueExtractor) {
-    return extract(ArrayList::new, arrayString, separator, stringValueExtractor).toArray((T[]) Array.newInstance(outputClass, 0));
+      Class<T> outputClass,
+      String arrayString,
+      String separator,
+      Function<String, T> stringValueExtractor) {
+    return extract(ArrayList::new, arrayString, separator, stringValueExtractor)
+        .toArray((T[]) Array.newInstance(outputClass, 0));
   }
 
   public static <I, O> O[] transform(I[] in, Class<O> out, Function<I, O> ioTransformer) {
@@ -121,7 +128,6 @@ public class Tools {
     }
     return out;
   }
-
 
   public static <T> List<T> getAll(Class<T> c, String condition) {
     EntityManager em = DBConnection.getEntityManager();

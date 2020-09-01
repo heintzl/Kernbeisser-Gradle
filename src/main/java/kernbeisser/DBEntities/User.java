@@ -199,7 +199,7 @@ public class User implements Serializable {
   }
 
   public static User getById(int parseInt) {
-    return DBConnection.getEntityManager().find(User.class, parseInt);
+    return Proxy.getSecureInstance(DBConnection.getEntityManager().find(User.class, parseInt));
   }
 
   @kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)

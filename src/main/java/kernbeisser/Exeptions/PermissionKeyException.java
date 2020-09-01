@@ -1,10 +1,9 @@
 package kernbeisser.Exeptions;
 
-public class PermissionKeyException extends ProxyException{
-    public PermissionKeyException() {}
+public class PermissionKeyException extends ProxyException {
+  public PermissionKeyException() {}
 
-    public PermissionKeyException(String message){
-        super(message);
-    }
-
+  public PermissionKeyException(String message) {
+    super(message);
+  }
 }
