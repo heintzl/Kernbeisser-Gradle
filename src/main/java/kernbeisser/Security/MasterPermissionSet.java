@@ -11,7 +11,7 @@ import kernbeisser.Enums.PermissionKey;
  */
 public final class MasterPermissionSet {
 
-  /** the java option for a c++ bitfield */
+  /** the java option for a c bitfield */
   private static final long[] bits = new long[((PermissionKey.values().length / Long.SIZE) + 1)];
 
   /**
@@ -46,8 +46,7 @@ public final class MasterPermissionSet {
    * @param key the key which should added to the permission set
    */
   public static void addPermission(PermissionKey key) {
-    int o = key.ordinal();
-    bits[o / Long.SIZE] = (bits[o / Long.SIZE] | (1 << (o % Long.SIZE)));
+    bits[key.ordinal() / Long.SIZE] = (bits[key.ordinal() / Long.SIZE] | (1 << (key.ordinal() % Long.SIZE)));
   }
 
   /**
@@ -56,11 +55,7 @@ public final class MasterPermissionSet {
    * @param key the key which should be removed
    */
   public static void removePermission(PermissionKey key) {
-    int o = key.ordinal();
-    long bit = (1 << (key.ordinal() % Long.SIZE));
-    if ((bits[key.ordinal() / Long.SIZE] & bit) == bit) {
-      bits[o / Long.SIZE] = (bits[o / Long.SIZE] & (1 << (o % Long.SIZE)));
-    }
+    bits[key.ordinal() / Long.SIZE]=(bits[key.ordinal() / Long.SIZE]&(~(1 << (key.ordinal() % Long.SIZE))));
   }
 
   /**
