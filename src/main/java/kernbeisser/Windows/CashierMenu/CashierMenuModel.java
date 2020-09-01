@@ -10,7 +10,7 @@ public class CashierMenuModel implements Model<CashierMenuController> {
     this.user = user;
   }
 
-  User getUser() {
+  User getOwner() {
     return user;
   }
 }
