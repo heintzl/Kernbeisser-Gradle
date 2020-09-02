@@ -12,7 +12,6 @@ import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 
 public class EditItemModel implements IModel<EditItemController> {
@@ -26,34 +25,6 @@ public class EditItemModel implements IModel<EditItemController> {
 
   Article getSource() {
     return article;
-  }
-
-  boolean doAction(Article article) {
-    try {
-      switch (mode) {
-        case ADD:
-          addItem(article);
-          break;
-        case EDIT:
-          editItem(article);
-          break;
-        case REMOVE:
-          removeItem(article);
-          break;
-      }
-      return true;
-    } catch (Exception e) {
-      Tools.showUnexpectedErrorWarning(e);
-      return false;
-    }
-  }
-
-  private void removeItem(Article article) {
-    Tools.delete(Article.class, article.getId());
-  }
-
-  private void editItem(Article article) {
-    Tools.edit(article.getId(), article);
   }
 
   int kbNumberExists(int kbNumber) {

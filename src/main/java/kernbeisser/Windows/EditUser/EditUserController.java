@@ -19,7 +19,7 @@ public class EditUserController implements IController<EditUserView, EditUserMod
   public EditUserController(User user, Mode mode) {
     model = new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode);
     if (mode == Mode.REMOVE) {
-      model.doAction(model.getUser());
+      Tools.delete(user);
     }
   }
 

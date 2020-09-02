@@ -68,9 +68,4 @@ class EditSurchargeTableView implements IView<EditSurchargeTableController> {
             SurchargeTable::setSurcharge,
             AccessCheckingField.DOUBLE_FORMER);
   }
-
-  public void incorrectInput() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(), "Bitte überprüfen sie die eingaben auf Fehler");
-  }
 }
