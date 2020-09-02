@@ -7,7 +7,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Main;
 import kernbeisser.Security.CustomKeySetSecurityHandler;
@@ -28,7 +28,7 @@ public class LogInModel implements IModel {
   }
 
   public static void logIn(String username, char[] password)
-      throws AccessDeniedException, PermissionRequired {
+      throws CannotLogInException, PermissionRequired {
     EntityManager em = DBConnection.getEntityManager();
     try {
       User user =
@@ -50,10 +50,10 @@ public class LogInModel implements IModel {
         MasterPermissionSet.loadPermission(user.getPermissions());
         Main.logger.info("User with user id [" + user.getId() + "] has logged in");
       } else {
-        throw new AccessDeniedException();
+        throw new CannotLogInException();
       }
     } catch (NoResultException e) {
-      throw new AccessDeniedException();
+      throw new CannotLogInException();
     }
   }
 }
