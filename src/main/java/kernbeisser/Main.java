@@ -104,6 +104,10 @@ public class Main {
     setSettingLAF();
     logger.info("register FontAwesome");
     IconFontSwing.register(FontAwesome.getIconFont());
+    try {
+      Tools.scaleLabelSize(Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
+    } catch (NumberFormatException ignored) {
+    }
   }
 
   public static void setSettingLAF() throws UnsupportedLookAndFeelException {

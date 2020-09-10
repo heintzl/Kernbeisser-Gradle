@@ -15,6 +15,7 @@ import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSuppliers.EditSuppliers;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUser.EditUserController;
+import kernbeisser.Windows.EditUserSetting.EditUserSettingController;
 import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
@@ -80,7 +81,6 @@ public class MenuView implements View<MenuController> {
               order.setEnabled(false);
               editPriceList.setEnabled(false);
               // editSurchargeTables.setEnabled(false);
-              editUserSettings.setEnabled(false);
               placeHolderControllerButton.setEnabled(false);
               placeHolderControllerButton1.setEnabled(false);
               placeHolderControllerButton2.setEnabled(false);
@@ -129,7 +129,7 @@ public class MenuView implements View<MenuController> {
     // NOT IMPLEMENTED
     editUserSettings =
         new ControllerButton(
-            Controller.createFakeController(new JPanel()),
+            new EditUserSettingController(LogInModel.getLoggedIn()),
             controller -> controller.openTab("<PlaceHolder>"));
     editUsers =
         new ControllerButton(

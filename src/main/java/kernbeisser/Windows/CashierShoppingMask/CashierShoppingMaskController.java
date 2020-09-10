@@ -34,10 +34,10 @@ public class CashierShoppingMaskController
     model = new CashierShoppingMaskModel();
   }
 
-  private void selectUser(User user) {
-    if (user != null) {
+  private void selectUser(User tableSelection) {
+    if (tableSelection != null) {
       view.setOpenShoppingMaskEnabled(true);
-      view.setStartFor(user.toString());
+      view.setStartFor(tableSelection.toString());
     } else {
       view.setOpenShoppingMaskEnabled(false);
     }

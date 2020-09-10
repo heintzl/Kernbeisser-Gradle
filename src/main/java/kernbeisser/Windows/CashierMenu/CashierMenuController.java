@@ -15,8 +15,8 @@ public class CashierMenuController implements Controller<CashierMenuView, Cashie
   private final CashierMenuModel model;
   private CashierMenuView view;
 
-  public CashierMenuController(User user) {
-    model = new CashierMenuModel(user);
+  public CashierMenuController(User owner) {
+    model = new CashierMenuModel(owner);
   }
 
   @Override
@@ -53,6 +53,6 @@ public class CashierMenuController implements Controller<CashierMenuView, Cashie
   }
 
   public void openTransfer() {
-    new TransactionController(model.getUser()).openTab("Überweissungen tätigen");
+    new TransactionController(model.getOwner()).openTab("Überweissungen tätigen");
   }
 }

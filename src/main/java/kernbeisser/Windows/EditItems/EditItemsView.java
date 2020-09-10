@@ -1,6 +1,8 @@
 package kernbeisser.Windows.EditItems;
 
+import java.awt.event.KeyEvent;
 import javax.swing.*;
+import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MVC.View;
@@ -15,6 +17,8 @@ public class EditItemsView implements View<EditItemsController> {
 
   @Linked private EditItemsController controller;
 
+  @Linked private BarcodeCapture capture;
+
   @Override
   public void initialize(EditItemsController controller) {
     choosePriceList.addActionListener(e -> controller.openPriceListSelection());
@@ -27,5 +31,10 @@ public class EditItemsView implements View<EditItemsController> {
 
   private void createUIComponents() {
     objectView = controller.getObjectView();
+  }
+
+  @Override
+  public boolean processKeyboardInput(KeyEvent e) {
+    return capture.processKeyEvent(e);
   }
 }

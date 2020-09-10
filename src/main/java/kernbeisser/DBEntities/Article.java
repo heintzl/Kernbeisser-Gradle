@@ -14,22 +14,40 @@ import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 
+/*
+ extends from the main article structure ArticleBase which extends Article and ArticleKornkraft
+ the Article class contains additional statistic fields which aren't required for the all Articles
+ and only used for Articles which are constantly in use of Kernbeisser
+*/
 @Entity
 @Table
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Article extends ArticleBase {
+  /*
+  the Kernbeisser number is a unique index for use in the shop.
+  It is a way to identify Articles and is sorted in priceLists
+  and categories.
+  */
   @Column(unique = true)
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_KB_NUMBER_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_KB_NUMBER_WRITE)})
   private int kbNumber;
 
+  /*
+  The surcharge describes the percentage which becomes added when the article gets bought,
+  based on the kind of article sugar products have a higher surcharge than cornflakes, because
+  sugar products aren't that healthy as cornflakes
+   */
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SURCHARGE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SURCHARGE_WRITE)})
   private double surcharge;
 
+  /*
+  describes the kind of the article and group them
+   */
   @ManyToOne
   @JoinColumn(name = "priceListId")
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRICE_LIST_READ)})
@@ -40,11 +58,6 @@ public class Article extends ArticleBase {
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_WRITE)})
   private ContainerDefinition containerDef;
-
-  @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE)})
-  private int suppliersItemNumber;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_READ)})
@@ -232,7 +245,6 @@ public class Article extends ArticleBase {
     Article article = (Article) o;
     return kbNumber == article.kbNumber
         && Double.compare(article.surcharge, surcharge) == 0
-        && suppliersItemNumber == article.suppliersItemNumber
         && weighable == article.weighable
         && listed == article.listed
         && showInShop == article.showInShop

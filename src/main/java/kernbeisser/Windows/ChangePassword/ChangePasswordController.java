@@ -70,22 +70,22 @@ public class ChangePasswordController
   void show(int passwordStrength) {
     switch (passwordStrength) {
       case 0:
-        view.setPasswordStrength(Strength.TO_LOW);
+        view.setPasswordStrength(PasswordStrength.TO_LOW);
         break;
       case 1:
-        view.setPasswordStrength(Strength.LOW);
+        view.setPasswordStrength(PasswordStrength.LOW);
         break;
       case 2:
-        view.setPasswordStrength(Strength.NORMAL);
+        view.setPasswordStrength(PasswordStrength.NORMAL);
         break;
       case 3:
-        view.setPasswordStrength(Strength.GOOD);
+        view.setPasswordStrength(PasswordStrength.GOOD);
         break;
       case 4:
-        view.setPasswordStrength(Strength.OPTIMAL);
+        view.setPasswordStrength(PasswordStrength.OPTIMAL);
         break;
       case 5:
-        view.setPasswordStrength(Strength.LEGENDARY);
+        view.setPasswordStrength(PasswordStrength.LEGENDARY);
         break;
     }
   }
@@ -105,11 +105,11 @@ public class ChangePasswordController
         if (strengthValid(passwordStrength)) {
           show(passwordStrength);
         } else {
-          view.setPasswordStrength(Strength.TO_LOW);
+          view.setPasswordStrength(PasswordStrength.TO_LOW);
           return false;
         }
       } else {
-        view.setPasswordStrength(Strength.LENGTH_TO_SMALL);
+        view.setPasswordStrength(PasswordStrength.LENGTH_TO_SMALL);
         return false;
       }
       return true;

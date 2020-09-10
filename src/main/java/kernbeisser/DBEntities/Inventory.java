@@ -2,15 +2,15 @@ package kernbeisser.DBEntities;
 
 import java.time.Instant;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+@Entity
+@Table
 public class Inventory {
   @Id
   @GeneratedValue

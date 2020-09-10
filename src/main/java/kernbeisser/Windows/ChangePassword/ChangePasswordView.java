@@ -57,9 +57,9 @@ public class ChangePasswordView implements View<ChangePasswordController> {
     currentPassword.setVisible(enable);
   }
 
-  void setPasswordStrength(Strength strength) {
-    passwordHint.setText("Stärke: " + strength.getHint());
-    passwordHint.setForeground(strength.getColor());
+  void setPasswordStrength(PasswordStrength passwordStrength) {
+    passwordHint.setText("Stärke: " + passwordStrength.getHint());
+    passwordHint.setForeground(passwordStrength.getColor());
   }
 
   public void passwordsMatch() {

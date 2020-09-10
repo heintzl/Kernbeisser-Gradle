@@ -29,12 +29,11 @@ import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
 import kernbeisser.Security.Proxy;
+import lombok.SneakyThrows;
 import org.apache.commons.beanutils.BeanUtils;
 import sun.misc.Unsafe;
 
 public class Tools {
-  private static final Toolkit toolkit = Toolkit.getDefaultToolkit();
-
   public static <A extends Annotation> Collection<Field> getWithAnnotation(
       Class<?> pattern, Class<A> annotation) {
     ArrayList<Field> out = new ArrayList<>();
@@ -47,35 +46,11 @@ public class Tools {
     return out;
   }
 
-  public static <T> String toSting(T[] in, Function<T, String> transformer) {
-    StringBuilder stringBuilder = new StringBuilder();
-    for (T t : in) {
-      stringBuilder.append(transformer.apply(t));
-    }
-    return stringBuilder.toString();
-  }
-
-  public static <T> String toSting(Collection<T> in, Function<T, String> transformer) {
-    StringBuilder stringBuilder = new StringBuilder();
-    for (T t : in) {
-      stringBuilder.append(transformer.apply(t));
-    }
-    return stringBuilder.toString();
-  }
-
   public static <R, T> R build(List<T> in, R r, BiFunction<R, T, R> builder) {
     for (T t : in) {
       r = builder.apply(r, t);
     }
     return r;
-  }
-
-  public static int getScreenWidth() {
-    return toolkit.getScreenSize().width;
-  }
-
-  public static int getScreenHeight() {
-    return toolkit.getScreenSize().height;
   }
 
   public static int add(Integer[] x) {
@@ -88,61 +63,32 @@ public class Tools {
     return o;
   }
 
-  public static void setDoubleFilter(JTextComponent c) {
-    ((AbstractDocument) c.getDocument())
-        .setDocumentFilter(
-            new DocumentFilter() {
-              @Override
-              public void replace(
-                  FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
-                  throws BadLocationException {
-                if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".")
-                    && text.matches("[,.]"))) {
-                  fb.replace(
-                      offset,
-                      length,
-                      text.replaceAll("[\\D&&[^,.]]", "").replaceAll(",", "."),
-                      attrs);
-                }
-              }
-            });
-  }
-
-  public static void setRealNumberFilter(JTextComponent c) {
-    ((AbstractDocument) c.getDocument())
-        .setDocumentFilter(
-            new DocumentFilter() {
-              @Override
-              public void replace(
-                  FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
-                  throws BadLocationException {
-                if (!(fb.getDocument().getText(0, fb.getDocument().getLength()).contains(".")
-                    && text.matches("[,.]"))) {
-                  fb.replace(offset, length, text.replaceAll("[^\\d]", ""), attrs);
-                }
-              }
-            });
-  }
-
   public static <T, O extends Collection<T>> O extract(
-      Supplier<O> supplier, String s, String separator, Function<String, T> method) {
-    String[] columns = s.split(separator);
-    O out = supplier.get();
+      Supplier<O> outputContainerSupplier,
+      String sourceString,
+      String separator,
+      Function<String, T> stringTransformer) {
+    String[] columns = sourceString.split(separator);
+    O out = outputContainerSupplier.get();
     for (String column : columns) {
-      out.add(method.apply(column));
+      out.add(stringTransformer.apply(column));
     }
     return out;
   }
 
   public static <T> T[] extract(
-      Class<T> c, String s, String separator, Function<String, T> method) {
-    return extract(ArrayList::new, s, separator, method).toArray((T[]) Array.newInstance(c, 0));
+      Class<T> outputClass,
+      String arrayString,
+      String separator,
+      Function<String, T> stringValueExtractor) {
+    return extract(ArrayList::new, arrayString, separator, stringValueExtractor)
+        .toArray((T[]) Array.newInstance(outputClass, 0));
   }
 
-  public static <I, O> O[] transform(I[] in, Class<O> out, Function<I, O> transformer) {
+  public static <I, O> O[] transform(I[] in, Class<O> out, Function<I, O> ioTransformer) {
     O[] output = (O[]) Array.newInstance(out, in.length);
     for (int i = 0; i < in.length; i++) {
-      output[i] = transformer.apply(in[i]);
+      output[i] = ioTransformer.apply(in[i]);
     }
     return output;
   }
@@ -155,17 +101,17 @@ public class Tools {
     return output;
   }
 
-  public static <T> Function<String, T> findParser(Class<T> c) {
-    if (c.equals(Boolean.class) || c.equals(boolean.class)) {
-      return e -> e.equals("null") ? null : c.cast(Boolean.parseBoolean(e));
-    } else if (c.equals(Integer.class) || c.equals(int.class)) {
-      return e -> e.equals("null") ? null : c.cast(Integer.parseInt(e));
-    } else if (c.equals(Float.class) || c.equals(float.class)) {
-      return e -> e.equals("null") ? null : c.cast(Float.parseFloat(e));
-    } else if (c.equals(Double.class) || c.equals(double.class)) {
-      return e -> e.equals("null") ? null : c.cast(Double.parseDouble(e));
+  public static <T> Function<String, T> findParser(Class<T> targetClass) {
+    if (targetClass.equals(Boolean.class) || targetClass.equals(boolean.class)) {
+      return e -> e.equals("null") ? null : targetClass.cast(Boolean.parseBoolean(e));
+    } else if (targetClass.equals(Integer.class) || targetClass.equals(int.class)) {
+      return e -> e.equals("null") ? null : targetClass.cast(Integer.parseInt(e));
+    } else if (targetClass.equals(Float.class) || targetClass.equals(float.class)) {
+      return e -> e.equals("null") ? null : targetClass.cast(Float.parseFloat(e));
+    } else if (targetClass.equals(Double.class) || targetClass.equals(double.class)) {
+      return e -> e.equals("null") ? null : targetClass.cast(Double.parseDouble(e));
     } else {
-      return c::cast;
+      return targetClass::cast;
     }
   }
 
@@ -183,20 +129,6 @@ public class Tools {
     return out;
   }
 
-  public static <I, O> O overwrite(O out, I in) {
-    Class<?> oc = out.getClass();
-    for (Field declaredField : in.getClass().getDeclaredFields()) {
-      try {
-        Field target = oc.getDeclaredField(declaredField.getName());
-        target.setAccessible(true);
-        declaredField.setAccessible(true);
-        target.set(out, declaredField.get(in));
-      } catch (NoSuchFieldException | IllegalAccessException ignored) {
-      }
-    }
-    return out;
-  }
-
   public static <T> List<T> getAll(Class<T> c, String condition) {
     EntityManager em = DBConnection.getEntityManager();
     List<T> out =
@@ -205,6 +137,16 @@ public class Tools {
             .getResultList();
     em.close();
     return Proxy.getSecureInstances(out);
+  }
+
+  public static <T> List<T> getAllUnProxy(Class<T> c) {
+    EntityManager em = DBConnection.getEntityManager();
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<T> cq = cb.createQuery(c);
+    Root<T> rootEntry = cq.from(c);
+    CriteriaQuery<T> all = cq.select(rootEntry);
+    TypedQuery<T> allQuery = em.createQuery(all);
+    return allQuery.getResultList();
   }
 
   public static <T> T mergeWithoutId(T in) {
@@ -223,7 +165,7 @@ public class Tools {
     Class<?> clazz = t.getClass();
     while (!clazz.equals(Object.class)) {
       for (Field declaredField : clazz.getDeclaredFields()) {
-        if (declaredField.getAnnotation(Id.class) != null) {
+        if (declaredField.isAnnotationPresent(Id.class)) {
           declaredField.setAccessible(true);
           try {
             declaredField.set(t, id);
@@ -394,19 +336,6 @@ public class Tools {
     } else {
       component.setBackground(new Color(0xFF9999));
     }
-  }
-
-  public static boolean verify(JComponent... components) {
-    boolean result = true;
-    for (JComponent component : components) {
-      if (component instanceof JTextComponent) {
-        if (component.getInputVerifier() != null
-            && !component.getInputVerifier().verify(component)) {
-          result = false;
-        }
-      }
-    }
-    return result;
   }
 
   public static void copyInto(Object source, Object destination) {
@@ -612,7 +541,7 @@ public class Tools {
   }
 
   public static boolean isUnique(Field f) {
-    if (f.getAnnotation(Id.class) != null) return false;
+    if (f.isAnnotationPresent(Id.class)) return true;
     for (Annotation annotation : f.getAnnotations()) {
       try {
         Method uniqueCheck = annotation.annotationType().getDeclaredMethod("unique");
@@ -645,7 +574,7 @@ public class Tools {
   public static Field getIdField(Class<?> clazz) {
     while (!clazz.equals(Object.class)) {
       for (Field declaredField : clazz.getDeclaredFields()) {
-        if (declaredField.getAnnotation(Id.class) != null) {
+        if (declaredField.isAnnotationPresent(Id.class)) {
           declaredField.setAccessible(true);
           return declaredField;
         }
@@ -653,6 +582,16 @@ public class Tools {
       clazz = clazz.getSuperclass();
     }
     return null;
+  }
+
+  public static <I, O> O[] transformToArray(
+      Collection<I> input, Class<O> outClass, Function<I, O> transformer) {
+    O[] out = (O[]) Array.newInstance(outClass, input.size());
+    int c = 0;
+    for (I i : input) {
+      out[c++] = transformer.apply(i);
+    }
+    return out;
   }
 
   public static Object getId(Object o) {
@@ -668,17 +607,34 @@ public class Tools {
     return java.util.Date.from(yearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
 
-  public static <T> T findById(Collection<T> collection, Object id) {
-    if (collection.size() == 0) return null;
+  public static <T> T findById(Iterable<T> collection, Object id) {
+    Iterator<T> iterator = collection.iterator();
+    if (!iterator.hasNext()) return null;
     Field field = getIdField(collection.iterator().next().getClass());
-    for (T t : collection) {
+    while (iterator.hasNext()) {
       try {
+        T t = iterator.next();
         if (field.get(t).equals(id)) return t;
       } catch (IllegalAccessException e) {
         e.printStackTrace();
       }
     }
     return null;
+  }
+
+  public static void scaleLabelSize(float scaleFactor) {
+    Enumeration<Object> keys = UIManager.getDefaults().keys();
+    while (keys.hasMoreElements()) {
+      Object key = keys.nextElement();
+      Font before = UIManager.getFont(key);
+      if (key.toString().endsWith(".font")) {
+        UIManager.put(
+            key,
+            new Font(
+                before.getName(), before.getStyle(), Math.round(before.getSize() * scaleFactor)));
+      }
+    }
+    System.out.println(UIManager.get("Table.font"));
   }
 
   public static Field findInAllSuperClasses(Class<?> clazz, String name)
@@ -716,5 +672,14 @@ public class Tools {
       }
     }
     return values;
+  }
+
+  @SneakyThrows
+  public static Object callPrivateFunction(
+      Class<?> clazz, Object obj, String name, Object... args) {
+    Method method =
+        clazz.getDeclaredMethod(name, Tools.transform(args, Class.class, Object::getClass));
+    method.setAccessible(true);
+    return method.invoke(obj, args);
   }
 }

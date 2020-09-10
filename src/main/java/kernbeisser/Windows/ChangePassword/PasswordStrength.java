@@ -3,7 +3,7 @@ package kernbeisser.Windows.ChangePassword;
 import java.awt.*;
 import kernbeisser.Enums.Setting;
 
-public enum Strength {
+public enum PasswordStrength {
   LENGTH_TO_SMALL(
       "Das Passwort muss mindestens "
           + Setting.MIN_PASSWORD_LENGTH.getIntValue()
@@ -16,7 +16,7 @@ public enum Strength {
   OPTIMAL("Optimal", new Color(0x00FF89)),
   LEGENDARY("Besser geht's nicht :)", new Color(0xFF00E0));
 
-  Strength(String hint, Color color) {
+  PasswordStrength(String hint, Color color) {
     this.color = color;
     this.hint = hint;
   }

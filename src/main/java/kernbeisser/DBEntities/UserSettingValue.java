@@ -134,4 +134,20 @@ public class UserSettingValue {
   public int hashCode() {
     return Objects.hash(id, user, userSetting, value);
   }
+
+  public static void setValue(User user, UserSetting setting, String value) {
+    EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.createQuery(
+            "update UserSettingValue setting set setting.value = :v where user.id = :uid and setting.userSetting = :us")
+        .setParameter("v", value)
+        .setParameter("uid", user.getId())
+        .setParameter("us", setting)
+        .executeUpdate();
+    em.flush();
+    et.commit();
+    em.close();
+    loadUser(user);
+  }
 }

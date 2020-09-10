@@ -16,7 +16,8 @@ public enum UserSetting {
         return Enum.valueOf(c, UserSettingValue.getValueFor(user, this));
       }
     }
-  };
+  },
+  FONT_SCALE_FACTOR("1");
   private final String defaultValue;
 
   UserSetting(String defaultValue) {
@@ -49,6 +50,14 @@ public enum UserSetting {
 
   public float getFloatValue(User user) {
     return Float.parseFloat(UserSettingValue.getValueFor(user, this));
+  }
+
+  public void setValue(User user, String value) {
+    UserSettingValue.setValue(user, this, value);
+  }
+
+  public void setValue(User user, Object value) {
+    UserSettingValue.setValue(user, this, String.valueOf(value));
   }
 
   public <T extends Enum<T>> T getEnumValue(Class<T> c, User user) {
