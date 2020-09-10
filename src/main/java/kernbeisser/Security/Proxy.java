@@ -11,6 +11,7 @@ import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.SneakyThrows;
+import lombok.experimental.ExtensionMethod;
 
 public class Proxy {
 
