@@ -53,26 +53,6 @@ public class EditUserModel implements IModel<EditUserController> {
     return exists;
   }
 
-  private void remove(User user) {
-    User.makeUserUnreadable(user);
-  }
-
-  private void edit(User user) {
-    Tools.edit(user.getId(), user);
-  }
-
-  private void add(User user) {
-    EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    UserGroup newUserGroup = new UserGroup();
-    em.persist(newUserGroup);
-    user.setUserGroup(newUserGroup);
-    em.persist(Tools.setId(new User(user), 0));
-    em.flush();
-    et.commit();
-    em.close();
-  }
 
   public User getUser() {
     return user;
