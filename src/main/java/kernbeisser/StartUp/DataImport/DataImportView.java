@@ -2,11 +2,11 @@ package kernbeisser.StartUp.DataImport;
 
 import java.awt.*;
 import javax.swing.*;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class DataImportView implements View<DataImportController> {
+public class DataImportView implements IView<DataImportController> {
   private JPanel main;
   private JButton importData;
   private JButton cancel;

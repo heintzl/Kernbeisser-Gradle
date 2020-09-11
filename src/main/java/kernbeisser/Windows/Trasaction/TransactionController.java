@@ -10,11 +10,11 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class TransactionController implements Controller<TransactionView, TransactionModel> {
+public class TransactionController implements IController<TransactionView, TransactionModel> {
   private final TransactionModel model;
   private TransactionView view;
 

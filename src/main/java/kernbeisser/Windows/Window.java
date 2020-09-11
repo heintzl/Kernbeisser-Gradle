@@ -3,7 +3,7 @@ package kernbeisser.Windows;
 import java.awt.*;
 import kernbeisser.Useful.Images;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 
 public interface Window {
   Image STANDARD_IMAGE = Images.getImage("Icon.png");
@@ -26,7 +26,7 @@ public interface Window {
 
   boolean noAccess();
 
-  Controller<?, ?> getController();
+  IController<?, ?> getController();
 
   default boolean commitClose() {
     return getController() == null || getController().commitAllClose();
@@ -95,16 +95,16 @@ public interface Window {
         }
 
         @Override
-        public Controller<?, ?> getController() {
+        public IController<?, ?> getController() {
           return null;
         }
 
         @Override
-        public void setContent(Controller<?, ?> content) {}
+        public void setContent(IController<?, ?> content) {}
 
         @Override
         public void setSize(Dimension dimension) {}
       };
 
-  void setContent(Controller<?, ?> content);
+  void setContent(IController<?, ?> content);
 }

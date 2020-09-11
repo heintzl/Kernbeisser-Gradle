@@ -22,11 +22,11 @@ import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-public class DataImportController implements Controller<DataImportView, DataImportModel> {
+public class DataImportController implements IController<DataImportView, DataImportModel> {
   private DataImportView view;
   private final DataImportModel model;
 

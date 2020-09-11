@@ -7,11 +7,11 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class PayView implements View<PayController> {
+public class PayView implements IView<PayController> {
   private JPanel main;
   private JPanel shoppingListPanel;
   private ShoppingCartView shoppingCartView;

@@ -18,11 +18,11 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class SpecialPriceEditorView implements View<SpecialPriceEditorController> {
+public class SpecialPriceEditorView implements IView<SpecialPriceEditorController> {
   private ObjectTable<Offer> offers;
 
   private kernbeisser.CustomComponents.TextFields.DateParseField from;

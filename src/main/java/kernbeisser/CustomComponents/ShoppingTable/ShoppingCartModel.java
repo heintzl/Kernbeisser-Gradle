@@ -3,10 +3,10 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import java.util.ArrayList;
 import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 import org.jetbrains.annotations.Nullable;
 
-public class ShoppingCartModel implements Model<ShoppingCartController> {
+public class ShoppingCartModel implements IModel<ShoppingCartController> {
   private final double userValue;
   private final double userSurcharge;
   private final ArrayList<ShoppingItem> shoppingItems = new ArrayList<>();

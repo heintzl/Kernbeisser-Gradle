@@ -6,12 +6,12 @@ import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.EditItems.EditItemsController;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUsers.EditUsers;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import org.jetbrains.annotations.NotNull;
 
-public class CashierMenuController implements Controller<CashierMenuView, CashierMenuModel> {
+public class CashierMenuController implements IController<CashierMenuView, CashierMenuModel> {
   private final CashierMenuModel model;
   private CashierMenuView view;
 

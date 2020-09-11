@@ -13,9 +13,9 @@ import kernbeisser.Main;
 import kernbeisser.Security.CustomKeySetSecurityHandler;
 import kernbeisser.Security.MasterPermissionSet;
 import kernbeisser.Security.Proxy;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class LogInModel implements Model {
+public class LogInModel implements IModel {
 
   public static User loggedIn;
 

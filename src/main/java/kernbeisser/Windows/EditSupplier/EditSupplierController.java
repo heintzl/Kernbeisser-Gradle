@@ -7,11 +7,11 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 
-public class EditSupplierController implements Controller<EditSupplierView, EditSupplierModel> {
+public class EditSupplierController implements IController<EditSupplierView, EditSupplierModel> {
 
   private final EditSupplierModel model;
   private EditSupplierView view;

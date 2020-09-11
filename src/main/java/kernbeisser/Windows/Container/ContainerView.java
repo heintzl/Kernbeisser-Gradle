@@ -9,11 +9,11 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Container;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class ContainerView implements View<ContainerController> {
+public class ContainerView implements IView<ContainerController> {
   private ObjectTable<Container> unpaidContainers;
   private kernbeisser.CustomComponents.PermissionButton commit;
   private ObjectTable<Container> lastContainers;

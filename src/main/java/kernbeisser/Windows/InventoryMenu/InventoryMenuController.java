@@ -1,10 +1,10 @@
 package kernbeisser.Windows.InventoryMenu;
 
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class InventoryMenuController implements Controller<InventoryMenuView, InventoryMenuModel> {
+public class InventoryMenuController implements IController<InventoryMenuView, InventoryMenuModel> {
 
   private final InventoryMenuModel model;
   private final InventoryMenuView view;

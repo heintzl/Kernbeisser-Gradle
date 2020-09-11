@@ -7,10 +7,10 @@ import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeTable;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-class EditSurchargeTableView implements View<EditSurchargeTableController> {
+class EditSurchargeTableView implements IView<EditSurchargeTableController> {
   private JButton commit;
   private JButton cancel;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<
@@ -67,10 +67,5 @@ class EditSurchargeTableView implements View<EditSurchargeTableController> {
             SurchargeTable::getSurcharge,
             SurchargeTable::setSurcharge,
             AccessCheckingField.DOUBLE_FORMER);
-  }
-
-  public void incorrectInput() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(), "Bitte überprüfen sie die eingaben auf Fehler");
   }
 }

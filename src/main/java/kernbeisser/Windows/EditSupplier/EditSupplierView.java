@@ -4,11 +4,11 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class EditSupplierView implements View<EditSupplierController> {
+public class EditSupplierView implements IView<EditSupplierController> {
 
   @Linked private EditSupplierController controller;
 

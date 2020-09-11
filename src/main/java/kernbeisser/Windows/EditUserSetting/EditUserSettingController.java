@@ -7,12 +7,12 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserSettingController
-    implements Controller<EditUserSettingView, EditUserSettingModel> {
+    implements IController<EditUserSettingView, EditUserSettingModel> {
   private EditUserSettingView view;
   private final EditUserSettingModel model;
 

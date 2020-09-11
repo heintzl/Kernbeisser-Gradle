@@ -6,8 +6,8 @@ public enum RawPrice implements Named {
   PRODUCE("Obst und Gemüse"),
   BAKERY("Backwaren"),
   DEPOSIT("Pfand"),
-  ITEMDEPOSIT("    > Einzelpfand"),
-  CONTAINERDEPOSIT("    > Gebindepfand");
+  ITEM_DEPOSIT("    > Einzelpfand"),
+  CONTAINER_DEPOSIT("    > Gebindepfand");
 
   private final String name;
 

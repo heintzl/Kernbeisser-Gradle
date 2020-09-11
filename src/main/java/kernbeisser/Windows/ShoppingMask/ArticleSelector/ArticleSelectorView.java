@@ -5,11 +5,11 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class ArticleSelectorView implements View<ArticleSelectorController> {
+public class ArticleSelectorView implements IView<ArticleSelectorController> {
   private JPanel main;
   private JButton chooseButton;
   private JCheckBox onlyWithoutBarcode;

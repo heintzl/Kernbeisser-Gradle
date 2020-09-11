@@ -5,11 +5,11 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.apache.commons.collections4.IterableUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class CollectionView<T> implements View<CollectionController<T>> {
+public class CollectionView<T> implements IView<CollectionController<T>> {
 
   private JButton commit;
   private JButton cancel;

@@ -6,9 +6,9 @@ import javax.persistence.NoResultException;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class TransactionModel implements Model<TransactionController> {
+public class TransactionModel implements IModel<TransactionController> {
 
   private final User owner;
 

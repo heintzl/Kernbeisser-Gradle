@@ -5,13 +5,13 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import org.jetbrains.annotations.NotNull;
 
-public class SoloShoppingMaskView implements View<SoloShoppingMaskController> {
+public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
 
   private JPanel main;
 

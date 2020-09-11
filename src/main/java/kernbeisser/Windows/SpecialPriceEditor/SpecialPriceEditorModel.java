@@ -7,9 +7,9 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class SpecialPriceEditorModel implements Model<SpecialPriceEditorController> {
+public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorController> {
   private Offer selected;
   private Article selectedArticle;
 

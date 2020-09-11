@@ -9,11 +9,11 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import org.jetbrains.annotations.NotNull;
 
-public class UserInfoController implements Controller<UserInfoView, UserInfoModel> {
+public class UserInfoController implements IController<UserInfoView, UserInfoModel> {
 
   private UserInfoView view;
 

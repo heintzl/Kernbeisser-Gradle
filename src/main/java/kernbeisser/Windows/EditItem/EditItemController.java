@@ -8,10 +8,10 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class EditItemController implements Controller<EditItemView, EditItemModel> {
+public class EditItemController implements IController<EditItemView, EditItemModel> {
 
   private EditItemView view;
   private final EditItemModel model;

@@ -3,12 +3,12 @@ package kernbeisser.StartUp.LogIn;
 import javax.swing.*;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-public class DBLogInView implements View<DBLogInController> {
+public class DBLogInView implements IView<DBLogInController> {
   private JButton logIn;
   private JTextField url;
   private JTextField username;

@@ -3,14 +3,14 @@ package kernbeisser.Windows.SoloShoppingMask;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import org.jetbrains.annotations.NotNull;
 
 public class SoloShoppingMaskController
-    implements Controller<SoloShoppingMaskView, SoloShoppingMaskModel> {
+    implements IController<SoloShoppingMaskView, SoloShoppingMaskModel> {
 
   private SoloShoppingMaskView view;
 

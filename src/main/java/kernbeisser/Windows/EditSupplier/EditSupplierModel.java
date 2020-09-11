@@ -5,9 +5,9 @@ import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class EditSupplierModel implements Model<EditSupplierController> {
+public class EditSupplierModel implements IModel<EditSupplierController> {
   private final Supplier supplier;
   private final Mode mode;
 
@@ -47,6 +47,4 @@ public class EditSupplierModel implements Model<EditSupplierController> {
       return false;
     }
   }
-
-  public void hasUsage(Supplier supplier) {}
 }

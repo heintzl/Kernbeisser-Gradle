@@ -9,11 +9,11 @@ import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class CashierShoppingMaskView implements View<CashierShoppingMaskController> {
+public class CashierShoppingMaskView implements IView<CashierShoppingMaskController> {
   private JPanel main;
   private SearchBoxView<User> searchBoxView;
   private PermissionButton openShoppingMask;

@@ -1,9 +1,9 @@
 package kernbeisser.Windows.UserInfo;
 
 import kernbeisser.DBEntities.User;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class UserInfoModel implements Model<UserInfoController> {
+public class UserInfoModel implements IModel<UserInfoController> {
 
   private final User user;
 

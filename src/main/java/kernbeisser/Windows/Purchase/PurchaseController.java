@@ -5,10 +5,10 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Date;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class PurchaseController implements Controller<PurchaseView, PurchaseModel> {
+public class PurchaseController implements IController<PurchaseView, PurchaseModel> {
   private final PurchaseModel model;
   private PurchaseView view;
 

@@ -18,8 +18,8 @@ import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.EditUserSetting.EditUserSettingController;
 import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.Controller;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.Setting.SettingController;
@@ -29,7 +29,7 @@ import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
 import org.jetbrains.annotations.NotNull;
 
-public class MenuView implements View<MenuController> {
+public class MenuView implements IView<MenuController> {
 
   private UserInfoView infoPanel;
   private JPanel main;
@@ -102,7 +102,7 @@ public class MenuView implements View<MenuController> {
     // NOT IMPLEMENTED
     printBonFromPast =
         new ControllerButton(
-            Controller.createFakeController(new JPanel()),
+            IController.createFakeController(new JPanel()),
             controller -> controller.openTab("Bon ausdrucken"));
     editPriceList =
         new ControllerButton(
@@ -144,7 +144,7 @@ public class MenuView implements View<MenuController> {
     // NOT IMPLEMENTED
     placeHolderControllerButton =
         new ControllerButton(
-            Controller.createFakeController(new JPanel()),
+            IController.createFakeController(new JPanel()),
             controller -> controller.openTab("<PlaceHolder>"));
     changeDBConnection =
         new ControllerButton(
@@ -160,12 +160,12 @@ public class MenuView implements View<MenuController> {
     // NOT IMPLEMENTED
     placeHolderControllerButton1 =
         new ControllerButton(
-            Controller.createFakeController(new JPanel()),
+            IController.createFakeController(new JPanel()),
             controller -> controller.openTab("<PlaceHolder>"));
     // NOT IMPLEMENTED
     placeHolderControllerButton2 =
         new ControllerButton(
-            Controller.createFakeController(new JPanel()),
+            IController.createFakeController(new JPanel()),
             controller -> controller.openTab("<PlaceHolder>"));
     openSelfShoppingMask =
         new ControllerButton(

@@ -1,8 +1,8 @@
 package kernbeisser.Windows;
 
 import kernbeisser.Enums.Mode;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 
 public interface MaskLoader<T> {
-  Controller<?, ?> accept(T t, Mode m);
+  IController<?, ?> accept(T t, Mode m);
 }

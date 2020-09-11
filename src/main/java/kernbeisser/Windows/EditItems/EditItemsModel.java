@@ -1,5 +1,5 @@
 package kernbeisser.Windows.EditItems;
 
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class EditItemsModel implements Model<EditItemsController> {}
+public class EditItemsModel implements IModel<EditItemsController> {}

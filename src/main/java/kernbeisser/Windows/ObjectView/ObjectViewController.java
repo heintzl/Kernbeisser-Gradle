@@ -4,13 +4,13 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectViewController<T> implements Controller<ObjectViewView<T>, ObjectViewModel<T>> {
+public class ObjectViewController<T> implements IController<ObjectViewView<T>, ObjectViewModel<T>> {
   private final ObjectViewModel<T> model;
   private ObjectViewView<T> view;
 

@@ -4,11 +4,11 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangePasswordController
-    implements Controller<ChangePasswordView, ChangePasswordModel> {
+    implements IController<ChangePasswordView, ChangePasswordModel> {
   private final ChangePasswordModel model;
   private ChangePasswordView view;
 

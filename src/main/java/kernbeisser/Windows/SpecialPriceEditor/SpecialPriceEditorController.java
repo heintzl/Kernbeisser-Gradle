@@ -11,14 +11,14 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Main;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class SpecialPriceEditorController
-    implements Controller<SpecialPriceEditorView, SpecialPriceEditorModel> {
+    implements IController<SpecialPriceEditorView, SpecialPriceEditorModel> {
   public static void main(String[] args)
       throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
           IllegalAccessException {

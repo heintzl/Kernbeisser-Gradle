@@ -12,13 +12,13 @@ import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.Menu.MenuController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class SimpleLogInController implements Controller<SimpleLogInView, SimpleLogInModel> {
+public class SimpleLogInController implements IController<SimpleLogInView, SimpleLogInModel> {
 
   private SimpleLogInView view;
 

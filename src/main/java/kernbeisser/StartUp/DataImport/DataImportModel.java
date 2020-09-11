@@ -5,9 +5,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class DataImportModel implements Model<DataImportController> {
+public class DataImportModel implements IModel<DataImportController> {
   <T> void batchMergeAll(Collection<T> v) {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();

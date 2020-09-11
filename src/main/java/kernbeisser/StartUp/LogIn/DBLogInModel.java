@@ -1,5 +1,5 @@
 package kernbeisser.StartUp.LogIn;
 
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class DBLogInModel implements Model<DBLogInController> {}
+public class DBLogInModel implements IModel<DBLogInController> {}

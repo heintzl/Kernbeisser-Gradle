@@ -5,10 +5,10 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
-public class SettingController implements Controller<SettingView, SettingModel> {
+public class SettingController implements IController<SettingView, SettingModel> {
   private final SettingModel model;
   private SettingView view;
 

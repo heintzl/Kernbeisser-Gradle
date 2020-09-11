@@ -7,11 +7,11 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 
-public class EditJobController implements Controller<EditJobView, EditJobModel> {
+public class EditJobController implements IController<EditJobView, EditJobModel> {
 
   private final EditJobModel model;
   private EditJobView view;

@@ -5,11 +5,11 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.MVC.View;
 import org.jetbrains.annotations.NotNull;
 
-public class PurchaseView implements View<PurchaseController> {
+public class PurchaseView implements IView<PurchaseController> {
   private JButton finish;
   private ObjectTable<ShoppingItem> items;
   private JLabel date;

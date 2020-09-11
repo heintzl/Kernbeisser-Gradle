@@ -11,10 +11,10 @@ import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.View;
+import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-public class ManagePriceListsView implements View<ManagePriceListsController> {
+public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   // TODO back or commit button can be deleted, they should have the same function
   private PermissionField priceListName;

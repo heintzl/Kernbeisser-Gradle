@@ -236,7 +236,7 @@ public class ShoppingItem implements Serializable {
   public ShoppingItem createItemDeposit(int number, boolean isContainer) {
     double itemDeposit = isContainer ? containerDeposit : singleDeposit;
     ShoppingItem deposit = createDeposit(itemDeposit);
-    deposit.name = (isContainer ? RawPrice.CONTAINERDEPOSIT : RawPrice.ITEMDEPOSIT).getName();
+    deposit.name = (isContainer ? RawPrice.CONTAINER_DEPOSIT : RawPrice.ITEM_DEPOSIT).getName();
     deposit.metricUnits = MetricUnits.PIECE;
     deposit.setItemRetailPrice(itemDeposit);
     deposit.setItemNetPrice(itemDeposit / deposit.calculatePreciseRetailPrice(1.0));

@@ -3,12 +3,12 @@ package kernbeisser.Windows.EditSurchargeTable;
 import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
 public class EditSurchargeTableController
-    implements Controller<EditSurchargeTableView, EditSurchargeTableModel> {
+    implements IController<EditSurchargeTableView, EditSurchargeTableModel> {
 
   private final EditSurchargeTableModel model;
   private EditSurchargeTableView view;
@@ -18,18 +18,13 @@ public class EditSurchargeTableController
         new EditSurchargeTableModel(
             surchargeTable == null ? new SurchargeTable() : surchargeTable, mode);
     if (mode == Mode.REMOVE) {
-      model.doAction(surchargeTable);
+      Tools.delete(SurchargeTable.class, surchargeTable.getStid());
     }
   }
 
   public void commit() {
-    try {
-      if (model.doAction(view.getObjectForm().getData())) {
-        view.back();
-      }
-    } catch (CannotParseException e) {
-      view.incorrectInput();
-      view.getObjectForm().markErrors();
+    if (view.getObjectForm().applyMode(model.getMode())) {
+      view.back();
     }
   }
 

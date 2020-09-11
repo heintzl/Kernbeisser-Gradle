@@ -3,15 +3,14 @@ package kernbeisser.Windows.EditUser;
 import java.util.HashSet;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class EditUserModel implements Model<EditUserController> {
+public class EditUserModel implements IModel<EditUserController> {
 
   private final User user;
   private final Mode mode;
@@ -19,29 +18,6 @@ public class EditUserModel implements Model<EditUserController> {
   public EditUserModel(User user, Mode mode) {
     this.user = user;
     this.mode = mode;
-  }
-
-  boolean doAction(User user) {
-    System.out.println(user.getId());
-    user = new User(user);
-    System.out.println(user.getId());
-    try {
-      switch (mode) {
-        case ADD:
-          add(user);
-          break;
-        case EDIT:
-          edit(user);
-          break;
-        case REMOVE:
-          remove(user);
-          break;
-      }
-      return true;
-    } catch (PersistenceException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      return false;
-    }
   }
 
   String generateUsername(String firstName, String surname) {
@@ -77,26 +53,6 @@ public class EditUserModel implements Model<EditUserController> {
     return exists;
   }
 
-  private void remove(User user) {
-    User.makeUserUnreadable(user);
-  }
-
-  private void edit(User user) {
-    Tools.edit(user.getId(), user);
-  }
-
-  private void add(User user) {
-    EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    UserGroup newUserGroup = new UserGroup();
-    em.persist(newUserGroup);
-    user.setUserGroup(newUserGroup);
-    em.persist(Tools.setId(new User(user), 0));
-    em.flush();
-    et.commit();
-    em.close();
-  }
 
   public User getUser() {
     return user;

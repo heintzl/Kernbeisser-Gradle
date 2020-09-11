@@ -5,11 +5,11 @@ import java.util.function.Consumer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.Searchable;
 import org.jetbrains.annotations.NotNull;
 
-public class SearchBoxController<T> implements Controller<SearchBoxView<T>, SearchBoxModel<T>> {
+public class SearchBoxController<T> implements IController<SearchBoxView<T>, SearchBoxModel<T>> {
   private SearchBoxView<T> view;
   private final SearchBoxModel<T> model;
 

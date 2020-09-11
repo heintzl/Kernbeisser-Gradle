@@ -1,5 +1,5 @@
 package kernbeisser.Windows.SoloShoppingMask;
 
-import kernbeisser.Windows.MVC.Model;
+import kernbeisser.Windows.MVC.IModel;
 
-public class SoloShoppingMaskModel implements Model<SoloShoppingMaskController> {}
+public class SoloShoppingMaskModel implements IModel<SoloShoppingMaskController> {}
