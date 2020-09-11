@@ -682,7 +682,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     for (VAT val : VAT.values()) {
       vat.addItem(val);
     }
-    ;
 
     containerSize.setEnabled(false);
 

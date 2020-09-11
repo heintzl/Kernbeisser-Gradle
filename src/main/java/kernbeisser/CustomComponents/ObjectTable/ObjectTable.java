@@ -273,7 +273,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
       @Override
       public T next() {
         return getFromRow(row++);
-      };
+      }
     };
   }
 }
