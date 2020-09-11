@@ -6,73 +6,145 @@ import java.util.List;
 import javax.persistence.*;
 import javax.transaction.NotSupportedException;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.RawPrice;
-import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.VAT;
+import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 
 @Entity
 @Table
 @NoArgsConstructor
-@Getter
 @EqualsAndHashCode(doNotUseGetters = true)
 public class ShoppingItem implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ID_READ})
+  @Setter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ID_WRITE})
   private long id;
 
-  @Column private int amount;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_AMOUNT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_AMOUNT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int amount;
 
-  @Column private int discount;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_DISCOUNT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_DISCOUNT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int discount;
 
   @JoinColumn(nullable = false)
   @ManyToOne
-  @Setter
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_PURCHASE_READ})
+  @Setter(onMethod_ = {PermissionKey.SHOPPING_ITEM_PURCHASE_WRITE})
   private Purchase purchase;
 
-  @Column @Setter private String name;
-
-  @Column private int kbNumber;
-
-  @Column @Setter private int itemMultiplier = 1;
-
-  @Column private double vat;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_NAME_READ})
+  @Setter(onMethod_ = {PermissionKey.SHOPPING_ITEM_NAME_WRITE})
+  private String name;
 
   @Column
-  @Getter(AccessLevel.NONE)
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_KB_NUMBER_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_KB_NUMBER_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int kbNumber;
+
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_MULTIPLIER_READ})
+  @Setter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_MULTIPLIER_WRITE})
+  private int itemMultiplier = 1;
+
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_VAT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_VAT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private double vat;
+
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_METRIC_UNITS_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_METRIC_UNITS_WRITE},
+      value = AccessLevel.PRIVATE)
   private MetricUnits metricUnits;
 
-  @Column private String unitAmount;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_UNIT_AMOUNT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_UNIT_AMOUNT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private String unitAmount;
 
-  @Column private boolean weighAble;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_WEIGH_ABLE_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_WEIGH_ABLE_WRITE},
+      value = AccessLevel.PRIVATE)
+  private boolean weighAble;
 
-  @Column private int suppliersItemNumber;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_SUPPLIERS_ITEM_NUMBER_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_SUPPLIERS_ITEM_NUMBER_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int suppliersItemNumber;
 
   @Column(length = 5)
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_SHORT_NAME_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_SHORT_NAME_WRITE},
+      value = AccessLevel.PRIVATE)
   private String shortName;
 
-  @Column private double surcharge;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_SURCHARGE_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_SURCHARGE_WRITE},
+      value = AccessLevel.PRIVATE)
+  private double surcharge;
 
-  @Column private boolean containerDiscount;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_CONTAINER_DEPOSIT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_CONTAINER_DEPOSIT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private boolean containerDiscount;
 
-  @Column @Setter private double itemRetailPrice;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_WRITE},
+      value = AccessLevel.PRIVATE)
+  private double itemRetailPrice;
 
-  @Column @Setter private double itemNetPrice;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_NET_PRICE_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_NET_PRICE_WRITE},
+      value = AccessLevel.PRIVATE)
+  private double itemNetPrice;
 
-  @Column @Setter private int shoppingCartIndex;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int shoppingCartIndex;
 
-  @Transient private double singleDeposit;
+  @Getter @Transient private double singleDeposit;
 
-  @Transient private double containerDeposit;
+  @Getter @Transient private double containerDeposit;
 
-  @Transient private double containerSize;
+  @Getter @Transient private double containerSize;
 
-  @Transient private int superIndex;
+  @Getter @Transient private int superIndex;
 
-  @Transient private Supplier supplier;
+  @Getter @Transient private Supplier supplier;
 
   /**
    * @param articleBase most ShoppingItem properties are copied from given article. surcharge gets
