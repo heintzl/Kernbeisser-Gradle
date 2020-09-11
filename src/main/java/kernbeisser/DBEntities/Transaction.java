@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
@@ -14,12 +13,14 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Table
 @Entity
+@EqualsAndHashCode(doNotUseGetters = true)
 public class Transaction {
   @Id
   @GeneratedValue
@@ -143,28 +144,5 @@ public class Transaction {
         value,
         TransactionType.PURCHASE,
         "Einkauf vom " + LocalDate.now());
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Transaction that = (Transaction) o;
-    return id == that.id
-        && Double.compare(that.value, value) == 0
-        && transactionType == that.transactionType
-        && from.equals(that.from)
-        && to.equals(that.to)
-        && date.equals(that.date)
-        && info.equals(that.info);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, value, transactionType, from, to, date, info);
   }
 }

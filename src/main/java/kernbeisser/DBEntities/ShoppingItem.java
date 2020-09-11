@@ -11,15 +11,13 @@ import kernbeisser.Enums.RawPrice;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table
 @NoArgsConstructor
 @Getter
+@EqualsAndHashCode(doNotUseGetters = true)
 public class ShoppingItem implements Serializable {
 
   @Id
@@ -280,31 +278,10 @@ public class ShoppingItem implements Serializable {
     return new double[] {sum, vatLowSum, vatHighSum};
   }
 
-  public ShoppingItem newInstance() {
-    return new ShoppingItem(this);
-  }
-
-  public ShoppingItem(ShoppingItem other) {
-    this.amount = other.amount;
-    this.discount = other.discount;
-    this.purchase = other.purchase;
-    this.name = other.name;
-    this.kbNumber = other.kbNumber;
-    this.itemMultiplier = other.itemMultiplier;
-    this.vat = other.vat;
-    this.metricUnits = other.metricUnits;
-    this.weighAble = other.weighAble;
-    this.suppliersItemNumber = other.suppliersItemNumber;
-    this.shortName = other.shortName;
-    this.surcharge = other.surcharge;
-    this.containerDiscount = other.containerDiscount;
-    this.itemRetailPrice = other.itemRetailPrice;
-    this.itemNetPrice = other.itemNetPrice;
-    this.singleDeposit = other.singleDeposit;
-    this.containerDeposit = other.containerDeposit;
-    this.containerSize = other.containerSize;
-    this.shoppingCartIndex = other.shoppingCartIndex;
-    this.superIndex = other.superIndex;
+  public ShoppingItem unproxy() {
+    ShoppingItem newInstance = new ShoppingItem();
+    Tools.copyInto(this, newInstance);
+    return newInstance;
   }
 
   public void addToRetailPrice(double addedRetailPrice) throws NotSupportedException {
@@ -315,25 +292,10 @@ public class ShoppingItem implements Serializable {
     return metricUnits != null ? metricUnits : MetricUnits.NONE;
   }
 
+  // TODO maybe replace this with check at ShoppingCartTable to not bind the hash code to this class
   @Override
   public int hashCode() {
     return kbNumber * ((discount % 100) + 1) * amount;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof ShoppingItem) {
-      ShoppingItem item = (ShoppingItem) obj;
-      return item.discount == discount
-          && item.name.equals(name)
-          && item.kbNumber == kbNumber
-          && item.vat == vat
-          && item.itemRetailPrice == itemRetailPrice
-          && item.containerDiscount == containerDiscount
-          && item.superIndex == superIndex;
-    } else {
-      return false;
-    }
   }
 
   @Override

@@ -3,18 +3,19 @@ package kernbeisser.DBEntities;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Table
 @Entity
+@EqualsAndHashCode(doNotUseGetters = true)
 public class Purchase {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -61,25 +62,5 @@ public class Purchase {
             .sum();
     em.close();
     return sum * (1 + userSurcharge);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Purchase purchase = (Purchase) o;
-    return sid == purchase.sid
-        && Double.compare(purchase.userSurcharge, userSurcharge) == 0
-        && session.equals(purchase.session)
-        && createDate.equals(purchase.createDate);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(sid, session, createDate, userSurcharge);
   }
 }

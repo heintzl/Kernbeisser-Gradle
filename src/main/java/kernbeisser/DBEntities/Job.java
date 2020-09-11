@@ -8,6 +8,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,6 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table
+@EqualsAndHashCode(doNotUseGetters = true)
 public class Job {
   @Id
   @GeneratedValue
@@ -44,11 +46,6 @@ public class Job {
 
   public static List<Job> getAll(String condition) {
     return Tools.getAll(Job.class, condition);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof Job && ((Job) obj).getJid() == this.getJid();
   }
 
   public static Collection<Job> defaultSearch(String s, int max) {

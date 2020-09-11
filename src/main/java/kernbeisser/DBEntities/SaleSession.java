@@ -1,16 +1,17 @@
 package kernbeisser.DBEntities;
 
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table
+@EqualsAndHashCode(doNotUseGetters = true)
 public class SaleSession {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,25 +39,5 @@ public class SaleSession {
 
   public static List<SaleSession> getAll(String condition) {
     return Tools.getAll(SaleSession.class, condition);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    SaleSession that = (SaleSession) o;
-    return sSid == that.sSid
-        && customer.equals(that.customer)
-        && secondSeller.equals(that.secondSeller)
-        && seller.equals(that.seller);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(sSid, customer, secondSeller, seller);
   }
 }

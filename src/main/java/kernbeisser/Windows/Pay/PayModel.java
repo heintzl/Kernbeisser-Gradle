@@ -73,7 +73,7 @@ public class PayModel implements Model<PayController> {
       em.persist(purchase);
       int i = 0;
       for (ShoppingItem item : items) {
-        ShoppingItem shoppingItem = item.newInstance();
+        ShoppingItem shoppingItem = item.unproxy();
         shoppingItem.setShoppingCartIndex(i);
         shoppingItem.setPurchase(purchase);
         em.persist(shoppingItem);

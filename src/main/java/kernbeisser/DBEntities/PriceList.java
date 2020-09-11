@@ -9,6 +9,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,6 +17,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "PriceLists")
+@EqualsAndHashCode(doNotUseGetters = true)
 public class PriceList implements Serializable {
 
   @Id
@@ -107,11 +109,6 @@ public class PriceList implements Serializable {
     return out;
   }
 
-  @Override
-  public int hashCode() {
-    return name.hashCode();
-  }
-
   public Collection<PriceList> getAllPriceLists() {
     EntityManager em = DBConnection.getEntityManager();
     Collection<PriceList> out =
@@ -123,18 +120,6 @@ public class PriceList implements Serializable {
             .getResultList();
     em.close();
     return out;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    PriceList priceList = (PriceList) o;
-    return pid == priceList.pid;
   }
 
   @Override

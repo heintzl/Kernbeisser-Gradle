@@ -2,17 +2,18 @@ package kernbeisser.DBEntities;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Table
 @Entity
+@EqualsAndHashCode(doNotUseGetters = true)
 public class UserGroup {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -58,24 +59,5 @@ public class UserGroup {
     }
     em.close();
     return v;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    UserGroup userGroup = (UserGroup) o;
-    return gid == userGroup.gid
-        && Double.compare(userGroup.value, value) == 0
-        && interestThisYear == userGroup.interestThisYear;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(gid, value, interestThisYear);
   }
 }
