@@ -2,12 +2,9 @@ package kernbeisser.Windows.EditUser;
 
 import java.util.HashSet;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 
 public class EditUserModel implements IModel<EditUserController> {
@@ -52,7 +49,6 @@ public class EditUserModel implements IModel<EditUserController> {
     em.close();
     return exists;
   }
-
 
   public User getUser() {
     return user;
