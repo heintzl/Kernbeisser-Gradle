@@ -30,7 +30,7 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
     EntityTransaction et = em.getTransaction();
     et.begin();
     Article i = em.find(Article.class, article.getId());
-    Offer o = em.find(Offer.class, offer.getOid());
+    Offer o = em.find(Offer.class, offer.getId());
     i.getOffers().remove(o);
     em.remove(o);
     em.persist(i);

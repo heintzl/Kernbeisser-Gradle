@@ -104,7 +104,7 @@ public class SpecialPriceEditorController
     try {
       model.refreshItem();
       view.setOffers(model.getSelectedArticle().getOffers());
-      model.edit(model.getSelectedOffer().getOid(), collect());
+      model.edit(model.getSelectedOffer().getId(), collect());
     } catch (IncorrectInput incorrectInput) {
       view.cannotParseDateFormat();
     }

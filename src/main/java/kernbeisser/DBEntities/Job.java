@@ -8,6 +8,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,12 +16,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table
+@EqualsAndHashCode(doNotUseGetters = true)
 public class Job {
   @Id
   @GeneratedValue
-  @Getter(onMethod_ = {@Key(PermissionKey.JOB_JID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.JOB_JID_WRITE)})
-  private int jid;
+  @Getter(onMethod_ = {@Key(PermissionKey.JOB_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.JOB_ID_WRITE)})
+  private int id;
 
   @Column(unique = true)
   @Getter(onMethod_ = {@Key(PermissionKey.JOB_NAME_READ)})
@@ -46,11 +48,6 @@ public class Job {
     return Tools.getAll(Job.class, condition);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof Job && ((Job) obj).getJid() == this.getJid();
-  }
-
   public static Collection<Job> defaultSearch(String s, int max) {
     EntityManager em = DBConnection.getEntityManager();
     Collection<Job> out =
@@ -66,6 +63,6 @@ public class Job {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Job[" + getJid() + "]");
+    return Tools.decide(this::getName, "Job[" + id + "]");
   }
 }

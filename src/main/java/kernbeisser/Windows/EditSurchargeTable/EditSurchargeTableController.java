@@ -18,7 +18,7 @@ public class EditSurchargeTableController
         new EditSurchargeTableModel(
             surchargeTable == null ? new SurchargeTable() : surchargeTable, mode);
     if (mode == Mode.REMOVE) {
-      Tools.delete(SurchargeTable.class, surchargeTable.getStid());
+      Tools.delete(SurchargeTable.class, surchargeTable.getId());
     }
   }
 

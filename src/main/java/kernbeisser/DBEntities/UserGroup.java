@@ -2,23 +2,24 @@ package kernbeisser.DBEntities;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Table
 @Entity
+@EqualsAndHashCode(doNotUseGetters = true)
 public class UserGroup {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_GID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.USER_GROUP_GID_WRITE)})
-  private int gid;
+  @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.USER_GROUP_ID_WRITE)})
+  private int id;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_VALUE_READ)})
@@ -37,7 +38,7 @@ public class UserGroup {
   public Collection<User> getMembers() {
     EntityManager em = DBConnection.getEntityManager();
     Collection<User> out =
-        em.createQuery("select u from User u where userGroup.id = " + gid, User.class)
+        em.createQuery("select u from User u where userGroup.id = " + id, User.class)
             .getResultList();
     em.close();
     return out;
@@ -52,30 +53,11 @@ public class UserGroup {
                 Transaction.class)
             .getResultList()) {
       v =
-          transaction.getFrom().getUserGroup().gid == gid
+          transaction.getFrom().getUserGroup().id == id
               ? v + transaction.getValue()
               : v - transaction.getValue();
     }
     em.close();
     return v;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    UserGroup userGroup = (UserGroup) o;
-    return gid == userGroup.gid
-        && Double.compare(userGroup.value, value) == 0
-        && interestThisYear == userGroup.interestThisYear;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(gid, value, interestThisYear);
   }
 }

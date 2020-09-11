@@ -6,11 +6,13 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table
+@EqualsAndHashCode(doNotUseGetters = true)
 public class Permission {
   @Id
   @GeneratedValue
@@ -52,22 +54,5 @@ public class Permission {
   @Override
   public String toString() {
     return Tools.decide(this::getName, "Permission[" + id + "]");
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Permission that = (Permission) o;
-    return id == that.id && name.equals(that.name) && keySet.equals(that.keySet);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, name, keySet);
   }
 }

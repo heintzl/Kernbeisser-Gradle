@@ -21,8 +21,8 @@ public class ChangePasswordModel implements IModel<ChangePasswordController> {
     EntityManager em = DBConnection.getEntityManager();
     String currentPassword =
         (String)
-            em.createQuery("select u.password from User u where u.id = :uid")
-                .setParameter("uid", user.getId())
+            em.createQuery("select u.password from User u where u.id = :id")
+                .setParameter("id", user.getId())
                 .getSingleResult();
     em.close();
     BCrypt.Result r =

@@ -3,18 +3,19 @@ package kernbeisser.DBEntities;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Table
 @Entity
+@EqualsAndHashCode(doNotUseGetters = true)
 public class SurchargeTable implements Serializable, Cloneable {
 
   public static final SurchargeTable DEFAULT;
@@ -32,9 +33,9 @@ public class SurchargeTable implements Serializable, Cloneable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_STID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_STID_WRITE)})
-  private int stid;
+  @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_ID_WRITE)})
+  private int id;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_READ)})
@@ -79,27 +80,5 @@ public class SurchargeTable implements Serializable, Cloneable {
             .getResultList();
     em.close();
     return out;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    SurchargeTable that = (SurchargeTable) o;
-    return stid == that.stid
-        && Double.compare(that.surcharge, surcharge) == 0
-        && from == that.from
-        && to == that.to
-        && name.equals(that.name)
-        && supplier.equals(that.supplier);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(stid, surcharge, from, to, name, supplier);
   }
 }
