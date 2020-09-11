@@ -69,7 +69,7 @@ public class ReportManager {
     outFileName =
         String.format(
             "%d_%s_%s_%s.pdf",
-            purchase.getSid(),
+            purchase.getId(),
             purchase.getSession().getCustomer().getFirstName(),
             purchase.getSession().getCustomer().getSurname(),
             purchase.getCreateDate().toString());
@@ -101,7 +101,7 @@ public class ReportManager {
     double[] sums = ShoppingItem.getSums(purchase.getAllItems());
     double credit = purchase.getSession().getCustomer().getUserGroup().getValue() - sums[0];
     Map<String, Object> reportParams = new HashMap<>();
-    reportParams.put("BonNo", purchase.getSid());
+    reportParams.put("BonNo", purchase.getId());
     reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
     reportParams.put("Seller", purchase.getSession().getSeller().getFullName());
     reportParams.put("Credit", credit);
