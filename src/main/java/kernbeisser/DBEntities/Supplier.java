@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,14 +17,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "Suppliers")
+@EqualsAndHashCode(doNotUseGetters = true)
 public class Supplier implements Serializable {
 
   @Id
   @Column(updatable = false, insertable = false, nullable = false)
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SID_WRITE)})
-  private int sid;
+  @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_ID_WRITE)})
+  private int id;
 
   @Column(unique = true)
   @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_NAME_READ)})
@@ -108,43 +109,7 @@ public class Supplier implements Serializable {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Lieferant[" + sid + "]");
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Supplier supplier = (Supplier) o;
-    return sid == supplier.sid
-        && surcharge == supplier.surcharge
-        && Objects.equals(name, supplier.name)
-        && Objects.equals(phoneNumber, supplier.phoneNumber)
-        && Objects.equals(fax, supplier.fax)
-        && Objects.equals(street, supplier.street)
-        && Objects.equals(location, supplier.location)
-        && Objects.equals(email, supplier.email)
-        && Objects.equals(shortName, supplier.shortName)
-        && Objects.equals(keeper, supplier.keeper)
-        && Objects.equals(createDate, supplier.createDate)
-        && Objects.equals(updateDate, supplier.updateDate);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(
-        sid,
-        name,
-        phoneNumber,
-        fax,
-        street,
-        location,
-        email,
-        shortName,
-        surcharge,
-        keeper,
-        createDate,
-        updateDate);
+    return Tools.decide(this::getName, "Lieferant[" + id + "]");
   }
 
   public static Collection<Supplier> defaultSearch(String s, int max) {

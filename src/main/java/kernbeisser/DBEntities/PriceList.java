@@ -9,6 +9,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,14 +17,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "PriceLists")
+@EqualsAndHashCode(doNotUseGetters = true)
 public class PriceList implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(updatable = false, insertable = false, nullable = false)
-  @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_WRITE)})
-  private int pid;
+  @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_ID_WRITE)})
+  private int id;
 
   @PrimaryKeyJoinColumn
   @Column(nullable = false, unique = true)
@@ -43,8 +45,8 @@ public class PriceList implements Serializable {
   private Instant updateDate;
 
   @CreationTimestamp
-  @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_ID_WRITE)})
   private Instant createDate;
 
   public static void savePriceList(String name) {
@@ -107,17 +109,12 @@ public class PriceList implements Serializable {
     return out;
   }
 
-  @Override
-  public int hashCode() {
-    return name.hashCode();
-  }
-
   public Collection<PriceList> getAllPriceLists() {
     EntityManager em = DBConnection.getEntityManager();
     Collection<PriceList> out =
         em.createQuery(
                 "select p from PriceList p where p.superPriceList = "
-                    + getPid()
+                    + getId()
                     + " order by p.name asc",
                 PriceList.class)
             .getResultList();
@@ -126,19 +123,7 @@ public class PriceList implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    PriceList priceList = (PriceList) o;
-    return pid == priceList.pid;
-  }
-
-  @Override
   public String toString() {
-    return Tools.decide(this::getName, "Preisliste[" + pid + "]");
+    return Tools.decide(this::getName, "Preisliste[" + id + "]");
   }
 }

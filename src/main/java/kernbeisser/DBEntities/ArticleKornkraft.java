@@ -2,17 +2,18 @@ package kernbeisser.DBEntities;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name = "catalog")
+@EqualsAndHashCode(doNotUseGetters = true, callSuper = true)
 public class ArticleKornkraft extends ArticleBase implements Serializable {
 
   @Column
@@ -28,7 +29,7 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
     EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
-              "select k from ArticleKornkraft k where k.base.suppliersItemNumber = :n",
+              "select k from ArticleKornkraft k where k.suppliersItemNumber = :n",
               ArticleKornkraft.class)
           .setParameter("n", kkNumber)
           .getSingleResult();
@@ -62,7 +63,7 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
       return em.createQuery(
               "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
               SurchargeTable.class)
-          .setParameter("supplier", Supplier.getKKSupplier().getSid())
+          .setParameter("supplier", Supplier.getKKSupplier().getId())
           .setParameter("number", getSuppliersItemNumber())
           .setMaxResults(1)
           .getSingleResult();
@@ -74,25 +75,5 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
   @Override
   public String toString() {
     return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    if (!super.equals(o)) {
-      return false;
-    }
-    ArticleKornkraft that = (ArticleKornkraft) o;
-    return synchronised == that.synchronised;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), synchronised);
   }
 }

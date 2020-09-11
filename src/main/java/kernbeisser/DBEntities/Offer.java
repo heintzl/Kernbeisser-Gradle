@@ -2,22 +2,23 @@ package kernbeisser.DBEntities;
 
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Security.Key;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table
+@EqualsAndHashCode(doNotUseGetters = true)
 public class Offer implements Serializable {
   @Id
   @GeneratedValue
-  @Getter(onMethod_ = {@Key(PermissionKey.OFFER_OID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.OFFER_OID_WRITE)})
-  private int oid;
+  @Getter(onMethod_ = {@Key(PermissionKey.OFFER_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.OFFER_ID_WRITE)})
+  private int id;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.OFFER_SPECIAL_NET_PRICE_READ)})
@@ -41,25 +42,4 @@ public class Offer implements Serializable {
   @Getter(onMethod_ = {@Key(PermissionKey.OFFER_REPEAT_MODE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.OFFER_REPEAT_MODE_WRITE)})
   private Repeat repeatMode;
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Offer offer = (Offer) o;
-    return oid == offer.oid
-        && Double.compare(offer.specialNetPrice, specialNetPrice) == 0
-        && fromDate.equals(offer.fromDate)
-        && toDate.equals(offer.toDate)
-        && repeatMode == offer.repeatMode;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(oid, specialNetPrice, fromDate, toDate, repeatMode);
-  }
 }

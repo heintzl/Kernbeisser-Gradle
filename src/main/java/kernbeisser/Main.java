@@ -16,6 +16,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
@@ -100,6 +101,7 @@ public class Main {
   }
 
   public static void buildEnvironment() throws UnsupportedLookAndFeelException {
+    generateKeySet(ShoppingItem.class);
     logger.info("setting look and feel");
     setSettingLAF();
     logger.info("register FontAwesome");

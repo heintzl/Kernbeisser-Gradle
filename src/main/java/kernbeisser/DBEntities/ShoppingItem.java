@@ -6,75 +6,145 @@ import java.util.List;
 import javax.persistence.*;
 import javax.transaction.NotSupportedException;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.RawPrice;
-import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.VAT;
+import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table
 @NoArgsConstructor
-@Getter
+@EqualsAndHashCode(doNotUseGetters = true)
 public class ShoppingItem implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private long siid;
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ID_READ})
+  @Setter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ID_WRITE})
+  private long id;
 
-  @Column private int amount;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_AMOUNT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_AMOUNT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int amount;
 
-  @Column private int discount;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_DISCOUNT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_DISCOUNT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int discount;
 
   @JoinColumn(nullable = false)
   @ManyToOne
-  @Setter
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_PURCHASE_READ})
+  @Setter(onMethod_ = {PermissionKey.SHOPPING_ITEM_PURCHASE_WRITE})
   private Purchase purchase;
 
-  @Column @Setter private String name;
-
-  @Column private int kbNumber;
-
-  @Column @Setter private int itemMultiplier = 1;
-
-  @Column private double vat;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_NAME_READ})
+  @Setter(onMethod_ = {PermissionKey.SHOPPING_ITEM_NAME_WRITE})
+  private String name;
 
   @Column
-  @Getter(AccessLevel.NONE)
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_KB_NUMBER_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_KB_NUMBER_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int kbNumber;
+
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_MULTIPLIER_READ})
+  @Setter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_MULTIPLIER_WRITE})
+  private int itemMultiplier = 1;
+
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_VAT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_VAT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private double vat;
+
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_METRIC_UNITS_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_METRIC_UNITS_WRITE},
+      value = AccessLevel.PRIVATE)
   private MetricUnits metricUnits;
 
-  @Column private String unitAmount;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_UNIT_AMOUNT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_UNIT_AMOUNT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private String unitAmount;
 
-  @Column private boolean weighAble;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_WEIGH_ABLE_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_WEIGH_ABLE_WRITE},
+      value = AccessLevel.PRIVATE)
+  private boolean weighAble;
 
-  @Column private int suppliersItemNumber;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_SUPPLIERS_ITEM_NUMBER_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_SUPPLIERS_ITEM_NUMBER_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int suppliersItemNumber;
 
   @Column(length = 5)
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_SHORT_NAME_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_SHORT_NAME_WRITE},
+      value = AccessLevel.PRIVATE)
   private String shortName;
 
-  @Column private double surcharge;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_SURCHARGE_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_SURCHARGE_WRITE},
+      value = AccessLevel.PRIVATE)
+  private double surcharge;
 
-  @Column private boolean containerDiscount;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_CONTAINER_DEPOSIT_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_CONTAINER_DEPOSIT_WRITE},
+      value = AccessLevel.PRIVATE)
+  private boolean containerDiscount;
 
-  @Column @Setter private double itemRetailPrice;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_WRITE},
+      value = AccessLevel.PRIVATE)
+  private double itemRetailPrice;
 
-  @Column @Setter private double itemNetPrice;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_NET_PRICE_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_ITEM_NET_PRICE_WRITE},
+      value = AccessLevel.PRIVATE)
+  private double itemNetPrice;
 
-  @Column @Setter private int shoppingCartIndex;
+  @Column
+  @Getter(onMethod_ = {PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_READ})
+  @Setter(
+      onMethod_ = {PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_WRITE},
+      value = AccessLevel.PRIVATE)
+  private int shoppingCartIndex;
 
-  @Transient private double singleDeposit;
+  @Getter @Transient private double singleDeposit;
 
-  @Transient private double containerDeposit;
+  @Getter @Transient private double containerDeposit;
 
-  @Transient private double containerSize;
+  @Getter @Transient private double containerSize;
 
-  @Transient private int superIndex;
+  @Getter @Transient private int superIndex;
 
-  @Transient private Supplier supplier;
+  @Getter @Transient private Supplier supplier;
 
   /**
    * @param articleBase most ShoppingItem properties are copied from given article. surcharge gets
@@ -280,31 +350,10 @@ public class ShoppingItem implements Serializable {
     return new double[] {sum, vatLowSum, vatHighSum};
   }
 
-  public ShoppingItem newInstance() {
-    return new ShoppingItem(this);
-  }
-
-  public ShoppingItem(ShoppingItem other) {
-    this.amount = other.amount;
-    this.discount = other.discount;
-    this.purchase = other.purchase;
-    this.name = other.name;
-    this.kbNumber = other.kbNumber;
-    this.itemMultiplier = other.itemMultiplier;
-    this.vat = other.vat;
-    this.metricUnits = other.metricUnits;
-    this.weighAble = other.weighAble;
-    this.suppliersItemNumber = other.suppliersItemNumber;
-    this.shortName = other.shortName;
-    this.surcharge = other.surcharge;
-    this.containerDiscount = other.containerDiscount;
-    this.itemRetailPrice = other.itemRetailPrice;
-    this.itemNetPrice = other.itemNetPrice;
-    this.singleDeposit = other.singleDeposit;
-    this.containerDeposit = other.containerDeposit;
-    this.containerSize = other.containerSize;
-    this.shoppingCartIndex = other.shoppingCartIndex;
-    this.superIndex = other.superIndex;
+  public ShoppingItem unproxy() {
+    ShoppingItem newInstance = new ShoppingItem();
+    Tools.copyInto(this, newInstance);
+    return newInstance;
   }
 
   public void addToRetailPrice(double addedRetailPrice) throws NotSupportedException {
@@ -315,29 +364,14 @@ public class ShoppingItem implements Serializable {
     return metricUnits != null ? metricUnits : MetricUnits.NONE;
   }
 
+  // TODO maybe replace this with check at ShoppingCartTable to not bind the hash code to this class
   @Override
   public int hashCode() {
     return kbNumber * ((discount % 100) + 1) * amount;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof ShoppingItem) {
-      ShoppingItem item = (ShoppingItem) obj;
-      return item.discount == discount
-          && item.name.equals(name)
-          && item.kbNumber == kbNumber
-          && item.vat == vat
-          && item.itemRetailPrice == itemRetailPrice
-          && item.containerDiscount == containerDiscount
-          && item.superIndex == superIndex;
-    } else {
-      return false;
-    }
-  }
-
-  @Override
   public String toString() {
-    return Tools.decide(this::getName, "Einkaufsartikel[" + siid + "]");
+    return Tools.decide(this::getName, "Einkaufsartikel[" + id + "]");
   }
 }

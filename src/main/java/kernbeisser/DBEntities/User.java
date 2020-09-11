@@ -9,6 +9,7 @@ import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table
 @NoArgsConstructor
+@EqualsAndHashCode(doNotUseGetters = true)
 public class User implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -314,94 +316,7 @@ public class User implements Serializable {
   }
 
   public User(User other) {
-    this.id = other.id;
-    this.permissions = other.permissions;
-    this.shares = other.shares;
-    this.solidaritySurcharge = other.solidaritySurcharge;
-    this.extraJobs = other.extraJobs;
-    this.jobs = other.jobs;
-    this.kernbeisserKey = other.kernbeisserKey;
-    this.employee = other.employee;
-    this.username = other.username;
-    this.password = other.password;
-    this.firstName = other.firstName;
-    this.surname = other.surname;
-    this.phoneNumber1 = other.phoneNumber1;
-    this.phoneNumber2 = other.phoneNumber2;
-    this.street = other.street;
-    this.town = other.town;
-    this.townCode = other.townCode;
-    this.email = other.email;
-    this.createDate = other.createDate;
-    this.updateDate = other.updateDate;
-    this.userGroup = other.userGroup;
-    this.unreadable = other.unreadable;
-    this.lastPasswordChange = other.lastPasswordChange;
-    this.forcePasswordChange = other.forcePasswordChange;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    User user = (User) o;
-    return id == user.id
-        && shares == user.shares
-        && Double.compare(user.solidaritySurcharge, solidaritySurcharge) == 0
-        && kernbeisserKey == user.kernbeisserKey
-        && employee == user.employee
-        && townCode == user.townCode
-        && unreadable == user.unreadable
-        && forcePasswordChange == user.forcePasswordChange
-        && Objects.equals(permissions, user.permissions)
-        && Objects.equals(extraJobs, user.extraJobs)
-        && Objects.equals(jobs, user.jobs)
-        && Objects.equals(username, user.username)
-        && Objects.equals(password, user.password)
-        && Objects.equals(firstName, user.firstName)
-        && Objects.equals(surname, user.surname)
-        && Objects.equals(phoneNumber1, user.phoneNumber1)
-        && Objects.equals(phoneNumber2, user.phoneNumber2)
-        && Objects.equals(street, user.street)
-        && Objects.equals(town, user.town)
-        && Objects.equals(email, user.email)
-        && Objects.equals(createDate, user.createDate)
-        && Objects.equals(updateDate, user.updateDate)
-        && Objects.equals(userGroup, user.userGroup)
-        && Objects.equals(lastPasswordChange, user.lastPasswordChange);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(
-        id,
-        permissions,
-        shares,
-        solidaritySurcharge,
-        extraJobs,
-        jobs,
-        kernbeisserKey,
-        employee,
-        username,
-        password,
-        firstName,
-        surname,
-        phoneNumber1,
-        phoneNumber2,
-        street,
-        town,
-        townCode,
-        email,
-        createDate,
-        updateDate,
-        userGroup,
-        unreadable,
-        lastPasswordChange,
-        forcePasswordChange);
+    Tools.copyInto(other, this);
   }
 
   public static User generateBeginnerUser() {

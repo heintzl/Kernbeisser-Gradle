@@ -3,18 +3,19 @@ package kernbeisser.DBEntities;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table
+@EqualsAndHashCode(doNotUseGetters = true)
 public class UserSettingValue {
   private static User loaded;
   private static HashMap<UserSetting, String> values;
@@ -113,26 +114,6 @@ public class UserSettingValue {
         + value
         + '\''
         + '}';
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    UserSettingValue that = (UserSettingValue) o;
-    return id == that.id
-        && user.equals(that.user)
-        && userSetting == that.userSetting
-        && value.equals(that.value);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, user, userSetting, value);
   }
 
   public static void setValue(User user, UserSetting setting, String value) {

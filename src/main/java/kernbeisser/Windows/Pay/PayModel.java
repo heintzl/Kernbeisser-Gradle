@@ -61,7 +61,7 @@ public class PayModel implements IModel<PayController> {
       }
 
       // Create saleSession if not exists
-      SaleSession db = em.find(SaleSession.class, saleSession.getSSid());
+      SaleSession db = em.find(SaleSession.class, saleSession.getId());
       if (db == null) {
         em.persist(saleSession);
         db = saleSession;
@@ -73,7 +73,7 @@ public class PayModel implements IModel<PayController> {
       em.persist(purchase);
       int i = 0;
       for (ShoppingItem item : items) {
-        ShoppingItem shoppingItem = item.newInstance();
+        ShoppingItem shoppingItem = item.unproxy();
         shoppingItem.setShoppingCartIndex(i);
         shoppingItem.setPurchase(purchase);
         em.persist(shoppingItem);

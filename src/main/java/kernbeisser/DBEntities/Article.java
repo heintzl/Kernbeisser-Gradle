@@ -24,6 +24,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(doNotUseGetters = true, callSuper = true)
 public class Article extends ArticleBase {
   /*
   the Kernbeisser number is a unique index for use in the shop.
@@ -213,11 +214,6 @@ public class Article extends ArticleBase {
   }
 
   @Override
-  public int hashCode() {
-    return getId() + getName().hashCode();
-  }
-
-  @Override
   public String toString() {
     return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");
   }
@@ -229,39 +225,5 @@ public class Article extends ArticleBase {
     Article out = new Article();
     Tools.copyInto(this, out);
     return out;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    if (!super.equals(o)) {
-      return false;
-    }
-    Article article = (Article) o;
-    return kbNumber == article.kbNumber
-        && Double.compare(article.surcharge, surcharge) == 0
-        && weighable == article.weighable
-        && listed == article.listed
-        && showInShop == article.showInShop
-        && deleted == article.deleted
-        && printAgain == article.printAgain
-        && deleteAllowed == article.deleteAllowed
-        && loss == article.loss
-        && sold == article.sold
-        && delivered == article.delivered
-        && coveredIntake == article.coveredIntake
-        && priceList.equals(article.priceList)
-        && containerDef == article.containerDef
-        && info.equals(article.info)
-        && offers.equals(article.offers)
-        && intake.equals(article.intake)
-        && lastDelivery.equals(article.lastDelivery)
-        && deletedDate.equals(article.deletedDate)
-        && cooling == article.cooling;
   }
 }

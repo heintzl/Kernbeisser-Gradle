@@ -3,24 +3,25 @@ package kernbeisser.DBEntities;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Table
 @Entity
+@EqualsAndHashCode(doNotUseGetters = true)
 public class Purchase {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_SID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_SID_WRITE)})
-  private int sid;
+  @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_WRITE)})
+  private int id;
 
   @ManyToOne
   @JoinColumn(nullable = false)
@@ -46,7 +47,7 @@ public class Purchase {
     EntityManager em = DBConnection.getEntityManager();
     Collection<ShoppingItem> out =
         em.createQuery(
-                "select i from ShoppingItem i where i.purchase.id = " + sid, ShoppingItem.class)
+                "select i from ShoppingItem i where i.purchase.id = " + id, ShoppingItem.class)
             .getResultList();
     em.close();
     return out;
@@ -56,30 +57,10 @@ public class Purchase {
     EntityManager em = DBConnection.getEntityManager();
     double sum =
         em.createQuery("select s from ShoppingItem s where purchase.id = :id", ShoppingItem.class)
-            .setParameter("id", sid).getResultList().stream()
+            .setParameter("id", id).getResultList().stream()
             .mapToDouble(ShoppingItem::getItemRetailPrice)
             .sum();
     em.close();
     return sum * (1 + userSurcharge);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Purchase purchase = (Purchase) o;
-    return sid == purchase.sid
-        && Double.compare(purchase.userSurcharge, userSurcharge) == 0
-        && session.equals(purchase.session)
-        && createDate.equals(purchase.createDate);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(sid, session, createDate, userSurcharge);
   }
 }

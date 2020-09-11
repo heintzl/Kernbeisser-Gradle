@@ -1,16 +1,17 @@
 package kernbeisser.DBEntities;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table
+@EqualsAndHashCode(doNotUseGetters = true)
 public class Shelf {
   @GeneratedValue
   @Id
@@ -28,21 +29,4 @@ public class Shelf {
   @Getter(onMethod_ = {@Key(PermissionKey.SHELF_ARTICLES_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ARTICLES_WRITE)})
   private Set<Article> articles = new HashSet<>();
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Shelf shelf = (Shelf) o;
-    return id == shelf.id && location.equals(shelf.location) && articles.equals(shelf.articles);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, location, articles);
-  }
 }
