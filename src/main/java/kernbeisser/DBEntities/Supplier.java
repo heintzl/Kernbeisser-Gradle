@@ -23,9 +23,9 @@ public class Supplier implements Serializable {
   @Id
   @Column(updatable = false, insertable = false, nullable = false)
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SID_WRITE)})
-  private int sid;
+  @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_ID_WRITE)})
+  private int id;
 
   @Column(unique = true)
   @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_NAME_READ)})
@@ -109,7 +109,7 @@ public class Supplier implements Serializable {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Lieferant[" + sid + "]");
+    return Tools.decide(this::getName, "Lieferant[" + id + "]");
   }
 
   public static Collection<Supplier> defaultSearch(String s, int max) {

@@ -15,9 +15,9 @@ import lombok.Setter;
 public class SaleSession {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Getter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_S_SID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_S_SID_WRITE)})
-  private int sSid;
+  @Getter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_ID_WRITE)})
+  private int id;
 
   @ManyToOne
   @JoinColumn

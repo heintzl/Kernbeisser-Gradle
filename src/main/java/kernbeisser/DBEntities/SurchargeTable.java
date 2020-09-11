@@ -33,9 +33,9 @@ public class SurchargeTable implements Serializable, Cloneable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_STID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_STID_WRITE)})
-  private int stid;
+  @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_ID_WRITE)})
+  private int id;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_READ)})

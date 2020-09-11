@@ -16,9 +16,9 @@ import lombok.Setter;
 public class Offer implements Serializable {
   @Id
   @GeneratedValue
-  @Getter(onMethod_ = {@Key(PermissionKey.OFFER_OID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.OFFER_OID_WRITE)})
-  private int oid;
+  @Getter(onMethod_ = {@Key(PermissionKey.OFFER_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.OFFER_ID_WRITE)})
+  private int id;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.OFFER_SPECIAL_NET_PRICE_READ)})

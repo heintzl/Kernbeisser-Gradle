@@ -17,9 +17,9 @@ import lombok.Setter;
 public class UserGroup {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_GID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.USER_GROUP_GID_WRITE)})
-  private int gid;
+  @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.USER_GROUP_ID_WRITE)})
+  private int id;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_VALUE_READ)})
@@ -38,7 +38,7 @@ public class UserGroup {
   public Collection<User> getMembers() {
     EntityManager em = DBConnection.getEntityManager();
     Collection<User> out =
-        em.createQuery("select u from User u where userGroup.id = " + gid, User.class)
+        em.createQuery("select u from User u where userGroup.id = " + id, User.class)
             .getResultList();
     em.close();
     return out;
@@ -53,7 +53,7 @@ public class UserGroup {
                 Transaction.class)
             .getResultList()) {
       v =
-          transaction.getFrom().getUserGroup().gid == gid
+          transaction.getFrom().getUserGroup().id == id
               ? v + transaction.getValue()
               : v - transaction.getValue();
     }

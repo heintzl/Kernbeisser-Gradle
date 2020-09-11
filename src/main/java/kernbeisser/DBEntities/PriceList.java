@@ -23,9 +23,9 @@ public class PriceList implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(updatable = false, insertable = false, nullable = false)
-  @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_WRITE)})
-  private int pid;
+  @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_ID_WRITE)})
+  private int id;
 
   @PrimaryKeyJoinColumn
   @Column(nullable = false, unique = true)
@@ -45,8 +45,8 @@ public class PriceList implements Serializable {
   private Instant updateDate;
 
   @CreationTimestamp
-  @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_PID_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_ID_WRITE)})
   private Instant createDate;
 
   public static void savePriceList(String name) {
@@ -114,7 +114,7 @@ public class PriceList implements Serializable {
     Collection<PriceList> out =
         em.createQuery(
                 "select p from PriceList p where p.superPriceList = "
-                    + getPid()
+                    + getId()
                     + " order by p.name asc",
                 PriceList.class)
             .getResultList();
@@ -124,6 +124,6 @@ public class PriceList implements Serializable {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Preisliste[" + pid + "]");
+    return Tools.decide(this::getName, "Preisliste[" + id + "]");
   }
 }

@@ -20,9 +20,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class Job {
   @Id
   @GeneratedValue
-  @Getter(onMethod_ = {@Key(PermissionKey.JOB_JID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.JOB_JID_WRITE)})
-  private int jid;
+  @Getter(onMethod_ = {@Key(PermissionKey.JOB_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.JOB_ID_WRITE)})
+  private int id;
 
   @Column(unique = true)
   @Getter(onMethod_ = {@Key(PermissionKey.JOB_NAME_READ)})
@@ -63,6 +63,6 @@ public class Job {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Job[" + getJid() + "]");
+    return Tools.decide(this::getName, "Job[" + id + "]");
   }
 }

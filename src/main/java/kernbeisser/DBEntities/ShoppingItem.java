@@ -22,7 +22,7 @@ public class ShoppingItem implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private long siid;
+  private long id;
 
   @Column private int amount;
 
@@ -300,6 +300,6 @@ public class ShoppingItem implements Serializable {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Einkaufsartikel[" + siid + "]");
+    return Tools.decide(this::getName, "Einkaufsartikel[" + id + "]");
   }
 }

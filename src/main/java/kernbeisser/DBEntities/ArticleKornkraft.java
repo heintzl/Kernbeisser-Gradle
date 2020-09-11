@@ -29,7 +29,7 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
     EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
-              "select k from ArticleKornkraft k where k.base.suppliersItemNumber = :n",
+              "select k from ArticleKornkraft k where k.suppliersItemNumber = :n",
               ArticleKornkraft.class)
           .setParameter("n", kkNumber)
           .getSingleResult();
@@ -63,7 +63,7 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
       return em.createQuery(
               "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
               SurchargeTable.class)
-          .setParameter("supplier", Supplier.getKKSupplier().getSid())
+          .setParameter("supplier", Supplier.getKKSupplier().getId())
           .setParameter("number", getSuppliersItemNumber())
           .setMaxResults(1)
           .getSingleResult();
