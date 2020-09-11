@@ -257,9 +257,9 @@ public class User implements Serializable {
     EntityManager em = DBConnection.getEntityManager();
     Collection<Transaction> out =
         em.createQuery(
-                "select t from Transaction t where t.from.id = :uid or t.to.id = :uid order by date",
+                "select t from Transaction t where t.from.id = :id or t.to.id = :id order by date",
                 Transaction.class)
-            .setParameter("uid", id)
+            .setParameter("id", id)
             .getResultList();
     em.close();
     return out;
@@ -269,9 +269,9 @@ public class User implements Serializable {
     EntityManager em = DBConnection.getEntityManager();
     Collection<Transaction> out =
         em.createQuery(
-                "select t from Transaction t where t.from.id = :uid or t.to.id = :uid",
+                "select t from Transaction t where t.from.id = :id or t.to.id = :id",
                 Transaction.class)
-            .setParameter("uid", id)
+            .setParameter("id", id)
             .getResultList();
     em.close();
     return out;
@@ -282,7 +282,7 @@ public class User implements Serializable {
     Collection<Purchase> out =
         em.createQuery(
                 "select p from Purchase p where p.session.customer.id = :uid", Purchase.class)
-            .setParameter("uid", id)
+            .setParameter("id", id)
             .getResultList();
     em.close();
     return out;

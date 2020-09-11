@@ -28,7 +28,7 @@ public class Users {
                     root.get("createDate"),
                     Tools.toDate(from).toInstant(),
                     Tools.toDate(to).toInstant()),
-                cb.equal(root.get("sid"), user.getId())));
+                cb.equal(root.get("id"), user.getId())));
 
     for (Purchase purchase : em.createQuery(criteriaQuery).getResultList()) {
       YearMonth month = YearMonth.from(purchase.getCreateDate());

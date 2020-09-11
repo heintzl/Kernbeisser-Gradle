@@ -32,9 +32,10 @@ public class LogInModel implements IModel {
     EntityManager em = DBConnection.getEntityManager();
     try {
       User user =
-          em.createQuery("select u from User u where u.username like :username", User.class)
+          em.createQuery("select u from User u where u.username = :username", User.class)
               .setParameter("username", username)
-              .getSingleResult();
+              .getResultList()
+              .get(0);
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
         if (!user.hasPermission(PermissionKey.ACTION_LOGIN)) {
           throw new PermissionRequired();

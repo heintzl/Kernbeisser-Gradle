@@ -118,23 +118,17 @@ public class ShoppingItem implements Serializable {
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)})
-  @Setter(
-      onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_WRITE)},
-      value = AccessLevel.PRIVATE)
+  @Setter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_WRITE)})
   private double itemRetailPrice;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_ITEM_NET_PRICE_READ)})
-  @Setter(
-      onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_ITEM_NET_PRICE_WRITE)},
-      value = AccessLevel.PRIVATE)
+  @Setter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_ITEM_NET_PRICE_WRITE)})
   private double itemNetPrice;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_READ)})
-  @Setter(
-      onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_WRITE)},
-      value = AccessLevel.PRIVATE)
+  @Setter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_WRITE)})
   private int shoppingCartIndex;
 
   @Getter @Transient private double singleDeposit;
