@@ -7,7 +7,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
@@ -54,7 +54,7 @@ public class SimpleLogInController implements IController<SimpleLogInView, Simpl
         removeSelf();
         new MenuController().openTab("Menu");
       }
-    } catch (AccessDeniedException e) {
+    } catch (CannotLogInException e) {
       view.accessDenied();
     } catch (PermissionRequired permissionRequired) {
       view.permissionRequired();

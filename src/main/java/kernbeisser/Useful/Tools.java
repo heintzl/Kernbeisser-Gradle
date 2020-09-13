@@ -412,8 +412,7 @@ public class Tools {
     }
   }
 
-  public static void invokeWithDefault(AccessConsumer<Object> consumer)
-      throws AccessDeniedException {
+  public static void invokeWithDefault(AccessConsumer<Object> consumer) {
     Object[] primitiveObjects =
         new Object[] {
           null, 0, (long) 0, (double) 0, (float) 0, (char) 0, (byte) 0, (short) 0, false,

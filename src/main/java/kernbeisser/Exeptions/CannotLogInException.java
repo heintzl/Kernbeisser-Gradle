@@ -1,3 +1,3 @@
 package kernbeisser.Exeptions;
 
-public class CannotLogInException {}
+public class CannotLogInException extends Exception {}

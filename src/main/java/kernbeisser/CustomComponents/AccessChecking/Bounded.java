@@ -2,6 +2,7 @@ package kernbeisser.CustomComponents.AccessChecking;
 
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 
 public interface Bounded<T, V> {
@@ -34,13 +35,10 @@ public interface Bounded<T, V> {
         setter.set(v, null);
         return true;
       } catch (NullPointerException ignored) {
-        Tools.invokeWithDefault(
-            e -> {
-              setter.set(v, (V) e);
-            });
+        Tools.invokeWithDefault(e -> setter.set(v, (V) e));
         return true;
       }
-    } catch (AccessDeniedException e) {
+    } catch (PermissionKeyRequiredException e) {
       return false;
     }
   }
