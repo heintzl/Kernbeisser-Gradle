@@ -44,7 +44,9 @@ public class ShoppingCartController implements Controller<ShoppingCartView, Shop
           } else {
             try {
               containers = Integer.parseInt(response);
-              if (Math.signum(containers) == Math.signum(item.getItemMultiplier())) {
+              if (containers == 0) {
+                exit = true;
+              } else if (Math.signum(containers) == Math.signum(item.getItemMultiplier())) {
                 model.addItemBehind(item.createContainerDeposit(containers), item);
                 exit = true;
               } else {
