@@ -53,12 +53,17 @@ public class CashierShoppingMaskController
         return;
       }
     }
-    new ShoppingMaskUIController(saleSession)
-        .openTab(
-            "Einkauf für "
-                + saleSession.getCustomer().getSurname()
-                + ", "
-                + saleSession.getCustomer().getFirstName());
+    new ShoppingMaskUIController(saleSession) {
+      @Override
+      public boolean commitClose() {
+        searchBoxController.search();
+        return super.commitClose();
+      }
+    }.openTab(
+        "Einkauf für "
+            + saleSession.getCustomer().getSurname()
+            + ", "
+            + saleSession.getCustomer().getFirstName());
   }
 
   public SearchBoxView<User> getSearchBoxView() {

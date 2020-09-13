@@ -67,6 +67,7 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
   }
 
   void emptyShoppingCart() {
+    model.getSaleSession().reload();
     shoppingCartController.emptyCart();
   }
 
@@ -275,12 +276,24 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
           e -> {
             PayController controller = (PayController) window.getController();
             if (controller.getModel().wasSuccessful()) {
+              model.setCloseConfirmed(true);
               view.back();
             }
           });
     } else {
       view.messageCartIsEmpty();
     }
+  }
+
+  @Override
+  public boolean commitClose() {
+    if (shoppingCartController.getItems().size() == 0
+        || model.isCloseConfirmed()
+        || view.doCancel()) {
+      resetMask();
+      return true;
+    }
+    return false;
   }
 
   void openSearchWindow() {
@@ -305,5 +318,10 @@ public class ShoppingMaskUIController implements Controller<ShoppingMaskUIView, 
     } catch (NumberFormatException e) {
       view.messageInvalidBarcode(barcode);
     }
+  }
+
+  public void resetMask() {
+    emptyShoppingCart();
+    fillUI();
   }
 }

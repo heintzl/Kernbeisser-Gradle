@@ -3,6 +3,7 @@ package kernbeisser.DBEntities;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
@@ -38,6 +39,14 @@ public class SaleSession {
 
   public static List<SaleSession> getAll(String condition) {
     return Tools.getAll(SaleSession.class, condition);
+  }
+
+  public void reload() {
+    EntityManager em = DBConnection.getEntityManager();
+    customer = em.find(User.class, getCustomer().getId());
+    seller = em.find(User.class, getSeller().getId());
+    secondSeller = secondSeller != null ? em.find(User.class, getSecondSeller().getId()) : null;
+    em.close();
   }
 
   @Override

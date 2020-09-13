@@ -114,9 +114,10 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     return articleName.getText().equals("");
   }
 
-  private void doCancel() {
-    controller.emptyShoppingCart();
-    back();
+  boolean doCancel() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(), "Soll der Einkauf wirklich abgebrochen werden?")
+        == 0;
   }
 
   private void doCheckout() {
@@ -587,7 +588,7 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
 
     checkout.addActionListener(e -> doCheckout());
     emptyShoppingCart.addActionListener(e -> controller.emptyShoppingCart());
-    cancelSalesSession.addActionListener(e -> doCancel());
+    cancelSalesSession.addActionListener(e -> back());
 
     searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
     searchArticle.addActionListener(e -> openSearchWindow());
@@ -711,8 +712,6 @@ public class ShoppingMaskUIView implements View<ShoppingMaskUIController> {
     keyCapture.add(KeyEvent.VK_INSERT, () -> optProduce.doClick());
     keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
     keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
-
-    articleTypeChange('a');
   }
 
   private void enablePreordered() {

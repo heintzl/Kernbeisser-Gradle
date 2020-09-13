@@ -11,11 +11,14 @@ import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.MVC.Model;
+import lombok.Getter;
+import lombok.Setter;
 
 public class ShoppingMaskModel implements Model<ShoppingMaskUIController> {
   private Article selected = null;
   private double value;
   private SaleSession saleSession;
+  @Getter @Setter private boolean closeConfirmed = false;
 
   ShoppingMaskModel(SaleSession saleSession) {
     this.saleSession = saleSession;

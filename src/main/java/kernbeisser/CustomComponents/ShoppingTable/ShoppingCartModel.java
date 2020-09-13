@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.MVC.Model;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 public class ShoppingCartModel implements Model<ShoppingCartController> {
-  private final double userValue;
-  private final double userSurcharge;
+  @Setter private double userValue;
+  private double userSurcharge;
   private final ArrayList<ShoppingItem> shoppingItems = new ArrayList<>();
 
   ShoppingCartModel(double userValue, double userSurcharge) {

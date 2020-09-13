@@ -123,7 +123,7 @@
               <focusable value="true"/>
               <font name="Arial" size="16"/>
               <foreground color="-16777216"/>
-              <text value="value"/>
+              <text value=""/>
             </properties>
           </component>
         </children>
@@ -162,7 +162,7 @@
               <focusable value="true"/>
               <font name="Arial" size="16"/>
               <foreground color="-16777216"/>
-              <text value="sum"/>
+              <text value=""/>
             </properties>
           </component>
         </children>
