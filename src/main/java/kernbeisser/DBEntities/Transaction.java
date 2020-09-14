@@ -10,7 +10,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
@@ -67,7 +67,9 @@ public class Transaction {
 
   public static void doTransaction(
       User from, User to, double value, TransactionType transactionType, String info)
-      throws AccessDeniedException {
+      throws InvalidTransactionException {
+    if (from.getUserGroup().getId() == to.getUserGroup().getId())
+      throw new kernbeisser.Exeptions.InvalidTransactionException();
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
@@ -76,7 +78,7 @@ public class Transaction {
     if (transactionType != TransactionType.INITIALIZE) {
       if (fromUG.getValue() - value < minValue) {
         if (!from.hasPermission(PermissionKey.GO_UNDER_MIN)) {
-          throw new AccessDeniedException(
+          throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the sending user ["
                   + from.getId()
                   + "] has not the Permission to go under the min value of "
@@ -86,7 +88,7 @@ public class Transaction {
       }
       if (toUG.getValue() + value < minValue) {
         if (!to.hasPermission(PermissionKey.GO_UNDER_MIN)) {
-          throw new AccessDeniedException(
+          throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the receiving user ["
                   + from.getId()
                   + "] has not the Permission to go under the min value of "
@@ -137,7 +139,7 @@ public class Transaction {
   }
 
   public static void doPurchaseTransaction(User customer, double value)
-      throws AccessDeniedException {
+      throws InvalidTransactionException {
     doTransaction(
         customer,
         User.getKernbeisserUser(),

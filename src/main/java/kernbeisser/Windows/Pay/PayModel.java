@@ -11,7 +11,7 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Reports.ReportManager;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -43,7 +43,7 @@ public class PayModel implements IModel<PayController> {
   }
 
   Purchase pay(SaleSession saleSession, List<ShoppingItem> items, double sum)
-      throws PersistenceException, AccessDeniedException {
+      throws PersistenceException, InvalidTransactionException {
     // Build connection by default
     EntityManager em = DBConnection.getEntityManager();
 
@@ -55,9 +55,9 @@ public class PayModel implements IModel<PayController> {
       // Do money exchange
       try {
         Transaction.doPurchaseTransaction(saleSession.getCustomer(), shoppingCartSum());
-      } catch (AccessDeniedException e) {
+      } catch (InvalidTransactionException e) {
         em.close();
-        throw new AccessDeniedException("The user has not enough value to buy these Articles");
+        throw new InvalidTransactionException();
       }
 
       // Create saleSession if not exists
