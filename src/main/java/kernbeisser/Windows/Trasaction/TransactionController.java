@@ -7,7 +7,6 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
@@ -80,16 +79,11 @@ public class TransactionController implements IController<TransactionView, Trans
     if (view.getValue() < 0 && !view.requestUserTransactionCommit()) {
       return;
     }
-    if (view.isFromKB()) {
-      transaction.setTransactionType(TransactionType.KB_TO_USER);
-      transaction.setFrom(User.getKernbeisserUser());
-    } else {
-      try {
-        transaction.setFrom(model.findUser(view.getFrom()));
-      } catch (NoResultException e) {
-        view.invalidFrom();
-        return;
-      }
+    try {
+      transaction.setFrom(model.findUser(view.getFrom()));
+    } catch (NoResultException e) {
+      view.invalidFrom();
+      return;
     }
     try {
       transaction.setTo(model.findUser(view.getTo()));
@@ -113,12 +107,8 @@ public class TransactionController implements IController<TransactionView, Trans
     view.setTransactions(model.getTransactions());
     view.setCount(model.getCount());
     view.setSum(model.getSum());
-    view.setTo("");
+    view.transactionAdded();
     userSearchBoxController.refreshLoadSolutions();
-  }
-
-  void loadUser(User user) {
-    view.setTo(user.getUsername());
   }
 
   public SearchBoxView<User> getSearchBoxView() {
@@ -143,5 +133,13 @@ public class TransactionController implements IController<TransactionView, Trans
     } else {
       return true;
     }
+  }
+
+  String getKernbeisserUsername() {
+    return User.getKernbeisserUser().getUsername();
+  }
+
+  public String getLoggedInUsername() {
+    return LogInModel.getLoggedIn().getUsername();
   }
 }

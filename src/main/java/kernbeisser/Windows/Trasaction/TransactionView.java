@@ -74,7 +74,7 @@ public class TransactionView implements IView<TransactionController> {
   private JLabel sum;
   private JLabel count;
   private PermissionField info;
-  private JCheckBox toKBValue;
+  private JCheckBox toKernbeisser;
 
   @Linked private SearchBoxController<User> userSearchBoxController;
 
@@ -98,16 +98,8 @@ public class TransactionView implements IView<TransactionController> {
     from.setText(s);
   }
 
-  boolean isFromKB() {
-    return fromKBValue.isSelected();
-  }
-
   void setFromKBEnable(boolean b) {
-    fromKBValue.setSelected(b);
     fromKBValue.setEnabled(b);
-    if (b) {
-      from.setEnabled(false);
-    }
   }
 
   void setFromEnabled(boolean b) {
@@ -219,7 +211,19 @@ public class TransactionView implements IView<TransactionController> {
           }
         });
     info.setRequiredWriteKeys(PermissionKey.TRANSACTION_INFO_WRITE);
-    fromKBValue.addActionListener(e -> from.setEnabled(!fromKBValue.isSelected()));
+    fromKBValue.addActionListener(
+        e -> {
+          from.setText(
+              fromKBValue.isSelected()
+                  ? controller.getKernbeisserUsername()
+                  : controller.getLoggedInUsername());
+          from.setEnabled(!fromKBValue.isSelected());
+        });
+    toKernbeisser.addActionListener(
+        e -> {
+          to.setText(toKernbeisser.isSelected() ? controller.getKernbeisserUsername() : "");
+          to.setEnabled(!toKernbeisser.isSelected());
+        });
     // Sets the ActionListeners for the instant Transaction Buttons
     {
       a10.addActionListener(
@@ -411,5 +415,9 @@ public class TransactionView implements IView<TransactionController> {
         "Die eingegeben Überweisungen könnnen nicht getätigt werden,\nda einige der Benutzer nicht die Berechtigung haben, unter das minimale\nGuthaben von "
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
             + " zu gehen");
+  }
+
+  public void transactionAdded() {
+    if (!toKernbeisser.isSelected()) to.setText("");
   }
 }
