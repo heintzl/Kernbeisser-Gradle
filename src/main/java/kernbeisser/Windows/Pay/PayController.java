@@ -8,7 +8,7 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
@@ -49,7 +49,7 @@ public class PayController implements IController<PayView, PayModel> {
           model.print(purchase);
         }
         view.back();
-      } catch (AccessDeniedException e) {
+      } catch (InvalidTransactionException e) {
         view.notEnoughValue();
       }
 
