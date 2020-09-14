@@ -47,7 +47,8 @@ public enum Setting {
   APP_DEFAULT_HEIGHT("1000"),
   CATALOG_RUN_GC_UNDER("20"),
   LABEL_SCALE_FACTOR("1."),
-  WARN_OVER_TRANSACTION_VALUE("1000.00");
+  WARN_OVER_TRANSACTION_VALUE("1000.00"),
+  OPEN_MULTIPLE_SHOPPING_MASK("true");
 
   // defines the type to like in java style
   // Value: Type:

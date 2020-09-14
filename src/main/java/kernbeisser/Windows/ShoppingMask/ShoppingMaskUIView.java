@@ -22,6 +22,7 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.UndefinedInputException;
@@ -740,7 +741,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   @Override
   public boolean isStackable() {
-    return true;
+    return Setting.OPEN_MULTIPLE_SHOPPING_MASK.getBooleanValue();
   }
 
   @Override

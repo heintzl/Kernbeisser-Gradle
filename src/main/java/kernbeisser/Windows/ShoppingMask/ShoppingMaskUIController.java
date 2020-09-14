@@ -1,6 +1,7 @@
 package kernbeisser.Windows.ShoppingMask;
 
 import java.awt.*;
+import java.util.Objects;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.*;
@@ -306,5 +307,19 @@ public class ShoppingMaskUIController
     } catch (NumberFormatException e) {
       view.messageInvalidBarcode(barcode);
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ShoppingMaskUIController that = (ShoppingMaskUIController) o;
+    return Objects.equals(
+        model.getSaleSession().getCustomer(), that.model.getSaleSession().getCustomer());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(view, model, shoppingCartController);
   }
 }
