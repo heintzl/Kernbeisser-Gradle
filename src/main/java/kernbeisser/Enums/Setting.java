@@ -46,7 +46,8 @@ public enum Setting {
   APP_DEFAULT_WIDTH("1600"),
   APP_DEFAULT_HEIGHT("1000"),
   CATALOG_RUN_GC_UNDER("20"),
-  LABEL_SCALE_FACTOR("1.");
+  LABEL_SCALE_FACTOR("1."),
+  WARN_OVER_TRANSACTION_VALUE("1000.00");
 
   // defines the type to like in java style
   // Value: Type:

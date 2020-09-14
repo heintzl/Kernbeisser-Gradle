@@ -126,6 +126,13 @@ public class TransactionView implements IView<TransactionController> {
     JOptionPane.showMessageDialog(getTopComponent(), "Die Überweisung/en wurde/n durchgeführt");
   }
 
+  boolean confirmExtraHeightTransaction() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            String.format("Ist der eingegebene Wert von %.2f€ korrekt?", getValue()))
+        == 0;
+  }
+
   boolean confirm() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(), "Sollen die eingetragenen überweisungen getätigt werden?")

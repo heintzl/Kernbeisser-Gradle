@@ -7,6 +7,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
@@ -72,6 +73,10 @@ public class TransactionController implements IController<TransactionView, Trans
 
   void addTransaction() {
     Transaction transaction = new Transaction();
+    if (view.getValue() > Setting.WARN_OVER_TRANSACTION_VALUE.getDoubleValue()
+        && !view.confirmExtraHeightTransaction()) {
+      return;
+    }
     if (view.getValue() <= 0) {
       view.invalidValue();
       return;
