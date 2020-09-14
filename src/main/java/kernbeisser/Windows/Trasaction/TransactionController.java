@@ -62,7 +62,7 @@ public class TransactionController implements IController<TransactionView, Trans
     try {
       model.transfer();
     } catch (InvalidTransactionException e) {
-      view.userHasNotEnoughValue();
+      view.transactionRejected();
       return;
     }
     view.success();

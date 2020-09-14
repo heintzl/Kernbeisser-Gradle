@@ -416,12 +416,12 @@ public class TransactionView implements IView<TransactionController> {
     return main;
   }
 
-  public void userHasNotEnoughValue() {
+  public void transactionRejected() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
         "Die eingegeben Überweisungen könnnen nicht getätigt werden,\nda einige der Benutzer nicht die Berechtigung haben, unter das minimale\nGuthaben von "
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
-            + " zu gehen");
+            + " zu gehen,\noder der Absender der gleiche ist wie der Empfänger");
   }
 
   public void transactionAdded() {
