@@ -13,8 +13,8 @@ import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
-import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Main;
 import kernbeisser.Security.MasterPermissionSet;
 import kernbeisser.Tasks.Articles;
@@ -237,7 +237,7 @@ public class DataImportController implements IController<DataImportView, DataImp
         MasterPermissionSet.removePermission(PermissionKey.GO_UNDER_MIN);
       }
       view.setUserProgress(4);
-    } catch (IOException | AccessDeniedException e) {
+    } catch (IOException | InvalidTransactionException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
   }

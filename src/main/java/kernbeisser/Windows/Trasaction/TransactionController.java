@@ -8,7 +8,7 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
@@ -61,7 +61,7 @@ public class TransactionController implements IController<TransactionView, Trans
   void unsafeTransfer() {
     try {
       model.transfer();
-    } catch (AccessDeniedException e) {
+    } catch (InvalidTransactionException e) {
       view.userHasNotEnoughValue();
       return;
     }

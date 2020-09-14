@@ -6,6 +6,7 @@ import javax.persistence.NoResultException;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Windows.MVC.IModel;
 
 public class TransactionModel implements IModel<TransactionController> {
@@ -34,7 +35,7 @@ public class TransactionModel implements IModel<TransactionController> {
     return transactions;
   }
 
-  void transfer() throws AccessDeniedException {
+  void transfer() throws InvalidTransactionException {
     final boolean[] correct = {true};
     transactions.forEach(e -> correct[0] = correct[0] & Transaction.isValidTransaction(e));
     if (!correct[0]) {
