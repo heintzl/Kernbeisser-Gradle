@@ -109,7 +109,7 @@ public class Supplier implements Serializable {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Lieferant[" + id + "]");
+    return Tools.decide(() -> getName() + "[" + shortName + "]", "Lieferant[" + id + "]");
   }
 
   public static Collection<Supplier> defaultSearch(String s, int max) {
