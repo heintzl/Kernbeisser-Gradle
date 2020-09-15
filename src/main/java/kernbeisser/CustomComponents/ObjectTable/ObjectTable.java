@@ -1,6 +1,5 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -8,6 +7,7 @@ import java.util.List;
 import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
@@ -71,9 +71,10 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     model = (DefaultTableModel) createModel(columns, objects);
     setModel(model);
     for (int i = 0; i < columns.size(); i++) {
-      getColumnModel()
-          .getColumn(convertColumnIndexToModel(i))
-          .setCellRenderer(columns.get(i).getRenderer());
+      TableColumn column = getColumnModel().getColumn(convertColumnIndexToModel(i));
+      column.setCellRenderer(columns.get(i).getRenderer());
+      int width = columns.get(i).getMinWidth();
+      if (width != -1) column.setMinWidth(width);
     }
   }
 

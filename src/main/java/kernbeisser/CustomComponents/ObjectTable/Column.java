@@ -35,6 +35,39 @@ public interface Column<T> {
     };
   }
 
+  static <T> Column<T> create(String s, Getter<T, Object> v, int alignment) {
+    return new Column<T>() {
+      private boolean read = true;
+
+      @Override
+      public String getName() {
+        return s;
+      }
+
+      @Override
+      public Object getValue(T t) {
+        if (!read) {
+          return "***********";
+        }
+        try {
+          return v.get(t);
+        } catch (AccessDeniedException e) {
+          read = false;
+          return getValue(t);
+        }
+      }
+
+      @Override
+      public TableCellRenderer getRenderer() {
+        return new DefaultTableCellRenderer() {
+          {
+            setHorizontalAlignment(alignment);
+          }
+        };
+      }
+    };
+  }
+
   @NotNull
   static <T> Column<T> create(String s, Getter<T, Object> v, Consumer<T> action) {
     return new Column<T>() {
@@ -73,5 +106,9 @@ public interface Column<T> {
 
   default TableCellRenderer getRenderer() {
     return DEFAULT_RENDERER;
+  }
+
+  default int getMinWidth() {
+    return -1;
   }
 }

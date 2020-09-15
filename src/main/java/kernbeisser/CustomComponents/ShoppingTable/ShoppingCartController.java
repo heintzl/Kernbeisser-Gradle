@@ -4,12 +4,13 @@ import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingCartController implements IController<ShoppingCartView, ShoppingCartModel> {
-  private final ShoppingCartView view;
   private final ShoppingCartModel model;
-  private final boolean editable;
+  private ShoppingCartView view;
+  @Linked private final boolean editable;
 
   /**
    * @param userValue The users credit before purchase
@@ -19,7 +20,6 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
    */
   public ShoppingCartController(double userValue, double userSurcharge, boolean editable) {
     model = new ShoppingCartModel(userValue, userSurcharge);
-    view = new ShoppingCartView(this, editable);
     this.editable = editable;
   }
 
@@ -65,7 +65,6 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   }
 
   public void refresh() {
-    view.clearNodes();
     double sum = 0;
     view.setObjects(model.getItems());
     for (ShoppingItem item : model.getItems()) {
@@ -73,7 +72,6 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
     }
     view.setSum(sum);
     view.setValue(model.getUserValue() - sum);
-    view.repaint();
   }
 
   void delete(ShoppingItem i) {
