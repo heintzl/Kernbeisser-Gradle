@@ -1,15 +1,16 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
-import java.awt.event.ActionEvent;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.Exeptions.AccessDeniedException;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public interface Column<T> {
+  public static final TableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
+
   static <T> Column<T> create(String s, Getter<T, Object> v) {
     return new Column<T>() {
       private boolean read = true;
@@ -30,32 +31,6 @@ public interface Column<T> {
           read = false;
           return getValue(t);
         }
-      }
-    };
-  }
-
-  @NotNull
-  @Contract(value = "_, _, _ -> new", pure = true)
-  static <T> Column<T> createButton(
-      String name, @NotNull Function<T, String> value, Consumer<T> action) {
-    return new Column<T>() {
-      @Override
-      public String getName() {
-        return name;
-      }
-
-      @Override
-      public Object getValue(T t) {
-        JButton button =
-            new JButton(
-                new AbstractAction() {
-                  @Override
-                  public void actionPerformed(ActionEvent e) {
-                    action.accept(t);
-                  }
-                });
-        button.setText(value.apply(t));
-        return button;
       }
     };
   }
@@ -95,4 +70,8 @@ public interface Column<T> {
   Object getValue(T t) throws AccessDeniedException;
 
   default void onAction(T t) {}
+
+  default TableCellRenderer getRenderer() {
+    return DEFAULT_RENDERER;
+  }
 }
