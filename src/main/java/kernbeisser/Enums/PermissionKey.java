@@ -3,26 +3,27 @@ package kernbeisser.Enums;
 import java.util.ArrayList;
 import java.util.Collection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Security.ActionPermission;
 import kernbeisser.Windows.LogIn.LogInModel;
 
 public enum PermissionKey {
 
   // VALUE
-  GO_UNDER_MIN(null),
+  GO_UNDER_MIN(ActionPermission.class),
 
   // Window Permissions
-  ACTION_OPEN_MANAGE_PRICELISTS(null),
+  ACTION_OPEN_MANAGE_PRICELISTS(ActionPermission.class),
 
   // Actions
-  ACTION_LOGIN(null),
-  ACTION_TRANSACTION(null),
-  ACTION_TRANSACTION_FROM_OTHER(null),
-  ACTION_TRANSACTION_FROM_KB(null),
-  ACTION_EDIT_USER(null),
-  ACTION_ORDER_CONTAINER(null),
-  ACTION_EDIT_PRICELIST(null),
-  ACTION_DELETE_PRICELIST(null),
-  ACTION_ADD_PRICELIST(null),
+  ACTION_LOGIN(ActionPermission.class),
+  ACTION_TRANSACTION(ActionPermission.class),
+  ACTION_TRANSACTION_FROM_OTHER(ActionPermission.class),
+  ACTION_TRANSACTION_FROM_KB(ActionPermission.class),
+  ACTION_EDIT_USER(ActionPermission.class),
+  ACTION_ORDER_CONTAINER(ActionPermission.class),
+  ACTION_EDIT_PRICELIST(ActionPermission.class),
+  ACTION_DELETE_PRICELIST(ActionPermission.class),
+  ACTION_ADD_PRICELIST(ActionPermission.class),
 
   ARTICLE_KB_NUMBER_READ(Article.class),
   ARTICLE_KB_NUMBER_WRITE(Article.class),

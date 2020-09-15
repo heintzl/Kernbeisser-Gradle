@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class PermissionView implements IView<PermissionController> {
   private ObjectTable<Permission> permission;
   private JPanel main;
-  private JComboBox<Object> category;
+  private JComboBox<Class> category;
   private JButton back;
   private JButton add;
   private JButton delete;
@@ -65,18 +65,13 @@ public class PermissionView implements IView<PermissionController> {
 
   void setCategories(Class<?>[] categories) {
     category.removeAllItems();
-    category.addItem("Aktionen");
     for (Class<?> keyCategory : categories) {
       category.addItem(keyCategory);
     }
   }
 
   public Class<?> getCategory() {
-    try {
-      return (Class<?>) category.getSelectedItem();
-    } catch (ClassCastException e) {
-      return null;
-    }
+    return (Class<?>) category.getSelectedItem();
   }
 
   @Override
