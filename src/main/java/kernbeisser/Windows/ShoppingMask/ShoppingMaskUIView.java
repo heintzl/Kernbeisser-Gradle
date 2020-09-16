@@ -27,8 +27,8 @@ import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.ShoppingMask.ShoppingTable.ShoppingCartController;
-import kernbeisser.Windows.ShoppingMask.ShoppingTable.ShoppingCartView;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -747,5 +747,9 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   @Override
   public boolean processKeyboardInput(KeyEvent e) {
     return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
+  }
+
+  public boolean askForClose() {
+    return JOptionPane.showConfirmDialog(getTopComponent(),"Soll der Einkauf wirklich abgebrochen werden?") == 0;
   }
 }

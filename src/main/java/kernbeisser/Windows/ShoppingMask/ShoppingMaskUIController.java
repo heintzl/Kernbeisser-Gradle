@@ -13,7 +13,7 @@ import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
-import kernbeisser.Windows.ShoppingMask.ShoppingTable.ShoppingCartController;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
@@ -277,12 +277,18 @@ public class ShoppingMaskUIController
           e -> {
             PayController controller = (PayController) window.getController();
             if (controller.getModel().wasSuccessful()) {
+              model.setSuccessful(true);
               view.back();
             }
           });
     } else {
       view.messageCartIsEmpty();
     }
+  }
+
+  @Override
+  public boolean commitClose() {
+    return model.isSuccessful() ||shoppingCartController.getItems().size()==0 || view.askForClose();
   }
 
   void openSearchWindow() {

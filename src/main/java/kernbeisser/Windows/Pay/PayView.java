@@ -7,8 +7,8 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.ShoppingMask.ShoppingTable.ShoppingCartController;
-import kernbeisser.Windows.ShoppingMask.ShoppingTable.ShoppingCartView;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import org.jetbrains.annotations.NotNull;
 
 public class PayView implements IView<PayController> {

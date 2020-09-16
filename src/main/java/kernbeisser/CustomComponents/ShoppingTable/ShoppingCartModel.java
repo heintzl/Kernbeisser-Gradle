@@ -1,4 +1,4 @@
-package kernbeisser.Windows.ShoppingMask.ShoppingTable;
+package kernbeisser.CustomComponents.ShoppingTable;
 
 import java.util.ArrayList;
 import java.util.List;

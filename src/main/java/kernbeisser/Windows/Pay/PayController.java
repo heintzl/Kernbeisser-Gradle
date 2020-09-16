@@ -11,7 +11,7 @@ import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.ShoppingMask.ShoppingTable.ShoppingCartController;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

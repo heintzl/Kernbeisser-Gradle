@@ -5,39 +5,19 @@ import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Data;
+import lombok.Getter;
 
+@Data
 public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
   private Article selected = null;
   private double value;
+  private boolean successful = false;
   private SaleSession saleSession;
 
   ShoppingMaskModel(SaleSession saleSession) {
     this.saleSession = saleSession;
     this.value = saleSession.getCustomer().getUserGroup().getValue();
-  }
-
-  public Article getSelected() {
-    return selected;
-  }
-
-  public void setSelected(Article selected) {
-    this.selected = selected;
-  }
-
-  public double getValue() {
-    return value;
-  }
-
-  public void setValue(int value) {
-    this.value = value;
-  }
-
-  public SaleSession getSaleSession() {
-    return saleSession;
-  }
-
-  public void setSaleSession(SaleSession saleSession) {
-    this.saleSession = saleSession;
   }
 
   ShoppingItem getByKbNumber(int kbNumber, int discount, boolean preordered) {
