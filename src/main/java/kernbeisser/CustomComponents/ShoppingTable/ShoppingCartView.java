@@ -8,7 +8,6 @@ import java.awt.event.AdjustmentListener;
 import java.text.MessageFormat;
 import java.util.Collection;
 import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -85,11 +84,6 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               @Override
               public void adjust(TableColumn column) {
                 column.setMinWidth(500);
-              }
-
-              @Override
-              public TableCellRenderer getRenderer() {
-                return DEFAULT_STRIPED_RENDERER;
               }
             },
             Column.create("Inhalt", ShoppingItem::getUnitAmount, SwingConstants.RIGHT),
