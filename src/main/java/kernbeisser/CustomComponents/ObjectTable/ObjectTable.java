@@ -1,14 +1,13 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
+import javax.swing.table.*;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +19,6 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private final ArrayList<ObjectSelectionListener<T>> doubleClickListeners = new ArrayList<>();
 
   private final List<T> objects = new ArrayList<>();
-
   private T lastSelected = null;
 
   private List<Column<T>> columns = new ArrayList<>();
@@ -71,10 +69,10 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     model = (DefaultTableModel) createModel(columns, objects);
     setModel(model);
     for (int i = 0; i < columns.size(); i++) {
-      TableColumn column = getColumnModel().getColumn(convertColumnIndexToModel(i));
-      column.setCellRenderer(columns.get(i).getRenderer());
-      int width = columns.get(i).getMinWidth();
-      if (width != -1) column.setMinWidth(width);
+      Column<T> column = columns.get(i);
+      TableColumn tableColumn = getColumnModel().getColumn(convertColumnIndexToModel(i));
+      tableColumn.setCellRenderer(column.getRenderer());
+      column.adjust(tableColumn);
     }
   }
 

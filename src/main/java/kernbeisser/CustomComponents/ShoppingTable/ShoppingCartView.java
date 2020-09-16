@@ -8,6 +8,10 @@ import java.awt.event.AdjustmentListener;
 import java.text.MessageFormat;
 import java.util.Collection;
 import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -76,14 +80,33 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               }
 
               @Override
-              public int getMinWidth() {
-                return 500;
+              public void adjust(TableColumn column) {
+                column.setMinWidth(500);
+              }
+
+              @Override
+              public TableCellRenderer getRenderer() {
+                return DEFAULT_STRIPED_RENDERER;
               }
             },
-            Column.create("Inhalt", ShoppingItem::getAmount, SwingConstants.RIGHT),
+            Column.create("Inhalt", ShoppingItem::getUnitAmount, SwingConstants.RIGHT),
             Column.create("Menge", ShoppingItem::getItemMultiplier, SwingConstants.RIGHT),
-            Column.create("Rabatt", ShoppingItem::getDiscount, SwingConstants.RIGHT),
+            Column.create(
+                "Rabatt",
+                e -> String.format("%d%%(%.2f€)", e.getDiscount(), e.getItemRetailPrice()),
+                SwingConstants.RIGHT),
             Column.create("Preis", ShoppingItem::getItemRetailPrice, SwingConstants.RIGHT));
+    if (editable) {
+      shoppingItems.addColumn(
+          Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
+      shoppingItems.addColumn(
+          Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.PLUS, 20, Color.GREEN), controller::plus));
+      shoppingItems.addColumn(
+          Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.MINUS, 20, Color.ORANGE), controller::minus));
+    }
     shoppingItems.getTableHeader().setBackground(Color.BLACK);
     shoppingItems.getTableHeader().setForeground(Color.WHITE);
     shoppingItems.getTableHeader().setFont(shoppingItems.getFont().deriveFont(Font.BOLD));

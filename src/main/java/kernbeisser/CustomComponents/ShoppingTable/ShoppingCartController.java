@@ -106,4 +106,24 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   public PermissionKey[] getRequiredKeys() {
     return new PermissionKey[0];
   }
+
+  public void manipulateShoppingItemAmount(ShoppingItem t, int manipulate) {
+    if (t.getItemMultiplier() + manipulate == 0) {
+      delete(t);
+      return;
+    }
+    model.getItems().stream()
+        .filter(s -> s.equals(t))
+        .findAny()
+        .ifPresent(e -> e.setItemMultiplier(e.getItemMultiplier() + manipulate));
+    refresh();
+  }
+
+  void plus(ShoppingItem i) {
+    manipulateShoppingItemAmount(i, +1);
+  }
+
+  void minus(ShoppingItem i) {
+    manipulateShoppingItemAmount(i, -1);
+  }
 }
