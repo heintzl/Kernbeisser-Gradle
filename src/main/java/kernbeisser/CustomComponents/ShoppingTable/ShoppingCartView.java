@@ -76,7 +76,10 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
 
               @Override
               public Object getValue(ShoppingItem shoppingItem) throws AccessDeniedException {
-                return shoppingItem.getName() + "[" + shoppingItem.getShortName() + "]";
+                return shoppingItem.getName()
+                    + (shoppingItem.getShortName() != null
+                        ? "[" + shoppingItem.getShortName() + "]"
+                        : "");
               }
 
               @Override
@@ -90,12 +93,16 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               }
             },
             Column.create("Inhalt", ShoppingItem::getUnitAmount, SwingConstants.RIGHT),
-            Column.create("Menge", ShoppingItem::getItemMultiplier, SwingConstants.RIGHT),
+            Column.create("Menge", e -> e.getItemMultiplier() + "x ", SwingConstants.RIGHT),
             Column.create(
                 "Rabatt",
-                e -> String.format("%d%%(%.2f€)", e.getDiscount(), e.getItemRetailPrice()),
+                e ->
+                    e.getDiscount() != 0
+                        ? String.format("%d%%(%.2f€)", e.getDiscount(), e.getItemRetailPrice())
+                        : "",
                 SwingConstants.RIGHT),
-            Column.create("Preis", ShoppingItem::getItemRetailPrice, SwingConstants.RIGHT));
+            Column.create(
+                "Preis", e -> String.format("%.2f", e.getRetailPrice()), SwingConstants.RIGHT));
     if (editable) {
       shoppingItems.addColumn(
           Column.createIcon(
