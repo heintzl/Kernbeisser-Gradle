@@ -6,7 +6,6 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {

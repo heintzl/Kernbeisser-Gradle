@@ -3,12 +3,12 @@ package kernbeisser.Windows.Pay;
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import org.jetbrains.annotations.NotNull;
 
 public class PayView implements IView<PayController> {

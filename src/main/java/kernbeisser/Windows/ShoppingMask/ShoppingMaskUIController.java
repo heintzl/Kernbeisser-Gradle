@@ -3,6 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import java.awt.*;
 import java.util.Objects;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
@@ -13,7 +14,6 @@ import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
-import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
@@ -288,7 +288,9 @@ public class ShoppingMaskUIController
 
   @Override
   public boolean commitClose() {
-    return model.isSuccessful() ||shoppingCartController.getItems().size()==0 || view.askForClose();
+    return model.isSuccessful()
+        || shoppingCartController.getItems().size() == 0
+        || view.askForClose();
   }
 
   void openSearchWindow() {

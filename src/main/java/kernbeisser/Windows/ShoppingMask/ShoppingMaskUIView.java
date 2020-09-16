@@ -16,6 +16,8 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
 import kernbeisser.CustomComponents.KeyCapture;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -27,8 +29,6 @@ import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -750,6 +750,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public boolean askForClose() {
-    return JOptionPane.showConfirmDialog(getTopComponent(),"Soll der Einkauf wirklich abgebrochen werden?") == 0;
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(), "Soll der Einkauf wirklich abgebrochen werden?")
+        == 0;
   }
 }
