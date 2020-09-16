@@ -1,4 +1,4 @@
-package kernbeisser.CustomComponents.ShoppingTable;
+package kernbeisser.Windows.ShoppingMask.ShoppingTable;
 
 import static java.text.MessageFormat.format;
 

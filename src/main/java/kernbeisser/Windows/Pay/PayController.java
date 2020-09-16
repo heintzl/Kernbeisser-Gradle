@@ -3,7 +3,6 @@ package kernbeisser.Windows.Pay;
 import java.awt.*;
 import java.util.List;
 import javax.persistence.PersistenceException;
-import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -12,6 +11,7 @@ import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.ShoppingMask.ShoppingTable.ShoppingCartController;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

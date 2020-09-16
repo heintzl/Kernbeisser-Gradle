@@ -16,8 +16,6 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
 import kernbeisser.CustomComponents.KeyCapture;
-import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -29,6 +27,8 @@ import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.ShoppingMask.ShoppingTable.ShoppingCartController;
+import kernbeisser.Windows.ShoppingMask.ShoppingTable.ShoppingCartView;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
