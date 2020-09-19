@@ -13,6 +13,7 @@ import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSuppliers.EditSuppliers;
 import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
 import kernbeisser.Windows.EditUser.EditUserController;
+import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.EditUserSetting.EditUserSettingController;
 import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -52,6 +53,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton addBeginner;
   private ControllerButton editJobs;
   private ControllerButton editSuppliers;
+  private ControllerButton editUserGroup;
 
   @Override
   public void initialize(MenuController controller) {
@@ -151,7 +153,11 @@ public class MenuView implements IView<MenuController> {
     editSuppliers =
         new ControllerButton(
             EditSuppliers::new, controller -> controller.openTab("Lieferanten bearbeiten"));
-    // TODO make focus on button work
+
+    editUserGroup =
+        new ControllerButton(
+            () -> new EditUserGroupController(LogInModel.getLoggedIn()),
+            controller -> controller.openTab("Nutzergruppe ändern"));
     openCashierShoppingMask.requestFocusInWindow();
   }
 }

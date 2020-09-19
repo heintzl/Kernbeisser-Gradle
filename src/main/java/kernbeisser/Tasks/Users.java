@@ -4,6 +4,8 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
+import javax.persistence.EntityManager;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -89,5 +91,26 @@ public class Users {
     if (user.getUsername() == null) {
       user.setUsername(user.getFirstName() + "." + user.getSurname() + new Random().nextLong());
     }
+  }
+
+  public static User switchUserGroup(User user, UserGroup newUserGroup) {
+    EntityManager em = DBConnection.getEntityManager();
+    User currentUser = em.find(User.class, user.getId());
+    UserGroup current = currentUser.getUserGroup();
+    if (current.getMembers().size() < 2) {
+      newUserGroup.setInterestThisYear(
+          newUserGroup.getInterestThisYear() + current.getInterestThisYear());
+      newUserGroup.setValue(newUserGroup.getValue() + current.getValue());
+    }
+    em.persist(newUserGroup);
+    currentUser.setUserGroup(newUserGroup);
+    em.persist(currentUser);
+    em.remove(current);
+    em.close();
+    return currentUser;
+  }
+
+  public static User leaveUserGroup(User user) {
+    return switchUserGroup(user, new UserGroup());
   }
 }

@@ -67,4 +67,17 @@ public class UserGroup {
     em.close();
     return v;
   }
+
+  public static Collection<UserGroup> defaultSearch(String s, int i) {
+    EntityManager em = DBConnection.getEntityManager();
+    Collection<UserGroup> out =
+        em.createQuery(
+                "select u from UserGroup u where u.id in (select user from User user where username like :s or firstName like :s or surname like :s)",
+                UserGroup.class)
+            .setParameter("s", s)
+            .setMaxResults(i)
+            .getResultList();
+    em.close();
+    return out;
+  }
 }
