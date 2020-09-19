@@ -39,7 +39,7 @@ public class PayModel implements IModel<PayController> {
 
   double shoppingCartSum() {
     return shoppingCart.stream().mapToDouble(ShoppingItem::getRetailPrice).sum()
-        * (1 + saleSession.getCustomer().getSolidaritySurcharge());
+        * (1 + saleSession.getCustomer().getUserGroup().getSolidaritySurcharge());
   }
 
   Purchase pay(SaleSession saleSession, List<ShoppingItem> items, double sum)

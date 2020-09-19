@@ -125,8 +125,8 @@ public class UserInfoView implements IView<UserInfoController> {
             ? String.valueOf(user.getShares())
             : "Kein zugriff");
     solidarySurcharge.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_SOLIDARITY_SURCHARGE_READ)
-            ? user.getSolidaritySurcharge() + ""
+        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)
+            ? user.getUserGroup().getSolidaritySurcharge() + ""
             : "Kein zugriff");
     createDate.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_CREATE_DATE_READ)
@@ -156,7 +156,7 @@ public class UserInfoView implements IView<UserInfoController> {
     townCode.setText(String.valueOf(user.getTownCode()));
     street.setText(user.getStreet());
     shares.setText(String.valueOf(user.getShares()));
-    solidarySurcharge.setText(user.getSolidaritySurcharge() + "");
+    solidarySurcharge.setText(user.getUserGroup().getSolidaritySurcharge() + "");
     createDate.setText(Date.INSTANT_FORMAT.format(user.getCreateDate()));
     updateDate.setText(Date.INSTANT_FORMAT.format(user.getUpdateDate()));
     key.setText(user.getKernbeisserKey() == -1 ? "Kein Schlüssel" : user.getKernbeisserKey() + "");

@@ -40,11 +40,6 @@ public class User implements Serializable {
   private int shares;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SOLIDARITY_SURCHARGE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SOLIDARITY_SURCHARGE_READ)})
-  private double solidaritySurcharge;
-
-  @Column
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_READ)})
   private String extraJobs;

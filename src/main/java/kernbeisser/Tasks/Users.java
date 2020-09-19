@@ -21,7 +21,6 @@ public class Users {
     User user = new User();
     User secondary = new User();
     user.setShares(Integer.parseInt(stringRaw[3]));
-    user.setSolidaritySurcharge(Integer.parseInt(stringRaw[4]) / 100.);
     secondary.setFirstName(stringRaw[5]);
     secondary.setSurname(stringRaw[6]);
     user.setExtraJobs(stringRaw[7]);
@@ -61,9 +60,14 @@ public class Users {
     return new User[] {user, secondary};
   }
 
+  public static final int INTEREST_THIS_YEAR_COLUMN = 2;
+  public static final int SOLIDARITY_SURCHARGE_COLUMN = 3;
+
   public static UserGroup getUserGroup(String[] rawData) {
     UserGroup userGroup = new UserGroup();
-    userGroup.setInterestThisYear((int) (Float.parseFloat(rawData[2].replace(",", "."))));
+    userGroup.setInterestThisYear(
+        (int) (Float.parseFloat(rawData[INTEREST_THIS_YEAR_COLUMN].replace(",", "."))));
+    userGroup.setSolidaritySurcharge(Integer.parseInt(rawData[SOLIDARITY_SURCHARGE_COLUMN]) / 100.);
     return userGroup;
   }
 

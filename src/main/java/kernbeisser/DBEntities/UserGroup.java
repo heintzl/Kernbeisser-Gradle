@@ -31,6 +31,13 @@ public class UserGroup {
   @Setter(onMethod_ = {@Key(PermissionKey.USER_GROUP_INTEREST_THIS_YEAR_WRITE)})
   private int interestThisYear;
 
+  @Column
+  @Setter(
+      onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_WRITE)})
+  @Getter(
+      onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)})
+  private double solidaritySurcharge;
+
   public static List<UserGroup> getAll(String condition) {
     return Tools.getAll(UserGroup.class, condition);
   }
