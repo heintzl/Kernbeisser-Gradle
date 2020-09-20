@@ -75,13 +75,6 @@ public class ShoppingItem implements Serializable {
   private MetricUnits metricUnits;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_UNIT_AMOUNT_READ)})
-  @Setter(
-      onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_UNIT_AMOUNT_WRITE)},
-      value = AccessLevel.PRIVATE)
-  private String unitAmount;
-
-  @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_WEIGH_ABLE_READ)})
   @Setter(
       onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_WEIGH_ABLE_WRITE)},
@@ -160,12 +153,6 @@ public class ShoppingItem implements Serializable {
     if (vat != null) {
       this.vat = vat.getValue();
     }
-    this.unitAmount =
-        articleBase.getMetricUnits() == MetricUnits.NONE
-                || articleBase.getMetricUnits() == MetricUnits.PIECE
-                || !(articleBase.getAmount() > 0)
-            ? ""
-            : articleBase.getAmount() + articleBase.getMetricUnits().getShortName();
     this.surcharge =
         articleBase.calculateSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
@@ -194,13 +181,6 @@ public class ShoppingItem implements Serializable {
     if (!this.weighAble && this.metricUnits != MetricUnits.NONE) {
       this.metricUnits = MetricUnits.PIECE;
     }
-    this.unitAmount =
-        this.weighAble
-                || article.getMetricUnits() == MetricUnits.NONE
-                || article.getMetricUnits() == MetricUnits.PIECE
-                || !(article.getAmount() > 0)
-            ? ""
-            : article.getAmount() + article.getMetricUnits().getShortName();
     this.surcharge =
         article.getSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
@@ -289,6 +269,16 @@ public class ShoppingItem implements Serializable {
     return itemRetailPrice
         * itemMultiplier
         * (isContainerDiscount() || !weighAble ? 1.0 : metricUnits.getBaseFactor());
+  }
+
+  public String getUnitAmount() {
+    if (this.getMetricUnits() == MetricUnits.NONE
+        || this.getMetricUnits() == MetricUnits.PIECE
+        || !(this.getAmount() > 0)) {
+      return "";
+    } else {
+      return this.getAmount() + this.getMetricUnits().getShortName();
+    }
   }
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)

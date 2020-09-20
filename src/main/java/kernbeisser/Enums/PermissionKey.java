@@ -205,8 +205,6 @@ public enum PermissionKey {
   SHOPPING_ITEM_VAT_WRITE(ShoppingItem.class),
   SHOPPING_ITEM_METRIC_UNITS_READ(ShoppingItem.class),
   SHOPPING_ITEM_METRIC_UNITS_WRITE(ShoppingItem.class),
-  SHOPPING_ITEM_UNIT_AMOUNT_READ(ShoppingItem.class),
-  SHOPPING_ITEM_UNIT_AMOUNT_WRITE(ShoppingItem.class),
   SHOPPING_ITEM_WEIGH_ABLE_READ(ShoppingItem.class),
   SHOPPING_ITEM_WEIGH_ABLE_WRITE(ShoppingItem.class),
   SHOPPING_ITEM_SUPPLIERS_ITEM_NUMBER_READ(ShoppingItem.class),
