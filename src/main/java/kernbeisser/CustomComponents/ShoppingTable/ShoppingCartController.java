@@ -77,7 +77,12 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   void delete(ShoppingItem i) {
     // TODO should throw exception if !editable
     if (!editable) return;
-    model.getItems().remove(i);
+    model
+        .getItems()
+        .removeIf(
+            e ->
+                e.getSuperIndex() == i.getShoppingCartIndex()
+                    || e.getShoppingCartIndex() == i.getShoppingCartIndex());
     refresh();
   }
 
@@ -107,15 +112,17 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
     return new PermissionKey[0];
   }
 
-  public void manipulateShoppingItemAmount(ShoppingItem t, int manipulate) {
-    if (t.getItemMultiplier() + manipulate == 0) {
-      delete(t);
+  public void manipulateShoppingItemAmount(ShoppingItem i, int manipulate) {
+    if (i.getItemMultiplier() + manipulate == 0) {
+      delete(i);
       return;
     }
     model.getItems().stream()
-        .filter(s -> s.equals(t))
-        .findAny()
-        .ifPresent(e -> e.setItemMultiplier(e.getItemMultiplier() + manipulate));
+        .filter(
+            e ->
+                (e.getSuperIndex() == i.getShoppingCartIndex() && e.getName().contains("Einzel"))
+                    || e.getShoppingCartIndex() == i.getShoppingCartIndex())
+        .forEach(e -> e.setItemMultiplier(e.getItemMultiplier() + manipulate));
     refresh();
   }
 
