@@ -16,7 +16,7 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   private JButton leaveUserGroup;
   private JButton changeUserGroup;
   private JTextField username;
-  private SearchBoxView<UserGroup> userGroupSelection;
+  private SearchBoxView<UserGroup> userGroupSearchBoxView;
   private JButton cancel;
   private JPanel main;
   private JLabel solidaritySurcharge;
@@ -28,7 +28,7 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   @Linked private SearchBoxController<UserGroup> searchBoxController;
 
   private void createUIComponents() {
-    userGroupSelection = searchBoxController.getView();
+    userGroupSearchBoxView = searchBoxController.getView();
     currentUserGroup =
         new ObjectTable<>(
             Column.create("Vorname", User::getFirstName),
@@ -61,5 +61,9 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   @Override
   public @NotNull JComponent getContent() {
     return main;
+  }
+
+  void setUsername(String username) {
+    this.username.setText(username);
   }
 }

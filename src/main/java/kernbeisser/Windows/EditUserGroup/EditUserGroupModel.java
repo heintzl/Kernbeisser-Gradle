@@ -7,9 +7,13 @@ import lombok.Data;
 @Data
 public class EditUserGroupModel implements IModel<EditUserGroupController> {
 
-  private final User user;
+  private User user;
 
   public EditUserGroupModel(User user) {
     this.user = user;
+  }
+
+  public void refreshData() {
+    user = User.getById(user.getId());
   }
 }

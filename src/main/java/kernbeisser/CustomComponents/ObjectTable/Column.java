@@ -8,6 +8,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.Exeptions.AccessDeniedException;
+import org.intellij.lang.annotations.MagicConstant;
 
 public interface Column<T> {
   Color STRIPED_BACKGROUND_COLOR = new Color(240, 240, 240);
@@ -26,11 +27,12 @@ public interface Column<T> {
     return create(s, v, DEFAULT_ALIGNMENT);
   }
 
-  static <T> Column<T> create(String s, Getter<T, Object> v, int alignment) {
+  static <T> Column<T> create(String s, Getter<T, Object> v, @MagicConstant int alignment) {
     return create(s, v, alignment, true);
   }
 
-  static <T> Column<T> create(String s, Getter<T, Object> v, int alignment, boolean striped) {
+  static <T> Column<T> create(
+      String s, Getter<T, Object> v, @MagicConstant int alignment, boolean striped) {
     return create(s, v, alignment, striped, e -> {});
   }
 

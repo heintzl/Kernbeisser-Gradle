@@ -1,5 +1,7 @@
 package kernbeisser.Windows.EditUserGroup;
 
+import javax.swing.*;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -17,7 +19,21 @@ public class EditUserGroupController implements IController<EditUserGroupView, E
 
   public EditUserGroupController(User user) {
     model = new EditUserGroupModel(user);
-    userGroupSearchBoxController = new SearchBoxController<>(UserGroup::defaultSearch);
+    userGroupSearchBoxController =
+        new SearchBoxController<>(
+            UserGroup::defaultSearch,
+            Column.create("Mitglieder", UserGroup::getMemberString, SwingConstants.LEFT),
+            Column.create(
+                "Guthaben", e -> String.format("%.2f€", e.getValue()), SwingConstants.RIGHT),
+            Column.create(
+                "Solidarzuschlag",
+                e -> String.format("%.2f%%", e.getSolidaritySurcharge() * 100),
+                SwingConstants.RIGHT));
+    userGroupSearchBoxController.addSelectionListener(this::select);
+  }
+
+  private void select(UserGroup userGroup) {
+    view.setUsername(userGroup.getMembers().iterator().next().getUsername());
   }
 
   @Override
@@ -36,13 +52,18 @@ public class EditUserGroupController implements IController<EditUserGroupView, E
   }
 
   public void leaveUserGroup() {
-    view.setCurrentUserGroup(Users.leaveUserGroup(model.getUser()).getUserGroup());
+    Users.leaveUserGroup(model.getUser());
+    pushViewRefresh();
   }
 
   public void changeUserGroup() {
-    view.setCurrentUserGroup(
-        Users.switchUserGroup(
-                model.getUser(), User.getByUsername(view.getUsername()).getUserGroup())
-            .getUserGroup());
+    Users.switchUserGroup(
+        model.getUser().getId(), User.getByUsername(view.getUsername()).getUserGroup().getId());
+    pushViewRefresh();
+  }
+
+  private void pushViewRefresh() {
+    model.refreshData();
+    view.setCurrentUserGroup(model.getUser().getUserGroup());
   }
 }

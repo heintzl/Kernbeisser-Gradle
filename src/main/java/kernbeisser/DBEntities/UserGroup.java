@@ -72,12 +72,22 @@ public class UserGroup {
     EntityManager em = DBConnection.getEntityManager();
     Collection<UserGroup> out =
         em.createQuery(
-                "select u from UserGroup u where u.id in (select user from User user where username like :s or firstName like :s or surname like :s)",
+                "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
                 UserGroup.class)
-            .setParameter("s", s)
+            .setParameter("s", "%" + s)
             .setMaxResults(i)
             .getResultList();
     em.close();
     return out;
+  }
+
+  public String getMemberString() {
+    Collection<User> members = getMembers();
+    StringBuilder sb = new StringBuilder();
+    for (User member : members) {
+      sb.append(member.getFirstName()).append(" ").append(member.getSurname()).append(", ");
+    }
+    sb.delete(sb.length() - 2, sb.length());
+    return sb.toString();
   }
 }

@@ -93,24 +93,26 @@ public class Users {
     }
   }
 
-  public static User switchUserGroup(User user, UserGroup newUserGroup) {
+  public static void switchUserGroup(int userId, int userGroupId) {
     EntityManager em = DBConnection.getEntityManager();
-    User currentUser = em.find(User.class, user.getId());
+    User currentUser = em.find(User.class, userId);
     UserGroup current = currentUser.getUserGroup();
+    UserGroup destination = em.find(UserGroup.class, userGroupId);
     if (current.getMembers().size() < 2) {
-      newUserGroup.setInterestThisYear(
-          newUserGroup.getInterestThisYear() + current.getInterestThisYear());
-      newUserGroup.setValue(newUserGroup.getValue() + current.getValue());
+      destination.setInterestThisYear(
+          destination.getInterestThisYear() + current.getInterestThisYear());
+      destination.setValue(destination.getValue() + current.getValue());
     }
-    em.persist(newUserGroup);
-    currentUser.setUserGroup(newUserGroup);
+    em.persist(destination);
+    currentUser.setUserGroup(destination);
     em.persist(currentUser);
     em.remove(current);
     em.close();
-    return currentUser;
   }
 
-  public static User leaveUserGroup(User user) {
-    return switchUserGroup(user, new UserGroup());
+  public static void leaveUserGroup(User user) {
+    UserGroup newUserGroup = new UserGroup();
+    Tools.persist(newUserGroup);
+    switchUserGroup(user.getId(), newUserGroup.getId());
   }
 }

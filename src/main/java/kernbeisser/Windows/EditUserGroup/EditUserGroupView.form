@@ -144,7 +144,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <nested-form id="9a926" form-file="kernbeisser/CustomComponents/SearchBox/SearchBoxView.form" binding="userGroupSelection" custom-create="true">
+              <nested-form id="9a926" form-file="kernbeisser/CustomComponents/SearchBox/SearchBoxView.form" binding="userGroupSearchBoxView" custom-create="true">
                 <constraints/>
               </nested-form>
             </children>
