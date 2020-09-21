@@ -16,26 +16,24 @@ public class ShoppingCartModel implements IModel<ShoppingCartController> {
     this.userSurcharge = userSurcharge;
   }
 
-  int addItem(ShoppingItem newItem) {
+  ShoppingItem addItem(ShoppingItem newItem) {
     return addItemAtIndex(newItem, shoppingItems.size());
   }
 
-  int addItemBehind(ShoppingItem newItem, ShoppingItem behindItem) {
+  ShoppingItem addItemBehind(ShoppingItem newItem, ShoppingItem behindItem) {
     return addItemAtIndex(newItem, shoppingItems.indexOf(getShoppingItem(behindItem)) + 1);
   }
 
-  int addItemAtIndex(ShoppingItem newItem, int atIndex) {
-    int index = atIndex;
+  ShoppingItem addItemAtIndex(ShoppingItem newItem, int atIndex) {
     ShoppingItem existingItem = getShoppingItem(newItem);
     if (existingItem != null) {
-      index = existingItem.getShoppingCartIndex();
       existingItem.setItemMultiplier(
           newItem.getItemMultiplier() + existingItem.getItemMultiplier());
+      return existingItem;
     } else {
-      newItem.setShoppingCartIndex(atIndex);
       shoppingItems.add(atIndex, newItem);
+      return newItem;
     }
-    return index;
   }
 
   public void increaseItemSpace() {

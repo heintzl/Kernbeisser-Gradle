@@ -130,7 +130,7 @@ public class ShoppingItem implements Serializable {
 
   @Getter @Transient private double containerSize;
 
-  @Getter @Transient private int superIndex = -1;
+  @Getter @Transient private ShoppingItem parentItem;
 
   @Getter @Transient private Supplier supplier;
 
@@ -302,13 +302,13 @@ public class ShoppingItem implements Serializable {
     deposit.metricUnits = MetricUnits.PIECE;
     deposit.setItemRetailPrice(itemDeposit);
     deposit.setItemNetPrice(itemDeposit / deposit.calculatePreciseRetailPrice(1.0));
-    deposit.superIndex = this.getShoppingCartIndex();
+    deposit.parentItem = this;
     deposit.itemMultiplier = number;
     return deposit;
   }
 
-  public ShoppingItem createSingleDeposit() {
-    return createItemDeposit(this.itemMultiplier, false);
+  public ShoppingItem createSingleDeposit(int multiplier) {
+    return createItemDeposit(multiplier, false);
   }
 
   public ShoppingItem createContainerDeposit(int number) {
@@ -360,6 +360,22 @@ public class ShoppingItem implements Serializable {
   @Override
   public int hashCode() {
     return kbNumber * ((discount % 100) + 1) * amount;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof ShoppingItem) {
+      ShoppingItem item = (ShoppingItem) obj;
+      return item.discount == discount
+          && item.name.equals(name)
+          && item.kbNumber == kbNumber
+          && item.vat == vat
+          && item.itemRetailPrice == itemRetailPrice
+          && item.containerDiscount == containerDiscount
+          && item.parentItem == parentItem;
+    } else {
+      return false;
+    }
   }
 
   @Override
