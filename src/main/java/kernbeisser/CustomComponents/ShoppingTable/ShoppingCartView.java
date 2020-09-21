@@ -127,7 +127,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
     shoppingItems.getTableHeader().setForeground(Color.LIGHT_GRAY);
     shoppingItems.getTableHeader().setFont(shoppingItems.getFont().deriveFont(22.0f));
     shoppingItems.setFont(shoppingItems.getFont().deriveFont(22.0f));
-    shoppingItems.setRowHeight(30);
+    shoppingItems.setRowHeight(36);
   }
 
   @Override

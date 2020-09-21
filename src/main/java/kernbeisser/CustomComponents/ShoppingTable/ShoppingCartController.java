@@ -77,12 +77,7 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   void delete(ShoppingItem i) {
     // TODO should throw exception if !editable
     if (!editable) return;
-    model
-        .getItems()
-        .removeIf(
-            e ->
-                e.getSuperIndex() == i.getShoppingCartIndex()
-                    || e.getShoppingCartIndex() == i.getShoppingCartIndex());
+    model.getItems().removeIf(e -> e.getSuperIndex() == i.getShoppingCartIndex() || e.equals(i));
     refresh();
   }
 
@@ -112,17 +107,25 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
     return new PermissionKey[0];
   }
 
-  public void manipulateShoppingItemAmount(ShoppingItem i, int manipulate) {
-    if (i.getItemMultiplier() + manipulate == 0) {
+  public void manipulateShoppingItemAmount(ShoppingItem i, int number) {
+    int manipulate = i.isContainerDiscount() ? (int) (number * i.getContainerSize()) : number;
+    if (i.getItemMultiplier() + manipulate <= 0) {
       delete(i);
       return;
     }
     model.getItems().stream()
-        .filter(
-            e ->
-                (e.getSuperIndex() == i.getShoppingCartIndex() && e.getName().contains("Einzel"))
-                    || e.getShoppingCartIndex() == i.getShoppingCartIndex())
-        .forEach(e -> e.setItemMultiplier(e.getItemMultiplier() + manipulate));
+        .filter(e -> (e.getSuperIndex() == i.getShoppingCartIndex()) || e.equals(i))
+        .forEach(
+            e -> {
+              if (e.getSuperIndex() == i.getShoppingCartIndex()
+                  && e.getName().contains("Gebinde")) {
+                if (i.isContainerDiscount()) {
+                  e.setItemMultiplier(e.getItemMultiplier() + number);
+                }
+              } else {
+                e.setItemMultiplier(e.getItemMultiplier() + manipulate);
+              }
+            });
     refresh();
   }
 

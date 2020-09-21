@@ -130,7 +130,7 @@ public class ShoppingItem implements Serializable {
 
   @Getter @Transient private double containerSize;
 
-  @Getter @Transient private int superIndex;
+  @Getter @Transient private int superIndex = -1;
 
   @Getter @Transient private Supplier supplier;
 
