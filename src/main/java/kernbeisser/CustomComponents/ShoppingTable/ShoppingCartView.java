@@ -8,12 +8,14 @@ import java.awt.event.AdjustmentListener;
 import java.text.MessageFormat;
 import java.util.Collection;
 import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -77,8 +79,13 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               public Object getValue(ShoppingItem shoppingItem) throws AccessDeniedException {
                 return shoppingItem.getName()
                     + (shoppingItem.getShortName() != null
-                        ? "[" + shoppingItem.getShortName() + "]"
+                        ? " [" + shoppingItem.getShortName() + "]"
                         : "");
+              }
+
+              @Override
+              public TableCellRenderer getRenderer() {
+                return DEFAULT_STRIPED_RENDERER;
               }
 
               @Override
@@ -87,30 +94,40 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               }
             },
             Column.create("Inhalt", ShoppingItem::getUnitAmount, SwingConstants.RIGHT),
-            Column.create("Menge", e -> e.getItemMultiplier() + "x ", SwingConstants.RIGHT),
+            Column.create(
+                "Menge",
+                e ->
+                    e.getPriceUnits() == MetricUnits.NONE
+                        ? ""
+                        : e.getItemMultiplier() + e.getPriceUnits().getShortName() + " ",
+                SwingConstants.RIGHT),
             Column.create(
                 "Rabatt",
                 e ->
-                    e.getDiscount() != 0
-                        ? String.format("%d%%(%.2f€)", e.getDiscount(), e.getItemRetailPrice())
-                        : "",
+                    e.isContainerDiscount()
+                        ? "Vorbestellt "
+                        : (e.getDiscount() != 0 ? e.getDiscount() + "% " : " "),
                 SwingConstants.RIGHT),
             Column.create(
-                "Preis", e -> String.format("%.2f", e.getRetailPrice()), SwingConstants.RIGHT));
+                "Preis", e -> String.format("%.2f€ ", e.getRetailPrice()), SwingConstants.RIGHT));
     if (editable) {
       shoppingItems.addColumn(
           Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x0B315A)),
+              controller::plus));
+      shoppingItems.addColumn(
+          Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.MINUS, 20, new Color(0x920101)),
+              controller::minus));
+      shoppingItems.addColumn(
+          Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
-      shoppingItems.addColumn(
-          Column.createIcon(
-              IconFontSwing.buildIcon(FontAwesome.PLUS, 20, Color.GREEN), controller::plus));
-      shoppingItems.addColumn(
-          Column.createIcon(
-              IconFontSwing.buildIcon(FontAwesome.MINUS, 20, Color.ORANGE), controller::minus));
     }
     shoppingItems.getTableHeader().setBackground(Color.BLACK);
-    shoppingItems.getTableHeader().setForeground(Color.WHITE);
-    shoppingItems.getTableHeader().setFont(shoppingItems.getFont().deriveFont(Font.BOLD));
+    shoppingItems.getTableHeader().setForeground(Color.LIGHT_GRAY);
+    shoppingItems.getTableHeader().setFont(shoppingItems.getFont().deriveFont(22.0f));
+    shoppingItems.setFont(shoppingItems.getFont().deriveFont(22.0f));
+    shoppingItems.setRowHeight(30);
   }
 
   @Override

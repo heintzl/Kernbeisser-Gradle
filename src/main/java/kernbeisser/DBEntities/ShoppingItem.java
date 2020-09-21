@@ -145,10 +145,7 @@ public class ShoppingItem implements Serializable {
     this.name = articleBase.getName();
     this.amount = articleBase.getAmount();
     this.itemNetPrice = articleBase.getNetPrice();
-    this.metricUnits =
-        (isContainerDiscount() && articleBase.getMetricUnits() != MetricUnits.NONE
-            ? MetricUnits.PIECE
-            : articleBase.getMetricUnits());
+    this.metricUnits = articleBase.getMetricUnits();
     VAT vat = articleBase.getVat();
     if (vat != null) {
       this.vat = vat.getValue();
@@ -178,9 +175,6 @@ public class ShoppingItem implements Serializable {
     this((ArticleBase) article, discount, hasContainerDiscount);
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
-    if (!this.weighAble && this.metricUnits != MetricUnits.NONE) {
-      this.metricUnits = MetricUnits.PIECE;
-    }
     this.surcharge =
         article.getSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
@@ -268,11 +262,21 @@ public class ShoppingItem implements Serializable {
   public double getRetailPrice() {
     return itemRetailPrice
         * itemMultiplier
-        * (isContainerDiscount() || !weighAble ? 1.0 : metricUnits.getBaseFactor());
+        * (isContainerDiscount() || !weighAble ? 1.0 : getPriceUnits().getBaseFactor());
+  }
+
+  public MetricUnits getPriceUnits() {
+    MetricUnits priceUnits = getMetricUnits();
+    if ((isContainerDiscount() || (getKbNumber() != 0 && !this.isWeighAble()))
+        && this.getMetricUnits() != MetricUnits.NONE) {
+      priceUnits = MetricUnits.PIECE;
+    }
+    return priceUnits;
   }
 
   public String getUnitAmount() {
-    if (this.getMetricUnits() == MetricUnits.NONE
+    if (isWeighAble()
+        || this.getMetricUnits() == MetricUnits.NONE
         || this.getMetricUnits() == MetricUnits.PIECE
         || !(this.getAmount() > 0)) {
       return "";

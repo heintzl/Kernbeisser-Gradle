@@ -325,13 +325,13 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     amountUnit.setText(
         preordered
             ? "Geb."
-            : shoppingItem.isWeighAble() ? shoppingItem.getMetricUnits().getShortName() : "stk.");
+            : shoppingItem.isWeighAble() ? shoppingItem.getPriceUnits().getShortName() : "stk.");
     isWeighable = shoppingItem.isWeighAble();
     containerSize.setText(
         new DecimalFormat("##.###")
             .format(shoppingItem.getContainerSize() * (isWeighable ? 1000 : 1)));
     containerUnit.setText(
-        (isWeighable ? shoppingItem.getMetricUnits() : MetricUnits.PIECE).getShortName());
+        (isWeighable ? shoppingItem.getPriceUnits() : MetricUnits.PIECE).getShortName());
     try {
       if (shoppingItem.getVat() > 0) setVat(shoppingItem.getVat());
     } catch (InvalidVATValueException e) {
