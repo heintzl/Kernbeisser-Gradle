@@ -281,7 +281,7 @@ public class ShoppingItem implements Serializable {
         || !(this.getAmount() > 0)) {
       return "";
     } else {
-      return this.getAmount() + this.getMetricUnits().getShortName();
+      return this.getAmount() + " " + this.getMetricUnits().getShortName();
     }
   }
 

@@ -105,7 +105,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
                 "Rabatt",
                 e ->
                     e.isContainerDiscount()
-                        ? "Vorbestellt "
+                        ? "VB "
                         : (e.getDiscount() != 0 ? e.getDiscount() + "% " : " "),
                 SwingConstants.RIGHT),
             Column.create(
