@@ -506,7 +506,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public void setDiscount() {
-    if (!rememberReductionSetting.isSelected() && !preordered) {
+    if (!rememberReductionSetting.isSelected()) {
       priceStandard.setSelected(true);
     }
   }
