@@ -4,12 +4,13 @@ import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingCartController implements IController<ShoppingCartView, ShoppingCartModel> {
-  private final ShoppingCartView view;
   private final ShoppingCartModel model;
-  private final boolean editable;
+  private ShoppingCartView view;
+  @Linked private final boolean editable;
 
   /**
    * @param userValue The users credit before purchase
@@ -19,19 +20,15 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
    */
   public ShoppingCartController(double userValue, double userSurcharge, boolean editable) {
     model = new ShoppingCartModel(userValue, userSurcharge);
-    view = new ShoppingCartView(this, editable);
     this.editable = editable;
   }
 
   public void addShoppingItem(ShoppingItem item) {
     // TODO should throw exception if !editable
     if (!editable) return;
-    int itemIndex = model.addItem(item);
-    if (item.getShoppingCartIndex() == 0) {
-      item.setShoppingCartIndex(itemIndex);
-    }
+    ShoppingItem addedItem = model.addItem(item);
     if (item.getSingleDeposit() != 0) {
-      model.addItem(item.createSingleDeposit());
+      model.addItem(addedItem.createSingleDeposit(item.getItemMultiplier()));
     }
     if (item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
       if (Math.abs(item.getItemMultiplier()) >= item.getContainerSize()) {
@@ -45,7 +42,7 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
             try {
               containers = Integer.parseInt(response);
               if (Math.signum(containers) == Math.signum(item.getItemMultiplier())) {
-                model.addItemBehind(item.createContainerDeposit(containers), item);
+                model.addItemBehind(addedItem.createContainerDeposit(containers), addedItem);
                 exit = true;
               } else {
                 throw (new NumberFormatException());
@@ -65,7 +62,6 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   }
 
   public void refresh() {
-    view.clearNodes();
     double sum = 0;
     view.setObjects(model.getItems());
     for (ShoppingItem item : model.getItems()) {
@@ -73,13 +69,12 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
     }
     view.setSum(sum);
     view.setValue(model.getUserValue() - sum);
-    view.repaint();
   }
 
   void delete(ShoppingItem i) {
     // TODO should throw exception if !editable
     if (!editable) return;
-    model.getItems().remove(i);
+    model.getItems().removeIf(e -> e.getParentItem() == i || e.equals(i));
     refresh();
   }
 
@@ -107,5 +102,34 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   @Override
   public PermissionKey[] getRequiredKeys() {
     return new PermissionKey[0];
+  }
+
+  public void manipulateShoppingItemAmount(ShoppingItem i, int number) {
+    int manipulate = i.isContainerDiscount() ? (int) (number * i.getContainerSize()) : number;
+    if (i.getItemMultiplier() + manipulate <= 0) {
+      delete(i);
+      return;
+    }
+    model.getItems().stream()
+        .filter(e -> (e.getParentItem() == i) || e.equals(i))
+        .forEach(
+            e -> {
+              if (e.getParentItem() == i && e.getName().contains("Gebinde")) {
+                if (i.isContainerDiscount()) {
+                  e.setItemMultiplier(e.getItemMultiplier() + number);
+                }
+              } else {
+                e.setItemMultiplier(e.getItemMultiplier() + manipulate);
+              }
+            });
+    refresh();
+  }
+
+  void plus(ShoppingItem i) {
+    manipulateShoppingItemAmount(i, +1);
+  }
+
+  void minus(ShoppingItem i) {
+    manipulateShoppingItemAmount(i, -1);
   }
 }

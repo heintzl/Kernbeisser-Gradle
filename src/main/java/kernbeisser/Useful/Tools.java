@@ -681,4 +681,10 @@ public class Tools {
     method.setAccessible(true);
     return method.invoke(obj, args);
   }
+
+  public static <T> void forEach(Enumeration<T> enumeration, Consumer<T> consumer) {
+    while (enumeration.hasMoreElements()) {
+      consumer.accept(enumeration.nextElement());
+    }
+  }
 }

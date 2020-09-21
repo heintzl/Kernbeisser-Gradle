@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.ActionPermission;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public class PermissionController implements IController<PermissionView, Permiss
   void loadSolutions() {
     Column<Permission> nameColumn = Column.create("Berechtigung", Permission::getName);
     Collection<Column<Permission>> keyColumns =
-        view.getCategory() != null
+        view.getCategory() != ActionPermission.class
             ? Tools.transform(
                 PermissionKey.find(view.getCategory(), true, false),
                 e ->
@@ -63,7 +64,7 @@ public class PermissionController implements IController<PermissionView, Permiss
                         s -> soloChange(s, e)));
     ArrayList<Column<Permission>> columns = new ArrayList<>(keyColumns.size() + 2);
     columns.add(nameColumn);
-    if (view.getCategory() != null) {
+    if (view.getCategory() != ActionPermission.class) {
       columns.add(
           Column.create(
               "Alle " + view.getCategory() + " Berechtigungen",

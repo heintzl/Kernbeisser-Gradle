@@ -75,13 +75,6 @@ public class ShoppingItem implements Serializable {
   private MetricUnits metricUnits;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_UNIT_AMOUNT_READ)})
-  @Setter(
-      onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_UNIT_AMOUNT_WRITE)},
-      value = AccessLevel.PRIVATE)
-  private String unitAmount;
-
-  @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_WEIGH_ABLE_READ)})
   @Setter(
       onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_WEIGH_ABLE_WRITE)},
@@ -137,7 +130,7 @@ public class ShoppingItem implements Serializable {
 
   @Getter @Transient private double containerSize;
 
-  @Getter @Transient private int superIndex;
+  @Getter @Transient private ShoppingItem parentItem;
 
   @Getter @Transient private Supplier supplier;
 
@@ -152,20 +145,11 @@ public class ShoppingItem implements Serializable {
     this.name = articleBase.getName();
     this.amount = articleBase.getAmount();
     this.itemNetPrice = articleBase.getNetPrice();
-    this.metricUnits =
-        (isContainerDiscount() && articleBase.getMetricUnits() != MetricUnits.NONE
-            ? MetricUnits.PIECE
-            : articleBase.getMetricUnits());
+    this.metricUnits = articleBase.getMetricUnits();
     VAT vat = articleBase.getVat();
     if (vat != null) {
       this.vat = vat.getValue();
     }
-    this.unitAmount =
-        articleBase.getMetricUnits() == MetricUnits.NONE
-                || articleBase.getMetricUnits() == MetricUnits.PIECE
-                || !(articleBase.getAmount() > 0)
-            ? ""
-            : articleBase.getAmount() + articleBase.getMetricUnits().getShortName();
     this.surcharge =
         articleBase.calculateSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
@@ -191,16 +175,6 @@ public class ShoppingItem implements Serializable {
     this((ArticleBase) article, discount, hasContainerDiscount);
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
-    if (!this.weighAble && this.metricUnits != MetricUnits.NONE) {
-      this.metricUnits = MetricUnits.PIECE;
-    }
-    this.unitAmount =
-        this.weighAble
-                || article.getMetricUnits() == MetricUnits.NONE
-                || article.getMetricUnits() == MetricUnits.PIECE
-                || !(article.getAmount() > 0)
-            ? ""
-            : article.getAmount() + article.getMetricUnits().getShortName();
     this.surcharge =
         article.getSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
@@ -288,7 +262,27 @@ public class ShoppingItem implements Serializable {
   public double getRetailPrice() {
     return itemRetailPrice
         * itemMultiplier
-        * (isContainerDiscount() || !weighAble ? 1.0 : metricUnits.getBaseFactor());
+        * (isContainerDiscount() || !weighAble ? 1.0 : getPriceUnits().getBaseFactor());
+  }
+
+  public MetricUnits getPriceUnits() {
+    MetricUnits priceUnits = getMetricUnits();
+    if ((isContainerDiscount() || (getKbNumber() != 0 && !this.isWeighAble()))
+        && this.getMetricUnits() != MetricUnits.NONE) {
+      priceUnits = MetricUnits.PIECE;
+    }
+    return priceUnits;
+  }
+
+  public String getUnitAmount() {
+    if (isWeighAble()
+        || this.getMetricUnits() == MetricUnits.NONE
+        || this.getMetricUnits() == MetricUnits.PIECE
+        || !(this.getAmount() > 0)) {
+      return "";
+    } else {
+      return this.getAmount() + " " + this.getMetricUnits().getShortName();
+    }
   }
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
@@ -308,13 +302,13 @@ public class ShoppingItem implements Serializable {
     deposit.metricUnits = MetricUnits.PIECE;
     deposit.setItemRetailPrice(itemDeposit);
     deposit.setItemNetPrice(itemDeposit / deposit.calculatePreciseRetailPrice(1.0));
-    deposit.superIndex = this.getShoppingCartIndex();
+    deposit.parentItem = this;
     deposit.itemMultiplier = number;
     return deposit;
   }
 
-  public ShoppingItem createSingleDeposit() {
-    return createItemDeposit(this.itemMultiplier, false);
+  public ShoppingItem createSingleDeposit(int multiplier) {
+    return createItemDeposit(multiplier, false);
   }
 
   public ShoppingItem createContainerDeposit(int number) {
@@ -366,6 +360,22 @@ public class ShoppingItem implements Serializable {
   @Override
   public int hashCode() {
     return kbNumber * ((discount % 100) + 1) * amount;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof ShoppingItem) {
+      ShoppingItem item = (ShoppingItem) obj;
+      return item.discount == discount
+          && item.name.equals(name)
+          && item.kbNumber == kbNumber
+          && item.vat == vat
+          && item.itemRetailPrice == itemRetailPrice
+          && item.containerDiscount == containerDiscount
+          && item.parentItem == parentItem;
+    } else {
+      return false;
+    }
   }
 
   @Override

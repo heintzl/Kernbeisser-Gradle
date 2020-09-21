@@ -7,13 +7,9 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
+import javax.swing.table.*;
 import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
-import org.apache.commons.collections4.EnumerationUtils;
-import org.apache.commons.collections4.IterableUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectTable<T> extends JTable implements Iterable<T> {
@@ -22,10 +18,10 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private final ArrayList<ObjectSelectionListener<T>> selectionListeners = new ArrayList<>();
   private final ArrayList<ObjectSelectionListener<T>> doubleClickListeners = new ArrayList<>();
 
+  private final List<T> objects = new ArrayList<>();
   private T lastSelected = null;
 
   private List<Column<T>> columns = new ArrayList<>();
-  private boolean complex = false;
 
   private DefaultTableModel model = (DefaultTableModel) super.dataModel;
 
@@ -45,17 +41,20 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   ObjectTable(Collection<T> fill, Collection<Column<T>> columns) {
     this.columns.addAll(columns);
-    refreshModel(this.columns, fill);
+    this.objects.addAll(fill);
+    refreshModel();
     addMouseListener(
         new MouseAdapter() {
           @Override
           public void mouseReleased(MouseEvent e) {
-            handleCellComponentEvents();
             if (getSelectedRow() == -1) {
               return;
             }
             T selection = getSelectedObject();
-            ObjectTable.this.columns.get(getSelectedColumn()).onAction(selection);
+            ObjectTable.this
+                .columns
+                .get(convertColumnIndexToModel(getSelectedColumn()))
+                .onAction(selection);
             invokeSelectionListeners(selection);
             if (lastSelected != null && lastSelected.equals(selection)) {
               invokeDoubleClickSelectionListeners(selection);
@@ -66,20 +65,15 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     setAutoCreateRowSorter(true);
   }
 
-  private void refreshModel(Collection<Column<T>> columns, Collection<T> objects) {
+  private void refreshModel() {
     model = (DefaultTableModel) createModel(columns, objects);
     setModel(model);
-    if (complex)
-      for (TableColumn tableColumn : EnumerationUtils.toList(getColumnModel().getColumns())) {
-        tableColumn.setCellRenderer(
-            (table, value, isSelected, hasFocus, row, column) -> {
-              if (value instanceof Component) {
-                return (Component) value;
-              } else {
-                return new JLabel(String.valueOf(value));
-              }
-            });
-      }
+    for (int i = 0; i < columns.size(); i++) {
+      Column<T> column = columns.get(i);
+      TableColumn tableColumn = getColumnModel().getColumn(convertColumnIndexToModel(i));
+      tableColumn.setCellRenderer(column.getRenderer());
+      column.adjust(tableColumn);
+    }
   }
 
   private TableModel createModel(Collection<Column<T>> columns, Collection<T> objects) {
@@ -90,38 +84,12 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
       public boolean isCellEditable(int row, int column) {
         return false;
       }
-
-      @Override
-      public void setDataVector(Vector dataVector, Vector columnIdentifiers) {
-        this.dataVector = nonNullVector(dataVector);
-        this.columnIdentifiers = nonNullVector(columnIdentifiers);
-        justifyRows(0, getRowCount());
-        fireTableStructureChanged();
-      }
-
-      private Vector nonNullVector(Vector v) {
-        return (v != null) ? v : new Vector();
-      }
-
-      private void justifyRows(int from, int to) {
-        // Sometimes the DefaultTableModel is subclassed
-        // instead of the AbstractTableModel by mistake.
-        // Set the number of rows for the case when getRowCount
-        // is overridden.
-        dataVector.setSize(getRowCount());
-
-        for (int i = from; i < to; i++) {
-          if (dataVector.elementAt(i) == null) {
-            dataVector.setElementAt(new Vector(), i);
-          }
-        }
-      }
     };
   }
 
   public T getFromRow(int index) {
     if (index < 0) return null;
-    return (T) model.getValueAt(convertRowIndexToModel(index), columns.size());
+    return objects.get(super.convertRowIndexToModel(getSelectedRow()));
   }
 
   private void invokeSelectionListeners(T t) {
@@ -136,36 +104,14 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     }
   }
 
-  public void setComplex(boolean v) {
-    if (complex == v) return;
-    complex = v;
-    refreshModel(columns, IterableUtils.toList(this));
-  }
-
-  private void handleCellComponentEvents() {
-    if (!complex) {
-      return;
-    }
-    Object cell = getValueAt(getSelectedRow(), getSelectedColumn());
-    if (!(cell instanceof Component)) {
-      return;
-    }
-    Component com = (Component) cell;
-    com.setFocusable(true);
-    com.requestFocus();
-    if (cell instanceof AbstractButton) {
-      ((AbstractButton) cell).doClick();
-    }
-  }
-
   private void insertColumn(Column<T> column) {
     columns.add(column);
-    refreshModel(columns, IterableUtils.toList(this));
+    refreshModel();
   }
 
   public void setColumns(List<Column<T>> columns) {
     this.columns = columns;
-    refreshModel(columns, IterableUtils.toList(this));
+    refreshModel();
   }
 
   public void setColumns(Collection<Column<T>> columns) {
@@ -239,7 +185,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   private Object[] collectColumns(T value) {
-    Object[] out = new Object[columns.size() + 1];
+    Object[] out = new Object[columns.size()];
     for (int i = 0; i < columns.size(); i++) {
       try {
         out[i] = columns.get(i).getValue(value);
@@ -247,12 +193,13 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
         out[i] = NO_ACCESS_VALUE;
       }
     }
-    out[out.length - 1] = value;
     return out;
   }
 
   public void setObjects(Collection<T> collection) {
-    refreshModel(columns, collection);
+    this.objects.clear();
+    this.objects.addAll(collection);
+    refreshModel();
   }
 
   public void setSelectedObject(T value) {
@@ -262,18 +209,6 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   @NotNull
   @Override
   public Iterator<T> iterator() {
-    return new Iterator<T>() {
-      private int row = 0;
-
-      @Override
-      public boolean hasNext() {
-        return row < getRowCount();
-      }
-
-      @Override
-      public T next() {
-        return getFromRow(row++);
-      }
-    };
+    return objects.iterator();
   }
 }

@@ -1,6 +1,7 @@
 package kernbeisser.Windows.ShoppingMask;
 
 import java.awt.*;
+import java.util.Objects;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.*;
@@ -276,12 +277,20 @@ public class ShoppingMaskUIController
           e -> {
             PayController controller = (PayController) window.getController();
             if (controller.getModel().wasSuccessful()) {
+              model.setSuccessful(true);
               view.back();
             }
           });
     } else {
       view.messageCartIsEmpty();
     }
+  }
+
+  @Override
+  public boolean commitClose() {
+    return model.isSuccessful()
+        || shoppingCartController.getItems().size() == 0
+        || view.askForClose();
   }
 
   void openSearchWindow() {
@@ -306,5 +315,19 @@ public class ShoppingMaskUIController
     } catch (NumberFormatException e) {
       view.messageInvalidBarcode(barcode);
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ShoppingMaskUIController that = (ShoppingMaskUIController) o;
+    return Objects.equals(
+        model.getSaleSession().getCustomer(), that.model.getSaleSession().getCustomer());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(view, model, shoppingCartController);
   }
 }

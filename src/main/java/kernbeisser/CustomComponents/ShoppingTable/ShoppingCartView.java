@@ -8,40 +8,36 @@ import java.awt.event.AdjustmentListener;
 import java.text.MessageFormat;
 import java.util.Collection;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class ShoppingCartView extends JPanel implements IView<ShoppingCartController> {
-  private final ShoppingCartController controller;
+public class ShoppingCartView implements IView<ShoppingCartController> {
+
   private JLabel sum;
   private JLabel value;
   private JPanel main;
   private ObjectTable<ShoppingItem> shoppingItems;
   private JLabel headerDelete;
   private JScrollPane tablePanel;
-  private final boolean editable;
   private boolean autoScrollDown;
 
-  ShoppingCartView(ShoppingCartController controller, boolean editable) {
-    this.controller = controller;
-    this.editable = editable;
-    headerDelete.setVisible(editable);
-  }
+  @Linked private boolean editable;
+
+  @Linked private ShoppingCartController controller;
 
   public void setObjects(Collection<ShoppingItem> items) {
     autoScrollDown = true;
     shoppingItems.setObjects(items);
-  }
-
-  void clearNodes() {
-    shoppingItems.removeAll();
   }
 
   public void setSum(double s) {
@@ -71,90 +67,71 @@ public class ShoppingCartView extends JPanel implements IView<ShoppingCartContro
   }
 
   private void createUIComponents() {
-    int size = 20;
-    Font gridFont = new Font("Arial", Font.PLAIN, size);
-    EmptyBorder margin = new EmptyBorder(new Insets(10, 10, 10, 10));
     shoppingItems =
         new ObjectTable<>(
-            Column.create(
-                "1",
-                e -> {
-                  JLabel name = new JLabel(e.getName());
-                  name.setBorder(margin);
-                  name.setFont(gridFont);
-                  return name;
-                }),
-            Column.create(
-                "2",
-                e -> {
-                  JLabel discount =
-                      new JLabel(
-                          e.isContainerDiscount()
-                              ? "Vorbestellt"
-                              : (e.getDiscount() != 0 ? e.getDiscount() + "%" : ""));
-                  discount.setFont(gridFont);
-                  discount.setHorizontalAlignment(SwingConstants.RIGHT);
-                  return discount;
-                }),
-            Column.create(
-                "3",
-                e -> {
-                  JLabel price = new JLabel(String.format("%.2f€", controller.getPrice(e)));
-                  price.setFont(gridFont);
-                  price.setHorizontalAlignment(SwingConstants.RIGHT);
-                  return price;
-                }),
-            Column.create(
-                "4",
-                e -> {
-                  JLabel content = new JLabel(e.getUnitAmount());
-                  content.setFont(gridFont);
-                  content.setHorizontalAlignment(SwingConstants.RIGHT);
-                  return content;
-                }),
-            Column.create(
-                "5",
-                e -> {
-                  JLabel amount =
-                      new JLabel(
-                          e.getMetricUnits() == MetricUnits.NONE
-                              ? ""
-                              : e.getItemMultiplier() + e.getMetricUnits().getShortName());
-                  amount.setFont(gridFont);
-                  amount.setHorizontalAlignment(SwingConstants.RIGHT);
-                  if (!editable) {
-                    amount.setBorder(new EmptyBorder(0, 0, 0, 20));
-                  }
-                  return amount;
-                }));
+            new Column<ShoppingItem>() {
+              @Override
+              public String getName() {
+                return "Name";
+              }
 
+              @Override
+              public Object getValue(ShoppingItem shoppingItem) throws AccessDeniedException {
+                return shoppingItem.getName()
+                    + (shoppingItem.getShortName() != null
+                        ? " [" + shoppingItem.getShortName() + "]"
+                        : "");
+              }
+
+              @Override
+              public TableCellRenderer getRenderer() {
+                return DEFAULT_STRIPED_RENDERER;
+              }
+
+              @Override
+              public void adjust(TableColumn column) {
+                column.setMinWidth(500);
+              }
+            },
+            Column.create("Inhalt", ShoppingItem::getUnitAmount, SwingConstants.RIGHT),
+            Column.create(
+                "Menge",
+                e ->
+                    e.getPriceUnits() == MetricUnits.NONE
+                        ? ""
+                        : e.getItemMultiplier() + e.getPriceUnits().getShortName() + " ",
+                SwingConstants.RIGHT),
+            Column.create(
+                "Rabatt",
+                e ->
+                    e.isContainerDiscount()
+                        ? "VB "
+                        : (e.getDiscount() != 0 ? e.getDiscount() + "% " : " "),
+                SwingConstants.RIGHT),
+            Column.create(
+                "Preis", e -> String.format("%.2f€ ", e.getRetailPrice()), SwingConstants.RIGHT));
     if (editable) {
       shoppingItems.addColumn(
-          Column.create(
-              "delete",
-              (e) ->
-                  new JPanel() {
-                    @Override
-                    public void paint(Graphics g) {
-                      g.drawImage(
-                          IconFontSwing.buildImage(FontAwesome.TRASH, size + 5, Color.RED),
-                          (getWidth() / 2) - (size / 2),
-                          3,
-                          null);
-                    }
-                  },
-              controller::delete));
+          Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x0B315A)),
+              controller::plus));
+      shoppingItems.addColumn(
+          Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.MINUS, 20, new Color(0x920101)),
+              controller::minus));
+      shoppingItems.addColumn(
+          Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
     }
-
-    shoppingItems.setRowHeight(size + 10);
-    shoppingItems.setGridColor(Color.WHITE);
-    shoppingItems.setComplex(true);
-    shoppingItems.setTableHeader(null);
+    shoppingItems.getTableHeader().setBackground(Color.BLACK);
+    shoppingItems.getTableHeader().setForeground(Color.LIGHT_GRAY);
+    shoppingItems.getTableHeader().setFont(shoppingItems.getFont().deriveFont(22.0f));
+    shoppingItems.setFont(shoppingItems.getFont().deriveFont(22.0f));
+    shoppingItems.setRowHeight(36);
   }
 
   @Override
   public void initialize(ShoppingCartController controller) {
-    add(main);
     tablePanel
         .getVerticalScrollBar()
         .addAdjustmentListener(

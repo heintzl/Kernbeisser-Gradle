@@ -22,6 +22,7 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.UndefinedInputException;
@@ -324,13 +325,13 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     amountUnit.setText(
         preordered
             ? "Geb."
-            : shoppingItem.isWeighAble() ? shoppingItem.getMetricUnits().getShortName() : "stk.");
+            : shoppingItem.isWeighAble() ? shoppingItem.getPriceUnits().getShortName() : "stk.");
     isWeighable = shoppingItem.isWeighAble();
     containerSize.setText(
         new DecimalFormat("##.###")
             .format(shoppingItem.getContainerSize() * (isWeighable ? 1000 : 1)));
     containerUnit.setText(
-        (isWeighable ? shoppingItem.getMetricUnits() : MetricUnits.PIECE).getShortName());
+        (isWeighable ? shoppingItem.getPriceUnits() : MetricUnits.PIECE).getShortName());
     try {
       if (shoppingItem.getVat() > 0) setVat(shoppingItem.getVat());
     } catch (InvalidVATValueException e) {
@@ -505,7 +506,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public void setDiscount() {
-    if (!rememberReductionSetting.isSelected() && !preordered) {
+    if (!rememberReductionSetting.isSelected()) {
       priceStandard.setSelected(true);
     }
   }
@@ -740,11 +741,17 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   @Override
   public boolean isStackable() {
-    return true;
+    return Setting.OPEN_MULTIPLE_SHOPPING_MASK.getBooleanValue();
   }
 
   @Override
   public boolean processKeyboardInput(KeyEvent e) {
     return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
+  }
+
+  public boolean askForClose() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(), "Soll der Einkauf wirklich abgebrochen werden?")
+        == 0;
   }
 }
