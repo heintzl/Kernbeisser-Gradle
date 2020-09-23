@@ -26,12 +26,9 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   public void addShoppingItem(ShoppingItem item) {
     // TODO should throw exception if !editable
     if (!editable) return;
-    int itemIndex = model.addItem(item);
-    if (item.getShoppingCartIndex() == 0) {
-      item.setShoppingCartIndex(itemIndex);
-    }
+    ShoppingItem addedItem = model.addItem(item);
     if (item.getSingleDeposit() != 0) {
-      model.addItem(item.createSingleDeposit());
+      model.addItem(addedItem.createSingleDeposit(item.getItemMultiplier()));
     }
     if (item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
       if (Math.abs(item.getItemMultiplier()) >= item.getContainerSize()) {
@@ -45,7 +42,7 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
             try {
               containers = Integer.parseInt(response);
               if (Math.signum(containers) == Math.signum(item.getItemMultiplier())) {
-                model.addItemBehind(item.createContainerDeposit(containers), item);
+                model.addItemBehind(addedItem.createContainerDeposit(containers), addedItem);
                 exit = true;
               } else {
                 throw (new NumberFormatException());
@@ -77,7 +74,7 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   void delete(ShoppingItem i) {
     // TODO should throw exception if !editable
     if (!editable) return;
-    model.getItems().remove(i);
+    model.getItems().removeIf(e -> e.getParentItem() == i || e.equals(i));
     refresh();
   }
 
@@ -107,15 +104,24 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
     return new PermissionKey[0];
   }
 
-  public void manipulateShoppingItemAmount(ShoppingItem t, int manipulate) {
-    if (t.getItemMultiplier() + manipulate == 0) {
-      delete(t);
+  public void manipulateShoppingItemAmount(ShoppingItem i, int number) {
+    int manipulate = i.isContainerDiscount() ? (int) (number * i.getContainerSize()) : number;
+    if (i.getItemMultiplier() + manipulate <= 0) {
+      delete(i);
       return;
     }
     model.getItems().stream()
-        .filter(s -> s.equals(t))
-        .findAny()
-        .ifPresent(e -> e.setItemMultiplier(e.getItemMultiplier() + manipulate));
+        .filter(e -> (e.getParentItem() == i) || e.equals(i))
+        .forEach(
+            e -> {
+              if (e.getParentItem() == i && e.getName().contains("Gebinde")) {
+                if (i.isContainerDiscount()) {
+                  e.setItemMultiplier(e.getItemMultiplier() + number);
+                }
+              } else {
+                e.setItemMultiplier(e.getItemMultiplier() + manipulate);
+              }
+            });
     refresh();
   }
 
