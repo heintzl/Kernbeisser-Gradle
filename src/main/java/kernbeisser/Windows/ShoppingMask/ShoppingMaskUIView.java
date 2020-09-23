@@ -209,8 +209,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     kbNumber.setEnabled(type == 'a');
   }
 
-  private void updateSupplierControl(char type) {
-    if (type == 'a' || type == 'c') {
+  private void updateSupplierControl(char type, boolean preordered) {
+    if (type == 'a' || (type == 'c' && preordered)) {
       supplier.setEnabled(true);
     } else {
       supplier.setEnabled(false);
@@ -290,7 +290,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   private void updateAllControls(char type) {
     updateKbNumberControl(type);
-    updateSupplierControl(type);
+    updateSupplierControl(type, isPreordered);
     updateSupplierNumberControl(type);
     updateArticleNameControl(type, isPreordered);
     updateVATControl(type, isPreordered);
@@ -327,10 +327,11 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     netPriceUnit.setText("€");
 
     amount.setText("1");
-    this.amountUnit.setText("");
+    amountUnit.setText("");
 
-    this.containerUnit.setText("");
-    containerUnit.setVisible(type == 'a');
+    containerUnit.setText("");
+
+    deposit.setText("");
 
     if (type == 'd' || type == 'r') {
       setVat(VAT.HIGH);
@@ -776,7 +777,13 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           variablePercentage.setEnabled(false);
           disablePreordered();
         });
-    price50Percent.addActionListener(e -> addToCart());
+    price50Percent.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) addToCart();
+          }
+        });
 
     pricePreordered.addItemListener(
         e -> {
