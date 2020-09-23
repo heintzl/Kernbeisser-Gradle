@@ -6,6 +6,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
@@ -56,14 +57,18 @@ public class EditUserGroupController implements IController<EditUserGroupView, E
     pushViewRefresh();
   }
 
-  public void changeUserGroup() {
-    Users.switchUserGroup(
-        model.getUser().getId(), User.getByUsername(view.getUsername()).getUserGroup().getId());
+  public void changeUserGroup(String password) throws CannotLogInException {
+    model.changeUserGroup(model.getUser().getId(),User.getByUsername(view.getUsername()).getUserGroup().getId(),password);
     pushViewRefresh();
   }
 
   private void pushViewRefresh() {
     model.refreshData();
     view.setCurrentUserGroup(model.getUser().getUserGroup());
+    userGroupSearchBoxController.search();
+  }
+
+  public int getMemberCount() {
+    return model.getUser().getUserGroup().getMembers().size();
   }
 }

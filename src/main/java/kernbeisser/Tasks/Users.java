@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.User;
@@ -95,6 +97,8 @@ public class Users {
 
   public static void switchUserGroup(int userId, int userGroupId) {
     EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     User currentUser = em.find(User.class, userId);
     UserGroup current = currentUser.getUserGroup();
     UserGroup destination = em.find(UserGroup.class, userGroupId);
@@ -102,11 +106,12 @@ public class Users {
       destination.setInterestThisYear(
           destination.getInterestThisYear() + current.getInterestThisYear());
       destination.setValue(destination.getValue() + current.getValue());
+      em.remove(current);
     }
     em.persist(destination);
     currentUser.setUserGroup(destination);
     em.persist(currentUser);
-    em.remove(current);
+    et.commit();
     em.close();
   }
 
