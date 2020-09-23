@@ -109,10 +109,10 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   @Getter private boolean isPreordered = false;
   private BarcodeCapture barcodeCapture;
   private KeyCapture keyCapture;
-  @Getter private ShoppingItem currentItem;
+  private ShoppingItem currentItem;
 
-  private boolean isEmptyArticleName() {
-    return articleName.getText().equals("");
+  private void createUIComponents() {
+    shoppingCartView = cartController.getView();
   }
 
   private void doCancel() {
@@ -138,11 +138,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     controller.editUserAction();
   }
 
-  private void createUIComponents() {
-    shoppingCartView = cartController.getView();
-  }
-
   void loadUserInfo(SaleSession saleSession) {
+    // TODO display customerName instead of LoginName
     customerName.setText(
         saleSession.getCustomer().getFirstName() + " " + saleSession.getCustomer().getSurname());
     customerLoginName.setText(saleSession.getCustomer().getUsername());
@@ -166,10 +163,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       }
     }
     articleNameOrVatChange();
-  }
-
-  private boolean isSupplierSet() {
-    return supplier.getSelectedItem() != null;
   }
 
   private void articleNameOrVatChange() {
@@ -198,6 +191,14 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     } else {
       addToCart();
     }
+  }
+
+  private boolean isEmptyArticleName() {
+    return articleName.getText().equals("");
+  }
+
+  private boolean isSupplierSet() {
+    return supplier.getSelectedItem() != null;
   }
 
   private boolean isValidVat() {
@@ -331,7 +332,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     this.containerUnit.setText("");
     containerUnit.setVisible(type == 'a');
 
-    if ("dr".indexOf(type) != -1) {
+    if (type == 'd' || type == 'r') {
       setVat(VAT.HIGH);
     }
     variablePercentage.setEnabled(
@@ -369,18 +370,18 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   private void setPriceOptions(char type) {
-    if ("dr".indexOf(type) == -1) {
-      pricePreordered.setEnabled(true);
-    } else {
+    if (type == 'd' || type == 'r') {
       pricePreordered.setEnabled(false);
       isPreordered = false;
+    } else {
+      pricePreordered.setEnabled(true);
     }
     if (type == 'a') {
       price50Percent.setEnabled(true);
       priceVariablePercentage.setEnabled(true);
     } else {
       priceStandard.setSelected(!isPreordered);
-      pricePreordered.setSelected(isPreordered());
+      pricePreordered.setSelected(isPreordered);
       price50Percent.setEnabled(false);
       priceVariablePercentage.setEnabled(false);
     }
@@ -520,7 +521,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
                 getContent(),
                 message,
                 stornoMessageTitle,
-                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
                 null,
                 null,
                 initValue);
@@ -528,6 +529,12 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       response = response.trim();
     }
     return response;
+  }
+
+  public boolean confirmClose() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(), "Soll der Einkauf wirklich abgebrochen werden?")
+        == 0;
   }
 
   public int confirmStorno() {
@@ -601,6 +608,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public int getOption() {
+    // TODO make enum
     if (optArticleNo.isSelected()) {
       return ARTICLE_NUMBER;
     }
@@ -799,6 +807,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     traversalPolicy = new FocusTraversal(traversalOrder);
 
     westPanel.setFocusTraversalPolicy(traversalPolicy);
+
     barcodeCapture = new BarcodeCapture(c -> controller.processBarcode(c));
 
     keyCapture = new KeyCapture();
@@ -813,6 +822,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
     keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
 
+    // TODO make enum
     articleTypeChange('a');
   }
 
@@ -848,11 +858,5 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   @Override
   public boolean processKeyboardInput(KeyEvent e) {
     return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
-  }
-
-  public boolean askForClose() {
-    return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Soll der Einkauf wirklich abgebrochen werden?")
-        == 0;
   }
 }
