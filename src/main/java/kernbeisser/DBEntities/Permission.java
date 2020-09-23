@@ -55,4 +55,11 @@ public class Permission {
   public String toString() {
     return Tools.decide(this::getName, "Permission[" + id + "]");
   }
+
+  public Collection<User> getAllUsers() {
+    return DBConnection.getEntityManager()
+        .createQuery("select u from User u where :p in(elements(u.permissions))", User.class)
+        .setParameter("p", this)
+        .getResultList();
+  }
 }
