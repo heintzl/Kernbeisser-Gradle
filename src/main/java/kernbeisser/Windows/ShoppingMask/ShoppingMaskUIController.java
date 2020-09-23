@@ -292,7 +292,7 @@ public class ShoppingMaskUIController
   public boolean commitClose() {
     return model.isSuccessful()
         || shoppingCartController.getItems().size() == 0
-        || view.askForClose();
+        || view.confirmClose();
   }
 
   void openSearchWindow() {
