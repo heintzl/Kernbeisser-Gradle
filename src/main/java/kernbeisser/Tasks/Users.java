@@ -4,6 +4,9 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -21,7 +24,6 @@ public class Users {
     User user = new User();
     User secondary = new User();
     user.setShares(Integer.parseInt(stringRaw[3]));
-    user.setSolidaritySurcharge(Integer.parseInt(stringRaw[4]) / 100.);
     secondary.setFirstName(stringRaw[5]);
     secondary.setSurname(stringRaw[6]);
     user.setExtraJobs(stringRaw[7]);
@@ -61,9 +63,14 @@ public class Users {
     return new User[] {user, secondary};
   }
 
+  public static final int INTEREST_THIS_YEAR_COLUMN = 2;
+  public static final int SOLIDARITY_SURCHARGE_COLUMN = 3;
+
   public static UserGroup getUserGroup(String[] rawData) {
     UserGroup userGroup = new UserGroup();
-    userGroup.setInterestThisYear((int) (Float.parseFloat(rawData[2].replace(",", "."))));
+    userGroup.setInterestThisYear(
+        (int) (Float.parseFloat(rawData[INTEREST_THIS_YEAR_COLUMN].replace(",", "."))));
+    userGroup.setSolidaritySurcharge(Integer.parseInt(rawData[SOLIDARITY_SURCHARGE_COLUMN]) / 100.);
     return userGroup;
   }
 
@@ -85,5 +92,31 @@ public class Users {
     if (user.getUsername() == null) {
       user.setUsername(user.getFirstName() + "." + user.getSurname() + new Random().nextLong());
     }
+  }
+
+  public static void switchUserGroup(int userId, int userGroupId) {
+    EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    User currentUser = em.find(User.class, userId);
+    UserGroup current = currentUser.getUserGroup();
+    UserGroup destination = em.find(UserGroup.class, userGroupId);
+    if (current.getMembers().size() < 2) {
+      destination.setInterestThisYear(
+          destination.getInterestThisYear() + current.getInterestThisYear());
+      destination.setValue(destination.getValue() + current.getValue());
+      em.remove(current);
+    }
+    em.persist(destination);
+    currentUser.setUserGroup(destination);
+    em.persist(currentUser);
+    et.commit();
+    em.close();
+  }
+
+  public static void leaveUserGroup(User user) {
+    UserGroup newUserGroup = new UserGroup();
+    Tools.persist(newUserGroup);
+    switchUserGroup(user.getId(), newUserGroup.getId());
   }
 }

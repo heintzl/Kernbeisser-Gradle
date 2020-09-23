@@ -31,6 +31,13 @@ public class UserGroup {
   @Setter(onMethod_ = {@Key(PermissionKey.USER_GROUP_INTEREST_THIS_YEAR_WRITE)})
   private int interestThisYear;
 
+  @Column
+  @Setter(
+      onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_WRITE)})
+  @Getter(
+      onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)})
+  private double solidaritySurcharge;
+
   public static List<UserGroup> getAll(String condition) {
     return Tools.getAll(UserGroup.class, condition);
   }
@@ -59,5 +66,28 @@ public class UserGroup {
     }
     em.close();
     return v;
+  }
+
+  public static Collection<UserGroup> defaultSearch(String s, int i) {
+    EntityManager em = DBConnection.getEntityManager();
+    Collection<UserGroup> out =
+        em.createQuery(
+                "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
+                UserGroup.class)
+            .setParameter("s", s + "%")
+            .setMaxResults(i)
+            .getResultList();
+    em.close();
+    return out;
+  }
+
+  public String getMemberString() {
+    Collection<User> members = getMembers();
+    StringBuilder sb = new StringBuilder();
+    for (User member : members) {
+      sb.append(member.getFirstName()).append(" ").append(member.getSurname()).append(", ");
+    }
+    sb.delete(sb.length() - 2, sb.length());
+    return sb.toString();
   }
 }

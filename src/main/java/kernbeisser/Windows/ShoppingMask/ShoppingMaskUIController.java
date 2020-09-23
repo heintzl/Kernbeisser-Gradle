@@ -28,7 +28,9 @@ public class ShoppingMaskUIController
     model = new ShoppingMaskModel(saleSession);
     this.shoppingCartController =
         new ShoppingCartController(
-            model.getValue(), model.getSaleSession().getCustomer().getSolidaritySurcharge(), true);
+            model.getValue(),
+            model.getSaleSession().getCustomer().getUserGroup().getSolidaritySurcharge(),
+            true);
   }
 
   private double getRelevantPrice() {

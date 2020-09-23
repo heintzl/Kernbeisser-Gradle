@@ -178,11 +178,6 @@ public class EditUserView implements IView<EditUserController> {
     isEmployee = new AccessCheckBox<>(User::isEmployee, User::setEmployee);
     shares =
         new AccessCheckingField<>(User::getShares, User::setShares, AccessCheckingField.INT_FORMER);
-    solidarySupplement =
-        new AccessCheckingField<>(
-            User::getSolidaritySurcharge,
-            User::setSolidaritySurcharge,
-            AccessCheckingField.DOUBLE_FORMER);
     extraJobs =
         new AccessCheckingField<>(User::getExtraJobs, User::setExtraJobs, AccessCheckingField.NONE);
     keyNumber =

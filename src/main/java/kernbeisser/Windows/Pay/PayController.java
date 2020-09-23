@@ -32,7 +32,7 @@ public class PayController implements IController<PayView, PayModel> {
     userValue = saleSession.getCustomer().getUserGroup().getValue();
     cartController =
         new ShoppingCartController(
-            userValue, saleSession.getCustomer().getSolidaritySurcharge(), false);
+            userValue, saleSession.getCustomer().getUserGroup().getSolidaritySurcharge(), false);
     model = new PayModel(saleSession, shoppingCart, transferCompleted);
     this.viewSize = windowSize;
   }

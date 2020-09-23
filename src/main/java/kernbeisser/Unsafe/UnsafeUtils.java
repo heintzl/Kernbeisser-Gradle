@@ -6,7 +6,7 @@ import sun.misc.Unsafe;
 public class UnsafeUtils {
   public static sun.misc.Unsafe unsafe = create();
 
-  public static <T> T setClass(Object o, Class<T> clazz) throws InstantiationException {
+  private static <T> T setClass(Object o, Class<T> clazz) throws InstantiationException {
     Object patternObject = unsafe.allocateInstance(clazz);
     unsafe.getAndSetInt(o, 8, unsafe.getInt(patternObject, 8));
     return (T) o;
@@ -24,6 +24,14 @@ public class UnsafeUtils {
       return (sun.misc.Unsafe) field.get(null);
     } catch (IllegalAccessException e) {
       throw new RuntimeException();
+    }
+  }
+
+  public static <I extends T, T> T chopOff(I in, Class<T> out) {
+    try {
+      return setClass(in, out);
+    } catch (InstantiationException e) {
+      throw new RuntimeException(e);
     }
   }
 }

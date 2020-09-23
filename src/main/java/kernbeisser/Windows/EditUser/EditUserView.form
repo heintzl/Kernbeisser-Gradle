@@ -286,7 +286,7 @@
       </component>
       <component id="5bdd0" class="javax.swing.JLabel" binding="lblZusatzdienste">
         <constraints>
-          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -296,7 +296,7 @@
       </component>
       <component id="380ab" class="javax.swing.JLabel" binding="lblAnteile">
         <constraints>
-          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -304,24 +304,7 @@
           <text value="Anteile:"/>
         </properties>
       </component>
-      <component id="27171" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <font style="0"/>
-          <text value="Solidarzuschlag:"/>
-        </properties>
-      </component>
       <component id="e6006" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="shares" custom-create="true">
-        <constraints>
-          <grid row="20" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="2bc92" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="solidarySupplement" custom-create="true">
         <constraints>
           <grid row="21" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
@@ -349,7 +332,7 @@
       </component>
       <component id="c4647" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="extraJobs" custom-create="true">
         <constraints>
-          <grid row="19" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="20" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
           <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
@@ -471,6 +454,16 @@
         </constraints>
         <properties>
           <text value="Email"/>
+        </properties>
+      </component>
+      <component id="b716b" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Benutzergruppe"/>
         </properties>
       </component>
     </children>
