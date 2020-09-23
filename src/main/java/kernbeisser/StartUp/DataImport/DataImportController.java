@@ -6,15 +6,17 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Main;
 import kernbeisser.Security.MasterPermissionSet;
 import kernbeisser.Tasks.Articles;
@@ -203,6 +205,13 @@ public class DataImportController implements IController<DataImportView, DataImp
       HashMap<String, Job> jobs = new HashMap<>();
       Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
       List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+      Permission importPermission = PermissionConstants.IMPORT.getPermission();
+      Permission keyPermission = PermissionConstants.KEY_PERMISSION.getPermission();
+      User kernbeisser = User.getKernbeisserUser();
+      BCrypt.Hasher hasher = BCrypt.withDefaults();
+      EntityManager em = DBConnection.getEntityManager();
+      EntityTransaction et = em.getTransaction();
+      et.begin();
       for (String l : lines) {
         String[] rawUserData = l.split(";");
 
@@ -213,40 +222,38 @@ public class DataImportController implements IController<DataImportView, DataImp
         users[0].setUserGroup(userGroup);
         users[1].setUserGroup(userGroup);
 
-        String defaultPassword =
-            BCrypt.withDefaults()
-                .hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray());
+        String defaultPassword = hasher.hashToString(4, "start".toCharArray());
         users[0].setPassword(defaultPassword);
         users[1].setPassword(defaultPassword);
 
-        Tools.persist(userGroup);
+        em.persist(userGroup);
 
-        users[0].getPermissions().add(PermissionConstants.IMPORT.getPermission());
-        users[1].getPermissions().add(PermissionConstants.IMPORT.getPermission());
+        users[0].getPermissions().add(importPermission);
+        users[1].getPermissions().add(importPermission);
 
         if (users[0].getKernbeisserKey() != -1) {
-          users[0].getPermissions().add(PermissionConstants.KEY_PERMISSION.getPermission());
+          users[0].getPermissions().add(keyPermission);
         }
 
-        Tools.persist(users[0]);
+        em.persist(users[0]);
 
         if (!users[1].getFirstName().equals("")) {
-          Tools.persist(users[1]);
+          em.persist(users[1]);
         }
 
-        MasterPermissionSet.addPermission(PermissionKey.GO_UNDER_MIN);
-
-        Transaction.doTransaction(
-            User.getKernbeisserUser(),
-            users[0],
-            Users.getValue(rawUserData),
-            TransactionType.INITIALIZE,
-            "Übertrag des Guthaben des alten Kernbeisser Programmes");
-
-        MasterPermissionSet.removePermission(PermissionKey.GO_UNDER_MIN);
+        Transaction transaction = new Transaction();
+        transaction.setTransactionType(TransactionType.INITIALIZE);
+        transaction.setFrom(kernbeisser);
+        transaction.setValue(Users.getValue(rawUserData));
+        transaction.setInfo("Übertrag des Guthaben des alten Kernbeisser Programmes");
+        transaction.setTo(users[0]);
+        em.persist(transaction);
       }
+      em.flush();
+      et.commit();
+      em.close();
       view.setUserProgress(4);
-    } catch (IOException | InvalidTransactionException e) {
+    } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
   }
