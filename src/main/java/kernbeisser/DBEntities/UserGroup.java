@@ -74,7 +74,7 @@ public class UserGroup {
         em.createQuery(
                 "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
                 UserGroup.class)
-            .setParameter("s", s+"%")
+            .setParameter("s", s + "%")
             .setMaxResults(i)
             .getResultList();
     em.close();

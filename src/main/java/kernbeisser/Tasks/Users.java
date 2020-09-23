@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.User;

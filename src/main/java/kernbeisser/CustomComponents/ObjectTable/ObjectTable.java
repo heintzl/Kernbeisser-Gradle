@@ -202,11 +202,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     refreshModel();
   }
 
-  public void replace(T value,T newValue){
+  public void replace(T value, T newValue) {
     int index = objects.indexOf(value);
-    objects.set(index,newValue);
+    objects.set(index, newValue);
     model.removeRow(index);
-    model.insertRow(index,collectColumns(newValue));
+    model.insertRow(index, collectColumns(newValue));
     repaint();
   }
 

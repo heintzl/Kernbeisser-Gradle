@@ -58,7 +58,10 @@ public class EditUserGroupController implements IController<EditUserGroupView, E
   }
 
   public void changeUserGroup(String password) throws CannotLogInException {
-    model.changeUserGroup(model.getUser().getId(),User.getByUsername(view.getUsername()).getUserGroup().getId(),password);
+    model.changeUserGroup(
+        model.getUser().getId(),
+        User.getByUsername(view.getUsername()).getUserGroup().getId(),
+        password);
     pushViewRefresh();
   }
 
