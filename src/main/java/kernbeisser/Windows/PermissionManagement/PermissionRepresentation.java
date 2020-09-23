@@ -38,7 +38,9 @@ public class PermissionRepresentation {
         .getResultList()
         .forEach(e -> userHashMap.put(e.getUsername(), e));
     userHashMap.values().forEach(e -> e.getPermissions().clear());
-    Permission.getAll(null).forEach(em::remove);
+    em.createQuery("select p from Permission p", Permission.class)
+        .getResultList()
+        .forEach(em::remove);
     List<Permission> permissions = parsePermissions(representation);
     permissions.forEach(em::persist);
     for (int i = 0; i < permissions.size(); i++) {

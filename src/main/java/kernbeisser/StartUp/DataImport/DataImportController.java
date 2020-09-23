@@ -98,9 +98,12 @@ public class DataImportController implements IController<DataImportView, DataImp
     return new JSONObject(sb.toString());
   }
 
+  Thread articleThread = null;
+
   void importData() {
     MasterPermissionSet.setAllBits(true);
     if (isValidDataSource()) {
+
       Main.logger.info("Starting importing data");
       File jsonPath = new File(view.getFilePath()).getParentFile();
       JSONObject path = extractJSON();
@@ -111,16 +114,16 @@ public class DataImportController implements IController<DataImportView, DataImp
         File priceLists = new File(jsonPath, itemPath.getString("PriceLists"));
         File items = new File(jsonPath, itemPath.getString("Items"));
         if (suppliers.exists() && priceLists.exists() && items.exists()) {
-          new Thread(
+          articleThread =
+              new Thread(
                   () -> {
                     view.setItemProgress(0);
                     parseSuppliers(suppliers);
                     parsePriceLists(priceLists);
                     parseItems(items);
                     Main.logger.info("Item thread finished");
-                    view.back();
-                  })
-              .start();
+                  });
+          articleThread.start();
         } else {
           view.itemSourceFound(false);
           view.itemSourcesNotExists();
@@ -137,6 +140,12 @@ public class DataImportController implements IController<DataImportView, DataImp
                     parseJobs(jobs);
                     parseUsers(users);
                     Main.logger.info("User thread finished");
+                    try {
+                      articleThread.join();
+                    } catch (InterruptedException e) {
+                      Tools.showUnexpectedErrorWarning(e);
+                    }
+                    view.back();
                   })
               .start();
         } else {

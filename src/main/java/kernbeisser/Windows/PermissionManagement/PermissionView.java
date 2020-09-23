@@ -150,4 +150,10 @@ public class PermissionView implements IView<PermissionController> {
   public @NotNull JComponent getContent() {
     return main;
   }
+
+  public void nameIsNotUnique() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Der gewählte name ist bereits vergeben,\nbitte wählen sie einen anderen.");
+  }
 }
