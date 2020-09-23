@@ -1,8 +1,12 @@
 package kernbeisser.Windows.PermissionManagement;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Permission;
@@ -17,6 +21,8 @@ public class PermissionView implements IView<PermissionController> {
   private JButton back;
   private JButton add;
   private JButton delete;
+  private JButton exportPermissions;
+  private JButton importPermissions;
 
   @Linked private PermissionController controller;
 
@@ -94,10 +100,60 @@ public class PermissionView implements IView<PermissionController> {
           }
         });
     back.addActionListener(e -> back());
+    exportPermissions.addActionListener(this::exportPermissions);
+    importPermissions.addActionListener(this::importPermissions);
+  }
+
+  private void importPermissions(ActionEvent event) {
+    JFileChooser jFileChooser = new JFileChooser();
+    jFileChooser.setFileFilter(new FileNameExtensionFilter("Berechtigungs-JSON", "json"));
+    jFileChooser.addActionListener(
+        e -> {
+          if (jFileChooser.getSelectedFile() != null) {
+            try {
+              controller.importFrom(jFileChooser.getSelectedFile());
+              JOptionPane.showMessageDialog(
+                  getTopComponent(), "Es wurden erfolgreich alle Berechtigungen importiert");
+            } catch (FileNotFoundException fileNotFoundException) {
+              JOptionPane.showMessageDialog(
+                  getTopComponent(),
+                  "Die angegebene Datei "
+                      + jFileChooser.getSelectedFile()
+                      + " kann nicht gefunden werden");
+            }
+          }
+        });
+    jFileChooser.showDialog(getTopComponent(), "Importieren");
+  }
+
+  private void exportPermissions(ActionEvent event) {
+    JFileChooser jFileChooser = new JFileChooser();
+    jFileChooser.setFileFilter(new FileNameExtensionFilter("Berechtigungs-JSON", "json"));
+    jFileChooser.addActionListener(
+        e -> {
+          if (jFileChooser.getSelectedFile() != null) {
+            try {
+              controller.exportTo(jFileChooser.getSelectedFile());
+            } catch (IOException ioException) {
+              JOptionPane.showMessageDialog(
+                  getTopComponent(),
+                  "Auf die angegebene Datei "
+                      + jFileChooser.getSelectedFile()
+                      + " kann nicht zugegriffen werden");
+            }
+          }
+        });
+    jFileChooser.showDialog(getTopComponent(), "Speichern");
   }
 
   @Override
   public @NotNull JComponent getContent() {
     return main;
+  }
+
+  public void nameIsNotUnique() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Der gewählte name ist bereits vergeben,\nbitte wählen sie einen anderen.");
   }
 }

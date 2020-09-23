@@ -1,8 +1,12 @@
 package kernbeisser.Windows.PermissionManagement;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
@@ -129,7 +133,13 @@ public class PermissionController implements IController<PermissionView, Permiss
   }
 
   public void addPermission() {
-    model.addPermission(view.getPermissionName());
+    try {
+      model.addPermission(view.getPermissionName());
+    } catch (PersistenceException e) {
+      view.nameIsNotUnique();
+      addPermission();
+    }
+
     view.setValues(model.getAllPermissions());
   }
 
@@ -156,5 +166,14 @@ public class PermissionController implements IController<PermissionView, Permiss
   @Override
   public PermissionKey[] getRequiredKeys() {
     return PermissionKey.find(Permission.class).toArray(new PermissionKey[0]);
+  }
+
+  public void importFrom(File selectedFile) throws FileNotFoundException {
+    PermissionRepresentation.putInDB(selectedFile);
+  }
+
+  public void exportTo(File selectedFile) throws IOException {
+    PermissionRepresentation.write(
+        selectedFile, new PermissionRepresentation(Permission.getAll(null)));
   }
 }
