@@ -6,10 +6,11 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class DataImportModel implements IModel<DataImportController> {
   <T> void batchMergeAll(Collection<T> v) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     int c = 0;
@@ -30,7 +31,7 @@ public class DataImportModel implements IModel<DataImportController> {
     if (v.size() == 0) {
       return;
     }
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     for (T t : v) {
@@ -45,7 +46,7 @@ public class DataImportModel implements IModel<DataImportController> {
     if (articles.size() == 0) {
       return;
     }
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     int c = 0;

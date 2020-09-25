@@ -6,6 +6,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +42,7 @@ public class Permission {
   }
 
   public static Collection<Permission> defaultSearch(String s, int max) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Permission> out =
         em.createQuery("select p from Permission p where p.name like :s", Permission.class)
             .setParameter("s", s + "%")

@@ -8,6 +8,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,7 +45,7 @@ public class Purchase {
   }
 
   public Collection<ShoppingItem> getAllItems() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<ShoppingItem> out =
         em.createQuery(
                 "select i from ShoppingItem i where i.purchase.id = " + id, ShoppingItem.class)
@@ -54,7 +55,7 @@ public class Purchase {
   }
 
   public double getSum() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     double sum =
         em.createQuery("select s from ShoppingItem s where purchase.id = :id", ShoppingItem.class)
             .setParameter("id", id).getResultList().stream()

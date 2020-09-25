@@ -11,6 +11,7 @@ import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 
 public class PermissionRepresentation {
   private final List<String> permissionName = new ArrayList<>();
@@ -30,7 +31,7 @@ public class PermissionRepresentation {
 
   public static void putInDB(File file) throws FileNotFoundException {
     PermissionRepresentation representation = read(file);
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     HashMap<String, User> userHashMap = new HashMap<>();

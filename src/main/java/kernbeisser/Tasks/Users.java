@@ -12,6 +12,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 
 public class Users {
 
@@ -95,7 +96,7 @@ public class Users {
   }
 
   public static void switchUserGroup(int userId, int userGroupId) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     User currentUser = em.find(User.class, userId);

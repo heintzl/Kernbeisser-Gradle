@@ -9,6 +9,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,7 +49,7 @@ public class UserSettingValue {
   }
 
   private static String loadOrCreateSettingValue(UserSetting setting, User user) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
               "select s from UserSettingValue s where userSetting = :sn and user.id = :id",
@@ -74,7 +75,7 @@ public class UserSettingValue {
   }
 
   private static Collection<UserSettingValue> getAllForUser(User user) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     List<UserSettingValue> out =
         em.createQuery("select u from UserSettingValue u where u.id = :id", UserSettingValue.class)
             .setParameter("id", user.getId())
@@ -117,7 +118,7 @@ public class UserSettingValue {
   }
 
   public static void setValue(User user, UserSetting setting, String value) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.createQuery(

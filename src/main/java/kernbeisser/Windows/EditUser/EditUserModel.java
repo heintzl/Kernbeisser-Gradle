@@ -6,6 +6,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class EditUserModel implements IModel<EditUserController> {
 
@@ -18,7 +19,7 @@ public class EditUserModel implements IModel<EditUserController> {
   }
 
   String generateUsername(String firstName, String surname) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     @SuppressWarnings("unchecked")
     HashSet<String> usernames =
         new HashSet<String>(
@@ -39,7 +40,7 @@ public class EditUserModel implements IModel<EditUserController> {
   }
 
   boolean usernameExists(String username) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     boolean exists =
         em.createQuery("select id from User where username like :username")
                 .setParameter("username", username)

@@ -15,6 +15,7 @@ import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Reports.ReportManager;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 import net.sf.jasperreports.engine.JRException;
 
 public class PayModel implements IModel<PayController> {
@@ -45,7 +46,7 @@ public class PayModel implements IModel<PayController> {
   Purchase pay(SaleSession saleSession, List<ShoppingItem> items, double sum)
       throws PersistenceException, InvalidTransactionException {
     // Build connection by default
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
 
     // Start transaction
     EntityTransaction et = em.getTransaction();

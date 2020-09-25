@@ -187,7 +187,7 @@ public class ShoppingItem implements Serializable {
       int kbNumber,
       double surcharge,
       boolean hasContainerDiscount) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     try {
       ShoppingItem out =
@@ -316,7 +316,7 @@ public class ShoppingItem implements Serializable {
   }
 
   public Article extractArticle() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("SELECT i from Article i where kbNumber = " + kbNumber, Article.class)
           .getSingleResult();

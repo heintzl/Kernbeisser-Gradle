@@ -9,6 +9,7 @@ import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class ContainerModel implements IModel<ContainerController> {
   private final Collection<Container> newContainers = new ArrayList<>();
@@ -23,7 +24,7 @@ public class ContainerModel implements IModel<ContainerController> {
   }
 
   Collection<Container> getLastContainers() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Container> out =
         em.createQuery("select c from Container c order by createDate desc", Container.class)
             .getResultList();
@@ -40,7 +41,7 @@ public class ContainerModel implements IModel<ContainerController> {
   }
 
   void saveChanges() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     newContainers.forEach(em::persist);

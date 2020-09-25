@@ -146,7 +146,7 @@ public class Article extends ArticleBase {
   }
 
   public static Collection<Article> defaultSearch(String search, int maxResults) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Article> out =
         em.createQuery(
                 "select i from Article i where kbNumber = :n"
@@ -175,7 +175,7 @@ public class Article extends ArticleBase {
   }
 
   public static Article getByKbNumber(int kbNumber) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select i from Article i where kbNumber = :n", Article.class)
           .setParameter("n", kbNumber)
@@ -188,7 +188,7 @@ public class Article extends ArticleBase {
   }
 
   public static Article getBySuppliersItemNumber(int suppliersNumber) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select i from Article i where suppliersItemNumber = :n", Article.class)
           .setParameter("n", suppliersNumber)
@@ -201,7 +201,7 @@ public class Article extends ArticleBase {
   }
 
   public static Article getByBarcode(long barcode) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select i from Article i where barcode = :n", Article.class)
           .setParameter("n", barcode)

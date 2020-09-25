@@ -9,6 +9,7 @@ import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class PermissionModel implements IModel<PermissionController> {
   void addKey(Permission permission, PermissionKey key) {
@@ -38,7 +39,7 @@ public class PermissionModel implements IModel<PermissionController> {
   }
 
   void addPermission(String permissionName) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     Permission pm = new Permission();

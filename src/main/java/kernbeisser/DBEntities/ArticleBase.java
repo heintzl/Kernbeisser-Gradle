@@ -7,6 +7,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -88,7 +89,7 @@ public class ArticleBase {
   public SurchargeTable getSurchargeTable() {
     // TODO really expensive!
     if (supplier == null) return SurchargeTable.DEFAULT;
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
               "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
@@ -115,7 +116,7 @@ public class ArticleBase {
   }
 
   public static ArticleBase getBySuppliersItemNumber(int suppliersNumber) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
               "select i from ArticleBase i where suppliersItemNumber = :n", ArticleBase.class)
@@ -129,7 +130,7 @@ public class ArticleBase {
   }
 
   public static ArticleBase getByBarcode(long barcode) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select i from Article i where barcode = :n", ArticleBase.class)
           .setParameter("n", barcode)

@@ -13,13 +13,14 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class SynchronizeArticleModel implements IModel<SynchronizeArticleController> {
 
   private final Collection<ArticleDifference<?>> allDifferences = loadAllDifferences();
 
   private Collection<ArticleDifference<?>> loadAllDifferences() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     HashMap<Integer, ArticleKornkraft> kornkraftHashMap = new HashMap<>();

@@ -8,6 +8,7 @@ import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 import lombok.Data;
 
 @Data
@@ -24,7 +25,7 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
   }
 
   void changeUserGroup(int user, int destination, String password) throws CannotLogInException {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     User dbUser = em.find(User.class, user);
     if (BCrypt.verifyer()
         .verify(password.toCharArray(), dbUser.getPassword().toCharArray())

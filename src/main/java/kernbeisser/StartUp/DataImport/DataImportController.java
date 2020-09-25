@@ -25,6 +25,7 @@ import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.IController;
+import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -209,7 +210,7 @@ public class DataImportController implements IController<DataImportView, DataImp
       Permission keyPermission = PermissionConstants.KEY_PERMISSION.getPermission();
       User kernbeisser = User.getKernbeisserUser();
       BCrypt.Hasher hasher = BCrypt.withDefaults();
-      EntityManager em = DBConnection.getEntityManager();
+      @Cleanup EntityManager em = DBConnection.getEntityManager();
       EntityTransaction et = em.getTransaction();
       et.begin();
       for (String l : lines) {
