@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
@@ -76,8 +77,8 @@ public class ShoppingMaskUIController
 
   boolean addToShoppingCart() {
     boolean piece =
-        (view.getOption() == ShoppingMaskUIView.ARTICLE_NUMBER
-            || view.getOption() == ShoppingMaskUIView.CUSTOM_PRODUCT);
+        (view.getArticleType() == ArticleType.ARTICLE_NUMBER
+            || view.getArticleType() == ArticleType.CUSTOM_PRODUCT);
     try {
       int discount = view.getDiscount();
       if (discount < 0 || discount > 100) {
@@ -109,7 +110,7 @@ public class ShoppingMaskUIController
       }
 
       if (item.getItemMultiplier() != 0
-          && (view.getOption() == ShoppingMaskUIView.RETURN_DEPOSIT || checkStorno(item, piece))) {
+          && (view.getArticleType() == ArticleType.RETURN_DEPOSIT || checkStorno(item, piece))) {
 
         shoppingCartController.addShoppingItem(item);
         view.setDiscount();
@@ -191,8 +192,8 @@ public class ShoppingMaskUIController
   }
 
   ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
-    switch (view.getOption()) {
-      case ShoppingMaskUIView.ARTICLE_NUMBER:
+    switch (view.getArticleType()) {
+      case ARTICLE_NUMBER:
         int discount = view.getDiscount();
         boolean preordered = view.isPreordered();
         int kbArticleNumber = view.getKBArticleNumber();
@@ -205,13 +206,13 @@ public class ShoppingMaskUIController
         }
         throw new UndefinedInputException();
 
-      case ShoppingMaskUIView.BAKED_GOODS:
+      case BAKED_GOODS:
         return ShoppingItem.createBakeryProduct(getRelevantPrice(), view.isPreordered());
 
-      case ShoppingMaskUIView.PRODUCE:
+      case PRODUCE:
         return ShoppingItem.createProduce(getRelevantPrice(), view.isPreordered());
 
-      case ShoppingMaskUIView.CUSTOM_PRODUCT:
+      case CUSTOM_PRODUCT:
         ArticleBase customArticle = new Article();
 
         customArticle.setName(view.getItemName());
@@ -229,7 +230,7 @@ public class ShoppingMaskUIController
         ShoppingItem customItem = new ShoppingItem(customArticle, 0, view.isPreordered());
         return customItem;
 
-      case ShoppingMaskUIView.DEPOSIT:
+      case DEPOSIT:
         if (view.getDeposit() < 0) {
           view.messageDepositStorno();
           return null;
@@ -237,7 +238,7 @@ public class ShoppingMaskUIController
           return ShoppingItem.createDeposit(view.getDeposit());
         }
 
-      case ShoppingMaskUIView.RETURN_DEPOSIT:
+      case RETURN_DEPOSIT:
         if (view.getDeposit() < 0) {
           view.messageDepositStorno();
           return null;

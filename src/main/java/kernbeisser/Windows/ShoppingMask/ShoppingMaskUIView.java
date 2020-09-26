@@ -7,6 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Vector;
 import javax.swing.*;
@@ -21,6 +22,7 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
@@ -33,13 +35,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
-  // TODO: create Enum
-  static final int ARTICLE_NUMBER = 0;
-  static final int BAKED_GOODS = 1;
-  static final int CUSTOM_PRODUCT = 2;
-  static final int DEPOSIT = 3;
-  static final int RETURN_DEPOSIT = 4;
-  static final int PRODUCE = 5;
+
   static final String stornoMessageTitle = "Storno";
 
   private JLabel customerName;
@@ -102,7 +98,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   @Linked private ShoppingMaskUIController controller;
   @Linked private ShoppingCartController cartController;
 
-  private char currentArticleType;
+  private ArticleType currentArticleType;
   private boolean isWeighable;
   static Vector<Component> traversalOrder = new Vector<Component>(1);
   static FocusTraversal traversalPolicy;
@@ -110,6 +106,11 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private BarcodeCapture barcodeCapture;
   private KeyCapture keyCapture;
   private ShoppingItem currentItem;
+
+  EnumSet<ArticleType> articleTypesWithSettablePrice =
+      EnumSet.of(ArticleType.CUSTOM_PRODUCT, ArticleType.BAKED_GOODS, ArticleType.PRODUCE);
+  EnumSet<ArticleType> depositArticleTypes =
+      EnumSet.of(ArticleType.DEPOSIT, ArticleType.RETURN_DEPOSIT);
 
   private void createUIComponents() {
     shoppingCartView = cartController.getView();
@@ -152,7 +153,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   private void supplierChange() {
     updateAllControls(currentArticleType);
-    if (getOption() == CUSTOM_PRODUCT) {
+    if (getArticleType() == ArticleType.CUSTOM_PRODUCT) {
       String savedPrice = isPreordered ? netPrice.getText() : price.getText();
       loadItemStats(controller.createCustomItem(getSupplier()));
       if (isPreordered) {
@@ -205,45 +206,45 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     return vat.getSelectedIndex() > -1;
   }
 
-  private void updateKbNumberControl(char type) {
-    kbNumber.setEnabled(type == 'a');
+  private void updateKbNumberControl(ArticleType type) {
+    kbNumber.setEnabled(type == ArticleType.ARTICLE_NUMBER);
   }
 
-  private void updateSupplierControl(char type, boolean preordered) {
-    if (type == 'a' || (type == 'c' && preordered)) {
+  private void updateSupplierControl(ArticleType type, boolean preordered) {
+    if (type == ArticleType.ARTICLE_NUMBER || (type == ArticleType.CUSTOM_PRODUCT && preordered)) {
       supplier.setEnabled(true);
     } else {
       supplier.setEnabled(false);
     }
   }
 
-  private void updateSupplierNumberControl(char type) {
-    if (type == 'a' && isSupplierSet()) {
+  private void updateSupplierNumberControl(ArticleType type) {
+    if (type == ArticleType.ARTICLE_NUMBER && isSupplierSet()) {
       suppliersItemNumber.setEnabled(true);
     } else {
       suppliersItemNumber.setEnabled(false);
     }
   }
 
-  private void updateArticleNameControl(char type, boolean preordered) {
-    if (type == 'c' && (isSupplierSet() || !preordered)) {
+  private void updateArticleNameControl(ArticleType type, boolean preordered) {
+    if (type == ArticleType.CUSTOM_PRODUCT && (isSupplierSet() || !preordered)) {
       articleName.setEnabled(true);
     } else {
       articleName.setEnabled(false);
     }
   }
 
-  private void updateVATControl(char type, boolean preordered) {
-    if (type == 'c' && (isSupplierSet() || !preordered)) {
+  private void updateVATControl(ArticleType type, boolean preordered) {
+    if (type == ArticleType.CUSTOM_PRODUCT && (isSupplierSet() || !preordered)) {
       vat.setEnabled(true);
     } else {
       vat.setEnabled(false);
     }
   }
 
-  private void updateNetPriceControl(char type, boolean preordered) {
+  private void updateNetPriceControl(ArticleType type, boolean preordered) {
     if (preordered) {
-      if (type == 'c') {
+      if (type == ArticleType.CUSTOM_PRODUCT) {
         netPrice.setEnabled(isSupplierSet() && !isEmptyArticleName() && isValidVat());
       } else {
         netPrice.setEnabled(!isEmptyArticleName() && isValidVat());
@@ -253,11 +254,11 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
   }
 
-  private void updatePriceControl(char type, boolean preordered) {
+  private void updatePriceControl(ArticleType type, boolean preordered) {
     if (preordered) {
       price.setEnabled(false);
     } else {
-      if (type == 'c' || type == 'p' || type == 'b') {
+      if (articleTypesWithSettablePrice.contains(type)) {
         price.setEnabled(!isEmptyArticleName() && isValidVat());
       } else {
         price.setEnabled(false);
@@ -265,10 +266,10 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
   }
 
-  private void updateAmountControl(char type, boolean preordered) {
-    if (type == 'a') {
+  private void updateAmountControl(ArticleType type, boolean preordered) {
+    if (type == ArticleType.ARTICLE_NUMBER) {
       amount.setEnabled(true);
-    } else if (type == 'c') {
+    } else if (type == ArticleType.CUSTOM_PRODUCT) {
       boolean isPriceBaseFieldsSet = !isEmptyArticleName() && isValidVat();
       if (preordered) {
         amount.setEnabled(isPriceBaseFieldsSet && isSupplierSet() && getNetPrice() > 0.0);
@@ -280,15 +281,15 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
   }
 
-  private void updateDepositControl(char type) {
-    if (type == 'd' || type == 'r') {
+  private void updateDepositControl(ArticleType type) {
+    if (depositArticleTypes.contains(type)) {
       deposit.setEnabled(true);
     } else {
       deposit.setEnabled(false);
     }
   }
 
-  private void updateAllControls(char type) {
+  private void updateAllControls(ArticleType type) {
     updateKbNumberControl(type);
     updateSupplierControl(type, isPreordered);
     updateSupplierNumberControl(type);
@@ -300,21 +301,21 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     updateDepositControl(type);
   }
 
-  private void articleTypeChange(char type) {
+  private void articleTypeChange(ArticleType type) {
     if (currentArticleType != type) {
       articleTypeInitialize(type);
     }
   }
 
-  private void articleTypeInitialize(char type) {
+  private void articleTypeInitialize(ArticleType type) {
     currentArticleType = type;
     setPriceOptions(type);
     isWeighable = false;
 
-    addAmount.setVisible(type == 'a');
-    addPrice.setVisible(!isPreordered && "pbc".indexOf(type) != -1);
-    addNetPrice.setVisible(isPreordered && "pbc".indexOf(type) != -1);
-    addDeposit.setVisible("dr".indexOf(type) != -1);
+    addAmount.setVisible(type == ArticleType.ARTICLE_NUMBER);
+    addPrice.setVisible(!isPreordered && articleTypesWithSettablePrice.contains(type));
+    addNetPrice.setVisible(isPreordered && articleTypesWithSettablePrice.contains(type));
+    addDeposit.setVisible(depositArticleTypes.contains(type));
 
     setSupplier(null);
     setSuppliersItemNumber("");
@@ -333,32 +334,32 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
     deposit.setText("");
 
-    if (type == 'd' || type == 'r') {
+    if (depositArticleTypes.contains(type)) {
       setVat(VAT.HIGH);
     }
     variablePercentage.setEnabled(
         priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
 
-    if (type == 'p') {
+    if (type == ArticleType.PRODUCE) {
       loadItemStats(Objects.requireNonNull(ShoppingItem.createProduce(0.0, isPreordered)));
       this.articleName.setText("Obst & Gemüse");
       price.selectAll();
       price.requestFocusInWindow();
-    } else if (type == 'b') {
+    } else if (type == ArticleType.BAKED_GOODS) {
       loadItemStats(Objects.requireNonNull(ShoppingItem.createBakeryProduct(0.0, isPreordered)));
       price.selectAll();
       this.articleName.setText("Backwaren");
       price.requestFocusInWindow();
-    } else if (type == 'd') {
+    } else if (type == ArticleType.DEPOSIT) {
       this.articleName.setText("Pfand-Behälter");
       deposit.requestFocusInWindow();
-    } else if (type == 'r') {
+    } else if (type == ArticleType.RETURN_DEPOSIT) {
       this.articleName.setText("Pfand zurück");
       deposit.requestFocusInWindow();
-    } else if (type == 'a') {
+    } else if (type == ArticleType.ARTICLE_NUMBER) {
       this.articleName.setText("");
       kbNumber.requestFocusInWindow();
-    } else if (type == 'c') {
+    } else if (type == ArticleType.CUSTOM_PRODUCT) {
       this.articleName.setText("");
       this.vat.setSelectedIndex(-1);
       if (articleName.isEnabled()) {
@@ -370,14 +371,14 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     updateAllControls(type);
   }
 
-  private void setPriceOptions(char type) {
-    if (type == 'd' || type == 'r') {
+  private void setPriceOptions(ArticleType type) {
+    if (depositArticleTypes.contains(type)) {
       pricePreordered.setEnabled(false);
       isPreordered = false;
     } else {
       pricePreordered.setEnabled(true);
     }
-    if (type == 'a') {
+    if (type == ArticleType.ARTICLE_NUMBER) {
       price50Percent.setEnabled(true);
       priceVariablePercentage.setEnabled(true);
     } else {
@@ -608,27 +609,26 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
   }
 
-  public int getOption() {
-    // TODO make enum
+  public ArticleType getArticleType() {
     if (optArticleNo.isSelected()) {
-      return ARTICLE_NUMBER;
+      return ArticleType.ARTICLE_NUMBER;
     }
     if (optBakedGoods.isSelected()) {
-      return BAKED_GOODS;
+      return ArticleType.BAKED_GOODS;
     }
     if (optCustomProduct.isSelected()) {
-      return CUSTOM_PRODUCT;
+      return ArticleType.CUSTOM_PRODUCT;
     }
     if (optDeposit.isSelected()) {
-      return DEPOSIT;
+      return ArticleType.DEPOSIT;
     }
     if (optDepositReturn.isSelected()) {
-      return RETURN_DEPOSIT;
+      return ArticleType.RETURN_DEPOSIT;
     }
     if (optProduce.isSelected()) {
-      return PRODUCE;
+      return ArticleType.PRODUCE;
     }
-    return -1;
+    return ArticleType.INVALID;
   }
 
   double getNetPrice() {
@@ -708,12 +708,12 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
     addAmount.addActionListener(e -> addToCart());
 
-    optProduce.addItemListener(e -> articleTypeChange('p'));
-    optBakedGoods.addItemListener(e -> articleTypeChange('b'));
-    optArticleNo.addItemListener(e -> articleTypeChange('a'));
-    optCustomProduct.addItemListener(e -> articleTypeChange('c'));
-    optDeposit.addItemListener(e -> articleTypeChange('d'));
-    optDepositReturn.addItemListener(e -> articleTypeChange('r'));
+    optProduce.addItemListener(e -> articleTypeChange(ArticleType.PRODUCE));
+    optBakedGoods.addItemListener(e -> articleTypeChange(ArticleType.BAKED_GOODS));
+    optArticleNo.addItemListener(e -> articleTypeChange(ArticleType.ARTICLE_NUMBER));
+    optCustomProduct.addItemListener(e -> articleTypeChange(ArticleType.CUSTOM_PRODUCT));
+    optDeposit.addItemListener(e -> articleTypeChange(ArticleType.DEPOSIT));
+    optDepositReturn.addItemListener(e -> articleTypeChange(ArticleType.RETURN_DEPOSIT));
 
     kbNumber.addKeyListener(
         new KeyAdapter() {
@@ -829,8 +829,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
     keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
 
-    // TODO make enum
-    articleTypeChange('a');
+    articleTypeChange(ArticleType.ARTICLE_NUMBER);
   }
 
   private void enablePreordered() {
