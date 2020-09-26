@@ -22,6 +22,7 @@ import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.Tasks.Catalog;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
+import lombok.Cleanup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -119,7 +120,7 @@ public class Main {
   }
 
   private static void createTestJobs(int count) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     for (int i = 0; i < count; i++) {
@@ -130,7 +131,6 @@ public class Main {
     }
     em.flush();
     et.commit();
-    em.close();
   }
 
   public static void generateKeySet(Class<?> clazz) {

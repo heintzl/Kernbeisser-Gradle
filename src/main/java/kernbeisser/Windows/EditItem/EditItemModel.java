@@ -13,6 +13,7 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class EditItemModel implements IModel<EditItemController> {
   private final Mode mode;
@@ -28,7 +29,7 @@ public class EditItemModel implements IModel<EditItemController> {
   }
 
   int kbNumberExists(int kbNumber) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select id from Article where kbNumber = " + kbNumber, Integer.class)
           .getSingleResult();
@@ -40,7 +41,7 @@ public class EditItemModel implements IModel<EditItemController> {
   }
 
   int barcodeExists(long barcode) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select id from Article where barcode = " + barcode, Integer.class)
           .getSingleResult();
@@ -53,7 +54,7 @@ public class EditItemModel implements IModel<EditItemController> {
 
   private void addItem(Article article) {
     article.setSurcharge(article.getSurchargeTable().getSurcharge());
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     article.setId(0);
@@ -88,7 +89,7 @@ public class EditItemModel implements IModel<EditItemController> {
   }
 
   public int nextUnusedArticleNumber(int kbNumber) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     int out =
         em.createQuery(
                     "select i.kbNumber from Article i where i.kbNumber > :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",
@@ -102,7 +103,7 @@ public class EditItemModel implements IModel<EditItemController> {
   }
 
   public static boolean nameExists(String name) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       em.createQuery("select i from Article i where i.name like :name")
           .setMaxResults(1)

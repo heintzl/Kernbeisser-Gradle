@@ -7,6 +7,7 @@ import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import lombok.Cleanup;
 
 // Permissions which become automatically generated when the application
 // requires them to prevent the functionality from the application
@@ -36,7 +37,7 @@ public enum PermissionConstants {
   }
 
   private static Permission loadOrCreate(PermissionConstants constants) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select p from Permission p where name like :pcn", Permission.class)
           .setParameter("pcn", "@" + constants.name())

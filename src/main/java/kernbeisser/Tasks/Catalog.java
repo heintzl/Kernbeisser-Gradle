@@ -17,6 +17,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
+import lombok.Cleanup;
 
 public class Catalog {
 
@@ -67,7 +68,7 @@ public class Catalog {
 
   public static void persistCatalog(
       Iterable<ArticleKornkraft> articles, ProgressMonitor pm, int before) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     int runGCUnder = Setting.CATALOG_RUN_GC_UNDER.getIntValue();
@@ -92,7 +93,7 @@ public class Catalog {
   }
 
   public static void clearCatalog() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     for (ArticleKornkraft articleKornkraft :
@@ -157,7 +158,7 @@ public class Catalog {
   }
 
   public static void setDepositByReference() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.createQuery(

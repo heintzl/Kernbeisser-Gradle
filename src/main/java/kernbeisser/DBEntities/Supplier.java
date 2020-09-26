@@ -9,6 +9,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -83,7 +84,7 @@ public class Supplier implements Serializable {
   private Instant updateDate;
 
   public static Supplier getKKSupplier() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select s from Supplier s where s.shortName like 'KK'", Supplier.class)
           .getSingleResult();
@@ -113,7 +114,7 @@ public class Supplier implements Serializable {
   }
 
   public static Collection<Supplier> defaultSearch(String s, int max) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Supplier> suppliers =
         em.createQuery(
                 "select s from Supplier s where s.name like :n or keeper like :n or s.phoneNumber like :n or s.fax like :n or email like :n",

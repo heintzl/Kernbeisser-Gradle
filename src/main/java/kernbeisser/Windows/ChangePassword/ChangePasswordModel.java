@@ -6,6 +6,7 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class ChangePasswordModel implements IModel<ChangePasswordController> {
 
@@ -18,7 +19,7 @@ public class ChangePasswordModel implements IModel<ChangePasswordController> {
   }
 
   public boolean checkPassword(String password) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     String currentPassword =
         (String)
             em.createQuery("select u.password from User u where u.id = :id")
@@ -31,7 +32,7 @@ public class ChangePasswordModel implements IModel<ChangePasswordController> {
   }
 
   public void changePassword(String newPasswordHash) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     User db = em.find(User.class, user.getId());

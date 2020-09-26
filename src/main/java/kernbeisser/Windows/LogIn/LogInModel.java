@@ -14,6 +14,7 @@ import kernbeisser.Security.CustomKeySetSecurityHandler;
 import kernbeisser.Security.MasterPermissionSet;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class LogInModel implements IModel {
 
@@ -29,7 +30,7 @@ public class LogInModel implements IModel {
 
   public static void logIn(String username, char[] password)
       throws CannotLogInException, PermissionRequired {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       User user =
           em.createQuery("select u from User u where u.username = :username", User.class)

@@ -9,6 +9,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -65,7 +66,7 @@ public class PriceList implements Serializable {
   }
 
   private static PriceList getPriceList(String name) throws NoResultException {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       PriceList out =
           em.createQuery(
@@ -101,7 +102,7 @@ public class PriceList implements Serializable {
   }
 
   public static Collection<PriceList> getAllHeadPriceLists() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<PriceList> out =
         em.createQuery("select p from PriceList p where p.superPriceList = null", PriceList.class)
             .getResultList();
@@ -110,7 +111,7 @@ public class PriceList implements Serializable {
   }
 
   public Collection<PriceList> getAllPriceLists() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<PriceList> out =
         em.createQuery(
                 "select p from PriceList p where p.superPriceList = "

@@ -9,10 +9,7 @@ import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -145,7 +142,7 @@ public class User implements Serializable {
   }
 
   public static User getByUsername(String username) throws NoResultException {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select u from User u where u.username = :username", User.class)
           .setParameter("username", username)
@@ -161,7 +158,7 @@ public class User implements Serializable {
   }
 
   public static void makeUserUnreadable(User user) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     User dbContent = em.find(User.class, user.getId());
@@ -183,7 +180,7 @@ public class User implements Serializable {
   }
 
   public static Collection<User> defaultSearch(String s, int max) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<User> out =
         em.createQuery(
                 "select u from User u where u.unreadable = false and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
@@ -249,7 +246,7 @@ public class User implements Serializable {
   }
 
   public Collection<Transaction> getAllValueChanges() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Transaction> out =
         em.createQuery(
                 "select t from Transaction t where t.from.id = :id or t.to.id = :id order by date",
@@ -261,7 +258,7 @@ public class User implements Serializable {
   }
 
   public Collection<Transaction> getAllTransactions() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Transaction> out =
         em.createQuery(
                 "select t from Transaction t where t.from.id = :id or t.to.id = :id",
@@ -273,7 +270,7 @@ public class User implements Serializable {
   }
 
   public Collection<Purchase> getAllPurchases() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Purchase> out =
         em.createQuery(
                 "select p from Purchase p where p.session.customer.id = :uid", Purchase.class)
@@ -284,7 +281,7 @@ public class User implements Serializable {
   }
 
   public static User getKernbeisserUser() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select u from User u where u.username like 'kernbeisser'", User.class)
           .setMaxResults(1)

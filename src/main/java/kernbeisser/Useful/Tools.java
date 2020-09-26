@@ -29,6 +29,7 @@ import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
 import kernbeisser.Security.Proxy;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.apache.commons.beanutils.BeanUtils;
 import sun.misc.Unsafe;
@@ -130,7 +131,7 @@ public class Tools {
   }
 
   public static <T> List<T> getAll(Class<T> c, String condition) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     List<T> out =
         em.createQuery(
                 "select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
@@ -140,7 +141,7 @@ public class Tools {
   }
 
   public static <T> List<T> getAllUnProxy(Class<T> c) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<T> cq = cb.createQuery(c);
     Root<T> rootEntry = cq.from(c);
@@ -225,7 +226,7 @@ public class Tools {
   }
 
   public static void runInSession(Consumer<EntityManager> dbAction) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     dbAction.accept(em);
@@ -236,7 +237,7 @@ public class Tools {
 
   public static <O, V> void addToCollection(
       Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, V value) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     O db = em.find(c, key);
@@ -249,7 +250,7 @@ public class Tools {
 
   public static <O, V> void addMultipleToCollection(
       Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, Collection<V> value) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     O db = em.find(c, key);
@@ -262,7 +263,7 @@ public class Tools {
 
   public static <O, V> void removeMultipleFromCollection(
       Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, Collection<V> value) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     O db = em.find(c, key);
@@ -275,7 +276,7 @@ public class Tools {
 
   public static <O, V> void removeFromCollection(
       Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, V value) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     O db = em.find(c, key);
@@ -303,7 +304,7 @@ public class Tools {
   }
 
   public static <T> void persist(T value) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.persist(value);
@@ -506,7 +507,7 @@ public class Tools {
     for (int i = 0; i < hashSets.length; i++) {
       hashSets[i] = new HashSet<>(Arrays.asList(uniqueValues[i]));
     }
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     collection.forEach(
@@ -553,7 +554,7 @@ public class Tools {
   }
 
   public static <P> Object[][] getAllValues(Class<P> parent, Field... fields) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<Object> query = cb.createQuery(Object.class);
     Root<P> root = query.from(parent);

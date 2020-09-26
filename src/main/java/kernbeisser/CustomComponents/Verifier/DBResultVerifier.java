@@ -5,6 +5,7 @@ import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import kernbeisser.DBConnection.DBConnection;
+import lombok.Cleanup;
 
 public abstract class DBResultVerifier extends TextComponentVerifier {
 
@@ -12,7 +13,7 @@ public abstract class DBResultVerifier extends TextComponentVerifier {
 
   @Override
   public boolean verify(JTextComponent component) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       em.createQuery(getQuery()).setParameter("s", component.getText()).getSingleResult();
       em.close();

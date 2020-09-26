@@ -10,6 +10,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -63,7 +64,7 @@ public class SettingValue {
   }
 
   public static String loadOrCreateSettingValue(Setting setting) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery("select s from SettingValue s where setting = :sn", SettingValue.class)
           .setParameter("sn", setting)
@@ -85,7 +86,7 @@ public class SettingValue {
   }
 
   public static void setValue(Setting setting, String value) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     try {

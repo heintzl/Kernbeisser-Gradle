@@ -7,6 +7,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,7 +44,7 @@ public class UserGroup {
   }
 
   public Collection<User> getMembers() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<User> out =
         em.createQuery("select u from User u where userGroup.id = " + id, User.class)
             .getResultList();
@@ -52,7 +53,7 @@ public class UserGroup {
   }
 
   public double calculateValue() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     double v = 0;
     for (Transaction transaction :
         em.createQuery(
@@ -69,7 +70,7 @@ public class UserGroup {
   }
 
   public static Collection<UserGroup> defaultSearch(String s, int i) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<UserGroup> out =
         em.createQuery(
                 "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",

@@ -9,6 +9,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
+import lombok.Cleanup;
 
 public class ArticleDifference<T> {
   private final ArticleBase kernbeisser, catalog;
@@ -30,7 +31,7 @@ public class ArticleDifference<T> {
   }
 
   void applyKernbeisser() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     ArticleKornkraft articleKornkraft = em.find(ArticleKornkraft.class, catalog.getId());
@@ -42,7 +43,7 @@ public class ArticleDifference<T> {
   }
 
   void applyCatalog() {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     Article article = em.find(Article.class, kernbeisser.getId());

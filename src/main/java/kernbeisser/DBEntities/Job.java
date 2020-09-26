@@ -8,6 +8,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +50,7 @@ public class Job {
   }
 
   public static Collection<Job> defaultSearch(String s, int max) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Job> out =
         em.createQuery(
                 "select j from Job j where j.name like :s or description like :sn", Job.class)

@@ -6,6 +6,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class EditSupplierModel implements IModel<EditSupplierController> {
   private final Supplier supplier;
@@ -25,7 +26,7 @@ public class EditSupplierModel implements IModel<EditSupplierController> {
   }
 
   public boolean nameExists(String name) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       em.createQuery("select id from Supplier where name like :n")
           .setParameter("n", name)
@@ -37,7 +38,7 @@ public class EditSupplierModel implements IModel<EditSupplierController> {
   }
 
   public boolean shortNameExists(String name) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       em.createQuery("select id from Supplier where shortName like :n")
           .setParameter("n", name)

@@ -8,6 +8,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorController> {
   private Offer selected;
@@ -26,7 +27,7 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
   }
 
   void remove(Article article, Offer offer) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     Article i = em.find(Article.class, article.getId());
@@ -52,7 +53,7 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
   }
 
   public void addOffer(Article article, Offer offer) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
     Article i =
@@ -68,7 +69,7 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
 
   public Collection<Article> searchArticle(
       String search, int maxResults, boolean onlyActionArticle) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Article> out =
         em.createQuery(
                 "select i from Article i where (i.suppliersItemNumber = :n or kbNumber = :n or i.supplier.shortName like :s or i.supplier.name like :s or i.name like :s or mod(barcode, 10000) = :n)"

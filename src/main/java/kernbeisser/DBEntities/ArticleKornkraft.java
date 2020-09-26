@@ -7,6 +7,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +27,7 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
   }
 
   public static ArticleKornkraft getByKkNumber(int kkNumber) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
               "select k from ArticleKornkraft k where k.suppliersItemNumber = :n",
@@ -41,7 +42,7 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
   }
 
   public static ArticleKornkraft getByKbNumber(int kbNumber) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
               "select ik from ArticleKornkraft ik where ik.suppliersItemNumber = (select i.suppliersItemNumber from Article i where i.kbNumber = :n and i.supplier.shortName = 'KK')",
@@ -58,7 +59,7 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
 
   public SurchargeTable getSurcharge() {
     // TODO really expensive!
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
               "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
