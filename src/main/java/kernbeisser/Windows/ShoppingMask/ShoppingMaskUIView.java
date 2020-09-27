@@ -28,7 +28,6 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.UndefinedInputException;
-import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -107,10 +106,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private KeyCapture keyCapture;
   private ShoppingItem currentItem;
 
-  EnumSet<ArticleType> articleTypesWithSettablePrice =
-      EnumSet.of(ArticleType.CUSTOM_PRODUCT, ArticleType.BAKED_GOODS, ArticleType.PRODUCE);
-  EnumSet<ArticleType> depositArticleTypes =
-      EnumSet.of(ArticleType.DEPOSIT, ArticleType.RETURN_DEPOSIT);
+  EnumSet<ArticleType> articleTypesWithSettablePrice;
+  EnumSet<ArticleType> depositArticleTypes;
 
   private void createUIComponents() {
     shoppingCartView = cartController.getView();
@@ -682,13 +679,15 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     return shoppingListPanel.getSize();
   }
 
-  public IController getController() {
+  public ShoppingMaskUIController getController() {
     return controller;
   }
 
   @Override
   public void initialize(ShoppingMaskUIController controller) {
-
+    articleTypesWithSettablePrice =
+        EnumSet.of(ArticleType.CUSTOM_PRODUCT, ArticleType.BAKED_GOODS, ArticleType.PRODUCE);
+    depositArticleTypes = EnumSet.of(ArticleType.DEPOSIT, ArticleType.RETURN_DEPOSIT);
     checkout.addActionListener(e -> doCheckout());
     emptyShoppingCart.addActionListener(e -> controller.emptyShoppingCart());
     cancelSalesSession.addActionListener(e -> doCancel());
