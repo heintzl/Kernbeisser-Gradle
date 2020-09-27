@@ -1,3 +1,5 @@
+package kernbeisser.Enums;
+
 public enum ArticleType {
   ARTICLE_NUMBER,
   BAKED_GOODS,
