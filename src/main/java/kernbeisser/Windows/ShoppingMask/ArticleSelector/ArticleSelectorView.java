@@ -19,11 +19,11 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
   @Linked private SearchBoxController<Article> searchBoxController;
 
   boolean searchOnlyWithoutBarcode() {
-    return onlyWithoutBarcode.isSelected();
+    return onlyWithoutBarcode != null && onlyWithoutBarcode.isSelected();
   }
 
   boolean searchOnlyShowInShop() {
-    return showInShopArticles.isSelected();
+    return showInShopArticles != null && showInShopArticles.isSelected();
   }
 
   private void createUIComponents() {

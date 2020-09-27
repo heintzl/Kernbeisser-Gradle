@@ -16,11 +16,13 @@ public class FocusTraversal extends FocusTraversalPolicy {
   }
 
   public Component getComponentAfter(Container focusCycleRoot, Component component) {
-    int idx;
-    do {
-      idx = (order.indexOf(component) + 1) % order.size();
-      component = order.get(idx);
-    } while (!getTabability(component) && idx <= order.size());
+    int origin = order.indexOf(component);
+    for (int idx = 0; idx < order.size(); idx++) {
+      Component target = order.get((origin + idx) % order.size());
+      if (getTabability(target)) {
+        return target;
+      }
+    }
     return component;
   }
 

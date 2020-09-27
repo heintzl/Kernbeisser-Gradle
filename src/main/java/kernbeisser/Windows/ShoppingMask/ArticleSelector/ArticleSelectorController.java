@@ -37,6 +37,7 @@ public class ArticleSelectorController
 
   private Collection<Article> search(String query, int max) {
     Collection<Article> articles = Article.defaultSearch(query, max);
+    getView();
     if (view != null) {
       if (view.searchOnlyWithoutBarcode()) {
         articles.removeIf(e -> e.getBarcode() != null);
