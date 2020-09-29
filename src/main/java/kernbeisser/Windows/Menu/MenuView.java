@@ -57,15 +57,7 @@ public class MenuView implements IView<MenuController> {
 
   @Override
   public void initialize(MenuController controller) {
-    // Releasesettings
-    printBonFromPast.setEnabled(false);
-    order.setEnabled(false);
-    editPriceList.setEnabled(false);
-    // editSurchargeTables.setEnabled(false);
-    placeHolderControllerButton.setEnabled(false);
-    placeHolderControllerButton1.setEnabled(false);
-    placeHolderControllerButton2.setEnabled(false);
-    // Releasesettings
+
   }
 
   @Override

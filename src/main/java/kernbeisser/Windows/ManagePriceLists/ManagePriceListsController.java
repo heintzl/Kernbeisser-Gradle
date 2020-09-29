@@ -10,14 +10,13 @@ import org.jetbrains.annotations.NotNull;
 public class ManagePriceListsController
     implements IController<ManagePriceListsView, ManagePriceListsModel> {
   private final ManagePriceListsModel model;
-  private final ManagePriceListsView view;
+  private ManagePriceListsView view;
 
   // TODO When the root is selected, the displayCurrentSuperpriceList should be activated, too.
   // TODO Nice to have: At Changes in the Tree, not to reload the hole tree to keep expansion state
   // und selected Node
 
   public ManagePriceListsController() {
-    this.view = new ManagePriceListsView(this);
     model = new ManagePriceListsModel();
   }
 

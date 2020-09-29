@@ -12,6 +12,7 @@ import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsView implements IView<ManagePriceListsController> {
@@ -27,11 +28,8 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   private JPanel main;
   private PermissionButton delete;
 
-  private final ManagePriceListsController controller;
-
-  public ManagePriceListsView(ManagePriceListsController controller) {
-    this.controller = controller;
-  }
+  @Linked
+  private ManagePriceListsController controller;
 
   PriceList getSelectedPriceList() {
     return priceListTree.getSelected();
