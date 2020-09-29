@@ -28,8 +28,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   private JPanel main;
   private PermissionButton delete;
 
-  @Linked
-  private ManagePriceListsController controller;
+  @Linked private ManagePriceListsController controller;
 
   PriceList getSelectedPriceList() {
     return priceListTree.getSelected();

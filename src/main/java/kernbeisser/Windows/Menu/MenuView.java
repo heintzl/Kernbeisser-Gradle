@@ -56,9 +56,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton editUserGroup;
 
   @Override
-  public void initialize(MenuController controller) {
-
-  }
+  public void initialize(MenuController controller) {}
 
   @Override
   public @NotNull JComponent getContent() {
