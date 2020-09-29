@@ -4,15 +4,13 @@
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="kernbeisser.Windows.MVC.Linked" />
     </list>
+    <pattern value="kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox" method="setItems" />
     <writeAnnotations>
       <writeAnnotation name="javax.persistence.Id" />
       <writeAnnotation name="org.hibernate.annotations.CreationTimestamp" />
       <writeAnnotation name="kernbeisser.Windows.AutoInitialize" />
       <writeAnnotation name="kernbeisser.Windows.MVC.Linked" />
     </writeAnnotations>
-  </component>
-  <component name="ExcludeFromValidation">
-    <file url="file://$PROJECT_DIR$/src/main/java/kernbeisser/DBEntities/User.java" />
   </component>
   <component name="ExcludeFromValidation">
     <file url="file://$PROJECT_DIR$/src/main/java/kernbeisser/DBEntities/User.java" />

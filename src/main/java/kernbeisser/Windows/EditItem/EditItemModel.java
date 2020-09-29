@@ -52,18 +52,6 @@ public class EditItemModel implements IModel<EditItemController> {
     }
   }
 
-  private void addItem(Article article) {
-    article.setSurcharge(article.getSurchargeTable().getSurcharge());
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    article.setId(0);
-    em.persist(article.unwrapProxy());
-    em.flush();
-    et.commit();
-    em.close();
-  }
-
   MetricUnits[] getAllUnits() {
     return MetricUnits.values();
   }
