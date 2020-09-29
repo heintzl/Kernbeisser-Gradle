@@ -2,7 +2,6 @@ package kernbeisser.Windows.EditItem;
 
 import java.util.Collection;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
