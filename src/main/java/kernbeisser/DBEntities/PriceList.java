@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.*;
+import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
@@ -110,9 +111,9 @@ public class PriceList implements Serializable {
     return out;
   }
 
-  public Collection<PriceList> getAllPriceLists() {
+  public List<PriceList> getAllPriceLists() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<PriceList> out =
+    List<PriceList> out =
         em.createQuery(
                 "select p from PriceList p where p.superPriceList = "
                     + getId()
@@ -126,5 +127,58 @@ public class PriceList implements Serializable {
   @Override
   public String toString() {
     return Tools.decide(this::getName, "Preisliste[" + id + "]");
+  }
+
+  public static Node<PriceList> asNode(Node<PriceList> parent, PriceList priceList) {
+    return new Node<PriceList>() {
+      @Override
+      public String toString() {
+        return getValue().name;
+      }
+
+      @Override
+      public PriceList getValue() {
+        return priceList;
+      }
+
+      @Override
+      public List<Node<PriceList>> getNodes() {
+        return Tools.transform(priceList.getAllPriceLists(), p -> asNode(this, p));
+      }
+
+      @Override
+      public Node<? extends PriceList> getParent() {
+        return parent;
+      }
+    };
+  }
+
+  public static Node<PriceList> getPriceListsAsNode() {
+    return new Node<PriceList>() {
+      @Override
+      public PriceList getValue() {
+        return new PriceList() {
+          @Override
+          public String toString() {
+            return "Preislisten";
+          }
+        };
+      }
+
+      @Override
+      public String toString() {
+        return "Preislisten";
+      }
+
+      @Override
+      public List<Node<PriceList>> getNodes() {
+        return Tools.transform(PriceList.getAllHeadPriceLists(), e -> PriceList.asNode(this, e));
+      }
+
+      @Override
+      public Node<? extends PriceList> getParent() {
+        return null;
+      }
+    };
   }
 }

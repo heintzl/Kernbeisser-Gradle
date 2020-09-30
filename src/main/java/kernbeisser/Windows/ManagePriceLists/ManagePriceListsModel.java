@@ -1,24 +1,12 @@
 package kernbeisser.Windows.ManagePriceLists;
 
 import javax.persistence.PersistenceException;
-import javax.swing.tree.TreeModel;
-import kernbeisser.CustomComponents.PriceListTree;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import org.hibernate.Session;
 
 public class ManagePriceListsModel implements IModel<ManagePriceListsController> {
-
-  private TreeModel PriceListTreeModel;
-
-  public TreeModel getPriceListTreeModel() {
-    return PriceListTreeModel;
-  }
-
-  void refresh() {
-    PriceListTreeModel = new PriceListTree(false).getModel();
-  }
 
   void savePriceList(String name, PriceList superPriceList) {
     PriceList.savePriceList(name, superPriceList);
