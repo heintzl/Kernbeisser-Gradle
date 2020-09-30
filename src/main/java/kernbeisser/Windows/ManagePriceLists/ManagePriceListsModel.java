@@ -1,9 +1,14 @@
 package kernbeisser.Windows.ManagePriceLists;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
+import kernbeisser.CustomComponents.ObjectTree.Node;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 import org.hibernate.Session;
 
 public class ManagePriceListsModel implements IModel<ManagePriceListsController> {
@@ -16,8 +21,39 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
     PriceList.deletePriceList(toDelete);
   }
 
-  public void renamePriceList(PriceList toRename, String newName) {
+  public void renamePriceList(PriceList toRename, String newName) throws PersistenceException {
     toRename.setName(newName);
     Tools.runInSession(em -> em.unwrap(Session.class).update(toRename));
+  }
+
+  public void setSuperPriceList(PriceList target, PriceList destination) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.createQuery("update PriceList set superPriceList = :d where id = :t")
+        .setParameter("d", destination)
+        .setParameter("t", target.getId())
+        .executeUpdate();
+    em.flush();
+    et.commit();
+  }
+
+  public void add(Node<PriceList> selectedNode, String requestName) throws PersistenceException {
+    PriceList newPriceList = new PriceList();
+    newPriceList.setName(requestName);
+    newPriceList.setSuperPriceList(selectedNode.getValue());
+    Tools.persist(newPriceList);
+  }
+
+  public void moveItems(PriceList target, PriceList destination) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.createQuery("UPDATE Article set priceList = :d where priceList = :t")
+        .setParameter("t", target)
+        .setParameter("d", destination)
+        .executeUpdate();
+    em.flush();
+    et.commit();
   }
 }

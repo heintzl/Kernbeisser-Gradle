@@ -129,6 +129,13 @@ public class PriceList implements Serializable {
     return Tools.decide(this::getName, "Preisliste[" + id + "]");
   }
 
+  public List<Article> getAllArticles() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery("select a from Article a where a.priceList = :p", Article.class)
+        .setParameter("p", this)
+        .getResultList();
+  }
+
   public static Node<PriceList> asNode(Node<PriceList> parent, PriceList priceList) {
     return new Node<PriceList>() {
       @Override

@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ManagePriceLists;
 
+import java.util.function.Consumer;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -7,8 +8,11 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.Window;
+import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsView implements IView<ManagePriceListsController> {
@@ -19,6 +23,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   private JButton moveArticles;
   private ObjectTree<PriceList> priceLists;
   private JPanel main;
+  private JButton moveItems;
 
   @Linked private ManagePriceListsController controller;
 
@@ -28,6 +33,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     deletePriceList.addActionListener(controller);
     renamePriceList.addActionListener(controller);
     moveArticles.addActionListener(controller);
+    moveItems.addActionListener(controller);
   }
 
   @Override
@@ -37,13 +43,80 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   private void createUIComponents() {
     priceLists = new ObjectTree<>(controller.getNode());
+    priceLists.addSelectionListener(
+        e -> articles.setObjects(controller.getAllArticles(e.getValue())));
     articles =
         new ObjectTable<>(
-            Column.create("Name", Article::getName),
-            Column.create("Lieferant", Article::getSupplier));
+            Column.create("Name", Article::getName, SwingConstants.LEFT),
+            Column.create("Lieferant", Article::getSupplier, SwingConstants.LEFT));
   }
 
   Node<PriceList> getSelectedNode() {
     return priceLists.getSelected();
+  }
+
+  public boolean commitMovement(PriceList from, PriceList to) {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Sind sie sich sicher, das die Preisliste '"
+                + from.getName()
+                + "',\nin die Preisliste '"
+                + to.getName()
+                + "' verschoben werden soll?")
+        == 0;
+  }
+
+  private Window w;
+
+  public void requiresPriceList(Consumer<Node<PriceList>> consumer) {
+    ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
+    priceListObjectTree.addSelectionListener(
+        e -> {
+          w.back();
+          consumer.accept(e);
+        });
+    w =
+        IController.createFakeController(priceListObjectTree)
+            .openAsWindow(getWindow(), SubWindow::new);
+    w.setTitle("Preisliste auswählen");
+  }
+
+  public void selectionRequired() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Bitte wählen sie zunächst eine Preisliste aus.");
+  }
+
+  public void requestRepaint() {
+    priceLists.refresh();
+  }
+
+  public void cannotMoveIntoSelf() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Die Preisliste kann nicht in sich selbst verschoben werden!");
+  }
+
+  public String requestName() {
+    return JOptionPane.showInputDialog(getTopComponent(), "Bitte geben sie den Namen ein");
+  }
+
+  public boolean commitItemMovement(PriceList from, PriceList to) {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Sind sie sich sicher, das die Artikel der Preisliste '"
+                + from.getName()
+                + "',\nin die Preisliste '"
+                + to.getName()
+                + "' verschoben werden soll?")
+        == 0;
+  }
+
+  public void cannotDelete() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Die Preisliste kann nicht gelöscht werden, da Artikel oder Preislisten auf diese verweissen.");
+  }
+
+  public void nameAlreadyExists(String name) {
+    JOptionPane.showMessageDialog(getTopComponent(), "Der Name " + name + " existiert bereits.");
   }
 }

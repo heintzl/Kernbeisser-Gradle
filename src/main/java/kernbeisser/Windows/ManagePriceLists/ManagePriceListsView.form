@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="1002" height="674"/>
+      <xy x="20" y="20" width="1004" height="674"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -50,19 +50,16 @@
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
+                      <actionCommand value="add"/>
                       <text value="Preisliste Hinzufügen"/>
                     </properties>
                   </component>
-                  <hspacer id="1729d">
-                    <constraints>
-                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                  </hspacer>
                   <component id="aa809" class="javax.swing.JButton" binding="deletePriceList">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
+                      <actionCommand value="delete"/>
                       <text value="Preisliste Löschen"/>
                     </properties>
                   </component>
@@ -71,7 +68,17 @@
                       <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
+                      <actionCommand value="rename"/>
                       <text value="Preisliste Umbennen"/>
+                    </properties>
+                  </component>
+                  <component id="8adee" class="javax.swing.JButton" binding="moveArticles">
+                    <constraints>
+                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="move"/>
+                      <text value="Preisliste verschieben"/>
                     </properties>
                   </component>
                 </children>
@@ -96,19 +103,20 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="8adee" class="javax.swing.JButton" binding="moveArticles">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Artikel in eine andere Preisliste verschieben"/>
-                </properties>
-              </component>
               <hspacer id="26cd1">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
+              <component id="23356" class="javax.swing.JButton" binding="moveItems">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <actionCommand value="move_items"/>
+                  <text value="Artikel aus der Preisliste verschieben"/>
+                </properties>
+              </component>
             </children>
           </grid>
           <scrollpane id="22669">
