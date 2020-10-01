@@ -259,22 +259,6 @@ public class DataImportController implements IController<DataImportView, DataImp
     }
   }
 
-  private void generateUsername(HashSet<String> usernames, User user) {
-    for (int i = 1; i < user.getSurname().length(); i++) {
-      String generatedUsername =
-          (user.getFirstName().split(" ")[0] + "." + user.getSurname().substring(0, i))
-              .toLowerCase();
-      if (!usernames.contains(generatedUsername)) {
-        user.setUsername(generatedUsername);
-        usernames.add(generatedUsername);
-        break;
-      }
-    }
-    if (user.getUsername() == null) {
-      user.setUsername(user.getFirstName() + "." + user.getSurname() + new Random().nextLong());
-    }
-  }
-
   private void parsePriceLists(File f) {
     try {
       List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);

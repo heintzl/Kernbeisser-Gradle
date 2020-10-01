@@ -56,17 +56,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton editUserGroup;
 
   @Override
-  public void initialize(MenuController controller) {
-    // Releasesettings
-    printBonFromPast.setEnabled(false);
-    order.setEnabled(false);
-    editPriceList.setEnabled(false);
-    // editSurchargeTables.setEnabled(false);
-    placeHolderControllerButton.setEnabled(false);
-    placeHolderControllerButton1.setEnabled(false);
-    placeHolderControllerButton2.setEnabled(false);
-    // Releasesettings
-  }
+  public void initialize(MenuController controller) {}
 
   @Override
   public @NotNull JComponent getContent() {

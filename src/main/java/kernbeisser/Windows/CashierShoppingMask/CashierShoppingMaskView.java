@@ -27,10 +27,6 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
     searchBoxView = searchBoxController.getView();
   }
 
-  void setSearchBoxView(SearchBoxView<User> userSearchBoxView) {
-    this.searchBoxView = userSearchBoxView;
-  }
-
   public void setStartFor(String firstName, String surname) {
     openShoppingMask.setText("Einkauf für " + surname + ", " + firstName + " beginnen");
   }

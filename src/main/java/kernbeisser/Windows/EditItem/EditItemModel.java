@@ -2,7 +2,6 @@ package kernbeisser.Windows.EditItem;
 
 import java.util.Collection;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
@@ -50,18 +49,6 @@ public class EditItemModel implements IModel<EditItemController> {
     } finally {
       em.close();
     }
-  }
-
-  private void addItem(Article article) {
-    article.setSurcharge(article.getSurchargeTable().getSurcharge());
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    article.setId(0);
-    em.persist(article.unwrapProxy());
-    em.flush();
-    et.commit();
-    em.close();
   }
 
   MetricUnits[] getAllUnits() {

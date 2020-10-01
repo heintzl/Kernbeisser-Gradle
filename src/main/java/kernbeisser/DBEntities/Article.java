@@ -217,13 +217,4 @@ public class Article extends ArticleBase {
   public String toString() {
     return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");
   }
-
-  public Article unwrapProxy() {
-    if (!Proxy.isProxyInstance(this)) {
-      return this;
-    }
-    Article out = new Article();
-    Tools.copyInto(this, out);
-    return out;
-  }
 }

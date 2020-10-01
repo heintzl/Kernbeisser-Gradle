@@ -2,8 +2,9 @@ package kernbeisser.Windows.EditItems;
 
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.PriceListTree;
+import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.EditItem.EditItemController;
 import kernbeisser.Windows.MVC.IController;
@@ -74,13 +75,15 @@ public class EditItemsController implements IController<EditItemsView, EditItems
   private Window w = null;
 
   void openPriceListSelection() {
-    PriceListTree pt = new PriceListTree();
-    pt.addSelectionListener(
+    ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
+    priceListObjectTree.addSelectionListener(
         e -> {
           objectViewController.setSearch(e.toString());
           objectViewController.search();
           w.back();
         });
-    w = IController.createFakeController(pt).openAsWindow(getView().getWindow(), SubWindow::new);
+    w =
+        IController.createFakeController(priceListObjectTree)
+            .openAsWindow(getView().getWindow(), SubWindow::new);
   }
 }

@@ -16,8 +16,7 @@ import org.jfree.chart.JFreeChart;
 public class Users {
 
   public static JFreeChart createBuyChart(User user, YearMonth from, YearMonth to) {
-      @Cleanup
-      EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     HashMap<YearMonth, Integer> result = new HashMap<>();
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<Purchase> criteriaQuery = cb.createQuery(Purchase.class);
