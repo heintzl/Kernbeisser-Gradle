@@ -227,6 +227,7 @@ public class DataImportController implements IController<DataImportView, DataImp
         users[0].setPassword(defaultPassword);
         users[1].setPassword(defaultPassword);
 
+        userGroup.setValue(Users.getValue(rawUserData));
         em.persist(userGroup);
 
         users[0].getPermissions().add(importPermission);

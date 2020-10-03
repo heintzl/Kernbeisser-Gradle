@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="@localhost" uuid="46f3935b-5795-43fb-b505-86b0626b1524">
+    <data-source source="LOCAL" name="jdbc:mysql://jdbc:mysql://localhost/kernbeisser:3306" uuid="d123860c-7fb6-42b3-bb68-1fe71d7f506f">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/kernbeisser</jdbc-url>
-      <driver-properties>
-        <property name="serverTimezone" value="UTC" />
-      </driver-properties>
-      <time-zone>CET</time-zone>
+      <jdbc-url>jdbc:mysql://jdbc:mysql://localhost/kernbeisser:3306</jdbc-url>
     </data-source>
   </component>
 </project>
