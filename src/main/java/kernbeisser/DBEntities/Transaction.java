@@ -113,6 +113,8 @@ public class Transaction {
     em.flush();
     et.commit();
     em.close();
+    from.getUserGroup().setValue(from.getUserGroup().getValue() - value);
+    to.getUserGroup().setValue(to.getUserGroup().getValue() + value);
   }
 
   public static boolean isValidTransaction(Transaction transaction) {
