@@ -275,6 +275,7 @@ public class ShoppingMaskUIController
                   () -> {
                     shoppingCartController.getItems().clear();
                     getView().back();
+                    view.rememberLogging();
                     LogInModel.refreshLogInData();
                   },
                   new Dimension(view.getShoppingListSize().width, view.getContent().getHeight()))

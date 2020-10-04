@@ -868,4 +868,18 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public void setCheckoutEnable(boolean b) {
     checkout.setEnabled(b);
   }
+
+  public void rememberLogging() {
+    if (JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Ich habe den Einkauf in das Log-Buch eingetragen",
+            "Haben sie den Einkauf in das Log-Buch eingetragen",
+            JOptionPane.YES_OPTION,
+            JOptionPane.INFORMATION_MESSAGE)
+        != 0) {
+      JOptionPane.showMessageDialog(
+          getTopComponent(),
+          "Ein Einkauf muss im Log-Buch notiert werden,\num eine zweite Sicherheit zu schaffen.");
+    }
+  }
 }
