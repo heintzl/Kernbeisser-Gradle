@@ -39,6 +39,7 @@ public class Main {
     logger.info("Free memory at start " + Runtime.getRuntime().freeMemory() / 1048576 + "MB");
     // Runs the jar with more memory if not enough is reserved
     checkRequiredMemory(args);
+    DBConnection.getEntityManager();
     buildEnvironment();
     checkVersion();
     if (!Setting.DB_INITIALIZED.getBooleanValue()) {

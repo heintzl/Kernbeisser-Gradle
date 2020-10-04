@@ -12,16 +12,16 @@ public enum Setting {
   DB_INITIALIZED("false"),
   VAT_LOW("0.07") {
     @Override
-    public void setValue(Object s) {
-      super.setValue(s);
+    public void changeValue(Object s) {
+      super.changeValue(s);
       JOptionPane.showMessageDialog(
           null, "Bitte starten sie das Programm neu um mwSt. zu aktualiesieren");
     }
   },
   VAT_HIGH("0.19") {
     @Override
-    public void setValue(Object s) {
-      super.setValue(s);
+    public void changeValue(Object s) {
+      super.changeValue(s);
       JOptionPane.showMessageDialog(
           null, "Bitte starten sie das Programm neu um mwSt. zu aktualiesieren");
     }
@@ -47,7 +47,7 @@ public enum Setting {
   APP_DEFAULT_HEIGHT("1000"),
   CATALOG_RUN_GC_UNDER("20"),
   LABEL_SCALE_FACTOR("1."),
-  WARN_OVER_TRANSACTION_VALUE("1000.00"),
+  WARN_OVER_TRANSACTION_VALUE("1000."),
   OPEN_MULTIPLE_SHOPPING_MASK("true");
 
   // defines the type to like in java style
@@ -57,6 +57,7 @@ public enum Setting {
   // 0      int
   // 0L     long
   // any    String
+  private String value;
   private final String defaultValue;
 
   Setting(String defaultValue) {
@@ -64,7 +65,7 @@ public enum Setting {
   }
 
   Setting(@NotNull Enum<?> e) {
-    this.defaultValue = e.name();
+    this(e.name());
   }
 
   public String getStringValue() {
@@ -73,7 +74,7 @@ public enum Setting {
 
   public double getDoubleValue() {
     try {
-      return Double.parseDouble(SettingValue.getValue(this));
+      return Double.parseDouble(getValue());
     } catch (NumberFormatException e) {
       Tools.showUnexpectedErrorWarning(e);
       StackTraceElement element = Tools.getCallerStackTraceElement(1);
@@ -92,7 +93,7 @@ public enum Setting {
 
   public int getIntValue() {
     try {
-      return Integer.parseInt(SettingValue.getValue(this));
+      return Integer.parseInt(getValue());
     } catch (NumberFormatException e) {
       Tools.showUnexpectedErrorWarning(e);
       StackTraceElement element = Tools.getCallerStackTraceElement(1);
@@ -111,7 +112,7 @@ public enum Setting {
 
   public long getLongValue() {
     try {
-      return Long.parseLong(SettingValue.getValue(this));
+      return Long.parseLong((getValue()));
     } catch (NumberFormatException e) {
       Tools.showUnexpectedErrorWarning(e);
       StackTraceElement element = Tools.getCallerStackTraceElement(1);
@@ -130,7 +131,7 @@ public enum Setting {
 
   public float getFloatValue() {
     try {
-      return Float.parseFloat(SettingValue.getValue(this));
+      return Float.parseFloat(getValue());
     } catch (NumberFormatException e) {
       Tools.showUnexpectedErrorWarning(e);
       StackTraceElement element = Tools.getCallerStackTraceElement(1);
@@ -148,17 +149,17 @@ public enum Setting {
   }
 
   public int getKeyEventValue() {
-    int value = 0;
+    int vKey = 0;
     try {
-      value = KeyEvent.class.getDeclaredField(this.getStringValue()).getInt(null);
+      vKey = KeyEvent.class.getDeclaredField(getValue()).getInt(null);
     } catch (IllegalAccessException | NoSuchFieldException e) {
       e.printStackTrace();
     }
-    return value;
+    return vKey;
   }
 
   public <T extends Enum<T>> T getEnumValue(Class<T> c) {
-    return Enum.valueOf(c, SettingValue.getValue(this));
+    return Enum.valueOf(c, getValue());
   }
 
   public String getDefaultValue() {
@@ -184,8 +185,13 @@ public enum Setting {
     }
   }
 
-  public void setValue(Object s) {
+  public void changeValue(Object s) {
     SettingValue.setValue(this, String.valueOf(s));
+    value = String.valueOf(s);
+  }
+
+  public void setValue(Object s) {
+    value = String.valueOf(s);
   }
 
   public static Class<?> getExpectedType(@NotNull Setting setting) {
@@ -205,5 +211,9 @@ public enum Setting {
       return Boolean.class;
     }
     return String.class;
+  }
+
+  public String getValue() {
+    return (this.value = this.value == null ? SettingValue.getValue(this) : value);
   }
 }

@@ -22,12 +22,17 @@ public class SurchargeTable implements Serializable, Cloneable {
   public static final SurchargeTable DEFAULT;
 
   static {
-    SurchargeTable standard = new SurchargeTable();
+    SurchargeTable standard =
+        new SurchargeTable() {
+          @Override
+          public double getSurcharge() {
+            return Setting.SURCHARGE_DEFAULT.getDoubleValue();
+          }
+        };
     standard.from = -1;
     standard.to = -1;
     standard.name = "DEFAULT";
     standard.supplier = null;
-    standard.surcharge = Setting.SURCHARGE_DEFAULT.getDoubleValue();
     DEFAULT = standard;
   }
 

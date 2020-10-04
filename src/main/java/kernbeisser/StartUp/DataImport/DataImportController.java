@@ -110,7 +110,7 @@ public class DataImportController implements IController<DataImportView, DataImp
       Main.logger.info("Starting importing data");
       File jsonPath = new File(view.getFilePath()).getParentFile();
       JSONObject path = extractJSON();
-      Setting.DB_INITIALIZED.setValue(true);
+      Setting.DB_INITIALIZED.changeValue(true);
       if (view.importItems()) {
         JSONObject itemPath = path.getJSONObject("ItemData");
         File suppliers = new File(jsonPath, itemPath.getString("Suppliers"));
@@ -336,7 +336,7 @@ public class DataImportController implements IController<DataImportView, DataImp
 
   void cancel() {
     view.back();
-    Setting.DB_INITIALIZED.setValue(true);
+    Setting.DB_INITIALIZED.changeValue(true);
   }
 
   @Override

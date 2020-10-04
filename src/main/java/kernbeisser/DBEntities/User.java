@@ -272,8 +272,7 @@ public class User implements Serializable {
   public Collection<Purchase> getAllPurchases() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Purchase> out =
-        em.createQuery(
-                "select p from Purchase p where p.session.customer.id = :uid", Purchase.class)
+        em.createQuery("select p from Purchase p where p.session.customer.id = :id", Purchase.class)
             .setParameter("id", id)
             .getResultList();
     em.close();

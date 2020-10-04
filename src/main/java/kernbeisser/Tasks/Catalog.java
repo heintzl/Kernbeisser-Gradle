@@ -1,6 +1,5 @@
 package kernbeisser.Tasks;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,7 +60,7 @@ public class Catalog {
               persistCatalog(newCatalog, pm, p);
               pm.close();
               // setDepositByReference();
-              Setting.INFO_LINE_LAST_CATALOG.setValue(ConfigManager.getCatalogInfoLine());
+              Setting.INFO_LINE_LAST_CATALOG.changeValue(ConfigManager.getCatalogInfoLine());
             })
         .start();
   }

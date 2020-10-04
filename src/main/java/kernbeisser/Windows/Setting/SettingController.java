@@ -103,7 +103,7 @@ public class SettingController implements IController<SettingView, SettingModel>
     if (view.commitResetSettings()) {
       for (Setting value : Setting.values()) {
         if (value != Setting.DB_INITIALIZED) {
-          value.setValue(value.getDefaultValue());
+          value.changeValue(value.getDefaultValue());
         }
       }
       getView().setValues(SettingValue.getAll(null));

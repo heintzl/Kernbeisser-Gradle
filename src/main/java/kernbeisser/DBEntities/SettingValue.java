@@ -1,13 +1,11 @@
 package kernbeisser.DBEntities;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Main;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -20,7 +18,14 @@ import lombok.Setter;
 @EqualsAndHashCode(doNotUseGetters = true)
 public class SettingValue {
 
-  private static HashMap<Setting, String> settingValueHashMap;
+  @Getter(lazy = true)
+  private static final HashMap<Setting, String> settingValueHashMap = load();
+
+  private static HashMap<Setting, String> load() {
+    HashMap<Setting, String> out = new HashMap<>();
+    getAll(null).forEach(e -> out.put(e.setting, e.value));
+    return out;
+  }
 
   @Id
   @GeneratedValue
@@ -40,49 +45,8 @@ public class SettingValue {
   private String value;
 
   public static String getValue(Setting s) {
-    if (settingValueHashMap == null) {
-      settingValueHashMap = new HashMap<>();
-      String[] allSettingNames =
-          Arrays.stream(Setting.class.getEnumConstants()).map(Enum::name).toArray(String[]::new);
-      String condition = "where c.setting IN ('" + String.join("','", allSettingNames) + "')";
-      getAll(condition).forEach(e -> settingValueHashMap.put(e.setting, e.value));
-      logSettings();
-    }
-    String out = settingValueHashMap.get(s);
-    if (out == null) {
-      out = loadOrCreateSettingValue(s);
-      settingValueHashMap.put(s, out);
-    }
-    return out;
-  }
-
-  private static void logSettings() {
-    StringBuilder sb = new StringBuilder("Setting Values:");
-    settingValueHashMap.forEach(
-        (a, b) -> sb.append("\n").append(a).append(" = '").append(b).append("'"));
-    Main.logger.info(sb);
-  }
-
-  public static String loadOrCreateSettingValue(Setting setting) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      return em.createQuery("select s from SettingValue s where setting = :sn", SettingValue.class)
-          .setParameter("sn", setting)
-          .getSingleResult()
-          .value;
-    } catch (NoResultException e) {
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      SettingValue value = new SettingValue();
-      value.value = setting.getDefaultValue();
-      value.setSetting(setting);
-      em.persist(value);
-      em.flush();
-      et.commit();
-      return loadOrCreateSettingValue(setting);
-    } finally {
-      em.close();
-    }
+    String out = getSettingValueHashMap().get(s);
+    return out == null ? s.getDefaultValue() : out;
   }
 
   public static void setValue(Setting setting, String value) {
@@ -97,13 +61,15 @@ public class SettingValue {
               .getSingleResult();
       settingValue.setValue(value);
       em.persist(settingValue);
-    } catch (NoResultException ignored) {
-      em.close();
-      return;
+    } catch (NoResultException noResultException) {
+      SettingValue settingValue = new SettingValue();
+      settingValue.setting = setting;
+      settingValue.value = value;
+      em.persist(settingValue);
     }
     et.commit();
     em.close();
-    settingValueHashMap.replace(setting, value);
+    getSettingValueHashMap().replace(setting, value);
   }
 
   public static List<SettingValue> getAll(String condition) {
