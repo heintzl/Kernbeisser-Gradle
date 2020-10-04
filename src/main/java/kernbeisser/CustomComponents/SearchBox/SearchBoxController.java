@@ -2,11 +2,14 @@ package kernbeisser.CustomComponents.SearchBox;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
+import javax.persistence.EntityManager;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.Searchable;
+import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
 
 public class SearchBoxController<T> implements IController<SearchBoxView<T>, SearchBoxModel<T>> {
@@ -18,8 +21,17 @@ public class SearchBoxController<T> implements IController<SearchBoxView<T>, Sea
     this.model = new SearchBoxModel<>(searchFunction, columns);
   }
 
+  public T tryToRefresh(T t) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    try {
+      return (T) em.find(t.getClass(), Tools.getId(t));
+    } catch (Exception e) {
+      return t;
+    }
+  }
+
   public T getSelectedObject() {
-    return view.getSelectedObject();
+    return tryToRefresh(view.getSelectedObject());
   }
 
   public void search() {
@@ -36,9 +48,9 @@ public class SearchBoxController<T> implements IController<SearchBoxView<T>, Sea
     }
     if (model.getLastSelectedObject() != null
         && view.getSelectedObject().equals(model.getLastSelectedObject())) {
-      runDoubleClickListener(view.getSelectedObject());
+      runDoubleClickListener(getSelectedObject());
     }
-    runSelectionListener(view.getSelectedObject());
+    runSelectionListener(getSelectedObject());
     model.setLastSelectedObject(view.getSelectedObject());
   }
 

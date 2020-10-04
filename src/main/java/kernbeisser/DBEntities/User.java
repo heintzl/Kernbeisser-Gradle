@@ -306,10 +306,6 @@ public class User implements Serializable {
     }
   }
 
-  public User(User other) {
-    Tools.copyInto(other, this);
-  }
-
   public static User generateBeginnerUser() {
     User user = new User();
     user.permissions.add(PermissionConstants.BEGINNER.getPermission());

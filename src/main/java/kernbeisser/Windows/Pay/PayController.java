@@ -49,6 +49,7 @@ public class PayController implements IController<PayView, PayModel> {
           model.print(purchase);
         }
         view.back();
+        model.runTransferCompleted();
       } catch (InvalidTransactionException e) {
         view.notEnoughValue();
       }
@@ -56,10 +57,6 @@ public class PayController implements IController<PayView, PayModel> {
     } catch (PersistenceException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
-  }
-
-  double getPrice(ShoppingItem item) {
-    return item.getItemRetailPrice();
   }
 
   @Override

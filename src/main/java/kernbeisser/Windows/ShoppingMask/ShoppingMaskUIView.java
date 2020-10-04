@@ -864,4 +864,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public boolean processKeyboardInput(KeyEvent e) {
     return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
   }
+
+  public void setCheckoutEnable(boolean b) {
+    checkout.setEnabled(b);
+  }
 }
