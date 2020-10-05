@@ -62,4 +62,12 @@ public class ShoppingCartModel implements IModel<ShoppingCartController> {
   public double getUserSurcharge() {
     return userSurcharge;
   }
+
+  public double getTotalSum() {
+    double sum = 0;
+    for (ShoppingItem item : shoppingItems) {
+      sum += item.getRetailPrice();
+    }
+    return sum;
+  }
 }

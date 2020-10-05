@@ -869,10 +869,12 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     checkout.setEnabled(b);
   }
 
-  public void rememberLogging() {
+  public void rememberLogging(String firstname, String surname, double value) {
     if (JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Ich habe den Einkauf in das Log-Buch eingetragen",
+            String.format(
+                "Haben sie den Einkauf in höhe von %.2f€ von %s, %s in das Log-Buch eingetragen?",
+                value, firstname, surname),
             "Haben sie den Einkauf in das Log-Buch eingetragen",
             JOptionPane.YES_OPTION,
             JOptionPane.INFORMATION_MESSAGE)

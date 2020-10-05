@@ -273,9 +273,12 @@ public class ShoppingMaskUIController
                   model.getSaleSession(),
                   shoppingCartController.getItems(),
                   () -> {
+                    view.rememberLogging(
+                        model.getSaleSession().getCustomer().getFirstName(),
+                        model.getSaleSession().getCustomer().getSurname(),
+                        shoppingCartController.getModel().getTotalSum());
                     shoppingCartController.getItems().clear();
                     getView().back();
-                    view.rememberLogging();
                     LogInModel.refreshLogInData();
                   },
                   new Dimension(view.getShoppingListSize().width, view.getContent().getHeight()))
