@@ -1,25 +1,30 @@
 package kernbeisser.Windows.Purchase;
 
-import java.util.Collection;
 import javax.swing.*;
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
+import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class PurchaseView implements IView<PurchaseController> {
   private JButton finish;
-  private ObjectTable<ShoppingItem> items;
   private JLabel date;
-  private JLabel sum;
   private JLabel count;
   private JLabel seller;
   private JLabel customer;
   private JPanel main;
+  private JLabel header;
+  private JButton printBon;
+  private JLabel countL;
+  private JLabel customerL;
+  private JLabel sellerL;
+  private ShoppingCartView cartView;
 
   @Linked private PurchaseController controller;
+
+  @Linked private ShoppingCartController cartController;
 
   void setDate(String date) {
     this.date.setText(date);
@@ -33,30 +38,23 @@ public class PurchaseView implements IView<PurchaseController> {
     seller.setText(sellerName);
   }
 
-  void setSum(double sum) {
-    this.sum.setText(sum + "€");
-  }
-
   void setItemCount(int c) {
     count.setText(c + "");
   }
 
-  void setItems(Collection<ShoppingItem> items) {
-    this.items.setObjects(items);
-  }
-
   private void createUIComponents() {
-    items =
-        new ObjectTable<ShoppingItem>(
-            Column.create("Artikelname", ShoppingItem::getName),
-            Column.create("Anzahl", ShoppingItem::getItemMultiplier),
-            Column.create("Verkaufs Preis", e -> controller.getPrice(e) + "€"),
-            Column.create("Netto Preis", e -> controller.getPrice(e) + "€"));
+    cartView = cartController.getView();
   }
 
   @Override
   public void initialize(PurchaseController controller) {
     finish.addActionListener((e) -> back());
+    printBon.addActionListener(e -> controller.printBon());
+
+    double scale = 1.5;
+    Tools.scaleFonts(
+        scale, count, seller, customer, main, printBon, countL, customerL, sellerL, finish);
+    Tools.scaleFonts(scale * 2, date, header);
   }
 
   @Override

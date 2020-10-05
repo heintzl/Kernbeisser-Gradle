@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.*;
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
@@ -314,5 +317,32 @@ public class User implements Serializable {
 
   public int getIdWithoutPermission() {
     return id;
+  }
+
+  public double valueAt(Instant instant) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    CriteriaBuilder builder = em.getCriteriaBuilder();
+    builder.createQuery(Transaction.class);
+    CriteriaQuery<Transaction> query = builder.createQuery(Transaction.class);
+    Root<Transaction> root = query.from(Transaction.class);
+    query
+        .select(root)
+        .where(
+            builder.and(
+                builder.or(
+                    builder.equal(
+                        root.get("to").get("userGroup").get("id"), getUserGroup().getId()),
+                    builder.equal(
+                        root.get("from").get("userGroup").get("id"), getUserGroup().getId()))),
+            builder.lessThan(root.get("date"), instant));
+    double value = 0;
+    for (Transaction transaction : em.createQuery(query).getResultList()) {
+      if (transaction.getFrom().getUserGroup().getId() == getUserGroup().getId()) {
+        value -= transaction.getValue();
+      } else {
+        value += transaction.getValue();
+      }
+    }
+    return value;
   }
 }

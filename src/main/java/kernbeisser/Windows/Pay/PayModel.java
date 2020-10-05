@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Pay;
 
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -106,10 +107,10 @@ public class PayModel implements IModel<PayController> {
     return PrintServiceLookup.lookupPrintServices(null, null);
   }
 
-  void print(Purchase purchase) {
+  public static void print(Purchase purchase, Collection<ShoppingItem> items) {
     try {
       ReportManager invoice = new ReportManager();
-      ReportManager.initInvoicePrint(shoppingCart, purchase);
+      ReportManager.initInvoicePrint(items, purchase);
       invoice.sendToPrinter();
     } catch (JRException e) {
       Tools.showUnexpectedErrorWarning(e);

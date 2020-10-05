@@ -11,6 +11,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.Purchase.PurchaseController;
+import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class UserInfoController implements IController<UserInfoView, UserInfoModel> {
@@ -135,6 +136,7 @@ public class UserInfoController implements IController<UserInfoView, UserInfoMod
   }
 
   public void openPurchase() {
-    new PurchaseController(view.getSelectedPurchase());
+    new PurchaseController(view.getSelectedPurchase())
+        .openAsWindow(view.getWindow(), SubWindow::new);
   }
 }

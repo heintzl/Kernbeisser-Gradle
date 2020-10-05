@@ -46,7 +46,7 @@ public class PayController implements IController<PayView, PayModel> {
         purchase =
             model.pay(model.getSaleSession(), model.getShoppingCart(), model.shoppingCartSum());
         if (printReceipt) {
-          model.print(purchase);
+          model.print(purchase, model.getShoppingCart());
         }
         view.back();
         model.runTransferCompleted();
