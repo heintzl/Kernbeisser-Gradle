@@ -11,6 +11,7 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.EditUser.EditUserController;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
@@ -272,18 +273,18 @@ public class ShoppingMaskUIController
                   model.getSaleSession(),
                   shoppingCartController.getItems(),
                   () -> {
+                    view.rememberLogging(
+                        model.getSaleSession().getCustomer().getFirstName(),
+                        model.getSaleSession().getCustomer().getSurname(),
+                        shoppingCartController.getModel().getTotalSum());
+                    shoppingCartController.getItems().clear();
                     getView().back();
+                    LogInModel.refreshLogInData();
                   },
                   new Dimension(view.getShoppingListSize().width, view.getContent().getHeight()))
               .openAsWindow(view.getWindow(), SubWindow::new);
-      window.addCloseEventListener(
-          e -> {
-            PayController controller = (PayController) window.getController();
-            if (controller.getModel().wasSuccessful()) {
-              model.setSuccessful(true);
-              view.back();
-            }
-          });
+      view.setCheckoutEnable(false);
+      window.addCloseEventListener(e -> view.setCheckoutEnable(true));
     } else {
       view.messageCartIsEmpty();
     }
@@ -291,9 +292,7 @@ public class ShoppingMaskUIController
 
   @Override
   public boolean commitClose() {
-    return model.isSuccessful()
-        || shoppingCartController.getItems().size() == 0
-        || view.confirmClose();
+    return shoppingCartController.getItems().size() == 0 || view.confirmClose();
   }
 
   void openSearchWindow() {

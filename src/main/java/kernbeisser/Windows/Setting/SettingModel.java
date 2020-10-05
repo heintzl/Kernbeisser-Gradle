@@ -7,7 +7,7 @@ public class SettingModel implements IModel<SettingController> {
   private SettingValue settingValue;
 
   public void edit(String value) {
-    settingValue.getSetting().setValue(value);
+    settingValue.getSetting().changeValue(value);
   }
 
   public void setSelectedValue(SettingValue settingValue) {

@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.*;
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
@@ -272,8 +275,7 @@ public class User implements Serializable {
   public Collection<Purchase> getAllPurchases() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Purchase> out =
-        em.createQuery(
-                "select p from Purchase p where p.session.customer.id = :uid", Purchase.class)
+        em.createQuery("select p from Purchase p where p.session.customer.id = :id", Purchase.class)
             .setParameter("id", id)
             .getResultList();
     em.close();
@@ -307,10 +309,6 @@ public class User implements Serializable {
     }
   }
 
-  public User(User other) {
-    Tools.copyInto(other, this);
-  }
-
   public static User generateBeginnerUser() {
     User user = new User();
     user.permissions.add(PermissionConstants.BEGINNER.getPermission());
@@ -319,5 +317,32 @@ public class User implements Serializable {
 
   public int getIdWithoutPermission() {
     return id;
+  }
+
+  public double valueAt(Instant instant) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    CriteriaBuilder builder = em.getCriteriaBuilder();
+    builder.createQuery(Transaction.class);
+    CriteriaQuery<Transaction> query = builder.createQuery(Transaction.class);
+    Root<Transaction> root = query.from(Transaction.class);
+    query
+        .select(root)
+        .where(
+            builder.and(
+                builder.or(
+                    builder.equal(
+                        root.get("to").get("userGroup").get("id"), getUserGroup().getId()),
+                    builder.equal(
+                        root.get("from").get("userGroup").get("id"), getUserGroup().getId()))),
+            builder.lessThan(root.get("date"), instant));
+    double value = 0;
+    for (Transaction transaction : em.createQuery(query).getResultList()) {
+      if (transaction.getFrom().getUserGroup().getId() == getUserGroup().getId()) {
+        value -= transaction.getValue();
+      } else {
+        value += transaction.getValue();
+      }
+    }
+    return value;
   }
 }

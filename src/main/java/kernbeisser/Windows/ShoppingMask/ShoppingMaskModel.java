@@ -11,8 +11,8 @@ import lombok.Data;
 public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
   private Article selected = null;
   private double value;
-  private boolean successful = false;
   private SaleSession saleSession;
+  private boolean payWindowOpen;
 
   ShoppingMaskModel(SaleSession saleSession) {
     this.saleSession = saleSession;

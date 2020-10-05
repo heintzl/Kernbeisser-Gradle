@@ -20,6 +20,19 @@ public class LogInModel implements IModel {
 
   public static User loggedIn;
 
+  public static void refreshLogInData() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    loggedIn =
+        Proxy.createProxyInstance(
+            em.find(User.class, loggedIn.getId()),
+            new CustomKeySetSecurityHandler(
+                PermissionConstants.ON_OWN_USER
+                    .getPermission()
+                    .getKeySet()
+                    .toArray(new PermissionKey[0])));
+    ;
+  }
+
   public LogInModel() {
     loggedIn = null;
   }

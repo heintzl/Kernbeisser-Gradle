@@ -9,8 +9,10 @@ import kernbeisser.Config.ConfigManager;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.StartUp.LogIn.DBLogInController;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.JFrameWindow;
+import org.hibernate.service.spi.ServiceException;
 
 public class DBConnection {
 
@@ -26,8 +28,11 @@ public class DBConnection {
       entityManagerFactory = Persistence.createEntityManagerFactory("Kernbeisser", properties);
       Main.logger.info("Login successful");
       return true;
-    } catch (Exception e) {
+    } catch (ServiceException e) {
       Main.logger.warn("Log in failed");
+      return false;
+    } catch (Exception e) {
+      Tools.showUnexpectedErrorWarning(e);
       return false;
     }
   }
@@ -86,9 +91,9 @@ public class DBConnection {
     et.commit();
     em.close();
     reload();
-    Setting.DB_VERSION.setValue(Setting.DB_VERSION.getDefaultValue());
-    Setting.DB_INITIALIZED.setValue(false);
-    Setting.INFO_LINE_LAST_CATALOG.setValue(Setting.INFO_LINE_LAST_CATALOG.getDefaultValue());
+    Setting.DB_VERSION.changeValue(Setting.DB_VERSION.getDefaultValue());
+    Setting.DB_INITIALIZED.changeValue(false);
+    Setting.INFO_LINE_LAST_CATALOG.changeValue(Setting.INFO_LINE_LAST_CATALOG.getDefaultValue());
     Main.logger.info("DB update complete");
   }
 

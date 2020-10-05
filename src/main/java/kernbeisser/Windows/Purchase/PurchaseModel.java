@@ -4,9 +4,10 @@ import java.util.Collection;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Getter;
 
 public class PurchaseModel implements IModel<PurchaseController> {
-  private final Purchase loaded;
+  @Getter private final Purchase loaded;
 
   PurchaseModel(Purchase loaded) {
     this.loaded = loaded;

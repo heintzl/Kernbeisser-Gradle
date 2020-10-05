@@ -688,4 +688,14 @@ public class Tools {
       consumer.accept(enumeration.nextElement());
     }
   }
+
+  public static void scaleFont(Component label, double fac) {
+    label.setFont(label.getFont().deriveFont(Math.round(label.getFont().getSize() * fac)));
+  }
+
+  public static void scaleFonts(double fac, Component... labels) {
+    for (Component label : labels) {
+      scaleFont(label, fac);
+    }
+  }
 }

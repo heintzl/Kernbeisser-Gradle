@@ -864,4 +864,24 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public boolean processKeyboardInput(KeyEvent e) {
     return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
   }
+
+  public void setCheckoutEnable(boolean b) {
+    checkout.setEnabled(b);
+  }
+
+  public void rememberLogging(String firstname, String surname, double value) {
+    if (JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            String.format(
+                "Haben sie den Einkauf in höhe von %.2f€ von %s, %s in das Log-Buch eingetragen?",
+                value, firstname, surname),
+            "Haben sie den Einkauf in das Log-Buch eingetragen",
+            JOptionPane.YES_OPTION,
+            JOptionPane.INFORMATION_MESSAGE)
+        != 0) {
+      JOptionPane.showMessageDialog(
+          getTopComponent(),
+          "Ein Einkauf muss im Log-Buch notiert werden,\num eine zweite Sicherheit zu schaffen.");
+    }
+  }
 }
