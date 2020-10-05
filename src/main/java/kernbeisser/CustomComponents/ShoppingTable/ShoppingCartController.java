@@ -105,33 +105,44 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   }
 
   public void manipulateShoppingItemAmount(ShoppingItem i, int number) {
-    model.getItems().removeIf(e -> {
-      if(e.equals(i)){
-        e.setItemMultiplier(e.getItemMultiplier()+number);
-        return e.getItemMultiplier() <= 0;
-      }
-      if(e.getParentItem() == null || (!e.getParentItem().equals(i)))return false;
-      if(e.getName().contains("Gebinde")){
-        int before = (int)((e.getParentItem().getItemMultiplier() - number) / (e.getParentItem().getContainerSize()));
-        System.out.println(before);
-        int after = (int)((e.getParentItem().getItemMultiplier()) / (e.getParentItem().getContainerSize()));
-        System.out.println(after);
-        e.setItemMultiplier(e.getItemMultiplier()+after-before);
-      }else {
-        e.setItemMultiplier(e.getItemMultiplier()+number);
-      }
-      return e.getItemMultiplier() <= 0;
-    });
-    if(number > 0 && i.getSingleDeposit() != 0){
+    model
+        .getItems()
+        .removeIf(
+            e -> {
+              if (e.equals(i)) {
+                e.setItemMultiplier(e.getItemMultiplier() + number);
+                return e.getItemMultiplier() <= 0;
+              }
+              if (e.getParentItem() == null || (!e.getParentItem().equals(i))) return false;
+              if (e.getName().contains("Gebinde")) {
+                int before =
+                    (int)
+                        ((e.getParentItem().getItemMultiplier() - number)
+                            / (e.getParentItem().getContainerSize()));
+                System.out.println(before);
+                int after =
+                    (int)
+                        ((e.getParentItem().getItemMultiplier())
+                            / (e.getParentItem().getContainerSize()));
+                System.out.println(after);
+                e.setItemMultiplier(e.getItemMultiplier() + after - before);
+              } else {
+                e.setItemMultiplier(e.getItemMultiplier() + number);
+              }
+              return e.getItemMultiplier() <= 0;
+            });
+    if (number > 0 && i.getSingleDeposit() != 0) {
       boolean depositFound = false;
       for (ShoppingItem item : model.getItems()) {
-        if (item.getParentItem() != null && item.getParentItem().equals(i) && !item.getName().contains("Gebinde")) {
+        if (item.getParentItem() != null
+            && item.getParentItem().equals(i)
+            && !item.getName().contains("Gebinde")) {
           depositFound = true;
           break;
         }
       }
-      if(!depositFound){
-        model.addItemBehind(i.createItemDeposit(number,false),i);
+      if (!depositFound) {
+        model.addItemBehind(i.createItemDeposit(number, false), i);
       }
     }
 
