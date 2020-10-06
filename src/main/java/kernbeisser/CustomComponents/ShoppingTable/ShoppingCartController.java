@@ -105,26 +105,21 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   }
 
   public void manipulateShoppingItemAmount(ShoppingItem i, int number) {
+    final int itemMultiplier = i.getItemMultiplier();
+    final double containerSize = i.getContainerSize();
     model
         .getItems()
         .removeIf(
             e -> {
               if (e.equals(i)) {
-                e.setItemMultiplier(e.getItemMultiplier() + number);
+                e.setItemMultiplier(itemMultiplier + number);
                 return e.getItemMultiplier() <= 0;
               }
               if (e.getParentItem() == null || (!e.getParentItem().equals(i))) return false;
               if (e.getName().contains("Gebinde")) {
-                int before =
-                    (int)
-                        ((e.getParentItem().getItemMultiplier() - number)
-                            / (e.getParentItem().getContainerSize()));
-                System.out.println(before);
-                int after =
-                    (int)
-                        ((e.getParentItem().getItemMultiplier())
-                            / (e.getParentItem().getContainerSize()));
-                System.out.println(after);
+                if (e.getParentItem().getItemMultiplier() <= 0) return true;
+                int before = (int) (itemMultiplier / containerSize);
+                int after = (int) ((itemMultiplier + number) / containerSize);
                 e.setItemMultiplier(e.getItemMultiplier() + after - before);
               } else {
                 e.setItemMultiplier(e.getItemMultiplier() + number);
@@ -145,7 +140,15 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
         model.addItemBehind(i.createItemDeposit(number, false), i);
       }
     }
-
+    if ((itemMultiplier + number) / containerSize == 1.
+        && (!model.getItems().stream()
+            .anyMatch(
+                e ->
+                    e.getParentItem() != null
+                        && e.getParentItem().equals(i)
+                        && e.getName().contains("Gebinde")))) {
+      model.addItemBehind(i.createItemDeposit(1, true), i);
+    }
     refresh();
   }
 
