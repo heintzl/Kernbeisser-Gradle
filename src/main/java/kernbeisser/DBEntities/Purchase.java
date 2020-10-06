@@ -56,12 +56,10 @@ public class Purchase {
 
   public double getSum() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    double sum =
-        em.createQuery("select s from ShoppingItem s where purchase.id = :id", ShoppingItem.class)
-            .setParameter("id", id).getResultList().stream()
-            .mapToDouble(ShoppingItem::getItemRetailPrice)
-            .sum();
-    em.close();
-    return sum * (1 + userSurcharge);
+    return em
+        .createQuery("select s from ShoppingItem s where purchase.id = :id", ShoppingItem.class)
+        .setParameter("id", id).getResultList().stream()
+        .mapToDouble(ShoppingItem::getRetailPrice)
+        .sum();
   }
 }

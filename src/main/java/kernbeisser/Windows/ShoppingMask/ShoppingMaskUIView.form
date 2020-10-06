@@ -659,7 +659,7 @@
                   </component>
                   <component id="db574" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="0" column="3" row-span="4" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="4" row-span="4" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="1.0"/>
                     </constraints>
                     <properties>
@@ -669,7 +669,7 @@
                   </component>
                   <component id="f310a" class="javax.swing.JLabel" binding="salesPerson1">
                     <constraints>
-                      <grid row="4" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="10" bottom="0" right="15" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -701,7 +701,7 @@
                   </component>
                   <component id="d4a9e" class="javax.swing.JLabel" binding="salesPerson2">
                     <constraints>
-                      <grid row="5" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="5" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="10" bottom="10" right="15" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -711,7 +711,7 @@
                   </component>
                   <component id="891d8" class="javax.swing.JButton" binding="editUser">
                     <constraints>
-                      <grid row="4" column="2" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="3" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="10" right="10" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -724,7 +724,7 @@
                   </component>
                   <component id="62553" class="javax.swing.JSeparator">
                     <constraints>
-                      <grid row="0" column="1" row-span="4" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="1" row-span="4" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="5" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties>
@@ -735,7 +735,7 @@
                   </component>
                   <component id="b936b" class="javax.swing.JSeparator">
                     <constraints>
-                      <grid row="0" column="4" row-span="4" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="5" row-span="4" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="5" bottom="0" right="15" weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties>
@@ -752,6 +752,15 @@
                     <properties>
                       <font size="16" style="1"/>
                       <text value="Kunden-Info"/>
+                    </properties>
+                  </component>
+                  <component id="4f3b9" class="javax.swing.JButton" binding="userInfo">
+                    <constraints>
+                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <text value="Benutzerinfo"/>
                     </properties>
                   </component>
                 </children>

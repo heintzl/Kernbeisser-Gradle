@@ -24,6 +24,7 @@ public class ObjectForm<P> {
   }
 
   public void setSource(P data) {
+    if (data == null) throw new NullPointerException("cannot set null as source for ObjectView");
     this.original = data;
     this.accessModel = Tools.clone(original);
     refreshAccess();

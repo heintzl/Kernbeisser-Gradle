@@ -186,4 +186,17 @@ public class UserInfoView implements IView<UserInfoController> {
   public @NotNull JComponent getContent() {
     return main;
   }
+
+  @Override
+  public @NotNull Dimension getSize() {
+    return new Dimension(500, 500);
+  }
+
+  @Override
+  public String getTitle() {
+    return "Benutzerinformationen von "
+        + controller.getModel().getUser().getFirstName()
+        + ", "
+        + controller.getModel().getUser().getSurname();
+  }
 }
