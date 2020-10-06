@@ -29,6 +29,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   private ObjectTable<ShoppingItem> shoppingItems;
   private JLabel headerDelete;
   private JScrollPane tablePanel;
+  private JLabel valueAfterLabel;
   private boolean autoScrollDown;
 
   @Linked private boolean editable;
@@ -147,5 +148,9 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   @Override
   public @NotNull JComponent getContent() {
     return main;
+  }
+
+  public void setValueAfterLabel(String text) {
+    valueAfterLabel.setText(text);
   }
 }

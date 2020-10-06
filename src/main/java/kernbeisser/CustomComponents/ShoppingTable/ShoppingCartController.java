@@ -152,6 +152,10 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
     refresh();
   }
 
+  public void setValueAfterLabel(String text) {
+    view.setValueAfterLabel(text);
+  }
+
   void plus(ShoppingItem i) {
     manipulateShoppingItemAmount(i, +1);
   }

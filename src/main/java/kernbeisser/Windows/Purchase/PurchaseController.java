@@ -34,6 +34,7 @@ public class PurchaseController implements IController<PurchaseView, PurchaseMod
     Collection<ShoppingItem> items = model.getAllItems();
     view.setItemCount(items.size());
     fillShoppingCart();
+    cartController.setValueAfterLabel("Damaliges Guthaben nach dem Einkauf:");
   }
 
   @Override
