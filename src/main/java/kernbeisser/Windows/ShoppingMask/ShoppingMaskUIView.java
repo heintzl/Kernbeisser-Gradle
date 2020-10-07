@@ -790,7 +790,18 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           variablePercentage.setEnabled(false);
           enablePreordered();
         });
-
+    rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für folge Artikel merken");
+    pricePreordered.addChangeListener(
+        e -> {
+          if (pricePreordered.isSelected()) {
+            rememberReductionSetting.setToolTipText("Nicht verfügbar für Vorbestellungsrabatt");
+            rememberReductionSetting.setSelected(false);
+          } else {
+            rememberReductionSetting.setToolTipText(
+                "Rabatt-Einstellungen für folge Artikel merken");
+          }
+          rememberReductionSetting.setEnabled(!pricePreordered.isSelected());
+        });
     priceVariablePercentage.addItemListener(
         e -> {
           variablePercentage.setEnabled(true);
@@ -832,6 +843,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     userInfo.addActionListener(e -> controller.openUserInfo());
 
     articleTypeChange(ArticleType.ARTICLE_NUMBER);
+
+    SwingUtilities.invokeLater(() -> kbNumber.requestFocusInWindow());
   }
 
   private void enablePreordered() {

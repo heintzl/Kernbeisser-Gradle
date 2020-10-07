@@ -13,13 +13,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
 @Table
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Purchase {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(generator = "increment")
+  @GenericGenerator(name = "increment", strategy = "increment")
   @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_WRITE)})
   private int id;
