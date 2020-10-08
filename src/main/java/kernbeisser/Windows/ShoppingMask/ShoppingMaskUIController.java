@@ -16,6 +16,7 @@ import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
+import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.Window;
 import kernbeisser.Windows.WindowImpl.SubWindow;
 import org.jetbrains.annotations.NotNull;
@@ -331,5 +332,10 @@ public class ShoppingMaskUIController
   @Override
   public int hashCode() {
     return Objects.hash(view, model, shoppingCartController);
+  }
+
+  public void openUserInfo() {
+    new UserInfoController(model.getSaleSession().getCustomer())
+        .openAsWindow(view.getWindow(), SubWindow::new);
   }
 }

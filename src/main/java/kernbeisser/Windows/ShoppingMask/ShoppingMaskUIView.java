@@ -91,6 +91,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private JComboBox supplier;
   private JButton emptyShoppingCart;
   private JComboBox vat;
+  private JButton userInfo;
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
@@ -789,7 +790,18 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           variablePercentage.setEnabled(false);
           enablePreordered();
         });
-
+    rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für folge Artikel merken");
+    pricePreordered.addChangeListener(
+        e -> {
+          if (pricePreordered.isSelected()) {
+            rememberReductionSetting.setToolTipText("Nicht verfügbar für Vorbestellungsrabatt");
+            rememberReductionSetting.setSelected(false);
+          } else {
+            rememberReductionSetting.setToolTipText(
+                "Rabatt-Einstellungen für folge Artikel merken");
+          }
+          rememberReductionSetting.setEnabled(!pricePreordered.isSelected());
+        });
     priceVariablePercentage.addItemListener(
         e -> {
           variablePercentage.setEnabled(true);
@@ -828,7 +840,11 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
     keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
 
+    userInfo.addActionListener(e -> controller.openUserInfo());
+
     articleTypeChange(ArticleType.ARTICLE_NUMBER);
+
+    SwingUtilities.invokeLater(() -> kbNumber.requestFocusInWindow());
   }
 
   private void enablePreordered() {
