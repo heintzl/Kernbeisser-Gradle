@@ -1,20 +1,20 @@
 package kernbeisser.Windows.Setting;
 
-import kernbeisser.DBEntities.SettingValue;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.IModel;
 
 public class SettingModel implements IModel<SettingController> {
-  private SettingValue settingValue;
+  private Setting setting;
 
   public void edit(String value) {
-    settingValue.getSetting().changeValue(value);
+    setting.changeValue(value);
   }
 
-  public void setSelectedValue(SettingValue settingValue) {
-    this.settingValue = settingValue;
+  public void setSelectedValue(Setting settingValue) {
+    this.setting = settingValue;
   }
 
-  public SettingValue getSelectedSettingValue() {
-    return settingValue;
+  public Setting getSelectedSettingValue() {
+    return setting;
   }
 }

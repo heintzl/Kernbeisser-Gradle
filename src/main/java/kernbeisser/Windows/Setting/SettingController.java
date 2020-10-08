@@ -1,6 +1,6 @@
 package kernbeisser.Windows.Setting;
 
-import kernbeisser.DBEntities.SettingValue;
+import java.util.Arrays;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
@@ -25,7 +25,7 @@ public class SettingController implements IController<SettingView, SettingModel>
   @Override
   public void fillUI() {
     view.setEditEnable(false);
-    getView().setValues(SettingValue.getAll(null));
+    view.setValues(Arrays.asList(Setting.values()));
   }
 
   @Override
@@ -34,7 +34,7 @@ public class SettingController implements IController<SettingView, SettingModel>
   }
 
   public void apply() {
-    switch (Setting.getExpectedType(model.getSelectedSettingValue().getSetting()).getSimpleName()) {
+    switch (Setting.getExpectedType(model.getSelectedSettingValue()).getSimpleName()) {
       case "Integer":
         try {
           Integer.parseInt(view.getValue());
@@ -84,7 +84,7 @@ public class SettingController implements IController<SettingView, SettingModel>
         break;
     }
     model.edit(view.getValue());
-    view.setValues(SettingValue.getAll(null));
+    view.setValues(Arrays.asList(Setting.values()));
     Main.logger.info(
         "User["
             + LogInModel.getLoggedIn().getId()
@@ -106,15 +106,15 @@ public class SettingController implements IController<SettingView, SettingModel>
           value.changeValue(value.getDefaultValue());
         }
       }
-      getView().setValues(SettingValue.getAll(null));
+      getView().setValues(Arrays.asList(Setting.values()));
       Main.logger.info(
           "User[" + LogInModel.getLoggedIn().getId() + "] set all settings to default");
     }
   }
 
-  public void select(SettingValue settingValue) {
+  public void select(Setting settingValue) {
     view.setValue(settingValue.getValue());
-    view.setSelectedSetting(settingValue.getSetting());
+    view.setSelectedSetting(settingValue);
     view.setEditEnable(true);
     model.setSelectedValue(settingValue);
   }
