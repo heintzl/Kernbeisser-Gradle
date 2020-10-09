@@ -7,13 +7,12 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
 public class SettingView implements IView<SettingController> {
-  private ObjectTable<SettingValue> settingValues;
+  private ObjectTable<Setting> settingValues;
   private JButton cancel;
   private JPanel main;
   private JButton applyChange;
@@ -28,15 +27,15 @@ public class SettingView implements IView<SettingController> {
         IconFontSwing.buildIcon(FontAwesome.TRASH, 20, resetSettings.getForeground()));
     resetSettings.setHorizontalTextPosition(SwingConstants.LEFT);
     settingValues.setColumns(
-        Column.create("Setting", SettingValue::getSetting),
-        Column.create("Wert", SettingValue::getValue),
-        Column.create("Standart", e -> e.getSetting().getDefaultValue()));
+        Column.create("Setting", Setting::toString),
+        Column.create("Wert", Setting::getValue),
+        Column.create("Standart", Setting::getDefaultValue));
     settingValues.addSelectionListener(controller::select);
     applyChange.addActionListener(e -> controller.apply());
     cancel.addActionListener(e -> controller.cancel());
   }
 
-  void setValues(Collection<SettingValue> values) {
+  void setValues(Collection<Setting> values) {
     settingValues.setObjects(values);
   }
 
@@ -52,7 +51,7 @@ public class SettingView implements IView<SettingController> {
     setting.setText(selectedSetting.toString());
   }
 
-  SettingValue getSelectedValue() {
+  Setting getSelectedValue() {
     return settingValues.getSelectedObject();
   }
 

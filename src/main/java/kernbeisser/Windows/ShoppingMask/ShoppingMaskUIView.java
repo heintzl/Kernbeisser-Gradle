@@ -844,7 +844,15 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
     articleTypeChange(ArticleType.ARTICLE_NUMBER);
 
-    SwingUtilities.invokeLater(() -> kbNumber.requestFocusInWindow());
+    SwingUtilities.invokeLater(
+        () -> {
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          kbNumber.requestFocusInWindow();
+        });
   }
 
   private void enablePreordered() {
