@@ -737,9 +737,13 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     suppliersItemNumber.addActionListener(e -> addToCart());
     suppliersItemNumber.addKeyListener(
         new KeyAdapter() {
+          private String lastSearch = "";
+
           @Override
           public void keyReleased(KeyEvent e) {
+            if (suppliersItemNumber.getText().equals(lastSearch)) return;
             controller.searchBySupplierItemsNumber();
+            lastSearch = suppliersItemNumber.getText();
           }
         });
     suppliersItemNumber.setToolTipText(
