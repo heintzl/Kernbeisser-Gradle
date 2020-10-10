@@ -119,9 +119,10 @@ public class EditItemController implements IController<EditItemView, EditItemMod
   }
 
   public String displayAmount(int amount) {
-    MetricUnits units = getView().getMetricUnits() != null
-                ? view.getMetricUnits()
-                : model.getSource().getMetricUnits();
-    return amount * units.getBaseFactor()+"";
+    MetricUnits units =
+        getView().getMetricUnits() != null
+            ? view.getMetricUnits()
+            : model.getSource().getMetricUnits();
+    return amount * units.getBaseFactor() + "";
   }
 }
