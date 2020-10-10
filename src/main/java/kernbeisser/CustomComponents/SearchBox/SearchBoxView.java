@@ -79,4 +79,9 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
     objects.setSelectedObject(t);
     return t != null;
   }
+
+  @Override
+  public Component getFocusOnInitialize() {
+    return searchInput;
+  }
 }

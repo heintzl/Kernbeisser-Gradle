@@ -63,6 +63,7 @@ public interface Window {
         parent.close();
       }
     }
+    window.getController().getView().getFocusOnInitialize().requestFocusInWindow();
     return window;
   }
 
