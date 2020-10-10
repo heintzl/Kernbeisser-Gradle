@@ -166,7 +166,6 @@ public class EditItemView implements IView<EditItemController> {
     containerSize.setInputVerifier(DoubleVerifier.from(0, 0.1, 40, 1000));
     articleObjectForm =
         new ObjectForm<>(
-            controller.getModel().getSource(),
             itemName,
             supplier,
             netPrice,

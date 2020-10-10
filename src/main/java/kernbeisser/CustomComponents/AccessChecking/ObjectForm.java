@@ -18,9 +18,8 @@ public class ObjectForm<P> {
   private P accessModel;
 
   @SafeVarargs
-  public ObjectForm(P original, Bounded<P, ?>... boundedFields) {
+  public ObjectForm(Bounded<P, ?>... boundedFields) {
     this.boundedFields = boundedFields;
-    setSource(original);
   }
 
   public void setSource(P data) {

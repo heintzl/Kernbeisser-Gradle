@@ -93,7 +93,6 @@ public class EditUserView implements IView<EditUserController> {
   public void initialize(EditUserController controller) {
     objectForm =
         new ObjectForm<>(
-            controller.getModel().getUser(),
             firstName,
             lastName,
             street,

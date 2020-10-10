@@ -30,6 +30,7 @@ public class EditUserController implements IController<EditUserView, EditUserMod
 
   @Override
   public void fillUI() {
+    view.getObjectForm().setSource(getModel().getUser());
     view.getObjectForm().setObjectValidator(this::validateUser);
   }
 

@@ -43,6 +43,7 @@ public class EditItemController implements IController<EditItemView, EditItemMod
     view.setUnits(model.getAllUnits());
     view.setContainerDefinitions(model.getAllContainerDefinitions());
     view.setVATs(model.getAllVATs());
+    view.getArticleObjectForm().setSource(model.getSource());
   }
 
   @Override

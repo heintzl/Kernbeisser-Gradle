@@ -29,16 +29,7 @@ public class EditSupplierView implements IView<EditSupplierController> {
   @Override
   public void initialize(EditSupplierController controller) {
     objectForm =
-        new ObjectForm<>(
-            controller.getModel().getSupplier(),
-            street,
-            location,
-            keeper,
-            phoneNumber,
-            fax,
-            name,
-            shortName,
-            surcharge);
+        new ObjectForm<>(street, location, keeper, phoneNumber, fax, name, shortName, surcharge);
     commit.addActionListener(e -> controller.commit());
     cancel.addActionListener(e -> back());
   }
