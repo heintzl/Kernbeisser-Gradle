@@ -131,6 +131,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     if (controller.addToShoppingCart()) {
       articleTypeInitialize(currentArticleType);
     }
+    amount.setText("1");
   }
 
   private void editUserAction() {
@@ -325,7 +326,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     netPrice.setText("");
     netPriceUnit.setText("€");
 
-    amount.setText("1");
     amountUnit.setText("");
 
     containerUnit.setText("");
@@ -452,7 +452,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     netPrice.setText("0.00");
     depositUnit.setText("€");
     priceUnit.setText("€");
-    amount.setText("1");
     articleName.setText("Kein Artikel gefunden!");
     amountUnit.setText("");
     containerUnit.setText("");
