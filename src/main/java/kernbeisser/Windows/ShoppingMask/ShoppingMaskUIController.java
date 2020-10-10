@@ -305,6 +305,7 @@ public class ShoppingMaskUIController
   void searchWindowResult(Article article) {
     view.setOptArticleNo();
     view.loadItemStats(new ShoppingItem(article, view.getDiscount(), view.isPreordered()));
+    view.setFocusOnAmount();
   }
 
   void editUserAction() {

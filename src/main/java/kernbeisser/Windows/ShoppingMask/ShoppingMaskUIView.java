@@ -920,4 +920,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public Component getFocusOnInitialize() {
     return kbNumber;
   }
+
+  public void setFocusOnAmount() {
+    amount.requestFocusInWindow();
+  }
 }
