@@ -170,6 +170,8 @@ public class PermissionController implements IController<PermissionView, Permiss
 
   public void importFrom(File selectedFile) throws FileNotFoundException {
     PermissionRepresentation.putInDB(selectedFile);
+    view.setValues(model.getAllPermissions());
+    loadSolutions();
   }
 
   public void exportTo(File selectedFile) throws IOException {
