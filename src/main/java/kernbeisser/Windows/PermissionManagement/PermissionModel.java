@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -58,5 +59,22 @@ public class PermissionModel implements IModel<PermissionController> {
   void addKeys(Permission permission, Collection<PermissionKey> keys) {
     Tools.addMultipleToCollection(
         Permission.class, permission.getId(), Permission::getKeySet, keys);
+  }
+
+  public void removeUserFromPermission(Permission permission) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    // TODO: fix that inefficient query
+    em.createQuery("select u from User u", User.class)
+        .getResultList()
+        .forEach(
+            e -> {
+              e.getPermissions().remove(permission);
+              em.persist(e);
+            });
+    em.flush();
+    em.remove(permission);
+    et.commit();
   }
 }
