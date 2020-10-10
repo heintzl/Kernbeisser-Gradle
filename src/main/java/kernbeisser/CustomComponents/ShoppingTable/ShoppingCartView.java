@@ -97,10 +97,14 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
             Column.create("Inhalt", ShoppingItem::getUnitAmount, SwingConstants.RIGHT),
             Column.create(
                 "Menge",
-                e ->
-                    e.getPriceUnits() == MetricUnits.NONE
-                        ? ""
-                        : e.getItemMultiplier() + e.getPriceUnits().getShortName() + " ",
+                e -> {
+                  if (e.isContainerDiscount()) {
+                    return e.getItemMultiplier() + " Gebinde";
+                  }
+                  return e.getPriceUnits() == MetricUnits.NONE
+                      ? ""
+                      : e.getItemMultiplier() + e.getPriceUnits().getShortName() + " ";
+                },
                 SwingConstants.RIGHT),
             Column.create(
                 "Rabatt",

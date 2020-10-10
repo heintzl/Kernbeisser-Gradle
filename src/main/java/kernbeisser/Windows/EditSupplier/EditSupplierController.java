@@ -38,7 +38,9 @@ public class EditSupplierController implements IController<EditSupplierView, Edi
   }
 
   @Override
-  public void fillUI() {}
+  public void fillUI() {
+    view.getObjectForm().setSource(getModel().getSupplier());
+  }
 
   @Override
   public PermissionKey[] getRequiredKeys() {

@@ -75,10 +75,10 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
   public void setReadable(boolean b) {
     if (b) {
       super.removeItem(NO_READ_PERMISSION);
-      super.addItem(NO_READ_PERMISSION);
-      setSelectedItem(NO_READ_PERMISSION);
     } else {
       super.removeItem(NO_READ_PERMISSION);
+      super.addItem(NO_READ_PERMISSION);
+      setSelectedItem(NO_READ_PERMISSION);
     }
   }
 

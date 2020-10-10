@@ -1,5 +1,9 @@
 package kernbeisser.Windows.EditItems;
 
+import static javax.swing.SwingConstants.LEFT;
+import static javax.swing.SwingConstants.RIGHT;
+
+import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
@@ -30,19 +34,19 @@ public class EditItemsController implements IController<EditItemsView, EditItems
             EditItemController::new,
             Article::defaultSearch,
             true,
-            Column.create("Name", Article::getName),
+            Column.create("Name", Article::getName, LEFT),
             Column.create(
-                "Packungsgröße", e -> (e.getAmount()) + e.getMetricUnits().getShortName()),
-            Column.create("Ladennummer", Article::getKbNumber),
-            Column.create("Lieferant", Article::getSupplier),
-            Column.create("Lieferantenummer", Article::getSuppliersItemNumber),
-            Column.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein"),
-            Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice())),
-            Column.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit())),
-            Column.create("MwSt.", e -> e.getVat().getName()),
-            Column.create("Gebindegrösse.", Article::getContainerSize),
-            Column.create("Preisliste", Article::getPriceList),
-            Column.create("Barcode", Article::getBarcode));
+                "Packungsgröße", e -> (e.getAmount()) + e.getMetricUnits().getShortName(), RIGHT),
+            Column.create("Ladennummer", Article::getKbNumber, RIGHT),
+            Column.create("Lieferant", Article::getSupplier, LEFT),
+            Column.create("Lieferantenummer", Article::getSuppliersItemNumber, RIGHT),
+            Column.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein", LEFT),
+            Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice()), RIGHT),
+            Column.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit()), RIGHT),
+            Column.create("MwSt.", e -> e.getVat().getName(), RIGHT),
+            Column.create("Gebindegrösse.", Article::getContainerSize, RIGHT),
+            Column.create("Preisliste", Article::getPriceList, LEFT),
+            Column.create("Barcode", Article::getBarcode, RIGHT));
 
     this.capture =
         new BarcodeCapture(

@@ -156,4 +156,15 @@ public class PermissionView implements IView<PermissionController> {
         getTopComponent(),
         "Der gewählte name ist bereits vergeben,\nbitte wählen sie einen anderen.");
   }
+
+  public boolean permissionIsInUse() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Die Berechtigung ist noch an Nutzer vergeben,\nsoll allen Nutzern die Berechtigung entzogen werden\nund die Berechtigung anschließend gelöscht werden?")
+        == 0;
+  }
+
+  public void successfulDeleted() {
+    JOptionPane.showMessageDialog(getTopComponent(), "Die Berechtigung wurde erfolgreich gelöscht");
+  }
 }

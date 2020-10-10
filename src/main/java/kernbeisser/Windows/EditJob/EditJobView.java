@@ -19,7 +19,7 @@ public class EditJobView implements IView<EditJobController> {
 
   @Override
   public void initialize(EditJobController controller) {
-    form = new ObjectForm<>(controller.getModel().getJob(), name, description);
+    form = new ObjectForm<>(name, description);
     cancel.addActionListener(e -> back());
     commit.addActionListener(e -> controller.commit());
   }

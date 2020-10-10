@@ -76,4 +76,8 @@ public interface IView<
       return false;
     }
   }
+
+  default Component getFocusOnInitialize() {
+    return getContent();
+  }
 }

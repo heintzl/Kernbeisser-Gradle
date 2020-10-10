@@ -49,4 +49,9 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
   public boolean processKeyboardInput(KeyEvent e) {
     return shoppingMaskUIView.processKeyboardInput(e);
   }
+
+  @Override
+  public Component getFocusOnInitialize() {
+    return shoppingMaskUIController.getView().getFocusOnInitialize();
+  }
 }

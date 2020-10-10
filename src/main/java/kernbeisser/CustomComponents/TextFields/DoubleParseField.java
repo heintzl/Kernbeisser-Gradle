@@ -7,7 +7,7 @@ public class DoubleParseField extends FilterField<Double> {
     super(
         e -> {
           try {
-            if (e.equals("") || e.equals("-")) {
+            if (e.equals("") || e.equals("-") || e.equals(".") || e.equals(",")) {
               return 0.;
             }
             double v = Double.parseDouble(e.replace(",", "."));

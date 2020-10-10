@@ -21,7 +21,7 @@ public interface Column<T> {
               setBackground(STRIPED_BACKGROUND_COLOR);
             }
           });
-  int DEFAULT_ALIGNMENT = SwingConstants.CENTER;
+  int DEFAULT_ALIGNMENT = SwingConstants.LEFT;
 
   static <T> Column<T> create(String s, Getter<T, Object> v) {
     return create(s, v, DEFAULT_ALIGNMENT);

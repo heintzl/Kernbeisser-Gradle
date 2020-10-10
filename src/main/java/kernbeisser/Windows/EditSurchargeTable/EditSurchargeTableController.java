@@ -36,6 +36,7 @@ public class EditSurchargeTableController
   @Override
   public void fillUI() {
     view.setSuppliers(model.getAllSuppliers());
+    view.getObjectForm().setSource(model.getSource());
   }
 
   @Override

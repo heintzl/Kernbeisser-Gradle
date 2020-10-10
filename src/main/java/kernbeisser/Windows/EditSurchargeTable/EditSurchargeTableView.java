@@ -39,8 +39,7 @@ class EditSurchargeTableView implements IView<EditSurchargeTableController> {
 
   @Override
   public void initialize(EditSurchargeTableController controller) {
-    objectForm =
-        new ObjectForm<>(controller.getModel().getSource(), supplier, name, from, to, surcharge);
+    objectForm = new ObjectForm<>(supplier, name, from, to, surcharge);
     commit.addActionListener((e) -> controller.commit());
     cancel.addActionListener((e) -> back());
   }

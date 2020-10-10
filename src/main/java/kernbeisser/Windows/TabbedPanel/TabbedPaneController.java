@@ -1,6 +1,7 @@
 package kernbeisser.Windows.TabbedPanel;
 
 import java.awt.*;
+import javax.swing.*;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.IController;
@@ -40,6 +41,8 @@ public class TabbedPaneController implements IController<TabbedPaneView, TabbedP
               tab.getController().getView().getWrappedContent(),
               model.indexOf(tab));
       getView().setSelected(model.indexOf(tab));
+      SwingUtilities.invokeLater(
+          () -> tab.getController().getView().getFocusOnInitialize().requestFocusInWindow());
     } else {
       getView().setSelected(posIn);
     }

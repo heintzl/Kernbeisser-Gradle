@@ -5,6 +5,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -87,6 +89,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   void setTo(String s) {
+    toKernbeisser.setSelected(false);
     to.setText(s);
   }
 
@@ -218,18 +221,41 @@ public class TransactionView implements IView<TransactionController> {
           }
         });
     info.setRequiredWriteKeys(PermissionKey.TRANSACTION_INFO_WRITE);
-    fromKBValue.addActionListener(
-        e -> {
-          from.setText(
-              fromKBValue.isSelected()
-                  ? controller.getKernbeisserUsername()
-                  : controller.getLoggedInUsername());
-          from.setEnabled(!fromKBValue.isSelected());
+    fromKBValue.addChangeListener(
+        new ChangeListener() {
+          private boolean lastState = false;
+
+          @Override
+          public void stateChanged(ChangeEvent e) {
+            if (lastState == fromKBValue.isSelected()) return;
+            lastState = !lastState;
+            if (fromKBValue.isSelected()) {
+              toKernbeisser.setSelected(false);
+              from.setText(controller.getKernbeisserUsername());
+              from.setEnabled(false);
+            } else {
+              from.setText(controller.getLoggedInUsername());
+              from.setEnabled(true);
+            }
+          }
         });
-    toKernbeisser.addActionListener(
-        e -> {
-          to.setText(toKernbeisser.isSelected() ? controller.getKernbeisserUsername() : "");
-          to.setEnabled(!toKernbeisser.isSelected());
+    toKernbeisser.addChangeListener(
+        new ChangeListener() {
+          private boolean lastState = false;
+
+          @Override
+          public void stateChanged(ChangeEvent e) {
+            if (lastState == toKernbeisser.isSelected()) return;
+            lastState = !lastState;
+            if (toKernbeisser.isSelected()) {
+              fromKBValue.setSelected(false);
+              to.setText(controller.getKernbeisserUsername());
+              to.setEnabled(false);
+            } else {
+              to.setText("");
+              to.setEnabled(true);
+            }
+          }
         });
     // Sets the ActionListeners for the instant Transaction Buttons
     {

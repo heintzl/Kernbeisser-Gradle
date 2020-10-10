@@ -54,4 +54,9 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
   public @NotNull JComponent getContent() {
     return main;
   }
+
+  @Override
+  public Component getFocusOnInitialize() {
+    return searchBoxController.getView().getFocusOnInitialize();
+  }
 }

@@ -32,6 +32,7 @@ public class ArticleSelectorController
                         + (e.getSuppliersItemNumber() > 0
                             ? " (" + e.getSuppliersItemNumber() + ")"
                             : "")));
+    searchBoxController.addDoubleClickListener(e -> this.choose());
     this.model = new ArticleSelectorModel(consumer);
   }
 

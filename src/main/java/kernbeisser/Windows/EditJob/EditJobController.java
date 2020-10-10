@@ -38,7 +38,9 @@ public class EditJobController implements IController<EditJobView, EditJobModel>
   }
 
   @Override
-  public void fillUI() {}
+  public void fillUI() {
+    view.getForm().setSource(getModel().getJob());
+  }
 
   @Override
   public PermissionKey[] getRequiredKeys() {

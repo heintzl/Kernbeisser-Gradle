@@ -42,6 +42,7 @@ public class PermissionRepresentation {
     em.createQuery("select p from Permission p", Permission.class)
         .getResultList()
         .forEach(em::remove);
+    em.flush();
     List<Permission> permissions = parsePermissions(representation);
     permissions.forEach(em::persist);
     for (int i = 0; i < permissions.size(); i++) {

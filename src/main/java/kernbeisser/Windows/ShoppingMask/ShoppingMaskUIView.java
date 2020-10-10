@@ -131,6 +131,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     if (controller.addToShoppingCart()) {
       articleTypeInitialize(currentArticleType);
     }
+    amount.setText("1");
   }
 
   private void editUserAction() {
@@ -325,7 +326,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     netPrice.setText("");
     netPriceUnit.setText("€");
 
-    amount.setText("1");
     amountUnit.setText("");
 
     containerUnit.setText("");
@@ -452,7 +452,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     netPrice.setText("0.00");
     depositUnit.setText("€");
     priceUnit.setText("€");
-    amount.setText("1");
     articleName.setText("Kein Artikel gefunden!");
     amountUnit.setText("");
     containerUnit.setText("");
@@ -737,9 +736,13 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     suppliersItemNumber.addActionListener(e -> addToCart());
     suppliersItemNumber.addKeyListener(
         new KeyAdapter() {
+          private String lastSearch = "";
+
           @Override
           public void keyReleased(KeyEvent e) {
+            if (suppliersItemNumber.getText().equals(lastSearch)) return;
             controller.searchBySupplierItemsNumber();
+            lastSearch = suppliersItemNumber.getText();
           }
         });
     suppliersItemNumber.setToolTipText(
@@ -907,5 +910,18 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           getTopComponent(),
           "Ein Einkauf muss im Log-Buch notiert werden,\num eine zweite Sicherheit zu schaffen.");
     }
+  }
+
+  public void setFocusOnKBNumber() {
+    kbNumber.requestFocusInWindow();
+  }
+
+  @Override
+  public Component getFocusOnInitialize() {
+    return kbNumber;
+  }
+
+  public void setFocusOnAmount() {
+    amount.requestFocusInWindow();
   }
 }

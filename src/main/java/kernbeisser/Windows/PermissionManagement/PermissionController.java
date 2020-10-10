@@ -144,8 +144,17 @@ public class PermissionController implements IController<PermissionView, Permiss
   }
 
   public void deletePermission() {
-    model.deletePermission(view.getSelectedObject());
-    view.setValues(model.getAllPermissions());
+    try {
+      model.deletePermission(view.getSelectedObject());
+      view.setValues(model.getAllPermissions());
+      view.successfulDeleted();
+    } catch (PersistenceException e) {
+      if (view.permissionIsInUse()) {
+        model.removeUserFromPermission(view.getSelectedObject());
+        view.setValues(model.getAllPermissions());
+        view.successfulDeleted();
+      }
+    }
   }
 
   @Override
@@ -170,6 +179,8 @@ public class PermissionController implements IController<PermissionView, Permiss
 
   public void importFrom(File selectedFile) throws FileNotFoundException {
     PermissionRepresentation.putInDB(selectedFile);
+    view.setValues(model.getAllPermissions());
+    loadSolutions();
   }
 
   public void exportTo(File selectedFile) throws IOException {
