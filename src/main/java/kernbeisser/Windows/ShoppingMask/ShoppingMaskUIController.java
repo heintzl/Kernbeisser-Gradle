@@ -260,6 +260,7 @@ public class ShoppingMaskUIController
   @Override
   public void fillUI() {
     view.loadUserInfo(model.getSaleSession());
+    view.setFocusOnKBNumber();
   }
 
   @Override

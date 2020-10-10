@@ -912,4 +912,13 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           "Ein Einkauf muss im Log-Buch notiert werden,\num eine zweite Sicherheit zu schaffen.");
     }
   }
+
+  public void setFocusOnKBNumber() {
+    kbNumber.requestFocusInWindow();
+  }
+
+  @Override
+  public Component getFocusOnInitialize() {
+    return kbNumber;
+  }
 }
