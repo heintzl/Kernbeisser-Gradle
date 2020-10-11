@@ -23,7 +23,7 @@ public class LogInModel implements IModel {
   public static void refreshLogInData() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     loggedIn =
-        Proxy.createProxyInstance(
+        Proxy.injectMethodHandler(
             em.find(User.class, loggedIn.getId()),
             new CustomKeySetSecurityHandler(
                 PermissionConstants.ON_OWN_USER
@@ -55,7 +55,7 @@ public class LogInModel implements IModel {
           throw new PermissionRequired();
         }
         loggedIn =
-            Proxy.createProxyInstance(
+            Proxy.injectMethodHandler(
                 user,
                 new CustomKeySetSecurityHandler(
                     PermissionConstants.ON_OWN_USER

@@ -3,7 +3,6 @@ package kernbeisser.Security;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashSet;
 import javassist.util.proxy.MethodHandler;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.AccessDeniedException;
@@ -11,10 +10,17 @@ import kernbeisser.Windows.LogIn.LogInModel;
 
 public class CustomKeySetSecurityHandler implements MethodHandler {
 
-  private final HashSet<PermissionKey> keys;
+  private final PermissionSet permissionSet;
+
+  public CustomKeySetSecurityHandler(PermissionSet keys) {
+    this.permissionSet = keys;
+  }
 
   public CustomKeySetSecurityHandler(PermissionKey... keys) {
-    this.keys = new HashSet<>(Arrays.asList(keys));
+    this(new PermissionSet());
+    for (PermissionKey key : keys) {
+      permissionSet.addPermission(key);
+    }
   }
 
   public Object invoke(Object proxy, Method proxyMethod, Method original, Object[] args)
@@ -22,7 +28,7 @@ public class CustomKeySetSecurityHandler implements MethodHandler {
           AccessDeniedException {
     Key key = proxyMethod.getAnnotation(Key.class);
     Object out;
-    if (key == null || containsAll(key.value())) {
+    if (key == null || permissionSet.hasPermissions(key.value())) {
       out = original.invoke(proxy, args);
     } else {
       throw new AccessDeniedException(
@@ -34,14 +40,5 @@ public class CustomKeySetSecurityHandler implements MethodHandler {
               + Arrays.toString(key.value()));
     }
     return out;
-  }
-
-  private boolean containsAll(PermissionKey[] keys) {
-    for (PermissionKey key : keys) {
-      if (!this.keys.contains(key)) {
-        return false;
-      }
-    }
-    return true;
   }
 }

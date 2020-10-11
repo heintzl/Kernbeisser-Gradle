@@ -8,6 +8,7 @@ import java.util.Collection;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.ProximateException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.SneakyThrows;
@@ -51,17 +52,7 @@ public class Proxy {
     if (ProxyFactory.isProxyClass(clazz)) {
       return Tools.createWithoutConstructor(clazz);
     }
-    ProxyFactory factory = new ProxyFactory();
-    factory.setSuperclass(clazz);
-    try {
-      return (T) factory.create(new Class[0], new Object[0], new SecurityHandler());
-    } catch (InstantiationException
-        | InvocationTargetException
-        | NoSuchMethodException
-        | IllegalAccessException e) {
-      e.printStackTrace();
-      return Tools.createWithoutConstructor(clazz);
-    }
+    return injectMethodHandler(Tools.createWithoutConstructor(clazz), new SecurityHandler());
   }
 
   /**
@@ -73,22 +64,10 @@ public class Proxy {
    * @return a Proxy which extends T
    */
   public static <T> T getSecureInstance(T parent) {
-    if (ProxyFactory.isProxyClass(parent.getClass())) {
+    if (parent == null || ProxyFactory.isProxyClass(parent.getClass())) {
       return parent;
     }
-    ProxyFactory factory = new ProxyFactory();
-    factory.setSuperclass(parent.getClass());
-    try {
-      T proxy = (T) factory.create(new Class[0], new Object[0], new SecurityHandler());
-      Tools.copyInto(parent, proxy);
-      return proxy;
-    } catch (InstantiationException
-        | InvocationTargetException
-        | NoSuchMethodException
-        | IllegalAccessException e) {
-      e.printStackTrace();
-      return parent;
-    }
+    return injectMethodHandler(parent, new SecurityHandler());
   }
 
   /**
@@ -125,6 +104,21 @@ public class Proxy {
           }
         });
     return collection;
+  }
+
+  public static <T> T injectMethodHandler(T value, MethodHandler methodHandler) {
+    ProxyFactory factory = new ProxyFactory();
+    factory.setSuperclass(value.getClass());
+    try {
+      T proxy = (T) factory.create(new Class[0], new Object[0], methodHandler);
+      Tools.copyInto(value, proxy);
+      return proxy;
+    } catch (InstantiationException
+        | InvocationTargetException
+        | NoSuchMethodException
+        | IllegalAccessException e) {
+      throw new ProximateException(e);
+    }
   }
 
   /**
@@ -171,22 +165,6 @@ public class Proxy {
                 + Arrays.toString(key.value()));
       }
       return out;
-    }
-  }
-
-  public static <T> T createProxyInstance(T parent, MethodHandler securityHandler) {
-    ProxyFactory factory = new ProxyFactory();
-    factory.setSuperclass(parent.getClass());
-    try {
-      T proxy = (T) factory.create(new Class[0], new Object[0], securityHandler);
-      Tools.copyInto(parent, proxy);
-      return proxy;
-    } catch (InstantiationException
-        | InvocationTargetException
-        | NoSuchMethodException
-        | IllegalAccessException e) {
-      e.printStackTrace();
-      return parent;
     }
   }
 
