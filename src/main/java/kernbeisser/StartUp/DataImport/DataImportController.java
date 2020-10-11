@@ -18,7 +18,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
-import kernbeisser.Security.MasterPermissionSet;
+import kernbeisser.Security.PermissionSet;
 import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
@@ -104,7 +104,7 @@ public class DataImportController implements IController<DataImportView, DataImp
   Thread articleThread = null;
 
   void importData() {
-    MasterPermissionSet.setAllBits(true);
+    PermissionSet.MASTER.setAllBits(true);
     if (isValidDataSource()) {
 
       Main.logger.info("Starting importing data");
@@ -160,7 +160,7 @@ public class DataImportController implements IController<DataImportView, DataImp
         createAdmin();
       }
     }
-    MasterPermissionSet.setAllBits(false);
+    PermissionSet.MASTER.setAllBits(false);
   }
 
   private void createAdmin() {
@@ -313,8 +313,8 @@ public class DataImportController implements IController<DataImportView, DataImp
       HashMap<String, PriceList> priceListHashMap = new HashMap<>();
       HashMap<String, Supplier> suppliers = new HashMap<>();
       Collection<Article> articles = new ArrayList<>(lines.size());
-      Supplier.getAll(null).forEach(e -> suppliers.put(e.getShortName(), e));
-      PriceList.getAll(null).forEach(e -> priceListHashMap.put(e.getName(), e));
+      Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
+      Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
       ErrorCollector errorCollector = new ErrorCollector();
       for (String l : lines) {
         String[] columns = l.split(";");

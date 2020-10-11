@@ -16,7 +16,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -77,7 +77,8 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               }
 
               @Override
-              public Object getValue(ShoppingItem shoppingItem) throws AccessDeniedException {
+              public Object getValue(ShoppingItem shoppingItem)
+                  throws PermissionKeyRequiredException {
                 return shoppingItem.getName()
                     + (shoppingItem.getShortName() != null
                         ? " [" + shoppingItem.getShortName() + "]"

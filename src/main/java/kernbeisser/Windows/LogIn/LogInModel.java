@@ -10,8 +10,8 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Main;
-import kernbeisser.Security.CustomKeySetSecurityHandler;
-import kernbeisser.Security.MasterPermissionSet;
+import kernbeisser.Security.PermissionSet;
+import kernbeisser.Security.PermissionSetSecurityHandler;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -25,7 +25,7 @@ public class LogInModel implements IModel {
     loggedIn =
         Proxy.injectMethodHandler(
             em.find(User.class, loggedIn.getId()),
-            new CustomKeySetSecurityHandler(
+            new PermissionSetSecurityHandler(
                 PermissionConstants.ON_OWN_USER
                     .getPermission()
                     .getKeySet()
@@ -57,12 +57,12 @@ public class LogInModel implements IModel {
         loggedIn =
             Proxy.injectMethodHandler(
                 user,
-                new CustomKeySetSecurityHandler(
+                new PermissionSetSecurityHandler(
                     PermissionConstants.ON_OWN_USER
                         .getPermission()
                         .getKeySet()
                         .toArray(new PermissionKey[0])));
-        MasterPermissionSet.loadPermission(user.getPermissions());
+        PermissionSet.MASTER.loadPermission(user.getPermissions());
         Main.logger.info("User with user id [" + user.getId() + "] has logged in");
       } else {
         throw new CannotLogInException();

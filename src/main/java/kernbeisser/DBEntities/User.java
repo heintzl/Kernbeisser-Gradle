@@ -10,6 +10,7 @@ import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Key;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -30,8 +31,14 @@ public class User implements Serializable {
 
   @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
+  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PERMISSIONS_WRITE)})
+  @Getter(
+      onMethod_ = {
+        @kernbeisser.Security.Key({
+          PermissionKey.USER_PERMISSIONS_READ,
+          PermissionKey.USER_PERMISSIONS_WRITE
+        })
+      })
   private Set<Permission> permissions = new HashSet<>();
 
   @Column
@@ -46,8 +53,11 @@ public class User implements Serializable {
 
   @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_JOBS_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_JOBS_READ)})
+  @Getter(
+      onMethod_ = {
+        @kernbeisser.Security.Key({PermissionKey.USER_JOBS_READ, PermissionKey.USER_JOBS_WRITE})
+      })
+  @Setter(onMethod_ = {@Key({PermissionKey.USER_JOBS_WRITE})})
   private Set<Job> jobs = new HashSet<>();
 
   @Column

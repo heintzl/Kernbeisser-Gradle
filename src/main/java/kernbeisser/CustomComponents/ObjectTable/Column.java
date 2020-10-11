@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.AccessChecking.Getter;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import org.intellij.lang.annotations.MagicConstant;
 
 public interface Column<T> {
@@ -57,7 +57,7 @@ public interface Column<T> {
         }
         try {
           return v.get(t);
-        } catch (AccessDeniedException e) {
+        } catch (PermissionKeyRequiredException e) {
           read = false;
           return getValue(t);
         }
@@ -111,7 +111,7 @@ public interface Column<T> {
       }
 
       @Override
-      public Object getValue(T t) throws AccessDeniedException {
+      public Object getValue(T t) throws PermissionKeyRequiredException {
         return "";
       }
 
@@ -134,7 +134,7 @@ public interface Column<T> {
 
   String getName();
 
-  Object getValue(T t) throws AccessDeniedException;
+  Object getValue(T t) throws PermissionKeyRequiredException;
 
   default void onAction(T t) {}
 

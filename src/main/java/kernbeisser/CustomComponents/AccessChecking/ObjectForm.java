@@ -19,6 +19,10 @@ public class ObjectForm<P> {
 
   @SafeVarargs
   public ObjectForm(Bounded<P, ?>... boundedFields) {
+    for (Bounded<P, ?> boundedField : boundedFields) {
+      if (boundedField == null)
+        throw new NullPointerException("cannot create ObjectFrom with null fields");
+    }
     this.boundedFields = boundedFields;
   }
 

@@ -26,7 +26,8 @@ public class Shelf {
 
   @JoinColumn
   @ManyToMany
-  @Getter(onMethod_ = {@Key(PermissionKey.SHELF_ARTICLES_READ)})
+  @Getter(
+      onMethod_ = {@Key({PermissionKey.SHELF_ARTICLES_READ, PermissionKey.SHELF_ARTICLES_WRITE})})
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ARTICLES_WRITE)})
   private Set<Article> articles = new HashSet<>();
 }

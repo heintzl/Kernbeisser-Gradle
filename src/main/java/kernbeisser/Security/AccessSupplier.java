@@ -1,7 +1,7 @@
 package kernbeisser.Security;
 
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 
 public interface AccessSupplier<T> {
-  T get() throws AccessDeniedException;
+  T get() throws PermissionKeyRequiredException;
 }

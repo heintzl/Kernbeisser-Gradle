@@ -1,6 +1,5 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
-import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
@@ -48,7 +47,7 @@ public interface Bounded<T, V> {
 
       getGetter().get(v);
       return true;
-    } catch (AccessDeniedException e) {
+    } catch (PermissionKeyRequiredException e) {
       return false;
     }
   }
