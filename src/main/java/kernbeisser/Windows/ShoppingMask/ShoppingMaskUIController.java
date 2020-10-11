@@ -7,10 +7,8 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.UndefinedInputException;
-import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
@@ -306,11 +304,6 @@ public class ShoppingMaskUIController
     view.setOptArticleNo();
     view.loadItemStats(new ShoppingItem(article, view.getDiscount(), view.isPreordered()));
     view.setFocusOnAmount();
-  }
-
-  void editUserAction() {
-    new EditUserController(model.getSaleSession().getCustomer(), Mode.EDIT)
-        .openAsWindow(view.getWindow(), SubWindow::new);
   }
 
   public void processBarcode(String barcode) {

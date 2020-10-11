@@ -107,22 +107,23 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
   public void manipulateShoppingItemAmount(ShoppingItem i, int number) {
     final int itemMultiplier = i.getItemMultiplier();
     final double containerSize = i.getContainerSize();
+    final int itemNumber = i.isContainerDiscount() ? (int) (number * i.getContainerSize()) : number;
     model
         .getItems()
         .removeIf(
             e -> {
               if (e.equals(i)) {
-                e.setItemMultiplier(itemMultiplier + number);
+                e.setItemMultiplier(itemMultiplier + itemNumber);
                 return e.getItemMultiplier() <= 0;
               }
               if (e.getParentItem() == null || (!e.getParentItem().equals(i))) return false;
               if (e.getName().contains("Gebinde")) {
                 if (e.getParentItem().getItemMultiplier() <= 0) return true;
                 int before = (int) (itemMultiplier / containerSize);
-                int after = (int) ((itemMultiplier + number) / containerSize);
+                int after = (int) ((itemMultiplier + itemNumber) / containerSize);
                 e.setItemMultiplier(e.getItemMultiplier() + after - before);
               } else {
-                e.setItemMultiplier(e.getItemMultiplier() + number);
+                e.setItemMultiplier(e.getItemMultiplier() + itemNumber);
               }
               return e.getItemMultiplier() <= 0;
             });
@@ -137,7 +138,7 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
         }
       }
       if (!depositFound) {
-        model.addItemBehind(i.createItemDeposit(number, false), i);
+        model.addItemBehind(i.createItemDeposit(itemNumber, false), i);
       }
     }
     if ((itemMultiplier + number) / containerSize == 1.

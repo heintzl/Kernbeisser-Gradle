@@ -383,7 +383,7 @@
                   </grid>
                   <component id="e6328" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -393,7 +393,7 @@
                   </component>
                   <component id="11129" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="kbNumber">
                     <constraints>
-                      <grid row="2" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                      <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
                       </grid>
                       <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
@@ -517,26 +517,6 @@
                       </hspacer>
                     </children>
                   </grid>
-                  <component id="7e987" class="javax.swing.JLabel">
-                    <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Lieferant:"/>
-                    </properties>
-                  </component>
-                  <component id="d64a1" class="javax.swing.JComboBox" binding="supplier">
-                    <constraints>
-                      <grid row="1" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.3" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                      <font size="14"/>
-                    </properties>
-                  </component>
                   <component id="13b9a" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="netPrice">
                     <constraints>
                       <grid row="6" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
@@ -615,6 +595,26 @@
                       <font size="14"/>
                     </properties>
                   </component>
+                  <component id="d64a1" class="javax.swing.JComboBox" binding="supplier">
+                    <constraints>
+                      <grid row="2" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="5" bottom="0" right="5" weightx="0.3" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                      <font size="14"/>
+                    </properties>
+                  </component>
+                  <component id="7e987" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag top="6" left="10" bottom="6" right="0" weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <font size="16" style="0"/>
+                      <text value="Lieferant:"/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
             </children>
@@ -644,17 +644,17 @@
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
-                      <text value="Login:"/>
+                      <text value="Name:"/>
                     </properties>
                   </component>
-                  <component id="ec9c3" class="javax.swing.JLabel" binding="customerLoginName">
+                  <component id="ec9c3" class="javax.swing.JLabel" binding="customerInfoName">
                     <constraints>
                       <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
-                      <text value="&lt;&lt;Login&gt;&gt;"/>
+                      <text value="&lt;&lt;Name&gt;&gt;"/>
                     </properties>
                   </component>
                   <component id="db574" class="javax.swing.JLabel">
@@ -752,15 +752,6 @@
                     <properties>
                       <font size="16" style="1"/>
                       <text value="Kunden-Info"/>
-                    </properties>
-                  </component>
-                  <component id="4f3b9" class="javax.swing.JButton" binding="userInfo">
-                    <constraints>
-                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <text value="Benutzerinfo"/>
                     </properties>
                   </component>
                 </children>
