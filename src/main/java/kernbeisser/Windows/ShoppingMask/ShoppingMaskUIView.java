@@ -894,15 +894,16 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     if (JOptionPane.showConfirmDialog(
             getTopComponent(),
             String.format(
-                "Haben sie den Einkauf in höhe von %.2f€ von %s, %s in das Log-Buch eingetragen?",
+                "Ist der Einkauf in Höhe von %.2f€ von %s %s in das Log-Buch eintragen worden?",
                 value, firstname, surname),
-            "Haben sie den Einkauf in das Log-Buch eingetragen",
+            "Log-Bucheintrag",
             JOptionPane.YES_OPTION,
-            JOptionPane.INFORMATION_MESSAGE)
+            JOptionPane.QUESTION_MESSAGE)
         != 0) {
       JOptionPane.showMessageDialog(
           getTopComponent(),
-          "Ein Einkauf muss im Log-Buch notiert werden,\num eine zweite Sicherheit zu schaffen.");
+          "Alle Einkäufe müssen im Log-Buch notiert werden\nfür den Fall, dass gespeicherte Daten verloren gehen.");
+      rememberLogging(firstname, surname, value);
     }
   }
 
