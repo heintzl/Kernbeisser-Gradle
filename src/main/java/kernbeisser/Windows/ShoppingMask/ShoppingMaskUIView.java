@@ -59,7 +59,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private JPanel eastPanel;
   private JPanel eastUpperPanel;
   private JLabel customerCredit;
-  private JLabel customerLoginName;
+  private JLabel customerInfoName;
   private JRadioButton priceStandard;
   private JRadioButton pricePreordered;
   private JRadioButton price50Percent;
@@ -91,7 +91,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private JComboBox supplier;
   private JButton emptyShoppingCart;
   private JComboBox vat;
-  private JButton userInfo;
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
@@ -134,20 +133,17 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     amount.setText("1");
   }
 
-  private void editUserAction() {
-    controller.editUserAction();
-  }
-
   void loadUserInfo(SaleSession saleSession) {
     // TODO display customerName instead of LoginName
-    customerName.setText(
-        saleSession.getCustomer().getFirstName() + " " + saleSession.getCustomer().getSurname());
-    customerLoginName.setText(saleSession.getCustomer().getUsername());
+    String customerDisplayName = saleSession.getCustomer().getFullName();
+    customerName.setText(customerDisplayName);
+
+    customerInfoName.setText(customerDisplayName);
     customerCredit.setText(
         format("{0, number, 0.00}\u20AC", saleSession.getCustomer().getUserGroup().getValue()));
-    salesPerson1.setText(saleSession.getSeller().getUsername());
+    salesPerson1.setText(saleSession.getSeller().getFullName());
     salesPerson2.setText(
-        saleSession.getSecondSeller() != null ? saleSession.getSecondSeller().getUsername() : "");
+        saleSession.getSecondSeller() != null ? saleSession.getSecondSeller().getFullName() : "");
   }
 
   private void supplierChange() {
@@ -814,7 +810,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     variablePercentage.addActionListener(e -> addToCart());
 
     editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
-    editUser.addActionListener(e -> editUserAction());
+    editUser.addActionListener(e -> controller.openUserInfo());
 
     traversalOrder.add(kbNumber);
     traversalOrder.add(articleName);
@@ -842,8 +838,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     keyCapture.add(KeyEvent.VK_INSERT, () -> optProduce.doClick());
     keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
     keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
-
-    userInfo.addActionListener(e -> controller.openUserInfo());
 
     articleTypeChange(ArticleType.ARTICLE_NUMBER);
 
