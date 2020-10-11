@@ -97,8 +97,13 @@ public class ConfigManager {
     return getFile(getHeader(), "CatalogSource", false);
   }
 
+  static String stripAllUselessStuff(String s) {
+    return s.replaceAll("[^0-9\\.; ]", "");
+  }
+
   public static boolean isCatalogUpToDate() {
-    return Setting.INFO_LINE_LAST_CATALOG.getStringValue().equals(getCatalogInfoLine());
+    return stripAllUselessStuff(Setting.INFO_LINE_LAST_CATALOG.getStringValue())
+        .equals(stripAllUselessStuff(getCatalogInfoLine()));
   }
 
   public static String getCatalogInfoLine() {

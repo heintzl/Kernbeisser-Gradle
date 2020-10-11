@@ -431,22 +431,27 @@ public class Tools {
     return Thread.currentThread().getStackTrace()[2 + above];
   }
 
+  static boolean keyBoardListenerIsActive = false;
+
   public static void activateKeyboardListener() {
-    KeyboardFocusManager.getCurrentKeyboardFocusManager()
-        .addKeyEventDispatcher(
-            new KeyEventDispatcher() {
-              @Override
-              public boolean dispatchKeyEvent(KeyEvent e) {
-                ViewMainPanel viewMainPanel =
-                    (ViewMainPanel)
-                        SwingUtilities.getAncestorOfClass(ViewMainPanel.class, e.getComponent());
-                if (viewMainPanel != null) {
-                  return viewMainPanel.getView().processKeyboardInput(e);
-                } else {
-                  return false;
+    if (!keyBoardListenerIsActive) {
+      KeyboardFocusManager.getCurrentKeyboardFocusManager()
+          .addKeyEventDispatcher(
+              new KeyEventDispatcher() {
+                @Override
+                public boolean dispatchKeyEvent(KeyEvent e) {
+                  ViewMainPanel viewMainPanel =
+                      (ViewMainPanel)
+                          SwingUtilities.getAncestorOfClass(ViewMainPanel.class, e.getComponent());
+                  if (viewMainPanel != null) {
+                    return viewMainPanel.getView().processKeyboardInput(e);
+                  } else {
+                    return false;
+                  }
                 }
-              }
-            });
+              });
+      keyBoardListenerIsActive = true;
+    }
   }
 
   public static void deactivateKeyboardListener() {
@@ -458,6 +463,7 @@ public class Tools {
                 return false;
               }
             });
+    keyBoardListenerIsActive = false;
   }
 
   public static <T> T decide(AccessSupplier<T> supplier, T t) {

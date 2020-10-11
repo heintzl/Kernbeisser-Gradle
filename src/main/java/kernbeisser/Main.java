@@ -46,7 +46,6 @@ public class Main {
       SwingUtilities.invokeLater(() -> new DataImportController().openTab("Daten importieren"));
     } else {
       checkCatalog();
-      Tools.activateKeyboardListener();
       openLogIn();
     }
   }

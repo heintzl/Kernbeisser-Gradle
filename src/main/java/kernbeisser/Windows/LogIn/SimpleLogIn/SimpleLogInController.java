@@ -34,7 +34,9 @@ public class SimpleLogInController implements IController<SimpleLogInView, Simpl
   }
 
   @Override
-  public void fillUI() {}
+  public void fillUI() {
+    Tools.activateKeyboardListener();
+  }
 
   @Override
   public PermissionKey[] getRequiredKeys() {
