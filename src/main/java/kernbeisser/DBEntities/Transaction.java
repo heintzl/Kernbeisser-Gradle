@@ -117,16 +117,17 @@ public class Transaction {
     to.getUserGroup().setValue(to.getUserGroup().getValue() + value);
   }
 
-  public static boolean isValidTransaction(Transaction transaction) {
-    double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
-    if (transaction.getFrom().getUserGroup().getValue() - transaction.getValue() < minValue) {
-      if (!transaction.getFrom().hasPermission(PermissionKey.GO_UNDER_MIN)) {
-        return false;
-      }
+  public static boolean isValidTransaction(Transaction tx) {
+    double globalBalanceMinimum = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
+    double remainingFromSideBalanceAfterTx = tx.getFrom().getUserGroup().getValue() - tx.getValue();
+    if (remainingFromSideBalanceAfterTx < globalBalanceMinimum) {
+      return tx.getFrom().hasPermission(PermissionKey.GO_UNDER_MIN);
     }
-    if (transaction.getValue() < 0
-        && transaction.getTo().getUserGroup().getValue() - transaction.getValue() < minValue) {
-      return transaction.getTo().hasPermission(PermissionKey.GO_UNDER_MIN);
+    // TODO should this be + to ever become valid if we have a negative tx?
+    double remainingToSideBalanceAfterTx = tx.getTo().getUserGroup().getValue() - tx.getValue();
+    boolean txValueNegative = tx.getValue() < 0;
+    if (txValueNegative && remainingToSideBalanceAfterTx < globalBalanceMinimum) {
+      return tx.getTo().hasPermission(PermissionKey.GO_UNDER_MIN);
     }
     return true;
   }
