@@ -2,11 +2,10 @@ package kernbeisser.CustomComponents.AccessChecking;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
-import java.util.function.Supplier;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.Window;
@@ -22,24 +21,21 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
 
   private C data;
 
-  private final Supplier<Collection<V>> supplier;
-
   private final Column<V>[] columns;
 
+  private final Collection<V> values;
+
   public AccessCheckingCollectionEditor(
-      Getter<P, C> getter,
-      Setter<P, C> setter,
-      Supplier<Collection<V>> source,
-      Column<V>... columns) {
+      Getter<P, C> getter, Setter<P, C> setter, Collection<V> values, Column<V>... columns) {
+    this.values = values;
     this.getter = getter;
     this.setter = setter;
-    this.supplier = source;
     this.columns = columns;
     addActionListener(this::trigger);
   }
 
   void trigger(ActionEvent event) {
-    new CollectionController<V>(data, supplier.get(), editable, columns)
+    new CollectionController<V>(data, values, editable, columns)
         .openAsWindow((Window) SwingUtilities.getWindowAncestor(this), SubWindow::new);
   }
 
@@ -57,7 +53,7 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
   public void setObjectData(P data) {
     try {
       this.data = getter.get(data);
-    } catch (AccessDeniedException e) {
+    } catch (PermissionKeyRequiredException e) {
       editable = false;
     }
   }
@@ -66,7 +62,7 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
   public void writeInto(P p) throws CannotParseException {
     try {
       setter.set(p, data);
-    } catch (AccessDeniedException e) {
+    } catch (PermissionKeyRequiredException e) {
       e.printStackTrace();
     }
   }

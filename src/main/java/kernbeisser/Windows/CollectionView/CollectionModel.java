@@ -2,6 +2,7 @@ package kernbeisser.Windows.CollectionView;
 
 import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.Security.IterableProtection.ProtectedIterable;
 import kernbeisser.Windows.MVC.IModel;
 
 public class CollectionModel<T> implements IModel<CollectionController<T>> {
@@ -19,6 +20,7 @@ public class CollectionModel<T> implements IModel<CollectionController<T>> {
     this.columns = columns;
     this.loaded = loaded;
     this.editable = editable;
+    available.removeAll(loaded);
     this.available = available;
   }
 
@@ -35,6 +37,18 @@ public class CollectionModel<T> implements IModel<CollectionController<T>> {
   }
 
   public boolean isEditable() {
-    return editable;
+    try {
+      return ((ProtectedIterable) loaded).isModifiable();
+    } catch (ClassCastException e) {
+      return true;
+    }
+  }
+
+  public boolean isReadable() {
+    try {
+      return ((ProtectedIterable) loaded).isReadable();
+    } catch (ClassCastException e) {
+      return true;
+    }
   }
 }

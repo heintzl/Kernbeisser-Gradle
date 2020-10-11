@@ -1,8 +1,8 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
 import javax.swing.*;
-import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
   public void setObjectData(P data) {
     try {
       setSelectedItem(getter.get(data));
-    } catch (AccessDeniedException ignored) {
+    } catch (PermissionKeyRequiredException ignored) {
 
     }
   }
@@ -57,7 +57,7 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
       } else {
         throw new CannotParseException();
       }
-    } catch (AccessDeniedException ignored) {
+    } catch (PermissionKeyRequiredException ignored) {
     }
   }
 

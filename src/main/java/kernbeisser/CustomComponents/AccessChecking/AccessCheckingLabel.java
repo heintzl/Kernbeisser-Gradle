@@ -3,7 +3,7 @@ package kernbeisser.CustomComponents.AccessChecking;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.Enums.Colors;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.AccessSupplier;
 
 public class AccessCheckingLabel extends JLabel {
@@ -11,7 +11,7 @@ public class AccessCheckingLabel extends JLabel {
     try {
       setText(text.get());
       setForeground(Colors.LABEL_FOREGROUND.getColor());
-    } catch (AccessDeniedException e) {
+    } catch (PermissionKeyRequiredException e) {
       setText("[Keine Leseberechtigung]");
       setForeground(Color.RED);
     }

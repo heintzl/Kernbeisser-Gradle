@@ -1,6 +1,5 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -8,7 +7,7 @@ import java.util.List;
 import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.table.*;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,6 +76,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   private TableModel createModel(Collection<Column<T>> columns, Collection<T> objects) {
+    objects.forEach(
+        e -> {
+          if (e == null)
+            throw new NullPointerException("cannot create model with null paramenters");
+        });
     Object[][] values = Tools.transformToArray(objects, Object[].class, this::collectColumns);
     String[] names = Tools.transformToArray(columns, String.class, Column::getName);
     return new DefaultTableModel(values, names) {
@@ -189,7 +193,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     for (int i = 0; i < columns.size(); i++) {
       try {
         out[i] = columns.get(i).getValue(value);
-      } catch (AccessDeniedException e) {
+      } catch (PermissionKeyRequiredException e) {
         out[i] = NO_ACCESS_VALUE;
       }
     }

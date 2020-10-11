@@ -55,8 +55,8 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     addAll.addActionListener(e -> controller.selectAllAvailable());
     remove.addActionListener(e -> controller.selectChosen());
     removeAll.addActionListener(e -> controller.selectAllChosen());
-    commit.addActionListener(e -> controller.commit());
     cancel.addActionListener(e -> back());
+    commit.addActionListener(e -> back());
   }
 
   void setEditable(boolean editable) {
@@ -80,22 +80,6 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   void setColumns(Column<T>[] columns) {
     available.setColumns(columns);
     chosen.setColumns(columns);
-  }
-
-  void addChosen(T t) {
-    chosen.add(t);
-  }
-
-  void removeAvailable(T t) {
-    available.remove(t);
-  }
-
-  void addAvailable(T t) {
-    available.add(t);
-  }
-
-  void removeChosen(T t) {
-    chosen.remove(t);
   }
 
   void setAvailable(Collection<T> collection) {

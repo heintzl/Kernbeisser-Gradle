@@ -5,8 +5,8 @@ import java.util.Collection;
 import javax.persistence.NoResultException;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.MVC.IModel;
 
 public class TransactionModel implements IModel<TransactionController> {
@@ -39,7 +39,7 @@ public class TransactionModel implements IModel<TransactionController> {
     final boolean[] correct = {true};
     transactions.forEach(e -> correct[0] = correct[0] & Transaction.isValidTransaction(e));
     if (!correct[0]) {
-      throw new AccessDeniedException("Not all transactions have valid values");
+      throw new PermissionKeyRequiredException("Not all transactions have valid values");
     }
     for (Transaction transaction : transactions) {
       Transaction.doTransaction(

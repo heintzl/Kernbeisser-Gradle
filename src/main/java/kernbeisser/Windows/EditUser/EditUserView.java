@@ -51,8 +51,6 @@ public class EditUserView implements IView<EditUserController> {
   private JLabel lblAnteile;
   private JLabel grpGenossenschaft;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, Integer> shares;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<User, Double>
-      solidarySupplement;
   private AccessCheckingCollectionEditor<User, Set<Job>, Job> chgJobs;
   private JLabel lblDienste;
   private JPanel userDataPanel;
@@ -103,7 +101,6 @@ public class EditUserView implements IView<EditUserController> {
             username,
             isEmployee,
             shares,
-            solidarySupplement,
             extraJobs,
             keyNumber,
             email,
@@ -188,13 +185,13 @@ public class EditUserView implements IView<EditUserController> {
         new AccessCheckingCollectionEditor<>(
             User::getPermissions,
             User::setPermissions,
-            () -> Permission.getAll(null),
+            Permission.getAll(null),
             Column.create("Name", Permission::getName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
             User::getJobs,
             User::setJobs,
-            () -> Job.getAll(null),
+            Job.getAll(null),
             Column.create("Name", Job::getName),
             Column.create("Beschreibung", Job::getDescription));
   }

@@ -1,7 +1,7 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
 import javax.swing.*;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 
 public class AccessCheckBox<P> extends JCheckBox implements Bounded<P, Boolean> {
@@ -31,7 +31,7 @@ public class AccessCheckBox<P> extends JCheckBox implements Bounded<P, Boolean> 
   public void setObjectData(P data) {
     try {
       setSelected(getter.get(data));
-    } catch (AccessDeniedException ignored) {
+    } catch (PermissionKeyRequiredException ignored) {
     }
   }
 
@@ -39,7 +39,7 @@ public class AccessCheckBox<P> extends JCheckBox implements Bounded<P, Boolean> 
   public void writeInto(P p) {
     try {
       setter.set(p, isSelected());
-    } catch (AccessDeniedException ignored) {
+    } catch (PermissionKeyRequiredException ignored) {
     }
   }
 

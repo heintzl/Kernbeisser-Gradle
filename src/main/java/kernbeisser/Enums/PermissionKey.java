@@ -8,6 +8,10 @@ import kernbeisser.Windows.LogIn.LogInModel;
 
 public enum PermissionKey {
 
+  // (only for CollectionProxy)
+  READ_ITERABLE_VALUE(ActionPermission.class),
+  MODIFY_ITERABLE_VALUE(ActionPermission.class),
+
   // VALUE
   GO_UNDER_MIN(ActionPermission.class),
 

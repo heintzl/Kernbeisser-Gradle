@@ -6,8 +6,8 @@ import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import kernbeisser.Enums.Colors;
-import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 
 public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, V> {
@@ -57,7 +57,7 @@ public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, 
   public void setObjectData(P data) {
     try {
       setText(stringTransformer.toString(getter.get(data)));
-    } catch (AccessDeniedException e) {
+    } catch (PermissionKeyRequiredException e) {
       setText("Keine Leseberechtigung");
       setForeground(Color.RED);
       addFocusListener(noReadPermissionMaker);
@@ -68,7 +68,7 @@ public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, 
   public void writeInto(P p) throws CannotParseException {
     try {
       setter.set(p, stringTransformer.fromString(getText()));
-    } catch (AccessDeniedException ignored) {
+    } catch (PermissionKeyRequiredException ignored) {
 
     }
   }

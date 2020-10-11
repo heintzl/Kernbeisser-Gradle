@@ -1,7 +1,7 @@
 package kernbeisser.Security;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.math.BigInteger;
+import java.util.*;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 
@@ -9,22 +9,22 @@ import kernbeisser.Enums.PermissionKey;
  * loads given permission set into a bit field saved as long array so we can easily check a
  * permission with bit field comparision against it.
  */
-public final class MasterPermissionSet {
+public class PermissionSet {
+  public static final PermissionSet MASTER = new PermissionSet();
 
   /** the java option for a c bitfield */
-  private static final long[] bits = new long[((PermissionKey.values().length / Long.SIZE) + 1)];
+  private final long[] bits = new long[((PermissionKey.values().length / Long.SIZE) + 1)];
 
   /**
    * loads all permission from the collection into the bit field
    *
    * @param permissions the collection of all permission which the logged in user has.
    */
-  public static void loadPermission(Collection<Permission> permissions) {
+  public void loadPermission(Collection<Permission> permissions) {
     Arrays.fill(bits, 0L);
     for (Permission permission : permissions) {
       for (PermissionKey key : permission.getKeySet()) {
-        int o = key.ordinal();
-        bits[o / Long.SIZE] = (bits[o / Long.SIZE] | (1 << (o % Long.SIZE)));
+        addPermission(key);
       }
     }
   }
@@ -35,8 +35,8 @@ public final class MasterPermissionSet {
    * @param key the key which should get tested against the bit field
    * @return the boolean if the PermissionSet contains the permission
    */
-  public static boolean hasPermission(PermissionKey key) {
-    long bit = (1 << (key.ordinal() % Long.SIZE));
+  public boolean hasPermission(PermissionKey key) {
+    long bit = (1L << (key.ordinal() % Long.SIZE));
     return (bits[key.ordinal() / Long.SIZE] & bit) == bit;
   }
 
@@ -45,9 +45,9 @@ public final class MasterPermissionSet {
    *
    * @param key the key which should added to the permission set
    */
-  public static void addPermission(PermissionKey key) {
+  public void addPermission(PermissionKey key) {
     bits[key.ordinal() / Long.SIZE] =
-        (bits[key.ordinal() / Long.SIZE] | (1 << (key.ordinal() % Long.SIZE)));
+        (bits[key.ordinal() / Long.SIZE] | (1L << (key.ordinal() % Long.SIZE)));
   }
 
   /**
@@ -55,9 +55,9 @@ public final class MasterPermissionSet {
    *
    * @param key the key which should be removed
    */
-  public static void removePermission(PermissionKey key) {
+  public void removePermission(PermissionKey key) {
     bits[key.ordinal() / Long.SIZE] =
-        (bits[key.ordinal() / Long.SIZE] & (~(1 << (key.ordinal() % Long.SIZE))));
+        (bits[key.ordinal() / Long.SIZE] & (~(1L << (key.ordinal() % Long.SIZE))));
   }
 
   /**
@@ -66,7 +66,7 @@ public final class MasterPermissionSet {
    * @param keys all keys in a var args form
    * @return true if the PermissionSet contains all keys
    */
-  public static boolean hasPermissions(PermissionKey... keys) {
+  public boolean hasPermissions(PermissionKey... keys) {
     for (PermissionKey key : keys) {
       if (!hasPermission(key)) {
         return false;
@@ -80,7 +80,24 @@ public final class MasterPermissionSet {
    *
    * @param b the value which the values become set
    */
-  public static void setAllBits(boolean b) {
-    Arrays.fill(bits, b ? -1L : 0);
+  public void setAllBits(boolean b) {
+    Arrays.fill(bits, b ? -1L : 0L);
+  }
+
+  public Set<PermissionKey> asSet() {
+    HashSet<PermissionKey> permissionKeys = new HashSet<>();
+    for (PermissionKey value : PermissionKey.values()) {
+      if (hasPermission(value)) permissionKeys.add(value);
+    }
+    return permissionKeys;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (long bit : bits) {
+      sb.append(String.format("%032d", new BigInteger(Long.toBinaryString(bit))));
+    }
+    return sb.toString();
   }
 }

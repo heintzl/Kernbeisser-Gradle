@@ -1,7 +1,6 @@
 package kernbeisser.Windows.CollectionView;
 
 import java.util.Collection;
-import java.util.HashSet;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.IController;
@@ -25,8 +24,8 @@ public class CollectionController<T> implements IController<CollectionView<T>, C
   @Override
   public void fillUI() {
     view.setAvailable(model.getAvailable());
+    model.getAvailable().removeAll(model.getLoaded());
     view.setChosen(model.getLoaded());
-    model.getLoaded().forEach(view::removeAvailable);
     view.setColumns(model.getColumns());
     view.setEditable(model.isEditable());
   }
@@ -36,36 +35,40 @@ public class CollectionController<T> implements IController<CollectionView<T>, C
     return new PermissionKey[0];
   }
 
-  void commit() {
-    model.getLoaded().clear();
-    model.getLoaded().addAll(view.getAllChosen());
-    view.back();
-  }
-
   public void selectAvailable() {
-    if (view.getSelectedAvailableObject() == null) {
+    T object = view.getSelectedAvailableObject();
+    if (object == null) {
       return;
     }
-    view.addChosen(view.getSelectedAvailableObject());
-    view.removeAvailable(view.getSelectedAvailableObject());
+    model.getLoaded().add(object);
+    model.getAvailable().remove(object);
+    refresh();
   }
 
   public void selectChosen() {
-    if (view.getSelectedChosenObject() == null) {
+    T object = view.getSelectedChosenObject();
+    if (object == null) {
       return;
     }
-    view.addAvailable(view.getSelectedChosenObject());
-    view.removeChosen(view.getSelectedChosenObject());
+    model.getAvailable().add(object);
+    model.getLoaded().remove(object);
+    refresh();
+  }
+
+  private void refresh() {
+    view.setAvailable(model.getAvailable());
+    view.setChosen(model.getLoaded());
   }
 
   public void selectAllAvailable() {
-    view.setChosen(new HashSet<>());
-    view.setAvailable(new HashSet<>());
-    model.getAvailable().forEach(view::addChosen);
+    model.getLoaded().addAll(model.getAvailable());
+    model.getAvailable().clear();
+    refresh();
   }
 
   public void selectAllChosen() {
-    view.getAllChosen().forEach(view::addAvailable);
-    view.setChosen(new HashSet<>());
+    model.getAvailable().addAll(model.getLoaded());
+    model.getLoaded().clear();
+    refresh();
   }
 }

@@ -1,43 +1,15 @@
 package kernbeisser.Security;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
+import java.util.stream.Collectors;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import kernbeisser.Exeptions.AccessDeniedException;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.SneakyThrows;
 
 public class Proxy {
 
-  /**
-   * creates a empty instance of a security checked object, which is used to test functions for
-   * accessibility
-   *
-   * @param parent the parent for the Object
-   * @param <T> the type of the secure instance
-   * @return a empty proxy object
-   */
-  public static <T> T getEmptySecurityInstance(T parent) {
-    if (ProxyFactory.isProxyClass(parent.getClass())) {
-      return parent;
-    }
-    ProxyFactory factory = new ProxyFactory();
-    factory.setSuperclass(parent.getClass());
-    try {
-      return (T) factory.create(new Class[0], new Object[0], new SecurityHandler());
-    } catch (InstantiationException
-        | InvocationTargetException
-        | NoSuchMethodException
-        | IllegalAccessException e) {
-      e.printStackTrace();
-      return parent;
-    }
-  }
+  private static final HashMap<Class<?>, Class<?>> proxyClassCache = new HashMap<>();
 
   /**
    * creates a empty instance of a security checked object, which is used to test functions for
@@ -51,17 +23,8 @@ public class Proxy {
     if (ProxyFactory.isProxyClass(clazz)) {
       return Tools.createWithoutConstructor(clazz);
     }
-    ProxyFactory factory = new ProxyFactory();
-    factory.setSuperclass(clazz);
-    try {
-      return (T) factory.create(new Class[0], new Object[0], new SecurityHandler());
-    } catch (InstantiationException
-        | InvocationTargetException
-        | NoSuchMethodException
-        | IllegalAccessException e) {
-      e.printStackTrace();
-      return Tools.createWithoutConstructor(clazz);
-    }
+    return injectMethodHandler(
+        Tools.createWithoutConstructor(clazz), PermissionSetSecurityHandler.ON_LOGGED_IN);
   }
 
   /**
@@ -73,22 +36,10 @@ public class Proxy {
    * @return a Proxy which extends T
    */
   public static <T> T getSecureInstance(T parent) {
-    if (ProxyFactory.isProxyClass(parent.getClass())) {
+    if (parent == null || ProxyFactory.isProxyClass(parent.getClass())) {
       return parent;
     }
-    ProxyFactory factory = new ProxyFactory();
-    factory.setSuperclass(parent.getClass());
-    try {
-      T proxy = (T) factory.create(new Class[0], new Object[0], new SecurityHandler());
-      Tools.copyInto(parent, proxy);
-      return proxy;
-    } catch (InstantiationException
-        | InvocationTargetException
-        | NoSuchMethodException
-        | IllegalAccessException e) {
-      e.printStackTrace();
-      return parent;
-    }
+    return injectMethodHandler(parent, PermissionSetSecurityHandler.ON_LOGGED_IN);
   }
 
   /**
@@ -107,24 +58,36 @@ public class Proxy {
     if (ProxyFactory.isProxyClass(any.getClass())) {
       return collection;
     }
-    Collection<V> buffer = new ArrayList<>(collection);
-    collection.clear();
-    ProxyFactory factory = new ProxyFactory();
-    factory.setSuperclass(any.getClass());
-    buffer.forEach(
-        parent -> {
-          try {
-            V proxy = (V) factory.create(new Class[0], new Object[0], new SecurityHandler());
-            Tools.copyInto(parent, proxy);
-            collection.add(proxy);
-          } catch (NoSuchMethodException
-              | InstantiationException
-              | IllegalAccessException
-              | InvocationTargetException e) {
-            e.printStackTrace();
-          }
-        });
-    return collection;
+    Class<?> proxyClass = getProxyClass(any.getClass());
+    return (C)
+        collection.stream()
+            .map(e -> injectMethodHandler(proxyClass, e, PermissionSetSecurityHandler.ON_LOGGED_IN))
+            .collect(Collectors.toCollection(ArrayList::new));
+  }
+
+  public static Class<?> getProxyClass(Class<?> clazz) {
+    Class<?> cachedClass = proxyClassCache.get(clazz);
+    if (cachedClass == null) {
+      ProxyFactory factory = new ProxyFactory();
+      factory.setSuperclass(clazz);
+      cachedClass = factory.createClass();
+      proxyClassCache.put(clazz, cachedClass);
+    }
+    return cachedClass;
+  }
+
+  private static <T> T injectMethodHandler(
+      Class<?> proxyClass, T value, MethodHandler methodHandler) {
+    if (value == null) return null;
+    javassist.util.proxy.Proxy p =
+        (javassist.util.proxy.Proxy) Tools.createWithoutConstructor(proxyClass);
+    p.setHandler(methodHandler);
+    Tools.copyInto(value, p);
+    return (T) p;
+  }
+
+  public static <T> T injectMethodHandler(T value, MethodHandler methodHandler) {
+    return injectMethodHandler(getProxyClass(value.getClass()), value, methodHandler);
   }
 
   /**
@@ -146,48 +109,6 @@ public class Proxy {
   @SneakyThrows
   public static MethodHandler getHandler(Object o) {
     return ProxyFactory.getHandler((javassist.util.proxy.Proxy) o);
-  }
-
-  /**
-   * the class which handel when a method is called by a proxy instance SecurityHandler checks if
-   * the current load PermissionSet contains all keys which specified in Key annotation to run the
-   * method when it doesn't than the security handler throws a AccessDeniedException
-   */
-  static class SecurityHandler implements MethodHandler {
-    public Object invoke(Object proxy, Method proxyMethod, Method original, Object[] args)
-        throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            AccessDeniedException {
-      Key key = proxyMethod.getAnnotation(Key.class);
-      Object out;
-      if (key == null || MasterPermissionSet.hasPermissions(key.value())) {
-        out = original.invoke(proxy, args);
-      } else {
-        throw new AccessDeniedException(
-            "User["
-                + LogInModel.getLoggedIn().getId()
-                + "] cannot access "
-                + original
-                + " because the user has not the required Keys:"
-                + Arrays.toString(key.value()));
-      }
-      return out;
-    }
-  }
-
-  public static <T> T createProxyInstance(T parent, MethodHandler securityHandler) {
-    ProxyFactory factory = new ProxyFactory();
-    factory.setSuperclass(parent.getClass());
-    try {
-      T proxy = (T) factory.create(new Class[0], new Object[0], securityHandler);
-      Tools.copyInto(parent, proxy);
-      return proxy;
-    } catch (InstantiationException
-        | InvocationTargetException
-        | NoSuchMethodException
-        | IllegalAccessException e) {
-      e.printStackTrace();
-      return parent;
-    }
   }
 
   public static <T> T removeProxy(T t) {

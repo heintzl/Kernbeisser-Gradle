@@ -24,7 +24,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Exeptions.AccessDeniedException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
@@ -463,7 +463,7 @@ public class Tools {
   public static <T> T decide(AccessSupplier<T> supplier, T t) {
     try {
       return supplier.get();
-    } catch (AccessDeniedException e) {
+    } catch (PermissionKeyRequiredException e) {
       return t;
     }
   }
@@ -471,7 +471,7 @@ public class Tools {
   public static <T> void tryIt(AccessConsumer<T> consumer, T t) {
     try {
       consumer.accept(t);
-    } catch (AccessDeniedException e) {
+    } catch (PermissionKeyRequiredException e) {
       e.printStackTrace();
     }
   }
