@@ -893,7 +893,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public void setCheckoutEnable(boolean b) {
-    checkout.setEnabled(b);
+    getTopComponent().setEnabled(b);
   }
 
   public void rememberLogging(String firstname, String surname, double value) {
