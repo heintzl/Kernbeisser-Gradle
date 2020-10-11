@@ -29,6 +29,12 @@ public class PermissionSet {
     }
   }
 
+  public void loadKeys(Iterable<PermissionKey> keys) {
+    for (PermissionKey key : keys) {
+      addPermission(key);
+    }
+  }
+
   /**
    * checks if the PermissionSet contains a Key by the ordinal value of it
    *

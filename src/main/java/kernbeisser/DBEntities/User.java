@@ -11,6 +11,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.PermissionSet;
+import kernbeisser.Security.PermissionSetSecurityHandler;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -322,7 +324,11 @@ public class User implements Serializable {
   public static User generateBeginnerUser() {
     User user = new User();
     user.permissions.add(PermissionConstants.BEGINNER.getPermission());
-    return user;
+    PermissionSet set = new PermissionSet();
+    set.loadKeys(PermissionKey.find(User.class));
+    set.removePermission(PermissionKey.USER_PERMISSIONS_READ);
+    set.removePermission(PermissionKey.USER_PERMISSIONS_WRITE);
+    return Proxy.injectMethodHandler(user, new PermissionSetSecurityHandler(set));
   }
 
   public int getIdWithoutPermission() {
