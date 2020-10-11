@@ -6,6 +6,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Exeptions.CannotLogInException;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -17,11 +18,11 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
   private User user;
 
   public EditUserGroupModel(User user) {
-    this.user = user;
+    this.user = Proxy.removeProxy(user);
   }
 
   public void refreshData() {
-    user = User.getById(user.getId());
+    user = Proxy.removeProxy(User.getById(user.getId()));
   }
 
   void changeUserGroup(int user, int destination, String password) throws CannotLogInException {

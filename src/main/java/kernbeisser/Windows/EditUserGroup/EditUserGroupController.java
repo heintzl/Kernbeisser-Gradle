@@ -49,7 +49,7 @@ public class EditUserGroupController implements IController<EditUserGroupView, E
 
   @Override
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
+    return new PermissionKey[] {};
   }
 
   public void leaveUserGroup() {
