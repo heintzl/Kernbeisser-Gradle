@@ -22,6 +22,7 @@ import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.Setting.SettingController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
+import kernbeisser.Windows.Tillroll.TillrollController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
@@ -43,7 +44,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton editUsers;
   private ControllerButton doTransaction;
   private ControllerButton changePermissions;
-  private ControllerButton placeHolderControllerButton;
+  private ControllerButton tillrollControllerButton;
   private ControllerButton changeDBConnection;
   private ControllerButton editApplicationSettings;
   private ControllerButton order;
@@ -111,9 +112,9 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             PermissionController::new, controller -> controller.openTab("Berechtigungen"));
     // NOT IMPLEMENTED
-    placeHolderControllerButton =
+    tillrollControllerButton =
         new ControllerButton(
-            ControllerButton.EMPTY, controller -> controller.openTab("<PlaceHolder>"));
+            () -> new TillrollController(), controller -> controller.openTab("Bonrolle"));
     changeDBConnection =
         new ControllerButton(
             DBLogInController::new, controller -> controller.openTab("Datenbankverbindung"));
