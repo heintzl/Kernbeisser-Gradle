@@ -3,7 +3,7 @@ package kernbeisser.DBEntities;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.CsvFileSource;
 
 class TransactionTest {
 
@@ -19,7 +19,7 @@ class TransactionTest {
       return fromCanGoUnderMin;
     }
     // TODO should this be + to ever become valid if we have a negative tx?
-    double remainingToSideBalanceAfterTx = toBalance - txValue;
+    double remainingToSideBalanceAfterTx = toBalance + txValue;
     boolean txValueNegative = txValue < 0;
     if (txValueNegative && remainingToSideBalanceAfterTx < globalBalanceMinimum) {
       return toCanGoUnderMin;
@@ -28,9 +28,9 @@ class TransactionTest {
   }
 
   @ParameterizedTest
-  @CsvSource(
-      value = {"1.0:2.0:0.0:true:true:true"},
-      delimiter = ':')
+  @CsvFileSource(
+      resources = {"/isTransactionValid.csv"},
+      numLinesToSkip = 1)
   void isValidTransaction(
       double txValue,
       double fromBalance,
