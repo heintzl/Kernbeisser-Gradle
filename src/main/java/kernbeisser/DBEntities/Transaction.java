@@ -123,8 +123,8 @@ public class Transaction {
     if (remainingFromSideBalanceAfterTx < globalBalanceMinimum) {
       return tx.getFrom().hasPermission(PermissionKey.GO_UNDER_MIN);
     }
-    // TODO should this be + to ever become valid if we have a negative tx?
-    double remainingToSideBalanceAfterTx = tx.getTo().getUserGroup().getValue() - tx.getValue();
+
+    double remainingToSideBalanceAfterTx = tx.getTo().getUserGroup().getValue() + tx.getValue();
     boolean txValueNegative = tx.getValue() < 0;
     if (txValueNegative && remainingToSideBalanceAfterTx < globalBalanceMinimum) {
       return tx.getTo().hasPermission(PermissionKey.GO_UNDER_MIN);
