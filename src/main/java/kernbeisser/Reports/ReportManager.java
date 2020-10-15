@@ -80,8 +80,8 @@ public class ReportManager {
 
   public static void initTillrollPrint(
       Collection<ShoppingItem> tillroll, Instant start, Instant end) throws JRException {
-    String startDate = Date.INSTANT_FORMAT.format(start.truncatedTo(ChronoUnit.DAYS));
-    String endDate = Date.INSTANT_FORMAT.format(end);
+    String startDate = start.truncatedTo(ChronoUnit.DAYS).toString();
+    String endDate = end.truncatedTo(ChronoUnit.DAYS).toString();
     JasperDesign jspDesign =
         JRXmlLoader.load(
             getReportsFolder()
