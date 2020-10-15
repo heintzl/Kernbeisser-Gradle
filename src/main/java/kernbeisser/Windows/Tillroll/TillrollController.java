@@ -3,6 +3,7 @@ package kernbeisser.Windows.Tillroll;
 import javax.swing.*;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Windows.MVC.IController;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +38,8 @@ public class TillrollController implements IController<TillrollView, TillrollMod
       view.back();
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);
+    } catch (IncorrectInput e) {
+      view.messageNoItems(e.getMessage());
     }
   }
 }

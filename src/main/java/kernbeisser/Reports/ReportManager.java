@@ -4,6 +4,8 @@ import static kernbeisser.Config.ConfigManager.getDirectory;
 import static kernbeisser.Config.ConfigManager.getPath;
 
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,6 +75,25 @@ public class ReportManager {
             purchase.getSession().getCustomer().getFirstName(),
             purchase.getSession().getCustomer().getSurname(),
             purchase.getCreateDate().toString());
+  }
+
+  public static void initTillrollPrint(
+      Collection<ShoppingItem> tillroll, Instant start, Instant end) throws JRException {
+    String startDate = start.truncatedTo(ChronoUnit.DAYS).toString();
+    String endDate = end.truncatedTo(ChronoUnit.DAYS).toString();
+    JasperDesign jspDesign =
+        JRXmlLoader.load(
+            getReportsFolder()
+                .resolve(getPath(CONFIG_CATEGORY, "tillrollFileName"))
+                .toAbsolutePath()
+                .toFile());
+    JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
+    Map<String, Object> reportParams = new HashMap<>();
+    reportParams.put("start", startDate);
+    reportParams.put("ende", endDate);
+    JRDataSource dataSource = new JRBeanCollectionDataSource(tillroll);
+    jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
+    outFileName = String.format("KernbeisserBonrolle_%s_%s.pdf", startDate, endDate);
   }
 
   public void sendToPrinter() throws JRException {

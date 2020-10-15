@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Bonrolle" pageWidth="420" pageHeight="595" columnWidth="380" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Bold" markup="none" isBold="true"/>
+	<parameter name="start" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ende" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="retailPrice" class="java.lang.Double"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="vat" class="java.lang.Double"/>
+	<field name="kbNumber" class="java.lang.Integer"/>
+	<field name="priceUnits.shortName" class="java.lang.String"/>
+	<field name="itemMultiplier" class="java.lang.Integer"/>
+	<field name="itemRetailPrice" class="java.lang.Double"/>
+	<field name="purchase.createDate" class="java.time.Instant"/>
+	<field name="purchase.id" class="java.lang.Integer"/>
+	<background>
+		<band height="400" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="280" height="20" uuid="a8e30bf7-7991-468f-8542-a3a9d1eff6dc"/>
+				<textElement markup="html">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bonrolle]]></text>
+			</staticText>
+			<textField pattern="dd.MM.yy HH:mm">
+				<reportElement style="Bold" x="250" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
+				<textElement textAlignment="Right">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="240" height="15" uuid="69436be7-57fc-4cd6-9411-af080fa7febf"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Zeitraum von " + $P{start} + " bis " + $P{ende}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="0" width="45" height="15" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="335" y="0" width="44" height="15" uuid="24631cf1-5277-48a1-a10f-f758907adcdf"/>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="2" width="45" height="14" uuid="b3fc7b17-c0f3-4671-a263-aa2145158817">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Menge]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="2" width="180" height="14" uuid="1eccd8a6-a075-4134-90a3-b975bbd40705">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Artikel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="2" width="30" height="14" uuid="d31a89c0-de4a-49aa-a684-db382a2c6ed4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[MWSt.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="2" width="70" height="14" uuid="6e78b0c5-01eb-41f3-958a-37bba3c43f31">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="27414533-6336-4d60-992c-1aa382fdeece"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Preis inkl. MWSt.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="30" height="14" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{itemMultiplier}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont">
+				<reportElement x="50" y="0" width="230" height="14" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{name} + (($F{itemMultiplier} == 1 || $F{priceUnits.shortName}=="?")? "": " à " + java.text.MessageFormat.format("{0, number,0.00}€",$F{itemRetailPrice}))]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###.##%;(#,###.##">
+				<reportElement x="280" y="0" width="30" height="14" uuid="6efcde95-291f-43d1-b62e-72f55da53670">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{vat}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
+				<reportElement x="310" y="0" width="70" height="14" uuid="a062389a-bb41-4962-b7cf-77cc1e391a2a"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{retailPrice}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="32" y="0" width="18" height="14" uuid="6a89b95e-bb9a-4481-8596-94fd928f6935">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{priceUnits.shortName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
+				<textElement>
+					<font size="7"/>
+					<paragraph lineSpacingSize="1.0"/>
+				</textElement>
+				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="76" splitType="Stretch"/>
+	</summary>
+</jasperReport>

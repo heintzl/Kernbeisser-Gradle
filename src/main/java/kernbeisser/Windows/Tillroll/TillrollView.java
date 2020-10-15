@@ -38,6 +38,14 @@ public class TillrollView extends JDialog implements IView<TillrollController> {
     return main;
   }
 
+  public void messageNoItems(String title) {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Im angegebenen Zeitraum liegen keine Umsätze vor.",
+        title,
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
   public void messageNotImplemented(ExportTypes exportType) {
     JOptionPane.showMessageDialog(
         getContent(),
