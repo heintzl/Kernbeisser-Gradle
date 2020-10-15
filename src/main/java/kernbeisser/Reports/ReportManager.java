@@ -17,6 +17,7 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Useful.Date;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -79,8 +80,8 @@ public class ReportManager {
 
   public static void initTillrollPrint(
       Collection<ShoppingItem> tillroll, Instant start, Instant end) throws JRException {
-    String startDate = start.truncatedTo(ChronoUnit.DAYS).toString();
-    String endDate = end.truncatedTo(ChronoUnit.DAYS).toString();
+    String startDate = Date.INSTANT_FORMAT.format(start.truncatedTo(ChronoUnit.DAYS));
+    String endDate = Date.INSTANT_FORMAT.format(end);
     JasperDesign jspDesign =
         JRXmlLoader.load(
             getReportsFolder()
