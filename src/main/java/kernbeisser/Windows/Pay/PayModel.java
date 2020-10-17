@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Pay;
 
+import java.awt.print.PrinterAbortException;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -18,6 +19,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import net.sf.jasperreports.engine.JRException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class PayModel implements IModel<PayController> {
   private boolean successful = false;
@@ -113,19 +115,12 @@ public class PayModel implements IModel<PayController> {
       ReportManager.initInvoicePrint(items, purchase);
       invoice.sendToPrinter();
     } catch (JRException e) {
-      Tools.showUnexpectedErrorWarning(e);
+      if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
+        Tools.showPrintAbortedWarning(e, true);
+      } else {
+        Tools.showUnexpectedErrorWarning(e);
+      }
     }
-    //        try {
-    //            //Creates new PrinterJob
-    //            PrinterJob p = PrinterJob.getPrinterJob();
-    //
-    //            //Sets selected PrintService
-    //            p.setPrintService(printService);
-    //
-    //
-    //        } catch (PrinterException e) {
-    //            Tools.showUnexpectedErrorWarning(e);
-    //        }
   }
 
   PrintService getDefaultPrinter() {

@@ -1,10 +1,13 @@
 package kernbeisser.Windows.Tillroll;
 
-import javax.swing.*;
+import java.awt.print.PrinterAbortException;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IController;
+import net.sf.jasperreports.engine.JRException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class TillrollController implements IController<TillrollView, TillrollModel> {
@@ -40,6 +43,12 @@ public class TillrollController implements IController<TillrollView, TillrollMod
       view.messageNotImplemented(exportType);
     } catch (IncorrectInput e) {
       view.messageNoItems(e.getMessage());
+    } catch (JRException e) {
+      if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
+        Tools.showPrintAbortedWarning(e, true);
+      } else {
+        Tools.showUnexpectedErrorWarning(e);
+      }
     }
   }
 }

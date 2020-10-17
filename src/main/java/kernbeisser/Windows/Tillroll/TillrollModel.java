@@ -9,7 +9,6 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Reports.ReportManager;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -35,15 +34,16 @@ public class TillrollModel implements IModel<TillrollController> {
   }
 
   public void exportTillroll(ExportTypes exportType, int days)
-      throws UnsupportedOperationException, IncorrectInput {
+      throws UnsupportedOperationException, IncorrectInput, JRException {
     Instant end = Instant.now();
     Instant start = end.minus(days, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS);
     List<ShoppingItem> items = getTillrollitems(start, end);
     if (items.size() == 0) {
       throw new IncorrectInput("Leere Bonrolle");
     }
-    if (exportType == ExportTypes.PDF || exportType == ExportTypes.PRINT) {
-      try {
+    switch (exportType) {
+      case PRINT:
+      case PDF:
         ReportManager tillroll = new ReportManager();
         tillroll.initTillrollPrint(items, start, end);
         if (exportType == ExportTypes.PDF) {
@@ -51,12 +51,9 @@ public class TillrollModel implements IModel<TillrollController> {
         } else {
           tillroll.sendToPrinter();
         }
-      } catch (JRException e) {
-        Tools.showUnexpectedErrorWarning(e);
-      }
-
-    } else {
-      throw new UnsupportedOperationException();
+        break;
+      default:
+        throw new UnsupportedOperationException();
     }
   }
 }

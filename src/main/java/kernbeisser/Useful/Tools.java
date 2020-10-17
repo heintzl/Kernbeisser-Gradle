@@ -297,6 +297,14 @@ public class Tools {
         JOptionPane.ERROR_MESSAGE);
   }
 
+  public static void showPrintAbortedWarning(Exception e, boolean logEvent) {
+    if (logEvent) {
+      Main.logger.error(e.getMessage(), e);
+    }
+    JOptionPane.showMessageDialog(
+        null, "Der Ausdruck wurde abgebrochen!", "Drucken", JOptionPane.WARNING_MESSAGE);
+  }
+
   public static <T> T removeLambda(T from, Supplier<T> original) {
     T out = original.get();
     copyInto(from, out);
