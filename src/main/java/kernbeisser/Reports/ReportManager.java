@@ -3,6 +3,7 @@ package kernbeisser.Reports;
 import static kernbeisser.Config.ConfigManager.getDirectory;
 import static kernbeisser.Config.ConfigManager.getPath;
 
+import java.awt.*;
 import java.awt.print.PrinterJob;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -130,9 +131,11 @@ public class ReportManager {
     printConfig.setDisplayPrintDialog(false);
     printConfig.setDisplayPageDialog(false);
     printExporter.setConfiguration(printConfig);
+
     try {
       printExporter.exportReport();
     } catch (JRException e) {
+
       if (e.getMessageKey() == "export.print.service.not.found") {
         Main.logger.error(e.getMessage(), e);
         if (JOptionPane.showConfirmDialog(
@@ -146,7 +149,6 @@ public class ReportManager {
         } else {
           Tools.showPrintAbortedWarning(e, false);
         }
-        ;
       } else {
         throw e;
       }
@@ -154,12 +156,16 @@ public class ReportManager {
   }
 
   public void exportPdf() throws JRException {
-    JasperExportManager.exportReportToPdfFile(
-        jspPrint,
-        getOutputFolder()
-            .resolve(outFileName.replaceAll("[\\\\/:*?\"<>|]", "_"))
-            .toAbsolutePath()
-            .toString());
+
+    Path filePath = getOutputFolder().resolve(getSafeOutFileName()).toAbsolutePath();
+
+    JasperExportManager.exportReportToPdfFile(jspPrint, filePath.toString());
+    Tools.openFile(filePath.toFile());
+  }
+
+  @NotNull
+  private String getSafeOutFileName() {
+    return outFileName.replaceAll("[\\\\/:*?\"<>|]", "_");
   }
 
   @NotNull

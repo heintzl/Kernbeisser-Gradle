@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.time.YearMonth;
@@ -711,5 +713,18 @@ public class Tools {
     for (Component label : labels) {
       scaleFont(label, fac);
     }
+  }
+
+  public static void openFile(File file) {
+    try {
+      Desktop desktop = Desktop.getDesktop();
+      desktop.open(file);
+    } catch (IOException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
+  }
+
+  public static void openFile(String filePath) {
+    openFile(new File(filePath));
   }
 }
