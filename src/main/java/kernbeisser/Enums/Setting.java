@@ -48,7 +48,8 @@ public enum Setting {
   CATALOG_RUN_GC_UNDER("20"),
   LABEL_SCALE_FACTOR("1."),
   WARN_OVER_TRANSACTION_VALUE("1000."),
-  OPEN_MULTIPLE_SHOPPING_MASK("true");
+  OPEN_MULTIPLE_SHOPPING_MASK("true"),
+  PRINTER("OS_default");
 
   // defines the type to like in java style
   // Value: Type:
