@@ -425,7 +425,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     containerUnit.setText(
         (isWeighable ? shoppingItem.getPriceUnits() : MetricUnits.PIECE).getShortName());
     try {
-      if (shoppingItem.getVat() > 0) setVat(shoppingItem.getVat());
+      if (shoppingItem.getVatValue() > 0) setVat(shoppingItem.getVatValue());
     } catch (InvalidVATValueException e) {
       e.printStackTrace();
       vat.setSelectedIndex(-1);

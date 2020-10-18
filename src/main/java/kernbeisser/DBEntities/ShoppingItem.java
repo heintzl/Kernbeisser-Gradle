@@ -62,10 +62,15 @@ public class ShoppingItem implements Serializable {
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_VAT_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_VAT_WRITE)})
+  private VAT vat;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_VATVALUE_READ)})
   @Setter(
-      onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_VAT_WRITE)},
+      onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_VATVALUE_WRITE)},
       value = AccessLevel.PRIVATE)
-  private double vat;
+  private double vatValue;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_METRIC_UNITS_READ)})
@@ -146,9 +151,9 @@ public class ShoppingItem implements Serializable {
     this.amount = articleBase.getAmount();
     this.itemNetPrice = articleBase.getNetPrice();
     this.metricUnits = articleBase.getMetricUnits();
-    VAT vat = articleBase.getVat();
-    if (vat != null) {
-      this.vat = vat.getValue();
+    this.vat = articleBase.getVat();
+    if (this.vat != null) {
+      this.vatValue = vat.getValue();
     }
     this.surcharge =
         articleBase.calculateSurcharge()
@@ -287,7 +292,7 @@ public class ShoppingItem implements Serializable {
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
   public double calculatePreciseRetailPrice(double netPrice) {
-    return netPrice * (1 + vat) * (1 + surcharge) * (1 - discount / 100.);
+    return netPrice * (1 + vatValue) * (1 + surcharge) * (1 - discount / 100.);
   }
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
@@ -336,8 +341,8 @@ public class ShoppingItem implements Serializable {
     for (ShoppingItem item : items) {
       double retailPrice = item.getRetailPrice();
       sum += retailPrice;
-      if (item.getVat() == VAT.LOW.getValue()) vatLowSum += retailPrice * vatLowFactor;
-      if (item.getVat() == VAT.HIGH.getValue()) vatHighSum += retailPrice * vatHighFactor;
+      if (item.getVat() == VAT.LOW) vatLowSum += retailPrice * vatLowFactor;
+      if (item.getVat() == VAT.HIGH) vatHighSum += retailPrice * vatHighFactor;
     }
     return new double[] {sum, vatLowSum, vatHighSum};
   }
@@ -369,7 +374,7 @@ public class ShoppingItem implements Serializable {
       return item.discount == discount
           && item.name.equals(name)
           && item.kbNumber == kbNumber
-          && item.vat == vat
+          && item.vatValue == vatValue
           && item.itemRetailPrice == itemRetailPrice
           && item.containerDiscount == containerDiscount
           && item.parentItem == parentItem;

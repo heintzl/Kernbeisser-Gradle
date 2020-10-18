@@ -87,8 +87,9 @@ public class ShoppingMaskUIController
       }
       ShoppingItem item = extractShoppingItemFromUI();
       if (item == null
-          || !(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() != 0))
-        return false;
+          || !(item.getItemNetPrice() > 0
+              && item.getVatValue() > 0
+              && item.getItemMultiplier() != 0)) return false;
 
       if (piece) {
         if (view.isPreordered() && view.getNetPrice() > 0) {
