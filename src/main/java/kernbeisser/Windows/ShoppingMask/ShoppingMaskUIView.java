@@ -316,6 +316,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     setSuppliersItemNumber("");
 
     setKbNumber("");
+    vat.setSelectedIndex(-1);
 
     price.setText("");
     priceUnit.setText("€");
@@ -324,6 +325,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
     amountUnit.setText("");
 
+    containerSize.setText("");
     containerUnit.setText("");
 
     deposit.setText("");
@@ -396,6 +398,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
                   .replace(36, shoppingItem.getName().length(), "...")
                   .toString()
               : shoppingItem.getName());
+      articleName.setCaretPosition(0);
     }
     price.setText(
         String.format(
