@@ -2,6 +2,8 @@ package kernbeisser.Windows.Tillroll;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import kernbeisser.DBConnection.DBConnection;
@@ -13,6 +15,7 @@ import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
 import net.sf.jasperreports.engine.JRException;
+import org.apache.commons.lang3.time.DateUtils;
 
 public class TillrollModel implements IModel<TillrollController> {
 
@@ -36,7 +39,8 @@ public class TillrollModel implements IModel<TillrollController> {
   public void exportTillroll(ExportTypes exportType, int days)
       throws UnsupportedOperationException, IncorrectInput, JRException {
     Instant end = Instant.now();
-    Instant start = end.minus(days, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS);
+    Instant start =
+        DateUtils.truncate(Date.from(end.minus(days, ChronoUnit.DAYS)), Calendar.DATE).toInstant();
     List<ShoppingItem> items = getTillrollitems(start, end);
     if (items.size() == 0) {
       throw new IncorrectInput("Leere Bonrolle");

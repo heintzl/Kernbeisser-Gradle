@@ -12,8 +12,8 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<style name="Bold" markup="none" isBold="true"/>
-	<parameter name="start" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="ende" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="start" class="java.sql.Timestamp" isForPrompting="false"/>
+	<parameter name="ende" class="java.sql.Timestamp" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -26,13 +26,41 @@
 	<field name="itemRetailPrice" class="java.lang.Double"/>
 	<field name="purchase.createDate" class="java.time.Instant"/>
 	<field name="purchase.id" class="java.lang.Integer"/>
+	<group name="Purchase">
+		<groupExpression><![CDATA[$F{purchase.id}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField>
+					<reportElement x="0" y="0" width="320" height="14" uuid="2bcd7f56-e064-48b7-bb9a-5cd079b03c57">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
+					</reportElement>
+					<textElement textAlignment="Left">
+						<font isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Bon Nummer: " + $F{purchase.id}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd.MM.yyyy HH:mm">
+					<reportElement x="230" y="0" width="150" height="14" uuid="0e295a26-392b-4848-bc0c-2ba61724b912">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[java.sql.Timestamp.from($F{purchase.createDate})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="7"/>
+		</groupFooter>
+	</group>
 	<background>
 		<band height="400" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</band>
 	</background>
 	<title>
-		<band height="28" splitType="Stretch">
+		<band height="22" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="0" width="280" height="20" uuid="a8e30bf7-7991-468f-8542-a3a9d1eff6dc"/>
 				<textElement markup="html">
@@ -40,24 +68,45 @@
 				</textElement>
 				<text><![CDATA[Bonrolle]]></text>
 			</staticText>
-			<textField pattern="dd.MM.yy HH:mm">
+			<textField pattern="dd.MM.yyyy HH:mm">
 				<reportElement style="Bold" x="250" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
 				<textElement textAlignment="Right">
 					<font size="13" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
-		</band>
-	</title>
-	<pageHeader>
-		<band height="15" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="240" height="15" uuid="69436be7-57fc-4cd6-9411-af080fa7febf"/>
+				<reportElement x="65" y="3" width="70" height="15" uuid="836b1164-c1ef-4f4f-b6e3-99e177ea623e"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Zeitraum von " + $P{start} + " bis " + $P{ende}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Zeitraum von "]]></textFieldExpression>
 			</textField>
+			<textField pattern="dd.MM.yyyy">
+				<reportElement x="135" y="3" width="60" height="15" uuid="72ee8b98-2004-4bd8-9e37-e73fa9df5776"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{start}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="187" y="3" width="20" height="15" uuid="eb69c396-e35e-4dc6-807b-95f3b2c2df20"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["bis"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd.MM.yyyy">
+				<reportElement x="204" y="3" width="60" height="15" uuid="facb38aa-eb4b-4ea0-b96e-b02c8d5c1d51"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ende}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
 			<textField>
 				<reportElement x="290" y="0" width="45" height="15" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
 				<textElement textAlignment="Right">

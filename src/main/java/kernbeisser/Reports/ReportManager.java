@@ -3,11 +3,10 @@ package kernbeisser.Reports;
 import static kernbeisser.Config.ConfigManager.getDirectory;
 import static kernbeisser.Config.ConfigManager.getPath;
 
-import java.awt.*;
 import java.awt.print.PrinterJob;
 import java.nio.file.Path;
+import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,8 +96,8 @@ public class ReportManager {
 
   public static void initTillrollPrint(
       Collection<ShoppingItem> tillroll, Instant start, Instant end) throws JRException {
-    String startDate = start.truncatedTo(ChronoUnit.DAYS).toString();
-    String endDate = end.truncatedTo(ChronoUnit.DAYS).toString();
+    Timestamp startDate = Timestamp.from(start);
+    Timestamp endDate = Timestamp.from(end);
     JasperDesign jspDesign =
         JRXmlLoader.load(
             getReportsFolder()
@@ -111,7 +110,8 @@ public class ReportManager {
     reportParams.put("ende", endDate);
     JRDataSource dataSource = new JRBeanCollectionDataSource(tillroll);
     jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
-    outFileName = String.format("KernbeisserBonrolle_%s_%s.pdf", startDate, endDate);
+    outFileName =
+        String.format("KernbeisserBonrolle_%s_%s.pdf", startDate.toString(), endDate.toString());
   }
 
   public void sendToPrinter() throws JRException {
@@ -136,7 +136,7 @@ public class ReportManager {
       printExporter.exportReport();
     } catch (JRException e) {
 
-      if (e.getMessageKey() == "export.print.service.not.found") {
+      if (e.getMessageKey().equals("export.print.service.not.found")) {
         Main.logger.error(e.getMessage(), e);
         if (JOptionPane.showConfirmDialog(
                 null,
