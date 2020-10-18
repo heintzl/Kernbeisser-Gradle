@@ -838,6 +838,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     keyCapture.add(KeyEvent.VK_INSERT, () -> optProduce.doClick());
     keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
     keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
+    keyCapture.addALT(KeyEvent.VK_S, () -> searchArticle.doClick());
+    keyCapture.addCTRL(KeyEvent.VK_F, () -> searchArticle.doClick());
 
     articleTypeChange(ArticleType.ARTICLE_NUMBER);
 
