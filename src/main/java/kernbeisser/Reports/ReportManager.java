@@ -179,8 +179,8 @@ public class ReportManager {
     reportParams.put("Credit", credit);
     reportParams.put("PurchaseDate", purchase.getCreateDate());
     reportParams.put("CreditWarning", credit <= Setting.CREDIT_WARNING_THRESHOLD.getDoubleValue());
-    reportParams.put("VatValueLow", VAT.LOW.getValue());
-    reportParams.put("VatValueHigh", VAT.HIGH.getValue());
+    reportParams.put("VatValueLow", purchase.guessVatValue(VAT.LOW));
+    reportParams.put("VatValueHigh", purchase.guessVatValue(VAT.HIGH));
     reportParams.put("SumTotal", sums[0]);
     reportParams.put("VatSumLow", sums[1]);
     reportParams.put("VatSumHigh", sums[2]);
