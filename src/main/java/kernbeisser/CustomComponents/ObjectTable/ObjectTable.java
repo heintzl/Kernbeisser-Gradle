@@ -6,9 +6,11 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 import javax.swing.*;
+import javax.swing.RowFilter;
 import javax.swing.table.*;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectTable<T> extends JTable implements Iterable<T> {
@@ -23,6 +25,8 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private List<Column<T>> columns = new ArrayList<>();
 
   private DefaultTableModel model = (DefaultTableModel) super.dataModel;
+
+  private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter = e -> true;
 
   public ObjectTable(Collection<Column<T>> columns) {
     this(Collections.emptyList(), columns);
@@ -61,7 +65,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             lastSelected = selection;
           }
         });
-    setAutoCreateRowSorter(true);
+    setRowSorter(createRowSorter());
   }
 
   private void refreshModel() {
@@ -73,6 +77,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
       tableColumn.setCellRenderer(column.getRenderer());
       column.adjust(tableColumn);
     }
+    setRowSorter(createRowSorter());
   }
 
   private TableModel createModel(Collection<Column<T>> columns, Collection<T> objects) {
@@ -83,12 +88,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
         });
     Object[][] values = Tools.transformToArray(objects, Object[].class, this::collectColumns);
     String[] names = Tools.transformToArray(columns, String.class, Column::getName);
-    return new DefaultTableModel(values, names) {
-      @Override
-      public boolean isCellEditable(int row, int column) {
-        return false;
-      }
-    };
+    return new ObjectTableModel(values,names);
   }
 
   public T getFromRow(int index) {
@@ -222,5 +222,22 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   @Override
   public Iterator<T> iterator() {
     return objects.iterator();
+  }
+
+  public void setRowFilter(kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter) {
+    this.rowFilter = rowFilter;
+    ((TableRowSorter<?>)getRowSorter()).sort();
+  }
+
+  private TableRowSorter<?> createRowSorter(){
+    TableRowSorter<?> out = new TableRowSorter<>(model);
+    out.setSortsOnUpdates(true);
+    out.setRowFilter(new RowFilter<Object, Integer>() {
+      @Override
+      public boolean include(Entry<?, ? extends Integer> entry) {
+        return rowFilter.isDisplayed(objects.get(entry.getIdentifier()));
+      }
+    });
+    return out;
   }
 }
