@@ -10,7 +10,6 @@ import javax.swing.RowFilter;
 import javax.swing.table.*;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectTable<T> extends JTable implements Iterable<T> {
@@ -88,7 +87,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
         });
     Object[][] values = Tools.transformToArray(objects, Object[].class, this::collectColumns);
     String[] names = Tools.transformToArray(columns, String.class, Column::getName);
-    return new ObjectTableModel(values,names);
+    return new ObjectTableModel(values, names);
   }
 
   public T getFromRow(int index) {
@@ -226,18 +225,19 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   public void setRowFilter(kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter) {
     this.rowFilter = rowFilter;
-    ((TableRowSorter<?>)getRowSorter()).sort();
+    ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
-  private TableRowSorter<?> createRowSorter(){
+  private TableRowSorter<?> createRowSorter() {
     TableRowSorter<?> out = new TableRowSorter<>(model);
     out.setSortsOnUpdates(true);
-    out.setRowFilter(new RowFilter<Object, Integer>() {
-      @Override
-      public boolean include(Entry<?, ? extends Integer> entry) {
-        return rowFilter.isDisplayed(objects.get(entry.getIdentifier()));
-      }
-    });
+    out.setRowFilter(
+        new RowFilter<Object, Integer>() {
+          @Override
+          public boolean include(Entry<?, ? extends Integer> entry) {
+            return rowFilter.isDisplayed(objects.get(entry.getIdentifier()));
+          }
+        });
     return out;
   }
 }

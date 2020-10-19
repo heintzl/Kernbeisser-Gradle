@@ -1,19 +1,13 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
 import java.awt.*;
-import java.util.Comparator;
-import java.util.Random;
 import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
-
-import com.sun.javafx.scene.control.TableColumnComparatorBase;
 import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import org.apache.commons.collections.comparators.ComparableComparator;
 import org.intellij.lang.annotations.MagicConstant;
 
 public interface Column<T> {
