@@ -26,6 +26,7 @@ public class SynchronizeArticleController
   @Override
   public void fillUI() {
     view.setDifferences(model.getAllDifferences());
+    view.setAllDiffsTypes(DifferenceType.values());
   }
 
   @Override
@@ -33,63 +34,17 @@ public class SynchronizeArticleController
     return new PermissionKey[0];
   }
 
-  public void acceptKernbeisser(ArticleDifference<?> articleDifference) {
-    articleDifference.applyKernbeisser();
-    model.getAllDifferences().remove(articleDifference);
-    view.remove(articleDifference);
-  }
-
-  public void acceptCatalog(ArticleDifference<?> articleDifference) {
-    articleDifference.applyCatalog();
-    model.getAllDifferences().remove(articleDifference);
-    view.remove(articleDifference);
-  }
-
-  void resolveConflicts() {
-    new Thread(
-            () -> {
-              view.setResolveConflictsEnabled(false);
-              double allowedDifference = view.getAllowedDifference() / 100;
-              String name = view.getDiffName();
-              String source = view.getSource();
-              model
-                  .getAllDifferences()
-                  .removeIf(
-                      e -> {
-                        if (e.getDifferenceName().equals(name)) {
-                          try {
-                            ArticleDifference<Number> numberDifference =
-                                (ArticleDifference<Number>) e;
-                            if (Math.abs(
-                                    numberDifference.getKernbeisserVersion().doubleValue()
-                                        - numberDifference.getCatalogVersion().doubleValue())
-                                < numberDifference.getKernbeisserVersion().doubleValue()
-                                    * allowedDifference) {
-                              switch (source) {
-                                case "Kernbeisser":
-                                  numberDifference.applyKernbeisser();
-                                  return true;
-                                case "Katalog":
-                                  numberDifference.applyCatalog();
-                                  return true;
-                                default:
-                                  return false;
-                              }
-                            } else {
-                              return false;
-                            }
-                          } catch (ClassCastException exception) {
-                            Tools.showUnexpectedErrorWarning(exception);
-                            return false;
-                          }
-                        } else {
-                          return false;
-                        }
-                      });
-              fillUI();
-              view.setResolveConflictsEnabled(true);
-            })
-        .start();
+  public double getDifference(ArticleDifference<?> difference) {
+    try {
+      ArticleDifference<Number> numberDifference = (ArticleDifference<Number>) difference;
+      return Math.abs(
+              numberDifference.getCatalogVersion().doubleValue()
+                  / numberDifference.getKernbeisserVersion().doubleValue())
+          - 1;
+    } catch (ClassCastException e) {
+      Tools.showUnexpectedErrorWarning(e);
+      throw new RuntimeException(e);
+    }
   }
 
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
@@ -97,5 +52,19 @@ public class SynchronizeArticleController
     Main.checkCatalog();
 
     new SynchronizeArticleController().openTab("Hello");
+  }
+
+  public void filter() {
+    view.setObjectFilter();
+  }
+
+  void useKernbeisser() {
+    model.resolve(view.getSelectedObjects(), true);
+    view.setDifferences(model.getAllDifferences());
+  }
+
+  void useKornkraft() {
+    model.resolve(view.getSelectedObjects(), false);
+    view.setDifferences(model.getAllDifferences());
   }
 }
