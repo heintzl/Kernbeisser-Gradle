@@ -32,12 +32,12 @@ public interface ProtectedIterable {
   default void checkWrite() {}
 
   public static PermissionSet transform(
-      PermissionSet ps, PermissionKey read, PermissionKey modify) {
+      PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
     PermissionSet permissionSet = new PermissionSet();
-    if (ps.hasPermission(read)) {
+    if (ps.hasPermissions(read)) {
       permissionSet.addPermission(PermissionKey.READ_ITERABLE_VALUE);
     }
-    if (ps.hasPermission(modify)) {
+    if (ps.hasPermissions(modify)) {
       permissionSet.addPermission(PermissionKey.MODIFY_ITERABLE_VALUE);
     }
     return permissionSet;

@@ -14,9 +14,11 @@ import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+import lombok.Getter;
 
 public class SynchronizeArticleModel implements IModel<SynchronizeArticleController> {
 
+  @Getter(lazy = true)
   private final Collection<ArticleDifference<?>> allDifferences = loadAllDifferences();
 
   private Collection<ArticleDifference<?>> loadAllDifferences() {
@@ -69,10 +71,6 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
     return out;
   }
 
-  Collection<ArticleDifference<?>> getAllDifferences() {
-    return allDifferences;
-  }
-
   private <T> Collection<ArticleDifference<T>> createDifference(
       DifferenceType name,
       Function<ArticleBase, T> getValue,
@@ -90,7 +88,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
 
   // useKernbeisser -> false = useKornkraft
   public void resolve(Collection<ArticleDifference<?>> differences, boolean useKernbeisser) {
-    allDifferences.removeAll(differences);
+    getAllDifferences().removeAll(differences);
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
