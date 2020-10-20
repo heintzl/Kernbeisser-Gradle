@@ -38,6 +38,23 @@ public class PayView implements IView<PayController> {
     shoppingCartController.getView().setObjects(items);
   }
 
+  public void confirmLogging(String name, double value) {
+    if (JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            String.format(
+                "Ist der Einkauf in Höhe von %.2f€ von %s in das Log-Buch eintragen worden?",
+                value, name),
+            "Log-Bucheintrag",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
+        != 0) {
+      JOptionPane.showMessageDialog(
+          getTopComponent(),
+          "Alle Einkäufe müssen im Log-Buch notiert werden\nfür den Fall, dass gespeicherte Daten verloren gehen.");
+      confirmLogging(name, value);
+    }
+  }
+
   void setViewSize(Dimension size) {
     main.setSize(size);
   }

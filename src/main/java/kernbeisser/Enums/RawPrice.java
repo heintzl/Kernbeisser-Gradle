@@ -7,7 +7,8 @@ public enum RawPrice implements Named {
   BAKERY("Backwaren"),
   DEPOSIT("Pfand"),
   ITEM_DEPOSIT("    > Einzelpfand"),
-  CONTAINER_DEPOSIT("    > Gebindepfand");
+  CONTAINER_DEPOSIT("    > Gebindepfand"),
+  SOLIDARITY("Solidaraufschlag");
 
   private final String name;
 

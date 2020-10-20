@@ -21,6 +21,7 @@ import javax.swing.*;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.ShoppingItemSum;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
@@ -170,8 +171,9 @@ public class ReportManager {
 
   @NotNull
   private static Map<String, Object> getInvoiceParams(Purchase purchase) {
-    double[] sums = ShoppingItem.getSums(purchase.getAllItems());
-    double credit = purchase.getSession().getCustomer().getUserGroup().getValue() - sums[0];
+    Collection<ShoppingItem> items = purchase.getAllItems();
+    double credit =
+        purchase.getSession().getCustomer().getUserGroup().getValue() - purchase.getSum();
     Map<String, Object> reportParams = new HashMap<>();
     reportParams.put("BonNo", purchase.getId());
     reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
@@ -179,11 +181,11 @@ public class ReportManager {
     reportParams.put("Credit", credit);
     reportParams.put("PurchaseDate", purchase.getCreateDate());
     reportParams.put("CreditWarning", credit <= Setting.CREDIT_WARNING_THRESHOLD.getDoubleValue());
-    reportParams.put("VatValueLow", VAT.LOW.getValue());
-    reportParams.put("VatValueHigh", VAT.HIGH.getValue());
-    reportParams.put("SumTotal", sums[0]);
-    reportParams.put("VatSumLow", sums[1]);
-    reportParams.put("VatSumHigh", sums[2]);
+    reportParams.put("VatValueLow", purchase.guessVatValue(VAT.LOW));
+    reportParams.put("VatValueHigh", purchase.guessVatValue(VAT.HIGH));
+    reportParams.put("SumTotal", purchase.getSum());
+    reportParams.put("VatSumLow", ShoppingItem.getSum(ShoppingItemSum.RETAILPRICE_VATLOW, items));
+    reportParams.put("VatSumHigh", ShoppingItem.getSum(ShoppingItemSum.RETAILPRICE_VATHIGH, items));
 
     return reportParams;
   }

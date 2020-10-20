@@ -3,9 +3,11 @@ package kernbeisser.DBEntities;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -57,11 +59,16 @@ public class Purchase {
   }
 
   public double getSum() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return em
-        .createQuery("select s from ShoppingItem s where purchase.id = :id", ShoppingItem.class)
-        .setParameter("id", id).getResultList().stream()
-        .mapToDouble(ShoppingItem::getRetailPrice)
-        .sum();
+    return getAllItems().stream().mapToDouble(ShoppingItem::getRetailPrice).sum();
+  }
+
+  public double guessVatValue(VAT vat) {
+    try {
+      double vatValue =
+          getAllItems().stream().filter(si -> si.getVat() == vat).findFirst().get().getVatValue();
+      return vatValue;
+    } catch (NoSuchElementException e) {
+      return 0.0;
+    }
   }
 }

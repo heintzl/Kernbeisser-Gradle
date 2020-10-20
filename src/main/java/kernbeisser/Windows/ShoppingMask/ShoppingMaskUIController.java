@@ -41,7 +41,7 @@ public class ShoppingMaskUIController
   private boolean checkStorno(ShoppingItem item, boolean piece) {
     boolean result = true;
     boolean exit = true;
-    String response = "";
+    String response;
     if (piece && item.getItemMultiplier() < 0) {
       response = view.inputStornoRetailPrice(item.getItemRetailPrice(), false);
       do {
@@ -87,8 +87,9 @@ public class ShoppingMaskUIController
       }
       ShoppingItem item = extractShoppingItemFromUI();
       if (item == null
-          || !(item.getItemNetPrice() > 0 && item.getVat() > 0 && item.getItemMultiplier() != 0))
-        return false;
+          || !(item.getItemNetPrice() > 0
+              && item.getVatValue() > 0
+              && item.getItemMultiplier() != 0)) return false;
 
       if (piece) {
         if (view.isPreordered() && view.getNetPrice() > 0) {
@@ -273,10 +274,6 @@ public class ShoppingMaskUIController
                   model.getSaleSession(),
                   shoppingCartController.getItems(),
                   () -> {
-                    view.rememberLogging(
-                        model.getSaleSession().getCustomer().getFirstName(),
-                        model.getSaleSession().getCustomer().getSurname(),
-                        shoppingCartController.getModel().getTotalSum());
                     shoppingCartController.getItems().clear();
                     getView().back();
                     LogInModel.refreshLogInData();
