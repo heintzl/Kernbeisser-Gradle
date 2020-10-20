@@ -13,6 +13,8 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.Enums.ShoppingItemSum;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Reports.ReportManager;
 import kernbeisser.Useful.Tools;
@@ -31,6 +33,26 @@ public class PayModel implements IModel<PayController> {
     this.shoppingCart = shoppingCart;
     this.saleSession = saleSession;
     this.transferCompleted = transferCompleted;
+    double solidaritySurcharge = saleSession.getCustomer().getUserGroup().getSolidaritySurcharge();
+    if (solidaritySurcharge > 0.0) addSolidarityItems(solidaritySurcharge);
+  }
+
+  private void addSolidarityItems(double solidaritySurcharge) {
+    removeSolidarityItems();
+    addSolidarityItem(VAT.LOW, solidaritySurcharge);
+    addSolidarityItem(VAT.HIGH, solidaritySurcharge);
+  }
+
+  private void addSolidarityItem(VAT vat, double solidaritySurcharge) {
+    ShoppingItemSum sumType = ShoppingItemSum.RETAILPRICE_VATHIGH;
+    if (vat == VAT.LOW) {
+      sumType = ShoppingItemSum.RETAILPRICE_VATLOW;
+    }
+    double value =
+        ShoppingItem.getSum(
+                sumType, shoppingCart, s -> s.getParentItem() == null && !s.isSolidaritySurcharge())
+            * solidaritySurcharge;
+    shoppingCart.add(ShoppingItem.createSolidaritySurcharge(value, vat, solidaritySurcharge));
   }
 
   List<ShoppingItem> getShoppingCart() {
@@ -42,8 +64,11 @@ public class PayModel implements IModel<PayController> {
   }
 
   double shoppingCartSum() {
-    return shoppingCart.stream().mapToDouble(ShoppingItem::getRetailPrice).sum()
-        * (1 + saleSession.getCustomer().getUserGroup().getSolidaritySurcharge());
+    return shoppingCart.stream().mapToDouble(ShoppingItem::getRetailPrice).sum();
+  }
+
+  void removeSolidarityItems() {
+    shoppingCart.removeIf(ShoppingItem::isSolidaritySurcharge);
   }
 
   Purchase pay(SaleSession saleSession, List<ShoppingItem> items, double sum)

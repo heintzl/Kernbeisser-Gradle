@@ -60,6 +60,12 @@ public class PayController implements IController<PayView, PayModel> {
   }
 
   @Override
+  public boolean commitClose() {
+    model.removeSolidarityItems();
+    return true;
+  }
+
+  @Override
   public @NotNull PayModel getModel() {
     return model;
   }

@@ -38,6 +38,7 @@ public class PermissionSetSecurityHandler implements MethodHandler {
       Object out = original.invoke(proxy, args);
       try {
         if (out == null) return null;
+        if (key == null) return out;
         if (Set.class.isAssignableFrom(out.getClass()))
           return SetProxy.create((Set) out, permissionSet, key.value()[0], key.value()[1]);
         if (Collection.class.isAssignableFrom(out.getClass()))
