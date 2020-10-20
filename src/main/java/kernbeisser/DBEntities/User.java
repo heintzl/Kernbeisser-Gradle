@@ -375,7 +375,7 @@ public class User implements Serializable {
   }
 
   private Set<String> loadDialogs() {
-    return new HashSet<>(Tools.transform(IgnoredDialog.getAllFor(this), IgnoredDialog::getName));
+    return new HashSet<>(Tools.transform(IgnoredDialog.getAllFor(this), IgnoredDialog::getOrigin));
   }
 
   public void ignoreDialog(String name) {
