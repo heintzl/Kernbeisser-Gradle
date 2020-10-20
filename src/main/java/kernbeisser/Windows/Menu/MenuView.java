@@ -22,6 +22,7 @@ import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.Setting.SettingController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
+import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleController;
 import kernbeisser.Windows.Tillroll.TillrollController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
@@ -55,6 +56,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton editJobs;
   private ControllerButton editSuppliers;
   private ControllerButton editUserGroup;
+  private ControllerButton synchoniseCatalog;
 
   @Override
   public void initialize(MenuController controller) {}
@@ -149,6 +151,10 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             () -> new EditUserGroupController(LogInModel.getLoggedIn()),
             controller -> controller.openTab("Nutzergruppe ändern"));
+    synchoniseCatalog =
+        new ControllerButton(
+            SynchronizeArticleController::new,
+            controller -> controller.openTab("Katalog sychonisieren"));
     openCashierShoppingMask.requestFocusInWindow();
   }
 }

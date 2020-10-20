@@ -39,22 +39,33 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
               }
             });
     ArrayList<ArticleDifference<?>> out = new ArrayList<>();
-    out.addAll(createDifference("Preis", ArticleBase::getNetPrice, ArticleBase::setNetPrice, a, b));
     out.addAll(
         createDifference(
-            "Gebindegröße", ArticleBase::getContainerSize, ArticleBase::setContainerSize, a, b));
+            DifferenceType.PRICE, ArticleBase::getNetPrice, ArticleBase::setNetPrice, a, b));
     out.addAll(
         createDifference(
-            "Einzelpfand", ArticleBase::getSingleDeposit, ArticleBase::setSingleDeposit, a, b));
+            DifferenceType.CONTAINER_SIZE,
+            ArticleBase::getContainerSize,
+            ArticleBase::setContainerSize,
+            a,
+            b));
     out.addAll(
         createDifference(
-            "Kistenpfand",
+            DifferenceType.DEPOSIT,
+            ArticleBase::getSingleDeposit,
+            ArticleBase::setSingleDeposit,
+            a,
+            b));
+    out.addAll(
+        createDifference(
+            DifferenceType.CONTAINER_DEPOSIT,
             ArticleBase::getContainerDeposit,
             ArticleBase::setContainerDeposit,
             a,
             b));
     out.addAll(
-        createDifference("Packungsmenge", ArticleBase::getAmount, ArticleBase::setAmount, a, b));
+        createDifference(
+            DifferenceType.AMOUNT, ArticleBase::getAmount, ArticleBase::setAmount, a, b));
     return out;
   }
 
@@ -63,7 +74,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
   }
 
   private <T> Collection<ArticleDifference<T>> createDifference(
-      String name,
+      DifferenceType name,
       Function<ArticleBase, T> getValue,
       BiConsumer<ArticleBase, T> setValue,
       List<ArticleBase> a,
@@ -75,5 +86,18 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
       }
     }
     return out;
+  }
+
+  // useKernbeisser -> false = useKornkraft
+  public void resolve(Collection<ArticleDifference<?>> differences, boolean useKernbeisser) {
+    allDifferences.removeAll(differences);
+    EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    if (useKernbeisser) differences.forEach(e -> e.applyKernbeisser(em));
+    else differences.forEach(e -> e.applyCatalog(em));
+    em.flush();
+    et.commit();
+    em.close();
   }
 }
