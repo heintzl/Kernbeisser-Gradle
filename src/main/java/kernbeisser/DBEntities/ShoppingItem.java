@@ -3,6 +3,8 @@ package kernbeisser.DBEntities;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 import javax.persistence.*;
 import javax.transaction.NotSupportedException;
 import kernbeisser.DBConnection.DBConnection;
@@ -14,7 +16,7 @@ import lombok.*;
 @Entity
 @Table
 @NoArgsConstructor
-@EqualsAndHashCode(doNotUseGetters = true)
+// @EqualsAndHashCode(doNotUseGetters = true)
 public class ShoppingItem implements Serializable {
 
   @Id
@@ -73,7 +75,6 @@ public class ShoppingItem implements Serializable {
   private double vatValue;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_METRIC_UNITS_READ)})
   @Setter(
       onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_METRIC_UNITS_WRITE)},
       value = AccessLevel.PRIVATE)
@@ -138,6 +139,8 @@ public class ShoppingItem implements Serializable {
   @Getter @Transient private ShoppingItem parentItem;
 
   @Getter @Transient private Supplier supplier;
+
+  @Getter @Transient private boolean solidaritySurcharge = false;
 
   /**
    * @param articleBase most ShoppingItem properties are copied from given article. surcharge gets
@@ -247,6 +250,19 @@ public class ShoppingItem implements Serializable {
         hasContainerDiscount);
   }
 
+  public static ShoppingItem createSolidaritySurcharge(double price, VAT vat, double surcharge) {
+    ShoppingItem solidarity =
+        createRawPriceProduct(RawPrice.SOLIDARITY.getName(), price, vat, -4, 0.0, false);
+    solidarity.solidaritySurcharge = true;
+    solidarity.name =
+        (int) (surcharge * 100)
+            + " % "
+            + RawPrice.SOLIDARITY.getName()
+            + " MWSt. "
+            + (vat == VAT.HIGH ? "voll" : "ermäßigt");
+    return solidarity;
+  }
+
   public static ShoppingItem createDeposit(double price) {
     ShoppingItem deposit =
         createRawPriceProduct(RawPrice.DEPOSIT.getName(), price, VAT.HIGH, -3, 0, false);
@@ -332,19 +348,47 @@ public class ShoppingItem implements Serializable {
     }
   }
 
-  public static double[] getSums(Collection<ShoppingItem> items) {
-    double sum = 0;
-    double vatLowSum = 0;
-    double vatLowFactor = (1 - 1 / (1 + VAT.LOW.getValue()));
-    double vatHighFactor = (1 - 1 / (1 + VAT.HIGH.getValue()));
-    double vatHighSum = 0;
-    for (ShoppingItem item : items) {
-      double retailPrice = item.getRetailPrice();
-      sum += retailPrice;
-      if (item.getVat() == VAT.LOW) vatLowSum += retailPrice * vatLowFactor;
-      if (item.getVat() == VAT.HIGH) vatHighSum += retailPrice * vatHighFactor;
+  public static double getSum(ShoppingItemSum sumType, Collection<ShoppingItem> items) {
+    return getSum(sumType, items, s -> true);
+  }
+
+  public static double getSum(
+      ShoppingItemSum sumType, Collection<ShoppingItem> items, Predicate<ShoppingItem> filter) {
+    Predicate<ShoppingItem> typeFilter;
+    switch (sumType) {
+      case RETAILPRICE_TOTAL:
+      case VAT_TOTAL:
+        typeFilter = s -> true;
+        break;
+      case RETAILPRICE_VATLOW:
+      case VAT_VATLOW:
+        typeFilter = s -> s.vat == VAT.LOW;
+        break;
+      case RETAILPRICE_VATHIGH:
+      case VAT_VATHIGH:
+        typeFilter = s -> s.vat == VAT.HIGH;
+        break;
+      default:
+        typeFilter = s -> false;
     }
-    return new double[] {sum, vatLowSum, vatHighSum};
+
+    ToDoubleFunction<ShoppingItem> argument;
+    switch (sumType) {
+      case RETAILPRICE_TOTAL:
+      case RETAILPRICE_VATLOW:
+      case RETAILPRICE_VATHIGH:
+        argument = ShoppingItem::getRetailPrice;
+        break;
+      case VAT_TOTAL:
+      case VAT_VATLOW:
+      case VAT_VATHIGH:
+        argument = s -> s.getRetailPrice() * (1 - 1 / (1 + s.getVatValue()));
+        break;
+      default:
+        argument = s -> 0.0;
+    }
+
+    return items.stream().filter(filter).filter(typeFilter).mapToDouble(argument).sum();
   }
 
   public ShoppingItem unproxy() {
@@ -357,6 +401,7 @@ public class ShoppingItem implements Serializable {
     throw new NotSupportedException();
   }
 
+  @Key(PermissionKey.SHOPPING_ITEM_METRIC_UNITS_READ)
   public MetricUnits getMetricUnits() {
     return metricUnits != null ? metricUnits : MetricUnits.NONE;
   }
