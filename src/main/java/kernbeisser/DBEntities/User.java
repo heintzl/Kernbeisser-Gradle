@@ -23,7 +23,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table
 @NoArgsConstructor
-@EqualsAndHashCode(doNotUseGetters = true)
+@EqualsAndHashCode(
+    doNotUseGetters = true,
+    exclude = {"ignoredDialogs"})
 public class User implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -362,5 +364,28 @@ public class User implements Serializable {
       }
     }
     return value;
+  }
+
+  @Getter(lazy = true)
+  @Transient
+  private final Set<String> ignoredDialogs = loadDialogs();
+
+  public boolean isIgnoredDialog(String dialogName) {
+    return getIgnoredDialogs().contains(dialogName);
+  }
+
+  private Set<String> loadDialogs() {
+    return new HashSet<>(Tools.transform(IgnoredDialog.getAllFor(this), IgnoredDialog::getName));
+  }
+
+  public void ignoreDialog(String name) {
+    IgnoredDialog ignoredDialog = new IgnoredDialog(this, name);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.persist(ignoredDialog);
+    em.flush();
+    et.commit();
+    getIgnoredDialogs().add(name);
   }
 }

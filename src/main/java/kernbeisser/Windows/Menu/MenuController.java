@@ -1,9 +1,11 @@
 package kernbeisser.Windows.Menu;
 
 import javax.swing.*;
+import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
@@ -25,7 +27,10 @@ public class MenuController implements IController<MenuView, MenuModel> {
   }
 
   @Override
-  public void fillUI() {}
+  public void fillUI() {
+    RememberDialog.showDialog(
+        LogInModel.getLoggedIn(), view.getTopComponent(), "Hey you this is the new Menu!");
+  }
 
   @Override
   public PermissionKey[] getRequiredKeys() {
