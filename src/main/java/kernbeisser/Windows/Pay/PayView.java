@@ -42,15 +42,15 @@ public class PayView implements IView<PayController> {
     if (JOptionPane.showConfirmDialog(
             getTopComponent(),
             String.format(
-                    "Ist der Einkauf in Höhe von %.2f€ von %s in das Log-Buch eintragen worden?",
-                    value, name),
+                "Ist der Einkauf in Höhe von %.2f€ von %s in das Log-Buch eintragen worden?",
+                value, name),
             "Log-Bucheintrag",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE)
-            != 0) {
+        != 0) {
       JOptionPane.showMessageDialog(
-              getTopComponent(),
-              "Alle Einkäufe müssen im Log-Buch notiert werden\nfür den Fall, dass gespeicherte Daten verloren gehen.");
+          getTopComponent(),
+          "Alle Einkäufe müssen im Log-Buch notiert werden\nfür den Fall, dass gespeicherte Daten verloren gehen.");
       confirmLogging(name, value);
     }
   }

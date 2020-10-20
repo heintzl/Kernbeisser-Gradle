@@ -43,14 +43,12 @@ public class PayController implements IController<PayView, PayModel> {
       // FIXME why pass shoppingCart to model if it was initialized with it?
 
       try {
-        purchase =
-            model.pay();
+        purchase = model.pay();
         if (printReceipt) {
           PayModel.print(purchase, model.getShoppingCart());
         }
         view.confirmLogging(
-                model.getSaleSession().getCustomer().getFullName(),
-                model.shoppingCartSum());
+            model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());
         view.back();
 
         model.runTransferCompleted();

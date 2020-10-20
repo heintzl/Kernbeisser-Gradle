@@ -71,8 +71,7 @@ public class PayModel implements IModel<PayController> {
     shoppingCart.removeIf(ShoppingItem::isSolidaritySurcharge);
   }
 
-  Purchase pay()
-      throws PersistenceException, InvalidTransactionException {
+  Purchase pay() throws PersistenceException, InvalidTransactionException {
     // Build connection by default
     @Cleanup EntityManager em = DBConnection.getEntityManager();
 
