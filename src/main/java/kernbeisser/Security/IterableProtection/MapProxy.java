@@ -19,7 +19,11 @@ public class MapProxy<K, V> implements Map<K, V>, ProtectedIterable {
   }
 
   public static <K, V> MapProxy<K, V> create(
-      Map<K, V> map, PermissionSet ps, PermissionKey read, PermissionKey modify, boolean proxyfy) {
+      Map<K, V> map,
+      PermissionSet ps,
+      PermissionKey[] read,
+      PermissionKey[] modify,
+      boolean proxyfy) {
     MapProxy<K, V> out = new MapProxy<>(proxyfy);
     out.map = map;
     return Proxy.injectMethodHandler(

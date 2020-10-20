@@ -15,12 +15,12 @@ public class CollectionProxy<T> implements Collection<T>, ProtectedIterable {
   private Collection<T> values;
 
   public static <T> CollectionProxy<T> createWithProxyChildren(
-      Collection<T> collection, PermissionSet ps, PermissionKey read, PermissionKey modify) {
+      Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
     return create(Proxy.getSecureInstances(collection), ps, read, modify);
   }
 
   public static <T> CollectionProxy<T> create(
-      Collection<T> collection, PermissionSet ps, PermissionKey read, PermissionKey modify) {
+      Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
     CollectionProxy<T> out = new CollectionProxy<>();
     out.values = collection;
     return Proxy.injectMethodHandler(

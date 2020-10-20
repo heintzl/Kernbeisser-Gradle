@@ -6,11 +6,10 @@ import java.util.*;
 import javassist.util.proxy.MethodHandler;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Exeptions.ProximateException;
 import kernbeisser.Security.IterableProtection.CollectionProxy;
 import kernbeisser.Security.IterableProtection.MapProxy;
+import kernbeisser.Security.IterableProtection.ProxyIterable;
 import kernbeisser.Security.IterableProtection.SetProxy;
-import kernbeisser.Windows.LogIn.LogInModel;
 
 public class PermissionSetSecurityHandler implements MethodHandler {
 
@@ -33,33 +32,30 @@ public class PermissionSetSecurityHandler implements MethodHandler {
   public Object invoke(Object proxy, Method proxyMethod, Method original, Object[] args)
       throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     Key key = proxyMethod.getAnnotation(Key.class);
-
-    if (key == null || permissionSet.hasPermissions(key.value())) {
-      Object out = original.invoke(proxy, args);
-      try {
-        if (out == null) return null;
-        if (key == null) return out;
-        if (Set.class.isAssignableFrom(out.getClass()))
-          return SetProxy.create((Set) out, permissionSet, key.value()[0], key.value()[1]);
-        if (Collection.class.isAssignableFrom(out.getClass()))
-          return CollectionProxy.create(
-              (Collection) out, permissionSet, key.value()[0], key.value()[1]);
-        if (Map.class.isAssignableFrom(out.getClass()))
-          return MapProxy.create((Map) out, permissionSet, key.value()[0], key.value()[1], true);
-      } catch (ArrayIndexOutOfBoundsException e) {
-        throw new ProximateException(
-            "key annotation on [" + proxyMethod + "] doesn't contain enough keys");
-      }
-      return out;
-
-    } else {
-      throw new PermissionKeyRequiredException(
-          "User["
-              + LogInModel.getLoggedIn().getId()
-              + "] cannot access "
-              + original
-              + " because the user has not the required Keys:"
-              + Arrays.toString(key.value()));
+    if (key != null) {
+      if (permissionSet.hasPermissions(key.value())) {
+        return original.invoke(proxy, args);
+      } else
+        throw new PermissionKeyRequiredException(
+            "permissionSet doesn't contains the required keys: " + Arrays.toString(key.value()));
     }
+    ProxyIterable proxyIterable = proxyMethod.getAnnotation(ProxyIterable.class);
+    return proxyIterable != null
+        ? tryWrapWithProxyLayer(
+            original.invoke(proxy, args), proxyIterable.read(), proxyIterable.modify())
+        : original.invoke(proxy, args);
+  }
+
+  private Object tryWrapWithProxyLayer(Object in, PermissionKey[] read, PermissionKey[] modify) {
+    if (Set.class.isAssignableFrom(in.getClass()))
+      return SetProxy.create((Set<?>) in, permissionSet, read, modify);
+    if (Collection.class.isAssignableFrom(in.getClass()))
+      return CollectionProxy.create((Collection<?>) in, permissionSet, read, modify);
+    if (Map.class.isAssignableFrom(in.getClass()))
+      return MapProxy.create((Map<?, ?>) in, permissionSet, read, modify, true);
+    throw new UnsupportedOperationException(
+        "cannot warp "
+            + in
+            + " with [collection | set | map] consider using @Key for normal objects");
   }
 }

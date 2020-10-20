@@ -4,54 +4,42 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
-import lombok.Cleanup;
+import lombok.Data;
 
+@Data
 public class ArticleDifference<T> {
   private final ArticleBase kernbeisser, catalog;
   private final Function<ArticleBase, T> getValue;
   private final BiConsumer<ArticleBase, T> setValue;
-  private final String name;
+  private final DifferenceType differenceType;
 
   public ArticleDifference(
       ArticleBase kernbeisser,
       ArticleBase catalog,
       Function<ArticleBase, T> getValue,
       BiConsumer<ArticleBase, T> setValue,
-      String name) {
+      DifferenceType differenceType) {
     this.getValue = getValue;
     this.kernbeisser = kernbeisser;
     this.catalog = catalog;
     this.setValue = setValue;
-    this.name = name;
+    this.differenceType = differenceType;
   }
 
-  void applyKernbeisser() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
+  void applyKernbeisser(EntityManager em) {
     ArticleKornkraft articleKornkraft = em.find(ArticleKornkraft.class, catalog.getId());
     articleKornkraft.setSynchronised(true);
     em.persist(articleKornkraft);
-    em.flush();
-    et.commit();
-    em.close();
   }
 
-  void applyCatalog() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
+  void applyCatalog(EntityManager em) {
     Article article = em.find(Article.class, kernbeisser.getId());
     setValue.accept(article, getValue.apply(catalog));
     em.persist(article);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public ArticleBase getKernbeisserArticle() {
@@ -70,10 +58,6 @@ public class ArticleDifference<T> {
     return getValue.apply(catalog);
   }
 
-  public String getDifferenceName() {
-    return name;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -87,11 +71,11 @@ public class ArticleDifference<T> {
         && Objects.equals(catalog, that.catalog)
         && Objects.equals(getValue, that.getValue)
         && Objects.equals(setValue, that.setValue)
-        && Objects.equals(name, that.name);
+        && Objects.equals(differenceType, that.differenceType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(kernbeisser, catalog, getValue, setValue, name);
+    return Objects.hash(kernbeisser, catalog, getValue, setValue, differenceType);
   }
 }
