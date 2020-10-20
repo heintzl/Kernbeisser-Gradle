@@ -21,6 +21,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private JButton useKernbeisser;
   private JButton useKornkraft;
   private JButton selectAll;
+  private JButton removeSelection;
 
   @Linked private SynchronizeArticleController controller;
 
@@ -45,6 +46,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     maxAllowedDifference.addActionListener(e -> setObjectFilter());
     useKernbeisser.addActionListener(e -> controller.useKernbeisser());
     useKornkraft.addActionListener(e -> controller.useKornkraft());
+    removeSelection.addActionListener(e -> differences.clearSelection());
   }
 
   @Override
@@ -107,5 +109,13 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
   Collection<ArticleDifference<?>> getSelectedObjects() {
     return differences.getSelectedObjects();
+  }
+
+  public boolean commitClose() {
+    differences.setRowFilter(null);
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Es sind noch unsynchonisierte Artikel vorhanden,\nwollen sie das Fester wirklich schließen?")
+        == 0;
   }
 }

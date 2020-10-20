@@ -67,4 +67,9 @@ public class SynchronizeArticleController
     model.resolve(view.getSelectedObjects(), false);
     view.setDifferences(model.getAllDifferences());
   }
+
+  @Override
+  public boolean commitClose() {
+    return model.getAllDifferences().size() == 0 || view.commitClose();
+  }
 }

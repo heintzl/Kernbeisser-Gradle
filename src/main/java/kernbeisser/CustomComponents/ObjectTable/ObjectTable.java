@@ -26,7 +26,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private DefaultTableModel model = (DefaultTableModel) super.dataModel;
 
-  private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter = e -> true;
+  private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> DEFAULT_ROW_FILTER = e -> true;
+
+  private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter = DEFAULT_ROW_FILTER;
 
   public ObjectTable(Collection<Column<T>> columns) {
     this(Collections.emptyList(), columns);
@@ -229,7 +231,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   public void setRowFilter(kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter) {
-    this.rowFilter = rowFilter;
+    this.rowFilter = rowFilter == null ? DEFAULT_ROW_FILTER : rowFilter;
     ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
