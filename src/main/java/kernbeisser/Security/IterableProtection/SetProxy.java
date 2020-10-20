@@ -14,12 +14,12 @@ public class SetProxy<T> implements Set<T>, ProtectedIterable {
   private SetProxy() {}
 
   public static <T> SetProxy<T> createWithProxyChildren(
-      Collection<T> collection, PermissionSet ps, PermissionKey read, PermissionKey modify) {
+      Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
     return create(Proxy.getSecureInstances(collection), ps, read, modify);
   }
 
   public static <T> SetProxy<T> create(
-      Collection<T> collection, PermissionSet ps, PermissionKey read, PermissionKey modify) {
+      Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
     SetProxy<T> out = new SetProxy<>();
     out.values = collection;
     return Proxy.injectMethodHandler(

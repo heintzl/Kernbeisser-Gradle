@@ -10,6 +10,7 @@ import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.IterableProtection.ProxyIterable;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Security.PermissionSetSecurityHandler;
@@ -36,10 +37,9 @@ public class User implements Serializable {
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PERMISSIONS_WRITE)})
   @Getter(
       onMethod_ = {
-        @kernbeisser.Security.Key({
-          PermissionKey.USER_PERMISSIONS_READ,
-          PermissionKey.USER_PERMISSIONS_WRITE
-        })
+        @ProxyIterable(
+            read = {PermissionKey.USER_PERMISSIONS_READ},
+            modify = {PermissionKey.USER_PERMISSIONS_WRITE})
       })
   private Set<Permission> permissions = new HashSet<>();
 
@@ -57,7 +57,9 @@ public class User implements Serializable {
   @ManyToMany(fetch = FetchType.EAGER)
   @Getter(
       onMethod_ = {
-        @kernbeisser.Security.Key({PermissionKey.USER_JOBS_READ, PermissionKey.USER_JOBS_WRITE})
+        @ProxyIterable(
+            read = {PermissionKey.USER_JOBS_READ},
+            modify = {PermissionKey.USER_JOBS_WRITE})
       })
   @Setter(onMethod_ = {@Key({PermissionKey.USER_JOBS_WRITE})})
   private Set<Job> jobs = new HashSet<>();
