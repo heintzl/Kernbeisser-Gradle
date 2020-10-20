@@ -895,23 +895,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     getTopComponent().setEnabled(b);
   }
 
-  public void rememberLogging(String firstname, String surname, double value) {
-    if (JOptionPane.showConfirmDialog(
-            getTopComponent(),
-            String.format(
-                "Ist der Einkauf in Höhe von %.2f€ von %s %s in das Log-Buch eintragen worden?",
-                value, firstname, surname),
-            "Log-Bucheintrag",
-            JOptionPane.YES_OPTION,
-            JOptionPane.QUESTION_MESSAGE)
-        != 0) {
-      JOptionPane.showMessageDialog(
-          getTopComponent(),
-          "Alle Einkäufe müssen im Log-Buch notiert werden\nfür den Fall, dass gespeicherte Daten verloren gehen.");
-      rememberLogging(firstname, surname, value);
-    }
-  }
-
   public void setFocusOnKBNumber() {
     kbNumber.requestFocusInWindow();
   }

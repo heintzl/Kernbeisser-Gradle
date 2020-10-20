@@ -41,7 +41,7 @@ public class ShoppingMaskUIController
   private boolean checkStorno(ShoppingItem item, boolean piece) {
     boolean result = true;
     boolean exit = true;
-    String response = "";
+    String response;
     if (piece && item.getItemMultiplier() < 0) {
       response = view.inputStornoRetailPrice(item.getItemRetailPrice(), false);
       do {
@@ -274,10 +274,6 @@ public class ShoppingMaskUIController
                   model.getSaleSession(),
                   shoppingCartController.getItems(),
                   () -> {
-                    view.rememberLogging(
-                        model.getSaleSession().getCustomer().getFirstName(),
-                        model.getSaleSession().getCustomer().getSurname(),
-                        shoppingCartController.getModel().getTotalSum());
                     shoppingCartController.getItems().clear();
                     getView().back();
                     LogInModel.refreshLogInData();

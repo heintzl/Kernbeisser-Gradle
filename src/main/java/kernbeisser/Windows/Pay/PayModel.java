@@ -71,7 +71,7 @@ public class PayModel implements IModel<PayController> {
     shoppingCart.removeIf(ShoppingItem::isSolidaritySurcharge);
   }
 
-  Purchase pay(SaleSession saleSession, List<ShoppingItem> items, double sum)
+  Purchase pay()
       throws PersistenceException, InvalidTransactionException {
     // Build connection by default
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -101,7 +101,7 @@ public class PayModel implements IModel<PayController> {
       purchase.setSession(db);
       em.persist(purchase);
       int i = 0;
-      for (ShoppingItem item : items) {
+      for (ShoppingItem item : shoppingCart) {
         ShoppingItem shoppingItem = item.unproxy();
         shoppingItem.setShoppingCartIndex(i);
         shoppingItem.setPurchase(purchase);
@@ -127,6 +127,7 @@ public class PayModel implements IModel<PayController> {
   }
 
   void runTransferCompleted() {
+
     transferCompleted.run();
   }
 
