@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.RowFilter;
 import javax.swing.table.*;
@@ -25,7 +26,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private DefaultTableModel model = (DefaultTableModel) super.dataModel;
 
-  private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter = e -> true;
+  private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> DEFAULT_ROW_FILTER = e -> true;
+
+  private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter = DEFAULT_ROW_FILTER;
 
   public ObjectTable(Collection<Column<T>> columns) {
     this(Collections.emptyList(), columns);
@@ -69,6 +72,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private void refreshModel() {
     model = (DefaultTableModel) createModel(columns, objects);
+    setRowSorter(null);
     setModel(model);
     for (int i = 0; i < columns.size(); i++) {
       Column<T> column = columns.get(i);
@@ -92,7 +96,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   public T getFromRow(int index) {
     if (index < 0) return null;
-    return objects.get(super.convertRowIndexToModel(getSelectedRow()));
+    return objects.get(super.convertRowIndexToModel(index));
   }
 
   private void invokeSelectionListeners(T t) {
@@ -167,7 +171,10 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   public void remove(T t) {
     int index = indexOf(t);
-    if (index != -1) model.removeRow(index);
+    if (index != -1) {
+      model.removeRow(index);
+      objects.remove(index);
+    }
   }
 
   private int indexOf(T t) {
@@ -224,20 +231,47 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   public void setRowFilter(kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter) {
-    this.rowFilter = rowFilter;
+    this.rowFilter = rowFilter == null ? DEFAULT_ROW_FILTER : rowFilter;
     ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
   private TableRowSorter<?> createRowSorter() {
     TableRowSorter<?> out = new TableRowSorter<>(model);
-    out.setSortsOnUpdates(true);
     out.setRowFilter(
         new RowFilter<Object, Integer>() {
           @Override
-          public boolean include(Entry<?, ? extends Integer> entry) {
-            return rowFilter.isDisplayed(objects.get(entry.getIdentifier()));
+          public synchronized boolean include(Entry<?, ? extends Integer> entry) {
+            try {
+              return rowFilter.isDisplayed(objects.get(entry.getIdentifier()));
+            } catch (IndexOutOfBoundsException e) {
+              System.out.println(entry.getIdentifier());
+              return false;
+            }
           }
         });
     return out;
+  }
+
+  public Collection<T> getSelectedObjects() {
+    int[] rows = getSelectedRows();
+    ArrayList<T> out = new ArrayList<>(rows.length);
+    for (int row : rows) {
+      out.add(getFromRow(row));
+    }
+    return out;
+  }
+
+  public T[] getSelectedObjects(T[] pattern) {
+    int[] rows = getSelectedRows();
+    T[] out = Arrays.copyOf(pattern, rows.length);
+    for (int i = 0; i < rows.length; i++) {
+      out[i] = getFromRow(rows[i]);
+    }
+    return out;
+  }
+
+  public void removeIf(Predicate<T> predicate) {
+    objects.removeIf(predicate);
+    refreshModel();
   }
 }

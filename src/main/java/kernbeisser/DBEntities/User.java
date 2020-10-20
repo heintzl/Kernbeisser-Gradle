@@ -10,6 +10,7 @@ import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.IterableProtection.ProxyIterable;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Security.PermissionSetSecurityHandler;
@@ -22,7 +23,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table
 @NoArgsConstructor
-@EqualsAndHashCode(doNotUseGetters = true)
+@EqualsAndHashCode(
+    doNotUseGetters = true,
+    exclude = {"ignoredDialogs"})
 public class User implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,10 +39,9 @@ public class User implements Serializable {
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PERMISSIONS_WRITE)})
   @Getter(
       onMethod_ = {
-        @kernbeisser.Security.Key({
-          PermissionKey.USER_PERMISSIONS_READ,
-          PermissionKey.USER_PERMISSIONS_WRITE
-        })
+        @ProxyIterable(
+            read = {PermissionKey.USER_PERMISSIONS_READ},
+            modify = {PermissionKey.USER_PERMISSIONS_WRITE})
       })
   private Set<Permission> permissions = new HashSet<>();
 
@@ -57,7 +59,9 @@ public class User implements Serializable {
   @ManyToMany(fetch = FetchType.EAGER)
   @Getter(
       onMethod_ = {
-        @kernbeisser.Security.Key({PermissionKey.USER_JOBS_READ, PermissionKey.USER_JOBS_WRITE})
+        @ProxyIterable(
+            read = {PermissionKey.USER_JOBS_READ},
+            modify = {PermissionKey.USER_JOBS_WRITE})
       })
   @Setter(onMethod_ = {@Key({PermissionKey.USER_JOBS_WRITE})})
   private Set<Job> jobs = new HashSet<>();
@@ -360,5 +364,28 @@ public class User implements Serializable {
       }
     }
     return value;
+  }
+
+  @Getter(lazy = true)
+  @Transient
+  private final Set<String> ignoredDialogs = loadDialogs();
+
+  public boolean isIgnoredDialog(String dialogName) {
+    return getIgnoredDialogs().contains(dialogName);
+  }
+
+  private Set<String> loadDialogs() {
+    return new HashSet<>(Tools.transform(IgnoredDialog.getAllFor(this), IgnoredDialog::getOrigin));
+  }
+
+  public void ignoreDialog(String name) {
+    IgnoredDialog ignoredDialog = new IgnoredDialog(this, name);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.persist(ignoredDialog);
+    em.flush();
+    et.commit();
+    getIgnoredDialogs().add(name);
   }
 }
