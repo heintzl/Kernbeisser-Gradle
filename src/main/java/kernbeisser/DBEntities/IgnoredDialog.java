@@ -12,15 +12,15 @@ public class IgnoredDialog {
 
   public IgnoredDialog() {}
 
-  public IgnoredDialog(User user, String name) {
+  public IgnoredDialog(User user, String origin) {
     this.user = user;
-    this.name = name;
+    this.origin = origin;
   }
 
   @Id @GeneratedValue private long id;
   @ManyToOne private User user;
 
-  @Column @Getter private String name;
+  @Column @Getter private String origin;
 
   public static Collection<IgnoredDialog> getAllFor(User user) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
