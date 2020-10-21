@@ -30,7 +30,7 @@ public class Catalog {
               ProgressMonitor pm =
                   new ProgressMonitor(
                       null,
-                      "Aktualiesiere Katalog",
+                      "Aktualisiere Katalog",
                       "interpretiere Aktikel ",
                       0,
                       2 * lines.size() + 3);
@@ -74,7 +74,7 @@ public class Catalog {
     int c = 0;
     for (ArticleKornkraft article : articles) {
       pm.setProgress(++before);
-      pm.setNote("Artikel " + c + " wird auf der Datenbank gespeichert");
+      pm.setNote("Artikel " + c + " wird in der Datenbank gespeichert");
       em.persist(article);
       c++;
       if (c % 200 == 0 && Runtime.getRuntime().freeMemory() / 1048576 < runGCUnder) {
@@ -110,7 +110,7 @@ public class Catalog {
     try {
       if (source.length < 42) {
         throw new CannotParseException(
-            "Article doesn't has at least 42 columns:\n" + Arrays.toString(source));
+            "Article doesn't have the minimum of 42 columns:\n" + Arrays.toString(source));
       }
       item.setSuppliersItemNumber(Integer.parseInt(source[0]));
       try {
