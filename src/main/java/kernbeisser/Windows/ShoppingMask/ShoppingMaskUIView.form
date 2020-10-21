@@ -351,8 +351,8 @@
                         <properties>
                           <focusTraversalPolicyProvider value="false"/>
                           <font size="16" style="0"/>
-                          <label value="Freier Artikel"/>
-                          <text value="&amp;Freier Artikel"/>
+                          <label value="Selbstdefinierter Artikel"/>
+                          <text value="Selbstde&amp;finierter Artikel"/>
                         </properties>
                       </component>
                       <component id="5ed2c" class="javax.swing.JRadioButton" binding="optDeposit">

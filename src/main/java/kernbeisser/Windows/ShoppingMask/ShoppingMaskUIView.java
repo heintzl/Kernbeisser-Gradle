@@ -316,6 +316,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     setSuppliersItemNumber("");
 
     setKbNumber("");
+    vat.setSelectedIndex(-1);
 
     price.setText("");
     priceUnit.setText("€");
@@ -324,6 +325,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
     amountUnit.setText("");
 
+    containerSize.setText("");
     containerUnit.setText("");
 
     deposit.setText("");
@@ -396,6 +398,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
                   .replace(36, shoppingItem.getName().length(), "...")
                   .toString()
               : shoppingItem.getName());
+      articleName.setCaretPosition(0);
     }
     price.setText(
         String.format(
@@ -422,7 +425,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     containerUnit.setText(
         (isWeighable ? shoppingItem.getPriceUnits() : MetricUnits.PIECE).getShortName());
     try {
-      if (shoppingItem.getVat() > 0) setVat(shoppingItem.getVat());
+      if (shoppingItem.getVatValue() > 0) setVat(shoppingItem.getVatValue());
     } catch (InvalidVATValueException e) {
       e.printStackTrace();
       vat.setSelectedIndex(-1);
@@ -890,23 +893,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   public void setCheckoutEnable(boolean b) {
     getTopComponent().setEnabled(b);
-  }
-
-  public void rememberLogging(String firstname, String surname, double value) {
-    if (JOptionPane.showConfirmDialog(
-            getTopComponent(),
-            String.format(
-                "Ist der Einkauf in Höhe von %.2f€ von %s %s in das Log-Buch eintragen worden?",
-                value, firstname, surname),
-            "Log-Bucheintrag",
-            JOptionPane.YES_OPTION,
-            JOptionPane.QUESTION_MESSAGE)
-        != 0) {
-      JOptionPane.showMessageDialog(
-          getTopComponent(),
-          "Alle Einkäufe müssen im Log-Buch notiert werden\nfür den Fall, dass gespeicherte Daten verloren gehen.");
-      rememberLogging(firstname, surname, value);
-    }
   }
 
   public void setFocusOnKBNumber() {

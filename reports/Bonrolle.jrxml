@@ -19,7 +19,7 @@
 	</queryString>
 	<field name="retailPrice" class="java.lang.Double"/>
 	<field name="name" class="java.lang.String"/>
-	<field name="vat" class="java.lang.Double"/>
+	<field name="vatValue" class="java.lang.Double"/>
 	<field name="kbNumber" class="java.lang.Integer"/>
 	<field name="priceUnits.shortName" class="java.lang.String"/>
 	<field name="itemMultiplier" class="java.lang.Integer"/>
@@ -183,7 +183,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{vat}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{vatValue}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
 				<reportElement x="310" y="0" width="70" height="14" uuid="a062389a-bb41-4962-b7cf-77cc1e391a2a"/>

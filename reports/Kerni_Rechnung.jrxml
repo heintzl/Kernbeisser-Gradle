@@ -28,13 +28,67 @@
 	</queryString>
 	<field name="retailPrice" class="java.lang.Double"/>
 	<field name="name" class="java.lang.String"/>
-	<field name="vat" class="java.lang.Double"/>
+	<field name="vatValue" class="java.lang.Double"/>
 	<field name="kbNumber" class="java.lang.Integer"/>
 	<field name="priceUnits.shortName" class="java.lang.String"/>
 	<field name="itemMultiplier" class="java.lang.Integer"/>
 	<field name="itemRetailPrice" class="java.lang.Double"/>
 	<field name="discount" class="java.lang.Integer"/>
 	<field name="containerDiscount" class="java.lang.Boolean"/>
+	<group name="Summary VAT Hi">
+		<groupFooter>
+			<band height="13">
+				<printWhenExpression><![CDATA[$P{VatSumHigh} > 0.0]]></printWhenExpression>
+				<textField pattern="#,##0.00¤;-#,##0.00¤">
+					<reportElement x="310" y="0" width="70" height="13" uuid="27ca8d35-9997-4c0d-9b45-cfc61b4ad173"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$P{VatSumHigh}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="220" y="0" width="90" height="13" uuid="6fd6b721-ff16-41b8-b906-846701df6d5d"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA["darin MWSt. " + (int) ($P{VatValueHigh} * 100) +"%:"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Summary VAT Lo">
+		<groupFooter>
+			<band height="13">
+				<printWhenExpression><![CDATA[$P{VatSumLow} > 0.0]]></printWhenExpression>
+				<textField pattern="#,##0.00¤;-#,##0.00¤">
+					<reportElement x="310" y="0" width="70" height="13" uuid="3dc03a00-a36a-48e8-b19b-2240f18cd599"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$P{VatSumLow}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="220" y="0" width="90" height="13" uuid="3c4ccf71-2dd5-4bb8-bd4c-ed0e7864dcb5"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA["darin MWSt. " + (int) ($P{VatValueLow} * 100) +"%:"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Summary Total">
+		<groupFooter>
+			<band height="16">
+				<textField evaluationTime="Report" pattern="#,##0.00¤;-#,##0.00 ¤">
+					<reportElement x="310" y="2" width="70" height="14" uuid="ff7446e6-555f-4f29-91bd-5e9b87df553b"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{SumTotal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="250" y="2" width="60" height="14" uuid="1ef5dd1c-9312-4fa9-aefc-ca078ee75eaa"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Summe: ]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
 	<background>
 		<band height="400" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -180,7 +234,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{vat}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{vatValue}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
 				<reportElement x="310" y="0" width="70" height="14" uuid="a062389a-bb41-4962-b7cf-77cc1e391a2a"/>
@@ -216,55 +270,21 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="76" splitType="Stretch">
-			<textField evaluationTime="Report" pattern="#,##0.00¤;-#,##0.00 ¤">
-				<reportElement x="310" y="0" width="70" height="14" uuid="5483ffe9-0caa-474a-975d-3e6860a46b39"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{SumTotal}]]></textFieldExpression>
-			</textField>
+		<band height="33" splitType="Stretch">
 			<staticText>
-				<reportElement x="250" y="0" width="60" height="14" uuid="016f79ff-2dc9-4b21-a680-fb871f7fee6d"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Summe: ]]></text>
-			</staticText>
-			<textField pattern="#,##0.00¤;-#,##0.00¤">
-				<reportElement x="310" y="14" width="70" height="13" uuid="edd4b967-44b9-4ad7-92a5-8317fce81ec0"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$P{VatSumLow}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="220" y="14" width="90" height="13" uuid="ff75376c-cc8f-448c-a572-305d945e14c2"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["darin MWSt. " + ($P{VatValueLow} * 100) +"%:"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="220" y="27" width="90" height="13" uuid="ab0fdcb8-dc57-4086-b9b3-63230439cc22"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["darin MWSt. " + ($P{VatValueHigh} * 100) +"%:"]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00¤;-#,##0.00¤">
-				<reportElement x="310" y="27" width="70" height="13" uuid="0104bd2f-17a3-48e4-9dd8-2e0dc5f1cdc0"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$P{VatSumHigh}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="110" y="45" width="200" height="13" uuid="1d8505d7-b1a4-4d12-ba6c-c1d07ce7cceb"/>
+				<reportElement x="110" y="5" width="200" height="13" uuid="1d8505d7-b1a4-4d12-ba6c-c1d07ce7cceb"/>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[verbleibendes Guthaben nach dem Einkauf:]]></text>
 			</staticText>
 			<textField evaluationTime="Report" pattern="#,##0.00¤;-#,##0.00¤">
-				<reportElement x="310" y="45" width="70" height="13" uuid="e8655fa3-32f0-4eeb-8816-c5ac94eecad4">
+				<reportElement x="310" y="5" width="70" height="13" uuid="e8655fa3-32f0-4eeb-8816-c5ac94eecad4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{Credit}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="160" y="57" width="220" height="16" uuid="be65bb8b-4b64-456f-8739-93e431107163"/>
+				<reportElement x="160" y="17" width="220" height="16" uuid="be65bb8b-4b64-456f-8739-93e431107163"/>
 				<textElement textAlignment="Right">
 					<font isBold="true" isItalic="true"/>
 				</textElement>

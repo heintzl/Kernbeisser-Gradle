@@ -43,12 +43,14 @@ public class PayController implements IController<PayView, PayModel> {
       // FIXME why pass shoppingCart to model if it was initialized with it?
 
       try {
-        purchase =
-            model.pay(model.getSaleSession(), model.getShoppingCart(), model.shoppingCartSum());
+        purchase = model.pay();
         if (printReceipt) {
-          model.print(purchase, model.getShoppingCart());
+          PayModel.print(purchase, model.getShoppingCart());
         }
+        view.confirmLogging(
+            model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());
         view.back();
+
         model.runTransferCompleted();
       } catch (InvalidTransactionException e) {
         view.notEnoughValue();
@@ -57,6 +59,12 @@ public class PayController implements IController<PayView, PayModel> {
     } catch (PersistenceException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
+  }
+
+  @Override
+  public boolean commitClose() {
+    model.removeSolidarityItems();
+    return true;
   }
 
   @Override
