@@ -15,12 +15,12 @@ public class SubWindow extends JDialog implements Window {
     super(window.getController().getView().getTopComponent());
     this.controller = controller;
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+    super.setLocationRelativeTo(window.getController().getView().getContent());
   }
 
   @Override
   public void setSize(Dimension d) {
     super.setSize(d);
-    super.setLocationRelativeTo(null);
   }
 
   @Override

@@ -919,4 +919,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public void setFocusOnAmount() {
     amount.requestFocusInWindow();
   }
+
+  public void setSearchArticleAvailable(boolean b) {
+    searchArticle.setEnabled(false);
+  }
 }
