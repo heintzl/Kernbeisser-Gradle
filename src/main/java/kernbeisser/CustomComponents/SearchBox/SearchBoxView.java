@@ -9,6 +9,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.CustomComponents.ObjectTable.RowFilter;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -83,5 +84,9 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   @Override
   public Component getFocusOnInitialize() {
     return searchInput;
+  }
+
+  public void setRowFilter(RowFilter<T> rowFilter) {
+    objects.setRowFilter(rowFilter);
   }
 }
