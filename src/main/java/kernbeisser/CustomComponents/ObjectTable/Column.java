@@ -1,7 +1,10 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
 import java.awt.*;
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -11,17 +14,38 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import org.intellij.lang.annotations.MagicConstant;
 
 public interface Column<T> {
-  Color STRIPED_BACKGROUND_COLOR = new Color(240, 240, 240);
+  Color STRIPED_BACKGROUND_COLOR_A = new Color(240, 240, 240);
+  Color STRIPED_BACKGROUND_COLOR_B = new DefaultTableCellRenderer().getBackground();
   TableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
   TableCellRenderer DEFAULT_STRIPED_RENDERER =
-      new StripedRenderer(
-          DEFAULT_RENDERER,
-          new DefaultTableCellRenderer() {
-            {
-              setBackground(STRIPED_BACKGROUND_COLOR);
-            }
-          });
+      new StripedRenderer(STRIPED_BACKGROUND_COLOR_A, STRIPED_BACKGROUND_COLOR_B);
   int DEFAULT_ALIGNMENT = SwingConstants.LEFT;
+  Comparator<Object> DEFAULT_SORTER = Comparator.comparing(Objects::toString);
+  Comparator<Object> NUMBER_SORTER =
+      new Comparator<Object>() {
+        private final Pattern numberFilter = Pattern.compile("[^\\d,.-]");
+
+        @Override
+        public int compare(Object o1, Object o2) {
+          double a;
+          double b;
+          try {
+            a =
+                Double.parseDouble(
+                    numberFilter.matcher(o1.toString()).replaceAll("").replace(",", "."));
+          } catch (NumberFormatException e) {
+            return -1;
+          }
+          try {
+            b =
+                Double.parseDouble(
+                    numberFilter.matcher(o2.toString()).replaceAll("").replace(",", "."));
+          } catch (NumberFormatException e) {
+            return 1;
+          }
+          return Double.compare(a, b);
+        }
+      };
 
   static <T> Column<T> create(String s, Getter<T, Object> v) {
     return create(s, v, DEFAULT_ALIGNMENT);
@@ -29,6 +53,11 @@ public interface Column<T> {
 
   static <T> Column<T> create(String s, Getter<T, Object> v, @MagicConstant int alignment) {
     return create(s, v, alignment, true);
+  }
+
+  static <T> Column<T> create(
+      String s, Getter<T, Object> v, @MagicConstant int alignment, Comparator<Object> comparator) {
+    return create(s, v, alignment, true, e -> {}, comparator);
   }
 
   static <T> Column<T> create(
@@ -42,6 +71,16 @@ public interface Column<T> {
 
   static <T> Column<T> create(
       String s, Getter<T, Object> v, int alignment, boolean striped, Consumer<T> onAction) {
+    return create(s, v, alignment, striped, onAction, DEFAULT_SORTER);
+  }
+
+  static <T> Column<T> create(
+      String s,
+      Getter<T, Object> v,
+      int alignment,
+      boolean striped,
+      Consumer<T> onAction,
+      Comparator<Object> sorter) {
     return new Column<T>() {
       private boolean read = true;
 
@@ -65,45 +104,26 @@ public interface Column<T> {
 
       @Override
       public TableCellRenderer getRenderer() {
-        return striped
-            ? new StripedRenderer(
-                new DefaultTableCellRenderer() {
-                  {
-                    setHorizontalAlignment(alignment);
-                  }
-                },
-                new DefaultTableCellRenderer() {
-                  {
-                    setBackground(STRIPED_BACKGROUND_COLOR);
-                    setHorizontalAlignment(alignment);
-                  }
-                })
-            : new DefaultTableCellRenderer() {
-              {
-                setHorizontalAlignment(alignment);
-              }
-            };
+        DefaultTableCellRenderer renderer =
+            striped ? new StripedRenderer() : new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(alignment);
+        return renderer;
       }
 
       @Override
       public void onAction(T t) {
         onAction.accept(t);
       }
+
+      @Override
+      public Comparator<Object> sorter() {
+        return sorter;
+      }
     };
   }
 
   static <T> Column<T> createIcon(Icon icon, Consumer<T> onAction) {
     return new Column<T>() {
-      final DefaultTableCellRenderer normal = new DefaultTableCellRenderer();
-      final DefaultTableCellRenderer dark = new DefaultTableCellRenderer();
-
-      {
-        normal.setIcon(icon);
-        dark.setIcon(icon);
-        normal.setHorizontalAlignment(DEFAULT_ALIGNMENT);
-        dark.setHorizontalAlignment(DEFAULT_ALIGNMENT);
-        dark.setBackground(STRIPED_BACKGROUND_COLOR);
-      }
 
       @Override
       public String getName() {
@@ -117,7 +137,10 @@ public interface Column<T> {
 
       @Override
       public TableCellRenderer getRenderer() {
-        return new StripedRenderer(normal, dark);
+        StripedRenderer renderer = new StripedRenderer();
+        renderer.setHorizontalAlignment(DEFAULT_ALIGNMENT);
+        renderer.setIcon(icon);
+        return renderer;
       }
 
       @Override
@@ -143,4 +166,8 @@ public interface Column<T> {
   }
 
   default void adjust(TableColumn column) {}
+
+  default Comparator<Object> sorter() {
+    return DEFAULT_SORTER;
+  }
 }
