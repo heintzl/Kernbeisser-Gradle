@@ -100,7 +100,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
                 "Menge",
                 e -> {
                   if (e.isContainerDiscount()) {
-                    return e.getItemMultiplier() + " Gebinde";
+                    return e.getItemMultiplier() / e.getContainerSize() + " Gebinde";
                   }
                   return e.getPriceUnits() == MetricUnits.NONE
                       ? ""
