@@ -18,6 +18,7 @@ public class EditUsers extends ObjectViewController<User> {
         Column.create(
             "Guthaben",
             u -> String.format("%.2f€", u.getUserGroup().getValue()),
-            SwingConstants.RIGHT));
+            SwingConstants.RIGHT,
+            Column.NUMBER_SORTER));
   }
 }
