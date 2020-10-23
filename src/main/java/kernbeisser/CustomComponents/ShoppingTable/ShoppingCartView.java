@@ -7,6 +7,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -16,6 +17,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.RawPrice;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -117,17 +119,25 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
             Column.create(
                 "Preis", e -> String.format("%.2f€ ", e.getRetailPrice()), SwingConstants.RIGHT));
     if (editable) {
+      Predicate<ShoppingItem> predicate =
+          item ->
+              !(item.getName().equals(RawPrice.PRODUCE.getName())
+                  || item.getName().equals(RawPrice.BAKERY.getName()));
       shoppingItems.addColumn(
           Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x0B315A)),
-              controller::plus));
+              controller::plus,
+              predicate));
       shoppingItems.addColumn(
           Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.MINUS, 20, new Color(0x920101)),
-              controller::minus));
+              controller::minus,
+              predicate));
       shoppingItems.addColumn(
           Column.createIcon(
-              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
+              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
+              controller::delete,
+              predicate));
     }
     shoppingItems.getTableHeader().setBackground(Color.BLACK);
     shoppingItems.getTableHeader().setForeground(Color.LIGHT_GRAY);

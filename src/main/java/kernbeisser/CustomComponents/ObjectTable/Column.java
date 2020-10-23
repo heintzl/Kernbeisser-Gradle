@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -123,6 +124,10 @@ public interface Column<T> {
   }
 
   static <T> Column<T> createIcon(Icon icon, Consumer<T> onAction) {
+    return createIcon(icon, onAction, e -> true);
+  }
+
+  static <T> Column<T> createIcon(Icon icon, Consumer<T> onAction, Predicate<T> onlyIf) {
     return new Column<T>() {
 
       @Override
@@ -132,12 +137,26 @@ public interface Column<T> {
 
       @Override
       public Object getValue(T t) throws PermissionKeyRequiredException {
-        return "";
+        return onlyIf.test(t);
       }
 
       @Override
       public TableCellRenderer getRenderer() {
-        StripedRenderer renderer = new StripedRenderer();
+        StripedRenderer renderer =
+            new StripedRenderer() {
+              @Override
+              public Component getTableCellRendererComponent(
+                  JTable table,
+                  Object value,
+                  boolean isSelected,
+                  boolean hasFocus,
+                  int row,
+                  int column) {
+                setIcon((boolean) value ? icon : null);
+                return super.getTableCellRendererComponent(
+                    table, "", isSelected, hasFocus, row, column);
+              }
+            };
         renderer.setHorizontalAlignment(DEFAULT_ALIGNMENT);
         renderer.setIcon(icon);
         return renderer;
