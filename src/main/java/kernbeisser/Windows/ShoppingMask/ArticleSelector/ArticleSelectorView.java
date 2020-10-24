@@ -2,6 +2,7 @@ package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 
 import java.awt.*;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ObjectTable.RowFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
@@ -32,16 +33,8 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
 
   @Override
   public void initialize(ArticleSelectorController controller) {
-    onlyWithoutBarcode.addActionListener(
-        e -> {
-          controller.refreshLoadSolutions();
-          showInShopArticles.setSelected(false);
-        });
-    showInShopArticles.addActionListener(
-        e -> {
-          controller.refreshLoadSolutions();
-          onlyWithoutBarcode.setSelected(false);
-        });
+    onlyWithoutBarcode.addActionListener(e -> controller.refreshSearch());
+    showInShopArticles.addActionListener(e -> controller.refreshSearch());
     chooseButton.addActionListener(e -> controller.choose());
   }
 
@@ -58,5 +51,9 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
   @Override
   public Component getFocusOnInitialize() {
     return searchBoxController.getView().getFocusOnInitialize();
+  }
+
+  public void setRowFilter(RowFilter<Article> articleRowFilter) {
+    searchBox.setRowFilter(articleRowFilter);
   }
 }

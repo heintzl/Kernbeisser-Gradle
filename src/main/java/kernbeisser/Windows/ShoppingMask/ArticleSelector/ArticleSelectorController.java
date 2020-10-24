@@ -2,6 +2,7 @@ package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -37,16 +38,19 @@ public class ArticleSelectorController
   }
 
   private Collection<Article> search(String query, int max) {
-    Collection<Article> articles = Article.defaultSearch(query, max);
     getView();
-    if (view != null) {
-      if (view.searchOnlyWithoutBarcode()) {
-        articles.removeIf(e -> e.getBarcode() != null);
-      } else if (view.searchOnlyShowInShop()) {
-        articles.removeIf(e -> !e.isShowInShop());
-      }
-    }
-    return articles;
+    return Article.getDefaultAll(
+        query, createFilter(view.searchOnlyWithoutBarcode(), view.searchOnlyShowInShop()), max);
+  }
+
+  private Predicate<Article> createFilter(boolean filterBarcode, boolean filterShowInShoppingCart) {
+    return e ->
+        !(filterBarcode && e.getBarcode() != null)
+            && !(filterShowInShoppingCart && !e.isShowInShop());
+  }
+
+  void refreshSearch() {
+    searchBoxController.search();
   }
 
   public void choose() {

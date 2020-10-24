@@ -294,7 +294,9 @@ public class ShoppingMaskUIController
 
   void openSearchWindow() {
     new ArticleSelectorController(this::searchWindowResult)
-        .openAsWindow(view.getWindow(), SubWindow::new);
+        .openAsWindow(view.getWindow(), SubWindow::new)
+        .addCloseEventListener(e -> view.setSearchArticleAvailable(true));
+    view.setSearchArticleAvailable(false);
   }
 
   void searchWindowResult(Article article) {

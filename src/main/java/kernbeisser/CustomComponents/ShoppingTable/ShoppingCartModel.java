@@ -24,6 +24,10 @@ public class ShoppingCartModel implements IModel<ShoppingCartController> {
     return addItemAtIndex(newItem, shoppingItems.indexOf(getShoppingItem(behindItem)) + 1);
   }
 
+  boolean shoppingCartItemAlreadyExists(ShoppingItem item) {
+    return getShoppingItem(item) != null;
+  }
+
   ShoppingItem addItemAtIndex(ShoppingItem newItem, int atIndex) {
     ShoppingItem existingItem = getShoppingItem(newItem);
     if (existingItem != null) {

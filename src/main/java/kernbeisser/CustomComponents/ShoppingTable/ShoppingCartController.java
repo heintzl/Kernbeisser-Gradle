@@ -2,7 +2,9 @@ package kernbeisser.CustomComponents.ShoppingTable;
 
 import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +29,16 @@ public class ShoppingCartController implements IController<ShoppingCartView, Sho
     // TODO should throw exception if !editable
     if (!editable) return;
     ShoppingItem addedItem = model.addItem(item);
+    if (item.getItemMultiplier() != addedItem.getItemMultiplier())
+      RememberDialog.showDialog(
+          LogInModel.getLoggedIn(),
+          view.getContent(),
+          "Der Artikel hat bereits im Einkaufswagen exsistiert.\nDie Menge von "
+              + addedItem.getName()
+              + " wurde auf "
+              + addedItem.getItemMultiplier()
+              + " geändert.",
+          "Artikel existiert bereits im Einkaufswagen");
     if (item.getSingleDeposit() != 0) {
       model.addItem(addedItem.createSingleDeposit(item.getItemMultiplier()));
     }

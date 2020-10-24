@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
@@ -151,26 +153,44 @@ public class Article extends ArticleBase {
     return Tools.getAll(Article.class, condition);
   }
 
+  private static TypedQuery<Article> createQuery(EntityManager em, String search) {
+    return em.createQuery(
+            "select i from Article i where kbNumber = :n"
+                + " or suppliersItemNumber = :n"
+                + " or i.supplier.shortName like :s"
+                + " or i.supplier.name like :s"
+                + " or UPPER(i.name) like :ds"
+                + " or mod(barcode,:bl) = :n"
+                + " or UPPER( i.priceList.name) like :u"
+                + " order by i.name asc",
+            Article.class)
+        .setParameter("n", Tools.tryParseInteger(search))
+        .setParameter(
+            "bl",
+            Tools.tryParseInteger(search) > 0
+                ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInteger(search))))
+                : 1)
+        .setParameter("s", search + "%")
+        .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
+        .setParameter("u", search.toUpperCase() + "%");
+  }
+
   public static Collection<Article> defaultSearch(String search, int maxResults) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    Collection<Article> out = createQuery(em, search).setMaxResults(maxResults).getResultList();
+    em.close();
+    return Proxy.getSecureInstances(out);
+  }
+
+  public static Collection<Article> getDefaultAll(
+      String search, Predicate<Article> articlePredicate, int max) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Article> out =
-        em.createQuery(
-                "select i from Article i where kbNumber = :n"
-                    + " or suppliersItemNumber = :n"
-                    + " or i.supplier.shortName like :s"
-                    + " or i.supplier.name like :s"
-                    + " or UPPER(i.name) like :ds"
-                    + " or barcode like :ds"
-                    + " or UPPER( i.priceList.name) like :u"
-                    + " order by i.name asc",
-                Article.class)
-            .setParameter("n", Tools.tryParseInteger(search))
-            .setParameter("s", search + "%")
-            .setParameter(
-                "ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
-            .setParameter("u", search.toUpperCase() + "%")
-            .setMaxResults(maxResults)
-            .getResultList();
+        createQuery(em, search)
+            .getResultStream()
+            .filter(articlePredicate)
+            .limit(max)
+            .collect(Collectors.toCollection(ArrayList::new));
     em.close();
     return Proxy.getSecureInstances(out);
   }

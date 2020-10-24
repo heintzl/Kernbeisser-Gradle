@@ -249,6 +249,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             }
           }
         });
+    for (int i = 0; i < columns.size(); i++) {
+      out.setComparator(i, columns.get(i).sorter());
+    }
     return out;
   }
 
