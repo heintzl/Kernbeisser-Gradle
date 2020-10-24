@@ -2,6 +2,7 @@ package kernbeisser.Windows.SoloShoppingMask;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
@@ -19,7 +20,7 @@ public class SoloShoppingMaskController
   @Linked private final ShoppingMaskUIController shoppingMaskUIController;
 
   public SoloShoppingMaskController() {
-    SaleSession saleSession = new SaleSession();
+    SaleSession saleSession = new SaleSession(SaleSessionType.SOLO);
     saleSession.setCustomer(LogInModel.getLoggedIn());
     saleSession.setSeller(LogInModel.getLoggedIn());
     this.shoppingMaskUIController = new ShoppingMaskUIController(saleSession);

@@ -3,6 +3,7 @@ package kernbeisser.DBEntities;
 import java.util.List;
 import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
@@ -18,6 +19,8 @@ public class SaleSession {
   @Getter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_ID_WRITE)})
   private int id;
+
+  private final SaleSessionType sessionType;
 
   @ManyToOne
   @JoinColumn
@@ -36,6 +39,10 @@ public class SaleSession {
   @Getter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_SELLER_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_SELLER_WRITE)})
   private User seller;
+
+  public SaleSession(SaleSessionType sessionType) {
+    this.sessionType = sessionType;
+  }
 
   public static List<SaleSession> getAll(String condition) {
     return Tools.getAll(SaleSession.class, condition);

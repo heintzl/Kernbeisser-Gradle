@@ -7,6 +7,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
@@ -44,7 +45,7 @@ public class CashierShoppingMaskController
   }
 
   public void openMaskWindow() {
-    SaleSession saleSession = new SaleSession();
+    SaleSession saleSession = new SaleSession(SaleSessionType.ASSISTED);
     saleSession.setCustomer(searchBoxController.getSelectedObject());
     saleSession.setSeller(LogInModel.getLoggedIn());
     if (!view.getSecondSeller().toString().equals("Keiner")) {
