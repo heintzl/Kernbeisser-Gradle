@@ -95,7 +95,7 @@
 			<staticText>
 				<reportElement x="15" y="100" width="350" height="210" forecolor="#919191" uuid="63ddc39a-4af5-4884-be67-c3bf92680ce9"/>
 				<textElement>
-					<font fontName="Arial Black" size="42"/>
+					<font fontName="DejaVu Sans" size="42"/>
 				</textElement>
 				<text><![CDATA[Muster! kein Kernbeisser Einkaufsbeleg]]></text>
 			</staticText>
