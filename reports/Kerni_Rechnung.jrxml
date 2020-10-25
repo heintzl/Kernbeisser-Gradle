@@ -39,7 +39,7 @@
 		<groupFooter>
 			<band height="13">
 				<printWhenExpression><![CDATA[$P{VatSumHigh} > 0.0]]></printWhenExpression>
-				<textField pattern="#,##0.00¤;-#,##0.00¤">
+				<textField pattern="#,##0.00€;-#,##0.00€">
 					<reportElement x="310" y="0" width="70" height="13" uuid="27ca8d35-9997-4c0d-9b45-cfc61b4ad173"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{VatSumHigh}]]></textFieldExpression>
@@ -56,7 +56,7 @@
 		<groupFooter>
 			<band height="13">
 				<printWhenExpression><![CDATA[$P{VatSumLow} > 0.0]]></printWhenExpression>
-				<textField pattern="#,##0.00¤;-#,##0.00¤">
+				<textField pattern="#,##0.00€;-#,##0.00€">
 					<reportElement x="310" y="0" width="70" height="13" uuid="3dc03a00-a36a-48e8-b19b-2240f18cd599"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{VatSumLow}]]></textFieldExpression>
@@ -72,7 +72,7 @@
 	<group name="Summary Total">
 		<groupFooter>
 			<band height="16">
-				<textField evaluationTime="Report" pattern="#,##0.00¤;-#,##0.00 ¤">
+				<textField evaluationTime="Report" pattern="#,##0.00€;-#,##0.00€">
 					<reportElement x="310" y="2" width="70" height="14" uuid="ff7446e6-555f-4f29-91bd-5e9b87df553b"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
@@ -236,7 +236,7 @@
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{vatValue}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00¤;-#,##0.00 ¤">
+			<textField pattern="#,##0.00€;-#,##0.00 €">
 				<reportElement x="310" y="0" width="70" height="14" uuid="a062389a-bb41-4962-b7cf-77cc1e391a2a"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{retailPrice}]]></textFieldExpression>
@@ -276,7 +276,7 @@
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[verbleibendes Guthaben nach dem Einkauf:]]></text>
 			</staticText>
-			<textField evaluationTime="Report" pattern="#,##0.00¤;-#,##0.00¤">
+			<textField evaluationTime="Report" pattern="#,##0.00€;-#,##0.00€">
 				<reportElement x="310" y="5" width="70" height="13" uuid="e8655fa3-32f0-4eeb-8816-c5ac94eecad4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
