@@ -85,7 +85,7 @@ public class ConfigManager {
   public static void updateFile() {
     try {
       FileWriter fw = new FileWriter(file);
-      fw.write(config.toString());
+      fw.write(config.toString(CONFIG_FILE_INDENT_FACTOR));
       fw.close();
     } catch (IOException e) {
       createFileIfNotExists();
