@@ -1,7 +1,15 @@
 {
   "dbIsInitialized": false,
   "CatalogSource": "",
-  "DBAccess":{"Username":"Application","URL":"jdbc:mysql://localhost/kernbeisser"},
+  "DBAccess": {
+    "Username": "Application",
+    "URL": "jdbc:mysql://localhost/kernbeisser"
+  },
   "ImagePath": "src/main/resources/Images/Icons",
-  "Reports": {"reportFolder": "reports", "outputFolder": "reports","invoiceFileName": "Kerni_Rechnung.jrxml","tillrollFileName":"Bonrolle.jrxml"}
+  "Reports": {
+    "tillrollFileName": "Bonrolle.jrxml",
+    "reportDirectory": "reports",
+    "outputDirectory": "reports",
+    "invoiceFileName": "Kerni_Rechnung.jrxml"
+  }
 }
