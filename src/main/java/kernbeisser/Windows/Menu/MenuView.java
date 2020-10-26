@@ -4,6 +4,7 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ControllerButton;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
@@ -70,90 +71,120 @@ public class MenuView implements IView<MenuController> {
     infoPanel = new UserInfoController(LogInModel.getLoggedIn()).getView();
     openCashierShoppingMask =
         new ControllerButton(
-            CashierShoppingMaskController::new, controller -> controller.openTab("Ladendienst"));
+            CashierShoppingMaskController::new, CashierShoppingMaskController.class);
     // NOT IMPLEMENTED
-    printBonFromPast =
-        new ControllerButton(
-            ControllerButton.EMPTY, controller -> controller.openTab("Bon ausdrucken"));
+    printBonFromPast = ControllerButton.empty();
     editPriceList =
         new ControllerButton(
             ManagePriceListsController::new,
+            ManagePriceListsController.class,
             controller -> controller.openTab("Preislisten bearbeiten"));
     editArticles =
         new ControllerButton(
-            EditItemsController::new, controller -> controller.openTab("Artikel bearbeiten"));
+            EditItemsController::new,
+            EditItemsController.class,
+            controller -> controller.openTab("Artikel bearbeiten"));
     editSurchargeTables =
         new ControllerButton(
             EditSurchargeTables::new,
+            EditSurchargeTables.class,
             controller -> controller.openTab("Zuschlagstabellen bearbeiten"));
     changePassword =
         new ControllerButton(
             () -> new ChangePasswordController(LogInModel.getLoggedIn(), true),
+            ChangePasswordController.class,
             controller -> controller.openTab("Passwort"));
     transactionHistory =
         new ControllerButton(
             () -> new UserInfoController(LogInModel.getLoggedIn()),
+            UserInfoController.class,
             controller -> controller.openTab(""));
     editOwnUser =
         new ControllerButton(
             () -> new EditUserController(LogInModel.getLoggedIn(), Mode.EDIT),
+            EditUserController.class,
             controller -> controller.openTab("Persönliche Information"));
     // NOT IMPLEMENTED
     editUserSettings =
         new ControllerButton(
             () -> new EditUserSettingController(LogInModel.getLoggedIn()),
+            EditUserSettingController.class,
             controller -> controller.openTab("<PlaceHolder>"));
     editUsers =
         new ControllerButton(
-            EditUsers::new, controller -> controller.openTab("Benutzer bearbeiten"));
+            EditUsers::new,
+            EditUsers.class,
+            controller -> controller.openTab("Benutzer bearbeiten"));
     doTransaction =
         new ControllerButton(
             () -> new TransactionController(LogInModel.getLoggedIn()),
+            TransactionController.class,
             controller -> controller.openTab("Überweisungen"));
     changePermissions =
         new ControllerButton(
-            PermissionController::new, controller -> controller.openTab("Berechtigungen"));
+            PermissionController::new,
+            PermissionController.class,
+            controller -> controller.openTab("Berechtigungen"));
     // NOT IMPLEMENTED
     tillrollControllerButton =
         new ControllerButton(
-            () -> new TillrollController(), controller -> controller.openTab("Bonrolle"));
+            TillrollController::new,
+            TillrollController.class,
+            controller -> controller.openTab("Bonrolle"));
     changeDBConnection =
         new ControllerButton(
-            DBLogInController::new, controller -> controller.openTab("Datenbankverbindung"));
+            DBLogInController::new,
+            DBLogInController.class,
+            controller -> controller.openTab("Datenbankverbindung"));
     editJobs =
-        new ControllerButton(EditJobs::new, controller -> controller.openTab("Jobs bearbeiten"));
+        new ControllerButton(
+            EditJobs::new, EditJobs.class, controller -> controller.openTab("Jobs bearbeiten"));
     editApplicationSettings =
-        new ControllerButton(SettingController::new, e -> e.openTab("Einstellungen"));
+        new ControllerButton(
+            SettingController::new, SettingController.class, e -> e.openTab("Einstellungen"));
     order =
         new ControllerButton(
-            () -> new ContainerController(LogInModel.getLoggedIn()),
-            controller -> controller.openTab("<PlaceHolder>"));
+            () -> new ContainerController(LogInModel.getLoggedIn()), ContainerController.class);
     // NOT IMPLEMENTED
-    placeHolderControllerButton1 =
-        new ControllerButton(
-            ControllerButton.EMPTY, controller -> controller.openTab("<PlaceHolder>"));
+    placeHolderControllerButton1 = ControllerButton.empty();
     // NOT IMPLEMENTED
-    placeHolderControllerButton2 =
-        new ControllerButton(
-            ControllerButton.EMPTY, controller -> controller.openTab("<PlaceHolder>"));
+    placeHolderControllerButton2 = ControllerButton.empty();
     openSelfShoppingMask =
         new ControllerButton(
-            SoloShoppingMaskController::new, controller -> controller.openTab("Selbsteinkauf"));
+            () -> {
+              try {
+                return new SoloShoppingMaskController();
+              } catch (NotEnoughCreditException e) {
+                JOptionPane.showMessageDialog(
+                    getTopComponent(),
+                    "sie können keinen Einkauf beginnen, da ihr Guthaben nicht ausreicht.\nFalls sie ihr Guthaben aufladen wollen, melden sie sich bitte bei dem Ladendienst,\ndieser wird sie dann an die / den Guthaben beauftragte/n verweissen.");
+                return null;
+              }
+            },
+            SoloShoppingMaskController.class,
+            e -> {
+              if (e != null) e.openTab("Selbsteinkauf");
+            });
     addBeginner =
         new ControllerButton(
             () -> new EditUserController(User.generateBeginnerUser(), Mode.ADD),
+            EditUserController.class,
             e -> e.openTab("Probemitglied aufnehmen"));
     editSuppliers =
         new ControllerButton(
-            EditSuppliers::new, controller -> controller.openTab("Lieferanten bearbeiten"));
+            EditSuppliers::new,
+            EditSuppliers.class,
+            controller -> controller.openTab("Lieferanten bearbeiten"));
 
     editUserGroup =
         new ControllerButton(
             () -> new EditUserGroupController(LogInModel.getLoggedIn()),
+            EditUserGroupController.class,
             controller -> controller.openTab("Nutzergruppe ändern"));
     synchoniseCatalog =
         new ControllerButton(
             SynchronizeArticleController::new,
+            SynchronizeArticleController.class,
             controller -> controller.openTab("Katalog sychonisieren"));
     openCashierShoppingMask.requestFocusInWindow();
   }

@@ -378,6 +378,10 @@ public class User implements Serializable {
     return new HashSet<>(Tools.transform(IgnoredDialog.getAllFor(this), IgnoredDialog::getOrigin));
   }
 
+  public boolean isBeginner() {
+    return permissions.contains(PermissionConstants.BEGINNER.getPermission());
+  }
+
   public void ignoreDialog(String name) {
     IgnoredDialog ignoredDialog = new IgnoredDialog(this, name);
     @Cleanup EntityManager em = DBConnection.getEntityManager();

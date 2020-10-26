@@ -668,7 +668,7 @@ public class Tools {
   public static Collection<Field> getAllFields(Class<?> clazz) {
     ArrayList<Field> out = new ArrayList<Field>(Arrays.asList(clazz.getDeclaredFields()));
     clazz = clazz.getSuperclass();
-    while (!clazz.equals(Object.class)) {
+    while (clazz != null && !clazz.equals(Object.class)) {
       out.addAll(Arrays.asList(clazz.getDeclaredFields()));
       clazz = clazz.getSuperclass();
     }
