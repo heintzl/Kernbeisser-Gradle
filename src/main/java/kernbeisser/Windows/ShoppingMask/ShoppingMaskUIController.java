@@ -5,9 +5,11 @@ import java.util.Objects;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
@@ -25,13 +27,23 @@ public class ShoppingMaskUIController
   private final ShoppingMaskModel model;
   @Linked private final ShoppingCartController shoppingCartController;
 
-  public ShoppingMaskUIController(SaleSession saleSession) {
+  public ShoppingMaskUIController(SaleSession saleSession) throws NotEnoughCreditException {
     model = new ShoppingMaskModel(saleSession);
     this.shoppingCartController =
         new ShoppingCartController(
             model.getValue(),
             model.getSaleSession().getCustomer().getUserGroup().getSolidaritySurcharge(),
             true);
+    if (model.getSaleSession().getCustomer().getUserGroup().getValue() <= 0) {
+      if (model.getSaleSession().getCustomer().hasPermission(PermissionKey.GO_UNDER_MIN)) {
+        RememberDialog.showDialog(
+            model.getSaleSession().getCustomer(),
+            null,
+            "Ihr Guthaben beträgt weniger als 0.01€, bitte sein sie sich bewusst,\ndass Schulden Zinsen verursachen.");
+      } else {
+        throw new NotEnoughCreditException();
+      }
+    }
   }
 
   private double getRelevantPrice() {

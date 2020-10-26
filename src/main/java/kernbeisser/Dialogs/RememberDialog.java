@@ -33,6 +33,11 @@ public class RememberDialog {
   }
 
   public static void showDialog(
+      User user, String dialogName, Component parent, Object message, String title) {
+    showDialog(user, dialogName, parent, message, title, JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public static void showDialog(
       User user,
       String dialogName,
       Component parent,

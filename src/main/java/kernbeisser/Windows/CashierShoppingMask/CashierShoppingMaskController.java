@@ -1,12 +1,14 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
 import javax.persistence.NoResultException;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
@@ -54,12 +56,16 @@ public class CashierShoppingMaskController
         return;
       }
     }
-    new ShoppingMaskUIController(saleSession)
-        .openTab(
-            "Einkauf für "
-                + saleSession.getCustomer().getSurname()
-                + ", "
-                + saleSession.getCustomer().getFirstName());
+    try {
+      new ShoppingMaskUIController(saleSession)
+          .openTab(
+              "Einkauf für "
+                  + saleSession.getCustomer().getSurname()
+                  + ", "
+                  + saleSession.getCustomer().getFirstName());
+    } catch (NotEnoughCreditException e) {
+      view.notEnoughCredit();
+    }
   }
 
   public SearchBoxView<User> getSearchBoxView() {

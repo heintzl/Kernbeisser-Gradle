@@ -2,6 +2,7 @@ package kernbeisser.Windows.SoloShoppingMask;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IController;
 import kernbeisser.Windows.MVC.Linked;
@@ -18,7 +19,7 @@ public class SoloShoppingMaskController
 
   @Linked private final ShoppingMaskUIController shoppingMaskUIController;
 
-  public SoloShoppingMaskController() {
+  public SoloShoppingMaskController() throws NotEnoughCreditException {
     SaleSession saleSession = new SaleSession();
     saleSession.setCustomer(LogInModel.getLoggedIn());
     saleSession.setSeller(LogInModel.getLoggedIn());
