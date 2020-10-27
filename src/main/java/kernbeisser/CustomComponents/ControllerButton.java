@@ -1,9 +1,11 @@
 package kernbeisser.CustomComponents;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -20,11 +22,17 @@ public class ControllerButton extends JButton {
   public <V extends IController<?, ?>> ControllerButton(
       Supplier<V> controller, Class<V> clazz, Consumer<V> action) {
     IView<?> view = Utils.getNotInitializedView(clazz);
-    setIcon(IconFontSwing.buildIcon(view.getTabIcon(), 20, new Color(0xFF00CCFF)));
+    setIcon(
+        IconFontSwing.buildIcon(
+            view.getTabIcon(), Tools.scaleWithLabelScalingFactor(16), new Color(0xFF00CCFF)));
+    setRolloverIcon(
+        IconFontSwing.buildIcon(
+            view.getTabIcon(), Tools.scaleWithLabelScalingFactor(16), new Color(0x04ACCD)));
     setEnabled(
         LogInModel.getLoggedIn()
             .hasPermission(Tools.createWithoutConstructor(clazz).getRequiredKeys()));
     setHorizontalAlignment(SwingConstants.LEFT);
+    Tools.scaleFont(this, 1.1);
     addActionListener(e -> action.accept(controller.get()));
   }
 

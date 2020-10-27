@@ -168,4 +168,8 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   public void setValueAfterLabel(String text) {
     valueAfterLabel.setText(text);
   }
+
+  public ObjectTable<ShoppingItem> getShoppingItemsTable() {
+    return shoppingItems;
+  }
 }
