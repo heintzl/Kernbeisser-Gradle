@@ -45,6 +45,11 @@ public class SaleSession {
     this.sessionType = sessionType;
   }
 
+  // default constructor just for Hibernate. don't use it
+  private SaleSession() {
+    this.sessionType = null;
+  }
+
   public static List<SaleSession> getAll(String condition) {
     return Tools.getAll(SaleSession.class, condition);
   }
