@@ -20,6 +20,7 @@ public class SaleSession {
   @Setter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_ID_WRITE)})
   private int id;
 
+  @Getter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_ID_READ)})
   private final SaleSessionType sessionType;
 
   @ManyToOne
@@ -46,5 +47,9 @@ public class SaleSession {
 
   public static List<SaleSession> getAll(String condition) {
     return Tools.getAll(SaleSession.class, condition);
+  }
+
+  public String getSessionTypeName() {
+    return getSessionType().name();
   }
 }
