@@ -26,11 +26,13 @@ import javax.swing.*;
 import javax.swing.text.*;
 import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
 import kernbeisser.Security.Proxy;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.apache.commons.beanutils.BeanUtils;
@@ -722,6 +724,12 @@ public class Tools {
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
+  }
+
+  public static void beep() {
+    if (LogInModel.getLoggedIn() == null
+        || UserSetting.CREATE_BEEP_SOUND.getBooleanValue(LogInModel.getLoggedIn()))
+      Toolkit.getDefaultToolkit().beep();
   }
 
   public static void openFile(String filePath) {

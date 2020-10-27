@@ -28,6 +28,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.UndefinedInputException;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -458,20 +459,20 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   void messageNoArticleFound() {
-    java.awt.Toolkit.getDefaultToolkit().beep();
+    Tools.beep();
     JOptionPane.showMessageDialog(
         mainPanel,
         "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
   }
 
   void messageInvalidDiscount() {
-    java.awt.Toolkit.getDefaultToolkit().beep();
+    Tools.beep();
     JOptionPane.showMessageDialog(mainPanel, "Rabatt muss zwischen 0 und 100 % liegen");
     variablePercentage.setText("");
   }
 
   public void messageBarcodeNotFound(long barcode) {
-    java.awt.Toolkit.getDefaultToolkit().beep();
+    Tools.beep();
     JOptionPane.showMessageDialog(
         getContent(),
         "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden",
@@ -480,7 +481,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public void messageInvalidBarcode(String barcode) {
-    java.awt.Toolkit.getDefaultToolkit().beep();
+    Tools.beep();
     JOptionPane.showMessageDialog(
         getContent(),
         "Ungültiger Barcode: " + barcode,
@@ -489,14 +490,14 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public void messageDepositStorno() {
-    java.awt.Toolkit.getDefaultToolkit().beep();
+    Tools.beep();
     JOptionPane.showMessageDialog(
         getContent(), "Pfand kann nicht storniert werden!", "Storno", JOptionPane.WARNING_MESSAGE);
     deposit.setText("");
   }
 
   public void messageCartIsEmpty() {
-    java.awt.Toolkit.getDefaultToolkit().beep();
+    Tools.beep();
     JOptionPane.showMessageDialog(
         getContent(), "Es gibt nichts zu bezahlen!", "Storno", JOptionPane.WARNING_MESSAGE);
   }
@@ -512,7 +513,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       message =
           "Negative Menge: Soll der Artikel wirklich storniert werden? Dann kann hier der Einzelpreis angepasst werden, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
     }
-    java.awt.Toolkit.getDefaultToolkit().beep();
+    Tools.beep();
     response =
         (String)
             JOptionPane.showInputDialog(
@@ -536,7 +537,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public int confirmStorno() {
-    java.awt.Toolkit.getDefaultToolkit().beep();
+    Tools.beep();
     return JOptionPane.showConfirmDialog(
         getContent(),
         "Soll die Ware wirklich storniert werden?",
@@ -545,7 +546,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public int confirmRoundedMultiplier(int roundedMultiplier) {
-    java.awt.Toolkit.getDefaultToolkit().beep();
+    Tools.beep();
     return JOptionPane.showConfirmDialog(
         getContent(),
         "Die Menge an Artikeln muss ganzzahlig sein. Soll die Menge auf "
