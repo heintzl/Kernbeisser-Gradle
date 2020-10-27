@@ -23,6 +23,7 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShoppingItemSum;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import net.sf.jasperreports.engine.*;
@@ -74,6 +75,27 @@ public class ReportManager {
     return result;
   }
 
+  @NotNull
+  private static Map<String, Object> getInvoiceParams(Purchase purchase) {
+    Collection<ShoppingItem> items = purchase.getAllItems();
+    double credit =
+        purchase.getSession().getCustomer().getUserGroup().getValue() - purchase.getSum();
+    Map<String, Object> reportParams = new HashMap<>();
+    reportParams.put("BonNo", purchase.getId());
+    reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
+    reportParams.put("Seller", purchase.getSession().getSeller().getFullName());
+    reportParams.put("Credit", credit);
+    reportParams.put("PurchaseDate", purchase.getCreateDate());
+    reportParams.put("CreditWarning", credit <= Setting.CREDIT_WARNING_THRESHOLD.getDoubleValue());
+    reportParams.put("VatValueLow", purchase.guessVatValue(VAT.LOW));
+    reportParams.put("VatValueHigh", purchase.guessVatValue(VAT.HIGH));
+    reportParams.put("SumTotal", purchase.getSum());
+    reportParams.put("VatSumLow", ShoppingItem.getSum(ShoppingItemSum.RETAILPRICE_VATLOW, items));
+    reportParams.put("VatSumHigh", ShoppingItem.getSum(ShoppingItemSum.RETAILPRICE_VATHIGH, items));
+
+    return reportParams;
+  }
+
   public static void initInvoicePrint(Collection<ShoppingItem> shoppingCart, Purchase purchase)
       throws JRException {
     JasperDesign jspDesign =
@@ -113,6 +135,101 @@ public class ReportManager {
     jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
     outFileName =
         String.format("KernbeisserBonrolle_%s_%s.pdf", startDate.toString(), endDate.toString());
+  }
+
+  static long countVatValues(Collection<Purchase> purchases, VAT vat) {
+    return purchases.stream()
+        .flatMap(p -> p.getAllItems().stream())
+        .filter(s -> s.getVat() == vat)
+        .mapToDouble(ShoppingItem::getVatValue)
+        .distinct()
+        .count();
+  }
+
+  static double getVatValue(Collection<Purchase> purchases, VAT vat) {
+    return purchases.stream()
+        .flatMap(p -> p.getAllItems().stream())
+        .filter(s -> s.getVat() == vat)
+        .mapToDouble(s -> s.getVatValue())
+        .findFirst()
+        .orElse(vat.getValue());
+  }
+
+  @NotNull
+  private static Map<String, Object> getAccountingParams(Collection<Purchase> purchases)
+      throws InvalidVATValueException {
+    double vatHiValue = 0.0;
+    double vatLoValue = 0.0;
+    double sumTotalPurchased = 0.0;
+    double sumVatHiPurchased = 0.0;
+    double sumVatLoPurchased = 0.0;
+    double transactionSaldo = 0.0;
+    double transactionCreditPayIn = 0.0;
+    double transactionSpecialPayments = 0.0;
+    double transactionPurchases = 0.0;
+    long t_high = countVatValues(purchases, VAT.HIGH);
+    long t_low = countVatValues(purchases, VAT.LOW);
+    if (t_high > 1 || t_low > 1) {
+      String message = "";
+      if (t_low > 1) {
+        message += "Mehrere Werte für niedrigen MWSt.-Satz gefunden \n";
+      }
+      if (t_high > 1) {
+        message += "Mehrere Werte für hohen MWSt.-Satz gefunden \n";
+      }
+      message +=
+          "Gab es zwischenzeitlich einen Wechsel des Steuersatzes?\n"
+              + "Der Bericht muss für einen Zeitraum mit eindeutigen Steuersätzen ausgegeben werden!";
+      JOptionPane.showMessageDialog(
+          JOptionPane.getRootFrame(),
+          message,
+          "Uneindeutige Steuersätze",
+          JOptionPane.ERROR_MESSAGE);
+      throw new InvalidVATValueException(1000.0);
+    }
+    vatLoValue = getVatValue(purchases, VAT.LOW);
+    vatHiValue = getVatValue(purchases, VAT.HIGH);
+    for (Purchase p : purchases) {
+      sumVatHiPurchased += p.getVatSum(VAT.HIGH);
+      sumVatLoPurchased += p.getVatSum(VAT.LOW);
+      sumTotalPurchased += p.getSum();
+    }
+    Map<String, Object> reportParams = new HashMap<>();
+    reportParams.put("vatHiValue", vatHiValue);
+    reportParams.put("vatLoValue", vatLoValue);
+    reportParams.put("sumTotalPurchased", sumTotalPurchased);
+    reportParams.put("sumVatHiPurchased", sumVatHiPurchased);
+    reportParams.put("sumVatLoPurchased", sumVatLoPurchased);
+    reportParams.put("transactionSaldo", transactionSaldo);
+    reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
+    reportParams.put("transactionSpecialPayments", transactionSpecialPayments);
+    reportParams.put("transactionPurchases", transactionPurchases);
+
+    return reportParams;
+  }
+
+  public static void initAccountingReportPrint(
+      Collection<Purchase> purchases, Instant start, Instant end)
+      throws JRException, InvalidVATValueException {
+    Timestamp startDate = Timestamp.from(start);
+    Timestamp endDate = Timestamp.from(end);
+    JasperDesign jspDesign =
+        JRXmlLoader.load(
+            getReportsFolder()
+                .resolve(getPath(CONFIG_CATEGORY, "accountingReportFileName"))
+                .toAbsolutePath()
+                .toFile());
+    JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
+    Map<String, Object> reportParams = getAccountingParams(purchases);
+    reportParams.put("start", startDate);
+    reportParams.put("ende", endDate);
+
+    JRDataSource dataSource = new JRBeanCollectionDataSource(purchases);
+    jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
+    outFileName =
+        String.format(
+            "KernbeisserBuchhaltungBonUebersicht_%s_%s.pdf",
+            startDate.toString(), endDate.toString());
   }
 
   public void sendToPrinter() throws JRException {
@@ -167,26 +284,5 @@ public class ReportManager {
   @NotNull
   private String getSafeOutFileName() {
     return outFileName.replaceAll("[\\\\/:*?\"<>|]", "_");
-  }
-
-  @NotNull
-  private static Map<String, Object> getInvoiceParams(Purchase purchase) {
-    Collection<ShoppingItem> items = purchase.getAllItems();
-    double credit =
-        purchase.getSession().getCustomer().getUserGroup().getValue() - purchase.getSum();
-    Map<String, Object> reportParams = new HashMap<>();
-    reportParams.put("BonNo", purchase.getId());
-    reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
-    reportParams.put("Seller", purchase.getSession().getSeller().getFullName());
-    reportParams.put("Credit", credit);
-    reportParams.put("PurchaseDate", purchase.getCreateDate());
-    reportParams.put("CreditWarning", credit <= Setting.CREDIT_WARNING_THRESHOLD.getDoubleValue());
-    reportParams.put("VatValueLow", purchase.guessVatValue(VAT.LOW));
-    reportParams.put("VatValueHigh", purchase.guessVatValue(VAT.HIGH));
-    reportParams.put("SumTotal", purchase.getSum());
-    reportParams.put("VatSumLow", ShoppingItem.getSum(ShoppingItemSum.RETAILPRICE_VATLOW, items));
-    reportParams.put("VatSumHigh", ShoppingItem.getSum(ShoppingItemSum.RETAILPRICE_VATHIGH, items));
-
-    return reportParams;
   }
 }
