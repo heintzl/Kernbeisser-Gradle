@@ -45,11 +45,11 @@ public class ReportManager {
   private static final String CONFIG_CATEGORY = "Reports";
 
   private static Path getReportsFolder() {
-    return getDirectory(CONFIG_CATEGORY, "reportFolder");
+    return getDirectory(CONFIG_CATEGORY, "reportDirectory");
   }
 
   private static Path getOutputFolder() {
-    return getDirectory(CONFIG_CATEGORY, "outputFolder");
+    return getDirectory(CONFIG_CATEGORY, "outputDirectory");
   }
 
   private static PrintRequestAttributeSet getPageFormatFromReport(JasperPrint jpsPrint) {

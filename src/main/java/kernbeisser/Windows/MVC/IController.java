@@ -241,7 +241,7 @@ public interface IController<
     return b && controller.commitClose();
   }
 
-  static IController<?, ?> createFakeController(JComponent content) {
+  static FakeController createFakeController(JComponent content) {
     return new FakeController(content);
   }
 
@@ -289,6 +289,11 @@ public interface IController<
     @Override
     public @NotNull JComponent getContent() {
       return content;
+    }
+
+    @Override
+    public String getTitle() {
+      return "<PlaceHolder>";
     }
   }
 
