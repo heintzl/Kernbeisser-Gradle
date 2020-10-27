@@ -26,6 +26,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
@@ -652,6 +653,8 @@ public class Tools {
                 before.getName(), before.getStyle(), Math.round(before.getSize() * scaleFactor)));
       }
     }
+    // maybe work not for all LAFs
+    UIManager.put("Table.rowHeight", (int) ((int) UIManager.get("Table.rowHeight") * scaleFactor));
     System.out.println(UIManager.get("Table.font"));
   }
 
@@ -714,6 +717,14 @@ public class Tools {
   public static void scaleFonts(double fac, Component... labels) {
     for (Component label : labels) {
       scaleFont(label, fac);
+    }
+  }
+
+  public static int scaleWithLabelScalingFactor(int value) {
+    try {
+      return (int) (value * Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
+    } catch (NumberFormatException e) {
+      return value;
     }
   }
 
