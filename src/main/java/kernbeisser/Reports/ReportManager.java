@@ -48,7 +48,14 @@ public class ReportManager {
     return getDirectory(CONFIG_CATEGORY, "reportDirectory");
   }
 
-  private static Path getOutputFolder() {
+  static JasperReport getJasperReport(String key) throws JRException {
+    JasperDesign jspDesign =
+        JRXmlLoader.load(
+            getReportsFolder().resolve(getPath(CONFIG_CATEGORY, key)).toAbsolutePath().toFile());
+    return JasperCompileManager.compileReport(jspDesign);
+  }
+
+  static Path getOutputFolder() {
     return getDirectory(CONFIG_CATEGORY, "outputDirectory");
   }
 
@@ -75,7 +82,61 @@ public class ReportManager {
     return result;
   }
 
+  public void sendToPrinter() throws JRException {
+    sendToPrinter(false);
+  }
+
+  public void sendToPrinter(boolean useOSDefaultPrinter) throws JRException {
+
+    JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
+    printExporter.setExporterInput(new SimpleExporterInput(jspPrint));
+    PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(jspPrint);
+    PrintServiceAttributeSet serviceAttributeSet = getPrinter(useOSDefaultPrinter);
+    SimplePrintServiceExporterConfiguration printConfig =
+        new SimplePrintServiceExporterConfiguration();
+    printConfig.setPrintRequestAttributeSet(requestAttributeSet);
+    printConfig.setPrintServiceAttributeSet(serviceAttributeSet);
+    printConfig.setDisplayPrintDialog(false);
+    printConfig.setDisplayPageDialog(false);
+    printExporter.setConfiguration(printConfig);
+
+    try {
+      printExporter.exportReport();
+    } catch (JRException e) {
+
+      if (e.getMessageKey().equals("export.print.service.not.found")) {
+        Main.logger.error(e.getMessage(), e);
+        if (JOptionPane.showConfirmDialog(
+                null,
+                "Der konfigurierte Drucker kann nicht gefunden werden!\n"
+                    + "Soll stattdessen der Standarddrucker verwendet werden?",
+                "Drucken",
+                JOptionPane.OK_CANCEL_OPTION)
+            == JOptionPane.OK_OPTION) {
+          sendToPrinter(true);
+        } else {
+          Tools.showPrintAbortedWarning(e, false);
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  public void exportPdf() throws JRException {
+
+    Path filePath = getOutputFolder().resolve(getSafeOutFileName()).toAbsolutePath();
+
+    JasperExportManager.exportReportToPdfFile(jspPrint, filePath.toString());
+    Tools.openFile(filePath.toFile());
+  }
+
   @NotNull
+  private String getSafeOutFileName() {
+    return outFileName.replaceAll("[\\\\/:*?\"<>|]", "_");
+  }
+
+  // start Invoice
   private static Map<String, Object> getInvoiceParams(Purchase purchase) {
     Collection<ShoppingItem> items = purchase.getAllItems();
     double credit =
@@ -98,16 +159,10 @@ public class ReportManager {
 
   public static void initInvoicePrint(Collection<ShoppingItem> shoppingCart, Purchase purchase)
       throws JRException {
-    JasperDesign jspDesign =
-        JRXmlLoader.load(
-            getReportsFolder()
-                .resolve(getPath(CONFIG_CATEGORY, "invoiceFileName"))
-                .toAbsolutePath()
-                .toFile());
-    JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
     Map<String, Object> reportParams = getInvoiceParams(purchase);
     JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
-    jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
+    jspPrint =
+        JasperFillManager.fillReport(getJasperReport("invoiceFileName"), reportParams, dataSource);
     outFileName =
         String.format(
             "%d_%s_%s_%s.pdf",
@@ -117,26 +172,22 @@ public class ReportManager {
             purchase.getCreateDate().toString());
   }
 
+  // start Tillroll
   public static void initTillrollPrint(
       Collection<ShoppingItem> tillroll, Instant start, Instant end) throws JRException {
     Timestamp startDate = Timestamp.from(start);
     Timestamp endDate = Timestamp.from(end);
-    JasperDesign jspDesign =
-        JRXmlLoader.load(
-            getReportsFolder()
-                .resolve(getPath(CONFIG_CATEGORY, "tillrollFileName"))
-                .toAbsolutePath()
-                .toFile());
-    JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
     Map<String, Object> reportParams = new HashMap<>();
     reportParams.put("start", startDate);
     reportParams.put("ende", endDate);
     JRDataSource dataSource = new JRBeanCollectionDataSource(tillroll);
-    jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
+    jspPrint =
+        JasperFillManager.fillReport(getJasperReport("tillrollFileName"), reportParams, dataSource);
     outFileName =
         String.format("KernbeisserBonrolle_%s_%s.pdf", startDate.toString(), endDate.toString());
   }
 
+  // start Accounting Report
   static long countVatValues(Collection<Purchase> purchases, VAT vat) {
     return purchases.stream()
         .flatMap(p -> p.getAllItems().stream())
@@ -150,7 +201,7 @@ public class ReportManager {
     return purchases.stream()
         .flatMap(p -> p.getAllItems().stream())
         .filter(s -> s.getVat() == vat)
-        .mapToDouble(s -> s.getVatValue())
+        .mapToDouble(ShoppingItem::getVatValue)
         .findFirst()
         .orElse(vat.getValue());
   }
@@ -158,8 +209,8 @@ public class ReportManager {
   @NotNull
   private static Map<String, Object> getAccountingParams(Collection<Purchase> purchases)
       throws InvalidVATValueException {
-    double vatHiValue = 0.0;
-    double vatLoValue = 0.0;
+    double vatHiValue;
+    double vatLoValue;
     double sumTotalPurchased = 0.0;
     double sumVatHiPurchased = 0.0;
     double sumVatLoPurchased = 0.0;
@@ -232,57 +283,5 @@ public class ReportManager {
             startDate.toString(), endDate.toString());
   }
 
-  public void sendToPrinter() throws JRException {
-    sendToPrinter(false);
-  }
-
-  public void sendToPrinter(boolean useOSDefaultPrinter) throws JRException {
-
-    JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
-    printExporter.setExporterInput(new SimpleExporterInput(jspPrint));
-    PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(jspPrint);
-    PrintServiceAttributeSet serviceAttributeSet = getPrinter(useOSDefaultPrinter);
-    SimplePrintServiceExporterConfiguration printConfig =
-        new SimplePrintServiceExporterConfiguration();
-    printConfig.setPrintRequestAttributeSet(requestAttributeSet);
-    printConfig.setPrintServiceAttributeSet(serviceAttributeSet);
-    printConfig.setDisplayPrintDialog(false);
-    printConfig.setDisplayPageDialog(false);
-    printExporter.setConfiguration(printConfig);
-
-    try {
-      printExporter.exportReport();
-    } catch (JRException e) {
-
-      if (e.getMessageKey().equals("export.print.service.not.found")) {
-        Main.logger.error(e.getMessage(), e);
-        if (JOptionPane.showConfirmDialog(
-                null,
-                "Der konfigurierte Drucker kann nicht gefunden werden!\n"
-                    + "Soll stattdessen der Standarddrucker verwendet werden?",
-                "Drucken",
-                JOptionPane.OK_CANCEL_OPTION)
-            == JOptionPane.OK_OPTION) {
-          sendToPrinter(true);
-        } else {
-          Tools.showPrintAbortedWarning(e, false);
-        }
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  public void exportPdf() throws JRException {
-
-    Path filePath = getOutputFolder().resolve(getSafeOutFileName()).toAbsolutePath();
-
-    JasperExportManager.exportReportToPdfFile(jspPrint, filePath.toString());
-    Tools.openFile(filePath.toFile());
-  }
-
-  @NotNull
-  private String getSafeOutFileName() {
-    return outFileName.replaceAll("[\\\\/:*?\"<>|]", "_");
-  }
+  // start usergroup balance
 }
