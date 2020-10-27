@@ -23,7 +23,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Passwort ändern"/>
             </properties>
@@ -38,7 +38,7 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <label value="Guthabenverlauf"/>
               <requestFocusEnabled value="false"/>
               <text value="Guthabenverlauf"/>
@@ -49,7 +49,7 @@
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <label value="Persönliche Informationen bearbeiten"/>
               <requestFocusEnabled value="false"/>
               <text value="Persönliche Informationen bearbeiten"/>
@@ -60,7 +60,7 @@
               <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Einstellungen"/>
             </properties>
@@ -70,7 +70,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <label value="Selbsteinkauf"/>
               <requestFocusEnabled value="false"/>
               <text value="Selbsteinkauf"/>
@@ -81,7 +81,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Nutzer Gruppe bearbeiten"/>
             </properties>
@@ -103,7 +103,8 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
+              <hideActionText value="false"/>
               <requestFocusEnabled value="false"/>
               <text value="Einkauf beginnen"/>
             </properties>
@@ -113,7 +114,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Bon nachträglich ausdrucken"/>
             </properties>
@@ -123,7 +124,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Vorbestellung"/>
             </properties>
@@ -133,7 +134,7 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Preislisten bearbeiten"/>
             </properties>
@@ -144,7 +145,7 @@
             </constraints>
             <properties>
               <actionCommand value="Artikel bearbeiten"/>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Artikelbearbeiten"/>
             </properties>
@@ -154,7 +155,7 @@
               <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Zuschlagstabellen bearbeiten"/>
             </properties>
@@ -164,7 +165,7 @@
               <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <text value="Lieferanten beabeiten"/>
             </properties>
           </component>
@@ -173,7 +174,7 @@
               <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <text value="Kornkraft-Katalog synchonisieren"/>
             </properties>
           </component>
@@ -199,7 +200,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <text value="Bonrolle"/>
             </properties>
           </component>
@@ -213,7 +214,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <text value="&lt;PlaceHolder&gt;"/>
             </properties>
           </component>
@@ -222,7 +223,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <text value="&lt;PlaceHolder&gt;"/>
             </properties>
           </component>
@@ -243,7 +244,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Benutzer bearbeiten"/>
             </properties>
@@ -259,7 +260,7 @@
             </constraints>
             <properties>
               <actionCommand value="Guthaben überweissen"/>
-              <font size="18"/>
+              <font/>
               <label value="Guthaben überweisen"/>
               <requestFocusEnabled value="false"/>
               <text value="Guthaben überweisen"/>
@@ -270,7 +271,7 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Berechtigungen bearbeiten"/>
             </properties>
@@ -280,7 +281,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <requestFocusEnabled value="false"/>
               <text value="Probemitglied aufnehmen"/>
             </properties>
@@ -290,7 +291,7 @@
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <text value="Jobs bearbeiten"/>
             </properties>
           </component>
@@ -320,7 +321,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <label value="Datenbankverbindung aktualisieren"/>
               <requestFocusEnabled value="false"/>
               <text value="Datenbankverbindung aktualisieren"/>
@@ -336,7 +337,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="18"/>
+              <font/>
               <label value="Programmeinstellungen bearbeiten"/>
               <requestFocusEnabled value="false"/>
               <text value="Programmeinstellungen bearbeiten"/>

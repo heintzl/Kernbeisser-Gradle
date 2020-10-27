@@ -17,7 +17,8 @@ public enum UserSetting {
       }
     }
   },
-  FONT_SCALE_FACTOR("1");
+  FONT_SCALE_FACTOR("1"),
+  CREATE_BEEP_SOUND("true");
   private final String defaultValue;
 
   UserSetting(String defaultValue) {
@@ -62,5 +63,9 @@ public enum UserSetting {
 
   public <T extends Enum<T>> T getEnumValue(Class<T> c, User user) {
     return Enum.valueOf(c, UserSettingValue.getValueFor(user, this));
+  }
+
+  public boolean getBooleanValue(User user) {
+    return Boolean.parseBoolean(UserSettingValue.getValueFor(user, this));
   }
 }

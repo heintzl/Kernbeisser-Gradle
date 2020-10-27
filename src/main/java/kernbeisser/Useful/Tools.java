@@ -26,11 +26,14 @@ import javax.swing.*;
 import javax.swing.text.*;
 import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
 import kernbeisser.Security.Proxy;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.apache.commons.beanutils.BeanUtils;
@@ -650,6 +653,8 @@ public class Tools {
                 before.getName(), before.getStyle(), Math.round(before.getSize() * scaleFactor)));
       }
     }
+    // maybe work not for all LAFs
+    UIManager.put("Table.rowHeight", (int) ((int) UIManager.get("Table.rowHeight") * scaleFactor));
     System.out.println(UIManager.get("Table.font"));
   }
 
@@ -715,6 +720,14 @@ public class Tools {
     }
   }
 
+  public static int scaleWithLabelScalingFactor(int value) {
+    try {
+      return (int) (value * Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
+    } catch (NumberFormatException e) {
+      return value;
+    }
+  }
+
   public static void openFile(File file) {
     try {
       Desktop desktop = Desktop.getDesktop();
@@ -722,6 +735,12 @@ public class Tools {
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
+  }
+
+  public static void beep() {
+    if (LogInModel.getLoggedIn() == null
+        || UserSetting.CREATE_BEEP_SOUND.getBooleanValue(LogInModel.getLoggedIn()))
+      Toolkit.getDefaultToolkit().beep();
   }
 
   public static void openFile(String filePath) {

@@ -158,6 +158,20 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     selectionListeners.add(listener);
   }
 
+  public void addDoubleClickListener(ObjectSelectionListener<T> listener) {
+    addSelectionListener(
+        new ObjectSelectionListener<T>() {
+          T last;
+
+          @Override
+          public void selected(T t) {
+            if (t.equals(last)) {
+              listener.selected(t);
+            } else last = t;
+          }
+        });
+  }
+
   public void addAll(Collection<T> in) {
     in.forEach(this::add);
   }

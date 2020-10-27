@@ -272,6 +272,14 @@ public class ShoppingMaskUIController
   public void fillUI() {
     view.loadUserInfo(model.getSaleSession());
     view.setFocusOnKBNumber();
+    shoppingCartController
+        .getView()
+        .getShoppingItemsTable()
+        .addDoubleClickListener(this::loadShoppingItem);
+  }
+
+  void loadShoppingItem(ShoppingItem item) {
+    if (item.getKbNumber() != 0) searchWindowResult(item.extractArticle());
   }
 
   @Override
