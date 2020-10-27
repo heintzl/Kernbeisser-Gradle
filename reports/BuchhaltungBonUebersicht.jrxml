@@ -18,12 +18,14 @@
 	</queryString>
 	<field name="createDate" class="java.time.Instant"/>
 	<field name="id" class="java.lang.Integer"/>
-	<field name="session.customer.FullName" class="java.lang.String"/>
+	<field name="session.customer.fullName" class="java.lang.String"/>
 	<field name="sum" class="java.lang.Double"/>
-	<field name="session.sessionType" class="java.lang.String"/>
-	<variable name="sessionSum" class="java.lang.Double" resetType="Group" resetGroup="SessionType" calculation="Sum"/>
+	<field name="session.sessionTypeName" class="java.lang.String"/>
+	<variable name="sessionSum" class="java.lang.Double" resetType="Group" resetGroup="SessionType" calculation="Sum">
+		<variableExpression><![CDATA[$F{sum}]]></variableExpression>
+	</variable>
 	<group name="SessionType" isReprintHeaderOnEachPage="true">
-		<groupExpression><![CDATA[$F{session.sessionType}]]></groupExpression>
+		<groupExpression><![CDATA[$F{session.sessionTypeName}]]></groupExpression>
 		<groupHeader>
 			<band height="45">
 				<staticText>
@@ -59,7 +61,7 @@
 					<textElement>
 						<font isUnderline="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{session.sessionType} == "SOLO"?"Einkaufs-Selbsteingaben":$F{session.sessionType} == "ASSISTED"?"Einkäufe beim Ladendienst":"Andere Einkäufe"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{session.sessionTypeName} == "SOLO"?"Einkaufs-Selbsteingaben":$F{session.sessionTypeName} == "ASSISTED"?"Einkäufe beim Ladendienst":"Andere Einkäufe"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -72,7 +74,7 @@
 					</textElement>
 					<text><![CDATA[Summe:]]></text>
 				</staticText>
-				<textField pattern="#,###.## €">
+				<textField pattern="#,##0.00 €">
 					<reportElement x="379" y="0" width="54" height="14" uuid="a2da7f26-0ed1-4403-8c75-9666208407e2">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 					</reportElement>
@@ -165,9 +167,9 @@
 				<reportElement x="44" y="0" width="326" height="14" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{session.customer.FullName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{session.customer.fullName}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,###.## €">
+			<textField pattern="#,##0.00 €">
 				<reportElement x="379" y="0" width="54" height="14" uuid="6efcde95-291f-43d1-b62e-72f55da53670">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
@@ -222,7 +224,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Umsatz " + (int) ($P{vatHiValue} * 100) + "% MWSt:"]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,###.## €">
+			<textField pattern="#,##0.00 €">
 				<reportElement x="379" y="13" width="54" height="14" uuid="3ebe1d71-0a6b-4dff-9ce7-e881456254b9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
@@ -231,7 +233,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{sumVatLoPurchased}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,###.## €">
+			<textField pattern="#,##0.00 €">
 				<reportElement x="379" y="27" width="54" height="14" uuid="a22b64bc-20bb-4892-be69-2d04f73e7fef">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
@@ -247,7 +249,7 @@
 				</textElement>
 				<text><![CDATA[Summe:]]></text>
 			</staticText>
-			<textField pattern="#,###.## €">
+			<textField pattern="#,##0.00 €">
 				<reportElement x="379" y="41" width="54" height="14" uuid="c43696e8-622e-41a1-a42d-f6848a677959">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
@@ -256,7 +258,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{sumTotalPurchased}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,###.## €">
+			<textField pattern="#,##0.00 €">
 				<reportElement x="379" y="62" width="54" height="14" uuid="b3d2eddf-40b0-45c7-97d7-f21b8a85b2ba">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
@@ -265,7 +267,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{transactionSaldo}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,###.## €">
+			<textField pattern="#,##0.00 €">
 				<reportElement x="379" y="76" width="54" height="14" uuid="f8f74ef0-959b-451b-ad1a-369d086eae60">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
@@ -282,7 +284,7 @@
 				<reportElement x="0" y="90" width="214" height="14" uuid="3145a409-f1bb-42f8-bc7c-257381838256"/>
 				<text><![CDATA[Guthabeneinzahlungen:]]></text>
 			</staticText>
-			<textField pattern="#,###.## €">
+			<textField pattern="#,##0.00 €">
 				<reportElement x="379" y="90" width="54" height="14" uuid="d84f0023-441f-4615-9c91-fb94dd801b71">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>

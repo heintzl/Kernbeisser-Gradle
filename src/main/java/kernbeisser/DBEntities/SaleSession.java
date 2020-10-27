@@ -50,6 +50,6 @@ public class SaleSession {
   }
 
   public String getSessionTypeName() {
-    return getSessionType().name();
+    return sessionType == null ? "UNKNOWN" : getSessionType().name();
   }
 }
