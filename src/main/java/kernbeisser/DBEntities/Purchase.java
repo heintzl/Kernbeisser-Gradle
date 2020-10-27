@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
@@ -58,8 +59,16 @@ public class Purchase {
     return out;
   }
 
+  private double getFilteredSum(Predicate<ShoppingItem> filter) {
+    return getAllItems().stream().filter(filter).mapToDouble(ShoppingItem::getRetailPrice).sum();
+  }
+
   public double getSum() {
-    return getAllItems().stream().mapToDouble(ShoppingItem::getRetailPrice).sum();
+    return getFilteredSum(s -> true);
+  }
+
+  public double getVatSum(VAT vat) {
+    return getFilteredSum(s -> s.getVat() == vat);
   }
 
   public double guessVatValue(VAT vat) {
