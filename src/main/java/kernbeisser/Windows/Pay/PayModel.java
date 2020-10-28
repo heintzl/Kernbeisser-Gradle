@@ -82,7 +82,9 @@ public class PayModel implements IModel<PayController> {
     try {
       // Do money exchange
       try {
-        Transaction.doPurchaseTransaction(saleSession.getCustomer(), shoppingCartSum());
+        Transaction transaction =
+            Transaction.doPurchaseTransaction(saleSession.getCustomer(), shoppingCartSum());
+        saleSession.setTransaction(transaction);
       } catch (InvalidTransactionException e) {
         em.close();
         throw new InvalidTransactionException();

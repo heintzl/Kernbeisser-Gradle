@@ -41,6 +41,12 @@ public class SaleSession {
   @Setter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_SELLER_WRITE)})
   private User seller;
 
+  @ManyToOne
+  @JoinColumn
+  @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_USER_SURCHARGE_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_USER_SURCHARGE_WRITE)})
+  private Transaction transaction;
+
   public SaleSession(SaleSessionType sessionType) {
     this.sessionType = sessionType;
   }

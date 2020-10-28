@@ -73,9 +73,11 @@ public class Purchase {
 
   public double guessVatValue(VAT vat) {
     try {
-      double vatValue =
-          getAllItems().stream().filter(si -> si.getVat() == vat).findFirst().get().getVatValue();
-      return vatValue;
+      return getAllItems().stream()
+          .filter(si -> si.getVat() == vat)
+          .findFirst()
+          .get()
+          .getVatValue();
     } catch (NoSuchElementException e) {
       return 0.0;
     }
