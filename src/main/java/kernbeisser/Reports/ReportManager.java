@@ -9,7 +9,9 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.persistence.NoResultException;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.HashPrintServiceAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
@@ -20,6 +22,8 @@ import javax.print.attribute.standard.PrinterName;
 import javax.swing.*;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShoppingItemSum;
 import kernbeisser.Enums.VAT;
@@ -207,10 +211,8 @@ public class ReportManager {
   }
 
   @NotNull
-  private static Map<String, Object> getAccountingParams(Collection<Purchase> purchases)
+  private static Map<String, Object> getAccountingParams(List<Purchase> purchases)
       throws InvalidVATValueException {
-    double vatHiValue;
-    double vatLoValue;
     double sumTotalPurchased = 0.0;
     double sumVatHiPurchased = 0.0;
     double sumVatLoPurchased = 0.0;
@@ -218,6 +220,12 @@ public class ReportManager {
     double transactionCreditPayIn = 0.0;
     double transactionSpecialPayments = 0.0;
     double transactionPurchases = 0.0;
+    Purchase lastReportedPurchase =
+        Purchase.getAll("where id=" + (purchases.get(0).getId() - 1)).get(0);
+    Purchase lastPurchaseToReport = purchases.get(purchases.size() - 1);
+    Timestamp startDate = Timestamp.from(lastReportedPurchase.getCreateDate());
+    Timestamp endDate = Timestamp.from(lastPurchaseToReport.getCreateDate());
+
     long t_high = countVatValues(purchases, VAT.HIGH);
     long t_low = countVatValues(purchases, VAT.LOW);
     if (t_high > 1 || t_low > 1) {
@@ -238,14 +246,36 @@ public class ReportManager {
           JOptionPane.ERROR_MESSAGE);
       throw new InvalidVATValueException(1000.0);
     }
-    vatLoValue = getVatValue(purchases, VAT.LOW);
-    vatHiValue = getVatValue(purchases, VAT.HIGH);
+    double vatLoValue = getVatValue(purchases, VAT.LOW);
+    double vatHiValue = getVatValue(purchases, VAT.HIGH);
     for (Purchase p : purchases) {
       sumVatHiPurchased += p.getVatSum(VAT.HIGH);
       sumVatLoPurchased += p.getVatSum(VAT.LOW);
       sumTotalPurchased += p.getSum();
     }
+
+    List<Transaction> transactions =
+        Transaction.getAll("where date > " + startDate + " and date <= " + endDate);
+    for (Transaction t : transactions) {
+      User kbUser = User.getKernbeisserUser();
+      if (t.getFrom().equals(kbUser) || t.getTo().equals(kbUser)) {
+        transactionSaldo += t.getValue();
+        switch (t.getTransactionType()) {
+          case PURCHASE:
+            transactionPurchases += t.getValue();
+            break;
+          case USER_GENERATED:
+            if (t.getFrom().equals(kbUser)) {
+              transactionCreditPayIn += t.getValue();
+            } else {
+              transactionSpecialPayments += t.getValue();
+            }
+        }
+      }
+    }
     Map<String, Object> reportParams = new HashMap<>();
+    reportParams.put("start", startDate);
+    reportParams.put("ende", endDate);
     reportParams.put("vatHiValue", vatHiValue);
     reportParams.put("vatLoValue", vatLoValue);
     reportParams.put("sumTotalPurchased", sumTotalPurchased);
@@ -259,28 +289,23 @@ public class ReportManager {
     return reportParams;
   }
 
-  public static void initAccountingReportPrint(
-      Collection<Purchase> purchases, Instant start, Instant end)
-      throws JRException, InvalidVATValueException {
-    Timestamp startDate = Timestamp.from(start);
-    Timestamp endDate = Timestamp.from(end);
-    JasperDesign jspDesign =
-        JRXmlLoader.load(
-            getReportsFolder()
-                .resolve(getPath(CONFIG_CATEGORY, "accountingReportFileName"))
-                .toAbsolutePath()
-                .toFile());
-    JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
-    Map<String, Object> reportParams = getAccountingParams(purchases);
-    reportParams.put("start", startDate);
-    reportParams.put("ende", endDate);
+  public static void initAccountingReportPrint(long startBon, long endBon)
+      throws JRException, InvalidVATValueException, NoResultException {
 
+    List<Purchase> purchases = Purchase.getAll("where id between " + startBon + " and " + endBon);
+    if (purchases.isEmpty()) {
+      throw new NoResultException();
+    }
+
+    Map<String, Object> reportParams = getAccountingParams(purchases);
     JRDataSource dataSource = new JRBeanCollectionDataSource(purchases);
-    jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
+    jspPrint =
+        JasperFillManager.fillReport(
+            getJasperReport("accountingReportFileName"), reportParams, dataSource);
     outFileName =
         String.format(
             "KernbeisserBuchhaltungBonUebersicht_%s_%s.pdf",
-            startDate.toString(), endDate.toString());
+            reportParams.get("start").toString(), reportParams.get("ende").toString());
   }
 
   // start usergroup balance
