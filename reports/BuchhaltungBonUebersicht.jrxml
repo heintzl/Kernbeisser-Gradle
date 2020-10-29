@@ -4,7 +4,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<style name="Bold" markup="none" isBold="true"/>
 	<parameter name="start" class="java.sql.Timestamp" isForPrompting="false"/>
-	<parameter name="ende" class="java.sql.Timestamp" isForPrompting="false"/>
+	<parameter name="end" class="java.sql.Timestamp" isForPrompting="false"/>
 	<parameter name="vatHiValue" class="java.lang.Double"/>
 	<parameter name="vatLoValue" class="java.lang.Double"/>
 	<parameter name="sumTotalPurchased" class="java.lang.Double"/>
@@ -13,6 +13,7 @@
 	<parameter name="transactionSaldo" class="java.lang.Double"/>
 	<parameter name="transactionCreditPayIn" class="java.lang.Double"/>
 	<parameter name="transactionSpecialPayments" class="java.lang.Double"/>
+	<parameter name="transactionPurchases" class="java.lang.Double"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -122,7 +123,7 @@
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ende}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{end}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd.MM.yyyy HH:mm">
 				<reportElement style="Bold" x="425" y="-2" width="130" height="20" uuid="78394d16-fe60-42dc-9da8-b91881cc133b"/>
@@ -198,7 +199,7 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="115" splitType="Stretch">
+		<band height="118" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="0" width="214" height="14" uuid="dcbd839b-1ca3-488f-8499-25b01b4173a7"/>
 				<textElement>
@@ -268,7 +269,7 @@
 				<textFieldExpression><![CDATA[$P{transactionSaldo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00 €">
-				<reportElement x="379" y="76" width="54" height="14" uuid="f8f74ef0-959b-451b-ad1a-369d086eae60">
+				<reportElement x="379" y="90" width="54" height="14" uuid="f8f74ef0-959b-451b-ad1a-369d086eae60">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -277,21 +278,34 @@
 				<textFieldExpression><![CDATA[$P{transactionSpecialPayments}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="76" width="214" height="14" uuid="5ce867a2-f1e4-4423-b860-b3b3c6850271"/>
+				<reportElement x="0" y="90" width="214" height="14" uuid="5ce867a2-f1e4-4423-b860-b3b3c6850271"/>
 				<text><![CDATA[Sondereinnahmen / -ausgaben:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="90" width="214" height="14" uuid="3145a409-f1bb-42f8-bc7c-257381838256"/>
+				<reportElement x="0" y="104" width="214" height="14" uuid="3145a409-f1bb-42f8-bc7c-257381838256"/>
 				<text><![CDATA[Guthabeneinzahlungen:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00 €">
-				<reportElement x="379" y="90" width="54" height="14" uuid="d84f0023-441f-4615-9c91-fb94dd801b71">
+				<reportElement x="379" y="104" width="54" height="14" uuid="d84f0023-441f-4615-9c91-fb94dd801b71">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{transactionCreditPayIn}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="76" width="214" height="14" uuid="fa891076-e728-4dbe-820e-1590f36807fc"/>
+				<text><![CDATA[Einkäufe vom Guthaben:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00 €">
+				<reportElement x="379" y="76" width="54" height="14" uuid="9c7dc525-0b85-4c68-880e-4c3450402bde">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{transactionPurchases}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

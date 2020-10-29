@@ -220,10 +220,17 @@ public class ReportManager {
     double transactionCreditPayIn = 0.0;
     double transactionSpecialPayments = 0.0;
     double transactionPurchases = 0.0;
-    Purchase lastReportedPurchase =
-        Purchase.getAll("where id=" + (purchases.get(0).getId() - 1)).get(0);
+    Purchase lastReportedPurchase = null;
+    if (purchases.get(0).getId() > 1) { // the first purchase does not have a predecessor...
+      lastReportedPurchase = Purchase.getAll("where id=" + (purchases.get(0).getId() - 1)).get(0);
+    }
     Purchase lastPurchaseToReport = purchases.get(purchases.size() - 1);
-    Timestamp startDate = Timestamp.from(lastReportedPurchase.getCreateDate());
+    Timestamp startDate;
+    if (lastReportedPurchase == null) {
+      startDate = Timestamp.from(Transaction.getAll("where 1=1").get(0).getDate());
+    } else {
+      startDate = Timestamp.from(lastReportedPurchase.getCreateDate());
+    }
     Timestamp endDate = Timestamp.from(lastPurchaseToReport.getCreateDate());
 
     long t_high = countVatValues(purchases, VAT.HIGH);
@@ -255,27 +262,39 @@ public class ReportManager {
     }
 
     List<Transaction> transactions =
-        Transaction.getAll("where date > " + startDate + " and date <= " + endDate);
+        Transaction.getAll(
+            "where id > "
+                + (lastReportedPurchase == null
+                    ? "0"
+                    : lastReportedPurchase.getSession().getTransaction().getId())
+                + " and id <= "
+                + lastPurchaseToReport.getSession().getTransaction().getId());
     for (Transaction t : transactions) {
       User kbUser = User.getKernbeisserUser();
       if (t.getFrom().equals(kbUser) || t.getTo().equals(kbUser)) {
         transactionSaldo += t.getValue();
-        switch (t.getTransactionType()) {
-          case PURCHASE:
+        String tTypeString = "";
+        if (t.getTransactionType() != null) {
+          tTypeString = t.getTransactionType().toString();
+        }
+        switch (tTypeString) {
+          case "PURCHASE":
             transactionPurchases += t.getValue();
             break;
-          case USER_GENERATED:
+          case "USER_GENERATED":
             if (t.getFrom().equals(kbUser)) {
               transactionCreditPayIn += t.getValue();
             } else {
               transactionSpecialPayments += t.getValue();
             }
+            break;
+          default:
         }
       }
     }
     Map<String, Object> reportParams = new HashMap<>();
     reportParams.put("start", startDate);
-    reportParams.put("ende", endDate);
+    reportParams.put("end", endDate);
     reportParams.put("vatHiValue", vatHiValue);
     reportParams.put("vatLoValue", vatLoValue);
     reportParams.put("sumTotalPurchased", sumTotalPurchased);
@@ -305,7 +324,7 @@ public class ReportManager {
     outFileName =
         String.format(
             "KernbeisserBuchhaltungBonUebersicht_%s_%s.pdf",
-            reportParams.get("start").toString(), reportParams.get("ende").toString());
+            reportParams.get("start").toString(), reportParams.get("end").toString());
   }
 
   // start usergroup balance
