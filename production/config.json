@@ -10,6 +10,7 @@
     "tillrollFileName": "Bonrolle.jrxml",
     "reportDirectory": "reports",
     "outputDirectory": "reports",
+    "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
     "invoiceFileName": "Kerni_Rechnung.jrxml"
   }
 }
