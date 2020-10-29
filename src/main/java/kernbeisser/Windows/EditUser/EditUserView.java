@@ -204,4 +204,18 @@ public class EditUserView implements IView<EditUserController> {
     this.username.setText(username);
     this.username.inputChanged();
   }
+
+  @Override
+  public String getTitle() {
+    switch (controller.getModel().getMode()) {
+      case REMOVE:
+        return "Benutzer löschen";
+      case EDIT:
+        return "Benutzer bearbeiten";
+      case ADD:
+        return "Benutzer hinzufügen";
+      default:
+        return "Benutzer-Formular";
+    }
+  }
 }

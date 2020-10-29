@@ -7,17 +7,14 @@ import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsController
-    implements IController<ManagePriceListsView, ManagePriceListsModel>, ActionListener {
-  private final ManagePriceListsModel model;
-  private ManagePriceListsView view;
+    extends Controller<ManagePriceListsView, ManagePriceListsModel> implements ActionListener {
 
   public ManagePriceListsController() {
-    model = new ManagePriceListsModel();
+    super(new ManagePriceListsModel());
   }
 
   @Override
@@ -25,81 +22,73 @@ public class ManagePriceListsController
     return model;
   }
 
-  @Override
-  public void fillUI() {}
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
-
   public Node<PriceList> getNode() {
     return PriceList.getPriceListsAsNode();
   }
 
   private void move() {
-    if (view.getSelectedNode() == null) view.selectionRequired();
-    else view.requiresPriceList(this::move);
+    if (getView().getSelectedNode() == null) getView().selectionRequired();
+    else getView().requiresPriceList(this::move);
   }
 
   private void move(Node<PriceList> target) {
-    PriceList selected = view.getSelectedNode().getValue();
+    PriceList selected = getView().getSelectedNode().getValue();
     if (target.getValue().getId() == selected.getId()) {
-      view.cannotMoveIntoSelf();
+      getView().cannotMoveIntoSelf();
       return;
     }
-    if (view.commitMovement(selected, target.getValue())) {
+    if (getView().commitMovement(selected, target.getValue())) {
       model.setSuperPriceList(selected, target.getValue());
-      view.requestRepaint();
+      getView().requestRepaint();
     }
   }
 
   private void rename() {
-    String name = view.requestName();
+    String name = getView().requestName();
     try {
-      model.renamePriceList(view.getSelectedNode().getValue(), name);
-      view.requestRepaint();
+      model.renamePriceList(getView().getSelectedNode().getValue(), name);
+      getView().requestRepaint();
     } catch (PersistenceException e) {
-      view.nameAlreadyExists(name);
+      getView().nameAlreadyExists(name);
     }
   }
 
   private void add() {
-    if (view.getSelectedNode() == null) {
-      view.selectionRequired();
+    if (getView().getSelectedNode() == null) {
+      getView().selectionRequired();
       return;
     }
-    String name = view.requestName();
+    String name = getView().requestName();
     try {
-      model.add(view.getSelectedNode(), name);
-      view.requestRepaint();
+      model.add(getView().getSelectedNode(), name);
+      getView().requestRepaint();
     } catch (PersistenceException e) {
-      view.nameAlreadyExists(name);
+      getView().nameAlreadyExists(name);
     }
   }
 
   private void remove() {
     try {
-      model.deletePriceList(view.getSelectedNode().getValue());
-      view.requestRepaint();
+      model.deletePriceList(getView().getSelectedNode().getValue());
+      getView().requestRepaint();
     } catch (PersistenceException e) {
-      view.cannotDelete();
+      getView().cannotDelete();
     }
   }
 
   private void moveItems(Node<PriceList> target) {
-    PriceList selection = view.getSelectedNode().getValue();
-    if (view.commitItemMovement(selection, target.getValue())) {
+    PriceList selection = getView().getSelectedNode().getValue();
+    if (getView().commitItemMovement(selection, target.getValue())) {
       model.moveItems(selection, target.getValue());
-      view.requestRepaint();
+      getView().requestRepaint();
     }
   }
 
   private void moveItems() {
-    if (view.getSelectedNode() == null) {
-      view.selectionRequired();
+    if (getView().getSelectedNode() == null) {
+      getView().selectionRequired();
 
-    } else view.requiresPriceList(this::moveItems);
+    } else getView().requiresPriceList(this::moveItems);
   }
 
   List<Article> getAllArticles(PriceList priceList) {
@@ -128,4 +117,7 @@ public class ManagePriceListsController
         throw new UnsupportedOperationException(e.getActionCommand() + " is not a valid command");
     }
   }
+
+  @Override
+  public void fillView(ManagePriceListsView managePriceListsView) {}
 }

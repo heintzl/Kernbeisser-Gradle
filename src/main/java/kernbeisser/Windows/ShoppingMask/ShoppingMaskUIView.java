@@ -912,4 +912,12 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public void setSearchArticleAvailable(boolean b) {
     searchArticle.setEnabled(false);
   }
+
+  @Override
+  public String getTitle() {
+    return "Einkauf für "
+        + controller.getModel().getSaleSession().getCustomer().getSurname()
+        + ", "
+        + controller.getModel().getSaleSession().getCustomer().getFirstName();
+  }
 }

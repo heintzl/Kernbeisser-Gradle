@@ -8,6 +8,7 @@ import kernbeisser.Windows.ObjectView.ObjectViewController;
 public class EditSuppliers extends ObjectViewController<Supplier> {
   public EditSuppliers() {
     super(
+        "Lieferanten bearbeiten",
         EditSupplierController::new,
         Supplier::defaultSearch,
         true,

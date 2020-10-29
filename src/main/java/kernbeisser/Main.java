@@ -43,7 +43,7 @@ public class Main {
     buildEnvironment();
     checkVersion();
     if (!Setting.DB_INITIALIZED.getBooleanValue()) {
-      SwingUtilities.invokeLater(() -> new DataImportController().openTab("Daten importieren"));
+      SwingUtilities.invokeLater(() -> new DataImportController().openTab());
     } else {
       checkCatalog();
       openLogIn();
@@ -116,7 +116,7 @@ public class Main {
   }
 
   private static void openLogIn() {
-    new SimpleLogInController().openTab("Log In");
+    new SimpleLogInController().openTab();
   }
 
   private static void createTestJobs(int count) {

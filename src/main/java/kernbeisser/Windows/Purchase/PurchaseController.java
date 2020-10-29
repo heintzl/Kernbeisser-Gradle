@@ -6,18 +6,16 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Date;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayModel;
 import org.jetbrains.annotations.NotNull;
 
-public class PurchaseController implements IController<PurchaseView, PurchaseModel> {
-  private final PurchaseModel model;
-  private PurchaseView view;
+public class PurchaseController extends Controller<PurchaseView, PurchaseModel> {
   @Linked private final ShoppingCartController cartController;
 
   public PurchaseController(Purchase purchase) {
-    model = new PurchaseModel(purchase);
+    super(new PurchaseModel(purchase));
     cartController = new ShoppingCartController(0, purchase.getUserSurcharge(), false);
   }
 
@@ -27,12 +25,12 @@ public class PurchaseController implements IController<PurchaseView, PurchaseMod
   }
 
   @Override
-  public void fillUI() {
-    view.setCustomer(model.getLoaded().getSession().getCustomer().getUsername());
-    view.setSeller(model.getLoaded().getSession().getSeller().getUsername());
-    view.setDate(Date.INSTANT_FORMAT.format(model.getLoaded().getCreateDate()));
+  public void fillView(PurchaseView purchaseView) {
+    getView().setCustomer(model.getLoaded().getSession().getCustomer().getUsername());
+    getView().setSeller(model.getLoaded().getSession().getSeller().getUsername());
+    getView().setDate(Date.INSTANT_FORMAT.format(model.getLoaded().getCreateDate()));
     Collection<ShoppingItem> items = model.getAllItems();
-    view.setItemCount(items.size());
+    getView().setItemCount(items.size());
     fillShoppingCart();
     cartController.setValueAfterLabel("Damaliges Guthaben nach dem Einkauf:");
   }

@@ -1,26 +1,16 @@
 package kernbeisser.Windows.InventoryMenu;
 
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.IController;
-import org.jetbrains.annotations.NotNull;
+import kernbeisser.Windows.MVC.Controller;
 
-public class InventoryMenuController implements IController<InventoryMenuView, InventoryMenuModel> {
-
-  private final InventoryMenuModel model;
-  private final InventoryMenuView view;
+public class InventoryMenuController extends Controller<InventoryMenuView, InventoryMenuModel> {
 
   InventoryMenuController(InventoryMenuView view) {
-    this.view = view;
-    model = new InventoryMenuModel();
+    super(new InventoryMenuModel());
   }
 
   @Override
-  public @NotNull InventoryMenuModel getModel() {
-    return model;
-  }
-
-  @Override
-  public void fillUI() {}
+  public void fillView(InventoryMenuView inventoryMenuView) {}
 
   @Override
   public PermissionKey[] getRequiredKeys() {

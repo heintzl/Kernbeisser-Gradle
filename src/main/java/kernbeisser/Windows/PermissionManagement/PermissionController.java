@@ -12,15 +12,13 @@ import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.ActionPermission;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-public class PermissionController implements IController<PermissionView, PermissionModel> {
-  private PermissionView view;
-  private final PermissionModel model;
+public class PermissionController extends Controller<PermissionView, PermissionModel> {
 
   public PermissionController() {
-    this.model = new PermissionModel();
+    super(new PermissionModel());
   }
 
   private void change(Permission permission, PermissionKey key) {
@@ -35,16 +33,16 @@ public class PermissionController implements IController<PermissionView, Permiss
     } else {
       model.addKey(permission, key);
     }
-    view.setValues(model.getAllPermissions());
+    getView().setValues(model.getAllPermissions());
     loadSolutions();
   }
 
   void loadSolutions() {
     Column<Permission> nameColumn = Column.create("Berechtigung", Permission::getName);
     Collection<Column<Permission>> keyColumns =
-        view.getCategory() != ActionPermission.class
+        getView().getCategory() != ActionPermission.class
             ? Tools.transform(
-                PermissionKey.find(view.getCategory(), true, false),
+                PermissionKey.find(getView().getCategory(), true, false),
                 e ->
                     Column.create(
                         e.name()
@@ -60,7 +58,7 @@ public class PermissionController implements IController<PermissionView, Permiss
                         },
                         s -> change(s, e)))
             : Tools.transform(
-                PermissionKey.find(view.getCategory()),
+                PermissionKey.find(getView().getCategory()),
                 e ->
                     Column.create(
                         e.name().replace(e.name().split("_")[0] + "_", ""),
@@ -68,14 +66,14 @@ public class PermissionController implements IController<PermissionView, Permiss
                         s -> soloChange(s, e)));
     ArrayList<Column<Permission>> columns = new ArrayList<>(keyColumns.size() + 2);
     columns.add(nameColumn);
-    if (view.getCategory() != ActionPermission.class) {
+    if (getView().getCategory() != ActionPermission.class) {
       columns.add(
           Column.create(
-              "Alle " + view.getCategory() + " Berechtigungen",
+              "Alle " + getView().getCategory() + " Berechtigungen",
               permission -> {
                 boolean read = true;
                 boolean write = true;
-                for (PermissionKey key : PermissionKey.find(view.getCategory())) {
+                for (PermissionKey key : PermissionKey.find(getView().getCategory())) {
                   if (!permission.contains(key)) {
                     read = (read && (!key.name().endsWith("READ")));
                     write = (write && (!key.name().endsWith("WRITE")));
@@ -87,7 +85,7 @@ public class PermissionController implements IController<PermissionView, Permiss
                 return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
               },
               permission -> {
-                Collection<PermissionKey> keys = PermissionKey.find(view.getCategory());
+                Collection<PermissionKey> keys = PermissionKey.find(getView().getCategory());
                 boolean read = true;
                 boolean write = true;
                 for (PermissionKey key : keys) {
@@ -114,12 +112,12 @@ public class PermissionController implements IController<PermissionView, Permiss
                           .filter(e -> e.name().endsWith("READ"))
                           .collect(Collectors.toCollection(ArrayList::new)));
                 }
-                view.setValues(model.getAllPermissions());
+                getView().setValues(model.getAllPermissions());
                 loadSolutions();
               }));
     }
     columns.addAll(keyColumns);
-    view.setColumns(columns);
+    getView().setColumns(columns);
   }
 
   private void soloChange(Permission s, PermissionKey e) {
@@ -128,31 +126,31 @@ public class PermissionController implements IController<PermissionView, Permiss
     } else {
       model.addKey(s, e);
     }
-    view.setValues(model.getAllPermissions());
+    getView().setValues(model.getAllPermissions());
     loadSolutions();
   }
 
   public void addPermission() {
     try {
-      model.addPermission(view.getPermissionName());
+      model.addPermission(getView().getPermissionName());
     } catch (PersistenceException e) {
-      view.nameIsNotUnique();
+      getView().nameIsNotUnique();
       addPermission();
     }
 
-    view.setValues(model.getAllPermissions());
+    getView().setValues(model.getAllPermissions());
   }
 
   public void deletePermission() {
     try {
-      model.deletePermission(view.getSelectedObject());
-      view.setValues(model.getAllPermissions());
-      view.successfulDeleted();
+      model.deletePermission(getView().getSelectedObject());
+      getView().setValues(model.getAllPermissions());
+      getView().successfulDeleted();
     } catch (PersistenceException e) {
-      if (view.permissionIsInUse()) {
-        model.removeUserFromPermission(view.getSelectedObject());
-        view.setValues(model.getAllPermissions());
-        view.successfulDeleted();
+      if (getView().permissionIsInUse()) {
+        model.removeUserFromPermission(getView().getSelectedObject());
+        getView().setValues(model.getAllPermissions());
+        getView().successfulDeleted();
       }
     }
   }
@@ -163,12 +161,12 @@ public class PermissionController implements IController<PermissionView, Permiss
   }
 
   @Override
-  public void fillUI() {
-    view.setCategories(model.getAllKeyCategories());
+  public void fillView(PermissionView permissionView) {
+    getView().setCategories(model.getAllKeyCategories());
     // boolean p = LogInModel.getLoggedIn().hasPermission(Key.PERMISSION_KEY_SET_WRITE);
-    // view.setAddEnable(p);
-    // view.setDeleteEnable(p);
-    view.setValues(model.getAllPermissions());
+    // getView().setAddEnable(p);
+    // getView().setDeleteEnable(p);
+    getView().setValues(model.getAllPermissions());
     loadSolutions();
   }
 
@@ -179,7 +177,7 @@ public class PermissionController implements IController<PermissionView, Permiss
 
   public void importFrom(File selectedFile) throws FileNotFoundException {
     PermissionRepresentation.putInDB(selectedFile);
-    view.setValues(model.getAllPermissions());
+    getView().setValues(model.getAllPermissions());
     loadSolutions();
   }
 

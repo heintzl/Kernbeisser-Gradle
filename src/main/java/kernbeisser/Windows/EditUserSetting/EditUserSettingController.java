@@ -7,17 +7,15 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IController;
-import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserSettingController
-    implements IController<EditUserSettingView, EditUserSettingModel> {
-  private EditUserSettingView view;
-  private final EditUserSettingModel model;
+    extends Controller<EditUserSettingView, EditUserSettingModel> {
 
   public EditUserSettingController(User user) {
-    model = new EditUserSettingModel(user);
+    super(new EditUserSettingModel(user));
   }
 
   @NotNull
@@ -27,10 +25,11 @@ public class EditUserSettingController
   }
 
   @Override
-  public void fillUI() {
-    view.setThemes(Theme.values());
-    view.setSelectedTheme(UserSetting.THEME.getEnumValue(Theme.class, model.getUser()));
-    view.setFontSize(UserSetting.FONT_SCALE_FACTOR.getFloatValue(model.getUser()));
+  public void fillView(EditUserSettingView editUserSettingView) {
+    editUserSettingView.setThemes(Theme.values());
+    editUserSettingView.setSelectedTheme(
+        UserSetting.THEME.getEnumValue(Theme.class, model.getUser()));
+    editUserSettingView.setFontSize(UserSetting.FONT_SCALE_FACTOR.getFloatValue(model.getUser()));
   }
 
   @Override
@@ -40,26 +39,26 @@ public class EditUserSettingController
 
   public void fontChanged() {
     Font before = UIManager.getFont("Label.font");
-    view.setExampleTextFont(
-        new Font(
-            before.getName(),
-            before.getStyle(),
-            Math.round(before.getSize() * view.getFontSize())));
+    getView()
+        .setExampleTextFont(
+            new Font(
+                before.getName(),
+                before.getStyle(),
+                Math.round(before.getSize() * getView().getFontSize())));
   }
 
   void commit() {
-    model.setFontScale(view.getFontSize());
-    model.setTheme(view.getTheme());
-    view.back();
+    model.setFontScale(getView().getFontSize());
+    model.setTheme(getView().getTheme());
+    getView().back();
   }
 
   public void refreshTheme() {
     try {
-      UIManager.setLookAndFeel(view.getTheme().getLookAndFeel());
+      UIManager.setLookAndFeel(getView().getTheme().getLookAndFeel());
     } catch (UnsupportedLookAndFeelException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
-    SwingUtilities.updateComponentTreeUI(
-        TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
+    SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getContent());
   }
 }

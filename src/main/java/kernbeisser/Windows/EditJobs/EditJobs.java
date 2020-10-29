@@ -8,6 +8,7 @@ import kernbeisser.Windows.ObjectView.ObjectViewController;
 public class EditJobs extends ObjectViewController<Job> {
   public EditJobs() {
     super(
+        "Jobs bearbeiten",
         EditJobController::new,
         Job::defaultSearch,
         true,

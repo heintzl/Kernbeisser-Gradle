@@ -18,7 +18,9 @@ import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.EditUserSetting.EditUserSettingController;
 import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.Setting.SettingController;
@@ -62,6 +64,8 @@ public class MenuView implements IView<MenuController> {
   @Override
   public void initialize(MenuController controller) {}
 
+  @Linked private MenuController controller;
+
   @Override
   public @NotNull JComponent getContent() {
     return main;
@@ -76,72 +80,52 @@ public class MenuView implements IView<MenuController> {
     printBonFromPast = ControllerButton.empty();
     editPriceList =
         new ControllerButton(
-            ManagePriceListsController::new,
-            ManagePriceListsController.class,
-            controller -> controller.openTab("Preislisten bearbeiten"));
+            ManagePriceListsController::new, ManagePriceListsController.class, Controller::openTab);
     editArticles =
         new ControllerButton(
-            EditItemsController::new,
-            EditItemsController.class,
-            controller -> controller.openTab("Artikel bearbeiten"));
+            EditItemsController::new, EditItemsController.class, Controller::openTab);
     editSurchargeTables =
         new ControllerButton(
-            EditSurchargeTables::new,
-            EditSurchargeTables.class,
-            controller -> controller.openTab("Zuschlagstabellen bearbeiten"));
+            EditSurchargeTables::new, EditSurchargeTables.class, Controller::openTab);
     changePassword =
         new ControllerButton(
             () -> new ChangePasswordController(LogInModel.getLoggedIn(), true),
             ChangePasswordController.class,
-            controller -> controller.openTab("Passwort"));
+            Controller::openTab);
     transactionHistory =
         new ControllerButton(
             () -> new UserInfoController(LogInModel.getLoggedIn()),
             UserInfoController.class,
-            controller -> controller.openTab(""));
+            Controller::openTab);
     editOwnUser =
         new ControllerButton(
             () -> new EditUserController(LogInModel.getLoggedIn(), Mode.EDIT),
             EditUserController.class,
-            controller -> controller.openTab("Persönliche Information"));
+            Controller::openTab);
     // NOT IMPLEMENTED
     editUserSettings =
         new ControllerButton(
             () -> new EditUserSettingController(LogInModel.getLoggedIn()),
             EditUserSettingController.class,
-            controller -> controller.openTab("<PlaceHolder>"));
-    editUsers =
-        new ControllerButton(
-            EditUsers::new,
-            EditUsers.class,
-            controller -> controller.openTab("Benutzer bearbeiten"));
+            Controller::openTab);
+    editUsers = new ControllerButton(EditUsers::new, EditUsers.class, Controller::openTab);
     doTransaction =
         new ControllerButton(
             () -> new TransactionController(LogInModel.getLoggedIn()),
             TransactionController.class,
-            controller -> controller.openTab("Überweisungen"));
+            Controller::openTab);
     changePermissions =
         new ControllerButton(
-            PermissionController::new,
-            PermissionController.class,
-            controller -> controller.openTab("Berechtigungen"));
+            PermissionController::new, PermissionController.class, Controller::openTab);
     // NOT IMPLEMENTED
     tillrollControllerButton =
         new ControllerButton(
-            TillrollController::new,
-            TillrollController.class,
-            controller -> controller.openTab("Bonrolle"));
+            TillrollController::new, TillrollController.class, Controller::openTab);
     changeDBConnection =
-        new ControllerButton(
-            DBLogInController::new,
-            DBLogInController.class,
-            controller -> controller.openTab("Datenbankverbindung"));
-    editJobs =
-        new ControllerButton(
-            EditJobs::new, EditJobs.class, controller -> controller.openTab("Jobs bearbeiten"));
+        new ControllerButton(DBLogInController::new, DBLogInController.class, Controller::openTab);
+    editJobs = new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab);
     editApplicationSettings =
-        new ControllerButton(
-            SettingController::new, SettingController.class, e -> e.openTab("Einstellungen"));
+        new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
     order =
         new ControllerButton(
             () -> new ContainerController(LogInModel.getLoggedIn()), ContainerController.class);
@@ -163,29 +147,31 @@ public class MenuView implements IView<MenuController> {
             },
             SoloShoppingMaskController.class,
             e -> {
-              if (e != null) e.openTab("Selbsteinkauf");
+              if (e != null) e.openTab();
             });
     addBeginner =
         new ControllerButton(
             () -> new EditUserController(User.generateBeginnerUser(), Mode.ADD),
             EditUserController.class,
-            e -> e.openTab("Probemitglied aufnehmen"));
+            Controller::openTab);
     editSuppliers =
-        new ControllerButton(
-            EditSuppliers::new,
-            EditSuppliers.class,
-            controller -> controller.openTab("Lieferanten bearbeiten"));
+        new ControllerButton(EditSuppliers::new, EditSuppliers.class, Controller::openTab);
 
     editUserGroup =
         new ControllerButton(
             () -> new EditUserGroupController(LogInModel.getLoggedIn()),
             EditUserGroupController.class,
-            controller -> controller.openTab("Nutzergruppe ändern"));
+            Controller::openTab);
     synchoniseCatalog =
         new ControllerButton(
             SynchronizeArticleController::new,
             SynchronizeArticleController.class,
-            controller -> controller.openTab("Katalog sychonisieren"));
+            Controller::openTab);
     openCashierShoppingMask.requestFocusInWindow();
+  }
+
+  @Override
+  public String getTitle() {
+    return "Menu";
   }
 }

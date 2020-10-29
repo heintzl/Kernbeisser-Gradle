@@ -3,7 +3,6 @@ package kernbeisser.Windows.EditItems;
 import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
-import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
@@ -11,26 +10,26 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.EditItem.EditItemController;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.ComponentController.ComponentController;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
 import kernbeisser.Windows.ObjectView.ObjectViewView;
-import kernbeisser.Windows.Window;
-import kernbeisser.Windows.WindowImpl.SubWindow;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class EditItemsController implements IController<EditItemsView, EditItemsModel> {
+public class EditItemsController extends Controller<EditItemsView, EditItemsModel> {
 
-  private EditItemsView view;
-  private final EditItemsModel model;
   private final ObjectViewController<Article> objectViewController;
 
   @Linked private final BarcodeCapture capture;
 
   public EditItemsController() {
-    this.model = new EditItemsModel();
+    super(new EditItemsModel());
     objectViewController =
         new ObjectViewController<>(
+            "Artikel bearbeiten",
             EditItemController::new,
             Article::defaultSearch,
             true,
@@ -63,7 +62,7 @@ public class EditItemsController implements IController<EditItemsView, EditItems
   }
 
   @Override
-  public void fillUI() {
+  public void fillView(EditItemsView editItemsView) {
     objectViewController.setSearch("");
   }
 
@@ -76,18 +75,15 @@ public class EditItemsController implements IController<EditItemsView, EditItems
     return objectViewController.getView();
   }
 
-  private Window w = null;
-
   void openPriceListSelection() {
     ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
     priceListObjectTree.addSelectionListener(
         e -> {
           objectViewController.setSearch(e.toString());
           objectViewController.search();
-          w.back();
+          IView.traceViewContainer(priceListObjectTree.getParent());
         });
-    w =
-        IController.createFakeController(priceListObjectTree)
-            .openAsWindow(getView().getWindow(), SubWindow::new);
+    new ComponentController(priceListObjectTree)
+        .openIn(new SubWindow(getView().traceViewContainer()));
   }
 }

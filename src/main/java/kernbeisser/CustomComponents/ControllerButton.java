@@ -9,19 +9,20 @@ import javax.swing.SwingConstants;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.ComponentController.ComponentController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
-import kernbeisser.Windows.MVC.Utils;
 
 public class ControllerButton extends JButton {
 
-  public <V extends IController<?, ?>> ControllerButton(Supplier<V> controller, Class<V> clazz) {
-    this(controller, clazz, (e) -> e.openTab(Utils.getNotInitializedView(clazz).getTitle()));
+  public <V extends Controller<?, ?>> ControllerButton(Supplier<V> controller, Class<V> clazz) {
+    this(controller, clazz, (e) -> e.openTab());
   }
 
-  public <V extends IController<?, ?>> ControllerButton(
+  public <V extends Controller<?, ?>> ControllerButton(
       Supplier<V> controller, Class<V> clazz, Consumer<V> action) {
-    IView<?> view = Utils.getNotInitializedView(clazz);
+    IView<?> view =
+        Tools.createWithoutConstructor(Tools.createWithoutConstructor(clazz).getViewClass());
     setIcon(
         IconFontSwing.buildIcon(
             view.getTabIcon(), Tools.scaleWithLabelScalingFactor(16), new Color(0xFF00CCFF)));
@@ -38,6 +39,8 @@ public class ControllerButton extends JButton {
 
   public static ControllerButton empty() {
     return new ControllerButton(
-        () -> IController.createFakeController(new JPanel()), IController.FakeController.class);
+        () -> new ComponentController(new JPanel()),
+        ComponentController.class,
+        Controller::openTab);
   }
 }

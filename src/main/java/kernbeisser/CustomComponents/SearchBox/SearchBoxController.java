@@ -7,18 +7,16 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
 import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
 
-public class SearchBoxController<T> implements IController<SearchBoxView<T>, SearchBoxModel<T>> {
-  private SearchBoxView<T> view;
-  private final SearchBoxModel<T> model;
+public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchBoxModel<T>> {
 
   @SafeVarargs
   public SearchBoxController(Searchable<T> searchFunction, Column<T>... columns) {
-    this.model = new SearchBoxModel<>(searchFunction, columns);
+    super(new SearchBoxModel<>(searchFunction, columns));
   }
 
   public T tryToRefresh(T t) {
@@ -31,27 +29,27 @@ public class SearchBoxController<T> implements IController<SearchBoxView<T>, Sea
   }
 
   public T getSelectedObject() {
-    return tryToRefresh(view.getSelectedObject());
+    return tryToRefresh(getView().getSelectedObject());
   }
 
   public void search() {
     Object lastId = getSelectedObject() != null ? Tools.getId(getSelectedObject()) : null;
-    view.setObjects(model.getValues(view.getSearch()));
-    if (!view.setSelectedObjectId(lastId)) {
+    getView().setObjects(model.getValues(getView().getSearch()));
+    if (lastId != null && !getView().setSelectedObjectId(lastId)) {
       runLostSelectionListener();
     }
   }
 
   void select() {
-    if (view.getSelectedObject() == null) {
+    if (getView().getSelectedObject() == null) {
       return;
     }
     if (model.getLastSelectedObject() != null
-        && view.getSelectedObject().equals(model.getLastSelectedObject())) {
+        && getView().getSelectedObject().equals(model.getLastSelectedObject())) {
       runDoubleClickListener(getSelectedObject());
     }
     runSelectionListener(getSelectedObject());
-    model.setLastSelectedObject(view.getSelectedObject());
+    model.setLastSelectedObject(getView().getSelectedObject());
   }
 
   private void runDoubleClickListener(T t) {
@@ -77,12 +75,6 @@ public class SearchBoxController<T> implements IController<SearchBoxView<T>, Sea
     return model;
   }
 
-  @Override
-  public void fillUI() {
-    view.setColumns(Arrays.asList(model.getColumns()));
-    search();
-  }
-
   public void addDoubleClickListener(Consumer<T> action) {
     model.getDoubleClickListener().add(action);
   }
@@ -96,6 +88,12 @@ public class SearchBoxController<T> implements IController<SearchBoxView<T>, Sea
   }
 
   @Override
+  public void fillView(SearchBoxView<T> tSearchBoxView) {
+    tSearchBoxView.setColumns(Arrays.asList(model.getColumns()));
+    search();
+  }
+
+  @Override
   public PermissionKey[] getRequiredKeys() {
     return new PermissionKey[0];
   }
@@ -105,10 +103,10 @@ public class SearchBoxController<T> implements IController<SearchBoxView<T>, Sea
   }
 
   public void setSearch(String s) {
-    view.setSearch(s);
+    getView().setSearch(s);
   }
 
   public void setSelectedObject(T t) {
-    view.setSelectedObject(t);
+    getView().setSelectedObject(t);
   }
 }

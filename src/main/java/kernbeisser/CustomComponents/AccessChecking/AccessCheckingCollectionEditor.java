@@ -8,8 +8,8 @@ import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
-import kernbeisser.Windows.Window;
-import kernbeisser.Windows.WindowImpl.SubWindow;
+import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 
 public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> extends JButton
     implements Bounded<P, C> {
@@ -36,7 +36,7 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
 
   void trigger(ActionEvent event) {
     new CollectionController<V>(data, values, editable, columns)
-        .openAsWindow((Window) SwingUtilities.getWindowAncestor(this), SubWindow::new);
+        .openIn(new SubWindow(IView.traceViewContainer(getParent())));
   }
 
   @Override

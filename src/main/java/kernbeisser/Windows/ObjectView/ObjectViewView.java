@@ -23,6 +23,8 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
 
   @Linked private SearchBoxController<T> searchBoxController;
 
+  @Linked private String title;
+
   void setEditAvailable(boolean s) {
     edit.setEnabled(s);
   }
@@ -64,5 +66,10 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
   @Override
   public IconCode getTabIcon() {
     return FontAwesome.PENCIL;
+  }
+
+  @Override
+  public String getTitle() {
+    return title;
   }
 }

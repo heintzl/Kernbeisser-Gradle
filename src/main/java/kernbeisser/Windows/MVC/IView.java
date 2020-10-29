@@ -5,13 +5,13 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
-import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Windows.ViewContainer;
 import org.jetbrains.annotations.NotNull;
 
 public interface IView<
-    C extends IController<? extends IView<? extends C>, ? extends IModel<? extends C>>> {
+    C extends Controller<? extends IView<? extends C>, ? extends IModel<? extends C>>> {
 
   void initialize(C controller);
 
@@ -44,14 +44,20 @@ public interface IView<
     return FontAwesome.WINDOW_MAXIMIZE;
   }
 
-  default kernbeisser.Windows.Window getWindow() {
-    return (kernbeisser.Windows.Window) SwingUtilities.getWindowAncestor(getContent());
+  default ViewContainer traceViewContainer() {
+    return IView.traceViewContainer(getContent());
+  }
+
+  static ViewContainer traceViewContainer(Component init) {
+    return ControllerReference.traceBack(init, e -> e.getController().getContainer() != null)
+        .getController()
+        .getContainer();
   }
 
   default void back() {
-    kernbeisser.Windows.Window window = getWindow();
-    if (window != null) {
-      window.back();
+    ViewContainer viewContainer = traceViewContainer();
+    if (viewContainer != null) {
+      viewContainer.requestClose();
     }
   }
 
@@ -61,10 +67,6 @@ public interface IView<
 
   default boolean isStackable() {
     return false;
-  }
-
-  default ViewMainPanel getWrappedContent() {
-    return new ViewMainPanel(getContent(), this);
   }
 
   default boolean processKeyboardInput(KeyEvent e) {

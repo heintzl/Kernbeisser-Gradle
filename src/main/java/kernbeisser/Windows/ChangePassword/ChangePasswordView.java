@@ -7,6 +7,7 @@ import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangePasswordView implements IView<ChangePasswordController> {
@@ -18,6 +19,7 @@ public class ChangePasswordView implements IView<ChangePasswordController> {
   private JLabel message;
   private JLabel passwordHint;
   private JLabel currentPasswordLable;
+  @Linked private ChangePasswordController controller;
 
   @Override
   public void initialize(ChangePasswordController controller) {

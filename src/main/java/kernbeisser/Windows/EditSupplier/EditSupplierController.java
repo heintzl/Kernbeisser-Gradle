@@ -7,17 +7,14 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 
-public class EditSupplierController implements IController<EditSupplierView, EditSupplierModel> {
-
-  private final EditSupplierModel model;
-  private EditSupplierView view;
+public class EditSupplierController extends Controller<EditSupplierView, EditSupplierModel> {
 
   public EditSupplierController(Supplier supplier, Mode mode) {
-    model = new EditSupplierModel(supplier, mode);
+    super(new EditSupplierModel(supplier, mode));
     if (mode.equals(Mode.REMOVE)) {
       try {
         Tools.delete(supplier);
@@ -38,8 +35,8 @@ public class EditSupplierController implements IController<EditSupplierView, Edi
   }
 
   @Override
-  public void fillUI() {
-    view.getObjectForm().setSource(getModel().getSupplier());
+  public void fillView(EditSupplierView editSupplierView) {
+    getView().getObjectForm().setSource(getModel().getSupplier());
   }
 
   @Override
@@ -48,8 +45,8 @@ public class EditSupplierController implements IController<EditSupplierView, Edi
   }
 
   public void commit() {
-    if (view.getObjectForm().applyMode(model.getMode())) {
-      view.back();
+    if (getView().getObjectForm().applyMode(model.getMode())) {
+      getView().back();
     }
   }
 
@@ -59,7 +56,7 @@ public class EditSupplierController implements IController<EditSupplierView, Edi
         if (name.equals(model.getSupplier().getName())) return name;
       case ADD:
         if (model.nameExists(name)) {
-          view.nameAlreadyExists();
+          getView().nameAlreadyExists();
           throw new CannotParseException("short name is already taken");
         } else return name;
       default:
@@ -73,7 +70,7 @@ public class EditSupplierController implements IController<EditSupplierView, Edi
         if (name.equals(model.getSupplier().getShortName())) return name;
       case ADD:
         if (model.shortNameExists(name)) {
-          view.shortNameAlreadyExists();
+          getView().shortNameAlreadyExists();
           throw new CannotParseException("short name is already taken");
         } else return name;
       default:

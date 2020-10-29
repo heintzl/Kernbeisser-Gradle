@@ -4,24 +4,28 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectViewController<T> implements IController<ObjectViewView<T>, ObjectViewModel<T>> {
-  private final ObjectViewModel<T> model;
-  private ObjectViewView<T> view;
+public class ObjectViewController<T> extends Controller<ObjectViewView<T>, ObjectViewModel<T>> {
 
   @Linked private final SearchBoxController<T> searchBoxController;
 
+  @Linked private String title;
   private boolean openWindow = false;
 
   public ObjectViewController(
-      MaskLoader<T> loader, Searchable<T> items, boolean copyAdd, Column<T>... columns) {
+      String title,
+      MaskLoader<T> loader,
+      Searchable<T> items,
+      boolean copyAdd,
+      Column<T>... columns) {
+    super(new ObjectViewModel<>(loader, items, copyAdd));
+    this.title = title;
     searchBoxController = new SearchBoxController<T>(items, columns);
-    model = new ObjectViewModel<>(loader, items, copyAdd);
   }
 
   void select() {
@@ -29,48 +33,48 @@ public class ObjectViewController<T> implements IController<ObjectViewView<T>, O
   }
 
   void checkSelectedObject() {
-    view.setAddAvailable(!openWindow);
+    getView().setAddAvailable(!openWindow);
     if (openWindow || searchBoxController.getSelectedObject() == null) {
-      view.setEditAvailable(false);
-      view.setRemoveAvailable(false);
+      getView().setEditAvailable(false);
+      getView().setRemoveAvailable(false);
     } else {
-      view.setEditAvailable(true);
-      view.setRemoveAvailable(true);
+      getView().setEditAvailable(true);
+      getView().setRemoveAvailable(true);
     }
   }
 
   void edit() {
     if (openWindow) return;
-    model
-        .openEdit(view.getWindow(), searchBoxController.getSelectedObject())
-        .addCloseEventListener(
-            e -> {
-              search();
-              openWindow = false;
-              checkSelectedObject();
-            });
-    view.setAddAvailable(false);
+    model.openEdit(
+        getView().traceViewContainer(),
+        searchBoxController.getSelectedObject(),
+        () -> {
+          search();
+          openWindow = false;
+          checkSelectedObject();
+        });
+    getView().setAddAvailable(false);
     openWindow = true;
     checkSelectedObject();
   }
 
   void add() {
     if (openWindow) return;
-    model
-        .openAdd(view.getWindow(), searchBoxController.getSelectedObject())
-        .addCloseEventListener(
-            e -> {
-              search();
-              openWindow = false;
-              checkSelectedObject();
-            });
-    view.setAddAvailable(false);
+    model.openAdd(
+        getView().traceViewContainer(),
+        searchBoxController.getSelectedObject(),
+        () -> {
+          search();
+          openWindow = false;
+          checkSelectedObject();
+        });
+    getView().setAddAvailable(false);
     openWindow = true;
     checkSelectedObject();
   }
 
   void delete() {
-    if (view.commitDelete()) {
+    if (getView().commitDelete()) {
       model.remove(searchBoxController.getSelectedObject());
     }
     search();
@@ -87,7 +91,7 @@ public class ObjectViewController<T> implements IController<ObjectViewView<T>, O
   }
 
   @Override
-  public void fillUI() {
+  public void fillView(ObjectViewView<T> tObjectViewView) {
     searchBoxController.addSelectionListener(e -> select());
     searchBoxController.addDoubleClickListener(e -> edit());
     searchBoxController.addLostSelectionListener(this::checkSelectedObject);

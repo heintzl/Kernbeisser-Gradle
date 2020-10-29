@@ -6,15 +6,13 @@ import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Container;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-public class ContainerController implements IController<ContainerView, ContainerModel> {
-  private ContainerView view;
-  private final ContainerModel model;
+public class ContainerController extends Controller<ContainerView, ContainerModel> {
 
   public ContainerController(User user) {
-    model = new ContainerModel(user);
+    super(new ContainerModel(user));
   }
 
   private void refreshUnpaidContainers() {
@@ -23,26 +21,26 @@ public class ContainerController implements IController<ContainerView, Container
     Collection<Container> containers = new ArrayList<>(newContainers.size() + oldContainers.size());
     containers.addAll(oldContainers);
     containers.addAll(newContainers);
-    view.setUnpaidContainers(containers);
+    getView().setUnpaidContainers(containers);
   }
 
   public void commit() {
     Container newContainer = new Container();
-    newContainer.setAmount(view.getAmount());
-    ArticleKornkraft item = model.getItemByKbNumber(view.getKbNumber());
+    newContainer.setAmount(getView().getAmount());
+    ArticleKornkraft item = model.getItemByKbNumber(getView().getKbNumber());
     if (item == null) {
-      item = model.getItemByKkNumber(view.getKkNumber());
+      item = model.getItemByKkNumber(getView().getKkNumber());
       if (item == null) {
-        view.noItemFound();
+        getView().noItemFound();
         return;
       }
     }
     newContainer.setItem(item);
     newContainer.setPayed(false);
-    newContainer.setNetPrice(view.getNetPrice());
-    newContainer.setAmount(view.getAmount());
+    newContainer.setNetPrice(getView().getNetPrice());
+    newContainer.setAmount(getView().getAmount());
     newContainer.setUser(model.getUser());
-    newContainer.setNetPrice(view.getNetPrice());
+    newContainer.setNetPrice(getView().getNetPrice());
     model.addContainer(newContainer);
     refreshUnpaidContainers();
     clear();
@@ -55,20 +53,20 @@ public class ContainerController implements IController<ContainerView, Container
   }
 
   public void remove() {
-    model.removeNew(view.getSelectedUnpaidOrder());
+    model.removeNew(getView().getSelectedUnpaidOrder());
     refreshUnpaidContainers();
   }
 
   public void searchKK() {
     clear();
-    view.setKbNumber("");
-    pasteData(model.getItemByKkNumber(view.getKkNumber()));
+    getView().setKbNumber("");
+    pasteData(model.getItemByKkNumber(getView().getKkNumber()));
   }
 
   public void searchKB() {
     clear();
-    view.setKkNumber("");
-    pasteData(model.getItemByKbNumber(view.getKbNumber()));
+    getView().setKkNumber("");
+    pasteData(model.getItemByKbNumber(getView().getKbNumber()));
   }
 
   private void pasteData(ArticleKornkraft item) {
@@ -83,27 +81,28 @@ public class ContainerController implements IController<ContainerView, Container
   }
 
   private void clear() {
-    view.setNetPrice("");
-    view.setItemSize("1");
-    view.setAmount("");
-    view.setItemName("Kein Artikel ausgewählt");
-    view.setSellingPrice("");
-    // view.setSuppliersItemNumber("");
-    // view.setKbNumber("");
+    getView().setNetPrice("");
+    getView().setItemSize("1");
+    getView().setAmount("");
+    getView().setItemName("Kein Artikel ausgewählt");
+    getView().setSellingPrice("");
+    // getView().setSuppliersItemNumber("");
+    // getView().setKbNumber("");
   }
 
   private void pasteData(Container c) {
-    view.setItemSize(
-        c.getItem().getContainerSize()
-            + " x "
-            + c.getItem().getAmount()
-            + c.getItem().getMetricUnits().getShortName());
-    view.setKbNumber(String.valueOf(c.getKBNumber()));
-    view.setKkNumber(String.valueOf(c.getItem().getSuppliersItemNumber()));
-    view.setSellingPrice(0 + "€");
-    view.setItemName(c.getItem().getName());
-    view.setAmount(String.valueOf(c.getAmount()));
-    view.setNetPrice(c.getNetPrice() + "€");
+    getView()
+        .setItemSize(
+            c.getItem().getContainerSize()
+                + " x "
+                + c.getItem().getAmount()
+                + c.getItem().getMetricUnits().getShortName());
+    getView().setKbNumber(String.valueOf(c.getKBNumber()));
+    getView().setKkNumber(String.valueOf(c.getItem().getSuppliersItemNumber()));
+    getView().setSellingPrice(0 + "€");
+    getView().setItemName(c.getItem().getName());
+    getView().setAmount(String.valueOf(c.getAmount()));
+    getView().setNetPrice(c.getNetPrice() + "€");
   }
 
   @Override
@@ -112,9 +111,9 @@ public class ContainerController implements IController<ContainerView, Container
   }
 
   @Override
-  public void fillUI() {
-    view.setLastContainers(model.getLastContainers());
-    view.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
+  public void fillView(ContainerView containerView) {
+    getView().setLastContainers(model.getLastContainers());
+    getView().setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
     refreshUnpaidContainers();
   }
 

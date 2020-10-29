@@ -4,27 +4,19 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-public class ChangePasswordController
-    implements IController<ChangePasswordView, ChangePasswordModel> {
-  private final ChangePasswordModel model;
-  private ChangePasswordView view;
+public class ChangePasswordController extends Controller<ChangePasswordView, ChangePasswordModel> {
 
   public ChangePasswordController(User user, boolean verifyWithOldPassword) {
-    model = new ChangePasswordModel(user, verifyWithOldPassword);
+    super(new ChangePasswordModel(user, verifyWithOldPassword));
   }
 
   @NotNull
   @Override
   public ChangePasswordModel getModel() {
     return model;
-  }
-
-  @Override
-  public void fillUI() {
-    view.setVerifyWithOldEnable(model.verifyWithOldPassword());
   }
 
   private int getPasswordStrength(String password) {
@@ -48,7 +40,7 @@ public class ChangePasswordController
   }
 
   private boolean comparePasswords() {
-    return view.getNewPassword().equals(view.getRepeatedPassword());
+    return getView().getNewPassword().equals(getView().getRepeatedPassword());
   }
 
   private boolean lengthValid(String password) {
@@ -64,52 +56,52 @@ public class ChangePasswordController
   }
 
   void refreshPasswordStrength() {
-    show(getPasswordStrength(view.getNewPassword()));
+    show(getPasswordStrength(getView().getNewPassword()));
   }
 
   void show(int passwordStrength) {
     switch (passwordStrength) {
       case 0:
-        view.setPasswordStrength(PasswordStrength.TO_LOW);
+        getView().setPasswordStrength(PasswordStrength.TO_LOW);
         break;
       case 1:
-        view.setPasswordStrength(PasswordStrength.LOW);
+        getView().setPasswordStrength(PasswordStrength.LOW);
         break;
       case 2:
-        view.setPasswordStrength(PasswordStrength.NORMAL);
+        getView().setPasswordStrength(PasswordStrength.NORMAL);
         break;
       case 3:
-        view.setPasswordStrength(PasswordStrength.GOOD);
+        getView().setPasswordStrength(PasswordStrength.GOOD);
         break;
       case 4:
-        view.setPasswordStrength(PasswordStrength.OPTIMAL);
+        getView().setPasswordStrength(PasswordStrength.OPTIMAL);
         break;
       case 5:
-        view.setPasswordStrength(PasswordStrength.LEGENDARY);
+        getView().setPasswordStrength(PasswordStrength.LEGENDARY);
         break;
     }
   }
 
   boolean checkPassword() {
-    if (!((!model.verifyWithOldPassword()) || validOldPassword(view.getCurrentPassword()))) {
-      view.currentPasswordEnteredWrong();
+    if (!((!model.verifyWithOldPassword()) || validOldPassword(getView().getCurrentPassword()))) {
+      getView().currentPasswordEnteredWrong();
       return false;
     }
     if (!comparePasswords()) {
-      view.passwordsDontMatch();
+      getView().passwordsDontMatch();
       return false;
     } else {
-      view.passwordsMatch();
-      int passwordStrength = getPasswordStrength(view.getNewPassword());
-      if (lengthValid(view.getNewPassword())) {
+      getView().passwordsMatch();
+      int passwordStrength = getPasswordStrength(getView().getNewPassword());
+      if (lengthValid(getView().getNewPassword())) {
         if (strengthValid(passwordStrength)) {
           show(passwordStrength);
         } else {
-          view.setPasswordStrength(PasswordStrength.TO_LOW);
+          getView().setPasswordStrength(PasswordStrength.TO_LOW);
           return false;
         }
       } else {
-        view.setPasswordStrength(PasswordStrength.LENGTH_TO_SMALL);
+        getView().setPasswordStrength(PasswordStrength.LENGTH_TO_SMALL);
         return false;
       }
       return true;
@@ -120,10 +112,16 @@ public class ChangePasswordController
     if (checkPassword()) {
       model.changePassword(
           BCrypt.withDefaults()
-              .hashToString(Setting.HASH_COSTS.getIntValue(), view.getNewPassword().toCharArray()));
-      view.passwordChanged();
-      view.back();
+              .hashToString(
+                  Setting.HASH_COSTS.getIntValue(), getView().getNewPassword().toCharArray()));
+      getView().passwordChanged();
+      getView().back();
     }
+  }
+
+  @Override
+  public void fillView(ChangePasswordView changePasswordView) {
+    changePasswordView.setVerifyWithOldEnable(model.verifyWithOldPassword());
   }
 
   @Override

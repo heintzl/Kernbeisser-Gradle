@@ -71,7 +71,6 @@ public class PayView implements IView<PayController> {
         e -> {
           this.back();
         });
-    shoppingCartController.fillUI();
   }
 
   @Override

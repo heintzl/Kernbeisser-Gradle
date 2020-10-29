@@ -2,20 +2,15 @@ package kernbeisser.Windows.Menu;
 
 import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Main;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
-import kernbeisser.Windows.MVC.IController;
-import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
-public class MenuController implements IController<MenuView, MenuModel> {
-
-  private final MenuModel model;
-  private MenuView view;
+public class MenuController extends Controller<MenuView, MenuModel> {
 
   public MenuController() {
-    model = new MenuModel();
+    super(new MenuModel());
   }
 
   @NotNull
@@ -25,33 +20,35 @@ public class MenuController implements IController<MenuView, MenuModel> {
   }
 
   @Override
-  public void fillUI() {}
+  public void fillView(MenuView menuView) {}
 
   @Override
   public PermissionKey[] getRequiredKeys() {
     return new PermissionKey[0];
   }
 
+  private boolean alreadyAsked = false;
+
   @Override
   public boolean commitClose() {
+    if (alreadyAsked) return true;
     if (JOptionPane.showConfirmDialog(
             getView().getTopComponent(),
             "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen")
         == 0) {
-      TabbedPaneModel.DEFAULT_TABBED_PANE.unsafeClose(asTab("Menu"));
-      if (TabbedPaneModel.DEFAULT_TABBED_PANE.clear()) {
-        try {
-          Main.setSettingLAF();
-        } catch (UnsupportedLookAndFeelException e) {
-          Tools.showUnexpectedErrorWarning(e);
-        }
-        SwingUtilities.updateComponentTreeUI(
-            TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
-        new SimpleLogInController().openTab("Log In");
-      } else {
-        new MenuController().openTab("Menu");
-      }
+      SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getTopComponent());
+      getView().traceViewContainer().getLoaded().withCloseEvent(SimpleLogInController::new);
+      alreadyAsked = true;
+      SwingUtilities.invokeLater(
+          () -> {
+            TabbedPaneModel.resetMainPanel();
+            new SimpleLogInController().openTab();
+          });
+      return true;
     }
     return false;
   }
+
+  @Override
+  protected void closed() {}
 }

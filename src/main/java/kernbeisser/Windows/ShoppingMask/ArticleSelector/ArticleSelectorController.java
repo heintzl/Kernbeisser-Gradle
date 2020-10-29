@@ -8,18 +8,17 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ArticleSelectorController
-    implements IController<ArticleSelectorView, ArticleSelectorModel> {
-  private final ArticleSelectorModel model;
-  private ArticleSelectorView view;
+    extends Controller<ArticleSelectorView, ArticleSelectorModel> {
 
   @Linked private final SearchBoxController<Article> searchBoxController;
 
   public ArticleSelectorController(Consumer<Article> consumer) {
+    super(new ArticleSelectorModel(consumer));
     searchBoxController =
         new SearchBoxController<>(
             this::search,
@@ -34,13 +33,14 @@ public class ArticleSelectorController
                             ? " (" + e.getSuppliersItemNumber() + ")"
                             : "")));
     searchBoxController.addDoubleClickListener(e -> this.choose());
-    this.model = new ArticleSelectorModel(consumer);
   }
 
   private Collection<Article> search(String query, int max) {
     getView();
     return Article.getDefaultAll(
-        query, createFilter(view.searchOnlyWithoutBarcode(), view.searchOnlyShowInShop()), max);
+        query,
+        createFilter(getView().searchOnlyWithoutBarcode(), getView().searchOnlyShowInShop()),
+        max);
   }
 
   private Predicate<Article> createFilter(boolean filterBarcode, boolean filterShowInShoppingCart) {
@@ -55,7 +55,7 @@ public class ArticleSelectorController
 
   public void choose() {
     model.getConsumer().accept(searchBoxController.getSelectedObject());
-    view.back();
+    getView().back();
   }
 
   @Override
@@ -64,7 +64,7 @@ public class ArticleSelectorController
   }
 
   @Override
-  public void fillUI() {}
+  public void fillView(ArticleSelectorView articleSelectorView) {}
 
   @Override
   public PermissionKey[] getRequiredKeys() {

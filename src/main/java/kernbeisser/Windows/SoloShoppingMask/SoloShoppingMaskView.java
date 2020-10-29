@@ -19,6 +19,8 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
 
   private ShoppingMaskUIView shoppingMaskUIView;
 
+  @Linked private SoloShoppingMaskController controller;
+
   @Linked private ShoppingMaskUIController shoppingMaskUIController;
 
   private void createUIComponents() {
@@ -53,5 +55,10 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
   @Override
   public Component getFocusOnInitialize() {
     return shoppingMaskUIController.getView().getFocusOnInitialize();
+  }
+
+  @Override
+  public String getTitle() {
+    return "Selbsteinkauf";
   }
 }

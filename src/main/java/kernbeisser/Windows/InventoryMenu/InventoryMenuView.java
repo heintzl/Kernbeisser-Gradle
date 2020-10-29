@@ -8,12 +8,13 @@ import org.jetbrains.annotations.NotNull;
 public class InventoryMenuView implements IView<InventoryMenuController> {
 
   @Linked private InventoryMenuController controller;
+  private JPanel main;
 
   @Override
   public void initialize(InventoryMenuController controller) {}
 
   @Override
   public @NotNull JComponent getContent() {
-    return null;
+    return main;
   }
 }

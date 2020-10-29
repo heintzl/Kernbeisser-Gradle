@@ -148,4 +148,9 @@ public class DataImportView implements IView<DataImportController> {
   public @NotNull JComponent getContent() {
     return main;
   }
+
+  @Override
+  public String getTitle() {
+    return "Daten importieren";
+  }
 }

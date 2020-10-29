@@ -1,16 +1,13 @@
 package kernbeisser.StartUp.LogIn;
 
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-public class DBLogInController implements IController<DBLogInView, DBLogInModel> {
-
-  private DBLogInView view;
-  private final DBLogInModel model;
+public class DBLogInController extends Controller<DBLogInView, DBLogInModel> {
 
   public DBLogInController() {
-    this.model = new DBLogInModel();
+    super(new DBLogInModel());
   }
 
   @Override
@@ -19,7 +16,7 @@ public class DBLogInController implements IController<DBLogInView, DBLogInModel>
   }
 
   @Override
-  public void fillUI() {}
+  public void fillView(DBLogInView dbLogInView) {}
 
   @Override
   public PermissionKey[] getRequiredKeys() {

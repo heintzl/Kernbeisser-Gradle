@@ -418,10 +418,10 @@ public class Tools {
   }
 
   public static <T> T createWithoutConstructor(Class<T> clazz) {
+    if (clazz == null) throw new NullPointerException("cannot create instance from null");
     try {
       return (T) unsafe.allocateInstance(clazz);
     } catch (InstantiationException e) {
-      Tools.showUnexpectedErrorWarning(e);
       throw new UnsupportedOperationException("cannot create instance without constructor :(");
     }
   }

@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserSettingView implements IView<EditUserSettingController> {
@@ -12,6 +13,7 @@ public class EditUserSettingView implements IView<EditUserSettingController> {
   private JSlider fontSize;
   private JPanel main;
   private JLabel exampleText;
+  @Linked private EditUserSettingController controller;
 
   public void setThemes(Theme[] values) {
     themes.removeAllItems();

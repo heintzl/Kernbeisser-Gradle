@@ -167,4 +167,9 @@ public class PermissionView implements IView<PermissionController> {
   public void successfulDeleted() {
     JOptionPane.showMessageDialog(getTopComponent(), "Die Berechtigung wurde erfolgreich gelöscht");
   }
+
+  @Override
+  public String getTitle() {
+    return "Berechtigungen";
+  }
 }

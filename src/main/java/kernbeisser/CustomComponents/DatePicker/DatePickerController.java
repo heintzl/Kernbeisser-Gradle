@@ -10,22 +10,19 @@ import java.util.function.Consumer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.IController;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
-import kernbeisser.Windows.WindowImpl.SubWindow;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.ViewContainer;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class DatePickerController implements IController<DatePickerView, DatePickerModel> {
-  private final DatePickerView view;
-  private final DatePickerModel model;
+public class DatePickerController extends Controller<DatePickerView, DatePickerModel> {
 
   public DatePickerController() {
-    view = new DatePickerView(this);
-    model = new DatePickerModel();
+    super(new DatePickerModel());
   }
 
   void loadMonth() {
-    view.setMonths(createMonth(view.getSelectedMonth()));
+    getView().setMonths(createMonth(getView().getSelectedMonth()));
   }
 
   private TableModel createMonth(int monthIndex) {
@@ -46,21 +43,23 @@ public class DatePickerController implements IController<DatePickerView, DatePic
   }
 
   void select() {
-    if (view.getSelectedDay() == -1) {
+    if (getView().getSelectedDay() == -1) {
       return;
     }
-    LocalDate date = Year.now().atMonth(view.getSelectedMonth() + 1).atDay(view.getSelectedDay());
+    LocalDate date =
+        Year.now().atMonth(getView().getSelectedMonth() + 1).atDay(getView().getSelectedDay());
     if (date.equals(model.getSelectedDate())) {
       commit();
     } else {
       model.setSelectedDate(date);
     }
-    view.setSelectionButtonText(
-        date.getDayOfWeek().getDisplayName(TextStyle.FULL_STANDALONE, Locale.GERMANY)
-            + " "
-            + date.getDayOfMonth()
-            + " "
-            + date.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMANY));
+    getView()
+        .setSelectionButtonText(
+            date.getDayOfWeek().getDisplayName(TextStyle.FULL_STANDALONE, Locale.GERMANY)
+                + " "
+                + date.getDayOfMonth()
+                + " "
+                + date.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMANY));
   }
 
   public LocalDate getSelectedValue() {
@@ -68,7 +67,7 @@ public class DatePickerController implements IController<DatePickerView, DatePic
   }
 
   void commit() {
-    view.back();
+    getView().back();
     finish();
   }
 
@@ -80,8 +79,8 @@ public class DatePickerController implements IController<DatePickerView, DatePic
   }
 
   @Override
-  public void fillUI() {
-    view.setMoths(Month.values());
+  public void fillView(DatePickerView datePickerView) {
+    datePickerView.setMoths(Month.values());
     loadMonth();
   }
 
@@ -90,12 +89,12 @@ public class DatePickerController implements IController<DatePickerView, DatePic
     return new PermissionKey[0];
   }
 
-  public static void requestDate(JFrameWindow current, Consumer<LocalDate> select) {
+  public static void requestDate(ViewContainer current, Consumer<LocalDate> select) {
     new DatePickerController() {
       @Override
       public void finish() {
         select.accept(getModel().getSelectedDate());
       }
-    }.openAsWindow(current, SubWindow::new);
+    }.openIn(new SubWindow(current));
   }
 }

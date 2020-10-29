@@ -5,15 +5,12 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-public class SettingController implements IController<SettingView, SettingModel> {
-  private final SettingModel model;
-  private SettingView view;
-
+public class SettingController extends Controller<SettingView, SettingModel> {
   public SettingController() {
-    model = new SettingModel();
+    super(new SettingModel());
   }
 
   @NotNull
@@ -23,9 +20,9 @@ public class SettingController implements IController<SettingView, SettingModel>
   }
 
   @Override
-  public void fillUI() {
-    view.setEditEnable(false);
-    view.setValues(Arrays.asList(Setting.values()));
+  public void fillView(SettingView settingView) {
+    getView().setEditEnable(false);
+    getView().setValues(Arrays.asList(Setting.values()));
   }
 
   @Override
@@ -37,70 +34,72 @@ public class SettingController implements IController<SettingView, SettingModel>
     switch (Setting.getExpectedType(model.getSelectedSettingValue()).getSimpleName()) {
       case "Integer":
         try {
-          Integer.parseInt(view.getValue());
+          Integer.parseInt(getView().getValue());
         } catch (NumberFormatException e) {
-          if (!view.commitType("ganze Zahl(-2147483648 bis +2147483647)")) {
+          if (!getView().commitType("ganze Zahl(-2147483648 bis +2147483647)")) {
             return;
           }
         }
         break;
       case "Long":
         try {
-          Long.parseLong(view.getValue());
+          Long.parseLong(getView().getValue());
         } catch (NumberFormatException e) {
-          if (!view.commitType(
-              "ganze Zahl(-9,223,372,036,854,775,808 bis +9,223,372,036,854,775,807)")) {
+          if (!getView()
+              .commitType(
+                  "ganze Zahl(-9,223,372,036,854,775,808 bis +9,223,372,036,854,775,807)")) {
             return;
           }
         }
         break;
       case "Double":
         try {
-          Double.parseDouble(view.getValue());
+          Double.parseDouble(getView().getValue());
         } catch (NumberFormatException e) {
-          if (!view.commitType(
-              "Kommazahl(-4.94065645841246544e-324d bis +1.79769313486231570e+308d)")) {
+          if (!getView()
+              .commitType("Kommazahl(-4.94065645841246544e-324d bis +1.79769313486231570e+308d)")) {
             return;
           }
         }
         break;
       case "Float":
         try {
-          Float.parseFloat(view.getValue());
+          Float.parseFloat(getView().getValue());
         } catch (NumberFormatException e) {
-          if (!view.commitType("Kommazahl(1.40129846432481707e-45 bis 3.40282346638528860e+38)")) {
+          if (!getView()
+              .commitType("Kommazahl(1.40129846432481707e-45 bis 3.40282346638528860e+38)")) {
             return;
           }
         }
         break;
       case "Boolean":
-        if (view.getValue().equals("false") || view.getValue().equals("true")) {
+        if (getView().getValue().equals("false") || getView().getValue().equals("true")) {
           break;
         } else {
-          if (!view.commitType("Boolean wert(ja = true, nein = false)")) {
+          if (!getView().commitType("Boolean wert(ja = true, nein = false)")) {
             return;
           }
         }
         break;
     }
-    model.edit(view.getValue());
-    view.setValues(Arrays.asList(Setting.values()));
+    model.edit(getView().getValue());
+    getView().setValues(Arrays.asList(Setting.values()));
     Main.logger.info(
         "User["
             + LogInModel.getLoggedIn().getId()
             + "] set "
             + model.getSelectedSettingValue().toString()
             + " to '"
-            + view.getValue()
+            + getView().getValue()
             + "'");
   }
 
   public void cancel() {
-    view.back();
+    getView().back();
   }
 
   public void resetAllSettings() {
-    if (view.commitResetSettings()) {
+    if (getView().commitResetSettings()) {
       for (Setting value : Setting.values()) {
         if (value != Setting.DB_INITIALIZED) {
           value.changeValue(value.getDefaultValue());
@@ -113,9 +112,9 @@ public class SettingController implements IController<SettingView, SettingModel>
   }
 
   public void select(Setting settingValue) {
-    view.setValue(settingValue.getValue());
-    view.setSelectedSetting(settingValue);
-    view.setEditEnable(true);
+    getView().setValue(settingValue.getValue());
+    getView().setSelectedSetting(settingValue);
+    getView().setEditEnable(true);
     model.setSelectedValue(settingValue);
   }
 }
