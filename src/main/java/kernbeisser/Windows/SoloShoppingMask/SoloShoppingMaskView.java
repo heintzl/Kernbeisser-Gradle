@@ -1,7 +1,6 @@
 package kernbeisser.Windows.SoloShoppingMask;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -45,11 +44,6 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
   @Override
   public IconCode getTabIcon() {
     return FontAwesome.SHOPPING_CART;
-  }
-
-  @Override
-  public boolean processKeyboardInput(KeyEvent e) {
-    return shoppingMaskUIView.processKeyboardInput(e);
   }
 
   @Override

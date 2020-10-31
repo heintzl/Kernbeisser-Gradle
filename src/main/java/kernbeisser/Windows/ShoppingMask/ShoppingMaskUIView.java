@@ -14,9 +14,7 @@ import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
-import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.SaleSession;
@@ -103,8 +101,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   static Vector<Component> traversalOrder = new Vector<Component>(1);
   static FocusTraversal traversalPolicy;
   @Getter private boolean isPreordered = false;
-  private BarcodeCapture barcodeCapture;
-  private KeyCapture keyCapture;
   private ShoppingItem currentItem;
 
   EnumSet<ArticleType> articleTypesWithSettablePrice;
@@ -123,7 +119,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     controller.startPay();
   }
 
-  private void openSearchWindow() {
+  void openSearchWindow() {
     controller.openSearchWindow();
   }
 
@@ -297,7 +293,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     updateDepositControl(type);
   }
 
-  private void articleTypeChange(ArticleType type) {
+  void articleTypeChange(ArticleType type) {
     if (currentArticleType != type) {
       articleTypeInitialize(type);
     }
@@ -581,7 +577,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     return amount.getSafeValue();
   }
 
-  private void setAmount(String value) {
+  void setAmount(String value) {
     if (amount.isEnabled() && amount.isVisible()) {
       this.amount.setText(value);
     }
@@ -829,22 +825,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
     westPanel.setFocusTraversalPolicy(traversalPolicy);
 
-    barcodeCapture = new BarcodeCapture(c -> controller.processBarcode(c));
-
-    keyCapture = new KeyCapture();
-    keyCapture.add(KeyEvent.VK_F2, () -> setAmount("2"));
-    keyCapture.add(KeyEvent.VK_F3, () -> setAmount("3"));
-    keyCapture.add(KeyEvent.VK_F4, () -> setAmount("4"));
-    keyCapture.add(KeyEvent.VK_F5, () -> setAmount("5"));
-    keyCapture.add(KeyEvent.VK_F6, () -> setAmount("6"));
-    keyCapture.add(KeyEvent.VK_F7, () -> setAmount("8"));
-    keyCapture.add(KeyEvent.VK_F8, () -> setAmount("10"));
-    keyCapture.add(KeyEvent.VK_INSERT, () -> optProduce.doClick());
-    keyCapture.add(KeyEvent.VK_PAGE_UP, () -> optBakedGoods.doClick());
-    keyCapture.add(KeyEvent.VK_END, () -> optArticleNo.doClick());
-    keyCapture.addALT(KeyEvent.VK_S, () -> searchArticle.doClick());
-    keyCapture.addCTRL(KeyEvent.VK_F, () -> searchArticle.doClick());
-
     articleTypeChange(ArticleType.ARTICLE_NUMBER);
 
     SwingUtilities.invokeLater(
@@ -885,11 +865,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   @Override
   public boolean isStackable() {
     return Setting.OPEN_MULTIPLE_SHOPPING_MASK.getBooleanValue();
-  }
-
-  @Override
-  public boolean processKeyboardInput(KeyEvent e) {
-    return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
   }
 
   public void setCheckoutEnable(boolean b) {

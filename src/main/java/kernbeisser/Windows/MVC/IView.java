@@ -1,7 +1,6 @@
 package kernbeisser.Windows.MVC;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -67,16 +66,6 @@ public interface IView<
 
   default boolean isStackable() {
     return false;
-  }
-
-  default boolean processKeyboardInput(KeyEvent e) {
-    if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()) {
-      JOptionPane.showMessageDialog(
-          getContent(), "In diesem Fenster ist keine Barcode-Eingabe möglich");
-      return true;
-    } else {
-      return false;
-    }
   }
 
   default Component getFocusOnInitialize() {

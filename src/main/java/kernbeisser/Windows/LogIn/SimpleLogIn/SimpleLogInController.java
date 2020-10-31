@@ -29,9 +29,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
   }
 
   @Override
-  public void fillView(SimpleLogInView simpleLogInView) {
-    Tools.activateKeyboardListener();
-  }
+  public void fillView(SimpleLogInView simpleLogInView) {}
 
   @Override
   public PermissionKey[] getRequiredKeys() {

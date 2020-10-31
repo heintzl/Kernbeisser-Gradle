@@ -68,7 +68,6 @@ public class SetProxy<T> implements Set<T>, ProtectedIterable {
   @Override
   @Key(PermissionKey.MODIFY_ITERABLE_VALUE)
   public boolean add(T t) {
-    System.out.println("adding this shit man");
     return values.add(t);
   }
 

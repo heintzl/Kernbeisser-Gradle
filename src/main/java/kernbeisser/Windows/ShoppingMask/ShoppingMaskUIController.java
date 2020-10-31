@@ -1,8 +1,11 @@
 package kernbeisser.Windows.ShoppingMask;
 
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
 import java.util.Objects;
 import javax.swing.JOptionPane;
+import kernbeisser.CustomComponents.BarcodeCapture;
+import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
@@ -26,6 +29,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, ShoppingMaskModel> {
   @Linked private final ShoppingCartController shoppingCartController;
+
+  private BarcodeCapture barcodeCapture;
+  private KeyCapture keyCapture;
 
   public ShoppingMaskUIController(SaleSession saleSession) throws NotEnoughCreditException {
     super(new ShoppingMaskModel(saleSession));
@@ -278,12 +284,28 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
 
   @Override
   public void fillView(ShoppingMaskUIView shoppingMaskUIView) {
-    getView().loadUserInfo(model.getSaleSession());
-    getView().setFocusOnKBNumber();
+    ShoppingMaskUIView view = getView();
+    view.loadUserInfo(model.getSaleSession());
+    view.setFocusOnKBNumber();
     shoppingCartController
         .getView()
         .getShoppingItemsTable()
         .addDoubleClickListener(this::loadShoppingItem);
+    barcodeCapture = new BarcodeCapture(this::processBarcode);
+
+    keyCapture = new KeyCapture();
+    keyCapture.add(KeyEvent.VK_F2, () -> view.setAmount("2"));
+    keyCapture.add(KeyEvent.VK_F3, () -> view.setAmount("3"));
+    keyCapture.add(KeyEvent.VK_F4, () -> view.setAmount("4"));
+    keyCapture.add(KeyEvent.VK_F5, () -> view.setAmount("5"));
+    keyCapture.add(KeyEvent.VK_F6, () -> view.setAmount("6"));
+    keyCapture.add(KeyEvent.VK_F7, () -> view.setAmount("8"));
+    keyCapture.add(KeyEvent.VK_F8, () -> view.setAmount("10"));
+    keyCapture.add(KeyEvent.VK_INSERT, () -> view.articleTypeChange(ArticleType.PRODUCE));
+    keyCapture.add(KeyEvent.VK_PAGE_UP, () -> view.articleTypeChange(ArticleType.BAKED_GOODS));
+    keyCapture.add(KeyEvent.VK_END, () -> view.articleTypeChange(ArticleType.ARTICLE_NUMBER));
+    keyCapture.addALT(KeyEvent.VK_S, view::openSearchWindow);
+    keyCapture.addCTRL(KeyEvent.VK_F, view::openSearchWindow);
   }
 
   @Override
@@ -338,6 +360,11 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     } catch (NumberFormatException e) {
       getView().messageInvalidBarcode(barcode);
     }
+  }
+
+  @Override
+  protected boolean processKeyboardInput(KeyEvent e) {
+    return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
   }
 
   @Override

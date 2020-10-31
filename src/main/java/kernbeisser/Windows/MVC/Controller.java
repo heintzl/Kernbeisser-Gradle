@@ -1,6 +1,7 @@
 package kernbeisser.Windows.MVC;
 
-import java.awt.Component;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -35,6 +38,27 @@ public abstract class Controller<
   }
 
   private final Collection<CloseEvent> closeEvents = new ArrayList<>();
+
+  static {
+    activateKeyboardListener();
+  }
+
+  private static void activateKeyboardListener() {
+    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+        .addKeyEventDispatcher(
+            new KeyEventDispatcher() {
+              @Override
+              public boolean dispatchKeyEvent(KeyEvent e) {
+                try {
+                  return ControllerReference.traceBack(e.getComponent())
+                      .getController()
+                      .processKeyboardInput(e);
+                } catch (UnsupportedOperationException ignored) {
+                  return false;
+                }
+              }
+            });
+  }
 
   public abstract void fillView(V v);
 
@@ -189,5 +213,15 @@ public abstract class Controller<
 
   public void addCloseEvent(CloseEvent closeEvent) {
     closeEvents.add(closeEvent);
+  }
+
+  protected boolean processKeyboardInput(KeyEvent e) {
+    if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()) {
+      JOptionPane.showMessageDialog(
+          view.getTopComponent(), "In diesem Fenster ist keine Barcode-Eingabe möglich");
+      return true;
+    } else {
+      return false;
+    }
   }
 }

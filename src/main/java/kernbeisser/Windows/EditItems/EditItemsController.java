@@ -3,6 +3,7 @@ package kernbeisser.Windows.EditItems;
 import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
+import java.awt.event.KeyEvent;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
@@ -13,7 +14,6 @@ import kernbeisser.Windows.EditItem.EditItemController;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
-import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
 import kernbeisser.Windows.ObjectView.ObjectViewView;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -23,7 +23,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
 
   private final ObjectViewController<Article> objectViewController;
 
-  @Linked private final BarcodeCapture capture;
+  private final BarcodeCapture capture;
 
   public EditItemsController() {
     super(new EditItemsModel());
@@ -53,6 +53,11 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
               objectViewController.setSearch(e);
               objectViewController.search();
             });
+  }
+
+  @Override
+  protected boolean processKeyboardInput(KeyEvent e) {
+    return capture.processKeyEvent(e);
   }
 
   @NotNull
