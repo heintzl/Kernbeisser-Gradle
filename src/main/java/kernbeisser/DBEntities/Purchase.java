@@ -27,7 +27,7 @@ public class Purchase {
   @GenericGenerator(name = "increment", strategy = "increment")
   @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_WRITE)})
-  private int id;
+  private long id;
 
   @ManyToOne
   @JoinColumn(nullable = false)
