@@ -66,7 +66,7 @@ public class Transaction {
     return Tools.getAll(Transaction.class, condition);
   }
 
-  public static void doTransaction(
+  public static Transaction doTransaction(
       User from, User to, double value, TransactionType transactionType, String info)
       throws InvalidTransactionException {
     if (from.getUserGroup().getId() == to.getUserGroup().getId())
@@ -115,6 +115,7 @@ public class Transaction {
     em.close();
     from.getUserGroup().setValue(from.getUserGroup().getValue() - value);
     to.getUserGroup().setValue(to.getUserGroup().getValue() + value);
+    return transaction;
   }
 
   public static boolean isValidTransaction(Transaction transaction) {
@@ -141,9 +142,9 @@ public class Transaction {
     }
   }
 
-  public static void doPurchaseTransaction(User customer, double value)
+  public static Transaction doPurchaseTransaction(User customer, double value)
       throws InvalidTransactionException {
-    doTransaction(
+    return doTransaction(
         customer,
         User.getKernbeisserUser(),
         value,

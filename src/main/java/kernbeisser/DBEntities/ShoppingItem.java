@@ -281,9 +281,12 @@ public class ShoppingItem implements Serializable {
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
   public double getRetailPrice() {
-    return itemRetailPrice
-        * itemMultiplier
-        * (isContainerDiscount() || !weighAble ? 1.0 : getPriceUnits().getBaseFactor());
+    return Math.round(
+            100.0
+                * itemRetailPrice
+                * itemMultiplier
+                * (isContainerDiscount() || !weighAble ? 1.0 : getPriceUnits().getBaseFactor()))
+        / 100.0;
   }
 
   public MetricUnits getPriceUnits() {

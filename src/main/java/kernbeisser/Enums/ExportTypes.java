@@ -3,10 +3,10 @@ package kernbeisser.Enums;
 import kernbeisser.Useful.Named;
 
 public enum ExportTypes implements Named {
-  CSV("CSV-Datei"),
-  JSON("JSON-Datei"),
+  PRINT("Ausdruck"),
   PDF("PDF-Datei"),
-  PRINT("Ausdruck");
+  JSON("JSON-Datei"),
+  CSV("CSV-Datei");
 
   private final String name;
 

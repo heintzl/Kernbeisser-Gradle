@@ -10,6 +10,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Reports.ReportManager;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -36,6 +37,22 @@ public class TillrollModel implements IModel<TillrollController> {
     return items;
   }
 
+  private void exportReport(ExportTypes exportType, ReportManager reportManager)
+      throws JRException {
+    switch (exportType) {
+      case PRINT:
+      case PDF:
+        if (exportType == ExportTypes.PDF) {
+          reportManager.exportPdf();
+        } else {
+          reportManager.sendToPrinter();
+        }
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+  }
+
   public void exportTillroll(ExportTypes exportType, int days)
       throws UnsupportedOperationException, IncorrectInput, JRException {
     Instant end = Instant.now();
@@ -45,19 +62,15 @@ public class TillrollModel implements IModel<TillrollController> {
     if (items.size() == 0) {
       throw new IncorrectInput("Leere Bonrolle");
     }
-    switch (exportType) {
-      case PRINT:
-      case PDF:
-        ReportManager tillroll = new ReportManager();
-        tillroll.initTillrollPrint(items, start, end);
-        if (exportType == ExportTypes.PDF) {
-          tillroll.exportPdf();
-        } else {
-          tillroll.sendToPrinter();
-        }
-        break;
-      default:
-        throw new UnsupportedOperationException();
-    }
+    ReportManager reportManager = new ReportManager();
+    reportManager.initTillrollPrint(items, start, end);
+    exportReport(exportType, reportManager);
+  }
+
+  public void exportAccountingReport(ExportTypes exportType, int startBon, int endBon)
+      throws UnsupportedOperationException, JRException, InvalidVATValueException {
+    ReportManager reportManager = new ReportManager();
+    reportManager.initAccountingReportPrint(startBon, endBon);
+    exportReport(exportType, reportManager);
   }
 }

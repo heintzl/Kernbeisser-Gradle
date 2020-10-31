@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
@@ -26,7 +27,7 @@ public class Purchase {
   @GenericGenerator(name = "increment", strategy = "increment")
   @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_WRITE)})
-  private int id;
+  private long id;
 
   @ManyToOne
   @JoinColumn(nullable = false)
@@ -58,15 +59,25 @@ public class Purchase {
     return out;
   }
 
+  private double getFilteredSum(Predicate<ShoppingItem> filter) {
+    return getAllItems().stream().filter(filter).mapToDouble(ShoppingItem::getRetailPrice).sum();
+  }
+
   public double getSum() {
-    return getAllItems().stream().mapToDouble(ShoppingItem::getRetailPrice).sum();
+    return getFilteredSum(s -> true);
+  }
+
+  public double getVatSum(VAT vat) {
+    return getFilteredSum(s -> s.getVat() == vat);
   }
 
   public double guessVatValue(VAT vat) {
     try {
-      double vatValue =
-          getAllItems().stream().filter(si -> si.getVat() == vat).findFirst().get().getVatValue();
-      return vatValue;
+      return getAllItems().stream()
+          .filter(si -> si.getVat() == vat)
+          .findFirst()
+          .get()
+          .getVatValue();
     } catch (NoSuchElementException e) {
       return 0.0;
     }

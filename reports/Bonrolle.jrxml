@@ -25,7 +25,7 @@
 	<field name="itemMultiplier" class="java.lang.Integer"/>
 	<field name="itemRetailPrice" class="java.lang.Double"/>
 	<field name="purchase.createDate" class="java.time.Instant"/>
-	<field name="purchase.id" class="java.lang.Integer"/>
+	<field name="purchase.id" class="java.lang.Long"/>
 	<group name="Purchase">
 		<groupExpression><![CDATA[$F{purchase.id}]]></groupExpression>
 		<groupHeader>

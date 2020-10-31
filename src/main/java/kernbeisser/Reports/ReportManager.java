@@ -9,7 +9,10 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.HashPrintServiceAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
@@ -18,13 +21,18 @@ import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.PrinterName;
 import javax.swing.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShoppingItemSum;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -47,7 +55,14 @@ public class ReportManager {
     return getDirectory(CONFIG_CATEGORY, "reportDirectory");
   }
 
-  private static Path getOutputFolder() {
+  static JasperReport getJasperReport(String key) throws JRException {
+    JasperDesign jspDesign =
+        JRXmlLoader.load(
+            getReportsFolder().resolve(getPath(CONFIG_CATEGORY, key)).toAbsolutePath().toFile());
+    return JasperCompileManager.compileReport(jspDesign);
+  }
+
+  static Path getOutputFolder() {
     return getDirectory(CONFIG_CATEGORY, "outputDirectory");
   }
 
@@ -72,47 +87,6 @@ public class ReportManager {
     }
     result.add(new PrinterName(printer, null));
     return result;
-  }
-
-  public static void initInvoicePrint(Collection<ShoppingItem> shoppingCart, Purchase purchase)
-      throws JRException {
-    JasperDesign jspDesign =
-        JRXmlLoader.load(
-            getReportsFolder()
-                .resolve(getPath(CONFIG_CATEGORY, "invoiceFileName"))
-                .toAbsolutePath()
-                .toFile());
-    JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
-    Map<String, Object> reportParams = getInvoiceParams(purchase);
-    JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
-    jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
-    outFileName =
-        String.format(
-            "%d_%s_%s_%s.pdf",
-            purchase.getId(),
-            purchase.getSession().getCustomer().getFirstName(),
-            purchase.getSession().getCustomer().getSurname(),
-            purchase.getCreateDate().toString());
-  }
-
-  public static void initTillrollPrint(
-      Collection<ShoppingItem> tillroll, Instant start, Instant end) throws JRException {
-    Timestamp startDate = Timestamp.from(start);
-    Timestamp endDate = Timestamp.from(end);
-    JasperDesign jspDesign =
-        JRXmlLoader.load(
-            getReportsFolder()
-                .resolve(getPath(CONFIG_CATEGORY, "tillrollFileName"))
-                .toAbsolutePath()
-                .toFile());
-    JasperReport jspReport = JasperCompileManager.compileReport(jspDesign);
-    Map<String, Object> reportParams = new HashMap<>();
-    reportParams.put("start", startDate);
-    reportParams.put("ende", endDate);
-    JRDataSource dataSource = new JRBeanCollectionDataSource(tillroll);
-    jspPrint = JasperFillManager.fillReport(jspReport, reportParams, dataSource);
-    outFileName =
-        String.format("KernbeisserBonrolle_%s_%s.pdf", startDate.toString(), endDate.toString());
   }
 
   public void sendToPrinter() throws JRException {
@@ -169,7 +143,7 @@ public class ReportManager {
     return outFileName.replaceAll("[\\\\/:*?\"<>|]", "_");
   }
 
-  @NotNull
+  // start Invoice
   private static Map<String, Object> getInvoiceParams(Purchase purchase) {
     Collection<ShoppingItem> items = purchase.getAllItems();
     double credit =
@@ -189,4 +163,185 @@ public class ReportManager {
 
     return reportParams;
   }
+
+  public static void initInvoicePrint(Collection<ShoppingItem> shoppingCart, Purchase purchase)
+      throws JRException {
+    Map<String, Object> reportParams = getInvoiceParams(purchase);
+    JRDataSource dataSource = new JRBeanCollectionDataSource(shoppingCart);
+    jspPrint =
+        JasperFillManager.fillReport(getJasperReport("invoiceFileName"), reportParams, dataSource);
+    outFileName =
+        String.format(
+            "%d_%s_%s_%s.pdf",
+            purchase.getId(),
+            purchase.getSession().getCustomer().getFirstName(),
+            purchase.getSession().getCustomer().getSurname(),
+            purchase.getCreateDate().toString());
+  }
+
+  // start Tillroll
+  public static void initTillrollPrint(
+      Collection<ShoppingItem> tillroll, Instant start, Instant end) throws JRException {
+    Timestamp startDate = Timestamp.from(start);
+    Timestamp endDate = Timestamp.from(end);
+    Map<String, Object> reportParams = new HashMap<>();
+    reportParams.put("start", startDate);
+    reportParams.put("ende", endDate);
+    JRDataSource dataSource = new JRBeanCollectionDataSource(tillroll);
+    jspPrint =
+        JasperFillManager.fillReport(getJasperReport("tillrollFileName"), reportParams, dataSource);
+    outFileName =
+        String.format("KernbeisserBonrolle_%s_%s.pdf", startDate.toString(), endDate.toString());
+  }
+
+  // start Accounting Report
+  static long countVatValues(Collection<Purchase> purchases, VAT vat) {
+    return purchases.stream()
+        .flatMap(p -> p.getAllItems().stream())
+        .filter(s -> s.getVat() == vat)
+        .mapToDouble(ShoppingItem::getVatValue)
+        .distinct()
+        .count();
+  }
+
+  static double getVatValue(Collection<Purchase> purchases, VAT vat) {
+    return purchases.stream()
+        .flatMap(p -> p.getAllItems().stream())
+        .filter(s -> s.getVat() == vat)
+        .mapToDouble(ShoppingItem::getVatValue)
+        .findFirst()
+        .orElse(vat.getValue());
+  }
+
+  @NotNull
+  private static Map<String, Object> getAccountingPurchaseParams(List<Purchase> purchases)
+      throws InvalidVATValueException {
+    double sumTotalPurchased = 0.0;
+    double sumVatHiPurchased = 0.0;
+    double sumVatLoPurchased = 0.0;
+    Timestamp endDate = Timestamp.from(purchases.get(purchases.size() - 1).getCreateDate());
+
+    long t_high = countVatValues(purchases, VAT.HIGH);
+    long t_low = countVatValues(purchases, VAT.LOW);
+    if (t_high > 1 || t_low > 1) {
+      String message = "";
+      if (t_low > 1) {
+        message += "Mehrere Werte für niedrigen MWSt.-Satz gefunden \n";
+      }
+      if (t_high > 1) {
+        message += "Mehrere Werte für hohen MWSt.-Satz gefunden \n";
+      }
+      message +=
+          "Gab es zwischenzeitlich einen Wechsel des Steuersatzes?\n"
+              + "Der Bericht muss für einen Zeitraum mit eindeutigen Steuersätzen ausgegeben werden!";
+      JOptionPane.showMessageDialog(
+          JOptionPane.getRootFrame(),
+          message,
+          "Uneindeutige Steuersätze",
+          JOptionPane.ERROR_MESSAGE);
+      throw new InvalidVATValueException(1000.0);
+    }
+    double vatLoValue = getVatValue(purchases, VAT.LOW);
+    double vatHiValue = getVatValue(purchases, VAT.HIGH);
+    for (Purchase p : purchases) {
+      sumVatHiPurchased += p.getVatSum(VAT.HIGH);
+      sumVatLoPurchased += p.getVatSum(VAT.LOW);
+      sumTotalPurchased += p.getSum();
+    }
+
+    Map<String, Object> reportParams = new HashMap<>();
+    reportParams.put("end", endDate);
+    reportParams.put("vatHiValue", vatHiValue);
+    reportParams.put("vatLoValue", vatLoValue);
+    reportParams.put("sumTotalPurchased", sumTotalPurchased);
+    reportParams.put("sumVatHiPurchased", sumVatHiPurchased);
+    reportParams.put("sumVatLoPurchased", sumVatLoPurchased);
+
+    return reportParams;
+  }
+
+  private static Map<String, Object> getAccountingTransactionParams(List<Purchase> purchases)
+      throws InvalidVATValueException {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    double transactionSaldo = 0.0;
+    double transactionCreditPayIn = 0.0;
+    double transactionSpecialPayments = 0.0;
+    double transactionPurchases = 0.0;
+    Instant startDate;
+    long lastReportedBonNo = purchases.get(0).getId() - 1;
+    Purchase bon = em.find(Purchase.class, lastReportedBonNo);
+    if (bon == null) {
+      startDate =
+          em.createQuery("select t from Transaction t order by t.date asc", Transaction.class)
+              .setFirstResult(0)
+              .setMaxResults(1)
+              .getSingleResult()
+              .getDate()
+              .minusSeconds(1);
+    } else {
+      startDate = bon.getSession().getTransaction().getDate();
+    }
+    Instant endDate = purchases.get(purchases.size() - 1).getCreateDate();
+    List<Transaction> transactions =
+        em.createQuery(
+                "select t from Transaction t where t.date > :from and t.date <= :to",
+                Transaction.class)
+            .setParameter("from", startDate)
+            .setParameter("to", endDate)
+            .getResultList();
+
+    for (Transaction t : transactions) {
+      User kbUser = User.getKernbeisserUser();
+      if (t.getFrom().equals(kbUser) || t.getTo().equals(kbUser)) {
+        transactionSaldo += t.getValue();
+        switch (t.getTransactionType()) {
+          case PURCHASE:
+            transactionPurchases += t.getValue();
+            break;
+          case USER_GENERATED:
+            transactionSpecialPayments += t.getValue();
+            break;
+          case PAYIN:
+          case INITIALIZE:
+            transactionCreditPayIn += t.getValue();
+            break;
+        }
+      }
+    }
+    Map<String, Object> reportParams = new HashMap<>();
+    reportParams.put("start", Timestamp.from(startDate));
+    reportParams.put("transactionSaldo", transactionSaldo);
+    reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
+    reportParams.put("transactionSpecialPayments", transactionSpecialPayments);
+    reportParams.put("transactionPurchases", transactionPurchases);
+
+    return reportParams;
+  }
+
+  public static void initAccountingReportPrint(long startBon, long endBon)
+      throws JRException, InvalidVATValueException, NoResultException {
+    EntityManager em = DBConnection.getEntityManager();
+
+    List<Purchase> purchases =
+        em.createQuery("select p from Purchase p where p.id between :from and :to", Purchase.class)
+            .setParameter("from", startBon)
+            .setParameter("to", endBon)
+            .getResultList();
+    if (purchases.isEmpty()) {
+      throw new NoResultException();
+    }
+
+    Map<String, Object> reportParams = getAccountingPurchaseParams(purchases);
+    reportParams.putAll(getAccountingTransactionParams(purchases));
+    JRDataSource dataSource = new JRBeanCollectionDataSource(purchases);
+    jspPrint =
+        JasperFillManager.fillReport(
+            getJasperReport("accountingReportFileName"), reportParams, dataSource);
+    outFileName =
+        String.format(
+            "KernbeisserBuchhaltungBonUebersicht_%s_%s.pdf",
+            reportParams.get("start").toString(), reportParams.get("end").toString());
+  }
+
+  // start usergroup balance
 }

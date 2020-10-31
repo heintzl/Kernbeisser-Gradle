@@ -12,7 +12,7 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<style name="Bold" markup="none" isBold="true"/>
-	<parameter name="BonNo" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="BonNo" class="java.lang.Long" isForPrompting="false"/>
 	<parameter name="Customer" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="CreditWarning" class="java.lang.Boolean"/>
 	<parameter name="Credit" class="java.lang.Double"/>

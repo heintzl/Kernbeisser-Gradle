@@ -14,6 +14,10 @@ public class TillrollView extends JDialog implements IView<TillrollController> {
   private JButton submit;
   private IntegerParseField days;
   private JPanel main;
+  private JRadioButton optBonrolle;
+  private JRadioButton optLadendienstEndabrechnung;
+  private IntegerParseField startBon;
+  private IntegerParseField endBon;
 
   @Linked private TillrollController controller;
 
@@ -25,11 +29,20 @@ public class TillrollView extends JDialog implements IView<TillrollController> {
     return (ExportTypes) exportType.getSelectedItem();
   }
 
+  void submit(TillrollController controller) {
+    if (optBonrolle.isSelected()) {
+      controller.exportTillroll(getExportType(), getDays());
+    } else if (optLadendienstEndabrechnung.isSelected()) {
+      controller.exportAccountingReport(
+          getExportType(), startBon.getSafeValue(), endBon.getSafeValue());
+    }
+  }
+
   @Override
   public void initialize(TillrollController controller) {
     days.setText("1");
     cancel.addActionListener(e -> back());
-    submit.addActionListener(e -> controller.exportTillroll(getExportType(), getDays()));
+    submit.addActionListener(e -> submit(controller));
     ExportTypes[] exportTypes = controller.getExportTypes();
     for (int i = 0; i < exportTypes.length; i++) {
       exportType.addItem(exportTypes[i]);
