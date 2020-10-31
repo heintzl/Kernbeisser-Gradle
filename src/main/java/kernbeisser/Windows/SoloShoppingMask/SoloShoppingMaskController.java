@@ -9,7 +9,6 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
-import org.jetbrains.annotations.NotNull;
 
 public class SoloShoppingMaskController
     extends Controller<SoloShoppingMaskView, SoloShoppingMaskModel> {

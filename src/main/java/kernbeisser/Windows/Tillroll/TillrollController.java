@@ -39,11 +39,11 @@ public class TillrollController extends Controller<TillrollView, TillrollModel> 
   public void exportAccountingReport(ExportTypes exportType, int startBon, int endBon) {
     try {
       model.exportAccountingReport(exportType, startBon, endBon);
-      view.back();
+      getView().back();
     } catch (UnsupportedOperationException e) {
-      view.messageNotImplemented(exportType);
+      getView().messageNotImplemented(exportType);
     } catch (InvalidVATValueException e) {
-      view.messageNoItems(e.getMessage());
+      getView().messageNoItems(e.getMessage());
     } catch (JRException e) {
       if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
         Tools.showPrintAbortedWarning(e, true);
