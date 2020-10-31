@@ -72,4 +72,9 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
         getTopComponent(),
         "Der Ausgewählte Benutzer hat nicht genung Guthaben, um ein Einkauf zu beginnen!");
   }
+
+  @Override
+  public String getTitle() {
+    return "Ladendiesnst Menu";
+  }
 }

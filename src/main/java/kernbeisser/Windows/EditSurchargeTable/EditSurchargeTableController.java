@@ -4,27 +4,24 @@ import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class EditSurchargeTableController
-    implements IController<EditSurchargeTableView, EditSurchargeTableModel> {
-
-  private final EditSurchargeTableModel model;
-  private EditSurchargeTableView view;
+    extends Controller<EditSurchargeTableView, EditSurchargeTableModel> {
 
   public EditSurchargeTableController(SurchargeTable surchargeTable, Mode mode) {
-    this.model =
+    super(
         new EditSurchargeTableModel(
-            surchargeTable == null ? new SurchargeTable() : surchargeTable, mode);
+            surchargeTable == null ? new SurchargeTable() : surchargeTable, mode));
     if (mode == Mode.REMOVE) {
       Tools.delete(SurchargeTable.class, surchargeTable.getId());
     }
   }
 
   public void commit() {
-    if (view.getObjectForm().applyMode(model.getMode())) {
-      view.back();
+    if (getView().getObjectForm().applyMode(model.getMode())) {
+      getView().back();
     }
   }
 
@@ -34,9 +31,9 @@ public class EditSurchargeTableController
   }
 
   @Override
-  public void fillUI() {
-    view.setSuppliers(model.getAllSuppliers());
-    view.getObjectForm().setSource(model.getSource());
+  public void fillView(EditSurchargeTableView editSurchargeTableView) {
+    getView().setSuppliers(model.getAllSuppliers());
+    getView().getObjectForm().setSource(model.getSource());
   }
 
   @Override

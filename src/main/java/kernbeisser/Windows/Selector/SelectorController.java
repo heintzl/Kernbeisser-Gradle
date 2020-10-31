@@ -5,20 +5,18 @@ import java.util.function.Consumer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
-import kernbeisser.Windows.Window;
-import kernbeisser.Windows.WindowImpl.SubWindow;
+import kernbeisser.Windows.ViewContainer;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class SelectorController<T> implements IController<SelectorView<T>, SelectorModel<T>> {
-  private final SelectorModel<T> model;
-  private SelectorView<T> view;
+public class SelectorController<T> extends Controller<SelectorView<T>, SelectorModel<T>> {
 
   @SafeVarargs
   public SelectorController(
       String title, Collection<T> currentValues, Searchable<T> searchable, Column<T>... columns) {
-    this.model = new SelectorModel<T>(currentValues, title, searchable, columns);
+    super(new SelectorModel<T>(currentValues, title, searchable, columns));
   }
 
   @Override
@@ -27,10 +25,10 @@ public class SelectorController<T> implements IController<SelectorView<T>, Selec
   }
 
   @Override
-  public void fillUI() {
-    view.setObjects(model.getCurrentValues());
-    view.setColumns(model.getColumns());
-    view.setTitle(model.getTitle());
+  public void fillView(SelectorView<T> tSelectorView) {
+    tSelectorView.setObjects(model.getCurrentValues());
+    tSelectorView.setColumns(model.getColumns());
+    tSelectorView.setTitle(model.getTitle());
   }
 
   @Override
@@ -39,11 +37,11 @@ public class SelectorController<T> implements IController<SelectorView<T>, Selec
   }
 
   public void remove() {
-    model.getCurrentValues().remove(view.getSelectedValue());
-    view.removeValue(view.getSelectedValue());
+    model.getCurrentValues().remove(getView().getSelectedValue());
+    getView().removeValue(getView().getSelectedValue());
   }
 
-  private Window selectionWindow;
+  private ViewContainer selectionWindow;
 
   public void add() {
     if (selectionWindow != null) {
@@ -53,13 +51,13 @@ public class SelectorController<T> implements IController<SelectorView<T>, Selec
         new SearchBoxController<T>(model.getSearchable(), model.getColumns());
     Consumer<T> selection =
         e -> {
-          view.addValue(e);
+          getView().addValue(e);
           model.getCurrentValues().add(e);
-          selectionWindow.back();
+          selectionWindow.requestClose();
           selectionWindow = null;
         };
     controller.addDoubleClickListener(selection);
     controller.addSelectionListener(selection);
-    selectionWindow = controller.openAsWindow(view.getWindow(), SubWindow::new);
+    selectionWindow = controller.openIn(new SubWindow(getView().traceViewContainer()));
   }
 }

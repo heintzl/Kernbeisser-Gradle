@@ -19,6 +19,7 @@ public class SettingView implements IView<SettingController> {
   private JTextField value;
   private JLabel setting;
   private JButton resetSettings;
+  private SettingController controller;
 
   @Override
   public void initialize(SettingController controller) {
@@ -89,5 +90,10 @@ public class SettingView implements IView<SettingController> {
   @Override
   public IconCode getTabIcon() {
     return FontAwesome.WRENCH;
+  }
+
+  @Override
+  public String getTitle() {
+    return "Einstellungen";
   }
 }

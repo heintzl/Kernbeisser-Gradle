@@ -7,21 +7,16 @@ import kernbeisser.CustomComponents.Charts.BuyChart;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Purchase.PurchaseController;
-import kernbeisser.Windows.WindowImpl.SubWindow;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class UserInfoController implements IController<UserInfoView, UserInfoModel> {
-
-  private UserInfoView view;
-
-  private final UserInfoModel model;
+public class UserInfoController extends Controller<UserInfoView, UserInfoModel> {
 
   public UserInfoController(User user) {
-    this.model = new UserInfoModel(user);
+    super(new UserInfoModel(user));
   }
 
   @Override
@@ -29,30 +24,15 @@ public class UserInfoController implements IController<UserInfoView, UserInfoMod
     return model;
   }
 
-  @Override
-  public void fillUI() {
-    if (model.getUser().getId() == LogInModel.getLoggedIn().getId()) {
-      view.pasteWithoutPermissionCheck(model.getUser());
-    } else {
-      view.pasteUser(model.getUser());
-    }
-    loadCurrentSite();
-  }
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
-
   public void loadCurrentSite() {
-    switch (view.getSelectedTabIndex()) {
+    switch (getView().getSelectedTabIndex()) {
       case 0:
-        view.setJobs(model.getUser().getJobs());
-        view.setPermissions(model.getUser().getPermissions());
-        view.setUserGroupMembers(model.getUser().getUserGroup().getMembers());
+        getView().setJobs(model.getUser().getJobs());
+        getView().setPermissions(model.getUser().getPermissions());
+        getView().setUserGroupMembers(model.getUser().getUserGroup().getMembers());
         return;
       case 1:
-        view.setShoppingHistory(model.getUser().getAllPurchases());
+        getView().setShoppingHistory(model.getUser().getAllPurchases());
         return;
       case 2:
         Collection<Column<Transaction>> columns = new ArrayList<>();
@@ -81,8 +61,8 @@ public class UserInfoController implements IController<UserInfoView, UserInfoMod
         columns.add(generateAfterValueChangeColumn());
         columns.add(Column.create("Info", Transaction::getInfo));
         columns.add(Column.create("Datum", Transaction::getDate));
-        view.setValueHistoryColumns(columns);
-        view.setValueHistory(model.getUser().getAllValueChanges());
+        getView().setValueHistoryColumns(columns);
+        getView().setValueHistory(model.getUser().getAllValueChanges());
         return;
     }
   }
@@ -136,7 +116,17 @@ public class UserInfoController implements IController<UserInfoView, UserInfoMod
   }
 
   public void openPurchase() {
-    new PurchaseController(view.getSelectedPurchase())
-        .openAsWindow(view.getWindow(), SubWindow::new);
+    new PurchaseController(getView().getSelectedPurchase())
+        .openIn(new SubWindow(getView().traceViewContainer()));
+  }
+
+  @Override
+  public void fillView(UserInfoView userInfoView) {
+    if (model.getUser().getId() == LogInModel.getLoggedIn().getId()) {
+      userInfoView.pasteWithoutPermissionCheck(model.getUser());
+    } else {
+      userInfoView.pasteUser(model.getUser());
+    }
+    loadCurrentSite();
   }
 }

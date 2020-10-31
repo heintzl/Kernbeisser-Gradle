@@ -75,4 +75,9 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
   public IconCode getTabIcon() {
     return FontAwesome.SIGN_IN;
   }
+
+  @Override
+  public String getTitle() {
+    return "Log In";
+  }
 }

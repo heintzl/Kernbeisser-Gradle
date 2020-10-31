@@ -11,38 +11,36 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import org.jetbrains.annotations.NotNull;
 
 public class CashierShoppingMaskController
-    implements IController<CashierShoppingMaskView, CashierShoppingMaskModel> {
-  private final CashierShoppingMaskModel model;
-  private CashierShoppingMaskView view;
+    extends Controller<CashierShoppingMaskView, CashierShoppingMaskModel> {
 
   @Linked private final SearchBoxController<User> searchBoxController;
 
   public CashierShoppingMaskController() {
+    super(new CashierShoppingMaskModel());
     this.searchBoxController =
         new SearchBoxController<>(
             User::defaultSearch,
             Column.create("Vorname", User::getFirstName),
             Column.create("Nachname", User::getSurname),
             Column.create("Benutzername", User::getUsername));
-    searchBoxController.getView();
     searchBoxController.addLostSelectionListener(() -> selectUser(null));
     searchBoxController.addSelectionListener(this::selectUser);
     searchBoxController.addDoubleClickListener(e -> openMaskWindow());
-    model = new CashierShoppingMaskModel();
   }
 
   private void selectUser(User tableSelection) {
+    getView();
     if (tableSelection != null) {
-      view.setOpenShoppingMaskEnabled(true);
-      view.setStartFor(tableSelection.getFirstName(), tableSelection.getSurname());
+      getView().setOpenShoppingMaskEnabled(true);
+      getView().setStartFor(tableSelection.getFirstName(), tableSelection.getSurname());
     } else {
-      view.setOpenShoppingMaskEnabled(false);
+      getView().setOpenShoppingMaskEnabled(false);
     }
   }
 
@@ -50,22 +48,17 @@ public class CashierShoppingMaskController
     SaleSession saleSession = new SaleSession(SaleSessionType.ASSISTED);
     saleSession.setCustomer(searchBoxController.getSelectedObject());
     saleSession.setSeller(LogInModel.getLoggedIn());
-    if (!view.getSecondSeller().toString().equals("Keiner")) {
+    if (!getView().getSecondSeller().toString().equals("Keiner")) {
       try {
-        saleSession.setSecondSeller(view.getSecondSeller());
+        saleSession.setSecondSeller(getView().getSecondSeller());
       } catch (NoResultException e) {
         return;
       }
     }
     try {
-      new ShoppingMaskUIController(saleSession)
-          .openTab(
-              "Einkauf für "
-                  + saleSession.getCustomer().getSurname()
-                  + ", "
-                  + saleSession.getCustomer().getFirstName());
+      new ShoppingMaskUIController(saleSession).openTab();
     } catch (NotEnoughCreditException e) {
-      view.notEnoughCredit();
+      getView().notEnoughCredit();
     }
   }
 
@@ -79,8 +72,8 @@ public class CashierShoppingMaskController
   }
 
   @Override
-  public void fillUI() {
-    view.setAllSecondarySellers(User.getAll(null));
+  public void fillView(CashierShoppingMaskView cashierShoppingMaskView) {
+    cashierShoppingMaskView.setAllSecondarySellers(User.getAll(null));
   }
 
   @Override

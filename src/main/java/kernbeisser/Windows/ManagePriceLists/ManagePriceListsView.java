@@ -8,11 +8,10 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.Window;
-import kernbeisser.Windows.WindowImpl.SubWindow;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsView implements IView<ManagePriceListsController> {
@@ -66,19 +65,15 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
         == 0;
   }
 
-  private Window w;
-
   public void requiresPriceList(Consumer<Node<PriceList>> consumer) {
     ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
     priceListObjectTree.addSelectionListener(
         e -> {
-          w.back();
           consumer.accept(e);
+          IView.traceViewContainer(priceListObjectTree.getParent()).requestClose();
         });
-    w =
-        IController.createFakeController(priceListObjectTree)
-            .openAsWindow(getWindow(), SubWindow::new);
-    w.setTitle("Preisliste auswählen");
+    new ComponentController(priceListObjectTree, "Preisliste auswählen")
+        .openIn(new SubWindow(traceViewContainer()));
   }
 
   public void selectionRequired() {
@@ -118,5 +113,10 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   public void nameAlreadyExists(String name) {
     JOptionPane.showMessageDialog(getTopComponent(), "Der Name " + name + " existiert bereits.");
+  }
+
+  @Override
+  public String getTitle() {
+    return "Preislisten bearbeiten";
   }
 }

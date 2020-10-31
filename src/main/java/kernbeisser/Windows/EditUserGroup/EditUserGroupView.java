@@ -119,4 +119,9 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   void setUsername(String username) {
     this.username.setText(username);
   }
+
+  @Override
+  public String getTitle() {
+    return "Nutzergruppe ändern";
+  }
 }

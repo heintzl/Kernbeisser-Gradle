@@ -10,15 +10,12 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-public class PayController implements IController<PayView, PayModel> {
-
-  private final PayModel model;
-  private PayView view;
+public class PayController extends Controller<PayView, PayModel> {
   private final Dimension viewSize;
   @Getter private final double userValue;
 
@@ -29,11 +26,11 @@ public class PayController implements IController<PayView, PayModel> {
       List<ShoppingItem> shoppingCart,
       Runnable transferCompleted,
       Dimension windowSize) {
+    super(new PayModel(saleSession, shoppingCart, transferCompleted));
     userValue = saleSession.getCustomer().getUserGroup().getValue();
     cartController =
         new ShoppingCartController(
             userValue, saleSession.getCustomer().getUserGroup().getSolidaritySurcharge(), false);
-    model = new PayModel(saleSession, shoppingCart, transferCompleted);
     this.viewSize = windowSize;
   }
 
@@ -47,13 +44,14 @@ public class PayController implements IController<PayView, PayModel> {
         if (printReceipt) {
           PayModel.print(purchase, model.getShoppingCart());
         }
-        view.confirmLogging(
-            model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());
-        view.back();
+        getView()
+            .confirmLogging(
+                model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());
+        getView().back();
 
         model.runTransferCompleted();
       } catch (InvalidTransactionException e) {
-        view.notEnoughValue();
+        getView().notEnoughValue();
       }
 
     } catch (PersistenceException e) {
@@ -73,9 +71,9 @@ public class PayController implements IController<PayView, PayModel> {
   }
 
   @Override
-  public void fillUI() {
-    view.setViewSize(viewSize);
-    view.fillShoppingCart(model.getShoppingCart());
+  public void fillView(PayView payView) {
+    getView().setViewSize(viewSize);
+    getView().fillShoppingCart(model.getShoppingCart());
   }
 
   @Override

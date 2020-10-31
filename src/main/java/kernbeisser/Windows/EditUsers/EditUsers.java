@@ -9,7 +9,8 @@ import kernbeisser.Windows.ObjectView.ObjectViewController;
 public class EditUsers extends ObjectViewController<User> {
   public EditUsers() {
     super(
-        (user, mode) -> new EditUserController(user, mode),
+        "Benutzer bearbeiten",
+        EditUserController::new,
         User::defaultSearch,
         false,
         Column.create("Vorname", User::getFirstName),

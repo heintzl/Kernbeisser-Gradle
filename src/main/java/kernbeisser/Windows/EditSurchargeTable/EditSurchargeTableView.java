@@ -8,6 +8,7 @@ import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeTable;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 class EditSurchargeTableView implements IView<EditSurchargeTableController> {
@@ -27,6 +28,7 @@ class EditSurchargeTableView implements IView<EditSurchargeTableController> {
   private JPanel main;
 
   private ObjectForm<SurchargeTable> objectForm;
+  @Linked private EditSurchargeTableController controller;
 
   void setSuppliers(Collection<Supplier> suppliers) {
     supplier.removeAllItems();

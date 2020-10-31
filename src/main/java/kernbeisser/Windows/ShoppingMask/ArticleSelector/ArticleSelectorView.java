@@ -17,6 +17,8 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
   private SearchBoxView<Article> searchBox;
   private JCheckBox showInShopArticles;
 
+  @Linked private ArticleSelectorController controller;
+
   @Linked private SearchBoxController<Article> searchBoxController;
 
   boolean searchOnlyWithoutBarcode() {

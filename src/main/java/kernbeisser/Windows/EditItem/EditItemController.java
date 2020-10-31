@@ -8,16 +8,13 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-public class EditItemController implements IController<EditItemView, EditItemModel> {
-
-  private EditItemView view;
-  private final EditItemModel model;
+public class EditItemController extends Controller<EditItemView, EditItemModel> {
 
   public EditItemController(Article article, Mode mode) {
-    model = new EditItemModel(article != null ? article : new Article(), mode);
+    super(new EditItemModel(article != null ? article : new Article(), mode));
     switch (mode) {
       case ADD:
         getView().setActionTitle("Als neuen Artikel aufnehmen");
@@ -37,13 +34,13 @@ public class EditItemController implements IController<EditItemView, EditItemMod
   }
 
   @Override
-  public void fillUI() {
-    view.setPriceLists(model.getAllPriceLists());
-    view.setSuppliers(model.getAllSuppliers());
-    view.setUnits(model.getAllUnits());
-    view.setContainerDefinitions(model.getAllContainerDefinitions());
-    view.setVATs(model.getAllVATs());
-    view.getArticleObjectForm().setSource(model.getSource());
+  public void fillView(EditItemView editItemView) {
+    editItemView.setPriceLists(model.getAllPriceLists());
+    editItemView.setSuppliers(model.getAllSuppliers());
+    editItemView.setUnits(model.getAllUnits());
+    editItemView.setContainerDefinitions(model.getAllContainerDefinitions());
+    editItemView.setVATs(model.getAllVATs());
+    editItemView.getArticleObjectForm().setSource(model.getSource());
   }
 
   @Override
@@ -57,7 +54,7 @@ public class EditItemController implements IController<EditItemView, EditItemMod
         if (name.equals(model.getSource().getName())) return name;
       case ADD:
         if (EditItemModel.nameExists(name)) {
-          view.nameAlreadyExists();
+          getView().nameAlreadyExists();
           throw new CannotParseException("Name already taken");
         } else return name;
       default:
@@ -73,7 +70,7 @@ public class EditItemController implements IController<EditItemView, EditItemMod
           if (model.getSource().getKbNumber() == number) return number;
         case ADD:
           if (!(model.kbNumberExists(number) > -1)) return number;
-          else if (view.kbNumberAlreadyExists()) {
+          else if (getView().kbNumberAlreadyExists()) {
             return model.nextUnusedArticleNumber(number);
           } else {
             throw new CannotParseException("Number is already taken");
@@ -96,7 +93,7 @@ public class EditItemController implements IController<EditItemView, EditItemMod
         case ADD:
           if (!(model.barcodeExists(barcode) > -1)) return barcode;
           else {
-            view.barcodeAlreadyExists();
+            getView().barcodeAlreadyExists();
             throw new CannotParseException("Barcode is already taken");
           }
         default:
@@ -108,21 +105,21 @@ public class EditItemController implements IController<EditItemView, EditItemMod
   }
 
   void doAction() {
-    if (view.getArticleObjectForm().applyMode(model.getMode())) view.back();
+    if (getView().getArticleObjectForm().applyMode(model.getMode())) getView().back();
   }
 
   public int validateAmount(String s) {
-    MetricUnits unit = view.getMetricUnits();
+    MetricUnits unit = getView().getMetricUnits();
     if (unit != null) {
       return (int)
-          (Double.parseDouble(s.replace(",", ".")) / view.getMetricUnits().getBaseFactor());
+          (Double.parseDouble(s.replace(",", ".")) / getView().getMetricUnits().getBaseFactor());
     } else throw new NullPointerException();
   }
 
   public String displayAmount(int amount) {
     MetricUnits units =
         getView().getMetricUnits() != null
-            ? view.getMetricUnits()
+            ? getView().getMetricUnits()
             : model.getSource().getMetricUnits();
     return amount * units.getBaseFactor() + "";
   }

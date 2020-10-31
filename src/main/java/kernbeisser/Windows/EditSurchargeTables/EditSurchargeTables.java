@@ -8,6 +8,7 @@ import kernbeisser.Windows.ObjectView.ObjectViewController;
 public class EditSurchargeTables extends ObjectViewController<SurchargeTable> {
   public EditSurchargeTables() {
     super(
+        "Zuschlagstabellen bearbeiten",
         EditSurchargeTableController::new,
         SurchargeTable::defaultSearch,
         true,

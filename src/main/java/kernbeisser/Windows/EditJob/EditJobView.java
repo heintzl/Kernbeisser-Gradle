@@ -5,6 +5,7 @@ import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class EditJobView implements IView<EditJobController> {
@@ -16,6 +17,8 @@ public class EditJobView implements IView<EditJobController> {
   private AccessCheckingField<Job, String> description;
 
   private ObjectForm<Job> form;
+
+  @Linked private EditJobController controller;
 
   @Override
   public void initialize(EditJobController controller) {
