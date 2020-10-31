@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.HashPrintServiceAttributeSet;
@@ -20,6 +21,7 @@ import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.PrinterName;
 import javax.swing.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Transaction;
@@ -30,6 +32,7 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -211,27 +214,12 @@ public class ReportManager {
   }
 
   @NotNull
-  private static Map<String, Object> getAccountingParams(List<Purchase> purchases)
+  private static Map<String, Object> getAccountingPurchaseParams(List<Purchase> purchases)
       throws InvalidVATValueException {
     double sumTotalPurchased = 0.0;
     double sumVatHiPurchased = 0.0;
     double sumVatLoPurchased = 0.0;
-    double transactionSaldo = 0.0;
-    double transactionCreditPayIn = 0.0;
-    double transactionSpecialPayments = 0.0;
-    double transactionPurchases = 0.0;
-    Purchase lastReportedPurchase = null;
-    if (purchases.get(0).getId() > 1) { // the first purchase does not have a predecessor...
-      lastReportedPurchase = Purchase.getAll("where id=" + (purchases.get(0).getId() - 1)).get(0);
-    }
-    Purchase lastPurchaseToReport = purchases.get(purchases.size() - 1);
-    Timestamp startDate;
-    if (lastReportedPurchase == null) {
-      startDate = Timestamp.from(Transaction.getAll("where 1=1").get(0).getDate());
-    } else {
-      startDate = Timestamp.from(lastReportedPurchase.getCreateDate());
-    }
-    Timestamp endDate = Timestamp.from(lastPurchaseToReport.getCreateDate());
+    Timestamp endDate = Timestamp.from(purchases.get(purchases.size() - 1).getCreateDate());
 
     long t_high = countVatValues(purchases, VAT.HIGH);
     long t_low = countVatValues(purchases, VAT.LOW);
@@ -261,45 +249,67 @@ public class ReportManager {
       sumTotalPurchased += p.getSum();
     }
 
-    List<Transaction> transactions =
-        Transaction.getAll(
-            "where id > "
-                + (lastReportedPurchase == null
-                    ? "0"
-                    : lastReportedPurchase.getSession().getTransaction().getId())
-                + " and id <= "
-                + lastPurchaseToReport.getSession().getTransaction().getId());
-    for (Transaction t : transactions) {
-      User kbUser = User.getKernbeisserUser();
-      if (t.getFrom().equals(kbUser) || t.getTo().equals(kbUser)) {
-        transactionSaldo += t.getValue();
-        String tTypeString = "";
-        if (t.getTransactionType() != null) {
-          tTypeString = t.getTransactionType().toString();
-        }
-        switch (tTypeString) {
-          case "PURCHASE":
-            transactionPurchases += t.getValue();
-            break;
-          case "USER_GENERATED":
-            if (t.getFrom().equals(kbUser)) {
-              transactionCreditPayIn += t.getValue();
-            } else {
-              transactionSpecialPayments += t.getValue();
-            }
-            break;
-          default:
-        }
-      }
-    }
     Map<String, Object> reportParams = new HashMap<>();
-    reportParams.put("start", startDate);
     reportParams.put("end", endDate);
     reportParams.put("vatHiValue", vatHiValue);
     reportParams.put("vatLoValue", vatLoValue);
     reportParams.put("sumTotalPurchased", sumTotalPurchased);
     reportParams.put("sumVatHiPurchased", sumVatHiPurchased);
     reportParams.put("sumVatLoPurchased", sumVatLoPurchased);
+
+    return reportParams;
+  }
+
+  private static Map<String, Object> getAccountingTransactionParams(List<Purchase> purchases)
+      throws InvalidVATValueException {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    double transactionSaldo = 0.0;
+    double transactionCreditPayIn = 0.0;
+    double transactionSpecialPayments = 0.0;
+    double transactionPurchases = 0.0;
+    Instant startDate;
+    long lastReportedBonNo = purchases.get(0).getId() - 1;
+    Purchase bon = em.find(Purchase.class, lastReportedBonNo);
+    if (bon == null) {
+      startDate =
+          em.createQuery("select t from Transaction t order by t.date asc", Transaction.class)
+              .setFirstResult(0)
+              .setMaxResults(1)
+              .getSingleResult()
+              .getDate()
+              .minusSeconds(1);
+    } else {
+      startDate = bon.getSession().getTransaction().getDate();
+    }
+    Instant endDate = purchases.get(purchases.size() - 1).getCreateDate();
+    List<Transaction> transactions =
+        em.createQuery(
+                "select t from Transaction t where t.date > :from and t.date <= :to",
+                Transaction.class)
+            .setParameter("from", startDate)
+            .setParameter("to", endDate)
+            .getResultList();
+
+    for (Transaction t : transactions) {
+      User kbUser = User.getKernbeisserUser();
+      if (t.getFrom().equals(kbUser) || t.getTo().equals(kbUser)) {
+        transactionSaldo += t.getValue();
+        switch (t.getTransactionType()) {
+          case PURCHASE:
+            transactionPurchases += t.getValue();
+            break;
+          case USER_GENERATED:
+            transactionSpecialPayments += t.getValue();
+            break;
+          case PAYIN:
+          case INITIALIZE:
+            transactionCreditPayIn += t.getValue();
+            break;
+        }
+      }
+    }
+    Map<String, Object> reportParams = new HashMap<>();
+    reportParams.put("start", Timestamp.from(startDate));
     reportParams.put("transactionSaldo", transactionSaldo);
     reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
     reportParams.put("transactionSpecialPayments", transactionSpecialPayments);
@@ -310,13 +320,19 @@ public class ReportManager {
 
   public static void initAccountingReportPrint(long startBon, long endBon)
       throws JRException, InvalidVATValueException, NoResultException {
+    EntityManager em = DBConnection.getEntityManager();
 
-    List<Purchase> purchases = Purchase.getAll("where id between " + startBon + " and " + endBon);
+    List<Purchase> purchases =
+        em.createQuery("select p from Purchase p where p.id between :from and :to", Purchase.class)
+            .setParameter("from", startBon)
+            .setParameter("to", endBon)
+            .getResultList();
     if (purchases.isEmpty()) {
       throw new NoResultException();
     }
 
-    Map<String, Object> reportParams = getAccountingParams(purchases);
+    Map<String, Object> reportParams = getAccountingPurchaseParams(purchases);
+    reportParams.putAll(getAccountingTransactionParams(purchases));
     JRDataSource dataSource = new JRBeanCollectionDataSource(purchases);
     jspPrint =
         JasperFillManager.fillReport(
