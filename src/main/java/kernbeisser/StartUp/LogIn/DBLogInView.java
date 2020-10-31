@@ -52,4 +52,9 @@ public class DBLogInView implements IView<DBLogInController> {
   public @NotNull JComponent getContent() {
     return main;
   }
+
+  @Override
+  public String getTitle() {
+    return "Datenbankverbindung";
+  }
 }

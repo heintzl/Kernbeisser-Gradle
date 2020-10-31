@@ -42,6 +42,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   private JLabel selectedArticleNetPrice;
 
   @Linked private SearchBoxController<Article> searchBoxController;
+  @Linked private SpecialPriceEditorController controller;
 
   void fillRepeat(Repeat[] repeats) {
     repeat.removeAllItems();

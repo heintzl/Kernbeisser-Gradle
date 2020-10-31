@@ -7,17 +7,14 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 
-public class EditJobController implements IController<EditJobView, EditJobModel> {
-
-  private final EditJobModel model;
-  private EditJobView view;
+public class EditJobController extends Controller<EditJobView, EditJobModel> {
 
   public EditJobController(Job job, Mode mode) {
-    model = new EditJobModel(job != null ? job : Proxy.getSecureInstance(new Job()), mode);
+    super(new EditJobModel(job != null ? job : Proxy.getSecureInstance(new Job()), mode));
     if (mode == Mode.REMOVE) {
       try {
         Tools.delete(job);
@@ -38,8 +35,8 @@ public class EditJobController implements IController<EditJobView, EditJobModel>
   }
 
   @Override
-  public void fillUI() {
-    view.getForm().setSource(getModel().getJob());
+  public void fillView(EditJobView editJobView) {
+    editJobView.getForm().setSource(getModel().getJob());
   }
 
   @Override
@@ -48,8 +45,8 @@ public class EditJobController implements IController<EditJobView, EditJobModel>
   }
 
   public void commit() {
-    if (view.getForm().applyMode(model.getMode())) {
-      view.back();
+    if (getView().getForm().applyMode(model.getMode())) {
+      getView().back();
     }
   }
 }

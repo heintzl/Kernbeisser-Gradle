@@ -10,18 +10,15 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
-import org.jetbrains.annotations.NotNull;
 
-public class TransactionController implements IController<TransactionView, TransactionModel> {
-  private final TransactionModel model;
-  private TransactionView view;
+public class TransactionController extends Controller<TransactionView, TransactionModel> {
 
   @Linked private final SearchBoxController<User> userSearchBoxController;
 
   public TransactionController(User user) {
-    model = new TransactionModel(user);
+    super(new TransactionModel(user));
     userSearchBoxController =
         new SearchBoxController<User>(
             User::defaultSearch,
@@ -29,30 +26,11 @@ public class TransactionController implements IController<TransactionView, Trans
             Column.create("Vorname", User::getFirstName),
             Column.create("Username", User::getUsername),
             Column.create("Guthaben", User::getRoundedValue));
-    userSearchBoxController.addSelectionListener(e -> view.setTo(e.toString()));
-  }
-
-  @Override
-  public @NotNull TransactionModel getModel() {
-    return model;
-  }
-
-  @Override
-  public void fillUI() {
-    view.setFromEnabled(
-        model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_OTHER));
-    view.setFromKBEnable(model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_KB));
-    view.setFrom(LogInModel.getLoggedIn().getUsername());
-    refreshTable();
-  }
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
+    userSearchBoxController.addSelectionListener(e -> getView().setTo(e.toString()));
   }
 
   void transfer() {
-    if (!view.confirm()) {
+    if (!getView().confirm()) {
       return;
     }
     unsafeTransfer();
@@ -62,57 +40,57 @@ public class TransactionController implements IController<TransactionView, Trans
     try {
       model.transfer();
     } catch (InvalidTransactionException e) {
-      view.transactionRejected();
+      getView().transactionRejected();
       return;
     }
-    view.success();
+    getView().success();
     model.getTransactions().clear();
-    view.setTransactions(model.getTransactions());
+    getView().setTransactions(model.getTransactions());
     refreshTable();
   }
 
   void addTransaction() {
     Transaction transaction = new Transaction();
-    if (view.getValue() > Setting.WARN_OVER_TRANSACTION_VALUE.getDoubleValue()
-        && !view.confirmExtraHeightTransaction()) {
+    if (getView().getValue() > Setting.WARN_OVER_TRANSACTION_VALUE.getDoubleValue()
+        && !getView().confirmExtraHeightTransaction()) {
       return;
     }
-    if (view.getValue() <= 0) {
-      view.invalidValue();
+    if (getView().getValue() <= 0) {
+      getView().invalidValue();
       return;
     }
-    if (view.getValue() < 0 && !view.requestUserTransactionCommit()) {
-      return;
-    }
-    try {
-      transaction.setFrom(model.findUser(view.getFrom()));
-    } catch (NoResultException e) {
-      view.invalidFrom();
+    if (getView().getValue() < 0 && !getView().requestUserTransactionCommit()) {
       return;
     }
     try {
-      transaction.setTo(model.findUser(view.getTo()));
+      transaction.setFrom(model.findUser(getView().getFrom()));
     } catch (NoResultException e) {
-      view.invalidTo();
+      getView().invalidFrom();
       return;
     }
-    transaction.setValue(view.getValue());
-    transaction.setInfo(view.getInfo());
+    try {
+      transaction.setTo(model.findUser(getView().getTo()));
+    } catch (NoResultException e) {
+      getView().invalidTo();
+      return;
+    }
+    transaction.setValue(getView().getValue());
+    transaction.setInfo(getView().getInfo());
     model.addTransaction(transaction);
     refreshTable();
-    view.setValue("");
+    getView().setValue("");
   }
 
   void remove() {
-    model.remove(view.getSelectedTransaction());
+    model.remove(getView().getSelectedTransaction());
     refreshTable();
   }
 
   private void refreshTable() {
-    view.setTransactions(model.getTransactions());
-    view.setCount(model.getCount());
-    view.setSum(model.getSum());
-    view.transactionAdded();
+    getView().setTransactions(model.getTransactions());
+    getView().setCount(model.getCount());
+    getView().setSum(model.getSum());
+    getView().transactionAdded();
     userSearchBoxController.refreshLoadSolutions();
   }
 
@@ -121,14 +99,25 @@ public class TransactionController implements IController<TransactionView, Trans
   }
 
   @Override
+  public void fillView(TransactionView transactionView) {
+    getView()
+        .setFromEnabled(
+            model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_OTHER));
+    getView()
+        .setFromKBEnable(model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_KB));
+    getView().setFrom(LogInModel.getLoggedIn().getUsername());
+    refreshTable();
+  }
+
+  @Override
   public boolean commitClose() {
     if (model.getTransactions().size() > 0) {
-      switch (view.commitUnsavedTransactions()) {
+      switch (getView().commitUnsavedTransactions()) {
         case 0:
           unsafeTransfer();
           return true;
         case 1:
-          view.transactionsDeleted();
+          getView().transactionsDeleted();
           return true;
         case 2:
           return false;

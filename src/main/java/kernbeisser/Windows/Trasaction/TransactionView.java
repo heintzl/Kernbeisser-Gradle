@@ -79,6 +79,7 @@ public class TransactionView implements IView<TransactionController> {
   private JCheckBox toKernbeisser;
 
   @Linked private SearchBoxController<User> userSearchBoxController;
+  @Linked private TransactionController controller;
 
   void setTransactions(Collection<Transaction> transactions) {
     this.transactions.setObjects(transactions);
@@ -452,5 +453,10 @@ public class TransactionView implements IView<TransactionController> {
 
   public void transactionAdded() {
     if (!toKernbeisser.isSelected()) to.setText("");
+  }
+
+  @Override
+  public String getTitle() {
+    return "Überweisungen";
   }
 }

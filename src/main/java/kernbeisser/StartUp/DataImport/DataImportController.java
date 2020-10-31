@@ -24,17 +24,15 @@ import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-public class DataImportController implements IController<DataImportView, DataImportModel> {
-  private DataImportView view;
-  private final DataImportModel model;
+public class DataImportController extends Controller<DataImportView, DataImportModel> {
 
   public DataImportController() {
-    model = new DataImportModel();
+    super(new DataImportModel());
   }
 
   void openFileExplorer() {
@@ -56,45 +54,48 @@ public class DataImportController implements IController<DataImportView, DataImp
           if (jFileChooser.getSelectedFile() == null) {
             return;
           }
-          view.setFilePath(jFileChooser.getSelectedFile().getAbsolutePath());
+          getView().setFilePath(jFileChooser.getSelectedFile().getAbsolutePath());
           checkDataSource();
         });
     jFileChooser.showOpenDialog(getView().getTopComponent());
   }
 
   private boolean isValidDataSource() {
-    return view.getFilePath().toUpperCase().endsWith(".JSON")
-        && new File(view.getFilePath()).exists();
+    return getView().getFilePath().toUpperCase().endsWith(".JSON")
+        && new File(getView().getFilePath()).exists();
   }
 
   void checkDataSource() {
     if (isValidDataSource()) {
-      view.setValidDataSource(true);
+      getView().setValidDataSource(true);
       JSONObject dataConfig = extractJSON();
       if (dataConfig.has("UserData")) {
         JSONObject jsonObject = dataConfig.getJSONObject("UserData");
-        view.userSourceFound(jsonObject.has("Users") && jsonObject.has("Jobs"));
+        getView().userSourceFound(jsonObject.has("Users") && jsonObject.has("Jobs"));
       } else {
-        view.userSourceFound(false);
+        getView().userSourceFound(false);
       }
       if (dataConfig.has("ItemData")) {
         JSONObject jsonObject = dataConfig.getJSONObject("ItemData");
-        view.itemSourceFound(
-            jsonObject.has("Suppliers") && jsonObject.has("Items") && jsonObject.has("PriceLists"));
+        getView()
+            .itemSourceFound(
+                jsonObject.has("Suppliers")
+                    && jsonObject.has("Items")
+                    && jsonObject.has("PriceLists"));
       } else {
-        view.itemSourceFound(false);
+        getView().itemSourceFound(false);
       }
     } else {
-      view.setValidDataSource(false);
-      view.userSourceFound(false);
-      view.itemSourceFound(false);
+      getView().setValidDataSource(false);
+      getView().userSourceFound(false);
+      getView().itemSourceFound(false);
     }
   }
 
   private JSONObject extractJSON() {
     StringBuilder sb = new StringBuilder();
     try {
-      Files.readAllLines(new File(view.getFilePath()).toPath()).forEach(sb::append);
+      Files.readAllLines(new File(getView().getFilePath()).toPath()).forEach(sb::append);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -108,10 +109,10 @@ public class DataImportController implements IController<DataImportView, DataImp
     if (isValidDataSource()) {
 
       Main.logger.info("Starting importing data");
-      File jsonPath = new File(view.getFilePath()).getParentFile();
+      File jsonPath = new File(getView().getFilePath()).getParentFile();
       JSONObject path = extractJSON();
       Setting.DB_INITIALIZED.changeValue(true);
-      if (view.importItems()) {
+      if (getView().importItems()) {
         JSONObject itemPath = path.getJSONObject("ItemData");
         File suppliers = new File(jsonPath, itemPath.getString("Suppliers"));
         File priceLists = new File(jsonPath, itemPath.getString("PriceLists"));
@@ -120,7 +121,7 @@ public class DataImportController implements IController<DataImportView, DataImp
           articleThread =
               new Thread(
                   () -> {
-                    view.setItemProgress(0);
+                    getView().setItemProgress(0);
                     parseSuppliers(suppliers);
                     parsePriceLists(priceLists);
                     parseItems(items);
@@ -128,18 +129,18 @@ public class DataImportController implements IController<DataImportView, DataImp
                   });
           articleThread.start();
         } else {
-          view.itemSourceFound(false);
-          view.itemSourcesNotExists();
+          getView().itemSourceFound(false);
+          getView().itemSourcesNotExists();
         }
       }
-      if (view.importUser()) {
+      if (getView().importUser()) {
         JSONObject userPath = path.getJSONObject("UserData");
         File users = new File(jsonPath, userPath.getString("Users"));
         File jobs = new File(jsonPath, userPath.getString("Jobs"));
         if (jobs.exists() && users.exists()) {
           new Thread(
                   () -> {
-                    view.setUserProgress(0);
+                    getView().setUserProgress(0);
                     parseJobs(jobs);
                     parseUsers(users);
                     Main.logger.info("User thread finished");
@@ -148,15 +149,15 @@ public class DataImportController implements IController<DataImportView, DataImp
                     } catch (InterruptedException e) {
                       Tools.showUnexpectedErrorWarning(e);
                     }
-                    view.back();
+                    getView().back();
                   })
               .start();
         } else {
-          view.userSourceFound(false);
-          view.userSourcesNotExists();
+          getView().userSourceFound(false);
+          getView().userSourcesNotExists();
         }
       }
-      if (view.createStandardAdmin()) {
+      if (getView().createStandardAdmin()) {
         createAdmin();
       }
     }
@@ -170,7 +171,7 @@ public class DataImportController implements IController<DataImportView, DataImp
     user.setUsername("Admin");
     String password;
     do {
-      password = view.requestPassword();
+      password = getView().requestPassword();
     } while (password.equals(""));
     user.setPassword(
         BCrypt.withDefaults()
@@ -192,9 +193,9 @@ public class DataImportController implements IController<DataImportView, DataImp
         job.setDescription(columns[1]);
         jobs.add(job);
       }
-      view.setUserProgress(1);
+      getView().setUserProgress(1);
       model.batchMergeAll(jobs);
-      view.setUserProgress(2);
+      getView().setUserProgress(2);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -254,7 +255,7 @@ public class DataImportController implements IController<DataImportView, DataImp
       em.flush();
       et.commit();
       em.close();
-      view.setUserProgress(4);
+      getView().setUserProgress(4);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -271,9 +272,9 @@ public class DataImportController implements IController<DataImportView, DataImp
         pl.setSuperPriceList(priceLists.get(columns[1]));
         priceLists.put(pl.getName(), pl);
       }
-      view.setItemProgress(3);
+      getView().setItemProgress(3);
       model.saveAll(priceLists.values());
-      view.setItemProgress(4);
+      getView().setItemProgress(4);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -297,9 +298,9 @@ public class DataImportController implements IController<DataImportView, DataImp
         supplier.setSurcharge(Integer.parseInt(columns[8]));
         suppliers.add(supplier);
       }
-      view.setItemProgress(1);
+      getView().setItemProgress(1);
       model.batchMergeAll(suppliers);
-      view.setItemProgress(2);
+      getView().setItemProgress(2);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -326,22 +327,22 @@ public class DataImportController implements IController<DataImportView, DataImp
       }
       Main.logger.warn("Ignored " + errorCollector.count() + " articles errors:");
       errorCollector.log();
-      view.setItemProgress(5);
+      getView().setItemProgress(5);
       model.saveAllItems(articles);
-      view.setItemProgress(6);
+      getView().setItemProgress(6);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
   }
 
   void cancel() {
-    view.back();
+    getView().back();
     Setting.DB_INITIALIZED.changeValue(true);
   }
 
   @Override
   public boolean commitClose() {
-    new SimpleLogInController().openTab("Log In");
+    new SimpleLogInController().openTab();
     return true;
   }
 
@@ -351,7 +352,7 @@ public class DataImportController implements IController<DataImportView, DataImp
   }
 
   @Override
-  public void fillUI() {}
+  public void fillView(DataImportView dataImportView) {}
 
   @Override
   public PermissionKey[] getRequiredKeys() {

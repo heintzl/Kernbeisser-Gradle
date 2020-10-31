@@ -4,6 +4,7 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class TillrollView extends JDialog implements IView<TillrollController> {
@@ -13,6 +14,8 @@ public class TillrollView extends JDialog implements IView<TillrollController> {
   private JButton submit;
   private IntegerParseField days;
   private JPanel main;
+
+  @Linked private TillrollController controller;
 
   int getDays() {
     return days.getSafeValue();
@@ -52,5 +55,10 @@ public class TillrollView extends JDialog implements IView<TillrollController> {
         exportType.getName() + ": Diese Methode ist noch nicht verfügbar!",
         "Ausgabefehler",
         JOptionPane.WARNING_MESSAGE);
+  }
+
+  @Override
+  public String getTitle() {
+    return "Bonrolle";
   }
 }

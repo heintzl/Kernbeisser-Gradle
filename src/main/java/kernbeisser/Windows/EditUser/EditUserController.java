@@ -9,15 +9,12 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-public class EditUserController implements IController<EditUserView, EditUserModel> {
-  private EditUserView view;
-  private final EditUserModel model;
-
+public class EditUserController extends Controller<EditUserView, EditUserModel> {
   public EditUserController(User user, Mode mode) {
-    model = new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode);
+    super(new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode));
     if (mode == Mode.REMOVE) {
       Tools.delete(user);
     }
@@ -26,12 +23,6 @@ public class EditUserController implements IController<EditUserView, EditUserMod
   @Override
   public @NotNull EditUserModel getModel() {
     return model;
-  }
-
-  @Override
-  public void fillUI() {
-    view.getObjectForm().setSource(getModel().getUser());
-    view.getObjectForm().setObjectValidator(this::validateUser);
   }
 
   private User validateUser(User user) throws CannotParseException {
@@ -47,6 +38,12 @@ public class EditUserController implements IController<EditUserView, EditUserMod
   }
 
   @Override
+  public void fillView(EditUserView editUserView) {
+    getView().getObjectForm().setSource(getModel().getUser());
+    getView().getObjectForm().setObjectValidator(this::validateUser);
+  }
+
+  @Override
   public PermissionKey[] getRequiredKeys() {
     return new PermissionKey[] {
       PermissionKey.USER_USERNAME_READ,
@@ -54,21 +51,22 @@ public class EditUserController implements IController<EditUserView, EditUserMod
   }
 
   void doAction() {
-    if (view.getObjectForm().applyMode(model.getMode())) {
-      view.back();
+    if (getView().getObjectForm().applyMode(model.getMode())) {
+      getView().back();
     }
   }
 
   void refreshUsername() {
     if (model.getMode() == Mode.ADD) {
-      User data = view.getObjectForm().getDataIgnoreWrongInput();
+      User data = getView().getObjectForm().getDataIgnoreWrongInput();
       if (data.getSurname() != null && data.getFirstName() != null) {
-        view.setUsername(
-            model
-                .generateUsername(
-                    data.getFirstName().toLowerCase().replace(" ", ""),
-                    data.getSurname().toLowerCase())
-                .replace(" ", ""));
+        getView()
+            .setUsername(
+                model
+                    .generateUsername(
+                        data.getFirstName().toLowerCase().replace(" ", ""),
+                        data.getSurname().toLowerCase())
+                    .replace(" ", ""));
       }
     }
   }
@@ -81,7 +79,7 @@ public class EditUserController implements IController<EditUserView, EditUserMod
         }
       case ADD:
         if (model.usernameExists(s)) {
-          view.usernameAlreadyExists();
+          getView().usernameAlreadyExists();
           throw new CannotParseException("username already exists");
         } else return s;
       default:

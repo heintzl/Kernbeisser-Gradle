@@ -118,4 +118,9 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
             "Es sind noch unsynchonisierte Artikel vorhanden,\nwollen sie das Fester wirklich schließen?")
         == 0;
   }
+
+  @Override
+  public String getTitle() {
+    return "Katalog sychonisieren";
+  }
 }

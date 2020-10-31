@@ -4,17 +4,14 @@ import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
 public class SynchronizeArticleController
-    implements IController<SynchronizeArticleView, SynchronizeArticleModel> {
-
-  private final SynchronizeArticleModel model;
-  private SynchronizeArticleView view;
+    extends Controller<SynchronizeArticleView, SynchronizeArticleModel> {
 
   public SynchronizeArticleController() {
-    model = new SynchronizeArticleModel();
+    super(new SynchronizeArticleModel());
   }
 
   @NotNull
@@ -24,9 +21,9 @@ public class SynchronizeArticleController
   }
 
   @Override
-  public void fillUI() {
-    view.setDifferences(model.getAllDifferences());
-    view.setAllDiffsTypes(DifferenceType.values());
+  public void fillView(SynchronizeArticleView synchronizeArticleView) {
+    synchronizeArticleView.setDifferences(model.getAllDifferences());
+    synchronizeArticleView.setAllDiffsTypes(DifferenceType.values());
   }
 
   @Override
@@ -51,25 +48,25 @@ public class SynchronizeArticleController
     Main.buildEnvironment();
     Main.checkCatalog();
 
-    new SynchronizeArticleController().openTab("Hello");
+    new SynchronizeArticleController().openTab();
   }
 
   public void filter() {
-    view.setObjectFilter();
+    getView().setObjectFilter();
   }
 
   void useKernbeisser() {
-    model.resolve(view.getSelectedObjects(), true);
-    view.setDifferences(model.getAllDifferences());
+    model.resolve(getView().getSelectedObjects(), true);
+    getView().setDifferences(model.getAllDifferences());
   }
 
   void useKornkraft() {
-    model.resolve(view.getSelectedObjects(), false);
-    view.setDifferences(model.getAllDifferences());
+    model.resolve(getView().getSelectedObjects(), false);
+    getView().setDifferences(model.getAllDifferences());
   }
 
   @Override
   public boolean commitClose() {
-    return model.getAllDifferences().size() == 0 || view.commitClose();
+    return model.getAllDifferences().size() == 0 || getView().commitClose();
   }
 }

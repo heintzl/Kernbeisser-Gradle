@@ -10,8 +10,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.Window;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
+import kernbeisser.Windows.ViewContainers.JFrameWindow;
 import org.hibernate.service.spi.ServiceException;
 
 public class DBConnection {
@@ -43,9 +42,7 @@ public class DBConnection {
     String[] conf = ConfigManager.getDBAccessData();
     if (!tryLogIn(conf[0], conf[1], conf[2])) {
       synchronized (DB_LOGIN_LOCK) {
-        new DBLogInController()
-            .openAsWindow(Window.NEW_VIEW_CONTAINER, JFrameWindow::new)
-            .addCloseEventListener(e -> DB_LOGIN_LOCK.notify());
+        new DBLogInController().withCloseEvent(DB_LOGIN_LOCK::notify).openIn(new JFrameWindow());
       }
       synchronized (DB_LOGIN_LOCK) {
         try {

@@ -1,7 +1,6 @@
 package kernbeisser.Windows.SoloShoppingMask;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -18,6 +17,8 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
   //    private BarcodeCapture barcodeCapture;
 
   private ShoppingMaskUIView shoppingMaskUIView;
+
+  @Linked private SoloShoppingMaskController controller;
 
   @Linked private ShoppingMaskUIController shoppingMaskUIController;
 
@@ -46,12 +47,12 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
   }
 
   @Override
-  public boolean processKeyboardInput(KeyEvent e) {
-    return shoppingMaskUIView.processKeyboardInput(e);
+  public Component getFocusOnInitialize() {
+    return shoppingMaskUIController.getView().getFocusOnInitialize();
   }
 
   @Override
-  public Component getFocusOnInitialize() {
-    return shoppingMaskUIController.getView().getFocusOnInitialize();
+  public String getTitle() {
+    return "Selbsteinkauf";
   }
 }

@@ -3,11 +3,12 @@ package kernbeisser.Windows.ObjectView;
 import java.util.Collection;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
-import kernbeisser.Windows.Window;
-import kernbeisser.Windows.WindowImpl.SubWindow;
+import kernbeisser.Windows.ViewContainer;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 
 public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
   private final MaskLoader<T> maskLoader;
@@ -21,19 +22,23 @@ public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
     this.copyValuesToAdd = copyValuesToAdd;
   }
 
-  Window openEdit(Window window, T selected) {
-    return maskLoader.accept(selected, Mode.EDIT).openAsWindow(window, SubWindow::new);
+  ViewContainer openEdit(ViewContainer window, T selected, CloseEvent closeEvent) {
+    return maskLoader
+        .accept(selected, Mode.EDIT)
+        .withCloseEvent(closeEvent)
+        .openIn(new SubWindow(window));
   }
 
   Collection<T> getItems(String search, int max) {
     return itemSupplier.search(search, max);
   }
 
-  Window openAdd(Window window, T selected) {
+  ViewContainer openAdd(ViewContainer window, T selected, CloseEvent closeEvent) {
     return maskLoader
         .accept(
             copyValuesToAdd ? selected : (T) Tools.invokeConstructor(selected.getClass()), Mode.ADD)
-        .openAsWindow(window, SubWindow::new);
+        .withCloseEvent(closeEvent)
+        .openIn(new SubWindow(window));
   }
 
   void remove(T selected) {

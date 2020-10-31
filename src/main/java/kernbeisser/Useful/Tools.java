@@ -3,7 +3,6 @@ package kernbeisser.Useful;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -24,7 +23,6 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.swing.*;
 import javax.swing.text.*;
-import kernbeisser.CustomComponents.ViewMainPanel;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
@@ -418,10 +416,10 @@ public class Tools {
   }
 
   public static <T> T createWithoutConstructor(Class<T> clazz) {
+    if (clazz == null) throw new NullPointerException("cannot create instance from null");
     try {
       return (T) unsafe.allocateInstance(clazz);
     } catch (InstantiationException e) {
-      Tools.showUnexpectedErrorWarning(e);
       throw new UnsupportedOperationException("cannot create instance without constructor :(");
     }
   }
@@ -442,41 +440,6 @@ public class Tools {
 
   public static StackTraceElement getCallerStackTraceElement(int above) {
     return Thread.currentThread().getStackTrace()[2 + above];
-  }
-
-  static boolean keyBoardListenerIsActive = false;
-
-  public static void activateKeyboardListener() {
-    if (!keyBoardListenerIsActive) {
-      KeyboardFocusManager.getCurrentKeyboardFocusManager()
-          .addKeyEventDispatcher(
-              new KeyEventDispatcher() {
-                @Override
-                public boolean dispatchKeyEvent(KeyEvent e) {
-                  ViewMainPanel viewMainPanel =
-                      (ViewMainPanel)
-                          SwingUtilities.getAncestorOfClass(ViewMainPanel.class, e.getComponent());
-                  if (viewMainPanel != null) {
-                    return viewMainPanel.getView().processKeyboardInput(e);
-                  } else {
-                    return false;
-                  }
-                }
-              });
-      keyBoardListenerIsActive = true;
-    }
-  }
-
-  public static void deactivateKeyboardListener() {
-    KeyboardFocusManager.getCurrentKeyboardFocusManager()
-        .addKeyEventDispatcher(
-            new KeyEventDispatcher() {
-              @Override
-              public boolean dispatchKeyEvent(KeyEvent e) {
-                return false;
-              }
-            });
-    keyBoardListenerIsActive = false;
   }
 
   public static <T> T decide(AccessSupplier<T> supplier, T t) {

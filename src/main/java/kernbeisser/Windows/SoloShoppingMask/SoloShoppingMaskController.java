@@ -4,27 +4,23 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
 import org.jetbrains.annotations.NotNull;
 
 public class SoloShoppingMaskController
-    implements IController<SoloShoppingMaskView, SoloShoppingMaskModel> {
-
-  private SoloShoppingMaskView view;
-
-  private final SoloShoppingMaskModel model;
+    extends Controller<SoloShoppingMaskView, SoloShoppingMaskModel> {
 
   @Linked private final ShoppingMaskUIController shoppingMaskUIController;
 
   public SoloShoppingMaskController() throws NotEnoughCreditException {
+    super(new SoloShoppingMaskModel());
     SaleSession saleSession = new SaleSession();
     saleSession.setCustomer(LogInModel.getLoggedIn());
     saleSession.setSeller(LogInModel.getLoggedIn());
     this.shoppingMaskUIController = new ShoppingMaskUIController(saleSession);
-    this.model = new SoloShoppingMaskModel();
   }
 
   public void processBarcode(String barcode) {
@@ -37,7 +33,7 @@ public class SoloShoppingMaskController
   }
 
   @Override
-  public void fillUI() {}
+  public void fillView(SoloShoppingMaskView soloShoppingMaskView) {}
 
   @Override
   public PermissionKey[] getRequiredKeys() {

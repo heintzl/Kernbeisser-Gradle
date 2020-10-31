@@ -8,18 +8,16 @@ import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Tasks.Users;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class EditUserGroupController implements IController<EditUserGroupView, EditUserGroupModel> {
-  private EditUserGroupView view;
-  private final EditUserGroupModel model;
+public class EditUserGroupController extends Controller<EditUserGroupView, EditUserGroupModel> {
 
   @Linked private final SearchBoxController<UserGroup> userGroupSearchBoxController;
 
   public EditUserGroupController(User user) {
-    model = new EditUserGroupModel(user);
+    super(new EditUserGroupModel(user));
     userGroupSearchBoxController =
         new SearchBoxController<>(
             UserGroup::defaultSearch,
@@ -34,7 +32,7 @@ public class EditUserGroupController implements IController<EditUserGroupView, E
   }
 
   private void select(UserGroup userGroup) {
-    view.setUsername(userGroup.getMembers().iterator().next().getUsername());
+    getView().setUsername(userGroup.getMembers().iterator().next().getUsername());
   }
 
   @Override
@@ -43,8 +41,8 @@ public class EditUserGroupController implements IController<EditUserGroupView, E
   }
 
   @Override
-  public void fillUI() {
-    view.setCurrentUserGroup(model.getUser().getUserGroup());
+  public void fillView(EditUserGroupView editUserGroupView) {
+    getView().setCurrentUserGroup(model.getUser().getUserGroup());
   }
 
   @Override
@@ -60,14 +58,14 @@ public class EditUserGroupController implements IController<EditUserGroupView, E
   public void changeUserGroup(String password) throws CannotLogInException {
     model.changeUserGroup(
         model.getUser().getId(),
-        User.getByUsername(view.getUsername()).getUserGroup().getId(),
+        User.getByUsername(getView().getUsername()).getUserGroup().getId(),
         password);
     pushViewRefresh();
   }
 
   private void pushViewRefresh() {
     model.refreshData();
-    view.setCurrentUserGroup(model.getUser().getUserGroup());
+    getView().setCurrentUserGroup(model.getUser().getUserGroup());
     userGroupSearchBoxController.search();
   }
 

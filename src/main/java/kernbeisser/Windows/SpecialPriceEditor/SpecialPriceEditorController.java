@@ -10,32 +10,22 @@ import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Main;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.WindowImpl.JFrameWindow;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class SpecialPriceEditorController
-    implements IController<SpecialPriceEditorView, SpecialPriceEditorModel> {
-  public static void main(String[] args)
-      throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
-          IllegalAccessException {
-    Main.buildEnvironment();
-    new SpecialPriceEditorController().openTab("IDK");
-  }
-
-  private SpecialPriceEditorView view;
-  private final SpecialPriceEditorModel model;
+    extends Controller<SpecialPriceEditorView, SpecialPriceEditorModel> {
 
   @Linked private final SearchBoxController<Article> searchBoxController;
 
   SpecialPriceEditorController() {
-    this.model = new SpecialPriceEditorModel();
+    super(new SpecialPriceEditorModel());
     this.searchBoxController =
         new SearchBoxController<Article>(
-            (s, m) -> model.searchArticle(s, m, view != null && view.filterOnlyActionArticle()),
+            (s, m) ->
+                model.searchArticle(s, m, getView() != null && getView().filterOnlyActionArticle()),
             Column.create("Name", Article::getName),
             Column.create("Packungsmenge", Article::getAmount),
             Column.create("Lieferant", Article::getSupplier),
@@ -44,7 +34,7 @@ public class SpecialPriceEditorController
           @Override
           public void search() {
             super.search();
-            if (view != null) {
+            if (getView() != null) {
               load(null);
             }
           }
@@ -54,70 +44,70 @@ public class SpecialPriceEditorController
 
   void load(Article article) {
     if (article == null) {
-      view.setOffers(CollectionUtils.EMPTY_COLLECTION);
-      view.setAddEnable(false);
-      view.setSelectedArticleIdentifier(null);
-      view.setSelectedArticleNetPrice(0);
+      getView().setOffers(CollectionUtils.EMPTY_COLLECTION);
+      getView().setAddEnable(false);
+      getView().setSelectedArticleIdentifier(null);
+      getView().setSelectedArticleNetPrice(0);
     } else {
-      view.setOffers(article.getOffers());
-      view.setAddEnable(true);
-      view.setSelectedArticleIdentifier(article.getName());
-      view.setSelectedArticleNetPrice(article.getNetPrice());
+      getView().setOffers(article.getOffers());
+      getView().setAddEnable(true);
+      getView().setSelectedArticleIdentifier(article.getName());
+      getView().setSelectedArticleNetPrice(article.getNetPrice());
     }
     model.setSelectedArticle(article);
-    view.setRemoveEnable(false);
-    view.setEditEnable(false);
+    getView().setRemoveEnable(false);
+    getView().setEditEnable(false);
   }
 
   void selectOffer() {
-    Offer o = view.getSelectedOffer();
+    Offer o = getView().getSelectedOffer();
     model.setSelectedOffer(o);
-    view.setFrom(o.getFromDate().toLocalDate());
-    view.setTo(o.getToDate().toLocalDate());
-    view.setSpecialNetPrice(o.getSpecialNetPrice());
-    view.setRepeat(o.getRepeatMode());
-    view.setEditEnable(true);
-    view.setRemoveEnable(true);
+    getView().setFrom(o.getFromDate().toLocalDate());
+    getView().setTo(o.getToDate().toLocalDate());
+    getView().setSpecialNetPrice(o.getSpecialNetPrice());
+    getView().setRepeat(o.getRepeatMode());
+    getView().setEditEnable(true);
+    getView().setRemoveEnable(true);
   }
 
   public void add() {
     try {
       model.addOffer(model.getSelectedArticle(), collect());
       model.refreshItem();
-      view.setOffers(model.getSelectedArticle().getOffers());
+      getView().setOffers(model.getSelectedArticle().getOffers());
     } catch (IncorrectInput incorrectInput) {
-      view.cannotParseDateFormat();
+      getView().cannotParseDateFormat();
     }
   }
 
   @NotNull
   private Offer collect() throws IncorrectInput {
     Offer out = new Offer();
-    out.setFromDate(view.getFrom());
-    out.setToDate(view.getTo());
-    out.setSpecialNetPrice(view.getSpecialPrice());
-    out.setRepeatMode(view.getRepeatMode());
+    out.setFromDate(getView().getFrom());
+    out.setToDate(getView().getTo());
+    out.setSpecialNetPrice(getView().getSpecialPrice());
+    out.setRepeatMode(getView().getRepeatMode());
     return out;
   }
 
   public void edit() {
     try {
       model.refreshItem();
-      view.setOffers(model.getSelectedArticle().getOffers());
+      getView().setOffers(model.getSelectedArticle().getOffers());
       model.edit(model.getSelectedOffer().getId(), collect());
     } catch (IncorrectInput incorrectInput) {
-      view.cannotParseDateFormat();
+      getView().cannotParseDateFormat();
     }
   }
 
   public void remove() {
     model.remove(model.getSelectedArticle(), model.getSelectedOffer());
     model.refreshItem();
-    view.setOffers(model.getSelectedArticle().getOffers());
+    getView().setOffers(model.getSelectedArticle().getOffers());
   }
 
   void searchFrom() {
-    DatePickerController.requestDate((JFrameWindow) view.getWindow(), view::setFrom);
+    DatePickerController.requestDate(getView().traceViewContainer(), getView()::setFrom);
   }
 
   SearchBoxView<Article> getSearchBoxView() {
@@ -125,7 +115,7 @@ public class SpecialPriceEditorController
   }
 
   void searchTo() {
-    DatePickerController.requestDate((JFrameWindow) view.getWindow(), view::setTo);
+    DatePickerController.requestDate(getView().traceViewContainer(), getView()::setTo);
   }
 
   void refreshSearchSolutions() {
@@ -138,8 +128,8 @@ public class SpecialPriceEditorController
   }
 
   @Override
-  public void fillUI() {
-    view.fillRepeat(Repeat.values());
+  public void fillView(SpecialPriceEditorView specialPriceEditorView) {
+    getView().fillRepeat(Repeat.values());
   }
 
   @Override

@@ -12,20 +12,15 @@ import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.MVC.IController;
+import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Menu.MenuController;
-import kernbeisser.Windows.TabbedPanel.TabbedPaneModel;
-import kernbeisser.Windows.WindowImpl.SubWindow;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class SimpleLogInController implements IController<SimpleLogInView, SimpleLogInModel> {
-
-  private SimpleLogInView view;
-
-  private final SimpleLogInModel model;
+public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
 
   public SimpleLogInController() {
-    this.model = new SimpleLogInModel();
+    super(new SimpleLogInModel());
   }
 
   @Override
@@ -34,9 +29,7 @@ public class SimpleLogInController implements IController<SimpleLogInView, Simpl
   }
 
   @Override
-  public void fillUI() {
-    Tools.activateKeyboardListener();
-  }
+  public void fillView(SimpleLogInView simpleLogInView) {}
 
   @Override
   public PermissionKey[] getRequiredKeys() {
@@ -45,21 +38,21 @@ public class SimpleLogInController implements IController<SimpleLogInView, Simpl
 
   public void logIn() {
     try {
-      model.logIn(view.getUsername(), view.getPassword());
+      model.logIn(getView().getUsername(), getView().getPassword());
       loadUserSettings();
       if (LogInModel.getLoggedIn().getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS)
               > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()
           || LogInModel.getLoggedIn().isForcePasswordChange()) {
         new ChangePasswordController(LogInModel.getLoggedIn(), true)
-            .openAsWindow(getView().getWindow(), SubWindow::new);
+            .openIn(new SubWindow(getView().traceViewContainer()));
       } else {
-        removeSelf();
-        new MenuController().openTab("Menu");
+        getView().back();
+        new MenuController().openTab();
       }
     } catch (CannotLogInException e) {
-      view.accessDenied();
+      getView().accessDenied();
     } catch (PermissionRequired permissionRequired) {
-      view.permissionRequired();
+      getView().permissionRequired();
     }
   }
 
@@ -67,8 +60,6 @@ public class SimpleLogInController implements IController<SimpleLogInView, Simpl
     try {
       UIManager.setLookAndFeel(
           UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
-      SwingUtilities.updateComponentTreeUI(
-          TabbedPaneModel.DEFAULT_TABBED_PANE.getView().getTopComponent());
     } catch (UnsupportedLookAndFeelException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
