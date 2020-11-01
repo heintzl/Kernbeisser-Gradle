@@ -2,17 +2,17 @@ package kernbeisser.DBEntities;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
-import lombok.Cleanup;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 
 @Table
 @Entity
@@ -29,9 +29,9 @@ public class SurchargeTable implements Serializable, Cloneable {
             return Setting.SURCHARGE_DEFAULT.getDoubleValue();
           }
         };
-    standard.from = -1;
-    standard.to = -1;
-    standard.name = "DEFAULT";
+    standard.from_number = -1;
+    standard.to_number = -1;
+    standard.description = "DEFAULT";
     standard.supplier = null;
     DEFAULT = standard;
   }
@@ -48,20 +48,18 @@ public class SurchargeTable implements Serializable, Cloneable {
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_WRITE)})
   private double surcharge;
 
-  @Column(name = "\"from\"")
   @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_FROM_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_FROM_WRITE)})
-  private int from;
+  private int from_number;
 
   @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_TO_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_TO_WRITE)})
-  @Column(name = "\"to\"")
-  private int to;
+  private int to_number;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_NAME_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_NAME_WRITE)})
-  private String name;
+  private String description;
 
   @JoinColumn
   @ManyToOne

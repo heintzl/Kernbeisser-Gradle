@@ -92,7 +92,7 @@ public class ArticleBase {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       return em.createQuery(
-              "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
+              "select st from SurchargeTable st where st.supplier.id = :supplier and st.from_number <= :number and st.to_number >= :number",
               SurchargeTable.class)
           .setParameter("supplier", supplier.getId())
           .setParameter("number", suppliersItemNumber)
@@ -107,7 +107,7 @@ public class ArticleBase {
     SurchargeTable surchargeTable = getSurchargeTable();
     double surcharge = surchargeTable.getSurcharge();
     if (surchargeTable == SurchargeTable.DEFAULT && supplier != null) {
-      double supplierSurcharge = supplier.getSurcharge() / 100.0;
+      double supplierSurcharge = supplier.getSurcharge();
       if (supplierSurcharge > 0) {
         surcharge = supplierSurcharge;
       }
