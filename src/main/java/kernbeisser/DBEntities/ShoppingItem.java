@@ -142,6 +142,8 @@ public class ShoppingItem implements Serializable {
 
   @Getter @Transient private boolean solidaritySurcharge = false;
 
+  @Getter @Transient private double articleSurcharge;
+
   /**
    * @param articleBase most ShoppingItem properties are copied from given article. surcharge gets
    *     calculated
@@ -160,7 +162,8 @@ public class ShoppingItem implements Serializable {
     }
     this.surcharge =
         articleBase.calculateSurcharge()
-            * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
+            * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1)
+            / 100.0;
     this.discount = discount;
     supplier = articleBase.getSupplier();
     if (supplier != null) {
@@ -183,7 +186,7 @@ public class ShoppingItem implements Serializable {
     this((ArticleBase) article, discount, hasContainerDiscount);
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
-    this.surcharge =
+    this.articleSurcharge =
         article.getSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
   }
@@ -193,7 +196,7 @@ public class ShoppingItem implements Serializable {
       double price,
       VAT vat,
       int kbNumber,
-      double surcharge,
+      Supplier supplier,
       boolean hasContainerDiscount) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
@@ -222,11 +225,11 @@ public class ShoppingItem implements Serializable {
       article.setMetricUnits(MetricUnits.NONE);
       article.setDeleteAllowed(false);
       article.setVat(vat);
-      article.setSurcharge(surcharge);
+      article.setSupplier(supplier);
       em.persist(article);
       em.flush();
       et.commit();
-      return createRawPriceProduct(name, price, vat, kbNumber, surcharge, hasContainerDiscount);
+      return createRawPriceProduct(name, price, vat, kbNumber, supplier, hasContainerDiscount);
     }
   }
 
@@ -236,7 +239,7 @@ public class ShoppingItem implements Serializable {
         price,
         VAT.LOW,
         -1,
-        Setting.SURCHARGE_PRODUCE.getDoubleValue(),
+        Supplier.getProduceSupplier(),
         hasContainerDiscount);
   }
 
@@ -246,13 +249,14 @@ public class ShoppingItem implements Serializable {
         price,
         VAT.LOW,
         -2,
-        Setting.SURCHARGE_BAKERY.getDoubleValue(),
+        Supplier.getBakerySupplier(),
         hasContainerDiscount);
   }
 
   public static ShoppingItem createSolidaritySurcharge(double price, VAT vat, double surcharge) {
     ShoppingItem solidarity =
-        createRawPriceProduct(RawPrice.SOLIDARITY.getName(), price, vat, -4, 0.0, false);
+        createRawPriceProduct(
+            RawPrice.SOLIDARITY.getName(), price, vat, -4, Supplier.getSolidaritySupplier(), false);
     solidarity.solidaritySurcharge = true;
     solidarity.name =
         (int) (surcharge * 100)
@@ -265,7 +269,8 @@ public class ShoppingItem implements Serializable {
 
   public static ShoppingItem createDeposit(double price) {
     ShoppingItem deposit =
-        createRawPriceProduct(RawPrice.DEPOSIT.getName(), price, VAT.HIGH, -3, 0, false);
+        createRawPriceProduct(
+            RawPrice.DEPOSIT.getName(), price, VAT.HIGH, -3, Supplier.getDepositSupplier(), false);
     deposit.name += price < 0 ? " zurück" : "";
     return deposit;
   }
@@ -273,11 +278,6 @@ public class ShoppingItem implements Serializable {
   public static List<ShoppingItem> getAll(String condition) {
     return Tools.getAll(ShoppingItem.class, condition);
   }
-
-  /*private static void addToRetailPrice(ShoppingItem item, double addRetailPrice) {
-    item.itemRetailPrice += Math.round(addRetailPrice * 100) / 100.;
-    item.itemNetPrice = item.itemRetailPrice / (1 + item.surcharge) / (1 + item.vat);
-  }*/
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
   public double getRetailPrice() {

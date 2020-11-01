@@ -13,9 +13,9 @@ public class EditSurchargeTables extends ObjectViewController<SurchargeTable> {
         SurchargeTable::defaultSearch,
         true,
         Column.create("Liefernat", SurchargeTable::getSupplier),
-        Column.create("Von", SurchargeTable::getFrom),
-        Column.create("Bis", SurchargeTable::getTo),
-        Column.create("Name", SurchargeTable::getName),
+        Column.create("Von", SurchargeTable::getFrom_number),
+        Column.create("Bis", SurchargeTable::getTo_number),
+        Column.create("Name", SurchargeTable::getDescription),
         Column.create("Zuschlag", SurchargeTable::getSurcharge));
   }
 }

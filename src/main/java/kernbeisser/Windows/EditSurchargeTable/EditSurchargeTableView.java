@@ -56,13 +56,19 @@ class EditSurchargeTableView implements IView<EditSurchargeTableController> {
         new AccessCheckingComboBox<>(SurchargeTable::getSupplier, SurchargeTable::setSupplier);
     name =
         new AccessCheckingField<>(
-            SurchargeTable::getName, SurchargeTable::setName, AccessCheckingField.NONE);
+            SurchargeTable::getDescription,
+            SurchargeTable::setDescription,
+            AccessCheckingField.NONE);
     from =
         new AccessCheckingField<>(
-            SurchargeTable::getFrom, SurchargeTable::setFrom, AccessCheckingField.INT_FORMER);
+            SurchargeTable::getFrom_number,
+            SurchargeTable::setFrom_number,
+            AccessCheckingField.INT_FORMER);
     to =
         new AccessCheckingField<>(
-            SurchargeTable::getTo, SurchargeTable::setTo, AccessCheckingField.INT_FORMER);
+            SurchargeTable::getTo_number,
+            SurchargeTable::setTo_number,
+            AccessCheckingField.INT_FORMER);
     surcharge =
         new AccessCheckingField<>(
             SurchargeTable::getSurcharge,
