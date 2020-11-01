@@ -9,10 +9,10 @@ import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.InconsistentSurchargeTable;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.*;
-
 
 @Table
 @Entity
@@ -84,5 +84,39 @@ public class SurchargeTable implements Serializable, Cloneable {
             .getResultList();
     em.close();
     return out;
+  }
+
+  public static Map<SurchargeTable, String> checkSurchargeTableConsistency() {
+    Map<SurchargeTable, String> result = new HashMap<>();
+    EntityManager em = DBConnection.getEntityManager();
+    List<SurchargeTable> sortedSurcharges =
+        em.createQuery(
+                "select st from SurchargeTable st order by st.supplier, st.from_number",
+                SurchargeTable.class)
+            .getResultList();
+    SurchargeTable old_row = null;
+    for (SurchargeTable st : sortedSurcharges) {
+      if (st.to_number < st.from_number) {
+        result.put(st, "Endnummer ist kleiner als Startnummer");
+      }
+      if (old_row != null
+          && old_row != null
+          && st.supplier.equals(old_row.supplier)
+          && st.from_number <= old_row.to_number) {
+        result.put(st, "Startnummer ist nicht größer als die Endnummer des vorherigen Eintrags");
+        result.put(
+            old_row, "Endnummer ist nicht kleiner als die Startnummer des folgenden Eintrags");
+      }
+      old_row = st;
+    }
+    return result;
+  }
+
+  public static void checkSurchargeTableRowConsistency(SurchargeTable surchargeTable)
+      throws InconsistentSurchargeTable {
+    Map<SurchargeTable, String> checkResult = checkSurchargeTableConsistency();
+    if (checkResult.containsKey(surchargeTable)) {
+      throw new InconsistentSurchargeTable(checkResult.get(surchargeTable));
+    }
   }
 }
