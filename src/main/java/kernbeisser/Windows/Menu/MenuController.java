@@ -5,6 +5,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class MenuController extends Controller<MenuView, MenuModel> {
@@ -31,13 +32,14 @@ public class MenuController extends Controller<MenuView, MenuModel> {
 
   @Override
   public boolean commitClose() {
+    var view = getView();
     if (alreadyAsked) return true;
     if (JOptionPane.showConfirmDialog(
-            getView().getTopComponent(),
+            view.getTopComponent(),
             "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen")
         == 0) {
       SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getTopComponent());
-      getView().traceViewContainer().getLoaded().withCloseEvent(SimpleLogInController::new);
+      view.traceViewContainer().getLoaded().withCloseEvent(SimpleLogInController::new);
       alreadyAsked = true;
       SwingUtilities.invokeLater(
           () -> {

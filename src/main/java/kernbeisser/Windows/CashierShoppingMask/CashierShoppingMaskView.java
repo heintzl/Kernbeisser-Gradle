@@ -77,4 +77,11 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   public String getTitle() {
     return "Ladendiesnst Menu";
   }
+
+  public boolean commitClose() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Sind sie sich sicher das sie den Ladendienst beenden,\nwollen und den Landendienst Report ausdrucken wollen?")
+        == 0;
+  }
 }

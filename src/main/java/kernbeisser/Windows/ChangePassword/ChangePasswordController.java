@@ -5,6 +5,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.Controller;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangePasswordController extends Controller<ChangePasswordView, ChangePasswordModel> {
@@ -40,7 +41,8 @@ public class ChangePasswordController extends Controller<ChangePasswordView, Cha
   }
 
   private boolean comparePasswords() {
-    return getView().getNewPassword().equals(getView().getRepeatedPassword());
+    var view = getView();
+    return view.getNewPassword().equals(view.getRepeatedPassword());
   }
 
   private boolean lengthValid(String password) {
@@ -56,7 +58,8 @@ public class ChangePasswordController extends Controller<ChangePasswordView, Cha
   }
 
   void refreshPasswordStrength() {
-    show(getPasswordStrength(getView().getNewPassword()));
+    var view = getView();
+    show(getPasswordStrength(view.getNewPassword()));
   }
 
   void show(int passwordStrength) {

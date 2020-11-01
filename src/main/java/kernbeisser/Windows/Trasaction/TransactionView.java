@@ -1,6 +1,8 @@
 package kernbeisser.Windows.Trasaction;
 
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -202,6 +204,8 @@ public class TransactionView implements IView<TransactionController> {
     return info.getText();
   }
 
+  private boolean lastFocusOnFrom = true;
+
   @Override
   public void initialize(TransactionController controller) {
     transferTransactions.addActionListener((e) -> controller.transfer());
@@ -256,6 +260,20 @@ public class TransactionView implements IView<TransactionController> {
               to.setText("");
               to.setEnabled(true);
             }
+          }
+        });
+    from.addFocusListener(
+        new FocusAdapter() {
+          @Override
+          public void focusGained(FocusEvent e) {
+            lastFocusOnFrom = true;
+          }
+        });
+    to.addFocusListener(
+        new FocusAdapter() {
+          @Override
+          public void focusGained(FocusEvent e) {
+            lastFocusOnFrom = false;
           }
         });
     // Sets the ActionListeners for the instant Transaction Buttons
@@ -458,5 +476,25 @@ public class TransactionView implements IView<TransactionController> {
   @Override
   public String getTitle() {
     return "Überweisungen";
+  }
+
+  public void pastUsername(String username) {
+    if (lastFocusOnFrom) {
+      if (from.isEnabled()) {
+        from.setText(username);
+        return;
+      }
+      if (to.isEnabled()) {
+        to.setText(username);
+      }
+    } else {
+      if (to.isEnabled()) {
+        to.setText(username);
+        return;
+      }
+      if (from.isEnabled()) {
+        from.setText(username);
+      }
+    }
   }
 }

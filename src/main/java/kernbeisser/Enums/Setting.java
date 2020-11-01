@@ -49,7 +49,8 @@ public enum Setting {
   LABEL_SCALE_FACTOR("1.5"),
   WARN_OVER_TRANSACTION_VALUE("1000."),
   OPEN_MULTIPLE_SHOPPING_MASK("true"),
-  PRINTER("OS_default");
+  PRINTER("OS_default"),
+  LAST_PRINTED_BON_NR("-1");
 
   // defines the type to like in java style
   // Value: Type:
@@ -113,8 +114,9 @@ public enum Setting {
 
   public long getLongValue() {
     try {
-      return Long.parseLong((getValue()));
+      return Long.parseLong((getValue().replace("l", "L").replace("L", "")));
     } catch (NumberFormatException e) {
+      e.printStackTrace();
       Tools.showUnexpectedErrorWarning(e);
       StackTraceElement element = Tools.getCallerStackTraceElement(1);
       Main.logger.error(
@@ -125,7 +127,7 @@ public enum Setting {
               + toString()
               + "] has the value '"
               + getStringValue()
-              + "' which cant be interpreted as an integer");
+              + "' which cant be interpreted as an long");
       throw new NumberFormatException();
     }
   }

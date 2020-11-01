@@ -10,6 +10,7 @@ import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserController extends Controller<EditUserView, EditUserModel> {
@@ -39,8 +40,9 @@ public class EditUserController extends Controller<EditUserView, EditUserModel> 
 
   @Override
   public void fillView(EditUserView editUserView) {
-    getView().getObjectForm().setSource(getModel().getUser());
-    getView().getObjectForm().setObjectValidator(this::validateUser);
+    var view = getView();
+    view.getObjectForm().setSource(getModel().getUser());
+    view.getObjectForm().setObjectValidator(this::validateUser);
   }
 
   @Override
@@ -51,14 +53,16 @@ public class EditUserController extends Controller<EditUserView, EditUserModel> 
   }
 
   void doAction() {
-    if (getView().getObjectForm().applyMode(model.getMode())) {
-      getView().back();
+    var view = getView();
+    if (view.getObjectForm().applyMode(model.getMode())) {
+      view.back();
     }
   }
 
   void refreshUsername() {
     if (model.getMode() == Mode.ADD) {
-      User data = getView().getObjectForm().getDataIgnoreWrongInput();
+      var view = getView();
+      User data = view.getObjectForm().getDataIgnoreWrongInput();
       if (data.getSurname() != null && data.getFirstName() != null) {
         getView()
             .setUsername(
@@ -72,6 +76,7 @@ public class EditUserController extends Controller<EditUserView, EditUserModel> 
   }
 
   public String validateUsername(String s) throws CannotParseException {
+    var view = getView();
     switch (model.getMode()) {
       case EDIT:
         if (model.getUser().getUsername().equals(s)) {
@@ -79,7 +84,7 @@ public class EditUserController extends Controller<EditUserView, EditUserModel> 
         }
       case ADD:
         if (model.usernameExists(s)) {
-          getView().usernameAlreadyExists();
+          view.usernameAlreadyExists();
           throw new CannotParseException("username already exists");
         } else return s;
       default:

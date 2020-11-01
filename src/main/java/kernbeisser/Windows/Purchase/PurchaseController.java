@@ -9,6 +9,7 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayModel;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class PurchaseController extends Controller<PurchaseView, PurchaseModel> {
@@ -26,11 +27,12 @@ public class PurchaseController extends Controller<PurchaseView, PurchaseModel> 
 
   @Override
   public void fillView(PurchaseView purchaseView) {
-    getView().setCustomer(model.getLoaded().getSession().getCustomer().getUsername());
-    getView().setSeller(model.getLoaded().getSession().getSeller().getUsername());
-    getView().setDate(Date.INSTANT_FORMAT.format(model.getLoaded().getCreateDate()));
+    var view = getView();
+    view.setCustomer(model.getLoaded().getSession().getCustomer().getUsername());
+    view.setSeller(model.getLoaded().getSession().getSeller().getUsername());
+    view.setDate(Date.INSTANT_FORMAT.format(model.getLoaded().getCreateDate()));
     Collection<ShoppingItem> items = model.getAllItems();
-    getView().setItemCount(items.size());
+    view.setItemCount(items.size());
     fillShoppingCart();
     cartController.setValueAfterLabel("Damaliges Guthaben nach dem Einkauf:");
   }
@@ -45,17 +47,16 @@ public class PurchaseController extends Controller<PurchaseView, PurchaseModel> 
   }
 
   public void fillShoppingCart() {
+    var view = cartController.getView();
     double sum = 0;
     Collection<ShoppingItem> items = model.getAllItems();
     for (ShoppingItem item : items) {
       sum += item.getRetailPrice();
     }
-    cartController.getView().setSum(sum);
-    cartController
-        .getView()
-        .setValue(
-            model.getLoaded().getSession().getCustomer().valueAt(model.getLoaded().getCreateDate())
-                - sum);
-    cartController.getView().setObjects(items);
+    view.setSum(sum);
+    view.setValue(
+        model.getLoaded().getSession().getCustomer().valueAt(model.getLoaded().getCreateDate())
+            - sum);
+    view.setObjects(items);
   }
 }

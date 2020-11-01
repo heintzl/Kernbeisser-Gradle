@@ -8,6 +8,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
+import lombok.var;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,8 +46,9 @@ public class EditJobController extends Controller<EditJobView, EditJobModel> {
   }
 
   public void commit() {
-    if (getView().getForm().applyMode(model.getMode())) {
-      getView().back();
+    var view = getView();
+    if (view.getForm().applyMode(model.getMode())) {
+      view.back();
     }
   }
 }
