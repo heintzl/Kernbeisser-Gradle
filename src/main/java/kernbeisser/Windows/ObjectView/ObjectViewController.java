@@ -8,6 +8,7 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MaskLoader;
 import kernbeisser.Windows.Searchable;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectViewController<T> extends Controller<ObjectViewView<T>, ObjectViewModel<T>> {
@@ -33,48 +34,52 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   }
 
   void checkSelectedObject() {
-    getView().setAddAvailable(!openWindow);
+    var view = getView();
+    view.setAddAvailable(!openWindow);
     if (openWindow || searchBoxController.getSelectedObject() == null) {
-      getView().setEditAvailable(false);
-      getView().setRemoveAvailable(false);
+      view.setEditAvailable(false);
+      view.setRemoveAvailable(false);
     } else {
-      getView().setEditAvailable(true);
-      getView().setRemoveAvailable(true);
+      view.setEditAvailable(true);
+      view.setRemoveAvailable(true);
     }
   }
 
   void edit() {
+    var view = getView();
     if (openWindow) return;
     model.openEdit(
-        getView().traceViewContainer(),
+        view.traceViewContainer(),
         searchBoxController.getSelectedObject(),
         () -> {
           search();
           openWindow = false;
           checkSelectedObject();
         });
-    getView().setAddAvailable(false);
+    view.setAddAvailable(false);
     openWindow = true;
     checkSelectedObject();
   }
 
   void add() {
+    var view = getView();
     if (openWindow) return;
     model.openAdd(
-        getView().traceViewContainer(),
+        view.traceViewContainer(),
         searchBoxController.getSelectedObject(),
         () -> {
           search();
           openWindow = false;
           checkSelectedObject();
         });
-    getView().setAddAvailable(false);
+    view.setAddAvailable(false);
     openWindow = true;
     checkSelectedObject();
   }
 
   void delete() {
-    if (getView().commitDelete()) {
+    var view = getView();
+    if (view.commitDelete()) {
       model.remove(searchBoxController.getSelectedObject());
     }
     search();

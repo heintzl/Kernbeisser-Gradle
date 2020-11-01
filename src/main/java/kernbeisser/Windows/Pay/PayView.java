@@ -9,6 +9,7 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class PayView implements IView<PayController> {
@@ -33,9 +34,10 @@ public class PayView implements IView<PayController> {
       sum += item.getRetailPrice();
     }
 
-    shoppingCartController.getView().setSum(sum);
-    shoppingCartController.getView().setValue(controller.getUserValue() - sum);
-    shoppingCartController.getView().setObjects(items);
+    var view = shoppingCartController.getView();
+    view.setSum(sum);
+    view.setValue(controller.getUserValue() - sum);
+    view.setObjects(items);
   }
 
   public void confirmLogging(String name, double value) {

@@ -17,6 +17,7 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
 import kernbeisser.Windows.ObjectView.ObjectViewView;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class EditItemsController extends Controller<EditItemsView, EditItemsModel> {
@@ -81,6 +82,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
   }
 
   void openPriceListSelection() {
+    var view = getView();
     ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
     priceListObjectTree.addSelectionListener(
         e -> {
@@ -88,7 +90,6 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
           objectViewController.search();
           IView.traceViewContainer(priceListObjectTree.getParent());
         });
-    new ComponentController(priceListObjectTree)
-        .openIn(new SubWindow(getView().traceViewContainer()));
+    new ComponentController(priceListObjectTree).openIn(new SubWindow(view.traceViewContainer()));
   }
 }

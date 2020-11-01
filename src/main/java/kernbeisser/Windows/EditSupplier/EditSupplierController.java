@@ -8,6 +8,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
+import lombok.var;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +37,8 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
 
   @Override
   public void fillView(EditSupplierView editSupplierView) {
-    getView().getObjectForm().setSource(getModel().getSupplier());
+    var view = getView();
+    view.getObjectForm().setSource(getModel().getSupplier());
   }
 
   @Override
@@ -45,8 +47,9 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
   }
 
   public void commit() {
-    if (getView().getObjectForm().applyMode(model.getMode())) {
-      getView().back();
+    var view = getView();
+    if (view.getObjectForm().applyMode(model.getMode())) {
+      view.back();
     }
   }
 
@@ -56,7 +59,8 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
         if (name.equals(model.getSupplier().getName())) return name;
       case ADD:
         if (model.nameExists(name)) {
-          getView().nameAlreadyExists();
+          var view = getView();
+          view.nameAlreadyExists();
           throw new CannotParseException("short name is already taken");
         } else return name;
       default:
@@ -65,12 +69,13 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
   }
 
   String validateShortName(String name) throws CannotParseException {
+    var view = getView();
     switch (model.getMode()) {
       case EDIT:
         if (name.equals(model.getSupplier().getShortName())) return name;
       case ADD:
         if (model.shortNameExists(name)) {
-          getView().shortNameAlreadyExists();
+          view.shortNameAlreadyExists();
           throw new CannotParseException("short name is already taken");
         } else return name;
       default:

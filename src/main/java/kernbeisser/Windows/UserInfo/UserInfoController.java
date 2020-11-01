@@ -11,6 +11,7 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class UserInfoController extends Controller<UserInfoView, UserInfoModel> {
@@ -25,14 +26,15 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
   }
 
   public void loadCurrentSite() {
-    switch (getView().getSelectedTabIndex()) {
+    var view = getView();
+    switch (view.getSelectedTabIndex()) {
       case 0:
-        getView().setJobs(model.getUser().getJobs());
-        getView().setPermissions(model.getUser().getPermissions());
-        getView().setUserGroupMembers(model.getUser().getUserGroup().getMembers());
+        view.setJobs(model.getUser().getJobs());
+        view.setPermissions(model.getUser().getPermissions());
+        view.setUserGroupMembers(model.getUser().getUserGroup().getMembers());
         return;
       case 1:
-        getView().setShoppingHistory(model.getUser().getAllPurchases());
+        view.setShoppingHistory(model.getUser().getAllPurchases());
         return;
       case 2:
         Collection<Column<Transaction>> columns = new ArrayList<>();
@@ -61,8 +63,8 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
         columns.add(generateAfterValueChangeColumn());
         columns.add(Column.create("Info", Transaction::getInfo));
         columns.add(Column.create("Datum", Transaction::getDate));
-        getView().setValueHistoryColumns(columns);
-        getView().setValueHistory(model.getUser().getAllValueChanges());
+        view.setValueHistoryColumns(columns);
+        view.setValueHistory(model.getUser().getAllValueChanges());
         return;
     }
   }
@@ -116,8 +118,9 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
   }
 
   public void openPurchase() {
-    new PurchaseController(getView().getSelectedPurchase())
-        .openIn(new SubWindow(getView().traceViewContainer()));
+    var view = getView();
+    new PurchaseController(view.getSelectedPurchase())
+        .openIn(new SubWindow(view.traceViewContainer()));
   }
 
   @Override

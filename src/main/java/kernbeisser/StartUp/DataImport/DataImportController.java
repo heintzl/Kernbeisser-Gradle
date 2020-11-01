@@ -26,6 +26,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.Cleanup;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -36,6 +37,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
   }
 
   void openFileExplorer() {
+    var view = getView();
     File file = new File("importPath.txt");
     String importPath = ".";
     if (file.exists()) {
@@ -54,48 +56,48 @@ public class DataImportController extends Controller<DataImportView, DataImportM
           if (jFileChooser.getSelectedFile() == null) {
             return;
           }
-          getView().setFilePath(jFileChooser.getSelectedFile().getAbsolutePath());
+          view.setFilePath(jFileChooser.getSelectedFile().getAbsolutePath());
           checkDataSource();
         });
-    jFileChooser.showOpenDialog(getView().getTopComponent());
+    jFileChooser.showOpenDialog(view.getTopComponent());
   }
 
   private boolean isValidDataSource() {
-    return getView().getFilePath().toUpperCase().endsWith(".JSON")
-        && new File(getView().getFilePath()).exists();
+    var view = getView();
+    return view.getFilePath().toUpperCase().endsWith(".JSON")
+        && new File(view.getFilePath()).exists();
   }
 
   void checkDataSource() {
+    var view = getView();
     if (isValidDataSource()) {
-      getView().setValidDataSource(true);
+      view.setValidDataSource(true);
       JSONObject dataConfig = extractJSON();
       if (dataConfig.has("UserData")) {
         JSONObject jsonObject = dataConfig.getJSONObject("UserData");
-        getView().userSourceFound(jsonObject.has("Users") && jsonObject.has("Jobs"));
+        view.userSourceFound(jsonObject.has("Users") && jsonObject.has("Jobs"));
       } else {
-        getView().userSourceFound(false);
+        view.userSourceFound(false);
       }
       if (dataConfig.has("ItemData")) {
         JSONObject jsonObject = dataConfig.getJSONObject("ItemData");
-        getView()
-            .itemSourceFound(
-                jsonObject.has("Suppliers")
-                    && jsonObject.has("Items")
-                    && jsonObject.has("PriceLists"));
+        view.itemSourceFound(
+            jsonObject.has("Suppliers") && jsonObject.has("Items") && jsonObject.has("PriceLists"));
       } else {
-        getView().itemSourceFound(false);
+        view.itemSourceFound(false);
       }
     } else {
-      getView().setValidDataSource(false);
-      getView().userSourceFound(false);
-      getView().itemSourceFound(false);
+      view.setValidDataSource(false);
+      view.userSourceFound(false);
+      view.itemSourceFound(false);
     }
   }
 
   private JSONObject extractJSON() {
+    var view = getView();
     StringBuilder sb = new StringBuilder();
     try {
-      Files.readAllLines(new File(getView().getFilePath()).toPath()).forEach(sb::append);
+      Files.readAllLines(new File(view.getFilePath()).toPath()).forEach(sb::append);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -107,12 +109,12 @@ public class DataImportController extends Controller<DataImportView, DataImportM
   void importData() {
     PermissionSet.MASTER.setAllBits(true);
     if (isValidDataSource()) {
-
+      var view = getView();
       Main.logger.info("Starting importing data");
-      File jsonPath = new File(getView().getFilePath()).getParentFile();
+      File jsonPath = new File(view.getFilePath()).getParentFile();
       JSONObject path = extractJSON();
       Setting.DB_INITIALIZED.changeValue(true);
-      if (getView().importItems()) {
+      if (view.importItems()) {
         JSONObject itemPath = path.getJSONObject("ItemData");
         File suppliers = new File(jsonPath, itemPath.getString("Suppliers"));
         File priceLists = new File(jsonPath, itemPath.getString("PriceLists"));
@@ -121,7 +123,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
           articleThread =
               new Thread(
                   () -> {
-                    getView().setItemProgress(0);
+                    view.setItemProgress(0);
                     parseSuppliers(suppliers);
                     parsePriceLists(priceLists);
                     parseItems(items);
@@ -129,18 +131,18 @@ public class DataImportController extends Controller<DataImportView, DataImportM
                   });
           articleThread.start();
         } else {
-          getView().itemSourceFound(false);
-          getView().itemSourcesNotExists();
+          view.itemSourceFound(false);
+          view.itemSourcesNotExists();
         }
       }
-      if (getView().importUser()) {
+      if (view.importUser()) {
         JSONObject userPath = path.getJSONObject("UserData");
         File users = new File(jsonPath, userPath.getString("Users"));
         File jobs = new File(jsonPath, userPath.getString("Jobs"));
         if (jobs.exists() && users.exists()) {
           new Thread(
                   () -> {
-                    getView().setUserProgress(0);
+                    view.setUserProgress(0);
                     parseJobs(jobs);
                     parseUsers(users);
                     Main.logger.info("User thread finished");
@@ -149,15 +151,15 @@ public class DataImportController extends Controller<DataImportView, DataImportM
                     } catch (InterruptedException e) {
                       Tools.showUnexpectedErrorWarning(e);
                     }
-                    getView().back();
+                    view.back();
                   })
               .start();
         } else {
-          getView().userSourceFound(false);
-          getView().userSourcesNotExists();
+          view.userSourceFound(false);
+          view.userSourcesNotExists();
         }
       }
-      if (getView().createStandardAdmin()) {
+      if (view.createStandardAdmin()) {
         createAdmin();
       }
     }
@@ -170,8 +172,9 @@ public class DataImportController extends Controller<DataImportView, DataImportM
     user.setSurname("Admin");
     user.setUsername("Admin");
     String password;
+    var view = getView();
     do {
-      password = getView().requestPassword();
+      password = view.requestPassword();
     } while (password.equals(""));
     user.setPassword(
         BCrypt.withDefaults()
@@ -193,15 +196,17 @@ public class DataImportController extends Controller<DataImportView, DataImportM
         job.setDescription(columns[1]);
         jobs.add(job);
       }
-      getView().setUserProgress(1);
+      var view = getView();
+      view.setUserProgress(1);
       model.batchMergeAll(jobs);
-      getView().setUserProgress(2);
+      view.setUserProgress(2);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
   }
 
   private void parseUsers(File f) {
+    var view = getView();
     try {
       HashSet<String> usernames = new HashSet<>();
       HashMap<String, Job> jobs = new HashMap<>();
@@ -255,13 +260,14 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       em.flush();
       et.commit();
       em.close();
-      getView().setUserProgress(4);
+      view.setUserProgress(4);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
   }
 
   private void parsePriceLists(File f) {
+    var view = getView();
     try {
       List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
       HashMap<String, PriceList> priceLists = new HashMap<>();
@@ -272,9 +278,9 @@ public class DataImportController extends Controller<DataImportView, DataImportM
         pl.setSuperPriceList(priceLists.get(columns[1]));
         priceLists.put(pl.getName(), pl);
       }
-      getView().setItemProgress(3);
+      view.setItemProgress(3);
       model.saveAll(priceLists.values());
-      getView().setItemProgress(4);
+      view.setItemProgress(4);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -298,9 +304,10 @@ public class DataImportController extends Controller<DataImportView, DataImportM
         supplier.setSurcharge(Integer.parseInt(columns[8]));
         suppliers.add(supplier);
       }
-      getView().setItemProgress(1);
+      var view = getView();
+      view.setItemProgress(1);
       model.batchMergeAll(suppliers);
-      getView().setItemProgress(2);
+      view.setItemProgress(2);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -327,16 +334,18 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       }
       Main.logger.warn("Ignored " + errorCollector.count() + " articles errors:");
       errorCollector.log();
-      getView().setItemProgress(5);
+      var view = getView();
+      view.setItemProgress(5);
       model.saveAllItems(articles);
-      getView().setItemProgress(6);
+      view.setItemProgress(6);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
   }
 
   void cancel() {
-    getView().back();
+    var view = getView();
+    view.back();
     Setting.DB_INITIALIZED.changeValue(true);
   }
 
