@@ -8,6 +8,7 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
@@ -48,7 +49,8 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
 
   @Override
   public Component getFocusOnInitialize() {
-    return shoppingMaskUIController.getView().getFocusOnInitialize();
+    var view = shoppingMaskUIController.getView();
+    return view.getFocusOnInitialize();
   }
 
   @Override

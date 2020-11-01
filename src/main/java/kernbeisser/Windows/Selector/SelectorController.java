@@ -9,6 +9,7 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.ViewContainer;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class SelectorController<T> extends Controller<SelectorView<T>, SelectorModel<T>> {
@@ -37,13 +38,15 @@ public class SelectorController<T> extends Controller<SelectorView<T>, SelectorM
   }
 
   public void remove() {
-    model.getCurrentValues().remove(getView().getSelectedValue());
-    getView().removeValue(getView().getSelectedValue());
+    var view = getView();
+    model.getCurrentValues().remove(view.getSelectedValue());
+    view.removeValue(view.getSelectedValue());
   }
 
   private ViewContainer selectionWindow;
 
   public void add() {
+    var view = getView();
     if (selectionWindow != null) {
       return;
     }
@@ -51,13 +54,13 @@ public class SelectorController<T> extends Controller<SelectorView<T>, SelectorM
         new SearchBoxController<T>(model.getSearchable(), model.getColumns());
     Consumer<T> selection =
         e -> {
-          getView().addValue(e);
+          view.addValue(e);
           model.getCurrentValues().add(e);
           selectionWindow.requestClose();
           selectionWindow = null;
         };
     controller.addDoubleClickListener(selection);
     controller.addSelectionListener(selection);
-    selectionWindow = controller.openIn(new SubWindow(getView().traceViewContainer()));
+    selectionWindow = controller.openIn(new SubWindow(view.traceViewContainer()));
   }
 }

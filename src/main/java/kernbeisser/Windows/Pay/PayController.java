@@ -13,6 +13,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class PayController extends Controller<PayView, PayModel> {
@@ -36,22 +37,21 @@ public class PayController extends Controller<PayView, PayModel> {
 
   void commitPayment(boolean printReceipt) {
     Purchase purchase;
+    var view = getView();
     try {
       // FIXME why pass shoppingCart to model if it was initialized with it?
-
       try {
         purchase = model.pay();
         if (printReceipt) {
           PayModel.print(purchase, model.getShoppingCart());
         }
-        getView()
-            .confirmLogging(
-                model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());
-        getView().back();
+        view.confirmLogging(
+            model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());
+        view.back();
 
         model.runTransferCompleted();
       } catch (InvalidTransactionException e) {
-        getView().notEnoughValue();
+        view.notEnoughValue();
       }
 
     } catch (PersistenceException e) {
@@ -72,8 +72,9 @@ public class PayController extends Controller<PayView, PayModel> {
 
   @Override
   public void fillView(PayView payView) {
-    getView().setViewSize(viewSize);
-    getView().fillShoppingCart(model.getShoppingCart());
+    var view = getView();
+    view.setViewSize(viewSize);
+    view.fillShoppingCart(model.getShoppingCart());
   }
 
   @Override

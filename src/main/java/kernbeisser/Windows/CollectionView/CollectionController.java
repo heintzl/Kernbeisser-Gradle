@@ -4,6 +4,7 @@ import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class CollectionController<T> extends Controller<CollectionView<T>, CollectionModel<T>> {
@@ -21,9 +22,10 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
 
   @Override
   public void fillView(CollectionView<T> tCollectionView) {
-    getView().setAvailable(model.getAvailable());
+    var view = getView();
+    view.setAvailable(model.getAvailable());
     model.getAvailable().removeAll(model.getLoaded());
-    getView().setChosen(model.getLoaded());
+    view.setChosen(model.getLoaded());
     getView().setColumns(model.getColumns());
     getView().setEditable(model.isEditable());
   }

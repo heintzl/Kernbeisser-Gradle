@@ -25,6 +25,7 @@ import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, ShoppingMaskModel> {
@@ -53,7 +54,8 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   private double getRelevantPrice() {
-    return getView().isPreordered() ? getView().getNetPrice() : getView().getPrice();
+    var view = getView();
+    return view.isPreordered() ? view.getNetPrice() : getView().getPrice();
   }
 
   private boolean checkStorno(ShoppingItem item, boolean piece) {

@@ -9,19 +9,21 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Windows.MVC.Controller;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class EditItemController extends Controller<EditItemView, EditItemModel> {
 
   public EditItemController(Article article, Mode mode) {
     super(new EditItemModel(article != null ? article : new Article(), mode));
+    var view = getView();
     switch (mode) {
       case ADD:
-        getView().setActionTitle("Als neuen Artikel aufnehmen");
-        getView().setActionIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
+        view.setActionTitle("Als neuen Artikel aufnehmen");
+        view.setActionIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
         break;
       case EDIT:
-        getView().setActionTitle("Änderungen übernehmen");
+        view.setActionTitle("Änderungen übernehmen");
         getView()
             .setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(0x0000BB)));
         break;
@@ -49,12 +51,13 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
   }
 
   String validateName(String name) throws CannotParseException {
+    var view = getView();
     switch (model.getMode()) {
       case EDIT:
         if (name.equals(model.getSource().getName())) return name;
       case ADD:
         if (EditItemModel.nameExists(name)) {
-          getView().nameAlreadyExists();
+          view.nameAlreadyExists();
           throw new CannotParseException("Name already taken");
         } else return name;
       default:
@@ -63,6 +66,7 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
   }
 
   int validateKBNumber(String input) throws CannotParseException {
+    var view = getView();
     try {
       int number = Integer.parseInt(input);
       switch (model.getMode()) {
@@ -70,7 +74,7 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
           if (model.getSource().getKbNumber() == number) return number;
         case ADD:
           if (!(model.kbNumberExists(number) > -1)) return number;
-          else if (getView().kbNumberAlreadyExists()) {
+          else if (view.kbNumberAlreadyExists()) {
             return model.nextUnusedArticleNumber(number);
           } else {
             throw new CannotParseException("Number is already taken");
@@ -84,6 +88,7 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
   }
 
   Long validateBarcode(String input) throws CannotParseException {
+    var view = getView();
     if (input.replace("null", "").equals("")) return null;
     try {
       long barcode = Long.parseLong(input);
@@ -93,7 +98,7 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
         case ADD:
           if (!(model.barcodeExists(barcode) > -1)) return barcode;
           else {
-            getView().barcodeAlreadyExists();
+            view.barcodeAlreadyExists();
             throw new CannotParseException("Barcode is already taken");
           }
         default:
@@ -105,22 +110,23 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
   }
 
   void doAction() {
-    if (getView().getArticleObjectForm().applyMode(model.getMode())) getView().back();
+    var view = getView();
+    if (view.getArticleObjectForm().applyMode(model.getMode())) view.back();
   }
 
   public int validateAmount(String s) {
-    MetricUnits unit = getView().getMetricUnits();
+    var view = getView();
+    MetricUnits unit = view.getMetricUnits();
     if (unit != null) {
       return (int)
-          (Double.parseDouble(s.replace(",", ".")) / getView().getMetricUnits().getBaseFactor());
+          (Double.parseDouble(s.replace(",", ".")) / view.getMetricUnits().getBaseFactor());
     } else throw new NullPointerException();
   }
 
   public String displayAmount(int amount) {
+    var view = getView();
     MetricUnits units =
-        getView().getMetricUnits() != null
-            ? getView().getMetricUnits()
-            : model.getSource().getMetricUnits();
+        view.getMetricUnits() != null ? view.getMetricUnits() : model.getSource().getMetricUnits();
     return amount * units.getBaseFactor() + "";
   }
 }

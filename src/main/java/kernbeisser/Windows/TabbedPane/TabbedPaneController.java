@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainer;
+import lombok.var;
 import org.apache.commons.collections4.CollectionUtils;
 
 public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneModel> {
@@ -17,11 +18,12 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
   public void fillView(TabbedPaneView tabbedPaneView) {}
 
   public void closeViewContainer(ViewContainer container, int index) {
-    if (container.getLoaded() == null) getView().removeTab(index);
+    var view = getView();
+    if (container.getLoaded() == null) view.removeTab(index);
     else {
       if (container.getLoaded().requestClose()) {
         container.getLoaded().notifyClosed();
-        getView().removeTab(index);
+        view.removeTab(index);
         getModel().remove(container);
       }
     }
@@ -37,13 +39,15 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
   }
 
   public ViewContainer createTabViewContainer() {
-    ViewContainer container = getView().prepareViewContainer();
+    var view = getView();
+    ViewContainer container = view.prepareViewContainer();
     getModel().add(container);
     return container;
   }
 
   public void kill(Controller<?, ?> controller) {
-    getView().removeTab(getView().indexOf(controller));
+    var view = getView();
+    view.removeTab(view.indexOf(controller));
     getModel().removeController(controller);
   }
 }

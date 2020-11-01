@@ -5,6 +5,7 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class EditSurchargeTableController
@@ -20,8 +21,9 @@ public class EditSurchargeTableController
   }
 
   public void commit() {
-    if (getView().getObjectForm().applyMode(model.getMode())) {
-      getView().back();
+    var view = getView();
+    if (view.getObjectForm().applyMode(model.getMode())) {
+      view.back();
     }
   }
 
@@ -32,8 +34,9 @@ public class EditSurchargeTableController
 
   @Override
   public void fillView(EditSurchargeTableView editSurchargeTableView) {
-    getView().setSuppliers(model.getAllSuppliers());
-    getView().getObjectForm().setSource(model.getSource());
+    var view = getView();
+    view.setSuppliers(model.getAllSuppliers());
+    view.getObjectForm().setSource(model.getSource());
   }
 
   @Override

@@ -15,6 +15,7 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Menu.MenuController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
@@ -37,22 +38,23 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
   }
 
   public void logIn() {
+    var view = getView();
     try {
-      model.logIn(getView().getUsername(), getView().getPassword());
+      model.logIn(view.getUsername(), view.getPassword());
       loadUserSettings();
       if (LogInModel.getLoggedIn().getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS)
               > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()
           || LogInModel.getLoggedIn().isForcePasswordChange()) {
         new ChangePasswordController(LogInModel.getLoggedIn(), true)
-            .openIn(new SubWindow(getView().traceViewContainer()));
+            .openIn(new SubWindow(view.traceViewContainer()));
       } else {
-        getView().back();
+        view.back();
         new MenuController().openTab();
       }
     } catch (CannotLogInException e) {
-      getView().accessDenied();
+      view.accessDenied();
     } catch (PermissionRequired permissionRequired) {
-      getView().permissionRequired();
+      view.permissionRequired();
     }
   }
 
