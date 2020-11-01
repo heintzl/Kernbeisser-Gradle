@@ -290,7 +290,7 @@ public class Tools {
     em.close();
   }
 
-  public static void showUnexpectedErrorWarning(Exception e) {
+  public static void showUnexpectedErrorWarning(Exception e) throws RuntimeException {
     Main.logger.error(e.getMessage(), e);
     JOptionPane.showMessageDialog(
         null,
@@ -298,6 +298,7 @@ public class Tools {
             + e.toString(),
         "Es ist ein unerwarteter Fehler aufgetreten",
         JOptionPane.ERROR_MESSAGE);
+    throw new RuntimeException(e);
   }
 
   public static void showPrintAbortedWarning(Exception e, boolean logEvent) {

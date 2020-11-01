@@ -11,9 +11,11 @@ import kernbeisser.Windows.ViewContainer;
 public class SubWindow extends JDialog implements ViewContainer {
 
   private Controller<?, ?> controller;
+  private final ViewContainer parent;
 
   public SubWindow(ViewContainer viewContainer) {
     super(viewContainer.getLoaded().getView().getTopComponent());
+    this.parent = viewContainer;
     viewContainer
         .getLoaded()
         .addCloseEvent(
@@ -30,7 +32,6 @@ public class SubWindow extends JDialog implements ViewContainer {
               }
             });
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-    super.setLocationRelativeTo(viewContainer.getLoaded().getView().getContent());
   }
 
   @Override
@@ -40,6 +41,7 @@ public class SubWindow extends JDialog implements ViewContainer {
     add(view.getContent());
     setTitle(view.getTitle());
     setSize(view.getSize());
+    setLocationRelativeTo(parent.getLoaded().getView().getTopComponent());
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     addWindowListener(
         new WindowAdapter() {
@@ -51,6 +53,7 @@ public class SubWindow extends JDialog implements ViewContainer {
             }
           }
         });
+
     setVisible(true);
   }
 
