@@ -158,8 +158,8 @@ public class ReportManager {
     reportParams.put("VatValueLow", purchase.guessVatValue(VAT.LOW));
     reportParams.put("VatValueHigh", purchase.guessVatValue(VAT.HIGH));
     reportParams.put("SumTotal", purchase.getSum());
-    reportParams.put("VatSumLow", ShoppingItem.getSum(ShoppingItemSum.RETAILPRICE_VATLOW, items));
-    reportParams.put("VatSumHigh", ShoppingItem.getSum(ShoppingItemSum.RETAILPRICE_VATHIGH, items));
+    reportParams.put("VatSumLow", ShoppingItem.getSum(ShoppingItemSum.VAT_VATLOW, items));
+    reportParams.put("VatSumHigh", ShoppingItem.getSum(ShoppingItemSum.VAT_VATHIGH, items));
 
     return reportParams;
   }
@@ -299,7 +299,7 @@ public class ReportManager {
             transactionPurchases += t.getValue();
             break;
           case USER_GENERATED:
-            transactionSpecialPayments += t.getValue() * (t.getFrom().equals(kbUser)?-1.0:1.0);
+            transactionSpecialPayments += t.getValue() * (t.getFrom().equals(kbUser) ? -1.0 : 1.0);
             break;
           case PAYIN:
           case INITIALIZE:
