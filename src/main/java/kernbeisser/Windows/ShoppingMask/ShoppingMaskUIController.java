@@ -197,9 +197,13 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         * (getView().isPreordered() ? article.getContainerSize() : 1);
   }
 
-  public double recalculatePrice(double newNetPrice) throws UndefinedInputException {
-    ShoppingItem item = extractShoppingItemFromUI();
-    return newNetPrice / item.getItemNetPrice() * item.getItemRetailPrice();
+  public double recalculatePrice(double newNetPrice) {
+    try {
+      ShoppingItem item = extractShoppingItemFromUI();
+      return newNetPrice / item.getItemNetPrice() * item.getItemRetailPrice();
+    } catch (UndefinedInputException e) {
+      return 0.0;
+    }
   }
 
   double getPrice(Article article) {

@@ -25,7 +25,6 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
-import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -432,15 +431,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   private void recalculatePrice() {
-    if (currentItem.getName() == null) {
-      try {
-        currentItem = controller.extractShoppingItemFromUI();
-      } catch (UndefinedInputException e) {
-        e.printStackTrace();
-      }
-    }
-    price.setText(
-        String.format("%.2f", currentItem.calculateItemRetailPrice(netPrice.getSafeValue())));
+    price.setText(String.format("%.2f", controller.recalculatePrice(netPrice.getSafeValue())));
   }
 
   void defaultSettings() {
