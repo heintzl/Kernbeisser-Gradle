@@ -876,7 +876,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public void setSearchArticleAvailable(boolean b) {
-    searchArticle.setEnabled(false);
+    searchArticle.setEnabled(b);
   }
 
   @Override
