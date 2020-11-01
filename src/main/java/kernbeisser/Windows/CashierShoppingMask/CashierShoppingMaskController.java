@@ -66,12 +66,11 @@ public class CashierShoppingMaskController
 
   @Override
   protected boolean commitClose() {
-    if (!model.isShoppingMaskOpened()) return true;
-    else {
+    if (model.isShoppingMaskOpened()) {
       if (!getView().commitClose()) return false;
       model.printTillRoll(this::handleResult);
-      return true;
     }
+    return true;
   }
 
   private void handleResult(Boolean b) {
