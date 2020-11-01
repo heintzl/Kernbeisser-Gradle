@@ -14,6 +14,7 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class CashierShoppingMaskController
@@ -35,12 +36,13 @@ public class CashierShoppingMaskController
   }
 
   private void selectUser(User tableSelection) {
-    getView();
+    var view = getView();
     if (tableSelection != null) {
-      getView().setOpenShoppingMaskEnabled(true);
-      getView().setStartFor(tableSelection.getFirstName(), tableSelection.getSurname());
+      view.setOpenShoppingMaskEnabled(true);
+      view.setStartFor(tableSelection.getFirstName(), tableSelection.getSurname());
+      model.setShoppingMaskOpened(true);
     } else {
-      getView().setOpenShoppingMaskEnabled(false);
+      view.setOpenShoppingMaskEnabled(false);
     }
   }
 
@@ -60,6 +62,20 @@ public class CashierShoppingMaskController
     } catch (NotEnoughCreditException e) {
       getView().notEnoughCredit();
     }
+  }
+
+  @Override
+  protected boolean commitClose() {
+    if (!model.isShoppingMaskOpened()) return true;
+    else {
+      if (!getView().commitClose()) return false;
+      model.printTillRoll(this::handleResult);
+      return true;
+    }
+  }
+
+  private void handleResult(Boolean b) {
+    // TODO: IDK really know it
   }
 
   public SearchBoxView<User> getSearchBoxView() {
