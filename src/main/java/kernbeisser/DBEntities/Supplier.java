@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -83,25 +84,54 @@ public class Supplier implements Serializable {
   @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_UPDATE_DATE_WRITE)})
   private Instant updateDate;
 
-  public static Supplier getKKSupplier() {
+  public static Supplier getSupplierByShortName(String shortName) throws NoResultException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery("select s from Supplier s where s.shortName like :sn", Supplier.class)
+        .setParameter("sn", shortName)
+        .getSingleResult();
+  }
+
+  private static Supplier getOrCreateSupplierByShortName(
+      String shortName, String defaultName, int defaultSurcharge) {
     try {
-      return em.createQuery("select s from Supplier s where s.shortName like 'KK'", Supplier.class)
-          .getSingleResult();
+      return getSupplierByShortName(shortName);
     } catch (NoResultException e) {
+      @Cleanup EntityManager em = DBConnection.getEntityManager();
       EntityTransaction et = em.getTransaction();
       Supplier s = new Supplier();
-      s.setName("Kornkraft Großhandel");
-      s.setShortName("KK");
+      s.setName(defaultName);
+      s.setShortName(shortName);
+      s.setSurcharge(defaultSurcharge);
       et.begin();
       em.persist(s);
       em.flush();
       et.commit();
-      return em.createQuery("select s from Supplier s where s.shortName like 'KK'", Supplier.class)
-          .getSingleResult();
-    } finally {
       em.close();
+      return getSupplierByShortName(shortName);
     }
+  }
+
+  public static Supplier getKKSupplier() {
+    return getOrCreateSupplierByShortName(
+        "KK", "Kornkraft Großhandel", Setting.SURCHARGE_DEFAULT.getIntValue());
+  }
+
+  public static Supplier getBakerySupplier() {
+    return getOrCreateSupplierByShortName(
+        "AWB", "Kennung Backwaren", Setting.SURCHARGE_BAKERY.getIntValue());
+  }
+
+  public static Supplier getProduceSupplier() {
+    return getOrCreateSupplierByShortName(
+        "AWO", "Kennung Obst&Gemüse", Setting.SURCHARGE_PRODUCE.getIntValue());
+  }
+
+  public static Supplier getSolidaritySupplier() {
+    return getOrCreateSupplierByShortName("SOZ", "Kennung Solidaritätszuschlag", 0);
+  }
+
+  public static Supplier getDepositSupplier() {
+    return getOrCreateSupplierByShortName("PF", "Kennung Pfand", 0);
   }
 
   public static List<Supplier> getAll(String condition) {
