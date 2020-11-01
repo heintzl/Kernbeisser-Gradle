@@ -20,7 +20,6 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   public TransactionController(User user) {
     super(new TransactionModel(user));
-    var view = getView();
     userSearchBoxController =
         new SearchBoxController<User>(
             User::defaultSearch,
@@ -28,7 +27,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
             Column.create("Vorname", User::getFirstName),
             Column.create("Username", User::getUsername),
             Column.create("Guthaben", User::getRoundedValue));
-    userSearchBoxController.addSelectionListener(e -> view.setTo(e.toString()));
+    userSearchBoxController.addSelectionListener(e -> getView().pastUsername(e.getUsername()));
   }
 
   void transfer() {
