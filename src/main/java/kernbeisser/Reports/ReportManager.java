@@ -299,7 +299,7 @@ public class ReportManager {
             transactionPurchases += t.getValue();
             break;
           case USER_GENERATED:
-            transactionSpecialPayments += t.getValue();
+            transactionSpecialPayments += t.getValue() * (t.getFrom().equals(kbUser)?-1.0:1.0);
             break;
           case PAYIN:
           case INITIALIZE:
