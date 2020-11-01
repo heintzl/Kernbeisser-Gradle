@@ -107,10 +107,7 @@ public class ArticleBase {
     SurchargeTable surchargeTable = getSurchargeTable();
     double surcharge = surchargeTable.getSurcharge();
     if (surchargeTable == SurchargeTable.DEFAULT && supplier != null) {
-      double supplierSurcharge = supplier.getSurcharge();
-      if (supplierSurcharge > 0) {
-        surcharge = supplierSurcharge;
-      }
+      surcharge = supplier.getSurcharge();
     }
     return surcharge;
   }
