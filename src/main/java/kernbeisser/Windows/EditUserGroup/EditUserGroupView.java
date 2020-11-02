@@ -24,6 +24,7 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   private JLabel solidaritySurcharge;
   private JLabel value;
   private JLabel interestThisYear;
+  private JButton editSoli;
 
   @Linked private EditUserGroupController controller;
 
@@ -50,7 +51,7 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
     currentUserGroup.setObjects(userGroup.getMembers());
     value.setText(toEuro(userGroup.getValue()));
     interestThisYear.setText(toEuro(userGroup.getInterestThisYear() / 100.));
-    solidaritySurcharge.setText(toEuro(userGroup.getSolidaritySurcharge()));
+    solidaritySurcharge.setText(String.format("%.2f%%", userGroup.getSolidaritySurcharge() * 100));
   }
 
   private void leaveUserGroup(ActionEvent event) {
@@ -100,6 +101,23 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
     cancel.addActionListener(e -> back());
     leaveUserGroup.addActionListener(this::leaveUserGroup);
     changeUserGroup.addActionListener(this::changeUserGroup);
+    editSoli.addActionListener(
+        e -> {
+          controller.editSoli(requestSoli());
+        });
+  }
+
+  private double requestSoli() {
+    String txt =
+        JOptionPane.showInputDialog(
+            getTopComponent(), "bitte geben sie den neuen Solidarzuschlag ein[%]");
+    try {
+      return Double.parseDouble(txt.replaceAll("[^\\d,.]", "").replace(",", ".")) / 100.;
+    } catch (NumberFormatException e) {
+      JOptionPane.showMessageDialog(
+          getTopComponent(), "der eingegebene Wert kann nicht als zahl interpretiert werden");
+      return requestSoli();
+    }
   }
 
   @Override
