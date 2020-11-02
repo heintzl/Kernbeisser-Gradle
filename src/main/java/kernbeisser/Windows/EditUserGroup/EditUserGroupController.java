@@ -1,6 +1,7 @@
 package kernbeisser.Windows.EditUserGroup;
 
 import javax.swing.*;
+import kernbeisser.CustomComponents.Dialogs.LogInDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.DBEntities.User;
@@ -55,11 +56,14 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
     pushViewRefresh();
   }
 
-  public void changeUserGroup(String password) throws CannotLogInException {
-    model.changeUserGroup(
-        model.getUser().getId(),
-        User.getByUsername(getView().getUsername()).getUserGroup().getId(),
-        password);
+  public void changeUserGroup() throws CannotLogInException {
+    if (LogInDialog.showLogInRequest(
+        getView().getTopComponent(),
+        User.getByUsername(getView().getUsername()).getUserGroup().getMembers())) {
+      model.changeUserGroup(
+          model.getUser().getId(),
+          User.getByUsername(getView().getUsername()).getUserGroup().getId());
+    } else throw new CannotLogInException();
     pushViewRefresh();
   }
 

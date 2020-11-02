@@ -4,6 +4,7 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ControllerButton;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
@@ -111,7 +112,8 @@ public class MenuView implements IView<MenuController> {
     editUsers = new ControllerButton(EditUsers::new, EditUsers.class, Controller::openTab);
     doTransaction =
         new ControllerButton(
-            () -> new TransactionController(LogInModel.getLoggedIn()),
+            () ->
+                new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
             TransactionController.class,
             Controller::openTab);
     changePermissions =

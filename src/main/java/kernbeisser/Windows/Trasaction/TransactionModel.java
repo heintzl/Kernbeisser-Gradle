@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.persistence.NoResultException;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.MVC.IModel;
@@ -13,8 +14,10 @@ public class TransactionModel implements IModel<TransactionController> {
 
   private final User owner;
 
-  TransactionModel(User owner) {
+  private final TransactionType transactionType;
 
+  TransactionModel(User owner, TransactionType transactionType) {
+    this.transactionType = transactionType;
     this.owner = owner;
   }
 
@@ -46,7 +49,7 @@ public class TransactionModel implements IModel<TransactionController> {
           transaction.getFrom(),
           transaction.getTo(),
           transaction.getValue(),
-          transaction.getTransactionType(),
+          transactionType,
           transaction.getInfo());
     }
   }

@@ -84,23 +84,14 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
           getTopComponent(),
           "Wollen sie wirklich ihre aktuelle Nutzergruppe verlassen?\nDas Guthaben wird nicht übertragen, da noch weitere Nutzer\nin ihrer Nutzergruppe sind.");
     }
-    JPasswordField passwordField = new JPasswordField();
-    if (JOptionPane.showConfirmDialog(
-            getTopComponent(),
-            passwordField,
-            "Anmeldung durch " + getUsername() + " erfoderlich",
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.PLAIN_MESSAGE)
-        == 0) {
-      try {
-        controller.changeUserGroup(new String(passwordField.getPassword()));
-        JOptionPane.showMessageDialog(
-            getTopComponent(),
-            "Sie sind erfolgreich der Nutzergruppe von " + getUsername() + " beigetreiten");
-      } catch (CannotLogInException e) {
-        JOptionPane.showMessageDialog(
-            getTopComponent(), "Das eingegebene Passwort stimmt nicht überein.");
-      }
+    try {
+      controller.changeUserGroup();
+      JOptionPane.showMessageDialog(
+          getTopComponent(),
+          "Sie sind erfolgreich der Nutzergruppe von " + getUsername() + " beigetreiten");
+    } catch (CannotLogInException e) {
+      JOptionPane.showMessageDialog(
+          getTopComponent(), "Das eingegebene Passwort stimmt nicht überein.");
     }
   }
 
@@ -122,6 +113,6 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
 
   @Override
   public String getTitle() {
-    return "Nutzergruppe ändern";
+    return "Nutzergruppe wechseln";
   }
 }

@@ -1,6 +1,5 @@
 package kernbeisser.Windows.EditUserGroup;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import javax.persistence.EntityManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
@@ -25,13 +24,9 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     user = Proxy.removeProxy(User.getById(user.getId()));
   }
 
-  void changeUserGroup(int user, int destination, String password) throws CannotLogInException {
+  void changeUserGroup(int user, int destination) throws CannotLogInException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     User dbUser = em.find(User.class, user);
-    if (BCrypt.verifyer()
-        .verify(password.toCharArray(), dbUser.getPassword().toCharArray())
-        .verified) {
-      Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
-    } else throw new CannotLogInException();
+    Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
   }
 }
