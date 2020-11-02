@@ -73,6 +73,11 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
     userGroupSearchBoxController.search();
   }
 
+  public void editSoli(double newValue) {
+    model.changeSoli(newValue);
+    pushViewRefresh();
+  }
+
   public int getMemberCount() {
     return model.getUser().getUserGroup().getMembers().size();
   }

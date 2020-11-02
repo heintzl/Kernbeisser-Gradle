@@ -1,6 +1,7 @@
 package kernbeisser.Windows.EditUserGroup;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -28,5 +29,15 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     User dbUser = em.find(User.class, user);
     Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
+  }
+
+  public void changeSoli(double newValue) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    UserGroup userGroup = em.find(UserGroup.class, user.getUserGroup().getId());
+    userGroup.setSolidaritySurcharge(newValue);
+    em.persist(userGroup);
+    et.commit();
   }
 }
