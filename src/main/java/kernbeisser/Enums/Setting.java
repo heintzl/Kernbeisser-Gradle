@@ -50,7 +50,8 @@ public enum Setting {
   WARN_OVER_TRANSACTION_VALUE("1000."),
   OPEN_MULTIPLE_SHOPPING_MASK("true"),
   PRINTER("OS_default"),
-  LAST_PRINTED_BON_NR("-1");
+  LAST_PRINTED_BON_NR("-1"),
+  OFFER_PREFIX("*AK* ");
 
   // defines the type to like in java style
   // Value: Type:

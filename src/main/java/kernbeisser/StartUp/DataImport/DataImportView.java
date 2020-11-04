@@ -55,11 +55,11 @@ public class DataImportView implements IView<DataImportController> {
         "Benutzer: "
             + (i < 2 ? "Jobs" : "Benutzer")
             + " "
-            + (i % 2 == 0 ? "zur Datenbank gespeichert" : "werden konvertiert")
+            + (i % 2 == 0 ? "in der Datenbank gespeichert" : "werden konvertiert")
             + "...");
     itemProgress.setValue(i);
     String target = "";
-    String status = i % 2 == 1 ? "auf der Datenbank gespeichert" : "werden konvertiert";
+    String status = i % 2 == 1 ? "in der Datenbank gespeichert" : "werden konvertiert";
     switch (i) {
       case 0:
         currentActionUser.setVisible(true);
@@ -80,7 +80,7 @@ public class DataImportView implements IView<DataImportController> {
   void setItemProgress(int i) {
     itemProgress.setValue(i);
     String target = "";
-    String status = i % 2 == 1 ? "auf der Datenbank gespeichert" : "werden konvertiert";
+    String status = i % 2 == 1 ? "in der Datenbank gespeichert" : "werden konvertiert";
     switch (i) {
       case 0:
         currentActionItems.setVisible(true);
@@ -113,7 +113,7 @@ public class DataImportView implements IView<DataImportController> {
   void itemSourcesNotExists() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Der Artikeldatensatz beinhalted Pfade von Dateien die nicht exesistieren!",
+        "Der Artikeldatensatz beinhaltet Pfade von Dateien die nicht existieren!",
         "Artikeldatensatz unvollst\u00e4ndig",
         JOptionPane.ERROR_MESSAGE);
   }
@@ -121,14 +121,14 @@ public class DataImportView implements IView<DataImportController> {
   void userSourcesNotExists() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Der Nutzerdatensatz beinhalted Pfade von Dateien die nicht exesistieren!",
+        "Der Nutzerdatensatz beinhaltet Pfade von Dateien die nicht existieren!",
         "Nutzerdatensatz unvollst\u00e4ndig",
         JOptionPane.ERROR_MESSAGE);
   }
 
   String requestPassword() {
     return JOptionPane.showInputDialog(
-        getTopComponent(), "Bitte geben sie ein Password für den automatisch erzeugten Admin ein");
+        getTopComponent(), "Bitte geben sie ein Passwort für den automatisch erzeugten Admin ein");
   }
 
   @Override

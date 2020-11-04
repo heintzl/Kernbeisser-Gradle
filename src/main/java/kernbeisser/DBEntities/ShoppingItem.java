@@ -144,6 +144,8 @@ public class ShoppingItem implements Serializable {
 
   @Getter @Transient private double articleSurcharge;
 
+  @Getter @Transient private boolean specialOffer;
+
   /**
    * @param articleBase most ShoppingItem properties are copied from given article. surcharge gets
    *     calculated
@@ -152,9 +154,15 @@ public class ShoppingItem implements Serializable {
    */
   public ShoppingItem(ArticleBase articleBase, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
-    this.name = articleBase.getName();
     this.amount = articleBase.getAmount();
-    this.itemNetPrice = articleBase.getNetPrice();
+    try {
+      this.itemNetPrice = articleBase.getOfferNetPrice();
+      this.specialOffer = true;
+    } catch (NoResultException e) {
+      this.itemNetPrice = articleBase.getNetPrice();
+      this.specialOffer = false;
+    }
+    this.name = (specialOffer ? Setting.OFFER_PREFIX.getStringValue() : "") + articleBase.getName();
     this.metricUnits = articleBase.getMetricUnits();
     this.vat = articleBase.getVat();
     if (this.vat != null) {
