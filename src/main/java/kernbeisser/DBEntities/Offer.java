@@ -42,4 +42,10 @@ public class Offer implements Serializable {
   @Getter(onMethod_ = {@Key(PermissionKey.OFFER_REPEAT_MODE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.OFFER_REPEAT_MODE_WRITE)})
   private Repeat repeatMode;
+
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  @Getter(onMethod_ = {@Key(PermissionKey.OFFER_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.OFFER_ID_WRITE)})
+  private ArticleBase article;
 }
