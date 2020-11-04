@@ -77,7 +77,7 @@ public class SurchargeTable implements Serializable, Cloneable {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<SurchargeTable> out =
         em.createQuery(
-                "select s from SurchargeTable s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",
+                "select s from SurchargeTable s where s.description like :search or s.supplier.name like :search or s.supplier.shortName like :search",
                 SurchargeTable.class)
             .setParameter("search", s + "%")
             .setMaxResults(max)
