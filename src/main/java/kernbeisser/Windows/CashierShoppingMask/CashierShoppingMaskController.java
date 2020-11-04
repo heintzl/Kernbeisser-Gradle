@@ -1,7 +1,6 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
 import javax.persistence.NoResultException;
-import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;

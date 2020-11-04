@@ -8,6 +8,7 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
@@ -18,10 +19,10 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   @Linked private final SearchBoxController<User> userSearchBoxController;
 
-  public TransactionController(User user) {
-    super(new TransactionModel(user));
+  public TransactionController(User user, TransactionType transactionType) {
+    super(new TransactionModel(user, transactionType));
     userSearchBoxController =
-        new SearchBoxController<User>(
+        new SearchBoxController<>(
             User::defaultSearch,
             Column.create("Nachname", User::getSurname),
             Column.create("Vorname", User::getFirstName),

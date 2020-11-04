@@ -1,7 +1,7 @@
 package kernbeisser.Windows.EditUserGroup;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -25,13 +25,19 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     user = Proxy.removeProxy(User.getById(user.getId()));
   }
 
-  void changeUserGroup(int user, int destination, String password) throws CannotLogInException {
+  void changeUserGroup(int user, int destination) throws CannotLogInException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     User dbUser = em.find(User.class, user);
-    if (BCrypt.verifyer()
-        .verify(password.toCharArray(), dbUser.getPassword().toCharArray())
-        .verified) {
-      Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
-    } else throw new CannotLogInException();
+    Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
+  }
+
+  public void changeSoli(double newValue) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    UserGroup userGroup = em.find(UserGroup.class, user.getUserGroup().getId());
+    userGroup.setSolidaritySurcharge(newValue);
+    em.persist(userGroup);
+    et.commit();
   }
 }

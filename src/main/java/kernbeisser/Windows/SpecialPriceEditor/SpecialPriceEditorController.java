@@ -1,6 +1,5 @@
 package kernbeisser.Windows.SpecialPriceEditor;
 
-import javax.swing.*;
 import kernbeisser.CustomComponents.DatePicker.DatePickerController;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;

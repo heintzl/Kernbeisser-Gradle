@@ -71,4 +71,10 @@ public class LogInModel implements IModel {
       throw new CannotLogInException();
     }
   }
+
+  public static boolean isValidLogIn(String username, char[] password) {
+    return BCrypt.verifyer()
+        .verify(password, User.getByUsername(username).getPassword().toCharArray())
+        .verified;
+  }
 }
