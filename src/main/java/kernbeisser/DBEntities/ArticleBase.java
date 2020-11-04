@@ -1,5 +1,8 @@
 package kernbeisser.DBEntities;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
@@ -137,6 +140,20 @@ public class ArticleBase {
     } finally {
       em.close();
     }
+  }
+
+  public double getOfferNetPrice() throws NoResultException {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    double offerNetPrice =
+        em.createQuery(
+                "select o from Offer o where article_id = :id and :d between fromDate and toDate",
+                Offer.class)
+            .setParameter("id", id)
+            .setParameter("d", Timestamp.from(Instant.now().truncatedTo(ChronoUnit.DAYS)))
+            .getSingleResult()
+            .getSpecialNetPrice();
+    em.close();
+    return offerNetPrice;
   }
 
   @Override
