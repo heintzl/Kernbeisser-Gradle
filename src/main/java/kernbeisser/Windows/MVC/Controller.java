@@ -224,4 +224,8 @@ public abstract class Controller<
       return false;
     }
   }
+
+  protected final boolean isInViewInitialize() {
+    return inViewInitialize;
+  }
 }

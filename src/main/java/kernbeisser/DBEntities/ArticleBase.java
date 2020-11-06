@@ -3,6 +3,7 @@ package kernbeisser.DBEntities;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
@@ -146,7 +147,7 @@ public class ArticleBase {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     double offerNetPrice =
         em.createQuery(
-                "select o from Offer o where article_id = :id and :d between fromDate and toDate",
+                "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
                 Offer.class)
             .setParameter("id", id)
             .setParameter("d", Timestamp.from(Instant.now().truncatedTo(ChronoUnit.DAYS)))
@@ -159,5 +160,12 @@ public class ArticleBase {
   @Override
   public String toString() {
     return Tools.decide(this::getName, "ArtikelBase[" + id + "]");
+  }
+
+  public Collection<Offer> getAllOffers() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery("select o from Offer o where article.id = :id", Offer.class)
+        .setParameter("id", id)
+        .getResultList();
   }
 }

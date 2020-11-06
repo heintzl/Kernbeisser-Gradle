@@ -70,10 +70,6 @@ public class Articles {
     article.setLoss(Integer.parseInt(rawArticleValues[23]));
     article.setInfo(rawArticleValues[24]);
     article.setSold(Integer.parseInt(rawArticleValues[25]));
-    article.setOffers(
-        extractOffers(
-            Tools.extract(Boolean.class, rawArticleValues[26], "_", Boolean::parseBoolean),
-            Integer.parseInt(rawArticleValues[7]) / 100f));
     article.setDelivered(Integer.parseInt(rawArticleValues[27]));
     // TODO: article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_",
     // Integer::parseInt));
@@ -86,6 +82,12 @@ public class Articles {
     article.setCooling(Cooling.valueOf(rawArticleValues[35]));
     article.setCoveredIntake(Boolean.parseBoolean(rawArticleValues[36]));
     return article;
+  }
+
+  public static List<Offer> extractOffers(String[] raw) {
+    return extractOffers(
+        Tools.extract(Boolean.class, raw[26], "_", Boolean::parseBoolean),
+        Integer.parseInt(raw[7]) / 100f);
   }
 
   private static List<Offer> extractOffers(Boolean[] months, double price) {

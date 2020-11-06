@@ -320,14 +320,17 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       HashSet<String> names = new HashSet<>();
       HashMap<String, PriceList> priceListHashMap = new HashMap<>();
       HashMap<String, Supplier> suppliers = new HashMap<>();
-      Collection<Article> articles = new ArrayList<>(lines.size());
+      HashMap<Article, Collection<Offer>> articleCollectionHashMap = new HashMap<>(lines.size());
+      Collection<Offer> offers = new ArrayList<>();
       Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
       Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
       ErrorCollector errorCollector = new ErrorCollector();
       for (String l : lines) {
         String[] columns = l.split(";");
         try {
-          articles.add(Articles.parse(columns, barcode, names, suppliers, priceListHashMap));
+          articleCollectionHashMap.put(
+              Articles.parse(columns, barcode, names, suppliers, priceListHashMap),
+              Articles.extractOffers(columns));
         } catch (CannotParseException e) {
           errorCollector.collect(e);
         }
@@ -336,7 +339,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       errorCollector.log();
       var view = getView();
       view.setItemProgress(5);
-      model.saveAllItems(articles);
+      model.saveAllItems(articleCollectionHashMap);
       view.setItemProgress(6);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
