@@ -4,6 +4,7 @@ import java.awt.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -43,6 +44,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
 
   @Linked private SearchBoxController<Article> searchBoxController;
   @Linked private SpecialPriceEditorController controller;
+  @Linked private AtomicReference<Boolean> filterOnlyActionArticle;
 
   void fillRepeat(Repeat[] repeats) {
     repeat.removeAllItems();
@@ -139,7 +141,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
     add.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, ICON_SIZE, Color.GREEN));
     remove.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, ICON_SIZE, Color.RED));
     edit.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, ICON_SIZE, new Color(0x757EFF)));
-    offers.addSelectionListener(e -> controller.selectOffer());
+    offers.addSelectionListener(controller::selectOffer);
     add.addActionListener(e -> controller.add());
     edit.addActionListener(e -> controller.edit());
     remove.addActionListener(e -> controller.remove());
@@ -148,7 +150,11 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
     searchTo.addActionListener(e -> controller.searchTo());
     searchTo.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR, ICON_SIZE, Color.GRAY));
     searchFrom.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR, ICON_SIZE, Color.GRAY));
-    filterActionArticle.addActionListener(e -> controller.refreshSearchSolutions());
+    filterActionArticle.addActionListener(
+        e -> {
+          filterOnlyActionArticle.set(filterActionArticle.isSelected());
+          controller.refreshSearchSolutions();
+        });
   }
 
   @Override
@@ -159,5 +165,10 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   @Override
   public @NotNull JComponent getContent() {
     return main;
+  }
+
+  @Override
+  public String getTitle() {
+    return "Aktionsartikel bearbeiten";
   }
 }

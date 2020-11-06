@@ -11,7 +11,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.IterableProtection.ProxyIterable;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
@@ -107,17 +106,6 @@ public class Article extends ArticleBase {
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SOLD_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SOLD_WRITE)})
   private int sold;
-
-  @JoinColumn
-  @OneToMany(fetch = FetchType.EAGER)
-  @Getter(
-      onMethod_ = {
-        @ProxyIterable(
-            read = {PermissionKey.ARTICLE_OFFERS_READ},
-            modify = {PermissionKey.ARTICLE_OFFERS_WRITE})
-      })
-  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_OFFERS_WRITE)})
-  private List<Offer> offers = new ArrayList<>();
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELIVERED_READ)})
