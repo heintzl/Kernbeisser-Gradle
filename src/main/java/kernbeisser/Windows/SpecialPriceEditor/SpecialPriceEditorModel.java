@@ -56,7 +56,6 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
                 + (onlyActionArticle ? " and a.id in (select article.id from Offer)" : ""),
             ArticleBase.class)
         .setParameter("s", search)
-        .setMaxResults(maxResults)
         .getResultList();
   }
 
