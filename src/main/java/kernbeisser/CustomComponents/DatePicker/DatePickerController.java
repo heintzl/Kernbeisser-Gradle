@@ -1,9 +1,11 @@
 package kernbeisser.CustomComponents.DatePicker;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -51,7 +53,7 @@ public class DatePickerController extends Controller<DatePickerView, DatePickerM
     if (date.equals(model.getSelectedDate())) {
       commit();
     } else {
-      model.setSelectedDate(date);
+      model.setSelectedDate(Instant.from(date.atStartOfDay(ZoneId.systemDefault())));
     }
     getView()
         .setSelectionButtonText(
@@ -62,7 +64,7 @@ public class DatePickerController extends Controller<DatePickerView, DatePickerM
                 + date.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMANY));
   }
 
-  public LocalDate getSelectedValue() {
+  public Instant getSelectedValue() {
     return model.getSelectedDate();
   }
 
@@ -89,7 +91,7 @@ public class DatePickerController extends Controller<DatePickerView, DatePickerM
     return new PermissionKey[0];
   }
 
-  public static void requestDate(ViewContainer current, Consumer<LocalDate> select) {
+  public static void requestDate(ViewContainer current, Consumer<Instant> select) {
     new DatePickerController() {
       @Override
       public void finish() {

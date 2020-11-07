@@ -1,6 +1,5 @@
 package kernbeisser.Tasks;
 
-import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -106,9 +105,9 @@ public class Articles {
       }
       Offer offer = new Offer();
       offer.setSpecialNetPrice(price);
-      offer.setFromDate(Date.valueOf(LocalDate.of(today.getYear(), from, 1)));
+      offer.setFromDate(Instant.from(LocalDate.of(today.getYear(), from, 1)));
       offer.setToDate(
-          Date.valueOf(
+          Instant.from(
               LocalDate.of(today.getYear(), from + (i - 1 - from), 1)
                   .with(TemporalAdjusters.lastDayOfMonth())));
       offer.setRepeatMode(Repeat.EVERY_YEAR);

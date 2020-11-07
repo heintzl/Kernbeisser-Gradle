@@ -1,7 +1,7 @@
 package kernbeisser.DBEntities;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.Instant;
 import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
@@ -29,13 +29,13 @@ public class Offer implements Serializable {
   // dangerous SQL keyword 'from' do not rename to 'from'
   @Getter(onMethod_ = {@Key(PermissionKey.OFFER_FROM_DATE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.OFFER_FROM_DATE_WRITE)})
-  private Date fromDate;
+  private Instant fromDate;
 
   @Column()
   // dangerous SQL keyword 'to' do not rename to 'to'
   @Getter(onMethod_ = {@Key(PermissionKey.OFFER_TO_DATE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.OFFER_TO_DATE_WRITE)})
-  private Date toDate;
+  private Instant toDate;
 
   @Column
   // dangerous SQL keyword 'repeat' do not rename to 'repeat'

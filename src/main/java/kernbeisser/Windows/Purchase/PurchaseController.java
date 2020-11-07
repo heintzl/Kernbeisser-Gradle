@@ -30,7 +30,7 @@ public class PurchaseController extends Controller<PurchaseView, PurchaseModel> 
     var view = getView();
     view.setCustomer(model.getLoaded().getSession().getCustomer().getUsername());
     view.setSeller(model.getLoaded().getSession().getSeller().getUsername());
-    view.setDate(Date.INSTANT_FORMAT.format(model.getLoaded().getCreateDate()));
+    view.setDate(Date.INSTANT_DATE_TIME.format(model.getLoaded().getCreateDate()));
     Collection<ShoppingItem> items = model.getAllItems();
     view.setItemCount(items.size());
     fillShoppingCart();
