@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.function.Predicate;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -88,5 +89,9 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
 
   public void setRowFilter(RowFilter<T> rowFilter) {
     objects.setRowFilter(rowFilter);
+  }
+
+  public void selectObject(Predicate<T> predicate) {
+    objects.setSelectedObject(objects.get(predicate));
   }
 }

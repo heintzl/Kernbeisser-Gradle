@@ -4,7 +4,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.RowFilter;
@@ -17,10 +16,8 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private static final Object NO_ACCESS_VALUE = "**********";
 
   private final ArrayList<ObjectSelectionListener<T>> selectionListeners = new ArrayList<>();
-  private final ArrayList<ObjectSelectionListener<T>> doubleClickListeners = new ArrayList<>();
 
   private final List<T> objects = new ArrayList<>();
-  private T lastSelected = null;
 
   private List<Column<T>> columns = new ArrayList<>();
 
@@ -61,10 +58,6 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
                 .get(convertColumnIndexToModel(getSelectedColumn()))
                 .onAction(selection);
             invokeSelectionListeners(selection);
-            if (lastSelected != null && lastSelected.equals(selection)) {
-              invokeDoubleClickSelectionListeners(selection);
-            }
-            lastSelected = selection;
           }
         });
     setRowSorter(createRowSorter());
@@ -105,12 +98,6 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     }
   }
 
-  private void invokeDoubleClickSelectionListeners(T t) {
-    for (ObjectSelectionListener<T> listener : doubleClickListeners) {
-      listener.selected(t);
-    }
-  }
-
   private void insertColumn(Column<T> column) {
     columns.add(column);
     refreshModel();
@@ -145,9 +132,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     return getFromRow(getSelectedRow());
   }
 
-  public T get(Function<T, Boolean> function) {
+  public T get(Predicate<T> function) {
     for (T object : this) {
-      if (function.apply(object)) {
+      if (function.test(object)) {
         return object;
       }
     }
@@ -235,7 +222,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   public void setSelectedObject(T value) {
-    getSelectionModel().setLeadSelectionIndex(indexOf(value));
+    int index = indexOf(value);
+    setRowSelectionInterval(index, index);
+    invokeSelectionListeners(value);
   }
 
   @NotNull

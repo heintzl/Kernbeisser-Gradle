@@ -1,8 +1,8 @@
 package kernbeisser.Windows.SpecialPriceEditor;
 
 import java.awt.*;
-import java.sql.Date;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.YearMonth;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.*;
@@ -15,10 +15,11 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DateParseField;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
-import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   private kernbeisser.CustomComponents.TextFields.DateParseField from;
   private kernbeisser.CustomComponents.TextFields.DateParseField to;
   private JComboBox<Repeat> repeat;
-  private SearchBoxView<Article> searchBox;
+  private SearchBoxView<ArticleBase> searchBox;
   private DoubleParseField specialNetPrice;
   private JButton remove;
   private JButton add;
@@ -41,8 +42,10 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   private JLabel selectedArticle;
   private PermissionCheckBox filterActionArticle;
   private JLabel selectedArticleNetPrice;
+  private ObjectTable<Offer> offersMonth;
+  private JComboBox<YearMonth> month;
 
-  @Linked private SearchBoxController<Article> searchBoxController;
+  @Linked private SearchBoxController<ArticleBase> searchBoxController;
   @Linked private SpecialPriceEditorController controller;
   @Linked private AtomicReference<Boolean> filterOnlyActionArticle;
 
@@ -57,11 +60,11 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
     this.offers.setObjects(offers);
   }
 
-  void setFrom(LocalDate s) {
+  void setFrom(Instant s) {
     from.setValue(s);
   }
 
-  void setTo(LocalDate s) {
+  void setTo(Instant s) {
     to.setValue(s);
   }
 
@@ -71,6 +74,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
 
   void setSpecialNetPrice(double p) {
     specialNetPrice.setText(String.format("%.2f", p));
+    if (p == 0) specialNetPrice.setText("");
   }
 
   void setEditEnable(boolean b) {
@@ -97,24 +101,37 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
     searchBox = searchBoxController.getView();
     offers =
         new ObjectTable<>(
-            Column.create("Von", Offer::getFromDate),
-            Column.create("Bis", Offer::getToDate),
+            Column.create("Von", e -> Date.INSTANT_DATE.format(e.getFromDate())),
+            Column.create("Bis", e -> Date.INSTANT_DATE.format(e.getToDate())),
             Column.create("Aktionsnettopreis", Offer::getSpecialNetPrice),
             Column.create("Wiederholung", Offer::getRepeatMode));
+    offersMonth =
+        new ObjectTable<Offer>(
+            Column.create("Artikel", Offer::getArticle),
+            Column.create("Von", e -> Date.INSTANT_DATE.format(e.getFromDate())),
+            Column.create("Bis", e -> Date.INSTANT_DATE.format(e.getToDate())),
+            Column.create("Aktionsnettopreis", Offer::getSpecialNetPrice),
+            Column.create("Wiederholung", Offer::getRepeatMode));
+    offersMonth.addSelectionListener(
+        e -> searchBox.selectObject(a -> a.getId() == e.getArticle().getId()));
     from = new DateParseField();
     to = new DateParseField();
+  }
+
+  public void setOffersMonth(Collection<Offer> offersMonth) {
+    this.offersMonth.setObjects(offersMonth);
   }
 
   Offer getSelectedOffer() {
     return offers.getSelectedObject();
   }
 
-  public Date getFrom() throws IncorrectInput {
-    return Date.valueOf(from.getUncheckedValue());
+  public Instant getFrom() throws IncorrectInput {
+    return from.getUncheckedValue();
   }
 
-  public Date getTo() throws IncorrectInput {
-    return Date.valueOf(to.getUncheckedValue());
+  public Instant getTo() throws IncorrectInput {
+    return to.getUncheckedValue();
   }
 
   double getSpecialPrice() {
@@ -155,6 +172,15 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
           filterOnlyActionArticle.set(filterActionArticle.isSelected());
           controller.refreshSearchSolutions();
         });
+    offers.addSelectionListener(e -> controller.load(e.getArticle()));
+    month.addActionListener(e -> controller.loadMonth());
+  }
+
+  public void setMonth(YearMonth[] months) {
+    month.removeAllItems();
+    for (YearMonth m : months) {
+      this.month.addItem(m);
+    }
   }
 
   @Override
@@ -170,5 +196,16 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   @Override
   public String getTitle() {
     return "Aktionsartikel bearbeiten";
+  }
+
+  public boolean commitStrangeNetPrice() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Der eingengebene Aktionspreis ist höher als der Normalpreis. Ist das wirklich korrekt?")
+        == 0;
+  }
+
+  public YearMonth getMonth() {
+    return (YearMonth) month.getSelectedItem();
   }
 }
