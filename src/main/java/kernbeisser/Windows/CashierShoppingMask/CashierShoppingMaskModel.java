@@ -11,6 +11,7 @@ import kernbeisser.Reports.AccountingReport;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 import lombok.Data;
 
 @Data
@@ -19,18 +20,15 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
     return User.defaultSearch(searchQuery, 500);
   }
 
-  private boolean shoppingMaskOpened = false;
+  boolean isShoppingMaskOpened() {
+    long from = Setting.LAST_PRINTED_BON_NR.getLongValue();
+    long id = getLastAssistedPurchaseId();
+    return (from < id);
+  }
 
   void printTillRoll(Consumer<Boolean> resultConsumer) {
-    EntityManager em = DBConnection.getEntityManager();
-    long id =
-        em.createQuery(
-                "select max(p.id) from Purchase p where p.session.seller.id = :lid and p.session.sessionType = :t",
-                Long.class)
-            .setParameter("lid", LogInModel.getLoggedIn().getId())
-            .setParameter("t", SaleSessionType.ASSISTED)
-            .getSingleResult();
     long from = Setting.LAST_PRINTED_BON_NR.getLongValue();
+    long id = getLastAssistedPurchaseId();
     if (from == id) {
       resultConsumer.accept(false);
       return;
@@ -46,4 +44,14 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
         });
     resultConsumer.accept(true);
   };
+
+  long getLastAssistedPurchaseId() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery(
+            "select max(p.id) from Purchase p where p.session.seller.id = :lid and p.session.sessionType = :t",
+            Long.class)
+        .setParameter("lid", LogInModel.getLoggedIn().getId())
+        .setParameter("t", SaleSessionType.ASSISTED)
+        .getSingleResult();
+  }
 }
