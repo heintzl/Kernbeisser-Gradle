@@ -97,7 +97,7 @@
               <text value="Hinzufügen"/>
             </properties>
           </component>
-          <component id="fb540" class="kernbeisser.CustomComponents.TextFields.DoubleParseField">
+          <component id="fb540" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="amount">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

@@ -127,11 +127,11 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   }
 
   public Instant getFrom() throws IncorrectInput {
-    return from.getUncheckedValue();
+    return from.getValue();
   }
 
   public Instant getTo() throws IncorrectInput {
-    return to.getUncheckedValue();
+    return to.getValue();
   }
 
   double getSpecialPrice() {

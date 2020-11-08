@@ -167,6 +167,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     if (in == null) {
       throw new NullPointerException("Cannot add null object to ObjectTable");
     }
+    objects.add(in);
     model.addRow(collectColumns(in));
   }
 
