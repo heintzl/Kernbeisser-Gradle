@@ -11,7 +11,7 @@ import kernbeisser.Enums.VAT;
 
 public class InvoiceReport extends Report {
 
-  Purchase purchase;
+  private final Purchase purchase;
 
   public InvoiceReport(Purchase purchase) {
     super(
@@ -22,6 +22,7 @@ public class InvoiceReport extends Report {
             purchase.getSession().getCustomer().getFirstName(),
             purchase.getSession().getCustomer().getSurname(),
             purchase.getCreateDate().toString()));
+    this.purchase = purchase;
   }
 
   @Override
