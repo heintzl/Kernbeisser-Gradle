@@ -43,7 +43,7 @@ public class PayController extends Controller<PayView, PayModel> {
       try {
         purchase = model.pay();
         if (printReceipt) {
-          PayModel.print(purchase, model.getShoppingCart());
+          PayModel.print(purchase);
         }
         view.confirmLogging(
             model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());

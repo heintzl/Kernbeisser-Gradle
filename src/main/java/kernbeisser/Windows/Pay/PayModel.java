@@ -1,7 +1,5 @@
 package kernbeisser.Windows.Pay;
 
-import java.awt.print.PrinterAbortException;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -16,12 +14,10 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Enums.ShoppingItemSum;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidTransactionException;
-import kernbeisser.Reports.ReportManager;
+import kernbeisser.Reports.InvoiceReport;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
-import net.sf.jasperreports.engine.JRException;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class PayModel implements IModel<PayController> {
   private boolean successful = false;
@@ -136,25 +132,8 @@ public class PayModel implements IModel<PayController> {
     return PrintServiceLookup.lookupPrintServices(null, null);
   }
 
-  public static void print(Purchase purchase, Collection<ShoppingItem> items) {
-    try {
-      ReportManager invoice = new ReportManager();
-      ReportManager.initInvoicePrint(items, purchase);
-      invoice.sendToPrinter();
-    } catch (JRException e) {
-      if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
-        Tools.showPrintAbortedWarning(e, true);
-      } else {
-        Tools.showUnexpectedErrorWarning(e);
-      }
-    }
-  }
-
-  PrintService getDefaultPrinter() {
-    return PrintServiceLookup.lookupDefaultPrintService();
-  }
-
-  public boolean wasSuccessful() {
-    return successful;
+  public static void print(Purchase purchase) {
+    InvoiceReport invoice = new InvoiceReport(purchase);
+    invoice.sendToPrinter("Bon wird erstellt", (e) -> Tools.showUnexpectedErrorWarning(e));
   }
 }

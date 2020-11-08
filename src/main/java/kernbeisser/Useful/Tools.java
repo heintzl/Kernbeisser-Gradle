@@ -290,7 +290,7 @@ public class Tools {
     em.close();
   }
 
-  public static void showUnexpectedErrorWarning(Exception e) throws RuntimeException {
+  public static void showUnexpectedErrorWarning(Throwable e) throws RuntimeException {
     Main.logger.error(e.getMessage(), e);
     JOptionPane.showMessageDialog(
         null,

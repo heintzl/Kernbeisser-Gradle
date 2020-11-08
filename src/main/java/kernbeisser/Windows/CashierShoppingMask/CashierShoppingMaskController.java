@@ -40,7 +40,6 @@ public class CashierShoppingMaskController
     if (tableSelection != null) {
       view.setOpenShoppingMaskEnabled(true);
       view.setStartFor(tableSelection.getFirstName(), tableSelection.getSurname());
-      model.setShoppingMaskOpened(true);
     } else {
       view.setOpenShoppingMaskEnabled(false);
     }
