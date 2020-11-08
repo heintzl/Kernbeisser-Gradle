@@ -5,17 +5,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.persistence.EntityManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Exeptions.InvalidVATValueException;
-import kernbeisser.Reports.ReportManager;
+import kernbeisser.Reports.AccountingReport;
+import kernbeisser.Reports.Report;
+import kernbeisser.Reports.TillrollReport;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
-import net.sf.jasperreports.engine.JRException;
 import org.apache.commons.lang3.time.DateUtils;
 
 public class TillrollModel implements IModel<TillrollController> {
@@ -37,15 +38,18 @@ public class TillrollModel implements IModel<TillrollController> {
     return items;
   }
 
-  private void exportReport(ExportTypes exportType, ReportManager reportManager)
-      throws JRException {
+  private void exportReport(
+      ExportTypes exportType,
+      Report report,
+      String message,
+      Consumer<Throwable> consumeJRException) {
     switch (exportType) {
       case PRINT:
       case PDF:
         if (exportType == ExportTypes.PDF) {
-          reportManager.exportPdf();
+          report.exportPdf(message, consumeJRException);
         } else {
-          reportManager.sendToPrinter();
+          report.sendToPrinter(message, consumeJRException);
         }
         break;
       default:
@@ -53,24 +57,24 @@ public class TillrollModel implements IModel<TillrollController> {
     }
   }
 
-  public void exportTillroll(ExportTypes exportType, int days)
-      throws UnsupportedOperationException, IncorrectInput, JRException {
+  public void exportTillroll(
+      ExportTypes exportType, int days, Consumer<Throwable> consumePdfException) {
     Instant end = Instant.now();
     Instant start =
         DateUtils.truncate(Date.from(end.minus(days, ChronoUnit.DAYS)), Calendar.DATE).toInstant();
     List<ShoppingItem> items = getTillrollitems(start, end);
     if (items.size() == 0) {
-      throw new IncorrectInput("Leere Bonrolle");
+      consumePdfException.accept(new IncorrectInput("Leere Bonrolle"));
+      return;
     }
-    ReportManager reportManager = new ReportManager();
-    reportManager.initTillrollPrint(items, start, end);
-    exportReport(exportType, reportManager);
+    TillrollReport reportManager = new TillrollReport(items, start, end);
+    exportReport(exportType, reportManager, "Bonrolle wird erstellt", consumePdfException);
   }
 
-  public void exportAccountingReport(ExportTypes exportType, int startBon, int endBon)
-      throws UnsupportedOperationException, JRException, InvalidVATValueException {
-    ReportManager reportManager = new ReportManager();
-    reportManager.initAccountingReportPrint(startBon, endBon);
-    exportReport(exportType, reportManager);
+  public void exportAccountingReport(
+      ExportTypes exportType, int startBon, int endBon, Consumer<Throwable> consumePdfException) {
+    AccountingReport report = new AccountingReport(startBon, endBon);
+    exportReport(
+        exportType, report, "Ladendienst Endabrechnung wird erstellt", consumePdfException);
   }
 }
