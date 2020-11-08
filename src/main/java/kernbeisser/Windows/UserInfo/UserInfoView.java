@@ -81,7 +81,7 @@ public class UserInfoView implements IView<UserInfoController> {
             Column.create("Beschreibung", Job::getDescription));
     shoppingHistory =
         new ObjectTable<Purchase>(
-            Column.create("Datum", e -> Date.INSTANT_FORMAT.format(e.getCreateDate())),
+            Column.create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate())),
             Column.create("Verkäufer", e -> e.getSession().getSeller()),
             Column.create("Käufer", e -> e.getSession().getCustomer()),
             Column.create("Summe", e -> String.format("%.2f€", e.getSum())));
@@ -130,11 +130,11 @@ public class UserInfoView implements IView<UserInfoController> {
             : "Kein zugriff");
     createDate.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_CREATE_DATE_READ)
-            ? Date.INSTANT_FORMAT.format(user.getCreateDate())
+            ? Date.INSTANT_DATE_TIME.format(user.getCreateDate())
             : "Kein zugriff");
     updateDate.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_UPDATE_DATE_READ)
-            ? Date.INSTANT_FORMAT.format(user.getUpdateDate())
+            ? Date.INSTANT_DATE_TIME.format(user.getUpdateDate())
             : "Kein zugriff");
     key.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_KERNBEISSER_KEY_READ)
@@ -157,8 +157,8 @@ public class UserInfoView implements IView<UserInfoController> {
     street.setText(user.getStreet());
     shares.setText(String.valueOf(user.getShares()));
     solidarySurcharge.setText(user.getUserGroup().getSolidaritySurcharge() + "");
-    createDate.setText(Date.INSTANT_FORMAT.format(user.getCreateDate()));
-    updateDate.setText(Date.INSTANT_FORMAT.format(user.getUpdateDate()));
+    createDate.setText(Date.INSTANT_DATE_TIME.format(user.getCreateDate()));
+    updateDate.setText(Date.INSTANT_DATE_TIME.format(user.getUpdateDate()));
     key.setText(user.getKernbeisserKey() == -1 ? "Kein Schlüssel" : user.getKernbeisserKey() + "");
     city.setText(user.getTown());
   }

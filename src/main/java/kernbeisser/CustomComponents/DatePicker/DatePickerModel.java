@@ -1,16 +1,10 @@
 package kernbeisser.CustomComponents.DatePicker;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Data;
 
+@Data
 public class DatePickerModel implements IModel<DatePickerController> {
-  private LocalDate selectedDate;
-
-  public LocalDate getSelectedDate() {
-    return selectedDate;
-  }
-
-  public void setSelectedDate(LocalDate selectedDate) {
-    this.selectedDate = selectedDate;
-  }
+  private Instant selectedDate;
 }
