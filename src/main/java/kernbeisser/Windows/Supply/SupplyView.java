@@ -45,6 +45,15 @@ public class SupplyView implements IView<SupplyController> {
     add.addActionListener(e -> addItem());
     suppliersNumber.addActionListener(e -> addItem());
     amount.addActionListener(e -> addItem());
+    shoppingItems.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyReleased(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_DELETE){
+          controller.remove(shoppingItems.getSelectedObject());
+          shoppingItems.remove(shoppingItems.getSelectedObject());
+        }
+      }
+    });
   }
 
   void addItem() {

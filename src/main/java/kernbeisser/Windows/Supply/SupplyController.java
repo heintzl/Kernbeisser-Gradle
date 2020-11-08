@@ -30,4 +30,8 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     model.getShoppingItems().add(item);
     return item;
   }
+
+  public void remove(ShoppingItem selectedObject) {
+    model.getShoppingItems().remove(selectedObject);
+  }
 }
