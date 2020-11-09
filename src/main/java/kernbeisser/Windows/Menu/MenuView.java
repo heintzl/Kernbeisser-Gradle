@@ -7,6 +7,7 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.StartUp.LogIn.DBLogInController;
+import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.Container.ContainerController;
@@ -28,7 +29,6 @@ import kernbeisser.Windows.Setting.SettingController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.SpecialPriceEditor.SpecialPriceEditorController;
 import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleController;
-import kernbeisser.Windows.Tillroll.TillrollController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
@@ -50,7 +50,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton editUsers;
   private ControllerButton doTransaction;
   private ControllerButton changePermissions;
-  private ControllerButton tillrollControllerButton;
+  private ControllerButton accountingReports;
   private ControllerButton changeDBConnection;
   private ControllerButton editApplicationSettings;
   private ControllerButton order;
@@ -122,9 +122,11 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             PermissionController::new, PermissionController.class, Controller::openTab);
     // NOT IMPLEMENTED
-    tillrollControllerButton =
+    accountingReports =
         new ControllerButton(
-            TillrollController::new, TillrollController.class, Controller::openTab);
+            AccountingReportsController::new,
+            AccountingReportsController.class,
+            Controller::openTab);
     changeDBConnection =
         new ControllerButton(DBLogInController::new, DBLogInController.class, Controller::openTab);
     editJobs = new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab);

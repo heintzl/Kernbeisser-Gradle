@@ -1,4 +1,4 @@
-package kernbeisser.Windows.Tillroll;
+package kernbeisser.Windows.AccountingReports;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -14,16 +14,17 @@ import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Reports.AccountingReport;
 import kernbeisser.Reports.Report;
 import kernbeisser.Reports.TillrollReport;
+import kernbeisser.Reports.UserBalanceReport;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
 import org.apache.commons.lang3.time.DateUtils;
 
-public class TillrollModel implements IModel<TillrollController> {
+public class AccountingReportsModel implements IModel<AccountingReportsController> {
 
   @Getter private final ExportTypes[] exportTypes = ExportTypes.values();
 
-  public TillrollModel() {}
+  public AccountingReportsModel() {}
 
   private List<ShoppingItem> getTillrollitems(Instant start, Instant end) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -76,5 +77,11 @@ public class TillrollModel implements IModel<TillrollController> {
     AccountingReport report = new AccountingReport(startBon, endBon);
     exportReport(
         exportType, report, "Ladendienst Endabrechnung wird erstellt", consumePdfException);
+  }
+
+  public void exportUserBalance(
+      ExportTypes exportType, boolean withNames, Consumer<Throwable> consumePdfException) {
+    UserBalanceReport report = new UserBalanceReport(withNames);
+    exportReport(exportType, report, "Guthabenstände werden erstellt", consumePdfException);
   }
 }
