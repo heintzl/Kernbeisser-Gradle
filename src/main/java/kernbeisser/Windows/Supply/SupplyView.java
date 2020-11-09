@@ -9,12 +9,16 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
+import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
+import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
+import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -26,12 +30,18 @@ public class SupplyView implements IView<SupplyController> {
   private JComboBox<Supplier> supplier;
   private JButton add;
   private ObjectTable<ShoppingItem> shoppingItems;
-  private DoubleParseField containerSize;
-  private DoubleParseField netPrice;
-  private JTextField name;
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<ArticleBase, Double>
+      containerSize;
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<ArticleBase, Double>
+      netPrice;
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<ArticleBase, String> name;
   private DoubleParseField amount;
+  private JButton commit;
+  private JButton cancel;
 
   @Linked private SupplyController controller;
+
+  private ObjectForm<ArticleBase> objectForm;
 
   @Override
   public void initialize(SupplyController controller) {
@@ -45,26 +55,39 @@ public class SupplyView implements IView<SupplyController> {
     add.addActionListener(e -> addItem());
     suppliersNumber.addActionListener(e -> addItem());
     amount.addActionListener(e -> addItem());
-    shoppingItems.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_DELETE){
-          controller.remove(shoppingItems.getSelectedObject());
-          shoppingItems.remove(shoppingItems.getSelectedObject());
-        }
-      }
-    });
+    shoppingItems.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+              controller.remove(shoppingItems.getSelectedObject());
+              shoppingItems.remove(shoppingItems.getSelectedObject());
+            }
+          }
+        });
+    objectForm = new ObjectForm<>(name, netPrice, containerSize);
+    cancel.addActionListener(e -> back());
+    commit.addActionListener(e -> controller.commit());
+  }
+
+  public ObjectForm<ArticleBase> getObjectForm() {
+    return objectForm;
   }
 
   void addItem() {
     try {
-      ShoppingItem item = controller.addItem(getSelected(), getSuppliersItemNumber(), getAmount());
-      shoppingItems.add(item);
+      try {
+        shoppingItems.add(controller.addItem(getAmount()));
+      } catch (NullPointerException e) {
+        throw new NoResultException();
+      }
       suppliersNumber.setText("");
       suppliersNumber.requestFocusInWindow();
       amount.setText("1");
     } catch (NoResultException e) {
       JOptionPane.showMessageDialog(getTopComponent(), "Der Artikel kann nicht gefunden werden.");
+    } catch (CannotParseException e) {
+      invalidInput();
     }
   }
 
@@ -85,16 +108,10 @@ public class SupplyView implements IView<SupplyController> {
     return main;
   }
 
-  void loadItem(ShoppingItem item) {
-    if (item == null) {
-      containerSize.setText("0.0");
-      name.setText("Kein Atikel gefunden");
-      netPrice.setText("0.00");
-    } else {
-      containerSize.setText(String.valueOf(item.getContainerSize()));
-      netPrice.setText(String.valueOf(item.getItemNetPrice()));
-      name.setText(item.getName());
-    }
+  void noArticleFound() {
+    containerSize.setText("0.0");
+    name.setText("Kein Atikel gefunden");
+    netPrice.setText("0.00");
   }
 
   public void setShoppingItems(ObjectTable<ShoppingItem> shoppingItems) {
@@ -109,6 +126,17 @@ public class SupplyView implements IView<SupplyController> {
   }
 
   private void createUIComponents() {
+    name =
+        new AccessCheckingField<>(
+            ArticleBase::getName, ArticleBase::setName, AccessCheckingField.NONE);
+    netPrice =
+        new AccessCheckingField<>(
+            ArticleBase::getNetPrice, ArticleBase::setNetPrice, AccessCheckingField.DOUBLE_FORMER);
+    containerSize =
+        new AccessCheckingField<>(
+            ArticleBase::getContainerSize,
+            ArticleBase::setContainerSize,
+            AccessCheckingField.DOUBLE_FORMER);
     shoppingItems =
         new ObjectTable<ShoppingItem>(
             Column.create("Lieferant", ShoppingItem::getSupplier),
@@ -117,5 +145,31 @@ public class SupplyView implements IView<SupplyController> {
             Column.create("Name", ShoppingItem::getName),
             Column.create("Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice())),
             Column.create("Gebindegröße", ShoppingItem::getContainerSize));
+  }
+
+  ArticleBase select(Collection<ArticleBase> collection) {
+    return SelectionDialog.select(
+        getTopComponent(), "Bitte wählen sie den gemeinten Artikel aus.", collection);
+  }
+
+  public void invalidInput() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Bitte überpüfen sie die Rot makierten Felder nach Fehrlern!");
+  }
+
+  public boolean commitClose() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Sind sie sich sicher das sie das Fenster schließen,\nwollen und die jetzige Eingabe beenden wollen?")
+        == 0;
+  }
+
+  public void success() {
+    JOptionPane.showMessageDialog(getTopComponent(), "Die Lieferung wurde erfolgreich eingegen!");
+  }
+
+  @Override
+  public String getTitle() {
+    return "Lieferung eingeben";
   }
 }
