@@ -1,13 +1,14 @@
-package kernbeisser.Windows.Tillroll;
+package kernbeisser.Windows.AccountingReports;
 
 import javax.swing.*;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-public class TillrollView extends JDialog implements IView<TillrollController> {
+public class AccountingReportsView extends JDialog implements IView<AccountingReportsController> {
 
   private JButton cancel;
   private JComboBox exportType;
@@ -15,11 +16,13 @@ public class TillrollView extends JDialog implements IView<TillrollController> {
   private IntegerParseField days;
   private JPanel main;
   private JRadioButton optBonrolle;
-  private JRadioButton optLadendienstEndabrechnung;
+  @Getter private JRadioButton optLadendienstEndabrechnung;
   private IntegerParseField startBon;
   private IntegerParseField endBon;
+  private JRadioButton optUserBalance;
+  private JCheckBox userBalanceWithNames;
 
-  @Linked private TillrollController controller;
+  @Linked private AccountingReportsController controller;
 
   int getDays() {
     return days.getSafeValue();
@@ -29,17 +32,19 @@ public class TillrollView extends JDialog implements IView<TillrollController> {
     return (ExportTypes) exportType.getSelectedItem();
   }
 
-  void submit(TillrollController controller) {
+  void submit(AccountingReportsController controller) {
     if (optBonrolle.isSelected()) {
       controller.exportTillroll(getExportType(), getDays());
     } else if (optLadendienstEndabrechnung.isSelected()) {
       controller.exportAccountingReport(
           getExportType(), startBon.getSafeValue(), endBon.getSafeValue());
+    } else if (optUserBalance.isSelected()) {
+      controller.exportUserBalance(getExportType(), userBalanceWithNames.isSelected());
     }
   }
 
   @Override
-  public void initialize(TillrollController controller) {
+  public void initialize(AccountingReportsController controller) {
     days.setText("1");
     cancel.addActionListener(e -> back());
     submit.addActionListener(e -> submit(controller));
@@ -72,6 +77,6 @@ public class TillrollView extends JDialog implements IView<TillrollController> {
 
   @Override
   public String getTitle() {
-    return "Bonrolle";
+    return "Buchhaltungsberichte";
   }
 }

@@ -1,4 +1,4 @@
-package kernbeisser.Windows.Tillroll;
+package kernbeisser.Windows.AccountingReports;
 
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Exeptions.IncorrectInput;
@@ -6,10 +6,11 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 
-public class TillrollController extends Controller<TillrollView, TillrollModel> {
+public class AccountingReportsController
+    extends Controller<AccountingReportsView, AccountingReportsModel> {
 
-  public TillrollController() {
-    super(new TillrollModel());
+  public AccountingReportsController() {
+    super(new AccountingReportsModel());
   }
 
   ExportTypes[] getExportTypes() {
@@ -49,6 +50,18 @@ public class TillrollController extends Controller<TillrollView, TillrollModel> 
     }
   }
 
+  public void exportUserBalance(ExportTypes exportType, boolean selected) {
+    var view = getView();
+    try {
+      model.exportUserBalance(exportType, selected, (e) -> consumePdfException(e, exportType));
+      view.back();
+    } catch (UnsupportedOperationException e) {
+      view.messageNotImplemented(exportType);
+    }
+  }
+
   @Override
-  public void fillView(TillrollView tillrollView) {}
+  public void fillView(AccountingReportsView accountingReportsView) {
+    getView().getOptLadendienstEndabrechnung().setSelected(true);
+  }
 }
