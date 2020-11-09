@@ -2,18 +2,17 @@ package kernbeisser.DBEntities;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
-import lombok.Cleanup;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Table
 @Entity
+@NoArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
 public class UserGroup {
   @Id
@@ -32,12 +31,29 @@ public class UserGroup {
   @Setter(onMethod_ = {@Key(PermissionKey.USER_GROUP_INTEREST_THIS_YEAR_WRITE)})
   private int interestThisYear;
 
+  /* for output to Report */
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_VALUE_READ)})
+  @Transient
+  private String membersAsString;
+
   @Column
   @Setter(
       onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_WRITE)})
   @Getter(
       onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)})
   private double solidaritySurcharge;
+
+  public UserGroup withMembersAsString(boolean withNames) {
+    UserGroup result = new UserGroup();
+    result.membersAsString =
+        getMembers().stream()
+            .map(m -> withNames ? m.getFullName() : String.valueOf(m.getId()))
+            .collect(Collectors.joining(", "));
+    result.id = getId();
+    result.value = getValue();
+    return result;
+  }
 
   public static List<UserGroup> getAll(String condition) {
     return Tools.getAll(UserGroup.class, condition);
