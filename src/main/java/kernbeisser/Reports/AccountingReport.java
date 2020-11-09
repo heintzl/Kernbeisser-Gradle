@@ -10,10 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Purchase;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import lombok.Cleanup;
@@ -76,8 +73,11 @@ public class AccountingReport extends Report {
   private static Map<String, Object> getAccountingPurchaseParams(List<Purchase> purchases)
       throws InvalidVATValueException {
     double sumTotalPurchased = 0.0;
-    double sumVatHiPurchased = 0.0;
-    double sumVatLoPurchased = 0.0;
+    double sumVatHiProductsPurchased = 0.0;
+    double sumVatLoProductsPurchased = 0.0;
+    double sumVatHiSolidarity = 0.0;
+    double sumVatLoSolidarity = 0.0;
+    double sumDeposit = 0.0;
     Timestamp endDate = Timestamp.from(purchases.get(purchases.size() - 1).getCreateDate());
 
     long t_high = countVatValues(purchases, VAT.HIGH);
@@ -102,9 +102,30 @@ public class AccountingReport extends Report {
     }
     double vatLoValue = getVatValue(purchases, VAT.LOW);
     double vatHiValue = getVatValue(purchases, VAT.HIGH);
+    String solidaritySupplier = Supplier.getSolidaritySupplier().getShortName();
+    String depositSupplier = Supplier.getDepositSupplier().getShortName();
     for (Purchase p : purchases) {
-      sumVatHiPurchased += p.getVatSum(VAT.HIGH);
-      sumVatLoPurchased += p.getVatSum(VAT.LOW);
+      sumVatHiProductsPurchased +=
+          p.getFilteredSum(
+              s ->
+                  s.getVat() == VAT.HIGH
+                      && !s.getShortName().equalsIgnoreCase(depositSupplier)
+                      && !s.getShortName().equalsIgnoreCase(solidaritySupplier));
+      sumVatLoProductsPurchased +=
+          p.getFilteredSum(
+              s ->
+                  s.getVat() == VAT.LOW
+                      && !s.getShortName().equalsIgnoreCase(depositSupplier)
+                      && !s.getShortName().equalsIgnoreCase(solidaritySupplier));
+      sumVatHiSolidarity +=
+          p.getFilteredSum(
+              s -> s.getVat() == VAT.HIGH && s.getShortName().equalsIgnoreCase(solidaritySupplier));
+      sumVatLoSolidarity +=
+          p.getFilteredSum(
+              s -> s.getVat() == VAT.LOW && s.getShortName().equalsIgnoreCase(solidaritySupplier));
+      sumDeposit +=
+          p.getFilteredSum(
+              s -> s.getVat() == VAT.HIGH && s.getShortName().equalsIgnoreCase(depositSupplier));
       sumTotalPurchased += p.getSum();
     }
 
@@ -113,8 +134,11 @@ public class AccountingReport extends Report {
     reportParams.put("vatHiValue", vatHiValue);
     reportParams.put("vatLoValue", vatLoValue);
     reportParams.put("sumTotalPurchased", sumTotalPurchased);
-    reportParams.put("sumVatHiPurchased", sumVatHiPurchased);
-    reportParams.put("sumVatLoPurchased", sumVatLoPurchased);
+    reportParams.put("sumVatHiProductsPurchased", sumVatHiProductsPurchased);
+    reportParams.put("sumVatLoProductsPurchased", sumVatLoProductsPurchased);
+    reportParams.put("sumDeposit", sumDeposit);
+    reportParams.put("sumVatHiSolidarity", sumVatHiSolidarity);
+    reportParams.put("sumVatLoSolidarity", sumVatLoSolidarity);
 
     return reportParams;
   }

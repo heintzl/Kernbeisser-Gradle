@@ -59,16 +59,12 @@ public class Purchase {
     return out;
   }
 
-  private double getFilteredSum(Predicate<ShoppingItem> filter) {
+  public double getFilteredSum(Predicate<ShoppingItem> filter) {
     return getAllItems().stream().filter(filter).mapToDouble(ShoppingItem::getRetailPrice).sum();
   }
 
   public double getSum() {
     return getFilteredSum(s -> true);
-  }
-
-  public double getVatSum(VAT vat) {
-    return getFilteredSum(s -> s.getVat() == vat);
   }
 
   public double guessVatValue(VAT vat) {
