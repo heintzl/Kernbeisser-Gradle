@@ -42,6 +42,11 @@ public class EditUserSettingView implements IView<EditUserSettingController> {
     return main;
   }
 
+  @Override
+  public String getTitle() {
+    return "Benutzerspezifische Einstellungen";
+  }
+
   public Theme getTheme() {
     return themes.getItemAt(themes.getSelectedIndex());
   }
