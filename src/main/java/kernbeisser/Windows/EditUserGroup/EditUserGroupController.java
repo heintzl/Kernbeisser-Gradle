@@ -24,8 +24,6 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
             UserGroup::defaultSearch,
             Column.create("Mitglieder", UserGroup::getMemberString, SwingConstants.LEFT),
             Column.create(
-                "Guthaben", e -> String.format("%.2f€", e.getValue()), SwingConstants.RIGHT),
-            Column.create(
                 "Solidarzuschlag",
                 e -> String.format("%.2f%%", e.getSolidaritySurcharge() * 100),
                 SwingConstants.RIGHT));

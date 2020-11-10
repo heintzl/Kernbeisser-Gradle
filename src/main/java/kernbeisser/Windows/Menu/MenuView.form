@@ -83,7 +83,7 @@
             <properties>
               <font/>
               <requestFocusEnabled value="false"/>
-              <text value="Nutzer Gruppe bearbeiten"/>
+              <text value="Anderer Nutzergruppe beitreten"/>
             </properties>
           </component>
         </children>
