@@ -112,23 +112,29 @@ public class AccountingReport extends Report {
           p.getFilteredSum(
               s ->
                   s.getVat() == VAT.HIGH
-                      && !s.getShortName().equalsIgnoreCase(depositSupplier)
-                      && !s.getShortName().equalsIgnoreCase(solidaritySupplier));
+                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(depositSupplier)
+                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
       sumVatLoProductsPurchased +=
           p.getFilteredSum(
               s ->
                   s.getVat() == VAT.LOW
-                      && !s.getShortName().equalsIgnoreCase(depositSupplier)
-                      && !s.getShortName().equalsIgnoreCase(solidaritySupplier));
+                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(depositSupplier)
+                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
       sumVatHiSolidarity +=
           p.getFilteredSum(
-              s -> s.getVat() == VAT.HIGH && s.getShortName().equalsIgnoreCase(solidaritySupplier));
+              s ->
+                  s.getVat() == VAT.HIGH
+                      && s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
       sumVatLoSolidarity +=
           p.getFilteredSum(
-              s -> s.getVat() == VAT.LOW && s.getShortName().equalsIgnoreCase(solidaritySupplier));
+              s ->
+                  s.getVat() == VAT.LOW
+                      && s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
       sumDeposit +=
           p.getFilteredSum(
-              s -> s.getVat() == VAT.HIGH && s.getShortName().equalsIgnoreCase(depositSupplier));
+              s ->
+                  s.getVat() == VAT.HIGH
+                      && s.getSafeSuppliersShortName().equalsIgnoreCase(depositSupplier));
       sumTotalPurchased += p.getSum();
     }
 
