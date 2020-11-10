@@ -1,8 +1,6 @@
 package kernbeisser.DBEntities;
 
-import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
@@ -150,7 +148,7 @@ public class ArticleBase {
                 "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
                 Offer.class)
             .setParameter("id", id)
-            .setParameter("d", Timestamp.from(Instant.now().truncatedTo(ChronoUnit.DAYS)))
+            .setParameter("d", Instant.now())
             .getSingleResult()
             .getSpecialNetPrice();
     em.close();

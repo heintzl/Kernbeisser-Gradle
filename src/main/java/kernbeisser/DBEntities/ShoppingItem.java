@@ -1,6 +1,7 @@
 package kernbeisser.DBEntities;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
@@ -12,6 +13,7 @@ import kernbeisser.Enums.*;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table
@@ -39,7 +41,7 @@ public class ShoppingItem implements Serializable {
       value = AccessLevel.PRIVATE)
   private int discount;
 
-  @JoinColumn(nullable = false)
+  @JoinColumn
   @ManyToOne
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_PURCHASE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_PURCHASE_WRITE)})
@@ -129,6 +131,8 @@ public class ShoppingItem implements Serializable {
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_WRITE)})
   private int shoppingCartIndex;
+
+  @Column @Getter @Setter @CreationTimestamp private Instant createDate;
 
   @Getter @Transient private double singleDeposit;
 

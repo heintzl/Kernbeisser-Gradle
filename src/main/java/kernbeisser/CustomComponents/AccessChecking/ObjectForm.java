@@ -39,6 +39,7 @@ public class ObjectForm<P> {
   }
 
   public P getData(boolean pingErrors) throws CannotParseException {
+    if (original == null) throw new NullPointerException("cannot obtain data from nullptr.");
     boolean success = true;
     P originalCopy = Tools.clone(original);
     for (Bounded<P, ?> boundedField : boundedFields) {

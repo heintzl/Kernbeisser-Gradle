@@ -6,7 +6,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import kernbeisser.Exeptions.IncorrectInput;
-import org.jetbrains.annotations.Nullable;
 
 public class FilterField<T> extends PermissionField {
   private final Transformable<T> transformer;
@@ -56,16 +55,15 @@ public class FilterField<T> extends PermissionField {
     }
   }
 
-  @Nullable
-  public T getSafeValue() {
-    try {
-      return transformer.toObject(getText());
-    } catch (IncorrectInput incorrectInput) {
-      return null;
-    }
+  public T getValue() throws IncorrectInput {
+    return transformer.toObject(getText());
   }
 
-  public T getUncheckedValue() throws IncorrectInput {
-    return transformer.toObject(getText());
+  public T getSafeValue() {
+    try {
+      return getValue();
+    } catch (IncorrectInput incorrectInput) {
+      throw new RuntimeException(incorrectInput);
+    }
   }
 }
