@@ -6,14 +6,13 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.*;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
-import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,12 +66,15 @@ public class Transaction {
   }
 
   public static Transaction doTransaction(
-      User from, User to, double value, TransactionType transactionType, String info)
+      EntityManager em,
+      User from,
+      User to,
+      double value,
+      TransactionType transactionType,
+      String info)
       throws InvalidTransactionException {
     if (from.getUserGroup().getId() == to.getUserGroup().getId())
       throw new kernbeisser.Exeptions.InvalidTransactionException();
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
     UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
     UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
     double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
@@ -98,38 +100,39 @@ public class Transaction {
         }
       }
     }
-    et.begin();
-    setValue(fromUG, fromUG.getValue() - value);
-    setValue(toUG, toUG.getValue() + value);
-    em.persist(fromUG);
-    em.persist(toUG);
     Transaction transaction = new Transaction();
     transaction.value = value;
     transaction.to = to;
     transaction.from = from;
     transaction.info = info;
     transaction.transactionType = transactionType;
+    isValidTransaction(transaction);
+    // sett
+    setValue(fromUG, fromUG.getValue() - value);
+    setValue(toUG, toUG.getValue() + value);
+    em.persist(fromUG);
+    em.persist(toUG);
     em.persist(transaction);
     em.flush();
-    et.commit();
-    em.close();
     from.getUserGroup().setValue(from.getUserGroup().getValue() - value);
     to.getUserGroup().setValue(to.getUserGroup().getValue() + value);
     return transaction;
   }
 
-  public static boolean isValidTransaction(Transaction transaction) {
+  public static void isValidTransaction(Transaction transaction)
+      throws InvalidTransactionException {
     double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
     if (transaction.getFrom().getUserGroup().getValue() - transaction.getValue() < minValue) {
       if (!transaction.getFrom().hasPermission(PermissionKey.GO_UNDER_MIN)) {
-        return false;
+        throw new InvalidTransactionException(new PermissionRequired());
       }
     }
     if (transaction.getValue() < 0
         && transaction.getTo().getUserGroup().getValue() - transaction.getValue() < minValue) {
-      return transaction.getTo().hasPermission(PermissionKey.GO_UNDER_MIN);
+      if (!transaction.getTo().hasPermission(PermissionKey.GO_UNDER_MIN)) {
+        throw new InvalidTransactionException(new PermissionRequired());
+      }
     }
-    return true;
   }
 
   private static void setValue(UserGroup transaction, double value) {
@@ -142,9 +145,10 @@ public class Transaction {
     }
   }
 
-  public static Transaction doPurchaseTransaction(User customer, double value)
+  public static Transaction doPurchaseTransaction(EntityManager em, User customer, double value)
       throws InvalidTransactionException {
     return doTransaction(
+        em,
         customer,
         User.getKernbeisserUser(),
         value,

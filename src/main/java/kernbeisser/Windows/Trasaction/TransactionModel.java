@@ -2,13 +2,16 @@ package kernbeisser.Windows.Trasaction;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class TransactionModel implements IModel<TransactionController> {
 
@@ -39,18 +42,23 @@ public class TransactionModel implements IModel<TransactionController> {
   }
 
   void transfer() throws InvalidTransactionException {
-    final boolean[] correct = {true};
-    transactions.forEach(e -> correct[0] = correct[0] & Transaction.isValidTransaction(e));
-    if (!correct[0]) {
-      throw new PermissionKeyRequiredException("Not all transactions have valid values");
-    }
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     for (Transaction transaction : transactions) {
-      Transaction.doTransaction(
-          transaction.getFrom(),
-          transaction.getTo(),
-          transaction.getValue(),
-          transactionType,
-          transaction.getInfo());
+      try {
+        Transaction.doTransaction(
+            em,
+            transaction.getFrom(),
+            transaction.getTo(),
+            transaction.getValue(),
+            transactionType,
+            transaction.getInfo());
+      } catch (InvalidTransactionException e) {
+        et.rollback();
+        em.close();
+        throw e;
+      }
     }
   }
 
