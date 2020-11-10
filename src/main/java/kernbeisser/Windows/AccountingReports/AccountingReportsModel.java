@@ -2,6 +2,7 @@ package kernbeisser.Windows.AccountingReports;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -11,10 +12,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Reports.AccountingReport;
-import kernbeisser.Reports.Report;
-import kernbeisser.Reports.TillrollReport;
-import kernbeisser.Reports.UserBalanceReport;
+import kernbeisser.Reports.*;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -23,6 +21,7 @@ import org.apache.commons.lang3.time.DateUtils;
 public class AccountingReportsModel implements IModel<AccountingReportsController> {
 
   @Getter private final ExportTypes[] exportTypes = ExportTypes.values();
+  @Getter private final List<String> userKeySortOrders = Arrays.asList("Id", "Name");
 
   public AccountingReportsModel() {}
 
@@ -73,8 +72,12 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
   }
 
   public void exportAccountingReport(
-      ExportTypes exportType, int startBon, int endBon, Consumer<Throwable> consumePdfException) {
-    AccountingReport report = new AccountingReport(startBon, endBon);
+      ExportTypes exportType,
+      int startBon,
+      int endBon,
+      boolean withNames,
+      Consumer<Throwable> consumePdfException) {
+    AccountingReport report = new AccountingReport(startBon, endBon, withNames);
     exportReport(
         exportType, report, "Ladendienst Endabrechnung wird erstellt", consumePdfException);
   }
@@ -83,5 +86,11 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
       ExportTypes exportType, boolean withNames, Consumer<Throwable> consumePdfException) {
     UserBalanceReport report = new UserBalanceReport(withNames);
     exportReport(exportType, report, "Guthabenstände werden erstellt", consumePdfException);
+  }
+
+  public void exportKeyUserList(
+      ExportTypes exportType, String sortOrder, Consumer<Throwable> consumePdfException) {
+    KeyUserList report = new KeyUserList(sortOrder);
+    exportReport(exportType, report, "Benutzer-Schlüssel-Liste wird erstellt", consumePdfException);
   }
 }

@@ -7,10 +7,12 @@
   },
   "ImagePath": "src/main/resources/Images/Icons",
   "Reports": {
+    "userBalanceFileName": "GuthabenUebersicht.jrxml",
     "tillrollFileName": "Bonrolle.jrxml",
     "reportDirectory": "reports",
     "outputDirectory": "reports",
     "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
+    "keyUserListFileName": "BenutzerSchlüssel.jrxml",
     "invoiceFileName": "Kerni_Rechnung.jrxml"
   }
 }

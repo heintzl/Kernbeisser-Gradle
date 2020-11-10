@@ -421,6 +421,10 @@ public class ShoppingItem implements Serializable {
     return metricUnits != null ? metricUnits : MetricUnits.NONE;
   }
 
+  @Key(PermissionKey.SHOPPING_ITEM_SHORT_NAME_READ)
+  public String getSafeSuppliersShortName() {
+    return (suppliersShortName == null ? "" : suppliersShortName);
+  }
   // TODO maybe replace this with check at ShoppingCartTable to not bind the hash code to this class
   @Override
   public int hashCode() {
