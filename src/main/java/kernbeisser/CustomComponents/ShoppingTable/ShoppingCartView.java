@@ -82,8 +82,8 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               public Object getValue(ShoppingItem shoppingItem)
                   throws PermissionKeyRequiredException {
                 return shoppingItem.getName()
-                    + (shoppingItem.getShortName() != null
-                        ? " [" + shoppingItem.getShortName() + "]"
+                    + (shoppingItem.getSuppliersShortName() != null
+                        ? " [" + shoppingItem.getSuppliersShortName() + "]"
                         : "");
               }
 
