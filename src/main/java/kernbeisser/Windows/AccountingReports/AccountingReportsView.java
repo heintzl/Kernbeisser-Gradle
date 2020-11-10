@@ -21,6 +21,9 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private IntegerParseField endBon;
   private JRadioButton optUserBalance;
   private JCheckBox userBalanceWithNames;
+  private JCheckBox accountingReportWithNames;
+  private JRadioButton optKeyUserList;
+  private JComboBox userKeySortOrder;
 
   @Linked private AccountingReportsController controller;
 
@@ -37,9 +40,14 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
       controller.exportTillroll(getExportType(), getDays());
     } else if (optLadendienstEndabrechnung.isSelected()) {
       controller.exportAccountingReport(
-          getExportType(), startBon.getSafeValue(), endBon.getSafeValue());
+          getExportType(),
+          startBon.getSafeValue(),
+          endBon.getSafeValue(),
+          accountingReportWithNames.isSelected());
     } else if (optUserBalance.isSelected()) {
       controller.exportUserBalance(getExportType(), userBalanceWithNames.isSelected());
+    } else if (optKeyUserList.isSelected()) {
+      controller.exportKeyUserList(getExportType(), userKeySortOrder.getSelectedItem().toString());
     }
   }
 
@@ -49,8 +57,11 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     cancel.addActionListener(e -> back());
     submit.addActionListener(e -> submit(controller));
     ExportTypes[] exportTypes = controller.getExportTypes();
-    for (int i = 0; i < exportTypes.length; i++) {
-      exportType.addItem(exportTypes[i]);
+    for (ExportTypes t : exportTypes) {
+      exportType.addItem(t);
+    }
+    for (String s : controller.getUserKeySortOrders()) {
+      userKeySortOrder.addItem(s);
     }
   }
 

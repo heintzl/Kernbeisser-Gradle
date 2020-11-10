@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.swing.*;
@@ -20,13 +21,15 @@ public class AccountingReport extends Report {
 
   private final long startBon;
   private final long endBon;
+  private final boolean withNames;
 
-  public AccountingReport(long startBon, long endBon) {
+  public AccountingReport(long startBon, long endBon, boolean withNames) {
     super(
         "accountingReportFileName",
         String.format("KernbeisserBuchhaltungBonUebersicht_%d_%d.pdf", startBon, endBon));
     this.startBon = startBon;
     this.endBon = endBon;
+    this.withNames = withNames;
   }
 
   private static List<Purchase> getPurchases(long startBon, long endBon) {
@@ -214,6 +217,8 @@ public class AccountingReport extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    return getPurchases(startBon, endBon);
+    return getPurchases(startBon, endBon).stream()
+        .map(p -> p.withUserIdentification(withNames))
+        .collect(Collectors.toList());
   }
 }
