@@ -101,7 +101,7 @@ public class ShoppingItem implements Serializable {
   @Setter(
       onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_SHORT_NAME_WRITE)},
       value = AccessLevel.PRIVATE)
-  private String shortName;
+  private String suppliersShortName;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_SURCHARGE_READ)})
@@ -179,7 +179,7 @@ public class ShoppingItem implements Serializable {
     this.discount = discount;
     supplier = articleBase.getSupplier();
     if (supplier != null) {
-      this.shortName = articleBase.getSupplier().getShortName();
+      this.suppliersShortName = articleBase.getSupplier().getShortName();
     }
     this.suppliersItemNumber = articleBase.getSuppliersItemNumber();
     this.singleDeposit = articleBase.getSingleDeposit();
