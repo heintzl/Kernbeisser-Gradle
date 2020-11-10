@@ -3,7 +3,6 @@ package kernbeisser.Windows.UserInfo;
 import java.awt.*;
 import java.util.Collection;
 import javax.swing.*;
-import kernbeisser.CustomComponents.Charts.BuyChart;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
@@ -21,7 +20,6 @@ public class UserInfoView implements IView<UserInfoController> {
   private JTabbedPane tabbedPane;
   private ObjectTable<Purchase> shoppingHistory;
   private ObjectTable<Transaction> valueHistory;
-  private BuyChart buyChart;
   private JLabel phoneNumber1;
   private JLabel username;
   private JLabel firstName;
@@ -68,7 +66,6 @@ public class UserInfoView implements IView<UserInfoController> {
 
   public void createUIComponents() {
     valueHistory = new ObjectTable<Transaction>();
-    buyChart = controller.createBuyChart();
     permissions = new ObjectTable<>(Column.create("Name", Permission::getName));
     userGroup =
         new ObjectTable<User>(

@@ -1,9 +1,7 @@
 package kernbeisser.Windows.UserInfo;
 
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collection;
-import kernbeisser.CustomComponents.Charts.BuyChart;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -111,10 +109,6 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
         return "Überweissung";
       }
     };
-  }
-
-  public BuyChart createBuyChart() {
-    return new BuyChart(model.getUser(), YearMonth.now().minusMonths(12), YearMonth.now());
   }
 
   public void openPurchase() {
