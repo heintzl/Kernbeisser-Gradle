@@ -34,7 +34,7 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
       return;
     }
     Setting.LAST_PRINTED_BON_NR.changeValue(id);
-    AccountingReport accountingReportManager = new AccountingReport(from + 1, id);
+    AccountingReport accountingReportManager = new AccountingReport(from + 1, id, false);
     accountingReportManager.exportPdf(
         "Ladendienst wird gedruckt",
         (e) -> {

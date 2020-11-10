@@ -1,5 +1,6 @@
 package kernbeisser.Windows.AccountingReports;
 
+import java.util.Collection;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Tools;
@@ -15,6 +16,10 @@ public class AccountingReportsController
 
   ExportTypes[] getExportTypes() {
     return model.getExportTypes();
+  }
+
+  Collection<String> getUserKeySortOrders() {
+    return model.getUserKeySortOrders();
   }
 
   public void exportTillroll(ExportTypes exportType, int days) {
@@ -39,11 +44,12 @@ public class AccountingReportsController
     }
   }
 
-  public void exportAccountingReport(ExportTypes exportType, int startBon, int endBon) {
+  public void exportAccountingReport(
+      ExportTypes exportType, int startBon, int endBon, boolean withNames) {
     var view = getView();
     try {
       model.exportAccountingReport(
-          exportType, startBon, endBon, (e) -> consumePdfException(e, exportType));
+          exportType, startBon, endBon, withNames, (e) -> consumePdfException(e, exportType));
       view.back();
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);
@@ -54,6 +60,16 @@ public class AccountingReportsController
     var view = getView();
     try {
       model.exportUserBalance(exportType, selected, (e) -> consumePdfException(e, exportType));
+      view.back();
+    } catch (UnsupportedOperationException e) {
+      view.messageNotImplemented(exportType);
+    }
+  }
+
+  public void exportKeyUserList(ExportTypes exportType, String sortOrder) {
+    var view = getView();
+    try {
+      model.exportKeyUserList(exportType, sortOrder, (e) -> consumePdfException(e, exportType));
       view.back();
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);

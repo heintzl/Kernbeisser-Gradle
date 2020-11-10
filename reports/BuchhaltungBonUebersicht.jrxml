@@ -22,15 +22,15 @@
 	</queryString>
 	<field name="createDate" class="java.time.Instant"/>
 	<field name="id" class="java.lang.Long"/>
-	<field name="session.customer.fullName" class="java.lang.String"/>
+	<field name="customerIdentification" class="java.lang.String"/>
 	<field name="sum" class="java.lang.Double"/>
 	<field name="session.sessionTypeName" class="java.lang.String"/>
-	<field name="session.seller.id" class="java.lang.Integer"/>
+	<field name="sellerIdentification" class="java.lang.String"/>
 	<variable name="sessionSum" class="java.lang.Double" resetType="Group" resetGroup="SessionType" calculation="Sum">
 		<variableExpression><![CDATA[$F{sum}]]></variableExpression>
 	</variable>
 	<group name="SessionType" isReprintHeaderOnEachPage="true">
-		<groupExpression><![CDATA[$F{session.sessionTypeName} == "SOLO"?"SOLO":$F{session.seller.id}.toString()]]></groupExpression>
+		<groupExpression><![CDATA[$F{session.sessionTypeName} == "SOLO"?"SOLO":$F{sellerIdentification}.toString()]]></groupExpression>
 		<groupHeader>
 			<band height="45">
 				<staticText>
@@ -66,7 +66,7 @@
 					<textElement>
 						<font isUnderline="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{session.sessionTypeName} == "SOLO"?"Einkaufs-Selbsteingaben":$F{session.sessionTypeName} == "ASSISTED"?"Einkäufe beim Ladendienst (" + $F{session.seller.id} +")":"Andere Einkäufe"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{session.sessionTypeName} == "SOLO"?"Einkaufs-Selbsteingaben":$F{session.sessionTypeName} == "ASSISTED"?"Einkäufe beim Ladendienst (" + $F{sellerIdentification} +")":"Andere Einkäufe"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -172,7 +172,7 @@
 				<reportElement x="44" y="0" width="326" height="14" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{session.customer.fullName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{customerIdentification}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00 €">
 				<reportElement x="379" y="0" width="54" height="14" uuid="6efcde95-291f-43d1-b62e-72f55da53670">
