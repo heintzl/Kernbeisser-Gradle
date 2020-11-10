@@ -47,6 +47,7 @@ public class PermissionSetSecurityHandler implements MethodHandler {
   }
 
   private Object tryWrapWithProxyLayer(Object in, PermissionKey[] read, PermissionKey[] modify) {
+    if (in == null) return null;
     if (Set.class.isAssignableFrom(in.getClass()))
       return SetProxy.create((Set<?>) in, permissionSet, read, modify);
     if (Collection.class.isAssignableFrom(in.getClass()))
