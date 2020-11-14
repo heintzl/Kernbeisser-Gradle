@@ -50,12 +50,10 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     return em.createQuery(
             "select a from ArticleBase a where "
-                + "(a.name like :s or a.suppliersItemNumber like '%"
-                + search
-                + "%')"
+                + "(a.name like :s or cast(a.suppliersItemNumber as string) like :s)"
                 + (onlyActionArticle ? " and a.id in (select article.id from Offer)" : ""),
             ArticleBase.class)
-        .setParameter("s", search)
+        .setParameter("s", "%" + search + "%")
         .getResultList();
   }
 
