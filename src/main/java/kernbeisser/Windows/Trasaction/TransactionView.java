@@ -475,7 +475,7 @@ public class TransactionView implements IView<TransactionController> {
 
   @Override
   public String getTitle() {
-    return "Überweisungen";
+    return "Überweisungen (" + controller.getTransactionTypeName() + ")";
   }
 
   public void pastUsername(String username) {
