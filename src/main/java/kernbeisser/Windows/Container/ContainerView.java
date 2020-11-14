@@ -157,4 +157,9 @@ public class ContainerView implements IView<ContainerController> {
   public @NotNull JComponent getContent() {
     return main;
   }
+
+  @Override
+  public String getTitle() {
+    return "Vorbestellung";
+  }
 }

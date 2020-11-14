@@ -25,6 +25,11 @@ public class EditItemsView implements IView<EditItemsController> {
     return main;
   }
 
+  @Override
+  public String getTitle() {
+    return "Artikel bearbeiten";
+  }
+
   private void createUIComponents() {
     objectView = controller.getObjectView();
   }

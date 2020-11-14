@@ -6,14 +6,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Purchase;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import lombok.Cleanup;
@@ -23,13 +21,15 @@ public class AccountingReport extends Report {
 
   private final long startBon;
   private final long endBon;
+  private final boolean withNames;
 
-  public AccountingReport(long startBon, long endBon) {
+  public AccountingReport(long startBon, long endBon, boolean withNames) {
     super(
         "accountingReportFileName",
         String.format("KernbeisserBuchhaltungBonUebersicht_%d_%d.pdf", startBon, endBon));
     this.startBon = startBon;
     this.endBon = endBon;
+    this.withNames = withNames;
   }
 
   private static List<Purchase> getPurchases(long startBon, long endBon) {
@@ -76,8 +76,11 @@ public class AccountingReport extends Report {
   private static Map<String, Object> getAccountingPurchaseParams(List<Purchase> purchases)
       throws InvalidVATValueException {
     double sumTotalPurchased = 0.0;
-    double sumVatHiPurchased = 0.0;
-    double sumVatLoPurchased = 0.0;
+    double sumVatHiProductsPurchased = 0.0;
+    double sumVatLoProductsPurchased = 0.0;
+    double sumVatHiSolidarity = 0.0;
+    double sumVatLoSolidarity = 0.0;
+    double sumDeposit = 0.0;
     Timestamp endDate = Timestamp.from(purchases.get(purchases.size() - 1).getCreateDate());
 
     long t_high = countVatValues(purchases, VAT.HIGH);
@@ -102,9 +105,36 @@ public class AccountingReport extends Report {
     }
     double vatLoValue = getVatValue(purchases, VAT.LOW);
     double vatHiValue = getVatValue(purchases, VAT.HIGH);
+    String solidaritySupplier = Supplier.getSolidaritySupplier().getShortName();
+    String depositSupplier = Supplier.getDepositSupplier().getShortName();
     for (Purchase p : purchases) {
-      sumVatHiPurchased += p.getVatSum(VAT.HIGH);
-      sumVatLoPurchased += p.getVatSum(VAT.LOW);
+      sumVatHiProductsPurchased +=
+          p.getFilteredSum(
+              s ->
+                  s.getVat() == VAT.HIGH
+                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(depositSupplier)
+                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
+      sumVatLoProductsPurchased +=
+          p.getFilteredSum(
+              s ->
+                  s.getVat() == VAT.LOW
+                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(depositSupplier)
+                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
+      sumVatHiSolidarity +=
+          p.getFilteredSum(
+              s ->
+                  s.getVat() == VAT.HIGH
+                      && s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
+      sumVatLoSolidarity +=
+          p.getFilteredSum(
+              s ->
+                  s.getVat() == VAT.LOW
+                      && s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
+      sumDeposit +=
+          p.getFilteredSum(
+              s ->
+                  s.getVat() == VAT.HIGH
+                      && s.getSafeSuppliersShortName().equalsIgnoreCase(depositSupplier));
       sumTotalPurchased += p.getSum();
     }
 
@@ -113,8 +143,11 @@ public class AccountingReport extends Report {
     reportParams.put("vatHiValue", vatHiValue);
     reportParams.put("vatLoValue", vatLoValue);
     reportParams.put("sumTotalPurchased", sumTotalPurchased);
-    reportParams.put("sumVatHiPurchased", sumVatHiPurchased);
-    reportParams.put("sumVatLoPurchased", sumVatLoPurchased);
+    reportParams.put("sumVatHiProductsPurchased", sumVatHiProductsPurchased);
+    reportParams.put("sumVatLoProductsPurchased", sumVatLoProductsPurchased);
+    reportParams.put("sumDeposit", sumDeposit);
+    reportParams.put("sumVatHiSolidarity", sumVatHiSolidarity);
+    reportParams.put("sumVatLoSolidarity", sumVatLoSolidarity);
 
     return reportParams;
   }
@@ -190,6 +223,8 @@ public class AccountingReport extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    return getPurchases(startBon, endBon);
+    return getPurchases(startBon, endBon).stream()
+        .map(p -> p.withUserIdentification(withNames))
+        .collect(Collectors.toList());
   }
 }

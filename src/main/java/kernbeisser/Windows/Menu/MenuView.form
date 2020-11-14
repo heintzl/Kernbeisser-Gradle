@@ -147,7 +147,7 @@
               <actionCommand value="Artikel bearbeiten"/>
               <font/>
               <requestFocusEnabled value="false"/>
-              <text value="Artikelbearbeiten"/>
+              <text value="Artikel bearbeiten"/>
             </properties>
           </component>
           <component id="5fab4" class="kernbeisser.CustomComponents.ControllerButton" binding="editSurchargeTables" custom-create="true">
