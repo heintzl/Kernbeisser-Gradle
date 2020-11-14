@@ -37,6 +37,7 @@ public class UserInfoView implements IView<UserInfoController> {
   private ObjectTable<User> userGroup;
   private JLabel key;
   private JLabel city;
+  private JButton printBon;
 
   @Linked private UserInfoController controller;
 
@@ -176,7 +177,13 @@ public class UserInfoView implements IView<UserInfoController> {
       }
     }
     tabbedPane.addChangeListener(e -> controller.loadCurrentSite());
-    shoppingHistory.addSelectionListener(e -> controller.openPurchase());
+    shoppingHistory.addDoubleClickListener(e -> controller.openPurchase());
+    shoppingHistory.addSelectionListener(
+        e -> {
+          printBon.setEnabled(true);
+        });
+    printBon.setEnabled(false);
+    printBon.addActionListener(e -> controller.openPurchase());
   }
 
   @Override
