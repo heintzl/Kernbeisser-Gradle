@@ -12,12 +12,13 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+import lombok.Getter;
 
 public class TransactionModel implements IModel<TransactionController> {
 
   private final User owner;
 
-  private final TransactionType transactionType;
+  @Getter private final TransactionType transactionType;
 
   TransactionModel(User owner, TransactionType transactionType) {
     this.transactionType = transactionType;

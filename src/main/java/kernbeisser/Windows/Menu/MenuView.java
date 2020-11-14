@@ -49,7 +49,7 @@ public class MenuView implements IView<MenuController> {
   private kernbeisser.CustomComponents.ControllerButton editOwnUser;
   private kernbeisser.CustomComponents.ControllerButton editUserSettings;
   private ControllerButton editUsers;
-  private ControllerButton doTransaction;
+  private ControllerButton doTransactionPayIn;
   private ControllerButton changePermissions;
   private ControllerButton accountingReports;
   private ControllerButton changeDBConnection;
@@ -65,6 +65,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton synchoniseCatalog;
   private ControllerButton offerManagement;
   private ControllerButton supply;
+  private ControllerButton doUserDefiniedTransaction;
 
   @Override
   public void initialize(MenuController controller) {}
@@ -114,10 +115,9 @@ public class MenuView implements IView<MenuController> {
             EditUserSettingController.class,
             Controller::openTab);
     editUsers = new ControllerButton(EditUsers::new, EditUsers.class, Controller::openTab);
-    doTransaction =
+    doTransactionPayIn =
         new ControllerButton(
-            () ->
-                new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
+            () -> new TransactionController(LogInModel.getLoggedIn(), TransactionType.PAYIN),
             TransactionController.class,
             Controller::openTab);
     changePermissions =
@@ -178,6 +178,11 @@ public class MenuView implements IView<MenuController> {
     offerManagement =
         new ControllerButton(SpecialPriceEditorController::new, SpecialPriceEditorController.class);
     supply = new ControllerButton(SupplyController::new, SupplyController.class);
+    doUserDefiniedTransaction =
+        new ControllerButton(
+            () ->
+                new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
+            TransactionController.class);
     openCashierShoppingMask.requestFocusInWindow();
   }
 

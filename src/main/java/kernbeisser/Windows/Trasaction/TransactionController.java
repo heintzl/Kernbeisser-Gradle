@@ -31,6 +31,15 @@ public class TransactionController extends Controller<TransactionView, Transacti
     userSearchBoxController.addSelectionListener(e -> getView().pastUsername(e.getUsername()));
   }
 
+  private void loadPreSettings(TransactionType transactionType) {
+    switch (transactionType) {
+      case PAYIN:
+        getView().setFromEnabled(false);
+        getView().setFrom(User.getKernbeisserUser().getUsername());
+        break;
+    }
+  }
+
   void transfer() {
     var view = getView();
     if (!view.confirm()) {
@@ -113,6 +122,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
     view.setFromKBEnable(model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_KB));
     view.setFrom(LogInModel.getLoggedIn().getUsername());
     refreshTable();
+    loadPreSettings(model.getTransactionType());
   }
 
   @Override
@@ -142,5 +152,9 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   public String getLoggedInUsername() {
     return LogInModel.getLoggedIn().getUsername();
+  }
+
+  public String getTransactionTypeName() {
+    return model.getTransactionType().toString();
   }
 }
