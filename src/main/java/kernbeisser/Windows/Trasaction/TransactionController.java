@@ -34,6 +34,9 @@ public class TransactionController extends Controller<TransactionView, Transacti
   private void loadPreSettings(TransactionType transactionType) {
     switch (transactionType) {
       case PAYIN:
+        getView().setFromEnabled(false);
+        getView().setFrom(User.getKernbeisserUser().getUsername());
+        break;
     }
   }
 
