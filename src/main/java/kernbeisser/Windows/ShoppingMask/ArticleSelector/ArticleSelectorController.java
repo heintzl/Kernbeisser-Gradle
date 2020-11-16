@@ -50,7 +50,7 @@ public class ArticleSelectorController
   }
 
   void refreshSearch() {
-    searchBoxController.search();
+    searchBoxController.invokeSearch();
   }
 
   public void choose() {
@@ -73,9 +73,5 @@ public class ArticleSelectorController
 
   public SearchBoxView<Article> getSearchBoxView() {
     return searchBoxController.getView();
-  }
-
-  public void refreshLoadSolutions() {
-    searchBoxController.refreshLoadSolutions();
   }
 }

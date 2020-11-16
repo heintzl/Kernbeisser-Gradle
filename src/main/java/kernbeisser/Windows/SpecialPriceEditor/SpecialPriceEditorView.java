@@ -112,8 +112,8 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
             Column.create("Bis", e -> Date.INSTANT_DATE.format(e.getToDate())),
             Column.create("Aktionsnettopreis", Offer::getSpecialNetPrice),
             Column.create("Wiederholung", Offer::getRepeatMode));
-    offersMonth.addSelectionListener(
-        e -> searchBox.selectObject(a -> a.getId() == e.getArticle().getId()));
+    // offersMonth.addSelectionListener(
+    //    e -> searchBox.selectObject(a -> a.getId() == e.getArticle().getId()));
     from = new DateParseField();
     to = new DateParseField();
   }
@@ -170,7 +170,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
     filterActionArticle.addActionListener(
         e -> {
           filterOnlyActionArticle.set(filterActionArticle.isSelected());
-          controller.refreshSearchSolutions();
+          controller.invokeSearch();
         });
     offers.addSelectionListener(e -> controller.load(e.getArticle()));
     month.addActionListener(e -> controller.loadMonth());

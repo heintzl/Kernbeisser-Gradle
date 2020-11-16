@@ -68,7 +68,7 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   private void pushViewRefresh() {
     model.refreshData();
     getView().setCurrentUserGroup(model.getUser().getUserGroup());
-    userGroupSearchBoxController.search();
+    userGroupSearchBoxController.invokeSearch();
   }
 
   public void editSoli(double newValue) {

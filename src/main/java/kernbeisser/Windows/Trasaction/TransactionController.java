@@ -107,7 +107,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
     view.setCount(model.getCount());
     view.setSum(model.getSum());
     view.transactionAdded();
-    userSearchBoxController.refreshLoadSolutions();
+    userSearchBoxController.invokeSearch();
   }
 
   public SearchBoxView<User> getSearchBoxView() {
