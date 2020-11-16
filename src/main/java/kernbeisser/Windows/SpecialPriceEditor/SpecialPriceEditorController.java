@@ -179,8 +179,8 @@ public class SpecialPriceEditorController
     DatePickerController.requestDate(getView().traceViewContainer(), getView()::setTo);
   }
 
-  void refreshSearchSolutions() {
-    searchBoxController.refreshLoadSolutions();
+  void invokeSearch() {
+    searchBoxController.invokeSearch();
   }
 
   @Override

@@ -1,8 +1,8 @@
 package kernbeisser.Windows.Selector;
 
 import java.util.Collection;
-import java.util.function.Consumer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
@@ -52,7 +52,7 @@ public class SelectorController<T> extends Controller<SelectorView<T>, SelectorM
     }
     SearchBoxController<T> controller =
         new SearchBoxController<T>(model.getSearchable(), model.getColumns());
-    Consumer<T> selection =
+    ObjectSelectionListener<T> selection =
         e -> {
           view.addValue(e);
           model.getCurrentValues().add(e);
@@ -60,7 +60,6 @@ public class SelectorController<T> extends Controller<SelectorView<T>, SelectorM
           selectionWindow = null;
         };
     controller.addDoubleClickListener(selection);
-    controller.addSelectionListener(selection);
     selectionWindow = controller.openIn(new SubWindow(view.traceViewContainer()));
   }
 }

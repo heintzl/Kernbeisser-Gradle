@@ -117,10 +117,6 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   }
 
   public void search() {
-    T t = searchBoxController.getSelectedObject();
-    searchBoxController.refreshLoadSolutions();
-    if (t != null) {
-      searchBoxController.setSelectedObject(t);
-    }
+    searchBoxController.invokeSearch();
   }
 }

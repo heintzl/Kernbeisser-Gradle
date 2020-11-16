@@ -1,9 +1,9 @@
 package kernbeisser.CustomComponents.SearchBox;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
 import javax.persistence.EntityManager;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
@@ -32,36 +32,9 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     return tryToRefresh(getView().getSelectedObject());
   }
 
-  public void search() {
-    Object lastId = getSelectedObject() != null ? Tools.getId(getSelectedObject()) : null;
-    getView().setObjects(model.getValues(getView().getSearch()));
-    if (lastId != null && !getView().setSelectedObjectId(lastId)) {
-      runLostSelectionListener();
-    }
-  }
-
-  void select() {
-    if (getView().getSelectedObject() == null) {
-      return;
-    }
-    if (model.getLastSelectedObject() != null
-        && getView().getSelectedObject().equals(model.getLastSelectedObject())) {
-      runDoubleClickListener(getSelectedObject());
-    }
-    runSelectionListener(getSelectedObject());
-    model.setLastSelectedObject(getView().getSelectedObject());
-  }
-
-  private void runDoubleClickListener(T t) {
-    for (Consumer<T> consumer : model.getDoubleClickListener()) {
-      consumer.accept(t);
-    }
-  }
-
-  private void runSelectionListener(T t) {
-    for (Consumer<T> consumer : model.getSelectionListener()) {
-      consumer.accept(t);
-    }
+  public void invokeSearch() {
+    getView().setObjects(model.getSearchResults(getView().getSearch()));
+    runLostSelectionListener();
   }
 
   private void runLostSelectionListener() {
@@ -75,12 +48,12 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     return model;
   }
 
-  public void addDoubleClickListener(Consumer<T> action) {
-    model.getDoubleClickListener().add(action);
+  public void addDoubleClickListener(ObjectSelectionListener<T> action) {
+    getView().addDoubleClickListener(action);
   }
 
-  public void addSelectionListener(Consumer<T> action) {
-    model.getSelectionListener().add(action);
+  public void addSelectionListener(ObjectSelectionListener<T> action) {
+    getView().addSelectionListener(action);
   }
 
   public void addLostSelectionListener(Runnable r) {
@@ -90,7 +63,7 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
   @Override
   public void fillView(SearchBoxView<T> tSearchBoxView) {
     tSearchBoxView.setColumns(Arrays.asList(model.getColumns()));
-    search();
+    invokeSearch();
   }
 
   @Override
@@ -98,15 +71,7 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     return new PermissionKey[0];
   }
 
-  public void refreshLoadSolutions() {
-    search();
-  }
-
   public void setSearch(String s) {
     getView().setSearch(s);
-  }
-
-  public void setSelectedObject(T t) {
-    getView().setSelectedObject(t);
   }
 }
