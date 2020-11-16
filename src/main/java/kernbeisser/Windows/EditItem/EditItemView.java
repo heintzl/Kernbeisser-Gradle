@@ -14,7 +14,6 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.MVC.IView;
@@ -43,9 +42,6 @@ public class EditItemView implements IView<EditItemController> {
       containerSize;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article, MetricUnits>
       metricUnits;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<
-          Article, ContainerDefinition>
-      containerDefinition;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Long> barcode;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckBox<Article> showInShoppingMask;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckBox<Article> weighable;
@@ -96,8 +92,6 @@ public class EditItemView implements IView<EditItemController> {
     priceList = new AccessCheckingComboBox<>(Article::getPriceList, Article::setPriceList);
     metricUnits =
         new AccessCheckingComboBox<>(ArticleBase::getMetricUnits, ArticleBase::setMetricUnits);
-    containerDefinition =
-        new AccessCheckingComboBox<>(Article::getContainerDef, Article::setContainerDef);
     barcode =
         new AccessCheckingField<>(
             ArticleBase::getBarcode, ArticleBase::setBarcode, controller::validateBarcode);
@@ -128,13 +122,6 @@ public class EditItemView implements IView<EditItemController> {
   void setPriceLists(Collection<PriceList> priceLists) {
     priceList.removeAllItems();
     priceLists.forEach(priceList::addItem);
-  }
-
-  void setContainerDefinitions(ContainerDefinition[] containerDefinitions) {
-    containerDefinition.removeAllItems();
-    for (ContainerDefinition definition : containerDefinitions) {
-      containerDefinition.addItem(definition);
-    }
   }
 
   public ObjectForm<Article> getArticleObjectForm() {
@@ -177,7 +164,6 @@ public class EditItemView implements IView<EditItemController> {
             containerSize,
             metricUnits,
             amount,
-            containerDefinition,
             barcode,
             showInShoppingMask,
             weighable);

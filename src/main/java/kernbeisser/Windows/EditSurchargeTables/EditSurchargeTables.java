@@ -1,21 +1,18 @@
 package kernbeisser.Windows.EditSurchargeTables;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.DBEntities.SurchargeTable;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Windows.EditSurchargeTable.EditSurchargeTableController;
 import kernbeisser.Windows.ObjectView.ObjectViewController;
 
-public class EditSurchargeTables extends ObjectViewController<SurchargeTable> {
+public class EditSurchargeTables extends ObjectViewController<SurchargeGroup> {
   public EditSurchargeTables() {
     super(
         "Zuschlagstabellen bearbeiten",
         EditSurchargeTableController::new,
-        SurchargeTable::defaultSearch,
+        SurchargeGroup::defaultSearch,
         true,
-        Column.create("Liefernat", SurchargeTable::getSupplier),
-        Column.create("Von", SurchargeTable::getFrom_number),
-        Column.create("Bis", SurchargeTable::getTo_number),
-        Column.create("Name", SurchargeTable::getDescription),
-        Column.create("Zuschlag", SurchargeTable::getSurcharge));
+        Column.create("Liefernat", SurchargeGroup::getSupplier),
+        Column.create("Zuschlag", SurchargeGroup::getSurcharge));
   }
 }

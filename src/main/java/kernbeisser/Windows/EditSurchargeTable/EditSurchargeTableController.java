@@ -1,6 +1,6 @@
 package kernbeisser.Windows.EditSurchargeTable;
 
-import kernbeisser.DBEntities.SurchargeTable;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
@@ -11,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 public class EditSurchargeTableController
     extends Controller<EditSurchargeTableView, EditSurchargeTableModel> {
 
-  public EditSurchargeTableController(SurchargeTable surchargeTable, Mode mode) {
+  public EditSurchargeTableController(SurchargeGroup surchargeGroup, Mode mode) {
     super(
         new EditSurchargeTableModel(
-            surchargeTable == null ? new SurchargeTable() : surchargeTable, mode));
+            surchargeGroup == null ? new SurchargeGroup() : surchargeGroup, mode));
     if (mode == Mode.REMOVE) {
-      Tools.delete(SurchargeTable.class, surchargeTable.getId());
+      Tools.delete(SurchargeGroup.class, surchargeGroup.getId());
     }
   }
 

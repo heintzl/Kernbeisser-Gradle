@@ -2,16 +2,16 @@ package kernbeisser.Windows.EditSurchargeTable;
 
 import java.util.Collection;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.DBEntities.SurchargeTable;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.MVC.IModel;
 
 public class EditSurchargeTableModel implements IModel<EditSurchargeTableController> {
-  private final SurchargeTable source;
+  private final SurchargeGroup source;
   private final Mode mode;
 
-  public EditSurchargeTableModel(SurchargeTable surchargeTable, Mode mode) {
-    this.source = surchargeTable;
+  public EditSurchargeTableModel(SurchargeGroup surchargeGroup, Mode mode) {
+    this.source = surchargeGroup;
     this.mode = mode;
   }
 
@@ -19,7 +19,7 @@ public class EditSurchargeTableModel implements IModel<EditSurchargeTableControl
     return Supplier.getAll(null);
   }
 
-  public SurchargeTable getSource() {
+  public SurchargeGroup getSource() {
     return source;
   }
 

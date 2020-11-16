@@ -40,7 +40,6 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
     editItemView.setPriceLists(model.getAllPriceLists());
     editItemView.setSuppliers(model.getAllSuppliers());
     editItemView.setUnits(model.getAllUnits());
-    editItemView.setContainerDefinitions(model.getAllContainerDefinitions());
     editItemView.setVATs(model.getAllVATs());
     editItemView.getArticleObjectForm().setSource(model.getSource());
   }

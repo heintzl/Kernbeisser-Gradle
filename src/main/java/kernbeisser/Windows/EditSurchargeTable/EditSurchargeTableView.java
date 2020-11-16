@@ -6,7 +6,7 @@ import kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox;
 import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.DBEntities.SurchargeTable;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -15,19 +15,19 @@ class EditSurchargeTableView implements IView<EditSurchargeTableController> {
   private JButton commit;
   private JButton cancel;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<
-          SurchargeTable, Supplier>
+          SurchargeGroup, Supplier>
       supplier;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<SurchargeTable, String>
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<SurchargeGroup, String>
       name;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<SurchargeTable, Integer>
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<SurchargeGroup, Integer>
       from;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<SurchargeTable, Integer>
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<SurchargeGroup, Integer>
       to;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<SurchargeTable, Double>
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<SurchargeGroup, Double>
       surcharge;
   private JPanel main;
 
-  private ObjectForm<SurchargeTable> objectForm;
+  private ObjectForm<SurchargeGroup> objectForm;
   @Linked private EditSurchargeTableController controller;
 
   void setSuppliers(Collection<Supplier> suppliers) {
@@ -35,7 +35,7 @@ class EditSurchargeTableView implements IView<EditSurchargeTableController> {
     suppliers.forEach(supplier::addItem);
   }
 
-  public ObjectForm<SurchargeTable> getObjectForm() {
+  public ObjectForm<SurchargeGroup> getObjectForm() {
     return objectForm;
   }
 
@@ -53,26 +53,11 @@ class EditSurchargeTableView implements IView<EditSurchargeTableController> {
 
   private void createUIComponents() {
     supplier =
-        new AccessCheckingComboBox<>(SurchargeTable::getSupplier, SurchargeTable::setSupplier);
-    name =
-        new AccessCheckingField<>(
-            SurchargeTable::getDescription,
-            SurchargeTable::setDescription,
-            AccessCheckingField.NONE);
-    from =
-        new AccessCheckingField<>(
-            SurchargeTable::getFrom_number,
-            SurchargeTable::setFrom_number,
-            AccessCheckingField.INT_FORMER);
-    to =
-        new AccessCheckingField<>(
-            SurchargeTable::getTo_number,
-            SurchargeTable::setTo_number,
-            AccessCheckingField.INT_FORMER);
+        new AccessCheckingComboBox<>(SurchargeGroup::getSupplier, SurchargeGroup::setSupplier);
     surcharge =
         new AccessCheckingField<>(
-            SurchargeTable::getSurcharge,
-            SurchargeTable::setSurcharge,
+            SurchargeGroup::getSurcharge,
+            SurchargeGroup::setSurcharge,
             AccessCheckingField.DOUBLE_FORMER);
   }
 }
