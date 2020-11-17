@@ -2,6 +2,7 @@ package kernbeisser.Tasks;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,10 +94,13 @@ public class Articles {
       }
       Offer offer = new Offer();
       offer.setSpecialNetPrice(price);
-      offer.setFromDate(Instant.from(LocalDate.of(today.getYear(), from, 1)));
+      offer.setFromDate(
+          Instant.from(
+              LocalDate.of(today.getYear(), from, 1).atStartOfDay(ZoneId.systemDefault())));
       offer.setToDate(
           Instant.from(
               LocalDate.of(today.getYear(), from + (i - 1 - from), 1)
+                  .atStartOfDay(ZoneId.systemDefault())
                   .with(TemporalAdjusters.lastDayOfMonth())));
       offer.setRepeatMode(Repeat.EVERY_YEAR);
       out.add(offer);
