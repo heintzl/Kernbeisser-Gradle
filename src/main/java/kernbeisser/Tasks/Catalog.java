@@ -1,6 +1,5 @@
 package kernbeisser.Tasks;
 
-import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,7 +7,6 @@ import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
-import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Supplier;
@@ -17,19 +15,16 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
-import kernbeisser.Tasks.DTO.Country;
-import kernbeisser.Tasks.DTO.Producer;
 import lombok.Cleanup;
 
 public class Catalog {
 
-  public static void updateCatalog() {
+  public static void updateCatalog(Collection<String> lines) {
     Main.logger.info("Updating catalog");
     new Thread(
             () -> {
               Collection<ArticleKornkraft> newCatalog = new ArrayList<>(10000);
               boolean infoLineSkipped = false;
-              Collection<String> lines = ConfigManager.getCatalogSource();
               ProgressMonitor pm =
                   new ProgressMonitor(
                       null,
@@ -63,7 +58,6 @@ public class Catalog {
               persistCatalog(newCatalog, pm, p);
               pm.close();
               // setDepositByReference();
-              Setting.INFO_LINE_LAST_CATALOG.changeValue(ConfigManager.getCatalogInfoLine());
             })
         .start();
   }
@@ -180,11 +174,5 @@ public class Catalog {
           Double crateDeposit = priceBySuppliersNumber.get((int) e.getContainerDeposit());
           e.setContainerDeposit(crateDeposit == null ? 0 : crateDeposit);
         });
-  }
-
-  private kernbeisser.Tasks.DTO.Catalog readCatalog() {
-    GsonBuilder gsonBuilder = new GsonBuilder();
-    gsonBuilder.registerTypeAdapter(Producer[].class, Producer.getTypeAdapter());
-    gsonBuilder.registerTypeAdapter(Country[].class, Country.getTypeAdapter());
   }
 }

@@ -301,7 +301,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
         supplier.setStreet(columns[5]);
         supplier.setLocation(columns[6]);
         supplier.setKeeper(columns[7]);
-        supplier.setSurcharge(Integer.parseInt(columns[8]));
+        supplier.setDefaultSurcharge(Integer.parseInt(columns[8]) / 100.);
         suppliers.add(supplier);
       }
       var view = getView();
@@ -321,7 +321,6 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       HashMap<String, PriceList> priceListHashMap = new HashMap<>();
       HashMap<String, Supplier> suppliers = new HashMap<>();
       HashMap<Article, Collection<Offer>> articleCollectionHashMap = new HashMap<>(lines.size());
-      Collection<Offer> offers = new ArrayList<>();
       Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
       Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
       ErrorCollector errorCollector = new ErrorCollector();

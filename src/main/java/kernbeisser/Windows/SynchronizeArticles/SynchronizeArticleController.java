@@ -2,7 +2,6 @@ package kernbeisser.Windows.SynchronizeArticles;
 
 import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
@@ -42,13 +41,6 @@ public class SynchronizeArticleController
       Tools.showUnexpectedErrorWarning(e);
       throw new RuntimeException(e);
     }
-  }
-
-  public static void main(String[] args) throws UnsupportedLookAndFeelException {
-    Main.buildEnvironment();
-    Main.checkCatalog();
-
-    new SynchronizeArticleController().openTab();
   }
 
   public void filter() {

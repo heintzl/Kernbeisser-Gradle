@@ -39,6 +39,16 @@ public enum MetricUnits implements Named {
     this.shortName = shortName;
   }
 
+  public static MetricUnits parseString(String identifier) {
+    for (MetricUnits value : values()) {
+      if (value.shortName.toUpperCase().equals(identifier.toUpperCase())
+          || value.name.toUpperCase().equals(identifier.toUpperCase())) {
+        return value;
+      }
+    }
+    return MetricUnits.PIECE;
+  }
+
   public double getBaseFactor() {
     return 0.001;
   }

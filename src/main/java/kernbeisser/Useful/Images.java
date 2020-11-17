@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
-import kernbeisser.Config.ConfigManager;
+import kernbeisser.Config.Config;
 import kernbeisser.Main;
 
 /** Easy Image Manager which loads all Images from a selected path and all under Dictionaries */
@@ -18,7 +18,7 @@ public class Images {
   private static final HashMap<String, BufferedImage> images = new HashMap<>();
 
   static {
-    collectImages(new File(ConfigManager.getHeader().getString("ImagePath")));
+    collectImages(Config.getConfig().getImagePath());
   }
 
   /**
@@ -54,6 +54,7 @@ public class Images {
    * @param dir the Dictionary with the images inside
    */
   private static void collectImages(File dir) {
+    if (dir == null) return;
     if (!dir.isDirectory()) {
       Main.logger.warn("invalid image dir found in config.json");
       return;

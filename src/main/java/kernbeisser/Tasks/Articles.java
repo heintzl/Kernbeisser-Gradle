@@ -67,8 +67,6 @@ public class Articles {
     // TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_",
     // Integer::parseInt));
     // TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
-    article.setIntake(Instant.now());
-    article.setLastDelivery(Instant.now());
     article.setVerified(Boolean.parseBoolean(rawArticleValues[36]));
     return article;
   }

@@ -67,7 +67,7 @@ public class Supplier implements Serializable {
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SURCHARGE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SURCHARGE_WRITE)})
-  private int defaultSurcharge;
+  private double defaultSurcharge;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_KEEPER_READ)})
@@ -101,7 +101,7 @@ public class Supplier implements Serializable {
       Supplier s = new Supplier();
       s.setName(defaultName);
       s.setShortName(shortName);
-      s.setSurcharge(defaultSurcharge);
+      s.setDefaultSurcharge(defaultSurcharge);
       et.begin();
       em.persist(s);
       em.flush();

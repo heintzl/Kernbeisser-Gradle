@@ -22,6 +22,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private JButton useKornkraft;
   private JButton selectAll;
   private JButton removeSelection;
+  private JButton importCatalog;
+  private JButton autoLinkCatalogSurchargeGroups;
 
   @Linked private SynchronizeArticleController controller;
 
