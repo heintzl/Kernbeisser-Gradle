@@ -10,5 +10,5 @@ public class PackageDefinition {
   private String user = "user.csv";
   private String priceLists = "priceLists.csv";
   private String suppliers = "suppliers.csv";
-  private String articles = "article.csv";
+  private String articles = "articles.csv";
 }

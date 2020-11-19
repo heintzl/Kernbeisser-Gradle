@@ -1,7 +1,9 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
+import java.io.File;
 import java.util.Collection;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
@@ -49,6 +51,11 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     useKernbeisser.addActionListener(e -> controller.useKernbeisser());
     useKornkraft.addActionListener(e -> controller.useKornkraft());
     removeSelection.addActionListener(e -> differences.clearSelection());
+    importCatalog.addActionListener(
+        e -> {
+          controller.importCatalog();
+        });
+    autoLinkCatalogSurchargeGroups.addActionListener(e -> controller.linkSurchargeGroups());
   }
 
   @Override
@@ -124,5 +131,29 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   @Override
   public String getTitle() {
     return "Katalog sychonisieren";
+  }
+
+  public File requestInputFile(String... extensions) {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setFileFilter(new FileNameExtensionFilter("Source-File", extensions));
+    fileChooser.showOpenDialog(getTopComponent());
+    return fileChooser.getSelectedFile();
+  }
+
+  public void setImportCatalogAvailable(boolean b) {
+    importCatalog.setEnabled(b);
+  }
+
+  public void importSuccessful() {
+    JOptionPane.showMessageDialog(getTopComponent(), "Katalog erfolgreich aktualiesiert!");
+  }
+
+  public void progressStarted() {
+    JOptionPane.showMessageDialog(getTopComponent(), "Katalog wird Aktualiesiert!");
+  }
+
+  public void surchargeGroupsSet() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Die Zuschlagsgruppen wurden erfolgreich gesetzt!");
   }
 }

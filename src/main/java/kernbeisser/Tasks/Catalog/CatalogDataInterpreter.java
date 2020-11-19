@@ -1,7 +1,5 @@
-package kernbeisser.Tasks;
+package kernbeisser.Tasks.Catalog;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -118,11 +116,5 @@ public class CatalogDataInterpreter {
     }
     em.flush();
     et.commit();
-  }
-
-  public static void main(String[] args) throws IOException {
-    new CatalogDataInterpreter(
-            Catalog.read(Paths.get("C:\\Users\\julik\\OneDrive\\Desktop\\produkte.json")))
-        .linkArticlesAndPersistSurchargeGroups();
   }
 }

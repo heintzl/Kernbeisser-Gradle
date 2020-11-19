@@ -39,7 +39,6 @@ public class ArticleDifference<T> {
     Article article = em.find(Article.class, kernbeisser.getId());
     setValue.accept(article, getValue.apply(catalog));
     em.persist(article);
-    em.flush();
   }
 
   public ArticleBase getKernbeisserArticle() {
