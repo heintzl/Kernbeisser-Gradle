@@ -168,7 +168,7 @@
             <properties>
               <font/>
               <requestFocusEnabled value="false"/>
-              <text value="Zuschlagstabellen bearbeiten"/>
+              <text value="Zuschlagsgruppen bearbeiten"/>
             </properties>
           </component>
           <component id="b0a12" class="kernbeisser.CustomComponents.ControllerButton" binding="editSuppliers" custom-create="true">

@@ -6,20 +6,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
+import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
+import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
 
 public class SynchronizeArticleModel implements IModel<SynchronizeArticleController> {
 
-  @Getter(lazy = true)
-  private final Collection<ArticleDifference<?>> allDifferences = loadAllDifferences();
+  @Getter private Collection<ArticleDifference<?>> allDifferences = loadAllDifferences();
+
+  public void refreshDiffs() {
+    allDifferences = loadAllDifferences();
+  }
 
   private Collection<ArticleDifference<?>> loadAllDifferences() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -86,7 +92,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
     return out;
   }
 
-  // useKernbeisser -> false = useKornkraft
+  // !useKernbeisser = useKornkraft
   public void resolve(Collection<ArticleDifference<?>> differences, boolean useKernbeisser) {
     getAllDifferences().removeAll(differences);
     EntityManager em = DBConnection.getEntityManager();
@@ -97,5 +103,9 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
     em.flush();
     et.commit();
     em.close();
+  }
+
+  void setProductGroups(Stream<String> source) {
+    new CatalogDataInterpreter(Catalog.read(source)).linkArticlesAndPersistSurchargeGroups();
   }
 }
