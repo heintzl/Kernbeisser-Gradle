@@ -237,6 +237,12 @@ public class ShoppingItem implements Serializable {
       article.setMetricUnits(MetricUnits.NONE);
       article.setVat(vat);
       article.setSupplier(supplier);
+      SurchargeGroup sg = new SurchargeGroup();
+      sg.setSupplier(supplier);
+      sg.setName(name);
+      sg.setSurcharge(23.);
+      em.persist(sg);
+      article.setSurchargeGroup(sg);
       em.persist(article);
       em.flush();
       et.commit();

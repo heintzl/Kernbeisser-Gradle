@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -66,7 +67,11 @@ public class SurchargeGroup implements Serializable, Cloneable {
   @Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_READ)
   public double getSurcharge() {
     if (surcharge == null) {
-      return parent == null ? supplier.getDefaultSurcharge() : parent.getSurcharge();
+      return parent == null
+          ? supplier == null
+              ? Setting.DEFAULT_SURCHARGE.getDoubleValue()
+              : supplier.getDefaultSurcharge()
+          : parent.getSurcharge();
     } else return surcharge;
   }
 

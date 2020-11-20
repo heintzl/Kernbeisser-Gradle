@@ -48,8 +48,7 @@ public class LogInModel implements IModel {
       User user =
           em.createQuery("select u from User u where u.username = :username", User.class)
               .setParameter("username", username)
-              .getResultList()
-              .get(0);
+              .getSingleResult();
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
         if (!user.hasPermission(PermissionKey.ACTION_LOGIN)) {
           throw new PermissionRequired();

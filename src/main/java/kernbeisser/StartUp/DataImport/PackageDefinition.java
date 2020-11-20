@@ -11,4 +11,5 @@ public class PackageDefinition {
   private String priceLists = "priceLists.csv";
   private String suppliers = "suppliers.csv";
   private String articles = "articles.csv";
+  private String kornkraftJson = "produkte.json";
 }

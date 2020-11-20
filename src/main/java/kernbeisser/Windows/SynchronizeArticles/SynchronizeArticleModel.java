@@ -13,6 +13,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
 import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Windows.MVC.IModel;
@@ -106,6 +107,17 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
   }
 
   void setProductGroups(Stream<String> source) {
-    new CatalogDataInterpreter(Catalog.read(source)).linkArticlesAndPersistSurchargeGroups();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    new CatalogDataInterpreter(Catalog.read(source))
+        .linkArticlesAndPersistSurchargeGroups(
+            em.createQuery("select a from ArticleBase a where supplier = :s", ArticleBase.class)
+                .setParameter("s", Supplier.getKKSupplier())
+                .getResultList(),
+            em,
+            false);
+    em.flush();
+    et.commit();
   }
 }
