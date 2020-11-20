@@ -3,8 +3,6 @@ package kernbeisser.Tasks.Catalog;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
@@ -12,7 +10,6 @@ import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Tasks.DTO.KornkraftArticle;
 import kernbeisser.Tasks.DTO.KornkraftGroup;
 import kernbeisser.Useful.Tree;
-import lombok.Cleanup;
 import lombok.Getter;
 
 public class CatalogDataInterpreter {
@@ -47,10 +44,8 @@ public class CatalogDataInterpreter {
     return tree;
   }
 
-  public void linkArticlesAndPersistSurchargeGroups() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
+  public void linkArticlesAndPersistSurchargeGroups(
+      List<ArticleBase> articleBases, EntityManager em, boolean persistKornkraftGroup) {
     Supplier kk = Supplier.getKKSupplier();
     HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap = new HashMap<>();
     getGroupTree()
@@ -61,16 +56,11 @@ public class CatalogDataInterpreter {
               sg.setName(value.getItext());
               sg.setSupplier(kk);
               sg.setParent(surchargeGroupHashMap.get(parent));
-              em.persist(sg);
+              if (persistKornkraftGroup) em.persist(sg);
               surchargeGroupHashMap.put(value, sg);
             });
     em.flush();
-    List<ArticleBase> resultList =
-        em.createQuery(
-                "select a from ArticleBase a where supplier.shortName like 'KK' order by suppliersItemNumber",
-                ArticleBase.class)
-            .getResultList();
-    for (ArticleBase articleBase : resultList) {
+    for (ArticleBase articleBase : articleBases) {
       SurchargeGroup sg =
           surchargeGroupHashMap.get(
               CatalogDataInterpreter.this
@@ -79,26 +69,25 @@ public class CatalogDataInterpreter {
 
       if (sg != null) {
         articleBase.setSurchargeGroup(sg);
-        em.persist(articleBase);
       }
     }
     ArticleBase last = null;
     ArticleBase next = null;
-    for (int i = 0; i < resultList.size(); i++) {
-      ArticleBase articleBase = resultList.get(i);
+    for (int i = 0; i < articleBases.size(); i++) {
+      ArticleBase articleBase = articleBases.get(i);
       if (articleBase.getSurchargeGroup() != null) {
         last = articleBase;
         continue;
       }
       if (next == null || next.getSuppliersItemNumber() <= articleBase.getSuppliersItemNumber()) {
         next = last;
-        for (int offset = i + 1; offset < resultList.size(); offset++) {
+        for (int offset = i + 1; offset < articleBases.size(); offset++) {
           SurchargeGroup sg =
               surchargeGroupHashMap.get(
                   getNumberGroupRefMap()
-                      .get((long) resultList.get(offset).getSuppliersItemNumber()));
+                      .get((long) articleBases.get(offset).getSuppliersItemNumber()));
           if (sg != null) {
-            next = resultList.get(offset);
+            next = articleBases.get(offset);
             break;
           }
         }
@@ -112,9 +101,6 @@ public class CatalogDataInterpreter {
       } else {
         articleBase.setSurchargeGroup(next.getSurchargeGroup());
       }
-      em.persist(articleBase);
     }
-    em.flush();
-    et.commit();
   }
 }

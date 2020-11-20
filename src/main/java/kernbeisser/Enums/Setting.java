@@ -51,7 +51,8 @@ public enum Setting {
   OPEN_MULTIPLE_SHOPPING_MASK("true"),
   PRINTER("OS_default"),
   LAST_PRINTED_BON_NR("-1"),
-  OFFER_PREFIX("*AK* ");
+  OFFER_PREFIX("*AK* "),
+  DEFAULT_SURCHARGE("23.0");
 
   // defines the type to like in java style
   // Value: Type:

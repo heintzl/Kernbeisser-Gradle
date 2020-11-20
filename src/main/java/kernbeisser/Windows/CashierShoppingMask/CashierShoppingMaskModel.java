@@ -11,7 +11,6 @@ import kernbeisser.Reports.AccountingReport;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
-import lombok.Cleanup;
 import lombok.Data;
 
 @Data
@@ -46,12 +45,15 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
   };
 
   long getLastAssistedPurchaseId() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return em.createQuery(
-            "select max(p.id) from Purchase p where p.session.seller.id = :lid and p.session.sessionType = :t",
-            Long.class)
-        .setParameter("lid", LogInModel.getLoggedIn().getId())
-        .setParameter("t", SaleSessionType.ASSISTED)
-        .getSingleResult();
+    EntityManager em = DBConnection.getEntityManager();
+    Long id =
+        em.createQuery(
+                "select max(p.id) from Purchase p where p.session.seller.id = :lid and p.session.sessionType = :t",
+                Long.class)
+            .setParameter("lid", LogInModel.getLoggedIn().getId())
+            .setParameter("t", SaleSessionType.ASSISTED)
+            .getSingleResult();
+    em.close();
+    return id == null ? Long.MAX_VALUE : id;
   }
 }
