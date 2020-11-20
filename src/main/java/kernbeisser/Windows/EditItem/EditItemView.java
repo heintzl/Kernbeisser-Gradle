@@ -14,7 +14,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.Enums.ContainerDefinition;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.MVC.IView;
@@ -43,13 +43,15 @@ public class EditItemView implements IView<EditItemController> {
       containerSize;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article, MetricUnits>
       metricUnits;
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<
+          Article, ContainerDefinition>
+      containerDefinition;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Long> barcode;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckBox<Article> showInShoppingMask;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckBox<Article> weighable;
   private JTextArea extraInfo;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article, VAT> vat;
   private JPanel main;
-  private AccessCheckingComboBox<Article, SurchargeGroup> surchargeGroup;
 
   private ObjectForm<Article> articleObjectForm;
 
@@ -94,19 +96,14 @@ public class EditItemView implements IView<EditItemController> {
     priceList = new AccessCheckingComboBox<>(Article::getPriceList, Article::setPriceList);
     metricUnits =
         new AccessCheckingComboBox<>(ArticleBase::getMetricUnits, ArticleBase::setMetricUnits);
+    containerDefinition =
+        new AccessCheckingComboBox<>(Article::getContainerDef, Article::setContainerDef);
     barcode =
         new AccessCheckingField<>(
             ArticleBase::getBarcode, ArticleBase::setBarcode, controller::validateBarcode);
     showInShoppingMask = new AccessCheckBox<>(Article::isShowInShop, Article::setShowInShop);
     weighable = new AccessCheckBox<>(Article::isWeighable, Article::setWeighable);
     vat = new AccessCheckingComboBox<>(ArticleBase::getVat, ArticleBase::setVat);
-    surchargeGroup =
-        new AccessCheckingComboBox<>(
-            e -> {
-              controller.loadSurchargeGroupsFor();
-              return e.getSurchargeGroup();
-            },
-            Article::setSurchargeGroup);
   }
 
   void setUnits(MetricUnits[] metricUnits) {
@@ -128,14 +125,16 @@ public class EditItemView implements IView<EditItemController> {
     suppliers.forEach(supplier::addItem);
   }
 
-  void setSurchargeGroup(Collection<SurchargeGroup> surchargeGroups) {
-    surchargeGroup.removeAllItems();
-    surchargeGroups.forEach(surchargeGroup::addItem);
-  }
-
   void setPriceLists(Collection<PriceList> priceLists) {
     priceList.removeAllItems();
     priceLists.forEach(priceList::addItem);
+  }
+
+  void setContainerDefinitions(ContainerDefinition[] containerDefinitions) {
+    containerDefinition.removeAllItems();
+    for (ContainerDefinition definition : containerDefinitions) {
+      containerDefinition.addItem(definition);
+    }
   }
 
   public ObjectForm<Article> getArticleObjectForm() {
@@ -178,10 +177,10 @@ public class EditItemView implements IView<EditItemController> {
             containerSize,
             metricUnits,
             amount,
+            containerDefinition,
             barcode,
             showInShoppingMask,
-            weighable,
-            surchargeGroup);
+            weighable);
   }
 
   void setActionTitle(String s) {

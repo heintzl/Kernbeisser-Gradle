@@ -9,7 +9,9 @@ public class ObjectTree<T> extends JTree {
   private Node<T> startValue;
   private final ArrayList<NodeSelectionListener<T>> selectionListeners = new ArrayList<>();
 
-  {
+  public ObjectTree(Node<T> startValue) {
+    this.startValue = startValue;
+    refresh();
     getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     addTreeSelectionListener(
         e -> {
@@ -21,17 +23,6 @@ public class ObjectTree<T> extends JTree {
           }
         });
   }
-
-  public void load(Node<T> startValue) {
-    this.startValue = startValue;
-    refresh();
-  }
-
-  public ObjectTree(Node<T> startValue) {
-    load(startValue);
-  }
-
-  public ObjectTree() {}
 
   public void setStartValue(Node<T> startValue) {
     this.startValue = startValue;

@@ -21,7 +21,7 @@ public class EditSupplierView implements IView<EditSupplierController> {
   private AccessCheckingField<Supplier, String> fax;
   private AccessCheckingField<Supplier, String> name;
   private AccessCheckingField<Supplier, String> shortName;
-  private AccessCheckingField<Supplier, Double> surcharge;
+  private AccessCheckingField<Supplier, Integer> surcharge;
   private AccessCheckingField<Supplier, String> street;
 
   private ObjectForm<Supplier> objectForm;
@@ -60,9 +60,7 @@ public class EditSupplierView implements IView<EditSupplierController> {
             Supplier::getShortName, Supplier::setShortName, controller::validateShortName);
     surcharge =
         new AccessCheckingField<>(
-            (e) -> e.getDefaultSurcharge() * 100,
-            (e, v) -> e.setDefaultSurcharge(v / 100),
-            AccessCheckingField.DOUBLE_FORMER);
+            Supplier::getSurcharge, Supplier::setSurcharge, AccessCheckingField.INT_FORMER);
   }
 
   public ObjectForm<Supplier> getObjectForm() {

@@ -38,7 +38,7 @@ public class DataImportView implements IView<DataImportController> {
     dataPath.setForeground(is ? Color.GREEN : Color.RED);
   }
 
-  void articleSourceFound(boolean is) {
+  void itemSourceFound(boolean is) {
     importItems.setSelected(is);
     importItems.setEnabled(is);
   }

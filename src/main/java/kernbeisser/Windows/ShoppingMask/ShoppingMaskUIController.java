@@ -254,7 +254,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
                 ? getView().getNetPrice()
                 : getView().getPrice()
                     / (1. + getView().getVat().getValue())
-                    / (1. + customArticle.getSurchargeGroup().getSurcharge()));
+                    / (1. + customArticle.calculateSurcharge()));
         customArticle.setMetricUnits(MetricUnits.PIECE);
         customArticle.setContainerSize(1.);
 

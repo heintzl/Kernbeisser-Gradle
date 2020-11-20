@@ -1,16 +1,11 @@
 package kernbeisser.StartUp.DataImport;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
@@ -33,6 +28,7 @@ import kernbeisser.Windows.MVC.Controller;
 import lombok.Cleanup;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 public class DataImportController extends Controller<DataImportView, DataImportModel> {
 
@@ -66,103 +62,106 @@ public class DataImportController extends Controller<DataImportView, DataImportM
     jFileChooser.showOpenDialog(view.getTopComponent());
   }
 
-  private PackageDefinition readFromPath(Path path) throws IOException {
-    try {
-      PackageDefinition packageDefinition =
-          new Gson()
-              .fromJson(Files.lines(path).collect(Collectors.joining()), PackageDefinition.class);
-      if (!packageDefinition.getType().equals(PackageDefinition.TYPE_MARK)) {
-        throw new UnsupportedOperationException("file contains wrong input");
-      }
-      return packageDefinition;
-    } catch (JsonSyntaxException e) {
-      throw new UnsupportedOperationException(e);
-    }
-  }
-
-  private PackageDefinition extractPackageDefinition() throws IOException {
-    return readFromPath(Paths.get(getView().getFilePath()));
-  }
-
-  private Path getPackagePath() {
-    return Paths.get(getView().getFilePath()).getParent();
+  private boolean isValidDataSource() {
+    var view = getView();
+    return view.getFilePath().toUpperCase().endsWith(".JSON")
+        && new File(view.getFilePath()).exists();
   }
 
   void checkDataSource() {
     var view = getView();
-    try {
-      PackageDefinition packageDefinition = extractPackageDefinition();
-      view.articleSourceFound(
-          packageDefinition.getArticles() != null
-              && Files.exists(getPackagePath().resolve(packageDefinition.getArticles()))
-              && packageDefinition.getSuppliers() != null
-              && Files.exists(getPackagePath().resolve(packageDefinition.getSuppliers()))
-              && packageDefinition.getPriceLists() != null
-              && Files.exists(getPackagePath().resolve(packageDefinition.getPriceLists())));
-      view.userSourceFound(
-          packageDefinition.getUser() != null
-              && Files.exists(getPackagePath().resolve(packageDefinition.getUser()))
-              && packageDefinition.getJobs() != null
-              && Files.exists(getPackagePath().resolve(packageDefinition.getJobs())));
-
-    } catch (IOException e) {
+    if (isValidDataSource()) {
+      view.setValidDataSource(true);
+      JSONObject dataConfig = extractJSON();
+      if (dataConfig.has("UserData")) {
+        JSONObject jsonObject = dataConfig.getJSONObject("UserData");
+        view.userSourceFound(jsonObject.has("Users") && jsonObject.has("Jobs"));
+      } else {
+        view.userSourceFound(false);
+      }
+      if (dataConfig.has("ItemData")) {
+        JSONObject jsonObject = dataConfig.getJSONObject("ItemData");
+        view.itemSourceFound(
+            jsonObject.has("Suppliers") && jsonObject.has("Items") && jsonObject.has("PriceLists"));
+      } else {
+        view.itemSourceFound(false);
+      }
+    } else {
       view.setValidDataSource(false);
+      view.userSourceFound(false);
+      view.itemSourceFound(false);
     }
+  }
+
+  private JSONObject extractJSON() {
+    var view = getView();
+    StringBuilder sb = new StringBuilder();
+    try {
+      Files.readAllLines(new File(view.getFilePath()).toPath()).forEach(sb::append);
+    } catch (IOException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
+    return new JSONObject(sb.toString());
   }
 
   Thread articleThread = null;
 
   void importData() {
     PermissionSet.MASTER.setAllBits(true);
-    try {
-      PackageDefinition packageDefinition = extractPackageDefinition();
-      Stream<String> suppliers =
-          Files.lines(getPackagePath().resolve(packageDefinition.getSuppliers()));
-      Stream<String> article =
-          Files.lines(getPackagePath().resolve(packageDefinition.getArticles()));
-      Stream<String> jobs = Files.lines(getPackagePath().resolve(packageDefinition.getJobs()));
-      Stream<String> priceLists =
-          Files.lines(getPackagePath().resolve(packageDefinition.getPriceLists()));
-      Stream<String> user = Files.lines(getPackagePath().resolve(packageDefinition.getUser()));
+    if (isValidDataSource()) {
       var view = getView();
       Main.logger.info("Starting importing data");
+      File jsonPath = new File(view.getFilePath()).getParentFile();
+      JSONObject path = extractJSON();
       Setting.DB_INITIALIZED.changeValue(true);
       if (view.importItems()) {
-        articleThread =
-            new Thread(
-                () -> {
-                  view.setItemProgress(0);
-                  parseSuppliers(suppliers);
-                  parsePriceLists(priceLists);
-                  parseArticle(article);
-                  Main.logger.info("Item thread finished");
-                });
-        articleThread.start();
+        JSONObject itemPath = path.getJSONObject("ItemData");
+        File suppliers = new File(jsonPath, itemPath.getString("Suppliers"));
+        File priceLists = new File(jsonPath, itemPath.getString("PriceLists"));
+        File items = new File(jsonPath, itemPath.getString("Items"));
+        if (suppliers.exists() && priceLists.exists() && items.exists()) {
+          articleThread =
+              new Thread(
+                  () -> {
+                    view.setItemProgress(0);
+                    parseSuppliers(suppliers);
+                    parsePriceLists(priceLists);
+                    parseItems(items);
+                    Main.logger.info("Item thread finished");
+                  });
+          articleThread.start();
+        } else {
+          view.itemSourceFound(false);
+          view.itemSourcesNotExists();
+        }
       }
       if (view.importUser()) {
-        new Thread(
-                () -> {
-                  view.setUserProgress(0);
-                  parseJobs(jobs);
-                  parseUsers(user);
-                  Main.logger.info("User thread finished");
-                  try {
-                    articleThread.join();
-                  } catch (InterruptedException e) {
-                    Tools.showUnexpectedErrorWarning(e);
-                  }
-                  view.back();
-                })
-            .start();
-      } else {
-        view.userSourceFound(false);
-        view.userSourcesNotExists();
+        JSONObject userPath = path.getJSONObject("UserData");
+        File users = new File(jsonPath, userPath.getString("Users"));
+        File jobs = new File(jsonPath, userPath.getString("Jobs"));
+        if (jobs.exists() && users.exists()) {
+          new Thread(
+                  () -> {
+                    view.setUserProgress(0);
+                    parseJobs(jobs);
+                    parseUsers(users);
+                    Main.logger.info("User thread finished");
+                    try {
+                      articleThread.join();
+                    } catch (InterruptedException e) {
+                      Tools.showUnexpectedErrorWarning(e);
+                    }
+                    view.back();
+                  })
+              .start();
+        } else {
+          view.userSourceFound(false);
+          view.userSourcesNotExists();
+        }
       }
       if (view.createStandardAdmin()) {
         createAdmin();
       }
-    } catch (IOException e) {
-      Tools.showUnexpectedErrorWarning(e);
     }
     PermissionSet.MASTER.setAllBits(false);
   }
@@ -186,144 +185,165 @@ public class DataImportController extends Controller<DataImportView, DataImportM
     Tools.persist(user);
   }
 
-  private void parseJobs(Stream<String> f) {
-    Collection<Job> jobs = new ArrayList<>(20);
-    f.forEach(
-        e -> {
-          String[] columns = e.split(";");
-          Job job = new Job();
-          job.setName(columns[0]);
-          job.setDescription(columns[1]);
-          jobs.add(job);
-        });
-    var view = getView();
-    view.setUserProgress(1);
-    model.batchMergeAll(jobs);
-    view.setUserProgress(2);
+  private void parseJobs(File f) {
+    try {
+      List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+      Collection<Job> jobs = new ArrayList<>((int) (lines.size() * 1.5));
+      for (String line : lines) {
+        String[] columns = line.split(";");
+        Job job = new Job();
+        job.setName(columns[0]);
+        job.setDescription(columns[1]);
+        jobs.add(job);
+      }
+      var view = getView();
+      view.setUserProgress(1);
+      model.batchMergeAll(jobs);
+      view.setUserProgress(2);
+    } catch (IOException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
   }
 
-  private void parseUsers(Stream<String> f) {
+  private void parseUsers(File f) {
     var view = getView();
-    HashSet<String> usernames = new HashSet<>();
-    HashMap<String, Job> jobs = new HashMap<>();
-    Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
-    Permission importPermission = PermissionConstants.IMPORT.getPermission();
-    Permission keyPermission = PermissionConstants.KEY_PERMISSION.getPermission();
-    User kernbeisser = User.getKernbeisserUser();
-    BCrypt.Hasher hasher = BCrypt.withDefaults();
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    f.forEach(
-        l -> {
-          String[] rawUserData = l.split(";");
+    try {
+      HashSet<String> usernames = new HashSet<>();
+      HashMap<String, Job> jobs = new HashMap<>();
+      Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
+      List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+      Permission importPermission = PermissionConstants.IMPORT.getPermission();
+      Permission keyPermission = PermissionConstants.KEY_PERMISSION.getPermission();
+      User kernbeisser = User.getKernbeisserUser();
+      BCrypt.Hasher hasher = BCrypt.withDefaults();
+      @Cleanup EntityManager em = DBConnection.getEntityManager();
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      for (String l : lines) {
+        String[] rawUserData = l.split(";");
 
-          User[] users = Users.parse(rawUserData, usernames, jobs);
+        User[] users = Users.parse(rawUserData, usernames, jobs);
 
-          UserGroup userGroup = Users.getUserGroup(rawUserData);
+        UserGroup userGroup = Users.getUserGroup(rawUserData);
 
-          users[0].setUserGroup(userGroup);
-          users[1].setUserGroup(userGroup);
+        users[0].setUserGroup(userGroup);
+        users[1].setUserGroup(userGroup);
 
-          String defaultPassword = hasher.hashToString(4, "start".toCharArray());
-          users[0].setPassword(defaultPassword);
-          users[1].setPassword(defaultPassword);
+        String defaultPassword = hasher.hashToString(4, "start".toCharArray());
+        users[0].setPassword(defaultPassword);
+        users[1].setPassword(defaultPassword);
 
-          userGroup.setValue(Users.getValue(rawUserData));
-          em.persist(userGroup);
+        userGroup.setValue(Users.getValue(rawUserData));
+        em.persist(userGroup);
 
-          users[0].getPermissions().add(importPermission);
-          users[1].getPermissions().add(importPermission);
+        users[0].getPermissions().add(importPermission);
+        users[1].getPermissions().add(importPermission);
 
-          if (users[0].getKernbeisserKey() != -1) {
-            users[0].getPermissions().add(keyPermission);
-          }
+        if (users[0].getKernbeisserKey() != -1) {
+          users[0].getPermissions().add(keyPermission);
+        }
 
-          em.persist(users[0]);
+        em.persist(users[0]);
 
-          if (!users[1].getFirstName().equals("")) {
-            em.persist(users[1]);
-          }
+        if (!users[1].getFirstName().equals("")) {
+          em.persist(users[1]);
+        }
 
-          Transaction transaction = new Transaction();
-          transaction.setTransactionType(TransactionType.INITIALIZE);
-          transaction.setFrom(kernbeisser);
-          transaction.setValue(Users.getValue(rawUserData));
-          transaction.setInfo("Übertrag des Guthaben des alten Kernbeisser Programmes");
-          transaction.setTo(users[0]);
-          em.persist(transaction);
-        });
-    em.flush();
-    et.commit();
-    em.close();
-    view.setUserProgress(4);
+        Transaction transaction = new Transaction();
+        transaction.setTransactionType(TransactionType.INITIALIZE);
+        transaction.setFrom(kernbeisser);
+        transaction.setValue(Users.getValue(rawUserData));
+        transaction.setInfo("Übertrag des Guthaben des alten Kernbeisser Programmes");
+        transaction.setTo(users[0]);
+        em.persist(transaction);
+      }
+      em.flush();
+      et.commit();
+      em.close();
+      view.setUserProgress(4);
+    } catch (IOException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
   }
 
-  private void parsePriceLists(Stream<String> f) {
+  private void parsePriceLists(File f) {
     var view = getView();
-    HashMap<String, PriceList> priceLists = new HashMap<>();
-    f.forEach(
-        e -> {
-          String[] columns = e.split(";");
-          PriceList pl = new PriceList();
-          pl.setName(columns[0]);
-          pl.setSuperPriceList(priceLists.get(columns[1]));
-          priceLists.put(pl.getName(), pl);
-        });
-    view.setItemProgress(3);
-    model.saveAll(priceLists.values());
-    view.setItemProgress(4);
+    try {
+      List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+      HashMap<String, PriceList> priceLists = new HashMap<>();
+      for (String l : lines) {
+        String[] columns = l.split(";");
+        PriceList pl = new PriceList();
+        pl.setName(columns[0]);
+        pl.setSuperPriceList(priceLists.get(columns[1]));
+        priceLists.put(pl.getName(), pl);
+      }
+      view.setItemProgress(3);
+      model.saveAll(priceLists.values());
+      view.setItemProgress(4);
+    } catch (IOException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
   }
 
-  private void parseSuppliers(Stream<String> f) {
-    Collection<Supplier> suppliers = new ArrayList<>();
-    f.forEach(
-        e -> {
-          String[] columns = e.replace("NULL", "").split(";");
-          Supplier supplier = new Supplier();
-          supplier.setShortName(columns[0]);
-          supplier.setName(columns[1]);
-          supplier.setPhoneNumber(columns[2]);
-          supplier.setEmail(columns[3]);
-          supplier.setFax(columns[4]);
-          supplier.setStreet(columns[5]);
-          supplier.setLocation(columns[6]);
-          supplier.setKeeper(columns[7]);
-          supplier.setDefaultSurcharge(Integer.parseInt(columns[8]) / 100.);
-          suppliers.add(supplier);
-        });
-    var view = getView();
-    view.setItemProgress(1);
-    model.batchMergeAll(suppliers);
-    view.setItemProgress(2);
+  private void parseSuppliers(File f) {
+    try {
+      List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+      Collection<Supplier> suppliers = new ArrayList<>(lines.size());
+      for (String l : lines) {
+        String[] columns = l.replace("NULL", "").split(";");
+        Supplier supplier = new Supplier();
+        supplier.setShortName(columns[0]);
+        supplier.setName(columns[1]);
+        supplier.setPhoneNumber(columns[2]);
+        supplier.setEmail(columns[3]);
+        supplier.setFax(columns[4]);
+        supplier.setStreet(columns[5]);
+        supplier.setLocation(columns[6]);
+        supplier.setKeeper(columns[7]);
+        supplier.setSurcharge(Integer.parseInt(columns[8]));
+        suppliers.add(supplier);
+      }
+      var view = getView();
+      view.setItemProgress(1);
+      model.batchMergeAll(suppliers);
+      view.setItemProgress(2);
+    } catch (IOException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
   }
 
-  private void parseArticle(Stream<String> f) {
-    HashSet<Long> barcode = new HashSet<>(5000);
-    HashSet<String> names = new HashSet<>();
-    HashMap<String, PriceList> priceListHashMap = new HashMap<>();
-    HashMap<String, Supplier> suppliers = new HashMap<>();
-    HashMap<Article, Collection<Offer>> articleCollectionHashMap = new HashMap<>(5000);
-    Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
-    Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
-    ErrorCollector errorCollector = new ErrorCollector();
-    f.forEach(
-        e -> {
-          String[] columns = e.split(";");
-          try {
-            articleCollectionHashMap.put(
-                Articles.parse(columns, barcode, names, suppliers, priceListHashMap),
-                Articles.extractOffers(columns));
-          } catch (CannotParseException ex) {
-            errorCollector.collect(ex);
-          }
-        });
-    Main.logger.warn("Ignored " + errorCollector.count() + " articles errors:");
-    errorCollector.log();
-    var view = getView();
-    view.setItemProgress(5);
-    model.saveAllItems(articleCollectionHashMap);
-    view.setItemProgress(6);
+  private void parseItems(File f) {
+    try {
+      List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+      HashSet<Long> barcode = new HashSet<>(lines.size());
+      HashSet<String> names = new HashSet<>();
+      HashMap<String, PriceList> priceListHashMap = new HashMap<>();
+      HashMap<String, Supplier> suppliers = new HashMap<>();
+      HashMap<Article, Collection<Offer>> articleCollectionHashMap = new HashMap<>(lines.size());
+      Collection<Offer> offers = new ArrayList<>();
+      Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
+      Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
+      ErrorCollector errorCollector = new ErrorCollector();
+      for (String l : lines) {
+        String[] columns = l.split(";");
+        try {
+          articleCollectionHashMap.put(
+              Articles.parse(columns, barcode, names, suppliers, priceListHashMap),
+              Articles.extractOffers(columns));
+        } catch (CannotParseException e) {
+          errorCollector.collect(e);
+        }
+      }
+      Main.logger.warn("Ignored " + errorCollector.count() + " articles errors:");
+      errorCollector.log();
+      var view = getView();
+      view.setItemProgress(5);
+      model.saveAllItems(articleCollectionHashMap);
+      view.setItemProgress(6);
+    } catch (IOException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
   }
 
   void cancel() {

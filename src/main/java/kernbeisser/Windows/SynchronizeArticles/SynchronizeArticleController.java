@@ -1,10 +1,8 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Tasks.Catalog.Catalog;
+import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
@@ -46,23 +44,11 @@ public class SynchronizeArticleController
     }
   }
 
-  void importCatalog() {
-    try {
-      getView().setImportCatalogAvailable(false);
-      Catalog.updateCatalog(
-          Files.lines(
-              getView().requestInputFile("csv", "bnn", "BNN", "txt").toPath(),
-              Catalog.DEFAULT_ENCODING),
-          () -> {
-            getView().setImportCatalogAvailable(true);
-            getView().importSuccessful();
-            model.refreshDiffs();
-            getView().setDifferences(model.getAllDifferences());
-          });
-      getView().progressStarted();
-    } catch (IOException e) {
-      Tools.showUnexpectedErrorWarning(e);
-    }
+  public static void main(String[] args) throws UnsupportedLookAndFeelException {
+    Main.buildEnvironment();
+    Main.checkCatalog();
+
+    new SynchronizeArticleController().openTab();
   }
 
   public void filter() {
@@ -77,18 +63,6 @@ public class SynchronizeArticleController
   void useKornkraft() {
     model.resolve(getView().getSelectedObjects(), false);
     getView().setDifferences(model.getAllDifferences());
-  }
-
-  void linkSurchargeGroups() {
-    try {
-      model.setProductGroups(
-          Files.lines(
-              getView().requestInputFile("csv", "bnn", "BNN", "txt").toPath(),
-              Catalog.DEFAULT_ENCODING));
-      getView().surchargeGroupsSet();
-    } catch (IOException e) {
-      Tools.showUnexpectedErrorWarning(e);
-    }
   }
 
   @Override

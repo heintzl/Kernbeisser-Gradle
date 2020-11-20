@@ -13,12 +13,13 @@ import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.Config.Config;
+import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
+import kernbeisser.Tasks.Catalog;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import lombok.Cleanup;
@@ -34,7 +35,6 @@ public class Main {
    * PriceLists and as least shows the LogIn Window
    */
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
-    Config.safeFile();
     Locale.setDefault(Locale.GERMAN);
     logger.info("Free memory at start " + Runtime.getRuntime().freeMemory() / 1048576 + "MB");
     // Runs the jar with more memory if not enough is reserved
@@ -45,6 +45,7 @@ public class Main {
     if (!Setting.DB_INITIALIZED.getBooleanValue()) {
       SwingUtilities.invokeLater(() -> new DataImportController().openTab());
     } else {
+      checkCatalog();
       openLogIn();
     }
   }
@@ -67,6 +68,13 @@ public class Main {
     } catch (URISyntaxException | IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public static void checkCatalog() {
+    logger.info("Checking Catalog ...");
+    if (ConfigManager.isCatalogUpToDate()) {
+      logger.info("Catalog up to Date!");
+    } else Catalog.updateCatalog();
   }
 
   public static void checkVersion() {

@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.ContainerDefinition;
+import kernbeisser.Enums.Cooling;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Proxy;
@@ -37,20 +39,38 @@ public class Article extends ArticleBase {
   private int kbNumber;
 
   /*
+  The surcharge describes the percentage which becomes added when the article gets bought,
+  based on the kind of article sugar products have a higher surcharge than cornflakes, because
+  sugar products aren't that healthy as cornflakes
+   */
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SURCHARGE_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SURCHARGE_WRITE)})
+  private double surcharge;
+
+  /*
   describes the kind of the article and group them
    */
   @ManyToOne
-  @JoinColumn
+  @JoinColumn(name = "priceListId")
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRICE_LIST_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRICE_LIST_WRITE)})
   private PriceList priceList;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_DEF_WRITE)})
+  private ContainerDefinition containerDef;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_WRITE)})
   private boolean weighable;
 
-  // boolean isInCatalog()
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LISTED_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LISTED_WRITE)})
+  private boolean listed;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOW_IN_SHOP_READ)})
@@ -58,19 +78,64 @@ public class Article extends ArticleBase {
   private boolean showInShop;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_ACTIVE_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_ACTIVE_WRITE)})
-  private boolean active;
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETED_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETED_WRITE)})
+  private boolean deleted;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
+  private boolean printAgain;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETE_ALLOWED_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETE_ALLOWED_WRITE)})
+  private boolean deleteAllowed;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LOSS_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LOSS_WRITE)})
+  private int loss;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_INFO_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_INFO_WRITE)})
+  private String info;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SOLD_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SOLD_WRITE)})
+  private int sold;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELIVERED_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELIVERED_WRITE)})
+  private int delivered;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_INTAKE_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_INTAKE_WRITE)})
+  private Instant intake;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LAST_DELIVERY_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LAST_DELIVERY_WRITE)})
+  private Instant lastDelivery;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETED_DATE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_DELETED_DATE_WRITE)})
-  private Instant activeStateChange;
+  private Instant deletedDate;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_VERIFIED_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_VERIFIED_WRITE)})
-  private boolean verified;
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_COOLING_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_COOLING_WRITE)})
+  private Cooling cooling;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_COVERED_INTAKE_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_COVERED_INTAKE_WRITE)})
+  private boolean coveredIntake;
 
   public static List<Article> getAll(String condition) {
     return Tools.getAll(Article.class, condition);

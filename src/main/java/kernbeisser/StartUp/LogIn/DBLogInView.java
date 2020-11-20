@@ -1,12 +1,12 @@
 package kernbeisser.StartUp.LogIn;
 
 import javax.swing.*;
-import kernbeisser.Config.Config;
-import kernbeisser.Config.Config.DBAccess;
+import kernbeisser.Config.ConfigManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 public class DBLogInView implements IView<DBLogInController> {
   private JButton logIn;
@@ -20,16 +20,19 @@ public class DBLogInView implements IView<DBLogInController> {
 
   @Override
   public void initialize(DBLogInController controller) {
-    DBAccess access = Config.getConfig().getDbAccess();
-    url.setText(access.getUrl());
-    username.setText(access.getUsername());
+    JSONObject access = ConfigManager.getDBAccess();
+    url.setText(access.getString("URL"));
+    username.setText(access.getString("Username"));
     logIn.addActionListener(
         e -> {
-          DBAccess newAccess =
-              new DBAccess(url.getText(), username.getText(), new String(password.getPassword()));
-          if (DBConnection.tryLogIn(newAccess)) {
-            Config.getConfig().setDbAccess(newAccess);
-            Config.safeFile();
+          String newUrl = url.getText();
+          String newUsername = username.getText();
+          String newPassword = new String(password.getPassword());
+          if (DBConnection.tryLogIn(newUrl, newUsername, newPassword)) {
+            access.put("URL", newUrl);
+            access.put("Username", newUsername);
+            access.put("Password", newPassword);
+            ConfigManager.updateFile();
             JOptionPane.showMessageDialog(
                 getTopComponent(), "Die Verbindung wurde erfolgreich erstellt!");
             back();
@@ -39,7 +42,10 @@ public class DBLogInView implements IView<DBLogInController> {
                 "Es kann leider keine Verbindung hergestellt werden,\n bitte \u00fcberpr\u00fcfen sie die Eingaben nach Fehlern");
           }
         });
-    cancel.addActionListener(e -> back());
+    cancel.addActionListener(
+        e -> {
+          back();
+        });
   }
 
   @Override
