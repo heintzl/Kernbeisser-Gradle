@@ -14,6 +14,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.MVC.IView;
@@ -48,6 +49,7 @@ public class EditItemView implements IView<EditItemController> {
   private JTextArea extraInfo;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article, VAT> vat;
   private JPanel main;
+  private AccessCheckingComboBox<Article, SurchargeGroup> surchargeGroup;
 
   private ObjectForm<Article> articleObjectForm;
 
@@ -98,6 +100,13 @@ public class EditItemView implements IView<EditItemController> {
     showInShoppingMask = new AccessCheckBox<>(Article::isShowInShop, Article::setShowInShop);
     weighable = new AccessCheckBox<>(Article::isWeighable, Article::setWeighable);
     vat = new AccessCheckingComboBox<>(ArticleBase::getVat, ArticleBase::setVat);
+    surchargeGroup =
+        new AccessCheckingComboBox<>(
+            e -> {
+              controller.loadSurchargeGroupsFor();
+              return e.getSurchargeGroup();
+            },
+            Article::setSurchargeGroup);
   }
 
   void setUnits(MetricUnits[] metricUnits) {
@@ -117,6 +126,11 @@ public class EditItemView implements IView<EditItemController> {
   void setSuppliers(Collection<Supplier> suppliers) {
     supplier.removeAllItems();
     suppliers.forEach(supplier::addItem);
+  }
+
+  void setSurchargeGroup(Collection<SurchargeGroup> surchargeGroups) {
+    surchargeGroup.removeAllItems();
+    surchargeGroups.forEach(surchargeGroup::addItem);
   }
 
   void setPriceLists(Collection<PriceList> priceLists) {
@@ -166,7 +180,8 @@ public class EditItemView implements IView<EditItemController> {
             amount,
             barcode,
             showInShoppingMask,
-            weighable);
+            weighable,
+            surchargeGroup);
   }
 
   void setActionTitle(String s) {

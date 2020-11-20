@@ -96,7 +96,7 @@ public class ArticleBase {
 
   @Column @UpdateTimestamp @Getter private Instant updateDate;
 
-  @JoinColumn
+  @JoinColumn(nullable = false)
   @ManyToOne
   @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})

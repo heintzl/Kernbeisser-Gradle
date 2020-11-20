@@ -41,6 +41,9 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
     editItemView.setSuppliers(model.getAllSuppliers());
     editItemView.setUnits(model.getAllUnits());
     editItemView.setVATs(model.getAllVATs());
+    editItemView.setSurchargeGroup(model.getAllSurchargeGroups());
+
+    // after
     editItemView.getArticleObjectForm().setSource(model.getSource());
   }
 
@@ -127,5 +130,9 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
     MetricUnits units =
         view.getMetricUnits() != null ? view.getMetricUnits() : model.getSource().getMetricUnits();
     return amount * units.getBaseFactor() + "";
+  }
+
+  public void loadSurchargeGroupsFor() {
+    getView().setSurchargeGroup(model.getAllSurchargeGroups());
   }
 }

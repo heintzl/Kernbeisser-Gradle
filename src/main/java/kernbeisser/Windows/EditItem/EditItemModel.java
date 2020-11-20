@@ -7,6 +7,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.VAT;
@@ -97,5 +98,10 @@ public class EditItemModel implements IModel<EditItemController> {
       em.close();
       return false;
     }
+  }
+
+  public Collection<SurchargeGroup> getAllSurchargeGroups() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery("select s from SurchargeGroup s", SurchargeGroup.class).getResultList();
   }
 }

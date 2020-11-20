@@ -34,7 +34,6 @@ import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
-import org.apache.commons.beanutils.BeanUtils;
 import sun.misc.Unsafe;
 
 public class Tools {
@@ -153,18 +152,6 @@ public class Tools {
     return allQuery.getResultList();
   }
 
-  public static <T> T mergeWithoutId(T in) {
-    try {
-      return mergeWithoutId(in, (T) in.getClass().getDeclaredConstructor().newInstance());
-    } catch (InstantiationException
-        | IllegalAccessException
-        | InvocationTargetException
-        | NoSuchMethodException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      return null;
-    }
-  }
-
   public static <T> T setId(T t, Object id) {
     Class<?> clazz = t.getClass();
     while (!clazz.equals(Object.class)) {
@@ -182,17 +169,6 @@ public class Tools {
       clazz = clazz.getSuperclass();
     }
     return t;
-  }
-
-  public static <T> T mergeWithoutId(T in, T toOverride) {
-    try {
-      Object before = getId(in);
-      BeanUtils.copyProperties(toOverride, in);
-      setId(in, before);
-    } catch (IllegalAccessException | InvocationTargetException e) {
-      e.printStackTrace();
-    }
-    return toOverride;
   }
 
   public static long tryParseLong(String s) {
@@ -220,7 +196,12 @@ public class Tools {
   }
 
   public static <T> void edit(Object key, T to) {
-    runInSession(em -> em.persist(Tools.mergeWithoutId(to, em.find(to.getClass(), key))));
+    runInSession(
+        em -> {
+          Object db = em.find(to.getClass(), key);
+          Tools.copyInto(to, db);
+          em.persist(db);
+        });
   }
 
   public static void add(Object o) {
