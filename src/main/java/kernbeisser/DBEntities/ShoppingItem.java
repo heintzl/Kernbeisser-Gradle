@@ -173,7 +173,7 @@ public class ShoppingItem implements Serializable {
       this.vatValue = vat.getValue();
     }
     this.surcharge =
-        articleBase.getSurchargeGroup().getSurcharge()
+        articleBase.calculateSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1)
             / 100.0;
     this.discount = discount;
@@ -199,7 +199,7 @@ public class ShoppingItem implements Serializable {
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
     this.articleSurcharge =
-        article.getSurchargeGroup().getSurcharge()
+        article.getSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
   }
 
@@ -235,6 +235,7 @@ public class ShoppingItem implements Serializable {
       article.setName(name);
       article.setKbNumber(kbNumber);
       article.setMetricUnits(MetricUnits.NONE);
+      article.setDeleteAllowed(false);
       article.setVat(vat);
       article.setSupplier(supplier);
       em.persist(article);

@@ -9,8 +9,6 @@ import org.jetbrains.annotations.Nullable;
 public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements Bounded<P, V> {
   private boolean inputChanged = false;
 
-  @lombok.Setter private boolean allowNull;
-
   private static final Object NO_READ_PERMISSION = "<Keine Leseberechtigung>";
 
   private final Setter<P, V> setter;
@@ -57,8 +55,7 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
       if (selectedIndex > -1) {
         setter.set(p, (V) getSelectedItem());
       } else {
-        if (!allowNull) throw new CannotParseException();
-        else setter.set(p, null);
+        throw new CannotParseException();
       }
     } catch (PermissionKeyRequiredException ignored) {
     }

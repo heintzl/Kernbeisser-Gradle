@@ -1,5 +1,8 @@
 package kernbeisser.Reports;
 
+import static kernbeisser.Config.ConfigManager.getDirectory;
+import static kernbeisser.Config.ConfigManager.getPath;
+
 import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterJob;
 import java.nio.file.Path;
@@ -14,7 +17,6 @@ import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.PrinterName;
 import javax.swing.*;
-import kernbeisser.Config.Config;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
@@ -42,7 +44,7 @@ public abstract class Report {
   private static final String CONFIG_CATEGORY = "Reports";
 
   private static Path getReportsFolder() {
-    return Config.getConfig().getReports().getReportDirectory().toPath();
+    return getDirectory(CONFIG_CATEGORY, "reportDirectory");
   }
 
   protected Report(String reportDefinition, String outFileName) {
@@ -70,15 +72,12 @@ public abstract class Report {
   private static JasperReport getJasperReport(String key) throws JRException {
     JasperDesign jspDesign =
         JRXmlLoader.load(
-            getReportsFolder()
-                .resolve(Config.getConfig().getReports().getReports().get(key))
-                .toAbsolutePath()
-                .toFile());
+            getReportsFolder().resolve(getPath(CONFIG_CATEGORY, key)).toAbsolutePath().toFile());
     return JasperCompileManager.compileReport(jspDesign);
   }
 
   private static Path getOutputFolder() {
-    return Config.getConfig().getReports().getOutputDirectory().toPath();
+    return getDirectory(CONFIG_CATEGORY, "outputDirectory");
   }
 
   private static PrintRequestAttributeSet getPageFormatFromReport(JasperPrint jpsPrint) {

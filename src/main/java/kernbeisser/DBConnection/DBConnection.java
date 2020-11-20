@@ -5,8 +5,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import kernbeisser.Config.Config;
-import kernbeisser.Config.Config.DBAccess;
+import kernbeisser.Config.ConfigManager;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.StartUp.LogIn.DBLogInController;
@@ -18,15 +17,12 @@ public class DBConnection {
 
   private static EntityManagerFactory entityManagerFactory = null;
 
-  public static boolean tryLogIn(DBAccess dbAccessData) {
-    Main.logger.info(
-        "Try to Login in with Username: \""
-            + dbAccessData.getUsername()
-            + "\" Password: ***********");
+  public static boolean tryLogIn(String url, String username, String password) {
+    Main.logger.info("Try to Login in with Username: \"" + username + "\" Password: ***********");
     HashMap<String, String> properties = new HashMap<>(3);
-    properties.put("javax.persistence.jdbc.user", dbAccessData.getUsername());
-    properties.put("javax.persistence.jdbc.url", dbAccessData.getUrl());
-    properties.put("javax.persistence.jdbc.password", dbAccessData.getPassword());
+    properties.put("javax.persistence.jdbc.user", username);
+    properties.put("javax.persistence.jdbc.url", url);
+    properties.put("javax.persistence.jdbc.password", password);
     try {
       entityManagerFactory = Persistence.createEntityManagerFactory("Kernbeisser", properties);
       Main.logger.info("Login successful");
@@ -43,7 +39,8 @@ public class DBConnection {
   private static final Object DB_LOGIN_LOCK = new Object();
 
   public static void logInWithConfig() {
-    if (!tryLogIn(Config.getConfig().getDBAccessData())) {
+    String[] conf = ConfigManager.getDBAccessData();
+    if (!tryLogIn(conf[0], conf[1], conf[2])) {
       synchronized (DB_LOGIN_LOCK) {
         new DBLogInController().withCloseEvent(DB_LOGIN_LOCK::notify).openIn(new JFrameWindow());
       }

@@ -2,7 +2,6 @@ package kernbeisser.Tasks;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,24 +50,36 @@ public class Articles {
     }
     // columns[7] look at line 311
     article.setVat(Boolean.parseBoolean(rawArticleValues[8]) ? VAT.LOW : VAT.HIGH);
+    article.setSurcharge(Integer.parseInt(rawArticleValues[9]) / 1000.);
     article.setSingleDeposit(Integer.parseInt(rawArticleValues[10]) / 100.);
     article.setContainerDeposit(Integer.parseInt(rawArticleValues[11]) / 100.);
     article.setMetricUnits(
         MetricUnits.valueOf(
             rawArticleValues[12].replace("WEIGHT", "GRAM").replace("STACK", "PIECE")));
     article.setPriceList(priceLists.get(rawArticleValues[13]));
+    article.setContainerDef(ContainerDefinition.valueOf(rawArticleValues[14]));
     article.setContainerSize(Double.parseDouble(rawArticleValues[15].replaceAll(",", ".")));
     article.setSuppliersItemNumber(Integer.parseInt(rawArticleValues[16]));
     article.setWeighable(!Boolean.parseBoolean(rawArticleValues[17]));
+    article.setListed(!Boolean.parseBoolean(rawArticleValues[18]));
     article.setShowInShop(!Boolean.parseBoolean(rawArticleValues[19]));
-    article.setActive(!Boolean.parseBoolean(rawArticleValues[20]));
+    article.setDeleted(Boolean.parseBoolean(rawArticleValues[20]));
+    article.setPrintAgain(Boolean.parseBoolean(rawArticleValues[21]));
+    article.setDeleteAllowed(Boolean.parseBoolean(rawArticleValues[22]));
+    article.setLoss(Integer.parseInt(rawArticleValues[23]));
     article.setInfo(rawArticleValues[24]);
+    article.setSold(Integer.parseInt(rawArticleValues[25]));
+    article.setDelivered(Integer.parseInt(rawArticleValues[27]));
     // TODO: article.setInvShelf(Tools.extract(ArrayList::new, columns[28], "_",
     // Integer::parseInt));
     // TODO: article.setInvStock(Tools.extract(ArrayList::new, columns[29], "_",
     // Integer::parseInt));
     // TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
-    article.setVerified(Boolean.parseBoolean(rawArticleValues[36]));
+    article.setIntake(Instant.now());
+    article.setLastDelivery(Instant.now());
+    article.setDeletedDate(null);
+    article.setCooling(Cooling.valueOf(rawArticleValues[35]));
+    article.setCoveredIntake(Boolean.parseBoolean(rawArticleValues[36]));
     return article;
   }
 
@@ -94,13 +105,10 @@ public class Articles {
       }
       Offer offer = new Offer();
       offer.setSpecialNetPrice(price);
-      offer.setFromDate(
-          Instant.from(
-              LocalDate.of(today.getYear(), from, 1).atStartOfDay(ZoneId.systemDefault())));
+      offer.setFromDate(Instant.from(LocalDate.of(today.getYear(), from, 1)));
       offer.setToDate(
           Instant.from(
               LocalDate.of(today.getYear(), from + (i - 1 - from), 1)
-                  .atStartOfDay(ZoneId.systemDefault())
                   .with(TemporalAdjusters.lastDayOfMonth())));
       offer.setRepeatMode(Repeat.EVERY_YEAR);
       out.add(offer);

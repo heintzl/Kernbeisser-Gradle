@@ -18,7 +18,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table
+@Table(name = "Suppliers")
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Supplier implements Serializable {
 
@@ -67,7 +67,7 @@ public class Supplier implements Serializable {
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SURCHARGE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_SURCHARGE_WRITE)})
-  private double defaultSurcharge;
+  private int surcharge;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SUPPLIER_KEEPER_READ)})
@@ -101,7 +101,7 @@ public class Supplier implements Serializable {
       Supplier s = new Supplier();
       s.setName(defaultName);
       s.setShortName(shortName);
-      s.setDefaultSurcharge(defaultSurcharge);
+      s.setSurcharge(defaultSurcharge);
       et.begin();
       em.persist(s);
       em.flush();

@@ -57,6 +57,22 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
     }
   }
 
+  public SurchargeTable getSurcharge() {
+    // TODO really expensive!
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    try {
+      return em.createQuery(
+              "select st from SurchargeTable st where st.supplier.id = :supplier and st.from <= :number and st.to >= :number",
+              SurchargeTable.class)
+          .setParameter("supplier", Supplier.getKKSupplier().getId())
+          .setParameter("number", getSuppliersItemNumber())
+          .setMaxResults(1)
+          .getSingleResult();
+    } catch (NoResultException e) {
+      return SurchargeTable.DEFAULT;
+    }
+  }
+
   @Override
   public String toString() {
     return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");

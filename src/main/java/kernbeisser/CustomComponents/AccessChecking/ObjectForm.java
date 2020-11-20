@@ -39,7 +39,7 @@ public class ObjectForm<P> {
   }
 
   public P getData(boolean pingErrors) throws CannotParseException {
-    checkValidSource();
+    if (original == null) throw new NullPointerException("cannot obtain data from nullptr.");
     boolean success = true;
     P originalCopy = Tools.clone(original);
     for (Bounded<P, ?> boundedField : boundedFields) {
@@ -86,7 +86,6 @@ public class ObjectForm<P> {
   }
 
   public void refreshAccess() {
-    checkValidSource();
     for (Bounded<P, ?> boundedField : boundedFields) {
       boundedField.setReadable(boundedField.canRead(accessModel));
       boundedField.setWriteable(boundedField.canWrite(accessModel));
@@ -94,7 +93,6 @@ public class ObjectForm<P> {
   }
 
   public void markErrors() {
-    checkValidSource();
     for (Bounded<P, ?> field : boundedFields) {
       if (!isValidInput(field)) {
         field.markWrongInput();
@@ -111,7 +109,6 @@ public class ObjectForm<P> {
   }
 
   public boolean persistAsNewEntity() {
-    checkValidSource();
     try {
       P data = getData(true);
       try {
@@ -129,7 +126,6 @@ public class ObjectForm<P> {
   }
 
   public boolean persistChanges() {
-    checkValidSource();
     try {
       P data = getData(true);
       try {
@@ -146,7 +142,6 @@ public class ObjectForm<P> {
   }
 
   public boolean applyMode(Mode mode) {
-    checkValidSource();
     switch (mode) {
       case REMOVE:
         Tools.delete(original.getClass(), Tools.getId(original));
@@ -158,10 +153,6 @@ public class ObjectForm<P> {
       default:
         throw new UnsupportedOperationException(mode + " is not supported by applyMode");
     }
-  }
-
-  private void checkValidSource() {
-    if (original == null) throw new UnsupportedOperationException("no source specified");
   }
 
   public boolean isCheckInputVerifier() {

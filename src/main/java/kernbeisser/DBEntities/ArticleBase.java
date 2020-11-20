@@ -14,7 +14,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Table
 @Entity
@@ -89,18 +88,31 @@ public class ArticleBase {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_BASE_CONTAINER_DEPOSIT_WRITE)})
   private double containerDeposit;
 
-  @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_INFO_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_INFO_WRITE)})
-  private String info;
+  public SurchargeTable getSurchargeTable() {
+    // TODO really expensive!
+    if (supplier == null) return SurchargeTable.DEFAULT;
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    try {
+      return em.createQuery(
+              "select st from SurchargeTable st where st.supplier.id = :supplier and st.from_number <= :number and st.to_number >= :number",
+              SurchargeTable.class)
+          .setParameter("supplier", supplier.getId())
+          .setParameter("number", suppliersItemNumber)
+          .setMaxResults(1)
+          .getSingleResult();
+    } catch (NoResultException e) {
+      return SurchargeTable.DEFAULT;
+    }
+  }
 
-  @Column @UpdateTimestamp @Getter private Instant updateDate;
-
-  @JoinColumn(nullable = false)
-  @ManyToOne
-  @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
-  private SurchargeGroup surchargeGroup;
+  public double calculateSurcharge() {
+    SurchargeTable surchargeTable = getSurchargeTable();
+    double surcharge = surchargeTable.getSurcharge();
+    if (surchargeTable == SurchargeTable.DEFAULT && supplier != null) {
+      surcharge = supplier.getSurcharge();
+    }
+    return surcharge;
+  }
 
   public static ArticleBase getBySuppliersItemNumber(int suppliersNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
