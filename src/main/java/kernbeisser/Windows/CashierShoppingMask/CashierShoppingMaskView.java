@@ -75,7 +75,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
 
   @Override
   public String getTitle() {
-    return "Ladendiesnst Menu";
+    return "Ladendienst-Menü";
   }
 
   public boolean commitClose() {

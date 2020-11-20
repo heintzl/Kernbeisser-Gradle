@@ -453,7 +453,7 @@
           <gridbag top="0" left="25" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Email"/>
+          <text value="E-Mail"/>
         </properties>
       </component>
       <component id="b716b" class="javax.swing.JLabel">

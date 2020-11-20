@@ -23,7 +23,7 @@ public enum MetricUnits implements Named {
       return 1;
     }
   },
-  NONE("Undefinierte-Einheit", "?") {
+  NONE("Undefinierte Einheit", "?") {
     @Override
     public double getBaseFactor() {
       return 1;

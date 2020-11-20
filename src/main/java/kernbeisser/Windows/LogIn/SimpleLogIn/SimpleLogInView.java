@@ -78,6 +78,6 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
 
   @Override
   public String getTitle() {
-    return "Log In";
+    return "Anmelden";
   }
 }

@@ -44,7 +44,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice()), RIGHT),
             Column.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit()), RIGHT),
             Column.create("MwSt.", e -> e.getVat().getName(), RIGHT),
-            Column.create("Gebindegrösse.", Article::getContainerSize, RIGHT),
+            Column.create("Gebindegröße", Article::getContainerSize, RIGHT),
             Column.create("Preisliste", Article::getPriceList, LEFT),
             Column.create("Barcode", Article::getBarcode, RIGHT));
 

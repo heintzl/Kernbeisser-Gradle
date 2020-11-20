@@ -46,7 +46,9 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         RememberDialog.showDialog(
             model.getSaleSession().getCustomer(),
             null,
-            "Ihr Guthaben beträgt weniger als 0.01€, bitte sein sie sich bewusst,\ndass Schulden Zinsen verursachen.");
+            "Ihr Guthaben beträgt weniger als 0.01€.\n"
+                + "Bitte sei dir bewusst,\n"
+                + "dass Schulden Zinsen verursachen.");
       } else {
         throw new NotEnoughCreditException();
       }
