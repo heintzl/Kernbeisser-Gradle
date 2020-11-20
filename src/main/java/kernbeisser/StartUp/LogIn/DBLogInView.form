@@ -67,7 +67,7 @@
         </constraints>
         <properties>
           <font size="16"/>
-          <text value="Datenbank-Anmeldung"/>
+          <text value="Datenbankverbindung"/>
         </properties>
       </component>
       <component id="c0408" class="javax.swing.JButton" binding="logIn">

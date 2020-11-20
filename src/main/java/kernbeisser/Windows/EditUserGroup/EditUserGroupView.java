@@ -87,7 +87,9 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
     } else {
       JOptionPane.showMessageDialog(
           getTopComponent(),
-          "Wollen sie wirklich ihre aktuelle Nutzergruppe verlassen?\nDas Guthaben wird nicht übertragen, da noch weitere Nutzer\nin ihrer Nutzergruppe sind.");
+          "Willst du wirklich deine aktuelle Nutzergruppe verlassen?\n"
+              + "Das Guthaben wird nicht übertragen, da noch weitere Nutzer\n"
+              + "in deiner Nutzergruppe sind.");
     }
     try {
       controller.changeUserGroup();

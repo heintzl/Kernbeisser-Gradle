@@ -36,7 +36,8 @@ public class MenuController extends Controller<MenuView, MenuModel> {
     if (alreadyAsked) return true;
     if (JOptionPane.showConfirmDialog(
             view.getTopComponent(),
-            "Sind sie Sicher das sie sich Ausloggen und\ndamit alle geöfnteten Tabs / Fenster schließen wollen")
+            "Bist du sicher, dass du dich ausloggen und\n"
+                + "damit alle geöfnteten Tabs / Fenster schließen möchtest?")
         == 0) {
       SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getTopComponent());
       view.traceViewContainer().getLoaded().withCloseEvent(SimpleLogInController::new);

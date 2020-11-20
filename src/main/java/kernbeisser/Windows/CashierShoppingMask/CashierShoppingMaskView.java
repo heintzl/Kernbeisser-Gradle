@@ -70,7 +70,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   public void notEnoughCredit() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Der Ausgewählte Benutzer hat nicht genung Guthaben, um ein Einkauf zu beginnen!");
+        "Der Ausgewählte Benutzer hat nicht genung Guthaben, um einen Einkauf zu beginnen!");
   }
 
   @Override
@@ -81,7 +81,8 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   public boolean commitClose() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Sind sie sich sicher das sie den Ladendienst beenden,\nwollen und den Ladendienst Report ausdrucken wollen?")
+            "Bist du dir sicher das du den Ladendienst beenden\n"
+                + "und den Ladendienst-Report ausdrucken möchtest?")
         == 0;
   }
 }

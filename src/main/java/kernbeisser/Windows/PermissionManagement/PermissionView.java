@@ -31,8 +31,7 @@ public class PermissionView implements IView<PermissionController> {
   }
 
   String getPermissionName() {
-    return JOptionPane.showInputDialog(
-        this, "Bitte geben sie den Namen der neuen Berechtigung ein");
+    return JOptionPane.showInputDialog(this, "Bitte gib den Namen der neuen Berechtigung ein");
   }
 
   private void createUIComponents() {
@@ -113,7 +112,7 @@ public class PermissionView implements IView<PermissionController> {
             try {
               controller.importFrom(jFileChooser.getSelectedFile());
               JOptionPane.showMessageDialog(
-                  getTopComponent(), "Es wurden erfolgreich alle Berechtigungen importiert");
+                  getTopComponent(), "Alle Berechtigungen erfolgreich importiert");
             } catch (FileNotFoundException fileNotFoundException) {
               JOptionPane.showMessageDialog(
                   getTopComponent(),
@@ -154,18 +153,21 @@ public class PermissionView implements IView<PermissionController> {
   public void nameIsNotUnique() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Der gewählte name ist bereits vergeben,\nbitte wählen sie einen anderen.");
+        "Der gewählte Name ist bereits vergeben,\n" + "bitte wähle einen anderen.");
   }
 
   public boolean permissionIsInUse() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Die Berechtigung ist noch an Nutzer vergeben,\nsoll allen Nutzern die Berechtigung entzogen werden\nund die Berechtigung anschließend gelöscht werden?")
+            "Die Berechtigung ist noch an Nutzer vergeben,\n"
+                + "soll allen Nutzern die Berechtigung entzogen werden\n"
+                + "und die Berechtigung anschließend gelöscht werden?")
         == 0;
   }
 
   public void successfulDeleted() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Die Berechtigung wurde erfolgreich gelöscht");
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Die Berechtigung wurde erfolgreich gelöscht.");
   }
 
   @Override

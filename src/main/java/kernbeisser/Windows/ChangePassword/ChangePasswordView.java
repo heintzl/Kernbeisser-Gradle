@@ -51,7 +51,7 @@ public class ChangePasswordView implements IView<ChangePasswordController> {
   }
 
   public void passwordsDontMatch() {
-    message.setText("Bitte Wiederholen sie das Passwort korrekt.");
+    message.setText("Bitte wiederhole das Passwort korrekt.");
   }
 
   void setVerifyWithOldEnable(boolean enable) {
@@ -70,16 +70,17 @@ public class ChangePasswordView implements IView<ChangePasswordController> {
 
   public void passwordCannotChanged() {
     JOptionPane.showMessageDialog(
-        getTopComponent(), "Das Password entspricht nicht den Vorraussetzungen");
+        getTopComponent(), "Das Password entspricht nicht den Vorraussetzungen.");
   }
 
   public void passwordChanged() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Das Password wurde erfolgreich geändert");
+    JOptionPane.showMessageDialog(getTopComponent(), "Das Password wurde erfolgreich geändert.");
   }
 
   public void currentPasswordEnteredWrong() {
     JOptionPane.showMessageDialog(
-        getTopComponent(), "Um das Passwort zu ändern müssen\n sie ihr altes Passwort bestätigen");
+        getTopComponent(),
+        "Um das Passwort zu ändern, musst\n" + "du dein altes Passwort bestätigen.");
   }
 
   @Override
