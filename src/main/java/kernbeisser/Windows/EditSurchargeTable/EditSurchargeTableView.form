@@ -42,7 +42,7 @@
               <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Zuschlag Tabelle"/>
+              <text value="Zuschlag-Tabelle"/>
             </properties>
           </component>
           <vspacer id="ddb57">
@@ -63,7 +63,7 @@
               <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Liefernaten Artikelnummer:"/>
+              <text value="Lieferanten-Artikelnummer:"/>
             </properties>
           </component>
           <component id="9d4d" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox" binding="supplier" custom-create="true">
@@ -123,7 +123,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="Zuschlag(In Prozent)"/>
+              <text value="Zuschlag (in Prozent)"/>
             </properties>
           </component>
           <component id="52073" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="surcharge" custom-create="true">

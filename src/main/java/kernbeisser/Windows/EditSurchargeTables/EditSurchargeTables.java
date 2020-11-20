@@ -12,7 +12,7 @@ public class EditSurchargeTables extends ObjectViewController<SurchargeTable> {
         EditSurchargeTableController::new,
         SurchargeTable::defaultSearch,
         true,
-        Column.create("Liefernat", SurchargeTable::getSupplier),
+        Column.create("Lieferant", SurchargeTable::getSupplier),
         Column.create("Von", SurchargeTable::getFrom_number),
         Column.create("Bis", SurchargeTable::getTo_number),
         Column.create("Name", SurchargeTable::getDescription),

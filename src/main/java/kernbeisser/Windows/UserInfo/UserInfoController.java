@@ -74,7 +74,7 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
       @Override
       public String getName() {
         value = 0;
-        return "Dannach";
+        return "Verbleibend";
       }
 
       @Override
@@ -106,7 +106,7 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
         if (valueChange.getTo() == null) {
           return "Einkauf";
         }
-        return "Überweissung";
+        return "Überweisung";
       }
     };
   }

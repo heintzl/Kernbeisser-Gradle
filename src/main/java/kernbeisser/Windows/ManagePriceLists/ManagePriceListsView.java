@@ -57,9 +57,10 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   public boolean commitMovement(PriceList from, PriceList to) {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Sind sie sich sicher, das die Preisliste '"
+            "Bist du sicher, dass die Preisliste '"
                 + from.getName()
-                + "',\nin die Preisliste '"
+                + "',\n"
+                + "in die Preisliste '"
                 + to.getName()
                 + "' verschoben werden soll?")
         == 0;
@@ -77,8 +78,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   }
 
   public void selectionRequired() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(), "Bitte wählen sie zunächst eine Preisliste aus.");
+    JOptionPane.showMessageDialog(getTopComponent(), "Bitte wähle zunächst eine Preisliste aus.");
   }
 
   public void requestRepaint() {
@@ -91,24 +91,25 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   }
 
   public String requestName() {
-    return JOptionPane.showInputDialog(getTopComponent(), "Bitte geben sie den Namen ein");
+    return JOptionPane.showInputDialog(getTopComponent(), "Bitte gib den Namen ein");
   }
 
   public boolean commitItemMovement(PriceList from, PriceList to) {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Sind sie sich sicher, das die Artikel der Preisliste '"
+            "Bist du sicher, dass die Artikel der Preisliste '"
                 + from.getName()
-                + "',\nin die Preisliste '"
+                + "',\n"
+                + "in die Preisliste '"
                 + to.getName()
-                + "' verschoben werden soll?")
+                + "' verschoben werden sollen?")
         == 0;
   }
 
   public void cannotDelete() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Die Preisliste kann nicht gelöscht werden, da Artikel oder Preislisten auf diese verweissen.");
+        "Die Preisliste kann nicht gelöscht werden, da Artikel oder Preislisten auf diese verweisen.");
   }
 
   public void nameAlreadyExists(String name) {

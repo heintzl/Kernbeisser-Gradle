@@ -36,7 +36,9 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
   public void permissionRequired() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Zugriff verweigert.\nIhr Benutzerkonto hat leider nicht die Berechtigung sich anzumelden.\nSie können es bei einem Admin freischalten lassen.");
+        "Zugriff verweigert.\n"
+            + "Dein Benutzerkonto hat leider nicht die Berechtigung sich anzumelden.\n"
+            + "Du kannst es bei einem Admin freischalten lassen.");
   }
 
   @Override
@@ -78,6 +80,6 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
 
   @Override
   public String getTitle() {
-    return "Log In";
+    return "Anmelden";
   }
 }

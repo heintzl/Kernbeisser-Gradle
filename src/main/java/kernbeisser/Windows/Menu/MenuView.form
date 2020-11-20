@@ -83,7 +83,7 @@
             <properties>
               <font/>
               <requestFocusEnabled value="false"/>
-              <text value="Anderer Nutzergruppe beitreten"/>
+              <text value="Nutzergruppe wechseln"/>
             </properties>
           </component>
           <component id="3cf1" class="kernbeisser.CustomComponents.ControllerButton" binding="doUserDefiniedTransaction" custom-create="true">
@@ -92,9 +92,9 @@
             </constraints>
             <properties>
               <font/>
-              <label value="Guthaben überweissen"/>
+              <label value="Guthaben überweisen"/>
               <requestFocusEnabled value="false"/>
-              <text value="Guthaben überweissen"/>
+              <text value="Guthaben überweisen"/>
             </properties>
           </component>
         </children>
@@ -186,7 +186,7 @@
             </constraints>
             <properties>
               <font/>
-              <text value="Kornkraft-Katalog synchonisieren"/>
+              <text value="Kornkraft-Katalog synchronisieren"/>
             </properties>
           </component>
           <vspacer id="6d71b">
@@ -290,11 +290,11 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <actionCommand value="Guthaben überweissen"/>
+              <actionCommand value="Guthaben überweisen"/>
               <font/>
-              <label value="Guthaben Einzahlungen tätigen"/>
+              <label value="Guthaben für Mitglieder buchen"/>
               <requestFocusEnabled value="false"/>
-              <text value="Guthaben Einzahlungen tätigen"/>
+              <text value="Guthaben für Mitglieder buchen"/>
             </properties>
           </component>
           <component id="c851a" class="kernbeisser.CustomComponents.ControllerButton" binding="changePermissions" custom-create="true">
@@ -353,9 +353,9 @@
             </constraints>
             <properties>
               <font/>
-              <label value="Datenbankverbindung aktualisieren"/>
+              <label value="Datenbankverbindung bearbeiten"/>
               <requestFocusEnabled value="false"/>
-              <text value="Datenbankverbindung aktualisieren"/>
+              <text value="Datenbankverbindung bearbeiten"/>
             </properties>
           </component>
           <vspacer id="db3d7">

@@ -57,16 +57,18 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   private void leaveUserGroup(ActionEvent event) {
     if (controller.getMemberCount() < 2) {
       JOptionPane.showMessageDialog(
-          getTopComponent(), "Sie sind bereits alleine in einer Nutzergruppe!");
+          getTopComponent(), "Du bist bereits alleine in einer Nutzergruppe!");
     } else {
       if (JOptionPane.showConfirmDialog(
               getTopComponent(),
-              "Möchten sie wirklich ihre Nutzergruppe verlassen?\nGuthaben und Solidaraufschlag werden nicht übernommen")
+              "Möchtest du wirklich deine Nutzergruppe verlassen?\n"
+                  + "Guthaben und Solidaraufschlag werden nicht übernommen...")
           == 0) {
         controller.leaveUserGroup();
         JOptionPane.showMessageDialog(
             getTopComponent(),
-            "Sie sind erfolgreich aus ihrer Nutzergruppe ausgestiegen\nund nun alleine in einer Nutzergruppe.");
+            "Du hast deine Nutzergruppe erfolgreich verlassen\n"
+                + "und bist nun alleine in einer Nutzergruppe.");
       }
     }
   }
@@ -76,20 +78,24 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
     if (controller.getMemberCount() < 2) {
       if (JOptionPane.showConfirmDialog(
               getTopComponent(),
-              "Sie sind derzeit alleine in einer Nutzergruppe.\nWollen sie wirklich ihre aktuelle Nutzergruppe auflösen\nund ihr aktuelles Guthaben auf die neue Nutzergruppe übertragen?")
+              "Du bist derzeit alleine in einer Nutzergruppe.\n"
+                  + "Willst du wirklich deine aktuelle Nutzergruppe auflösen\n"
+                  + "und ihr aktuelles Guthaben auf die neue Nutzergruppe übertragen?")
           != 0) {
         return;
       }
     } else {
       JOptionPane.showMessageDialog(
           getTopComponent(),
-          "Wollen sie wirklich ihre aktuelle Nutzergruppe verlassen?\nDas Guthaben wird nicht übertragen, da noch weitere Nutzer\nin ihrer Nutzergruppe sind.");
+          "Willst du wirklich deine aktuelle Nutzergruppe verlassen?\n"
+              + "Das Guthaben wird nicht übertragen, da noch weitere Nutzer\n"
+              + "in deiner Nutzergruppe sind.");
     }
     try {
       controller.changeUserGroup();
       JOptionPane.showMessageDialog(
           getTopComponent(),
-          "Sie sind erfolgreich der Nutzergruppe von " + getUsername() + " beigetreiten");
+          "Du bist erfolgreich der Nutzergruppe von " + getUsername() + " beigetreiten");
     } catch (CannotLogInException e) {
       JOptionPane.showMessageDialog(
           getTopComponent(), "Das eingegebene Passwort stimmt nicht überein.");
@@ -110,12 +116,12 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   private double requestSoli() {
     String txt =
         JOptionPane.showInputDialog(
-            getTopComponent(), "bitte geben sie den neuen Solidarzuschlag ein[%]");
+            getTopComponent(), "Bitte gib den neuen Solidarzuschlag ein [%]");
     try {
       return Double.parseDouble(txt.replaceAll("[^\\d,.]", "").replace(",", ".")) / 100.;
     } catch (NumberFormatException e) {
       JOptionPane.showMessageDialog(
-          getTopComponent(), "der eingegebene Wert kann nicht als zahl interpretiert werden");
+          getTopComponent(), "Der eingegebene Wert konnte nicht als Zahl interpretiert werden.");
       return requestSoli();
     }
   }

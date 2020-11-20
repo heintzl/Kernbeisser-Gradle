@@ -131,7 +131,7 @@ public class ContainerView implements IView<ContainerController> {
   void noItemFound() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Es konnte kein Kornkraft Artikel mit dieser Kornkraft / Kernbeisser Nummer gefunden werden");
+        "Es konnte kein Kornkraft-Artikel mit dieser Kornkraft-/Kernbeißer-Nummer gefunden werden.");
   }
 
   @Override

@@ -52,7 +52,8 @@ public class PayView implements IView<PayController> {
         != 0) {
       JOptionPane.showMessageDialog(
           getTopComponent(),
-          "Alle Einkäufe müssen im Log-Buch notiert werden\nfür den Fall, dass gespeicherte Daten verloren gehen.");
+          "Alle Einkäufe müssen im Log-Buch notiert werden\n"
+              + "für den Fall, dass gespeicherte Daten verloren gehen.");
       confirmLogging(name, value);
     }
   }
@@ -83,8 +84,8 @@ public class PayView implements IView<PayController> {
   public void notEnoughValue() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Sie haben nicht die Berechtigung unter das minimale Guthaben von "
+        "Du hast nicht die Berechtigung unter das minimale Guthaben von "
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
-            + " zu gehen");
+            + " zu gehen.");
   }
 }

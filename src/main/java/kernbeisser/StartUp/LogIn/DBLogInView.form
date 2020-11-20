@@ -67,7 +67,7 @@
         </constraints>
         <properties>
           <font size="16"/>
-          <text value="Datenbank Log In"/>
+          <text value="Datenbankverbindung"/>
         </properties>
       </component>
       <component id="c0408" class="javax.swing.JButton" binding="logIn">
@@ -76,7 +76,7 @@
         </constraints>
         <properties>
           <foreground color="-12797137"/>
-          <text value="Log In"/>
+          <text value="Anmelden"/>
         </properties>
       </component>
       <component id="8a382" class="javax.swing.JButton" binding="cancel">
