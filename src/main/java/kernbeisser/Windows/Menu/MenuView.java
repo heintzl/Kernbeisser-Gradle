@@ -14,7 +14,7 @@ import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.EditItems.EditItemsController;
 import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSuppliers.EditSuppliers;
-import kernbeisser.Windows.EditSurchargeTables.EditSurchargeTables;
+import kernbeisser.Windows.EditSurchargeGroups.EditSurchargeGroupController;
 import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.EditUserSetting.EditUserSettingController;
@@ -91,8 +91,7 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             EditItemsController::new, EditItemsController.class, Controller::openTab);
     editSurchargeTables =
-        new ControllerButton(
-            EditSurchargeTables::new, EditSurchargeTables.class, Controller::openTab);
+        new ControllerButton(EditSurchargeGroupController::new, EditSurchargeGroupController.class);
     changePassword =
         new ControllerButton(
             () -> new ChangePasswordController(LogInModel.getLoggedIn(), true),

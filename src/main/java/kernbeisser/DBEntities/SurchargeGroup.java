@@ -3,6 +3,7 @@ package kernbeisser.DBEntities;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
@@ -67,5 +68,31 @@ public class SurchargeGroup implements Serializable, Cloneable {
     if (surcharge == null) {
       return parent == null ? supplier.getDefaultSurcharge() : parent.getSurcharge();
     } else return surcharge;
+  }
+
+  public boolean isSurchargeExtracted() {
+    return surcharge == null;
+  }
+
+  @Override
+  public String toString() {
+    return name;
+  }
+
+  @Override
+  public int hashCode() {
+    return id;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    SurchargeGroup that = (SurchargeGroup) o;
+    return Objects.equals(id, that.id);
   }
 }

@@ -711,6 +711,32 @@ public class Tools {
       Toolkit.getDefaultToolkit().beep();
   }
 
+  // reverses a ref map
+  // apple -> fruit
+  // carrot -> fruit
+  // Output:
+  // fruit -> (apple,carrot)
+  public static <K, V> Map<K, Collection<V>> reverseReference(Map<V, K> map) {
+    HashMap<K, Collection<V>> out = new HashMap<>();
+    map.forEach(
+        (k, v) -> {
+          if (v == null) return;
+          Collection<V> collection = out.computeIfAbsent(v, k1 -> new ArrayList<>());
+          collection.add(k);
+        });
+    return out;
+  }
+
+  public static <K, V> Map<K, V> createMap(Iterable<K> v, Function<K, V> valueGenerator) {
+    HashMap<K, V> map = new HashMap<>();
+    v.forEach(
+        e -> {
+          V value = valueGenerator.apply(e);
+          if (value != null) map.put(e, value);
+        });
+    return map;
+  }
+
   public static void openFile(String filePath) {
     openFile(new File(filePath));
   }
