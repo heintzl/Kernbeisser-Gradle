@@ -141,7 +141,7 @@ public class TransactionView implements IView<TransactionController> {
 
   boolean confirm() {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Sollen die eingetragenen überweisungen getätigt werden?")
+            getTopComponent(), "Sollen die eingetragenen Überweisungen getätigt werden?")
         == 0;
   }
 
@@ -183,7 +183,8 @@ public class TransactionView implements IView<TransactionController> {
   public boolean requestUserTransactionCommit() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Der angegebene Preis ist negativ, das entspricht einer Auszahlung.\nIst das korrekt?")
+            "Der angegebene Preis ist negativ, das entspricht einer Auszahlung.\n"
+                + "Ist das korrekt?")
         == 0;
   }
 
@@ -464,9 +465,12 @@ public class TransactionView implements IView<TransactionController> {
   public void transactionRejected() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Die eingegeben Überweisungen könnnen nicht getätigt werden,\nda einige der Benutzer nicht die Berechtigung haben, unter das minimale\nGuthaben von "
+        "Die eingegeben Überweisungen könnnen nicht getätigt werden,\n"
+            + "da einige der Benutzer nicht die Berechtigung haben, unter das minimale\n"
+            + "Guthaben von "
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
-            + " zu gehen,\noder der Absender der gleiche ist wie der Empfänger");
+            + " zu gehen,\n"
+            + "oder der Absender der gleiche ist wie der Empfänger");
   }
 
   public void transactionAdded() {

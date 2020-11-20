@@ -132,11 +132,11 @@ public class EditItemView implements IView<EditItemController> {
     return 0
         == JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Die Artikelnummer ist bereits vergeben soll die nächste freie Ausgewählt werden?");
+            "Die Artikelnummer ist bereits vergeben. Soll die nächste freie gewählt werden?");
   }
 
   void barcodeAlreadyExists() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Der Barcode ist bereits vergeben");
+    JOptionPane.showMessageDialog(getTopComponent(), "Der Barcode ist bereits vergeben.");
   }
 
   @Override
@@ -190,11 +190,11 @@ public class EditItemView implements IView<EditItemController> {
   public void nameAlreadyExists() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Der gewählte Name ist bereits vergeben!\nBitte wählen sie einen anderen");
+        "Der gewählte Name ist bereits vergeben!\n" + "Bitte wähle einen anderen.");
   }
 
   public void invalidInput() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Bitte füllen sie alle Werte korrekt aus");
+    JOptionPane.showMessageDialog(getTopComponent(), "Bitte fülle alle Werte korrekt aus");
   }
 
   public MetricUnits getMetricUnits() {

@@ -12,7 +12,7 @@ public class EditSurchargeTables extends ObjectViewController<SurchargeGroup> {
         EditSurchargeTableController::new,
         SurchargeGroup::defaultSearch,
         true,
-        Column.create("Liefernat", SurchargeGroup::getSupplier),
+        Column.create("Lieferant", SurchargeGroup::getSupplier),
         Column.create("Zuschlag", SurchargeGroup::getSurcharge));
   }
 }

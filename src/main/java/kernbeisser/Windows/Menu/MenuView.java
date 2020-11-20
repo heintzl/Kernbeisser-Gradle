@@ -149,7 +149,9 @@ public class MenuView implements IView<MenuController> {
               } catch (NotEnoughCreditException e) {
                 JOptionPane.showMessageDialog(
                     getTopComponent(),
-                    "sie können keinen Einkauf beginnen, da ihr Guthaben nicht ausreicht.\nFalls sie ihr Guthaben aufladen wollen, melden sie sich bitte bei dem Ladendienst,\ndieser wird sie dann an die / den Guthaben beauftragte/n verweissen.");
+                    "Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
+                        + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
+                        + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.");
                 return null;
               }
             },
@@ -188,6 +190,6 @@ public class MenuView implements IView<MenuController> {
 
   @Override
   public String getTitle() {
-    return "Menu";
+    return "Menü";
   }
 }

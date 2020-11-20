@@ -70,10 +70,10 @@ public class EditSupplierView implements IView<EditSupplierController> {
   }
 
   public void nameAlreadyExists() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Der gewählte Name ist schon vergeben");
+    JOptionPane.showMessageDialog(getTopComponent(), "Der gewählte Name ist schon vergeben.");
   }
 
   public void shortNameAlreadyExists() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Die Abkürzung ist schon vergeben");
+    JOptionPane.showMessageDialog(getTopComponent(), "Die Abkürzung ist schon vergeben.");
   }
 }

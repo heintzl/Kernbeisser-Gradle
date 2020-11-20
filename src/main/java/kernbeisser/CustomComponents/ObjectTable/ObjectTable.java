@@ -148,13 +148,15 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   public void addDoubleClickListener(ObjectSelectionListener<T> listener) {
     addSelectionListener(
         new ObjectSelectionListener<T>() {
-          T last;
+          private T last;
+          private long lastClick = System.nanoTime();
 
           @Override
           public void selected(T t) {
-            if (t.equals(last)) {
+            if (t.equals(last) && Math.abs(System.nanoTime() - lastClick) < 5e+8) {
               listener.selected(t);
             } else last = t;
+            lastClick = System.nanoTime();
           }
         });
   }
@@ -220,12 +222,6 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     model.removeRow(index);
     model.insertRow(index, collectColumns(newValue));
     repaint();
-  }
-
-  public void setSelectedObject(T value) {
-    int index = indexOf(value);
-    setRowSelectionInterval(index, index);
-    invokeSelectionListeners(value);
   }
 
   @NotNull

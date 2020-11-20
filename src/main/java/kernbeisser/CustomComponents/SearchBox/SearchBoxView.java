@@ -4,14 +4,13 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
-import java.util.function.Predicate;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -47,15 +46,22 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   @Override
   public void initialize(SearchBoxController<T> controller) {
     search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 14, new Color(0x757EFF)));
-    objects.addSelectionListener(e -> controller.select());
-    search.addActionListener(e -> controller.search());
+    search.addActionListener(e -> controller.invokeSearch());
     searchInput.addKeyListener(
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            controller.search();
+            controller.invokeSearch();
           }
         });
+  }
+
+  void addSelectionListener(ObjectSelectionListener<T> selectionListener) {
+    objects.addSelectionListener(selectionListener);
+  }
+
+  void addDoubleClickListener(ObjectSelectionListener<T> doubleSelectionListener) {
+    objects.addDoubleClickListener(doubleSelectionListener);
   }
 
   @Override
@@ -72,16 +78,6 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
     searchInput.setText(s);
   }
 
-  public void setSelectedObject(T value) {
-    objects.setSelectedObject(value);
-  }
-
-  public boolean setSelectedObjectId(Object o) {
-    T t = Tools.findById(objects.getItems(), o);
-    objects.setSelectedObject(t);
-    return t != null;
-  }
-
   @Override
   public Component getFocusOnInitialize() {
     return searchInput;
@@ -89,9 +85,5 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
 
   public void setRowFilter(RowFilter<T> rowFilter) {
     objects.setRowFilter(rowFilter);
-  }
-
-  public void selectObject(Predicate<T> predicate) {
-    objects.setSelectedObject(objects.get(predicate));
   }
 }

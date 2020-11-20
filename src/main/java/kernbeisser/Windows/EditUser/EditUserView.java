@@ -72,11 +72,11 @@ public class EditUserView implements IView<EditUserController> {
 
   void passwordToShort() {
     JOptionPane.showMessageDialog(
-        null, "Das Passwort ist leider zu kurz, es muss mindestens 4 zeichen lang sein");
+        null, "Das Passwort ist leider zu kurz. Es muss mindestens 4 Zeichen lang sein.");
   }
 
   String requestPassword() {
-    return JOptionPane.showInputDialog("Bitte geben sie das neue Passwort ein:");
+    return JOptionPane.showInputDialog("Bitte gib das neue Passwort ein:");
   }
 
   void passwordChanged() {
@@ -197,7 +197,7 @@ public class EditUserView implements IView<EditUserController> {
   }
 
   public void invalidInput() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Der Eingegeben werte sind nicht korrekt!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Der eingegeben Werte sind nicht korrekt!");
   }
 
   public void setUsername(String username) {
