@@ -1,5 +1,6 @@
 package kernbeisser.Tasks.Catalog;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,23 +11,9 @@ import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Tasks.DTO.KornkraftArticle;
 import kernbeisser.Tasks.DTO.KornkraftGroup;
 import kernbeisser.Useful.Tree;
-import lombok.Getter;
 
 public class CatalogDataInterpreter {
-
-  private final Catalog catalog;
-
-  @Getter(lazy = true)
-  private final HashMap<Long, KornkraftGroup> numberGroupRefMap = createNumberRefMap();
-
-  @Getter(lazy = true)
-  private final Tree<KornkraftGroup> groupTree = extractGroupsTree();
-
-  public CatalogDataInterpreter(Catalog catalog) {
-    this.catalog = catalog;
-  }
-
-  private HashMap<Long, KornkraftGroup> createNumberRefMap() {
+  public static HashMap<Long, KornkraftGroup> createNumberRefMap(Catalog catalog) {
     KornkraftArticle[] data = catalog.getData();
     HashMap<Long, KornkraftGroup> out = new HashMap<>(data.length);
     for (KornkraftArticle article : data) {
@@ -36,7 +23,18 @@ public class CatalogDataInterpreter {
     return out;
   }
 
-  public Tree<KornkraftGroup> extractGroupsTree() {
+  public static HashMap<Long, SurchargeGroup> createNumberRefMap(
+      Catalog catalog, HashMap<KornkraftGroup, SurchargeGroup> groupSurchargeGroupHashMap) {
+    KornkraftArticle[] data = catalog.getData();
+    HashMap<Long, SurchargeGroup> out = new HashMap<>(data.length);
+    for (KornkraftArticle article : data) {
+      KornkraftGroup[] groups = catalog.getBreadcrums().get(article.getInetwg());
+      out.put(article.getArtnr(), groupSurchargeGroupHashMap.get(groups[groups.length - 1]));
+    }
+    return out;
+  }
+
+  public static Tree<KornkraftGroup> extractGroupsTree(Catalog catalog) {
     Tree<KornkraftGroup> tree = new Tree<>();
     for (KornkraftGroup[] value : catalog.getBreadcrums().values()) {
       tree.put(value);
@@ -44,63 +42,79 @@ public class CatalogDataInterpreter {
     return tree;
   }
 
-  public void linkArticlesAndPersistSurchargeGroups(
-      List<ArticleBase> articleBases, EntityManager em, boolean persistKornkraftGroup) {
+  public static HashMap<KornkraftGroup, SurchargeGroup> extractSurchargeGroups(
+      Tree<KornkraftGroup> kornkraftGroupTree) {
     Supplier kk = Supplier.getKKSupplier();
-    HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap = new HashMap<>();
-    getGroupTree()
-        .overAll(
-            new KornkraftGroup(),
-            (parent, value) -> {
-              SurchargeGroup sg = new SurchargeGroup();
-              sg.setName(value.getItext());
-              sg.setSupplier(kk);
-              sg.setParent(surchargeGroupHashMap.get(parent));
-              if (persistKornkraftGroup) em.persist(sg);
-              surchargeGroupHashMap.put(value, sg);
-            });
-    em.flush();
-    for (ArticleBase articleBase : articleBases) {
-      SurchargeGroup sg =
-          surchargeGroupHashMap.get(
-              CatalogDataInterpreter.this
-                  .getNumberGroupRefMap()
-                  .get((long) articleBase.getSuppliersItemNumber()));
+    HashMap<KornkraftGroup, SurchargeGroup> out = new HashMap<>();
+    kornkraftGroupTree.overAll(
+        new KornkraftGroup(),
+        (parent, value) -> {
+          SurchargeGroup sg = new SurchargeGroup();
+          sg.setName(value.getItext());
+          sg.setSupplier(kk);
+          sg.setParent(out.get(parent));
+          out.put(value, sg);
+        });
+    return out;
+  }
 
-      if (sg != null) {
-        articleBase.setSurchargeGroup(sg);
-      }
+  public static HashMap<KornkraftGroup, SurchargeGroup> extractSurchargeGroups(
+      Tree<KornkraftGroup> kornkraftGroupTree, EntityManager entityManager) {
+    Supplier kk = Supplier.getKKSupplier();
+    HashMap<KornkraftGroup, SurchargeGroup> out = new HashMap<>();
+    kornkraftGroupTree.overAll(
+        new KornkraftGroup(),
+        (parent, value) -> {
+          SurchargeGroup sg = new SurchargeGroup();
+          sg.setName(value.getItext());
+          sg.setSupplier(kk);
+          sg.setParent(out.get(parent));
+          entityManager.persist(sg);
+          out.put(value, sg);
+        });
+    return out;
+  }
+
+  public static void linkArticles(
+      List<? extends ArticleBase> articleBases,
+      HashMap<Long, SurchargeGroup> surchargeGroupHashMap) {
+    for (ArticleBase current : articleBases) {
+      SurchargeGroup ref = surchargeGroupHashMap.get((long) current.getSuppliersItemNumber());
+      if (ref != null) current.setSurchargeGroup(ref);
     }
-    ArticleBase last = null;
-    ArticleBase next = null;
+  }
+
+  public static void autoLinkArticle(List<? extends ArticleBase> articleBases) {
+    SurchargeGroup undef = SurchargeGroup.undefined();
+    ArticleBase last = findNext(0, articleBases);
+    ArticleBase next = last;
+    articleBases.sort(Comparator.comparingInt(ArticleBase::getSuppliersItemNumber));
+    for (ArticleBase articleBase : articleBases) {
+      if (!articleBase.getSurchargeGroup().equals(undef)) last = articleBase;
+    }
     for (int i = 0; i < articleBases.size(); i++) {
-      ArticleBase articleBase = articleBases.get(i);
-      if (articleBase.getSurchargeGroup() != null) {
-        last = articleBase;
-        continue;
-      }
-      if (next == null || next.getSuppliersItemNumber() <= articleBase.getSuppliersItemNumber()) {
-        next = last;
-        for (int offset = i + 1; offset < articleBases.size(); offset++) {
-          SurchargeGroup sg =
-              surchargeGroupHashMap.get(
-                  getNumberGroupRefMap()
-                      .get((long) articleBases.get(offset).getSuppliersItemNumber()));
-          if (sg != null) {
-            next = articleBases.get(offset);
-            break;
-          }
-        }
-      }
-      if (last == null) {
-        last = next;
-      }
-      if (Math.abs(last.getSuppliersItemNumber() - articleBase.getSuppliersItemNumber())
-          < Math.abs(next.getSuppliersItemNumber() - articleBase.getSuppliersItemNumber())) {
-        articleBase.setSurchargeGroup(last.getSurchargeGroup());
-      } else {
-        articleBase.setSurchargeGroup(next.getSurchargeGroup());
+      ArticleBase current = articleBases.get(i);
+      if (next.getSuppliersItemNumber() <= current.getSuppliersItemNumber())
+        next = findNext(i + 1, articleBases);
+      if (diff(current, next) > diff(current, last))
+        current.setSurchargeGroup(last.getSurchargeGroup());
+      else current.setSurchargeGroup(next.getSurchargeGroup());
+    }
+  }
+
+  public static int diff(ArticleBase a, ArticleBase b) {
+    return Math.abs(a.getSuppliersItemNumber() - b.getSuppliersItemNumber());
+  }
+
+  public static ArticleBase findNext(int offset, List<? extends ArticleBase> articleBases) {
+    SurchargeGroup undef = SurchargeGroup.undefined();
+    for (int i = 0; i < articleBases.size(); i++) {
+      ArticleBase current = articleBases.get((offset + i) % articleBases.size());
+      if (!current.getSurchargeGroup().equals(undef)) {
+        return current;
       }
     }
+    throw new UnsupportedOperationException(
+        "cannot auto link articles without any set surcharge group");
   }
 }

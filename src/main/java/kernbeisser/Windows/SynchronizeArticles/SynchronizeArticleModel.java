@@ -14,8 +14,10 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
 import kernbeisser.Tasks.DTO.Catalog;
+import kernbeisser.Tasks.DTO.KornkraftGroup;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -106,17 +108,34 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
     em.close();
   }
 
+  private void refresh(
+      HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap, EntityManager em) {
+    HashMap<String, SurchargeGroup> nameRef = new HashMap<>();
+    em.createQuery("select s from SurchargeGroup s where supplier = :s", SurchargeGroup.class)
+        .setParameter("s", Supplier.getKKSupplier())
+        .getResultStream()
+        .forEach(e -> nameRef.put(e.pathString(), e));
+    surchargeGroupHashMap.replaceAll((a, b) -> nameRef.get(b.pathString()));
+  }
+
   void setProductGroups(Stream<String> source) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
-    new CatalogDataInterpreter(Catalog.read(source))
-        .linkArticlesAndPersistSurchargeGroups(
-            em.createQuery("select a from ArticleBase a where supplier = :s", ArticleBase.class)
-                .setParameter("s", Supplier.getKKSupplier())
-                .getResultList(),
-            em,
-            false);
+    Catalog catalog = Catalog.read(source);
+    HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap =
+        CatalogDataInterpreter.extractSurchargeGroups(
+            CatalogDataInterpreter.extractGroupsTree(catalog));
+    refresh(surchargeGroupHashMap, em);
+    HashMap<Long, SurchargeGroup> kornkraftGroupHashMap =
+        CatalogDataInterpreter.createNumberRefMap(catalog, surchargeGroupHashMap);
+    List<ArticleBase> articleBases =
+        em.createQuery("select a from ArticleBase a where supplier = :s", ArticleBase.class)
+            .setParameter("s", Supplier.getKKSupplier())
+            .getResultList();
+    CatalogDataInterpreter.linkArticles(articleBases, kornkraftGroupHashMap);
+    CatalogDataInterpreter.autoLinkArticle(articleBases);
+    articleBases.forEach(em::persist);
     em.flush();
     et.commit();
   }

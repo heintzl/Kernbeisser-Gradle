@@ -82,9 +82,7 @@ public class SynchronizeArticleController
   void linkSurchargeGroups() {
     try {
       model.setProductGroups(
-          Files.lines(
-              getView().requestInputFile("csv", "bnn", "BNN", "txt").toPath(),
-              Catalog.DEFAULT_ENCODING));
+          Files.lines(getView().requestInputFile("json").toPath(), Catalog.DEFAULT_ENCODING));
       getView().surchargeGroupsSet();
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);

@@ -117,16 +117,14 @@ public class ArticleBase {
   }
 
   public static ArticleBase getByBarcode(long barcode) {
+    return getGenericByBarcode(barcode, ArticleBase.class);
+  }
+
+  public static <T extends ArticleBase> T getGenericByBarcode(long barcode, Class<T> clazz) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      return em.createQuery("select i from Article i where barcode = :n", ArticleBase.class)
-          .setParameter("n", barcode)
-          .getSingleResult();
-    } catch (NoResultException f) {
-      return null;
-    } finally {
-      em.close();
-    }
+    return em.createQuery("select i from " + clazz.getSimpleName() + " i where barcode = :n", clazz)
+        .setParameter("n", barcode)
+        .getSingleResult();
   }
 
   public double getOfferNetPrice() {

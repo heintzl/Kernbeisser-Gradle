@@ -15,7 +15,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table
 @EqualsAndHashCode(doNotUseGetters = true)
-public class Container implements Serializable {
+public class PreOrder implements Serializable {
   @Id
   @GeneratedValue
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ID_READ)})
@@ -35,11 +35,6 @@ public class Container implements Serializable {
   private User user;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_USER_SURCHARGE_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_USER_SURCHARGE_WRITE)})
-  private double userSurcharge;
-
-  @Column
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_INFO_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_INFO_WRITE)})
   private String info;
@@ -48,16 +43,6 @@ public class Container implements Serializable {
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_AMOUNT_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_AMOUNT_WRITE)})
   private int amount;
-
-  @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_NET_PRICE_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_NET_PRICE_WRITE)})
-  private double netPrice;
-
-  @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_PAYED_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_PAYED_WRITE)})
-  private boolean payed;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
@@ -69,8 +54,8 @@ public class Container implements Serializable {
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATE_DATE_WRITE)})
   private Instant createDate;
 
-  public static List<Container> getAll(String condition) {
-    return Tools.getAll(Container.class, condition);
+  public static List<PreOrder> getAll(String condition) {
+    return Tools.getAll(PreOrder.class, condition);
   }
 
   public int getKBNumber() {
