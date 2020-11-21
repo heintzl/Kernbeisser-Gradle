@@ -213,7 +213,7 @@ public class ShoppingItem implements Serializable {
     } catch (NullPointerException ignored) {
     }
     try {
-      this.lastDeliveryMonth = Date.INSTANT_MONTH_YEAR.format(article.getLastDelivery());
+      this.lastDeliveryMonth = Date.INSTANT_MONTH_YEAR.format(Instant.now());
     } catch (NullPointerException ignored) {
     }
   }

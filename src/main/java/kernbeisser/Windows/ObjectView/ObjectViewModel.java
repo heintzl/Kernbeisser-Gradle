@@ -2,7 +2,6 @@ package kernbeisser.Windows.ObjectView;
 
 import java.util.Collection;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.MaskLoader;
@@ -35,8 +34,7 @@ public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
 
   ViewContainer openAdd(ViewContainer window, T selected, CloseEvent closeEvent) {
     return maskLoader
-        .accept(
-            copyValuesToAdd ? selected : (T) Tools.invokeConstructor(selected.getClass()), Mode.ADD)
+        .accept(copyValuesToAdd ? selected : null, Mode.ADD)
         .withCloseEvent(closeEvent)
         .openIn(new SubWindow(window));
   }

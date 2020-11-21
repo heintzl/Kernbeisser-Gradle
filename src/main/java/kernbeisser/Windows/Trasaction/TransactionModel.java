@@ -61,6 +61,8 @@ public class TransactionModel implements IModel<TransactionController> {
         throw e;
       }
     }
+    em.flush();
+    et.commit();
   }
 
   double getSum() {
