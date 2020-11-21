@@ -136,7 +136,7 @@ public class EditUserView implements IView<EditUserController> {
 
   @Override
   public @NotNull Dimension getSize() {
-    return new Dimension(500, 700);
+    return new Dimension(500, 830);
   }
 
   private void createUIComponents() {

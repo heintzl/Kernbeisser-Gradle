@@ -1,5 +1,6 @@
 package kernbeisser.Windows.EditItem;
 
+import java.awt.Dimension;
 import java.util.Collection;
 import javax.swing.*;
 import kernbeisser.CustomComponents.AccessChecking.AccessCheckBox;
@@ -210,6 +211,11 @@ public class EditItemView implements IView<EditItemController> {
 
   public void invalidInput() {
     JOptionPane.showMessageDialog(getTopComponent(), "Bitte fülle alle Werte korrekt aus");
+  }
+
+  @Override
+  public @NotNull Dimension getSize() {
+    return new Dimension(1200, 1000);
   }
 
   public MetricUnits getMetricUnits() {
