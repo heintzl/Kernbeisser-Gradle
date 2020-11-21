@@ -129,18 +129,22 @@ public class ArticleBase {
     }
   }
 
-  public double getOfferNetPrice() throws NoResultException {
+  public double getOfferNetPrice() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    double offerNetPrice =
-        em.createQuery(
-                "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
-                Offer.class)
-            .setParameter("id", id)
-            .setParameter("d", Instant.now())
-            .getSingleResult()
-            .getSpecialNetPrice();
-    em.close();
-    return offerNetPrice;
+    try {
+      double offerNetPrice =
+          em.createQuery(
+                  "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
+                  Offer.class)
+              .setParameter("id", id)
+              .setParameter("d", Instant.now())
+              .getSingleResult()
+              .getSpecialNetPrice();
+      em.close();
+      return offerNetPrice;
+    } catch (NoResultException e) {
+      return -999.0;
+    }
   }
 
   @Override
