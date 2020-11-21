@@ -159,12 +159,13 @@ public class ShoppingItem implements Serializable {
   public ShoppingItem(ArticleBase articleBase, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
     this.amount = articleBase.getAmount();
-    try {
-      this.itemNetPrice = articleBase.getOfferNetPrice();
-      this.specialOffer = true;
-    } catch (NoResultException e) {
+    double offerNetPrice = articleBase.getOfferNetPrice();
+    if (offerNetPrice == -999.0) {
       this.itemNetPrice = articleBase.getNetPrice();
       this.specialOffer = false;
+    } else {
+      this.itemNetPrice = offerNetPrice;
+      this.specialOffer = true;
     }
     this.name = (specialOffer ? Setting.OFFER_PREFIX.getStringValue() : "") + articleBase.getName();
     this.metricUnits = articleBase.getMetricUnits();
