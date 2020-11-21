@@ -2,12 +2,14 @@ package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +18,6 @@ public class PreOrderView implements IView<PreOrderController> {
   private kernbeisser.CustomComponents.PermissionButton add;
   private ObjectTable<PreOrder> preOrders;
   private IntegerParseField amount;
-  private IntegerParseField kbNumber;
   private JLabel name;
   private JLabel containerSize;
   private JLabel sellingPrice;
@@ -25,6 +26,9 @@ public class PreOrderView implements IView<PreOrderController> {
   private JLabel netPrice;
   private JComboBox<User> user;
   private IntegerParseField kkNumber;
+  private JButton schließenButton;
+  private JButton abhakplanButton;
+  private JButton bestellungExportierenButton;
 
   @Linked private PreOrderController controller;
 
@@ -41,7 +45,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   int getKkNumber() {
-    return kbNumber.getSafeValue();
+    return kkNumber.getSafeValue();
   }
 
   void setKkNumber(int s) {
@@ -55,12 +59,17 @@ public class PreOrderView implements IView<PreOrderController> {
   private void createUIComponents() {
     preOrders =
         new ObjectTable<>(
+            Column.create("Benutzer", e -> e.getUser().getFullName()),
             Column.create("Anzahl", PreOrder::getAmount),
             Column.create("Ladennummer", PreOrder::getKBNumber),
             Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber()),
             Column.create("Produktname", e -> e.getItem().getName()),
-            Column.create("Netto-Preis", e -> e.getItem().getNetPrice() + "€"),
-            Column.create("Verkaufspreis", e -> "notDefined" + "€"));
+            Column.create(
+                "Netto-Preis", e -> e.getItem().getNetPrice() + "€", SwingConstants.RIGHT));
+  }
+
+  void setPreOrders(Collection<PreOrder> preOrders) {
+    this.preOrders.setObjects(preOrders);
   }
 
   void setItemName(String s) {
@@ -79,14 +88,6 @@ public class PreOrderView implements IView<PreOrderController> {
     return preOrders.getSelectedObject();
   }
 
-  public int getKbNumber() {
-    return kbNumber.getSafeValue();
-  }
-
-  void setKbNumber(int s) {
-    kbNumber.setText(String.valueOf(s));
-  }
-
   void noItemFound() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
@@ -102,13 +103,6 @@ public class PreOrderView implements IView<PreOrderController> {
             controller.searchKK();
           }
         });
-    kbNumber.addKeyListener(
-        new KeyAdapter() {
-          @Override
-          public void keyReleased(KeyEvent e) {
-            controller.searchKB();
-          }
-        });
     add.addActionListener(e -> controller.add());
     preOrders.addKeyListener(
         new KeyAdapter() {
@@ -117,6 +111,7 @@ public class PreOrderView implements IView<PreOrderController> {
             if (e.getKeyCode() == KeyEvent.VK_DELETE) controller.delete();
           }
         });
+    kkNumber.addActionListener(e -> controller.add());
   }
 
   @Override
@@ -144,5 +139,19 @@ public class PreOrderView implements IView<PreOrderController> {
 
   public void remove(PreOrder selected) {
     preOrders.remove(selected);
+  }
+
+  public void setUser(Collection<User> allUser) {
+    user.removeAllItems();
+    allUser.forEach(user::addItem);
+  }
+
+  public void noArticleFoundForBarcode(String barcode) {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Konnte keinen Kornkraft-Artikel mit Barcode \"" + barcode + "\" finden",
+        "Artikel nicht gefunden",
+        JOptionPane.INFORMATION_MESSAGE);
   }
 }

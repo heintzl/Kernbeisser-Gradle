@@ -1,30 +1,24 @@
 package kernbeisser.Windows.PreOrder;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.PreOrder;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.MVC.IModel;
-import lombok.Cleanup;
 
 public class PreOrderModel implements IModel<PreOrderController> {
-  private final Collection<PreOrder> newPreOrders = new ArrayList<>();
+  private final EntityManager em = DBConnection.getEntityManager();
+  private final EntityTransaction et = em.getTransaction();
 
-  void saveChanges() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
+  {
     et.begin();
-    newPreOrders.forEach(em::persist);
-    em.flush();
-    et.commit();
-    em.close();
   }
 
-  ArticleKornkraft getItemByKbNumber(int kbNumber) {
-    return ArticleKornkraft.getByKbNumber(kbNumber);
+  Collection<User> getAllUser() {
+    return User.getAll(null);
   }
 
   ArticleKornkraft getItemByKkNumber(int kkNumber) {
@@ -32,10 +26,26 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public void add(PreOrder preOrder) {
-    newPreOrders.add(preOrder);
+    em.persist(preOrder);
+    em.flush();
   }
 
   public void remove(PreOrder selected) {
-    newPreOrders.remove(selected);
+    em.remove(selected);
+    em.flush();
+  }
+
+  public ArticleKornkraft getByBarcode(String s) {
+    return ArticleKornkraft.getByBarcode(Long.parseLong(s));
+  }
+
+  Collection<PreOrder> getAllPreOrders() {
+    return em.createQuery("select p from PreOrder p", PreOrder.class).getResultList();
+  }
+
+  public void close() {
+    em.flush();
+    et.commit();
+    em.close();
   }
 }

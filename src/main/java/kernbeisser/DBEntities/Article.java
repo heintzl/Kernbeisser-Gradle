@@ -145,16 +145,7 @@ public class Article extends ArticleBase {
   }
 
   public static Article getByBarcode(long barcode) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      return em.createQuery("select i from Article i where barcode = :n", Article.class)
-          .setParameter("n", barcode)
-          .getSingleResult();
-    } catch (NoResultException f) {
-      return null;
-    } finally {
-      em.close();
-    }
+    return getGenericByBarcode(barcode, Article.class);
   }
 
   @Override

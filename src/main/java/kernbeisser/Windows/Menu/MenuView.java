@@ -133,9 +133,7 @@ public class MenuView implements IView<MenuController> {
     editJobs = new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab);
     editApplicationSettings =
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
-    order =
-        new ControllerButton(
-            () -> new PreOrderController(LogInModel.getLoggedIn()), PreOrderController.class);
+    order = new ControllerButton(PreOrderController::new, PreOrderController.class);
     // NOT IMPLEMENTED
     placeHolderControllerButton1 = ControllerButton.empty();
     // NOT IMPLEMENTED

@@ -1,11 +1,12 @@
 package kernbeisser.Windows.PreOrder;
 
+import java.awt.event.KeyEvent;
 import javax.persistence.NoResultException;
+import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PreOrderController extends Controller<PreOrderView, PreOrderModel> {
 
-  public PreOrderController(User user) {
+  public PreOrderController() {
     super(new PreOrderModel());
   }
 
@@ -24,7 +25,6 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   void searchKK() {
     try {
-      getView().setKbNumber(0);
       pasteDataInView(model.getItemByKkNumber(getView().getKkNumber()));
     } catch (NoResultException e) {
       noArticleFound();
@@ -35,6 +35,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     try {
       PreOrder order = obtainFromView();
       noArticleFound();
+      getView().setKkNumber(0);
       model.add(order);
       getView().addPreOrder(order);
     } catch (NoResultException e) {
@@ -59,6 +60,12 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     pasteDataInView(empty);
   }
 
+  @Override
+  protected boolean commitClose() {
+    model.close();
+    return true;
+  }
+
   void pasteDataInView(ArticleKornkraft articleKornkraft) {
     var view = getView();
     view.setAmount(String.valueOf(1));
@@ -81,34 +88,45 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   private ArticleKornkraft findArticle() {
-    int kkNumber = getView().getKkNumber();
-    int kbNumber = getView().getKbNumber();
-    try {
-      if (kbNumber == 0) throw new NoResultException();
-      return model.getItemByKbNumber(kbNumber);
-    } catch (NoResultException e) {
-      if (kkNumber == 0) throw new NoResultException();
-      return model.getItemByKkNumber(kkNumber);
-    }
+    if (getView().getKkNumber() == 0) throw new NoResultException();
+    return model.getItemByKkNumber(getView().getKkNumber());
   }
 
-  void searchKB() {
-    try {
-      getView().setKkNumber(0);
-      pasteDataInView(model.getItemByKbNumber(getView().getKbNumber()));
-    } catch (NoResultException e) {
-      noArticleFound();
-    }
+  void insert(ArticleKornkraft articleBase) {
+    if (articleBase == null) throw new NullPointerException("cannot insert null as PreOrder");
+    PreOrder preOrder = new PreOrder();
+    var view = getView();
+    preOrder.setUser(view.getUser());
+    preOrder.setItem(articleBase);
+    preOrder.setAmount(view.getAmount());
+    preOrder.setInfo(articleBase.getInfo());
+    model.add(preOrder);
+    getView().addPreOrder(preOrder);
   }
 
   @Override
   public void fillView(PreOrderView preOrderView) {
     preOrderView.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
+    preOrderView.setUser(model.getAllUser());
+    preOrderView.setPreOrders(model.getAllPreOrders());
     noArticleFound();
   }
 
   @Override
   public PermissionKey[] getRequiredKeys() {
     return new PermissionKey[0];
+  }
+
+  @Override
+  protected boolean processKeyboardInput(KeyEvent e) {
+    return new BarcodeCapture(this::processBarcode).processKeyEvent(e);
+  }
+
+  private void processBarcode(String s) {
+    try {
+      insert(model.getByBarcode(s));
+    } catch (NoResultException e) {
+      getView().noArticleFoundForBarcode(s);
+    }
   }
 }

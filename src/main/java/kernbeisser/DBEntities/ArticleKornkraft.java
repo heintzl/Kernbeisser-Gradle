@@ -36,14 +36,8 @@ public class ArticleKornkraft extends ArticleBase implements Serializable {
         .getSingleResult();
   }
 
-  public static ArticleKornkraft getByKbNumber(int kbNumber) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return em.createQuery(
-            "select ik from ArticleKornkraft ik where ik.supplier = :kbs and id in (select kb.id from Article kb where kbNumber = :n)",
-            ArticleKornkraft.class)
-        .setParameter("kbs", Supplier.getKKSupplier())
-        .setParameter("n", kbNumber)
-        .getSingleResult();
+  public static ArticleKornkraft getByBarcode(long barcode) {
+    return getGenericByBarcode(barcode, ArticleKornkraft.class);
   }
 
   @Override
