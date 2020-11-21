@@ -11,6 +11,7 @@ import javax.transaction.NotSupportedException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.*;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -149,6 +150,10 @@ public class ShoppingItem implements Serializable {
   @Getter @Transient private double articleSurcharge;
 
   @Getter @Transient private boolean specialOffer;
+  // required for article labels and pricelists
+  @Getter @Transient private String shortBarcode = "";
+
+  @Getter @Transient private String lastDeliveryMonth = "";
 
   /**
    * @param articleBase most ShoppingItem properties are copied from given article. surcharge gets
@@ -202,6 +207,15 @@ public class ShoppingItem implements Serializable {
     this.articleSurcharge =
         article.getSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
+    try {
+      String barcode = Long.toString(article.getBarcode());
+      this.shortBarcode = barcode.substring(barcode.length() - 4);
+    } catch (NullPointerException ignored) {
+    }
+    try {
+      this.lastDeliveryMonth = Date.INSTANT_MONTH_YEAR.format(article.getLastDelivery());
+    } catch (NullPointerException ignored) {
+    }
   }
 
   public static ShoppingItem createRawPriceProduct(
