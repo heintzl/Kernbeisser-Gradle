@@ -100,4 +100,27 @@ public class SurchargeGroup implements Serializable, Cloneable {
     SurchargeGroup that = (SurchargeGroup) o;
     return Objects.equals(id, that.id);
   }
+
+  public static SurchargeGroup undefined() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    try {
+      return em.createQuery(
+              "select s from SurchargeGroup s where s.name = 'UNDEFINED'", SurchargeGroup.class)
+          .getSingleResult();
+    } catch (NoResultException e) {
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      SurchargeGroup surchargeGroup = new SurchargeGroup();
+      surchargeGroup.setName("UNDEFINED");
+      em.persist(surchargeGroup);
+      em.flush();
+      et.commit();
+      return surchargeGroup;
+    }
+  }
+
+  public String pathString() {
+    if (parent == null) return name;
+    return parent.pathString() + ":" + name;
+  }
 }

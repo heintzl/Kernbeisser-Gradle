@@ -10,7 +10,6 @@ import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
-import kernbeisser.Windows.Container.ContainerController;
 import kernbeisser.Windows.EditItems.EditItemsController;
 import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSuppliers.EditSuppliers;
@@ -25,6 +24,7 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
+import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.Setting.SettingController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.SpecialPriceEditor.SpecialPriceEditorController;
@@ -135,7 +135,7 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
     order =
         new ControllerButton(
-            () -> new ContainerController(LogInModel.getLoggedIn()), ContainerController.class);
+            () -> new PreOrderController(LogInModel.getLoggedIn()), PreOrderController.class);
     // NOT IMPLEMENTED
     placeHolderControllerButton1 = ControllerButton.empty();
     // NOT IMPLEMENTED

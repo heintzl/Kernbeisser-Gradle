@@ -12,6 +12,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
@@ -24,7 +25,8 @@ public class Articles {
       HashSet<Long> barcodes,
       HashSet<String> names,
       HashMap<String, Supplier> suppliers,
-      HashMap<String, PriceList> priceLists)
+      HashMap<String, PriceList> priceLists,
+      SurchargeGroup surchargeGroup)
       throws CannotParseException {
     Article article = new Article();
     article.setName(rawArticleValues[1].replace("%", "Prozent"));
@@ -69,6 +71,7 @@ public class Articles {
     // Integer::parseInt));
     // TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
     article.setVerified(Boolean.parseBoolean(rawArticleValues[36]));
+    article.setSurchargeGroup(surchargeGroup);
     return article;
   }
 

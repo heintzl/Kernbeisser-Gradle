@@ -16,6 +16,7 @@ import kernbeisser.DBEntities.Offer;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -166,12 +167,13 @@ public class DataImportModel implements IModel<DataImportController> {
     Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
     Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
     ErrorCollector errorCollector = new ErrorCollector();
+    SurchargeGroup undef = SurchargeGroup.undefined();
     f.forEach(
         e -> {
           String[] columns = e.split(";");
           try {
             articleCollectionHashMap.put(
-                Articles.parse(columns, barcode, names, suppliers, priceListHashMap),
+                Articles.parse(columns, barcode, names, suppliers, priceListHashMap, undef),
                 Articles.extractOffers(columns));
           } catch (CannotParseException ex) {
             errorCollector.collect(ex);
@@ -180,10 +182,17 @@ public class DataImportModel implements IModel<DataImportController> {
     Main.logger.warn("Ignored " + errorCollector.count() + " articles errors:");
     errorCollector.log();
     progress.accept(5);
-    new CatalogDataInterpreter(Catalog.read(kornkraftJson))
-        .linkArticlesAndPersistSurchargeGroups(
-            new ArrayList<>(articleCollectionHashMap.keySet()), em, true);
-    articleCollectionHashMap.keySet().forEach(em::persist);
+    ArrayList<Article> articles = new ArrayList<>(articleCollectionHashMap.keySet());
+    Catalog catalog = Catalog.read(kornkraftJson);
+    HashMap<Long, SurchargeGroup> surchargeGroupHashMap =
+        CatalogDataInterpreter.createNumberRefMap(
+            catalog,
+            CatalogDataInterpreter.extractSurchargeGroups(
+                CatalogDataInterpreter.extractGroupsTree(catalog), em));
+    CatalogDataInterpreter.linkArticles(articles, surchargeGroupHashMap);
+    CatalogDataInterpreter.autoLinkArticle(articles);
+    em.flush();
+    articles.forEach(em::persist);
     progress.accept(6);
     em.flush();
     et.commit();

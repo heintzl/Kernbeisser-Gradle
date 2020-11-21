@@ -20,7 +20,7 @@
         <class>kernbeisser.DBEntities.Job</class>
         <class>kernbeisser.DBEntities.Transaction</class>
         <class>kernbeisser.DBEntities.SurchargeGroup</class>
-        <class>kernbeisser.DBEntities.Container</class>
+        <class>kernbeisser.DBEntities.PreOrder</class>
         <class>kernbeisser.DBEntities.Permission</class>
         <class>kernbeisser.DBEntities.Offer</class>
         <class>kernbeisser.DBEntities.SettingValue</class>

@@ -12,6 +12,7 @@ import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
@@ -49,7 +50,11 @@ public class Catalog {
                       });
               setDeposit(newCatalog);
               int c = 0;
+              SurchargeGroup undefined = SurchargeGroup.undefined();
               for (ArticleKornkraft articleKornkraft : newCatalog) {
+                if (articleKornkraft.getSurchargeGroup() == null) {
+                  articleKornkraft.setSurchargeGroup(undefined);
+                }
                 em.persist(articleKornkraft);
                 if (c % 500 == 0) em.flush();
                 c++;
