@@ -14,4 +14,8 @@ public class Date {
       DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
           .withLocale(Locale.GERMANY)
           .withZone(ZoneId.systemDefault());
+  public static DateTimeFormatter INSTANT_MONTH_YEAR =
+      DateTimeFormatter.ofPattern("MMMuu")
+          .withLocale(Locale.GERMANY)
+          .withZone(ZoneId.systemDefault());
 }
