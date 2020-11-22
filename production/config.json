@@ -1,18 +1,29 @@
 {
-  "dbIsInitialized": false,
-  "CatalogSource": "",
-  "DBAccess": {
-    "Username": "Application",
-    "URL": "jdbc:mysql://localhost/kernbeisser"
+  "imagePath": {
+    "path": "images"
   },
-  "ImagePath": "src/main/resources/Images/Icons",
-  "Reports": {
-    "userBalanceFileName": "GuthabenUebersicht.jrxml",
-    "tillrollFileName": "Bonrolle.jrxml",
-    "reportDirectory": "reports",
-    "outputDirectory": "reports",
-    "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
-    "keyUserListFileName": "BenutzerSchlüssel.jrxml",
-    "invoiceFileName": "Kerni_Rechnung.jrxml"
+  "dbIsInitialized": false,
+  "dbAccess": {
+    "url": "",
+    "username": "",
+    "password": ""
+  },
+  "reports": {
+    "reportDirectory": {
+      "path": "reports"
+    },
+    "outputDirectory": {
+      "path": "reports/output"
+    },
+    "reports": {
+      "userBalanceFileName": "GuthabenUebersicht.jrxml",
+      "articleLabel": "Etiketten.jrxml",
+      "tillrollFileName": "Bonrolle.jrxml",
+      "preOrderChecklist": "Abhakplan.jrxml",
+      "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
+      "keyUserListFileName": "BenutzerSchlüssel.jrxml",
+      "invoiceFileName": "Kerni_Rechnung.jrxml",
+      "priceList": "Preisliste.jrxml"
+    }
   }
 }

@@ -41,7 +41,7 @@ public class PriceList implements Serializable {
   @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_SUPER_PRICE_LIST_WRITE)})
   private PriceList superPriceList;
 
-  @Column @Getter private Instant lastPrint;
+  @Column @Getter @Setter private Instant lastPrint;
 
   @UpdateTimestamp
   @Getter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_UPDATE_DATE_READ)})
