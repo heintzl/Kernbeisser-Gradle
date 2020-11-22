@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
@@ -63,8 +65,23 @@ public class Catalog {
               et.commit();
               em.close();
               onSuccess.run();
+              autoLinkAllUndefArticles(Supplier.getKKSupplier());
             })
         .start();
+  }
+
+  public static void autoLinkAllUndefArticles(Supplier supplier) {
+    EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    List<ArticleBase> articleBases =
+        em.createQuery("select a from ArticleBase a where a.supplier = :s", ArticleBase.class)
+            .setParameter("s", supplier)
+            .getResultList();
+    CatalogDataInterpreter.autoLinkArticle(articleBases);
+    articleBases.forEach(em::persist);
+    et.commit();
+    em.close();
   }
 
   public static ArticleKornkraft parseArticle(ArticleKornkraft base, String[] source)
