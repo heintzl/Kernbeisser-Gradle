@@ -114,6 +114,7 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
     kkNumber.addActionListener(e -> controller.add());
+    abhakplanButton.addActionListener(e -> controller.printChecklist());
     close.addActionListener(e -> back());
   }
 

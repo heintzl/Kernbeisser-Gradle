@@ -129,4 +129,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       getView().noArticleFoundForBarcode(s);
     }
   }
+
+  public void printChecklist() {
+    model.printCheckList();
+  }
 }
