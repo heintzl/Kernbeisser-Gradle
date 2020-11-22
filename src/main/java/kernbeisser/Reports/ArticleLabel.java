@@ -12,7 +12,7 @@ public class ArticleLabel extends Report {
   private final List<Article> articles;
 
   public ArticleLabel(List<Article> articles) {
-    super("ArticleLabel", "Etiketten");
+    super("articleLabel", "Etiketten");
     this.articles = articles;
   }
 
@@ -23,6 +23,6 @@ public class ArticleLabel extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    return articles.stream().map(a -> new ShoppingItem(a, 0, false)).collect(Collectors.toList());
+    return articles.stream().map(ShoppingItem::createReportItem).collect(Collectors.toList());
   }
 }
