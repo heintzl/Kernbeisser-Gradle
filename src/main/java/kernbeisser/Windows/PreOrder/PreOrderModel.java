@@ -7,6 +7,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Reports.PreOrderChecklist;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 
 public class PreOrderModel implements IModel<PreOrderController> {
@@ -47,5 +49,10 @@ public class PreOrderModel implements IModel<PreOrderController> {
     em.flush();
     et.commit();
     em.close();
+  }
+
+  public void printCheckList() {
+    PreOrderChecklist checklist = new PreOrderChecklist();
+    checklist.sendToPrinter("Abhakplan wird gedruckt...", e -> Tools.showUnexpectedErrorWarning(e));
   }
 }
