@@ -207,15 +207,20 @@ public class ShoppingItem implements Serializable {
     this.articleSurcharge =
         article.getSurchargeGroup().getSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
+  }
+
+  public static ShoppingItem createReportItem(Article article) {
+    ShoppingItem item = new ShoppingItem(article, 0, false);
     try {
       String barcode = Long.toString(article.getBarcode());
-      this.shortBarcode = barcode.substring(barcode.length() - 4);
+      item.shortBarcode = barcode.substring(barcode.length() - 4);
     } catch (NullPointerException ignored) {
     }
     try {
-      this.lastDeliveryMonth = Date.INSTANT_MONTH_YEAR.format(Instant.now());
+      item.lastDeliveryMonth = Date.INSTANT_MONTH_YEAR.format(article.getLastDelivery());
     } catch (NullPointerException ignored) {
     }
+    return item;
   }
 
   public static ShoppingItem createRawPriceProduct(
