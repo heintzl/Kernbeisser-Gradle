@@ -23,6 +23,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   private ObjectTree<PriceList> priceLists;
   private JPanel main;
   private JButton moveItems;
+  private JButton print;
 
   @Linked private ManagePriceListsController controller;
 
@@ -33,6 +34,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     renamePriceList.addActionListener(controller);
     moveArticles.addActionListener(controller);
     moveItems.addActionListener(controller);
+    print.addActionListener(controller);
   }
 
   @Override
