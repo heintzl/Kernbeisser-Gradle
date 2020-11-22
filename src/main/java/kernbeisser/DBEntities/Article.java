@@ -148,6 +148,20 @@ public class Article extends ArticleBase {
     return getGenericByBarcode(barcode, Article.class);
   }
 
+  public Instant getLastDelivery() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    Instant lastDelivery =
+        em.createQuery(
+                "select i from ShoppingItem i where purchase_id is null and suppliersItemNumber = :k order by i.createDate desc",
+                ShoppingItem.class)
+            .setParameter("k", this.getSuppliersItemNumber())
+            .getResultStream()
+            .findFirst()
+            .orElseGet(ShoppingItem::new)
+            .getCreateDate();
+    return lastDelivery;
+  }
+
   @Override
   public String toString() {
     return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");
