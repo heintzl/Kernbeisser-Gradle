@@ -4,6 +4,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
@@ -24,9 +25,9 @@ public class PreOrderView implements IView<PreOrderController> {
   private JPanel main;
   private JPanel insertSection;
   private JLabel netPrice;
-  private JComboBox<User> user;
+  private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<User> user;
   private IntegerParseField kkNumber;
-  private JButton schließenButton;
+  private JButton close;
   private JButton abhakplanButton;
   private JButton bestellungExportierenButton;
 
@@ -66,6 +67,7 @@ public class PreOrderView implements IView<PreOrderController> {
             Column.create("Produktname", e -> e.getItem().getName()),
             Column.create(
                 "Netto-Preis", e -> e.getItem().getNetPrice() + "€", SwingConstants.RIGHT));
+    user = new AdvancedComboBox<>(User::getFullName);
   }
 
   void setPreOrders(Collection<PreOrder> preOrders) {
@@ -112,6 +114,7 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
     kkNumber.addActionListener(e -> controller.add());
+    close.addActionListener(e -> back());
   }
 
   @Override
