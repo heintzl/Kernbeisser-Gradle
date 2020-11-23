@@ -14,9 +14,10 @@
 		<![CDATA[]]>
 	</queryString>
 	<field name="user.fullName" class="java.lang.String"/>
-	<field name="item.name" class="java.lang.String"/>
-	<field name="item.suppliersItemNumber" class="java.lang.Integer"/>
+	<field name="article.name" class="java.lang.String"/>
+	<field name="article.suppliersItemNumber" class="java.lang.Integer"/>
 	<field name="amount" class="java.lang.Integer"/>
+	<field name="retarded" class="java.lang.Boolean"/>
 	<group name="User">
 		<groupExpression><![CDATA[$F{user.fullName}]]></groupExpression>
 		<groupHeader>
@@ -31,7 +32,7 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="23"/>
+			<band height="33"/>
 		</groupFooter>
 	</group>
 	<background>
@@ -145,26 +146,46 @@
 				<textElement textAlignment="Right">
 					<font size="13"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{item.suppliersItemNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{article.suppliersItemNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="240" y="1" width="258" height="17" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
+					<printWhenExpression><![CDATA[!$F{retarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font size="13"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{item.name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="198" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
+					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="13" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="240" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
+					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Nachlief.:]]></text>
+			</staticText>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="45" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</summary>
 </jasperReport>

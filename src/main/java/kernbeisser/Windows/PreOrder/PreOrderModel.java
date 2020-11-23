@@ -14,7 +14,7 @@ import kernbeisser.Windows.MVC.IModel;
 
 public class PreOrderModel implements IModel<PreOrderController> {
   private final EntityManager em = DBConnection.getEntityManager();
-  private final EntityTransaction et = em.getTransaction();
+  private EntityTransaction et = em.getTransaction();
 
   {
     et.begin();
@@ -58,8 +58,16 @@ public class PreOrderModel implements IModel<PreOrderController> {
     em.close();
   }
 
+  private void saveData() {
+    em.flush();
+    et.commit();
+    et = em.getTransaction();
+    et.begin();
+  }
+
   public void printCheckList() {
-    PreOrderChecklist checklist = new PreOrderChecklist();
-    checklist.sendToPrinter("Abhakplan wird gedruckt...", e -> Tools.showUnexpectedErrorWarning(e));
+    saveData();
+    PreOrderChecklist checklist = new PreOrderChecklist(getAllPreOrders());
+    checklist.sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
   }
 }

@@ -24,9 +24,14 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void searchKK() {
-    try {
-      pasteDataInView(model.getItemByKkNumber(getView().getKkNumber()));
-    } catch (NoResultException e) {
+    PreOrderView view = getView();
+    if (view.getKkNumber() != 0) {
+      try {
+        pasteDataInView(model.getItemByKkNumber(view.getKkNumber()));
+      } catch (NoResultException e) {
+        noArticleFound();
+      }
+    } else {
       noArticleFound();
     }
   }
@@ -81,7 +86,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     ArticleKornkraft article = findArticle();
     var view = getView();
     preOrder.setUser(view.getUser());
-    preOrder.setItem(article);
+    preOrder.setArticle(article);
     preOrder.setAmount(view.getAmount());
     preOrder.setInfo(article.getInfo());
     return preOrder;
@@ -97,7 +102,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     PreOrder preOrder = new PreOrder();
     var view = getView();
     preOrder.setUser(view.getUser());
-    preOrder.setItem(articleBase);
+    preOrder.setArticle(articleBase);
     preOrder.setAmount(view.getAmount());
     preOrder.setInfo(articleBase.getInfo());
     model.add(preOrder);

@@ -2,11 +2,15 @@ package kernbeisser.DBEntities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import javax.persistence.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +30,7 @@ public class PreOrder implements Serializable {
   @JoinColumn
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_WRITE)})
-  private ArticleKornkraft item;
+  private ArticleBase article;
 
   @ManyToOne
   @JoinColumn
@@ -58,14 +62,21 @@ public class PreOrder implements Serializable {
     return Tools.getAll(PreOrder.class, condition);
   }
 
+  public boolean isRetarded() {
+    return ChronoUnit.DAYS.between(createDate, Instant.now())
+        > Setting.PREORDERRETARD_THRESHOLD.getIntValue();
+  }
+
   public int getKBNumber() {
-    List<Article> articles =
-        Article.getAll("where suppliersItemNumber = " + item.getSuppliersItemNumber());
-    if (articles.size() == 0) {
-      return -1;
-    } else {
-      return articles.get(0).getKbNumber();
-    }
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery(
+            "select a.kbNumber from Article a where  suppliersItemNumber = :i and supplier = :s",
+            Integer.class)
+        .setParameter("i", article.getSuppliersItemNumber())
+        .setParameter("s", article.getSupplier())
+        .getResultStream()
+        .findFirst()
+        .orElse(-1);
   }
 
   @Override

@@ -63,8 +63,8 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
   public void print(PriceList selectedList) {
     AtomicBoolean printed = new AtomicBoolean(true);
     PriceListReport report = new PriceListReport(selectedList);
-    report.exportPdf(
-        "Preisliste wird exportiert...",
+    report.sendToPrinter(
+        "Preisliste wird gedruckt...",
         e -> {
           printed.set(false);
           Report.pdfExportException(e);
