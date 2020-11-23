@@ -196,7 +196,7 @@ public abstract class Report {
       JOptionPane.showMessageDialog(
           null,
           "Die Datei kann nicht geschrieben werden,\nweil sie in einer anderen Anwendung geöffnet ist.\n"
-              + "Bitte die Datei schließen und den Export erneut aufrufen\n",
+              + "Bitte die Datei schließen und den Export erneut aufrufen!\n",
           "Fehler beim Dateizugriff",
           JOptionPane.ERROR_MESSAGE);
       throw new RuntimeException(f);
