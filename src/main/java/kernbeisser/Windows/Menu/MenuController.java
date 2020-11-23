@@ -53,5 +53,7 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   }
 
   @Override
-  protected void closed() {}
+  protected void closed() {
+    SwingUtilities.getWindowAncestor(getView().getContent()).dispose();
+  }
 }
