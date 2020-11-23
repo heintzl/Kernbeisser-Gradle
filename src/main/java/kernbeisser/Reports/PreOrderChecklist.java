@@ -4,11 +4,13 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Map;
 import kernbeisser.DBEntities.PreOrder;
-import kernbeisser.DBEntities.User;
 
 public class PreOrderChecklist extends Report {
-  public PreOrderChecklist() {
+  private final Collection<PreOrder> preorder;
+
+  public PreOrderChecklist(Collection<PreOrder> preorder) {
     super("preOrderChecklist", "preOrderChecklist" + LocalDate.now().toString());
+    this.preorder = preorder;
   }
 
   @Override
@@ -18,6 +20,6 @@ public class PreOrderChecklist extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    return PreOrder.getAll("where user_id <> " + User.getKernbeisserUser().getId());
+    return preorder;
   }
 }
