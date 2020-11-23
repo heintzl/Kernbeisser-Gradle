@@ -63,10 +63,10 @@ public class PreOrderView implements IView<PreOrderController> {
             Column.create("Benutzer", e -> e.getUser().getFullName()),
             Column.create("Anzahl", PreOrder::getAmount),
             Column.create("Ladennummer", PreOrder::getKBNumber),
-            Column.create("Kornkraftnummer", e -> e.getItem().getSuppliersItemNumber()),
-            Column.create("Produktname", e -> e.getItem().getName()),
+            Column.create("Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber()),
+            Column.create("Produktname", e -> e.getArticle().getName()),
             Column.create(
-                "Netto-Preis", e -> e.getItem().getNetPrice() + "€", SwingConstants.RIGHT));
+                "Netto-Preis", e -> e.getArticle().getNetPrice() + "€", SwingConstants.RIGHT));
     user = new AdvancedComboBox<>(User::getFullName);
   }
 
