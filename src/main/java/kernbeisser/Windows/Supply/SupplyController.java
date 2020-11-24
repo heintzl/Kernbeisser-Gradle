@@ -43,7 +43,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public ShoppingItem addItem(double amount) throws CannotParseException {
-    if(!model.articleExists(getView().getSuppliersItemNumber()))throw new NoResultException();
+    if (!model.articleExists(getView().getSuppliersItemNumber())) throw new NoResultException();
     ArticleBase ab = getView().getObjectForm().getData();
     if (ab == null) throw new NoResultException();
     if (!model.isArticle(ab)) {
@@ -71,8 +71,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   @Override
   protected boolean commitClose() {
-    if(getView().shouldPrintLabels())
-      model.print();
+    if (getView().shouldPrintLabels()) model.print();
     return model.getShoppingItems().size() == 0 || getView().commitClose();
   }
 

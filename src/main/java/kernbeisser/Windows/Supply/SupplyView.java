@@ -222,6 +222,8 @@ public class SupplyView implements IView<SupplyController> {
   }
 
   public boolean shouldPrintLabels() {
-    return JOptionPane.showConfirmDialog(getTopComponent(),"Sollen die ausgewählten Ladenschielder ausgedruckt werden?") == 0;
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(), "Sollen die ausgewählten Ladenschielder ausgedruckt werden?")
+        == 0;
   }
 }

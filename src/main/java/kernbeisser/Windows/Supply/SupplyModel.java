@@ -120,11 +120,16 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   void print() {
-    @Cleanup
-    EntityManager em = DBConnection.getEntityManager();
-    HashMap<Integer,Article> articleHashMap = new HashMap<>();
-    em.createQuery("select a from Article a",Article.class).getResultStream().forEach(e -> articleHashMap.put(e.getSuppliersItemNumber(),e));
-    new ArticleLabel(print.stream().map(e -> articleHashMap.get(e.getSuppliersItemNumber())).collect(Collectors.toCollection(ArrayList::new))).exportPdf("Drucke Ladenschilder",Tools::showUnexpectedErrorWarning);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    HashMap<Integer, Article> articleHashMap = new HashMap<>();
+    em.createQuery("select a from Article a", Article.class)
+        .getResultStream()
+        .forEach(e -> articleHashMap.put(e.getSuppliersItemNumber(), e));
+    new ArticleLabel(
+            print.stream()
+                .map(e -> articleHashMap.get(e.getSuppliersItemNumber()))
+                .collect(Collectors.toCollection(ArrayList::new)))
+        .exportPdf("Drucke Ladenschilder", Tools::showUnexpectedErrorWarning);
   }
 
   public void togglePrint(ArticleBase bases) {
@@ -136,6 +141,6 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   public boolean articleExists(int suppliersItemNumber) {
-    return findBySuppliersItemNumber(Supplier.getKKSupplier(),suppliersItemNumber).size() != 0;
+    return findBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersItemNumber).size() != 0;
   }
 }
