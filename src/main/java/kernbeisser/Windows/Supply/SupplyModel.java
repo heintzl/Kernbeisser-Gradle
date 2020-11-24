@@ -2,8 +2,10 @@ package kernbeisser.Windows.Supply;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
@@ -14,6 +16,7 @@ import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Reports.ArticleLabel;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -116,7 +119,13 @@ public class SupplyModel implements IModel<SupplyController> {
     return em.createQuery("select p from PriceList p", PriceList.class).getResultList();
   }
 
-  void print() {}
+  void print() {
+    @Cleanup
+    EntityManager em = DBConnection.getEntityManager();
+    HashMap<Integer,Article> articleHashMap = new HashMap<>();
+    em.createQuery("select a from Article a",Article.class).getResultStream().forEach(e -> articleHashMap.put(e.getSuppliersItemNumber(),e));
+    new ArticleLabel(print.stream().map(e -> articleHashMap.get(e.getSuppliersItemNumber())).collect(Collectors.toCollection(ArrayList::new))).exportPdf("Drucke Ladenschilder",Tools::showUnexpectedErrorWarning);
+  }
 
   public void togglePrint(ArticleBase bases) {
     if (!print.remove(bases)) print.add(bases);
@@ -124,5 +133,9 @@ public class SupplyModel implements IModel<SupplyController> {
 
   public boolean becomePrinted(Article article) {
     return print.contains(article);
+  }
+
+  public boolean articleExists(int suppliersItemNumber) {
+    return findBySuppliersItemNumber(Supplier.getKKSupplier(),suppliersItemNumber).size() != 0;
   }
 }

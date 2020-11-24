@@ -28,6 +28,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     try {
       ArticleBase ab = select(model.findBySuppliersItemNumber(supplier, supNr));
       getView().getObjectForm().setSource(ab);
+      last = supNr;
     } catch (NoResultException noResultException) {
       getView().noArticleFound();
     }
@@ -42,6 +43,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public ShoppingItem addItem(double amount) throws CannotParseException {
+    if(!model.articleExists(getView().getSuppliersItemNumber()))throw new NoResultException();
     ArticleBase ab = getView().getObjectForm().getData();
     if (ab == null) throw new NoResultException();
     if (!model.isArticle(ab)) {
@@ -55,6 +57,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     ShoppingItem item = new ShoppingItem(ab, 0, true);
     item.setItemMultiplier((int) Math.round(amount * item.getContainerSize()));
     model.getShoppingItems().add(item);
+    model.togglePrint(ab);
     getView().getObjectForm().applyMode(Mode.EDIT);
     return item;
   }
@@ -68,6 +71,8 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   @Override
   protected boolean commitClose() {
+    if(getView().shouldPrintLabels())
+      model.print();
     return model.getShoppingItems().size() == 0 || getView().commitClose();
   }
 

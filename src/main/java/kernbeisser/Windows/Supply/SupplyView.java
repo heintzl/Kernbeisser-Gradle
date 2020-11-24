@@ -63,6 +63,7 @@ public class SupplyView implements IView<SupplyController> {
           }
         });
     add.addActionListener(e -> addItem());
+    amount.addActionListener(e -> addItem());
     suppliersNumber.addActionListener(e -> addItem());
     amount.addActionListener(e -> addItem());
     shoppingItems.addKeyListener(
@@ -184,7 +185,7 @@ public class SupplyView implements IView<SupplyController> {
   }
 
   public void success() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Die Lieferung wurde erfolgreich eingegen!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Die Lieferung wurde erfolgreich eingegeben!");
   }
 
   @Override
@@ -218,5 +219,9 @@ public class SupplyView implements IView<SupplyController> {
   public void repaintTable() {
     suppliersNumber.requestFocusInWindow();
     shoppingItems.repaint();
+  }
+
+  public boolean shouldPrintLabels() {
+    return JOptionPane.showConfirmDialog(getTopComponent(),"Sollen die ausgewählten Ladenschielder ausgedruckt werden?") == 0;
   }
 }
