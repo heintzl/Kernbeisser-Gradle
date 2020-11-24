@@ -376,6 +376,18 @@ public class ShoppingItem implements Serializable {
     return createItemDeposit(number, true);
   }
 
+  public Article extractArticleBySupplierNumber() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery(
+            "select a from Article a where suppliersItemNumber = :sn and supplier = :s",
+            Article.class)
+        .setParameter("sn", suppliersItemNumber)
+        .setParameter("s", supplier)
+        .getResultStream()
+        .findFirst()
+        .orElse(null);
+  }
+
   public Article extractArticle() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {

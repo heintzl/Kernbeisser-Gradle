@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import javax.swing.*;
@@ -125,6 +126,52 @@ public interface Column<T> {
 
   static <T> Column<T> createIcon(Icon icon, Consumer<T> onAction) {
     return createIcon(icon, onAction, e -> true);
+  }
+
+  static <T> Column<T> createIcon(
+      String name, Function<T, Icon> iconFunction, Consumer<T> consumer) {
+    return new Column<T>() {
+      @Override
+      public String getName() {
+        return name;
+      }
+
+      @Override
+      public Object getValue(T t) throws PermissionKeyRequiredException {
+        return t;
+      }
+
+      @Override
+      public void onAction(T t) {
+        consumer.accept(t);
+      }
+
+      @Override
+      public TableCellRenderer getRenderer() {
+        StripedRenderer renderer =
+            new StripedRenderer() {
+              @Override
+              public Component getTableCellRendererComponent(
+                  JTable table,
+                  Object value,
+                  boolean isSelected,
+                  boolean hasFocus,
+                  int row,
+                  int column) {
+                setIcon(iconFunction.apply((T) value));
+                return super.getTableCellRendererComponent(
+                    table, "", isSelected, hasFocus, row, column);
+              }
+            };
+        renderer.setHorizontalAlignment(DEFAULT_ALIGNMENT);
+        return renderer;
+      }
+
+      @Override
+      public void adjust(TableColumn column) {
+        column.setMaxWidth(20);
+      }
+    };
   }
 
   static <T> Column<T> createIcon(Icon icon, Consumer<T> onAction, Predicate<T> onlyIf) {

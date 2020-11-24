@@ -1,6 +1,8 @@
 package kernbeisser.Windows.Supply;
 
+import java.util.Collection;
 import javax.persistence.NoResultException;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -24,21 +26,41 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   void searchShoppingItem(Supplier supplier, int supNr) {
     if (supNr == 0 || last == supNr) return;
     try {
-      ArticleBase ab = getView().select(model.getViaSuppliersItemNumber(supplier, supNr));
-      if (ab != null) getView().getObjectForm().setSource(ab);
-      else getView().noArticleFound();
+      ArticleBase ab = select(model.findBySuppliersItemNumber(supplier, supNr));
+      getView().getObjectForm().setSource(ab);
       last = supNr;
     } catch (NoResultException noResultException) {
       getView().noArticleFound();
     }
   }
 
+  private ArticleBase select(Collection<ArticleBase> articleBases) {
+    if (articleBases.size() == 0) throw new NoResultException();
+    for (ArticleBase base : articleBases) {
+      if (model.isArticle(base)) return base;
+    }
+    return articleBases.iterator().next();
+  }
+
+  private ArticleBase obtainInput() throws CannotParseException {
+    if (!model.articleExists(getView().getSuppliersItemNumber())) throw new NoResultException();
+    return getView().getObjectForm().getData();
+  }
+
   public ShoppingItem addItem(double amount) throws CannotParseException {
-    ArticleBase ab = getView().getObjectForm().getData();
-    if (ab == null) throw new NoResultException();
+    ArticleBase ab = obtainInput();
+    if (!model.isArticle(ab)) {
+      Article article = model.findNextTo(ab);
+      article.setKbNumber(model.getNextUnusedKBNumber(article.getKbNumber()));
+      getView().verifyArticleAutofill(article, model.getAllPriceLists());
+      ab =
+          model.persistArticleBase(
+              ab, article.isWeighable(), article.getPriceList(), article.getKbNumber());
+    }
     ShoppingItem item = new ShoppingItem(ab, 0, true);
     item.setItemMultiplier((int) Math.round(amount * item.getContainerSize()));
     model.getShoppingItems().add(item);
+    model.togglePrint(ab);
     getView().getObjectForm().applyMode(Mode.EDIT);
     return item;
   }
@@ -52,10 +74,20 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   @Override
   protected boolean commitClose() {
+    if (getView().shouldPrintLabels()) model.print();
     return model.getShoppingItems().size() == 0 || getView().commitClose();
   }
 
   public void remove(ShoppingItem selectedObject) {
     model.getShoppingItems().remove(selectedObject);
+  }
+
+  public void togglePrint(ShoppingItem t) {
+    model.togglePrint(t.extractArticleBySupplierNumber());
+    getView().repaintTable();
+  }
+
+  public boolean becomePrinted(ShoppingItem e) {
+    return model.becomePrinted(e.extractArticleBySupplierNumber());
   }
 }

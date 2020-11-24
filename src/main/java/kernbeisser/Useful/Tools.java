@@ -358,6 +358,28 @@ public class Tools {
     }
   }
 
+  public static <T, V extends T> void copyInto(Class<T> base, V source, V destination) {
+    Class<?> clazz = base;
+    boolean isProxy = Proxy.isProxyInstance(source);
+    while (!clazz.equals(Object.class)) {
+      for (Field field : clazz.getDeclaredFields()) {
+        if (Modifier.isStatic(field.getModifiers())) {
+          continue;
+        }
+        if (isProxy && field.getName().equals("handler")) {
+          continue;
+        }
+        field.setAccessible(true);
+        try {
+          field.set(destination, field.get(source));
+        } catch (IllegalAccessException e) {
+          e.printStackTrace();
+        }
+      }
+      clazz = clazz.getSuperclass();
+    }
+  }
+
   private static final Unsafe unsafe = createUnsafe();
 
   private static Unsafe createUnsafe() {

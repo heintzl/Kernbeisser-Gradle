@@ -40,7 +40,6 @@ public class MenuView implements IView<MenuController> {
   private UserInfoView infoPanel;
   private JPanel main;
   private kernbeisser.CustomComponents.ControllerButton openCashierShoppingMask;
-  private kernbeisser.CustomComponents.ControllerButton printBonFromPast;
   private ControllerButton editPriceList;
   private ControllerButton editArticles;
   private ControllerButton editSurchargeTables;
@@ -82,8 +81,6 @@ public class MenuView implements IView<MenuController> {
     openCashierShoppingMask =
         new ControllerButton(
             CashierShoppingMaskController::new, CashierShoppingMaskController.class);
-    // NOT IMPLEMENTED
-    printBonFromPast = ControllerButton.empty();
     editPriceList =
         new ControllerButton(
             ManagePriceListsController::new, ManagePriceListsController.class, Controller::openTab);

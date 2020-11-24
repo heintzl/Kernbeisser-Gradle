@@ -1,21 +1,31 @@
 package kernbeisser.Windows.Supply;
 
+import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import javax.persistence.NoResultException;
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
+import kernbeisser.CustomComponents.TextFields.IntegerParseField;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleBase;
+import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Exeptions.CannotParseException;
@@ -53,6 +63,7 @@ public class SupplyView implements IView<SupplyController> {
           }
         });
     add.addActionListener(e -> addItem());
+    amount.addActionListener(e -> addItem());
     suppliersNumber.addActionListener(e -> addItem());
     amount.addActionListener(e -> addItem());
     shoppingItems.addKeyListener(
@@ -137,6 +148,8 @@ public class SupplyView implements IView<SupplyController> {
             ArticleBase::getContainerSize,
             ArticleBase::setContainerSize,
             AccessCheckingField.DOUBLE_FORMER);
+    Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
+    Icon unselected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0xC7C7C7));
     shoppingItems =
         new ObjectTable<ShoppingItem>(
             Column.create("Lieferant", ShoppingItem::getSupplier),
@@ -144,7 +157,14 @@ public class SupplyView implements IView<SupplyController> {
             Column.create("Gebinde-Anzahl", p -> p.getItemMultiplier() / p.getContainerSize()),
             Column.create("Name", ShoppingItem::getName),
             Column.create("Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice())),
-            Column.create("Gebindegröße", ShoppingItem::getContainerSize));
+            Column.create("Gebindegröße", ShoppingItem::getContainerSize),
+            Column.create(
+                "Gebinde-Preis",
+                e -> String.format("%.2f", e.getItemNetPrice() * e.getContainerSize())),
+            Column.createIcon(
+                "Ausdrucken",
+                e -> controller.becomePrinted(e) ? selected : unselected,
+                controller::togglePrint));
   }
 
   ArticleBase select(Collection<ArticleBase> collection) {
@@ -165,11 +185,45 @@ public class SupplyView implements IView<SupplyController> {
   }
 
   public void success() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Die Lieferung wurde erfolgreich eingegen!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Die Lieferung wurde erfolgreich eingegeben!");
   }
 
   @Override
   public String getTitle() {
     return "Lieferung eingeben";
+  }
+
+  public void verifyArticleAutofill(Article article, Collection<PriceList> priceLists) {
+    AdvancedComboBox<PriceList> priceListAdvancedComboBox = new AdvancedComboBox<>();
+    IntegerParseField kbNumber = new IntegerParseField();
+    kbNumber.setText(article.getKbNumber() + "");
+    priceListAdvancedComboBox.setItems(priceLists);
+    priceListAdvancedComboBox.setSelectedItem(article.getPriceList());
+    JCheckBox weighable = new JCheckBox("Auswiegware:", article.isWeighable());
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        new Object[] {
+          new JLabel("Preisliste:"),
+          priceListAdvancedComboBox,
+          new JLabel("Kernbeissernr."),
+          kbNumber,
+          weighable
+        },
+        "Artikel vervollständigen",
+        JOptionPane.INFORMATION_MESSAGE);
+    article.setKbNumber(kbNumber.getSafeValue());
+    article.setPriceList(priceListAdvancedComboBox.getSelected());
+    article.setWeighable(weighable.isSelected());
+  }
+
+  public void repaintTable() {
+    suppliersNumber.requestFocusInWindow();
+    shoppingItems.repaint();
+  }
+
+  public boolean shouldPrintLabels() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(), "Sollen die ausgewählten Ladenschielder ausgedruckt werden?")
+        == 0;
   }
 }

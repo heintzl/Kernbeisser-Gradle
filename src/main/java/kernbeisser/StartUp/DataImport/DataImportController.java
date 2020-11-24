@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -110,10 +111,15 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       Stream<String> suppliers =
           Files.lines(getPackagePath().resolve(packageDefinition.getSuppliers()));
       Stream<String> article =
-          Files.lines(getPackagePath().resolve(packageDefinition.getArticles()));
+          Files.lines(
+              getPackagePath().resolve(packageDefinition.getArticles()), StandardCharsets.UTF_8);
       Stream<String> productsJson =
-          Files.lines(getPackagePath().resolve(packageDefinition.getKornkraftJson()));
-      Stream<String> jobs = Files.lines(getPackagePath().resolve(packageDefinition.getJobs()));
+          Files.lines(
+              getPackagePath().resolve(packageDefinition.getKornkraftJson()),
+              StandardCharsets.UTF_8);
+      Stream<String> jobs =
+          Files.lines(
+              getPackagePath().resolve(packageDefinition.getJobs()), StandardCharsets.US_ASCII);
       Stream<String> priceLists =
           Files.lines(getPackagePath().resolve(packageDefinition.getPriceLists()));
       Stream<String> user = Files.lines(getPackagePath().resolve(packageDefinition.getUser()));
