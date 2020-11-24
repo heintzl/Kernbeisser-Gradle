@@ -42,21 +42,21 @@
 				<textFieldExpression><![CDATA[$F{itemRetailPrice}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0,00 €">
-				<reportElement x="55" y="24" width="74" height="16" uuid="68aaf506-bc52-4233-b155-77d5434508b1"/>
+				<reportElement x="59" y="24" width="70" height="16" uuid="68aaf506-bc52-4233-b155-77d5434508b1"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unitAmount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0,00 €">
-				<reportElement x="55" y="42" width="74" height="16" uuid="c984a9ad-1eb9-47d7-bfb8-4304cc26ae84"/>
+				<reportElement x="59" y="42" width="70" height="16" uuid="c984a9ad-1eb9-47d7-bfb8-4304cc26ae84"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["KB " + $F{kbNumber}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0,00 €">
-				<reportElement x="55" y="60" width="74" height="16" uuid="1e861e48-2b1d-4a6d-8e3c-57186ec9650e"/>
+				<reportElement x="59" y="60" width="70" height="16" uuid="1e861e48-2b1d-4a6d-8e3c-57186ec9650e"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>

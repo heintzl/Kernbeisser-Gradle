@@ -91,6 +91,21 @@ public class ManagePriceListsController
     } else getView().requiresPriceList(this::moveItems);
   }
 
+  private void print() {
+    ManagePriceListsView view = getView();
+    if (view.getSelectedNode() == null) {
+      view.selectionRequired();
+    } else {
+      PriceList selectedList = view.getSelectedNode().getValue();
+      List<Article> articles = getAllArticles(selectedList);
+      if (articles.size() == 0) {
+        view.selectionRequired();
+      } else {
+        model.print(selectedList);
+      }
+    }
+  }
+
   List<Article> getAllArticles(PriceList priceList) {
     return priceList.getAllArticles();
   }
@@ -112,6 +127,9 @@ public class ManagePriceListsController
         break;
       case "MOVE_ITEMS":
         moveItems();
+        break;
+      case "PRINT":
+        print();
         break;
       default:
         throw new UnsupportedOperationException(e.getActionCommand() + " is not a valid command");

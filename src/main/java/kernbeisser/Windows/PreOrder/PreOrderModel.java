@@ -8,11 +8,13 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Reports.PreOrderChecklist;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 
 public class PreOrderModel implements IModel<PreOrderController> {
   private final EntityManager em = DBConnection.getEntityManager();
-  private final EntityTransaction et = em.getTransaction();
+  private EntityTransaction et = em.getTransaction();
 
   {
     et.begin();
@@ -54,5 +56,18 @@ public class PreOrderModel implements IModel<PreOrderController> {
     em.flush();
     et.commit();
     em.close();
+  }
+
+  private void saveData() {
+    em.flush();
+    et.commit();
+    et = em.getTransaction();
+    et.begin();
+  }
+
+  public void printCheckList() {
+    saveData();
+    PreOrderChecklist checklist = new PreOrderChecklist(getAllPreOrders());
+    checklist.sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
   }
 }

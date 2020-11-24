@@ -3,6 +3,7 @@ package kernbeisser.Reports;
 import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterJob;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
@@ -185,6 +186,23 @@ public abstract class Report {
               }
             })
         .start();
+  }
+
+  public static void pdfExportException(Throwable e) {
+    try {
+      throw e.getCause();
+    } catch (FileNotFoundException f) {
+      Main.logger.error(e.getMessage(), e);
+      JOptionPane.showMessageDialog(
+          null,
+          "Die Datei kann nicht geschrieben werden,\nweil sie in einer anderen Anwendung geöffnet ist.\n"
+              + "Bitte die Datei schließen und den Export erneut aufrufen!\n",
+          "Fehler beim Dateizugriff",
+          JOptionPane.ERROR_MESSAGE);
+      throw new RuntimeException(f);
+    } catch (Throwable t) {
+      Tools.showUnexpectedErrorWarning(t);
+    }
   }
 
   @NotNull

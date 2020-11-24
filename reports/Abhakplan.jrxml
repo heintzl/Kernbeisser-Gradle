@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Abhakplan" pageWidth="595" pageHeight="842" columnWidth="499" leftMargin="48" rightMargin="48" topMargin="20" bottomMargin="20" uuid="4bbac286-dab4-4299-9984-7be3c020703c">
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="cm"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="user.fullName" class="java.lang.String"/>
+	<field name="article.name" class="java.lang.String"/>
+	<field name="article.suppliersItemNumber" class="java.lang.Integer"/>
+	<field name="amount" class="java.lang.Integer"/>
+	<field name="retarded" class="java.lang.Boolean"/>
+	<group name="User">
+		<groupExpression><![CDATA[$F{user.fullName}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<textField>
+					<reportElement x="0" y="0" width="420" height="20" uuid="02c5579c-a688-4b75-b4ad-9adc6e296e8c"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{user.fullName}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="33"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="55" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="280" height="20" uuid="dd820fd1-75ce-4c86-9b1b-d4fd89a8da6a"/>
+				<textElement markup="html">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Abhakplan Vorbestellungen Kronkraft]]></text>
+			</staticText>
+			<textField pattern="dd.MM.yyyy HH:mm">
+				<reportElement x="369" y="0" width="130" height="20" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722"/>
+				<textElement textAlignment="Right">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="60" height="20" uuid="b807eccd-37c2-4275-833a-829353351db3"/>
+				<textElement>
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[gelief.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="60" y="30" width="50" height="20" uuid="e5f8441f-c758-49e4-99c4-47636ca5b851"/>
+				<textElement>
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[fehlt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="30" width="50" height="20" uuid="1f7713d1-ddba-46e2-b05f-b6846da71e8f"/>
+				<textElement textAlignment="Right">
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Menge]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="30" width="50" height="20" uuid="f0f8b4bc-12fc-4f15-8f4c-e61afcae6b57"/>
+				<textElement textAlignment="Right">
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[KK-Nr.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="30" width="50" height="20" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4"/>
+				<textElement>
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Produkt]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="409" y="30" width="45" height="20" uuid="979caf5a-f274-4531-b0c9-187d195a1fd9"/>
+				<textElement textAlignment="Right">
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="454" y="30" width="44" height="20" uuid="a4aa5782-f7d1-42f1-8a00-d87a62117e2f"/>
+				<textElement textAlignment="Right">
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="1" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<rectangle>
+				<reportElement x="10" y="2" width="12" height="12" uuid="dcd1c446-4c2a-4fa5-8035-f3b40e4c8fc9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="67" y="2" width="12" height="12" uuid="7abb3947-8d8d-4b74-8ade-1db155792baa">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+			<textField>
+				<reportElement x="100" y="1" width="40" height="17" uuid="39fb4ddd-c63d-4856-87a5-950048fae6ea">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="716b65a5-898a-48ee-8873-f89cfdb56be9"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="150" y="1" width="10" height="16" uuid="5788b0e3-76be-435e-be6f-725db43c7019"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[x]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="1" width="50" height="17" uuid="e8f3a35c-13e0-4f21-acc2-f1481c73286f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0fcc61-6f33-42f3-91b0-b2f6988d712f"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{article.suppliersItemNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="1" width="258" height="17" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
+					<printWhenExpression><![CDATA[!$F{retarded}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="198" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
+					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="13" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="240" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
+					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Nachlief.:]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

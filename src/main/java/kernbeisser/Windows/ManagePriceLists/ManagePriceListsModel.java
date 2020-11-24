@@ -1,11 +1,14 @@
 package kernbeisser.Windows.ManagePriceLists;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Reports.PriceListReport;
+import kernbeisser.Reports.Report;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -55,5 +58,17 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
         .executeUpdate();
     em.flush();
     et.commit();
+  }
+
+  public void print(PriceList selectedList) {
+    AtomicBoolean printed = new AtomicBoolean(true);
+    PriceListReport report = new PriceListReport(selectedList);
+    report.sendToPrinter(
+        "Preisliste wird gedruckt...",
+        e -> {
+          printed.set(false);
+          Report.pdfExportException(e);
+        });
+    // TODO selectedList.setLastPrint(Instant.now()); and commit to database
   }
 }
