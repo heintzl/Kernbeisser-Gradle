@@ -42,10 +42,13 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     return articleBases.iterator().next();
   }
 
-  public ShoppingItem addItem(double amount) throws CannotParseException {
+  private ArticleBase obtainInput() throws CannotParseException {
     if (!model.articleExists(getView().getSuppliersItemNumber())) throw new NoResultException();
-    ArticleBase ab = getView().getObjectForm().getData();
-    if (ab == null) throw new NoResultException();
+    return getView().getObjectForm().getData();
+  }
+
+  public ShoppingItem addItem(double amount) throws CannotParseException {
+    ArticleBase ab = obtainInput();
     if (!model.isArticle(ab)) {
       Article article = model.findNextTo(ab);
       article.setKbNumber(model.getNextUnusedKBNumber(article.getKbNumber()));
