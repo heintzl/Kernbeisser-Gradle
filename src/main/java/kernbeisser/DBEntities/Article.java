@@ -152,4 +152,36 @@ public class Article extends ArticleBase {
   public String toString() {
     return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");
   }
+
+  public static Article fromArticleBase(
+      ArticleBase ab, boolean weighable, PriceList priceList, int kbNumber) {
+    Article article = new Article();
+    Tools.copyInto(ArticleBase.class, ab, article);
+    article.setId(0);
+    article.setWeighable(weighable);
+    article.setPriceList(priceList);
+    article.setKbNumber(kbNumber);
+    article.setActive(true);
+    article.setVerified(false);
+    article.setActiveStateChange(Instant.now());
+    return article;
+  }
+
+  public static Article nextArticleTo(int suppliersItemNumber, Supplier supplier) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return nextArticleTo(em, suppliersItemNumber, supplier);
+  }
+
+  public static Article nextArticleTo(
+      EntityManager em, int suppliersItemNumber, Supplier supplier) {
+    return em.createQuery(
+            "select a from Article a where supplier = :s order by abs(a.suppliersItemNumber - :sn) asc",
+            Article.class)
+        .setParameter("s", supplier)
+        .setParameter("sn", suppliersItemNumber)
+        .setMaxResults(1)
+        .getResultStream()
+        .findAny()
+        .orElse(null);
+  }
 }

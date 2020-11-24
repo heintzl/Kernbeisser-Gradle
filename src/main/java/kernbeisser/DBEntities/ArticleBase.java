@@ -156,4 +156,13 @@ public class ArticleBase {
         .setParameter("id", id)
         .getResultList();
   }
+
+  public Article getKernbeisserArticle(EntityManager em) {
+    return em.createQuery(
+            "select a from Article a where suppliersItemNumber = :sn and supplier = :s",
+            Article.class)
+        .setParameter("sn", suppliersItemNumber)
+        .setParameter("s", supplier)
+        .getSingleResult();
+  }
 }
