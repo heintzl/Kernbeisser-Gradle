@@ -1,6 +1,7 @@
 package kernbeisser.Windows.AccountingReports;
 
 import java.util.Collection;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Tools;
@@ -78,6 +79,7 @@ public class AccountingReportsController
 
   @Override
   public void fillView(AccountingReportsView accountingReportsView) {
-    getView().getOptLadendienstEndabrechnung().setSelected(true);
+    accountingReportsView.setUser(User.getAllUserFullNames(true));
+    accountingReportsView.getOptAccountingReport().doClick();
   }
 }
