@@ -3,6 +3,7 @@ package kernbeisser.Windows.AccountingReports;
 import java.util.Collection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
+import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
@@ -71,6 +72,18 @@ public class AccountingReportsController
     var view = getView();
     try {
       model.exportKeyUserList(exportType, sortOrder, (e) -> consumePdfException(e, exportType));
+      view.back();
+    } catch (UnsupportedOperationException e) {
+      view.messageNotImplemented(exportType);
+    }
+  }
+
+  public void exportTransactionStatement(
+      ExportTypes exportType, User user, StatementType statementType, boolean current) {
+    var view = getView();
+    try {
+      model.exportTransactionStatement(
+          exportType, user, statementType, current, (e) -> consumePdfException(e, exportType));
       view.back();
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);
