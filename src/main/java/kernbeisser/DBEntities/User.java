@@ -392,4 +392,15 @@ public class User implements Serializable {
     et.commit();
     getIgnoredDialogs().add(name);
   }
+
+  public static Collection<User> getAllUserFullNames(boolean withKbUser) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    List<User> result =
+        em.createQuery(
+                "select u from User u where upper(username) != 'KERNBEISSER' order by firstName,surname asc",
+                User.class)
+            .getResultList();
+    if (withKbUser) result.add(0, User.getKernbeisserUser());
+    return result;
+  }
 }

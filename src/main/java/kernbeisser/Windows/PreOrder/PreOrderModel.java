@@ -1,13 +1,11 @@
 package kernbeisser.Windows.PreOrder;
 
 import java.util.Collection;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleKornkraft;
 import kernbeisser.DBEntities.PreOrder;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -18,16 +16,6 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   {
     et.begin();
-  }
-
-  Collection<User> getAllUser() {
-    List<User> result =
-        em.createQuery(
-                "select u from User u where upper(username) != 'KERNBEISSER' order by firstName,surname asc",
-                User.class)
-            .getResultList();
-    result.add(0, User.getKernbeisserUser());
-    return result;
   }
 
   ArticleKornkraft getItemByKkNumber(int kkNumber) {
