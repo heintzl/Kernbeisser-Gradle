@@ -77,13 +77,13 @@ public class TransactionController extends Controller<TransactionView, Transacti
       return;
     }
     try {
-      transaction.setFrom(model.findUser(view.getFrom()));
+      transaction.setFromUser(model.findUser(view.getFrom()));
     } catch (NoResultException e) {
       view.invalidFrom();
       return;
     }
     try {
-      transaction.setTo(model.findUser(view.getTo()));
+      transaction.setToUser(model.findUser(view.getTo()));
     } catch (NoResultException e) {
       view.invalidTo();
       return;

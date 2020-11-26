@@ -73,11 +73,11 @@ public class UserGroup {
     double v = 0;
     for (Transaction transaction :
         em.createQuery(
-                "select t from Transaction t where t.from = (select u from User u where u.userGroup.id = :ugid) or t.to = (select u from User u where u.userGroup.id = :ugid)",
+                "select t from Transaction t where t.fromUser = (select u from User u where u.userGroup.id = :ugid) or t.toUser = (select u from User u where u.userGroup.id = :ugid)",
                 Transaction.class)
             .getResultList()) {
       v =
-          transaction.getFrom().getUserGroup().id == id
+          transaction.getFromUser().getUserGroup().id == id
               ? v + transaction.getValue()
               : v - transaction.getValue();
     }

@@ -183,14 +183,15 @@ public class AccountingReport extends Report {
 
     for (Transaction t : transactions) {
       User kbUser = User.getKernbeisserUser();
-      if (t.getFrom().equals(kbUser) || t.getTo().equals(kbUser)) {
+      if (t.getFromUser().equals(kbUser) || t.getToUser().equals(kbUser)) {
         transactionSaldo += t.getValue();
         switch (t.getTransactionType()) {
           case PURCHASE:
             transactionPurchases += t.getValue();
             break;
           case USER_GENERATED:
-            transactionSpecialPayments += t.getValue() * (t.getFrom().equals(kbUser) ? -1.0 : 1.0);
+            transactionSpecialPayments +=
+                t.getValue() * (t.getFromUser().equals(kbUser) ? -1.0 : 1.0);
             break;
           case PAYIN:
           case INITIALIZE:
