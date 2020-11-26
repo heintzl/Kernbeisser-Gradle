@@ -119,10 +119,11 @@ public class TransactionView implements IView<TransactionController> {
             Column.create(
                 "Von",
                 e ->
-                    e.getFrom() == null
+                    e.getFromUser() == null
                         ? "Kernbeißer"
-                        : (e.getFrom().getSurname() + ", " + e.getFrom().getFirstName())),
-            Column.create("An", e -> e.getTo().getSurname() + ", " + e.getTo().getFirstName()),
+                        : (e.getFromUser().getSurname() + ", " + e.getFromUser().getFirstName())),
+            Column.create(
+                "An", e -> e.getToUser().getSurname() + ", " + e.getToUser().getFirstName()),
             Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
             Column.create("Info", Transaction::getInfo));
     searchBoxView = userSearchBoxController.getView();

@@ -43,13 +43,13 @@ public class Transaction {
   @ManyToOne
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_WRITE)})
-  private User from;
+  private User fromUser;
 
   @JoinColumn(nullable = false)
   @ManyToOne
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_TO_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_TO_WRITE)})
-  private User to;
+  private User toUser;
 
   @CreationTimestamp
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_DATE_READ)})
@@ -102,8 +102,8 @@ public class Transaction {
     }
     Transaction transaction = new Transaction();
     transaction.value = value;
-    transaction.to = to;
-    transaction.from = from;
+    transaction.toUser = to;
+    transaction.fromUser = from;
     transaction.info = info;
     transaction.transactionType = transactionType;
     isValidTransaction(transaction);
@@ -122,14 +122,14 @@ public class Transaction {
   public static void isValidTransaction(Transaction transaction)
       throws InvalidTransactionException {
     double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
-    if (transaction.getFrom().getUserGroup().getValue() - transaction.getValue() < minValue) {
-      if (!transaction.getFrom().hasPermission(PermissionKey.GO_UNDER_MIN)) {
+    if (transaction.getFromUser().getUserGroup().getValue() - transaction.getValue() < minValue) {
+      if (!transaction.getFromUser().hasPermission(PermissionKey.GO_UNDER_MIN)) {
         throw new InvalidTransactionException(new PermissionRequired());
       }
     }
     if (transaction.getValue() < 0
-        && transaction.getTo().getUserGroup().getValue() - transaction.getValue() < minValue) {
-      if (!transaction.getTo().hasPermission(PermissionKey.GO_UNDER_MIN)) {
+        && transaction.getToUser().getUserGroup().getValue() - transaction.getValue() < minValue) {
+      if (!transaction.getToUser().hasPermission(PermissionKey.GO_UNDER_MIN)) {
         throw new InvalidTransactionException(new PermissionRequired());
       }
     }

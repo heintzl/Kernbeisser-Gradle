@@ -268,7 +268,7 @@ public class User implements Serializable {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Transaction> out =
         em.createQuery(
-                "select t from Transaction t where t.from.id = :id or t.to.id = :id order by date",
+                "select t from Transaction t where t.fromUser.id = :id or t.toUser.id = :id order by date",
                 Transaction.class)
             .setParameter("id", id)
             .getResultList();
@@ -280,7 +280,7 @@ public class User implements Serializable {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Transaction> out =
         em.createQuery(
-                "select t from Transaction t where t.from.id = :id or t.to.id = :id",
+                "select t from Transaction t where t.fromUser.id = :id or t.toUser.id = :id",
                 Transaction.class)
             .setParameter("id", id)
             .getResultList();
@@ -357,7 +357,7 @@ public class User implements Serializable {
             builder.lessThan(root.get("date"), instant));
     double value = 0;
     for (Transaction transaction : em.createQuery(query).getResultList()) {
-      if (transaction.getFrom().getUserGroup().getId() == getUserGroup().getId()) {
+      if (transaction.getFromUser().getUserGroup().getId() == getUserGroup().getId()) {
         value -= transaction.getValue();
       } else {
         value += transaction.getValue();

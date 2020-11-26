@@ -50,8 +50,8 @@ public class TransactionModel implements IModel<TransactionController> {
       try {
         Transaction.doTransaction(
             em,
-            transaction.getFrom(),
-            transaction.getTo(),
+            transaction.getFromUser(),
+            transaction.getToUser(),
             transaction.getValue(),
             transactionType,
             transaction.getInfo());

@@ -41,20 +41,20 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
             Column.create(
                 "Von",
                 e -> {
-                  if (e.getFrom() == null) {
+                  if (e.getFromUser() == null) {
                     return "Kenbeisser";
                   } else {
-                    return e.getFrom().getUsername();
+                    return e.getFromUser().getUsername();
                   }
                 }));
         columns.add(
             Column.create(
                 "An",
                 e -> {
-                  if (e.getTo() == null) {
+                  if (e.getToUser() == null) {
                     return "Kenbeisser";
                   } else {
-                    return e.getTo().getUsername();
+                    return e.getToUser().getUsername();
                   }
                 }));
         columns.add(Column.create("Betrag", e -> String.format("%.2f€", e.getValue())));
@@ -80,8 +80,8 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
       @Override
       public Object getValue(Transaction valueChange) {
 
-        if (valueChange.getTo() != null
-            && valueChange.getTo().getId() == LogInModel.getLoggedIn().getId()) {
+        if (valueChange.getToUser() != null
+            && valueChange.getToUser().getId() == LogInModel.getLoggedIn().getId()) {
           value += valueChange.getValue();
         } else {
           value -= valueChange.getValue();
@@ -100,10 +100,10 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
 
       @Override
       public Object getValue(Transaction valueChange) {
-        if (valueChange.getFrom() == null) {
+        if (valueChange.getFromUser() == null) {
           return "Guthabenaufladung";
         }
-        if (valueChange.getTo() == null) {
+        if (valueChange.getToUser() == null) {
           return "Einkauf";
         }
         return "Überweisung";
