@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "catalog")
+@Table
 @EqualsAndHashCode(doNotUseGetters = true, callSuper = true)
 public class ArticleKornkraft extends ArticleBase implements Serializable {
 
