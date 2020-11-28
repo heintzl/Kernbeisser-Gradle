@@ -1,6 +1,7 @@
 package kernbeisser.Reports;
 
-import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,26 +19,18 @@ public class TransactionStatement extends Report {
   private final User user;
   private final StatementType statementType;
   private final boolean current;
+  private ZonedDateTime startDate;
+  private ZonedDateTime endDate;
+  private final Collection<Transaction> userTransactions;
 
   public TransactionStatement(User user, StatementType statementType, boolean current) {
-    super("priceList", "Kontoauszug_" + user.toString() + ".pdf");
+    super("transactionStatement", "Kontoauszug_" + user.toString() + ".pdf");
     this.user = user;
     this.statementType = statementType;
     this.current = current;
-  }
-
-  @Override
-  Map<String, Object> getReportParams() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("user", user.getFullName());
-    params.put("userGroup", user.getUserGroup().getMemberString());
-    return params;
-  }
-
-  @Override
-  Collection<?> getDetailCollection() {
-    LocalDate endDate = LocalDate.now();
-    LocalDate startDate = LocalDate.parse("2010-01-01");
+    ZoneId local = ZoneId.systemDefault();
+    endDate = ZonedDateTime.now(local);
+    startDate = ZonedDateTime.of(2010, 1, 1, 0, 0, 0, 0, local);
     switch (statementType) {
       case MONTH:
         startDate = endDate.withDayOfMonth(1);
@@ -47,7 +40,7 @@ public class TransactionStatement extends Report {
         }
         break;
       case QUARTER:
-        int monthOfQuarter = endDate.getMonthValue() % 3;
+        int monthOfQuarter = (endDate.getMonthValue() - 1) % 3;
         startDate = endDate.minus(monthOfQuarter, ChronoUnit.MONTHS).withDayOfMonth(1);
         if (!current) {
           endDate = startDate.minus(1, ChronoUnit.DAYS);
@@ -65,13 +58,49 @@ public class TransactionStatement extends Report {
         break;
     }
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return em.createQuery(
-            "select t from Transaction t where (from.id = :u or to.id = :u) and date >= :sd and date <= :ed",
-            Transaction.class)
-        .setParameter("u", user.getId())
-        .setParameter("sd", startDate)
-        .setParameter("ed", endDate)
-        .getResultStream()
+    userTransactions =
+        em.createQuery(
+                "select t from Transaction t where (fromUser.id = :u or toUser.id = :u)",
+                Transaction.class)
+            .setParameter("u", user.getId())
+            .getResultList();
+  }
+
+  @Override
+  Map<String, Object> getReportParams() {
+    Map<String, Object> params = new HashMap<>();
+    double startValue =
+        userTransactions.stream()
+            .filter(t -> t.getDate().isBefore(startDate.toInstant()))
+            .mapToDouble(t -> (t.getFromUser().equals(user) ? -1.0 : 1.0) * t.getValue())
+            .reduce(Double::sum)
+            .orElse(0.0);
+    double endValue =
+        userTransactions.stream()
+            .filter(t -> !t.getDate().isAfter(endDate.toInstant()))
+            .mapToDouble(t -> (t.getFromUser().equals(user) ? -1.0 : 1.0) * t.getValue())
+            .reduce(Double::sum)
+            .orElse(0.0);
+    params.put("user", user);
+    params.put("startValue", startValue);
+    params.put("endValue", endValue);
+    String stType = statementType.toString();
+    params.put(
+        "statementType",
+        (!current && statementType != StatementType.FULL
+                ? "Vor" + stType.substring(0, 1).toLowerCase()
+                : stType.substring(0, 1))
+            + stType.substring(1));
+    return params;
+  }
+
+  @Override
+  Collection<Transaction> getDetailCollection() {
+    return userTransactions.stream()
+        .filter(
+            t ->
+                !(t.getDate().isBefore(startDate.toInstant())
+                    || t.getDate().isAfter(endDate.toInstant())))
         .collect(Collectors.toList());
   }
 }
