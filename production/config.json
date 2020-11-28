@@ -18,6 +18,7 @@
     "reports": {
       "userBalanceFileName": "GuthabenUebersicht.jrxml",
       "articleLabel": "Etiketten.jrxml",
+      "transactionStatement": "Kontoauszug.jrxml",
       "tillrollFileName": "Bonrolle.jrxml",
       "preOrderChecklist": "Abhakplan.jrxml",
       "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",

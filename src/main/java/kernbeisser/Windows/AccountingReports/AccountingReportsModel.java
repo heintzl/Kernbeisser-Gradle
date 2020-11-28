@@ -10,7 +10,9 @@ import java.util.function.Consumer;
 import javax.persistence.EntityManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
+import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Reports.*;
 import kernbeisser.Windows.MVC.IModel;
@@ -67,8 +69,11 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
       consumePdfException.accept(new IncorrectInput("Leere Bonrolle"));
       return;
     }
-    TillrollReport reportManager = new TillrollReport(items, start, end);
-    exportReport(exportType, reportManager, "Bonrolle wird erstellt", consumePdfException);
+    exportReport(
+        exportType,
+        new TillrollReport(items, start, end),
+        "Bonrolle wird erstellt",
+        consumePdfException);
   }
 
   public void exportAccountingReport(
@@ -77,20 +82,41 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
       int endBon,
       boolean withNames,
       Consumer<Throwable> consumePdfException) {
-    AccountingReport report = new AccountingReport(startBon, endBon, withNames);
     exportReport(
-        exportType, report, "Ladendienst Endabrechnung wird erstellt", consumePdfException);
+        exportType,
+        new AccountingReport(startBon, endBon, withNames),
+        "Ladendienst Endabrechnung wird erstellt",
+        consumePdfException);
   }
 
   public void exportUserBalance(
       ExportTypes exportType, boolean withNames, Consumer<Throwable> consumePdfException) {
-    UserBalanceReport report = new UserBalanceReport(withNames);
-    exportReport(exportType, report, "Guthabenstände werden erstellt", consumePdfException);
+    exportReport(
+        exportType,
+        new UserBalanceReport(withNames),
+        "Guthabenstände werden erstellt",
+        consumePdfException);
   }
 
   public void exportKeyUserList(
       ExportTypes exportType, String sortOrder, Consumer<Throwable> consumePdfException) {
-    KeyUserList report = new KeyUserList(sortOrder);
-    exportReport(exportType, report, "Benutzer-Schlüssel-Liste wird erstellt", consumePdfException);
+    exportReport(
+        exportType,
+        new KeyUserList(sortOrder),
+        "Benutzer-Schlüssel-Liste wird erstellt",
+        consumePdfException);
+  }
+
+  public void exportTransactionStatement(
+      ExportTypes exportType,
+      User user,
+      StatementType statementType,
+      boolean current,
+      Consumer<Throwable> consumePdfException) {
+    exportReport(
+        exportType,
+        new TransactionStatement(user, statementType, current),
+        "Benutzer-Schlüssel-Liste wird erstellt",
+        consumePdfException);
   }
 }

@@ -3,7 +3,7 @@ package kernbeisser.Enums;
 public enum TransactionType {
   PURCHASE("Einkauf"),
   USER_GENERATED("Benutzerdefiniert"),
-  INITIALIZE("Übertrag des Altenprogrammes"),
+  INITIALIZE("Übertrag aus Vorversion"),
   PAYIN("Einzahlung"),
   ;
   private final String name;

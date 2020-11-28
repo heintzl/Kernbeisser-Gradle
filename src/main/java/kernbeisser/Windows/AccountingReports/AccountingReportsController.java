@@ -1,7 +1,9 @@
 package kernbeisser.Windows.AccountingReports;
 
 import java.util.Collection;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
+import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
@@ -76,8 +78,21 @@ public class AccountingReportsController
     }
   }
 
+  public void exportTransactionStatement(
+      ExportTypes exportType, User user, StatementType statementType, boolean current) {
+    var view = getView();
+    try {
+      model.exportTransactionStatement(
+          exportType, user, statementType, current, (e) -> consumePdfException(e, exportType));
+      view.back();
+    } catch (UnsupportedOperationException e) {
+      view.messageNotImplemented(exportType);
+    }
+  }
+
   @Override
   public void fillView(AccountingReportsView accountingReportsView) {
-    getView().getOptLadendienstEndabrechnung().setSelected(true);
+    accountingReportsView.setUser(User.getAllUserFullNames(true));
+    accountingReportsView.getOptAccountingReport().doClick();
   }
 }
