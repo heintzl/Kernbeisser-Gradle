@@ -32,7 +32,7 @@
               <background color="-1"/>
               <focusCycleRoot value="false"/>
               <focusTraversalPolicyProvider value="true"/>
-              <minimumSize width="530" height="760"/>
+              <minimumSize width="400" height="900"/>
               <preferredSize width="400" height="900"/>
             </properties>
             <border type="none"/>
@@ -67,7 +67,8 @@
                   <autoscrolls value="true"/>
                   <enabled value="true"/>
                   <foreground color="-1"/>
-                  <minimumSize width="515" height="656"/>
+                  <minimumSize width="400" height="656"/>
+                  <preferredSize width="400" height="800"/>
                   <visible value="true"/>
                 </properties>
                 <border type="none" title="Einkaufs-Artikel" title-position="1">
@@ -624,7 +625,7 @@
               <splitpane position="right"/>
             </constraints>
             <properties>
-              <minimumSize width="500" height="760"/>
+              <minimumSize width="500" height="900"/>
               <preferredSize width="500" height="900"/>
             </properties>
             <border type="none"/>
@@ -632,8 +633,8 @@
               <grid id="7919b" binding="eastUpperPanel" layout-manager="GridBagLayout">
                 <constraints border-constraint="North"/>
                 <properties>
-                  <minimumSize width="500" height="74"/>
-                  <preferredSize width="500" height="74"/>
+                  <minimumSize width="300" height="74"/>
+                  <preferredSize width="300" height="74"/>
                 </properties>
                 <border type="none"/>
                 <children>
@@ -696,6 +697,8 @@
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
+                      <minimumSize width="50" height="22"/>
+                      <preferredSize width="50" height="22"/>
                       <text value="&lt;&lt;100000,00 €&gt;&gt;"/>
                     </properties>
                   </component>
@@ -719,6 +722,8 @@
                       <contentAreaFilled value="false"/>
                       <inheritsPopupMenu value="true"/>
                       <label value=""/>
+                      <minimumSize width="40" height="30"/>
+                      <preferredSize width="40" height="30"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -762,7 +767,7 @@
                   <autoscrolls value="true"/>
                   <enabled value="true"/>
                   <minimumSize width="373" height="201"/>
-                  <preferredSize width="467" height="201"/>
+                  <preferredSize width="467" height="800"/>
                 </properties>
                 <border type="none" title="Einkauf" title-position="1">
                   <font style="3"/>
