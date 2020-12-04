@@ -32,7 +32,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   Article getItemByKkNumber(int kkNumber) {
-    return Article.getBySuppliersItemNumber(Supplier.getKKSupplier(),kkNumber);
+    return Article.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber);
   }
 
   public void add(PreOrder preOrder) {

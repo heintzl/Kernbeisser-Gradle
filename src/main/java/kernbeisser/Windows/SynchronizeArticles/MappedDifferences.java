@@ -3,7 +3,7 @@ package kernbeisser.Windows.SynchronizeArticles;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 
-public enum  MappedDifferences implements Difference<Article,Object> {
+public enum MappedDifferences implements Difference<Article, Object> {
   PRICE("Preis") {
     @Override
     public void set(Article article, Object t) throws PermissionKeyRequiredException {
@@ -27,55 +27,51 @@ public enum  MappedDifferences implements Difference<Article,Object> {
     }
 
     @Override
-    public Double get (Article article) throws PermissionKeyRequiredException {
+    public Double get(Article article) throws PermissionKeyRequiredException {
       return article.getContainerSize();
     }
 
-
     @Override
-    public double distance (Article a, Article b){
+    public double distance(Article a, Article b) {
       return Math.abs(this.get(b) / this.get(a));
     }
   },
   DEPOSIT("Pfand") {
-      @Override
-      public void set(Article article, Object t) throws PermissionKeyRequiredException {
+    @Override
+    public void set(Article article, Object t) throws PermissionKeyRequiredException {
       article.setSingleDeposit((Double) t);
     }
 
-      @Override
-      public Double get(Article article) throws PermissionKeyRequiredException {
+    @Override
+    public Double get(Article article) throws PermissionKeyRequiredException {
       return article.getSingleDeposit();
     }
 
-
-      @Override
-      public double distance(Article a, Article b) {
+    @Override
+    public double distance(Article a, Article b) {
       return Math.abs(this.get(b) / this.get(a));
     }
-
   },
-  CONTAINER_DOPSIT("Kisten-Pfand"){
-      @Override
-      public void set(Article article, Object t) throws PermissionKeyRequiredException {
+  CONTAINER_DOPSIT("Kisten-Pfand") {
+    @Override
+    public void set(Article article, Object t) throws PermissionKeyRequiredException {
       article.setContainerDeposit((Double) t);
     }
 
-      @Override
-      public Double get(Article article) throws PermissionKeyRequiredException {
+    @Override
+    public Double get(Article article) throws PermissionKeyRequiredException {
       return article.getContainerDeposit();
     }
 
-      @Override
-      public String getName() {
+    @Override
+    public String getName() {
       return "Kistenpfand";
     }
 
-      @Override
-      public double distance(Article a, Article b) {
+    @Override
+    public double distance(Article a, Article b) {
       return Math.abs(this.get(b) / this.get(a));
     }
-
   },
   AMOUNT("Menge") {
     @Override
@@ -93,7 +89,7 @@ public enum  MappedDifferences implements Difference<Article,Object> {
       return Math.abs(this.get(b) / this.get(a));
     }
   },
-  NAME("Name"){
+  NAME("Name") {
     @Override
     public void set(Article article, Object t) throws PermissionKeyRequiredException {
       article.setName((String) t);
@@ -108,11 +104,11 @@ public enum  MappedDifferences implements Difference<Article,Object> {
     public double distance(Article a, Article b) {
       return 0;
     }
-  }
-  ;
+  };
 
   private final String name;
-  MappedDifferences(String name){
+
+  MappedDifferences(String name) {
     this.name = name;
   }
 

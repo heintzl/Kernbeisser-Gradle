@@ -44,11 +44,9 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
         Column.create("Artikel", e -> e.getCurrent().getName()),
         Column.create("Kornkraftnummer", e -> e.getCurrent().getSuppliersItemNumber()),
         Column.create("Unterschied", e -> e.getArticleDifference().getName()),
-        Column.create(
-            "Abweichung",e -> String.format("%.2f%%",e.distance())),
+        Column.create("Abweichung", e -> String.format("%.2f%%", e.distance())),
         Column.create("Kernbeisser", ArticleDifference::getCurrentVersion),
-        Column.create("Katalog", ArticleDifference::getNewVersion)
-        );
+        Column.create("Katalog", ArticleDifference::getNewVersion));
     selectAll.addActionListener(
         e -> {
           differences.requestFocusInWindow();
@@ -103,7 +101,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
           @Override
           public boolean isDisplayed(ArticleDifference<?> difference) {
-            return type.equals(difference.getArticleDifference()) && filterDiff || difference.distance() < allowedDiff;
+            return type.equals(difference.getArticleDifference()) && filterDiff
+                || difference.distance() < allowedDiff;
           }
         });
   }
@@ -158,6 +157,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   }
 
   public void mergeDiffsFirst() {
-    JOptionPane.showMessageDialog(getTopComponent(),"Bitte Korrigieren sie alle Konflikte bevor sie den Katalog persistieren.");
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Bitte Korrigieren sie alle Konflikte bevor sie den Katalog persistieren.");
   }
 }

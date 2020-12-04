@@ -37,7 +37,6 @@ import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
-import org.apache.commons.collections4.Get;
 import sun.misc.Unsafe;
 
 public class Tools {
@@ -208,36 +207,36 @@ public class Tools {
         });
   }
 
-  public static void resetId(Object o){
+  public static void resetId(Object o) {
     Tools.setId(o, Tools.getId(Tools.createWithoutConstructor(o.getClass())));
   }
 
-
-  public static <T,V> Map<V,Collection<T>> group(Collection<T> collection,Getter<T,V> getter){
-    HashMap<V,Collection<T>> collectionHashMap = new HashMap<>();
+  public static <T, V> Map<V, Collection<T>> group(Collection<T> collection, Getter<T, V> getter) {
+    HashMap<V, Collection<T>> collectionHashMap = new HashMap<>();
     for (T t : collection) {
       collectionHashMap.computeIfAbsent(getter.get(t), k -> new ArrayList<>()).add(t);
     }
     return collectionHashMap;
   }
-  public static <T,V> void fillUniqueFieldWithNextAvailable(Collection<T> collection,Getter<T,V> getter, Setter<T,V> setter,
-      UnaryOperator<V> next){
+
+  public static <T, V> void fillUniqueFieldWithNextAvailable(
+      Collection<T> collection, Getter<T, V> getter, Setter<T, V> setter, UnaryOperator<V> next) {
     Set<V> values = new HashSet<>(collection.size());
     Collection<T> task = new ArrayList<>();
     for (T t : collection) {
-      if(!values.add(getter.get(t)))task.add(t);
+      if (!values.add(getter.get(t))) task.add(t);
     }
     for (T t : task) {
       V value = next.apply(getter.get(t));
-      while (values.contains(value)){
+      while (values.contains(value)) {
         value = next.apply(value);
       }
-      if(!values.add(value))System.out.println("HOW?");
-      setter.set(t,value);
+      if (!values.add(value)) System.out.println("HOW?");
+      setter.set(t, value);
     }
   }
 
-  public static  <T,V> Set<V> createSet(Collection<T> collection,Getter<T,V> tvGetter){
+  public static <T, V> Set<V> createSet(Collection<T> collection, Getter<T, V> tvGetter) {
     HashSet<V> out = new HashSet<>(collection.size());
     collection.forEach(e -> out.add(tvGetter.get(e)));
     return out;

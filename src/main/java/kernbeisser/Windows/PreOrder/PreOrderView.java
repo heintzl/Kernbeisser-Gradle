@@ -96,7 +96,7 @@ public class PreOrderView implements IView<PreOrderController> {
         "Es konnte kein Kornkraft-Artikel mit dieser Kornkraft-/Kernbeißer-Nummer gefunden werden.");
   }
 
-  void resetArticleNr(){
+  void resetArticleNr() {
     kkNumber.setText("");
     kkNumber.requestFocusInWindow();
   }

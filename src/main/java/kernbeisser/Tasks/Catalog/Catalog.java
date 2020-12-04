@@ -1,22 +1,18 @@
 package kernbeisser.Tasks.Catalog;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Main;
 
 public class Catalog {
 
@@ -36,8 +32,7 @@ public class Catalog {
     em.close();
   }
 
-  public static Article parseArticle(Article base, String[] source)
-      throws CannotParseException {
+  public static Article parseArticle(Article base, String[] source) throws CannotParseException {
     try {
       if (source.length < 42) {
         throw new CannotParseException(

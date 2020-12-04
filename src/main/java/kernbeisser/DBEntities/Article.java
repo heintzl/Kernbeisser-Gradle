@@ -24,14 +24,11 @@ import org.hibernate.annotations.UpdateTimestamp;
  and only used for Articles which are constantly in use of Kernbeisser
 */
 @Entity
-@Table(
-    uniqueConstraints=
-    @UniqueConstraint(columnNames = {"supplier_id","suppliersItemNumber"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"supplier_id", "suppliersItemNumber"}))
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
-
 public class Article {
 
   @Id
@@ -151,8 +148,7 @@ public class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_INFO_WRITE)})
   private String info;
 
-  @Column @UpdateTimestamp
-  @Getter private Instant updateDate;
+  @Column @UpdateTimestamp @Getter private Instant updateDate;
 
   @JoinColumn(nullable = false)
   @ManyToOne
@@ -166,15 +162,15 @@ public class Article {
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
     return em.createQuery(
-        "select i from Article i where kbNumber = :n"
-            + " or suppliersItemNumber = :n"
-            + " or i.supplier.shortName like :s"
-            + " or i.supplier.name like :s"
-            + " or UPPER(i.name) like :ds"
-            + " or mod(barcode,:bl) = :n"
-            + " or UPPER( i.priceList.name) like :u"
-            + " order by i.name asc",
-        Article.class)
+            "select i from Article i where kbNumber = :n"
+                + " or suppliersItemNumber = :n"
+                + " or i.supplier.shortName like :s"
+                + " or i.supplier.name like :s"
+                + " or UPPER(i.name) like :ds"
+                + " or mod(barcode,:bl) = :n"
+                + " or UPPER( i.priceList.name) like :u"
+                + " order by i.name asc",
+            Article.class)
         .setParameter("n", Tools.tryParseInteger(search))
         .setParameter(
             "bl",
@@ -219,29 +215,33 @@ public class Article {
     }
   }
 
-  public static Article getBySuppliersItemNumber(Supplier supplier,int suppliersNumber) {
+  public static Article getBySuppliersItemNumber(Supplier supplier, int suppliersNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return getBySuppliersItemNumber(supplier, suppliersNumber,em);
+    return getBySuppliersItemNumber(supplier, suppliersNumber, em);
   }
 
-  public static Article getBySuppliersItemNumber(Supplier supplier,int suppliersNumber,EntityManager em) {
-    return em.createQuery("select i from Article i where suppliersItemNumber = :n and supplier  = :s", Article.class)
-        .setParameter("s",supplier)
+  public static Article getBySuppliersItemNumber(
+      Supplier supplier, int suppliersNumber, EntityManager em) {
+    return em.createQuery(
+            "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
+            Article.class)
+        .setParameter("s", supplier)
         .setParameter("n", suppliersNumber)
         .getSingleResult();
   }
 
   public static Article getByBarcode(long barcode) {
-    @Cleanup
-    EntityManager em = DBConnection.getEntityManager();
-    return em.createQuery("select a from Article a where barcode = :b",Article.class).setParameter("b",barcode).getSingleResult();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery("select a from Article a where barcode = :b", Article.class)
+        .setParameter("b", barcode)
+        .getSingleResult();
   }
 
   public Instant getLastDelivery() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     return em.createQuery(
-        "select i from ShoppingItem i where purchase.id is null and suppliersItemNumber = :k order by i.createDate desc",
-        ShoppingItem.class)
+            "select i from ShoppingItem i where purchase.id is null and suppliersItemNumber = :k order by i.createDate desc",
+            ShoppingItem.class)
         .setParameter("k", this.getSuppliersItemNumber())
         .getResultStream()
         .findFirst()
@@ -262,8 +262,8 @@ public class Article {
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier) {
     return em.createQuery(
-        "select a from Article a where supplier = :s order by abs(a.suppliersItemNumber - :sn) asc",
-        Article.class)
+            "select a from Article a where supplier = :s order by abs(a.suppliersItemNumber - :sn) asc",
+            Article.class)
         .setParameter("s", supplier)
         .setParameter("sn", suppliersItemNumber)
         .setMaxResults(1)
@@ -284,8 +284,8 @@ public class Article {
     try {
       double offerNetPrice =
           em.createQuery(
-              "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
-              Offer.class)
+                  "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
+                  Offer.class)
               .setParameter("id", id)
               .setParameter("d", Instant.now())
               .getSingleResult()

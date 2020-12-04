@@ -163,11 +163,14 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
 
   void searchBySupplierItemsNumber() {
     Supplier supplier = getView().getSupplier();
-    if(supplier == null)getView().noSupplierSelected();
+    if (supplier == null) getView().noSupplierSelected();
     getView().defaultSettings();
     ShoppingItem found =
-        model.getBySupplierItemNumber(supplier,
-            getView().getSuppliersNumber(), getView().getDiscount(), getView().isPreordered());
+        model.getBySupplierItemNumber(
+            supplier,
+            getView().getSuppliersNumber(),
+            getView().getDiscount(),
+            getView().isPreordered());
     if (found != null) {
       getView().loadItemStats(found);
     } else {
@@ -234,7 +237,8 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         }
         int suppliersNumber = getView().getSuppliersNumber();
         if (suppliersNumber != 0 && getView().getSupplier() != null) {
-          return model.getBySupplierItemNumber(getView().getSupplier(),suppliersNumber, discount, preordered);
+          return model.getBySupplierItemNumber(
+              getView().getSupplier(), suppliersNumber, discount, preordered);
         }
         throw new UndefinedInputException();
 

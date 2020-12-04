@@ -27,14 +27,15 @@ public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
     return null;
   }
 
-  ShoppingItem getBySupplierItemNumber(Supplier supplier,int suppliersNumber, int discount, boolean preordered) {
+  ShoppingItem getBySupplierItemNumber(
+      Supplier supplier, int suppliersNumber, int discount, boolean preordered) {
 
-    Article article = Article.getBySuppliersItemNumber(supplier,suppliersNumber);
+    Article article = Article.getBySuppliersItemNumber(supplier, suppliersNumber);
     if (article != null) {
       return new ShoppingItem(article, discount, preordered);
     }
     if (preordered) {
-      Article articleBase = Article.getBySuppliersItemNumber(supplier,suppliersNumber);
+      Article articleBase = Article.getBySuppliersItemNumber(supplier, suppliersNumber);
       if (articleBase != null) {
         return new ShoppingItem(articleBase, discount, preordered);
       }

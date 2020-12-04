@@ -7,24 +7,19 @@ import java.util.Collection;
 import javax.persistence.NoResultException;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
-import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
-import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Exeptions.CannotParseException;
@@ -41,8 +36,7 @@ public class SupplyView implements IView<SupplyController> {
   private ObjectTable<ShoppingItem> shoppingItems;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Double>
       containerSize;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Double>
-      netPrice;
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Double> netPrice;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, String> name;
   private DoubleParseField amount;
   private JButton commit;
@@ -136,9 +130,7 @@ public class SupplyView implements IView<SupplyController> {
   }
 
   private void createUIComponents() {
-    name =
-        new AccessCheckingField<>(
-            Article::getName, Article::setName, AccessCheckingField.NONE);
+    name = new AccessCheckingField<>(Article::getName, Article::setName, AccessCheckingField.NONE);
     netPrice =
         new AccessCheckingField<>(
             Article::getNetPrice, Article::setNetPrice, AccessCheckingField.DOUBLE_FORMER);

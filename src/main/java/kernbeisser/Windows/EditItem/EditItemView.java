@@ -57,8 +57,7 @@ public class EditItemView implements IView<EditItemController> {
 
   private void createUIComponents() {
     itemName =
-        new AccessCheckingField<>(
-            Article::getName, Article::setName, controller::validateName);
+        new AccessCheckingField<>(Article::getName, Article::setName, controller::validateName);
     amount =
         new AccessCheckingField<>(
             Article::getAmount,
@@ -92,8 +91,7 @@ public class EditItemView implements IView<EditItemController> {
             AccessCheckingField.DOUBLE_FORMER);
     supplier = new AccessCheckingComboBox<>(Article::getSupplier, Article::setSupplier);
     priceList = new AccessCheckingComboBox<>(Article::getPriceList, Article::setPriceList);
-    metricUnits =
-        new AccessCheckingComboBox<>(Article::getMetricUnits, Article::setMetricUnits);
+    metricUnits = new AccessCheckingComboBox<>(Article::getMetricUnits, Article::setMetricUnits);
     barcode =
         new AccessCheckingField<>(
             Article::getBarcode, Article::setBarcode, controller::validateBarcode);

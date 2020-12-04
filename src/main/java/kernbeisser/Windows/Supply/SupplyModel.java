@@ -74,9 +74,7 @@ public class SupplyModel implements IModel<SupplyController> {
         .setParameter("sin", suppliersItemNumber);
   }
 
-
-  public Article findBySuppliersItemNumber(
-      Supplier supplier, int suppliersItemNumber) {
+  public Article findBySuppliersItemNumber(Supplier supplier, int suppliersItemNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     return Article.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
   }
@@ -111,7 +109,7 @@ public class SupplyModel implements IModel<SupplyController> {
     try {
       findBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersItemNumber);
       return true;
-    }catch (NoResultException e){
+    } catch (NoResultException e) {
       return false;
     }
   }

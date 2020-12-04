@@ -114,8 +114,10 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       Stream<String> article =
           Files.lines(
               getPackagePath().resolve(packageDefinition.getArticles()), StandardCharsets.UTF_8);
-      Stream<String> kkCatalog = Files.lines(
-          getPackagePath().resolve(packageDefinition.getKornkraftCatalog()), Catalog.DEFAULT_ENCODING);
+      Stream<String> kkCatalog =
+          Files.lines(
+              getPackagePath().resolve(packageDefinition.getKornkraftCatalog()),
+              Catalog.DEFAULT_ENCODING);
       Stream<String> productsJson =
           Files.lines(
               getPackagePath().resolve(packageDefinition.getKornkraftJson()),
@@ -136,7 +138,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
                   view.setItemProgress(0);
                   model.parseSuppliers(suppliers, view::setItemProgress);
                   model.parsePriceLists(priceLists, view::setItemProgress);
-                  model.parseArticle(article, kkCatalog,productsJson, view::setItemProgress);
+                  model.parseArticle(article, kkCatalog, productsJson, view::setItemProgress);
                   Main.logger.info("Item thread finished");
                 });
         articleThread.start();

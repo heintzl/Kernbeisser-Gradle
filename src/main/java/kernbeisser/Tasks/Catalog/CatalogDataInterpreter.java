@@ -76,8 +76,7 @@ public class CatalogDataInterpreter {
   }
 
   public static void linkArticles(
-      List<Article> articleBases,
-      HashMap<Long, SurchargeGroup> surchargeGroupHashMap) {
+      List<Article> articleBases, HashMap<Long, SurchargeGroup> surchargeGroupHashMap) {
     for (Article current : articleBases) {
       SurchargeGroup ref = surchargeGroupHashMap.get((long) current.getSuppliersItemNumber());
       if (ref != null) current.setSurchargeGroup(ref);

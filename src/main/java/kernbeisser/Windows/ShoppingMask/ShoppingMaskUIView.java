@@ -890,6 +890,9 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public void noSupplierSelected() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-        getContent(), "Um nach der Lieferantennummer suchen zu können,\nmust du als erstes ein Lieferanten auswählen.", "Lieferant nicht ausgewählt", JOptionPane.WARNING_MESSAGE);
+        getContent(),
+        "Um nach der Lieferantennummer suchen zu können,\nmust du als erstes ein Lieferanten auswählen.",
+        "Lieferant nicht ausgewählt",
+        JOptionPane.WARNING_MESSAGE);
   }
 }

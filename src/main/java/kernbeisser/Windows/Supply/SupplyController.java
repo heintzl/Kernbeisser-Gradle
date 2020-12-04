@@ -1,6 +1,5 @@
 package kernbeisser.Windows.Supply;
 
-import java.util.Collection;
 import javax.persistence.NoResultException;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -32,7 +31,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     }
   }
 
-  private void checkInput() throws CannotParseException{
+  private void checkInput() throws CannotParseException {
     if (!model.articleExists(getView().getSuppliersItemNumber())) {
       throw new CannotParseException();
     }
