@@ -5,8 +5,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.ArticleKornkraft;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PreOrder;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Useful.Tools;
@@ -30,8 +31,8 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return result;
   }
 
-  ArticleKornkraft getItemByKkNumber(int kkNumber) {
-    return ArticleKornkraft.getByKkNumber(kkNumber);
+  Article getItemByKkNumber(int kkNumber) {
+    return Article.getBySuppliersItemNumber(Supplier.getKKSupplier(),kkNumber);
   }
 
   public void add(PreOrder preOrder) {
@@ -44,8 +45,8 @@ public class PreOrderModel implements IModel<PreOrderController> {
     em.flush();
   }
 
-  public ArticleKornkraft getByBarcode(String s) {
-    return ArticleKornkraft.getByBarcode(Long.parseLong(s));
+  public Article getByBarcode(String s) {
+    return Article.getByBarcode(Long.parseLong(s));
   }
 
   Collection<PreOrder> getAllPreOrders() {

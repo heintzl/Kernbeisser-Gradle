@@ -1,13 +1,20 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
-import kernbeisser.CustomComponents.PermissionComboBox;
+import kernbeisser.CustomComponents.TextFields.DoubleParseField;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -18,14 +25,15 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private JButton back;
   private ObjectTable<ArticleDifference<?>> differences;
   private JButton filter;
-  private kernbeisser.CustomComponents.TextFields.DoubleParseField maxAllowedDifference;
-  private PermissionComboBox<DifferenceType> diffName;
   private JButton useKernbeisser;
   private JButton useKornkraft;
   private JButton selectAll;
   private JButton removeSelection;
   private JButton importCatalog;
   private JButton autoLinkCatalogSurchargeGroups;
+  private AdvancedComboBox<MappedDifferences> difference;
+  private DoubleParseField maxAllowedDiff;
+  private JButton useKernbeisserAndIgnore;
 
   @Linked private SynchronizeArticleController controller;
 
@@ -33,29 +41,29 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   public void initialize(SynchronizeArticleController controller) {
     back.addActionListener(e -> back());
     differences.setColumns(
-        Column.create("Artikel", e -> e.getKernbeisserArticle().getName()),
-        Column.create("Kornkraftnummer", e -> e.getKernbeisserArticle().getSuppliersItemNumber()),
+        Column.create("Artikel", e -> e.getCurrent().getName()),
+        Column.create("Kornkraftnummer", e -> e.getCurrent().getSuppliersItemNumber()),
+        Column.create("Unterschied", e -> e.getArticleDifference().getName()),
         Column.create(
-            "Abweichung", e -> String.format("%.2f%%", controller.getDifference(e) * 100)),
-        Column.create("Unterschied", ArticleDifference::getDifferenceType),
-        Column.create("Kernbeisser", ArticleDifference::getKernbeisserVersion),
-        Column.create("Katalog", ArticleDifference::getCatalogVersion));
-    filter.addActionListener(e -> controller.filter());
+            "Abweichung",e -> String.format("%.2f%%",e.distance())),
+        Column.create("Kernbeisser", ArticleDifference::getCurrentVersion),
+        Column.create("Katalog", ArticleDifference::getNewVersion)
+        );
     selectAll.addActionListener(
         e -> {
           differences.requestFocusInWindow();
           differences.selectAll();
         });
-    diffName.addActionListener(e -> setObjectFilter());
-    maxAllowedDifference.addActionListener(e -> setObjectFilter());
+    maxAllowedDiff.addActionListener(e -> setObjectFilter());
     useKernbeisser.addActionListener(e -> controller.useKernbeisser());
     useKornkraft.addActionListener(e -> controller.useKornkraft());
     removeSelection.addActionListener(e -> differences.clearSelection());
+    useKernbeisserAndIgnore.addActionListener(e -> controller.useKernbeisserAndIgnore());
     importCatalog.addActionListener(
         e -> {
           controller.importCatalog();
         });
-    autoLinkCatalogSurchargeGroups.addActionListener(e -> controller.linkSurchargeGroups());
+    autoLinkCatalogSurchargeGroups.addActionListener(e -> controller.setProductGroups());
   }
 
   @Override
@@ -65,6 +73,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
   private void createUIComponents() {
     differences = new ObjectTable<>();
+    maxAllowedDiff = new DoubleParseField();
+    difference = new AdvancedComboBox<>(Difference::getName);
   }
 
   void setDifferences(Collection<ArticleDifference<?>> articleDifference) {
@@ -77,11 +87,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   }
 
   public double getAllowedDifference() {
-    return maxAllowedDifference.getSafeValue() / 100;
-  }
-
-  public DifferenceType getDiffName() {
-    return (DifferenceType) diffName.getSelectedItem();
+    return maxAllowedDiff.getSafeValue() / 100;
   }
 
   public void setFilterAvailable(boolean b) {
@@ -92,28 +98,14 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     differences.setRowFilter(
         new RowFilter<ArticleDifference<?>>() {
           private final double allowedDiff = getAllowedDifference();
-          private final boolean filterDiff = !maxAllowedDifference.getText().equals("");
-          private final DifferenceType selectedDiffType = getDiffName();
+          private final boolean filterDiff = !maxAllowedDiff.getText().equals("");
+          private final MappedDifferences type = difference.getSelected();
 
           @Override
           public boolean isDisplayed(ArticleDifference<?> difference) {
-            if (filterDiff
-                && Math.abs(SynchronizeArticleView.this.controller.getDifference(difference))
-                    > allowedDiff) {
-              return false;
-            }
-            if (!difference.getDifferenceType().equals(selectedDiffType)) return false;
-            return true;
+            return type.equals(difference.getArticleDifference()) && filterDiff || difference.distance() < allowedDiff;
           }
         });
-  }
-
-  void setAllDiffsTypes(DifferenceType[] diffsTypes) {
-    diffName.removeAllItems();
-    ;
-    for (DifferenceType diffsType : diffsTypes) {
-      diffName.addItem(diffsType);
-    }
   }
 
   Collection<ArticleDifference<?>> getSelectedObjects() {
@@ -155,5 +147,17 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   public void surchargeGroupsSet() {
     JOptionPane.showMessageDialog(
         getTopComponent(), "Die Zuschlagsgruppen wurden erfolgreich gesetzt!");
+  }
+
+  public void setAllDiffs(MappedDifferences[] mappedDiffs) {
+    difference.setItems(Arrays.asList(mappedDiffs));
+  }
+
+  public Difference<Article, ?> getSelectedDiff() {
+    return difference.getSelected();
+  }
+
+  public void mergeDiffsFirst() {
+    JOptionPane.showMessageDialog(getTopComponent(),"Bitte Korrigieren sie alle Konflikte bevor sie den Katalog persistieren.");
   }
 }

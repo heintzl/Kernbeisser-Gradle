@@ -15,7 +15,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DateParseField;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
-import kernbeisser.DBEntities.ArticleBase;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
@@ -30,7 +30,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   private kernbeisser.CustomComponents.TextFields.DateParseField from;
   private kernbeisser.CustomComponents.TextFields.DateParseField to;
   private JComboBox<Repeat> repeat;
-  private SearchBoxView<ArticleBase> searchBox;
+  private SearchBoxView<Article> searchBox;
   private DoubleParseField specialNetPrice;
   private JButton remove;
   private JButton add;
@@ -45,7 +45,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   private ObjectTable<Offer> offersMonth;
   private JComboBox<YearMonth> month;
 
-  @Linked private SearchBoxController<ArticleBase> searchBoxController;
+  @Linked private SearchBoxController<Article> searchBoxController;
   @Linked private SpecialPriceEditorController controller;
   @Linked private AtomicReference<Boolean> filterOnlyActionArticle;
 

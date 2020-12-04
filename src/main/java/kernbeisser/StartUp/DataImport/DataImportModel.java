@@ -28,10 +28,12 @@ import kernbeisser.Main;
 import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
 import kernbeisser.Tasks.DTO.Catalog;
+import kernbeisser.Tasks.DTO.KornkraftGroup;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
+import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleModel;
 import lombok.Cleanup;
 
 public class DataImportModel implements IModel<DataImportController> {
@@ -155,7 +157,32 @@ public class DataImportModel implements IModel<DataImportController> {
     progress.accept(4);
   }
 
-  void parseArticle(Stream<String> f, Stream<String> kornkraftJson, Consumer<Integer> progress) {
+  void parseArticle(Stream<String> f,Stream<String> kornkraftCatalog,Stream<String> productsJson, Consumer<Integer> progress) {
+    readArticles(f);
+    readCatalog(kornkraftCatalog);
+    setProductGroups(productsJson);
+  }
+
+  private void setProductGroups(Stream<String> productGroups){
+    @Cleanup
+    EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Catalog catalog = Catalog.read(productGroups);
+    HashMap<Long,SurchargeGroup> surchargeGroupHashMap = CatalogDataInterpreter.createNumberRefMap(catalog,CatalogDataInterpreter.extractSurchargeGroups(CatalogDataInterpreter.extractGroupsTree(catalog),em));
+    CatalogDataInterpreter.linkArticles(em.createQuery("select a from Article a where supplier = :s",Article.class).setParameter("s",Supplier.getKKSupplier()).getResultList(),surchargeGroupHashMap);
+    em.flush();
+    et.commit();
+  }
+
+  private void readCatalog(Stream<String> kornkraftCatalog){
+    SynchronizeArticleModel model = new SynchronizeArticleModel();
+    model.load(kornkraftCatalog);
+    model.resolveAllFor(true);
+    model.pushToDB();
+  }
+
+  private void readArticles(Stream<String> f){
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
@@ -181,19 +208,12 @@ public class DataImportModel implements IModel<DataImportController> {
         });
     Main.logger.warn("Ignored " + errorCollector.count() + " articles errors:");
     errorCollector.log();
-    progress.accept(5);
     ArrayList<Article> articles = new ArrayList<>(articleCollectionHashMap.keySet());
-    Catalog catalog = Catalog.read(kornkraftJson);
-    HashMap<Long, SurchargeGroup> surchargeGroupHashMap =
-        CatalogDataInterpreter.createNumberRefMap(
-            catalog,
-            CatalogDataInterpreter.extractSurchargeGroups(
-                CatalogDataInterpreter.extractGroupsTree(catalog), em));
-    CatalogDataInterpreter.linkArticles(articles, surchargeGroupHashMap);
-    CatalogDataInterpreter.autoLinkArticle(articles);
-    em.flush();
+    Tools.group(articles,Article::getSupplier).forEach((v,k) -> Tools.fillUniqueFieldWithNextAvailable(k,Article::getSuppliersItemNumber,(o,a) -> {
+      o.setSuppliersItemNumber(a);
+      o.setVerified(false);
+    },e -> e+1));
     articles.forEach(em::persist);
-    progress.accept(6);
     em.flush();
     et.commit();
   }

@@ -12,7 +12,6 @@ import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
 import kernbeisser.CustomComponents.Verifier.KBNumberVerifier;
 import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
@@ -59,48 +58,48 @@ public class EditItemView implements IView<EditItemController> {
   private void createUIComponents() {
     itemName =
         new AccessCheckingField<>(
-            ArticleBase::getName, ArticleBase::setName, controller::validateName);
+            Article::getName, Article::setName, controller::validateName);
     amount =
         new AccessCheckingField<>(
-            ArticleBase::getAmount,
-            ArticleBase::setAmount,
+            Article::getAmount,
+            Article::setAmount,
             AccessCheckingField.combine(controller::displayAmount, controller::validateAmount));
     netPrice =
         new AccessCheckingField<>(
-            ArticleBase::getNetPrice, ArticleBase::setNetPrice, AccessCheckingField.DOUBLE_FORMER);
+            Article::getNetPrice, Article::setNetPrice, AccessCheckingField.DOUBLE_FORMER);
     deposit =
         new AccessCheckingField<>(
-            ArticleBase::getSingleDeposit,
-            ArticleBase::setSingleDeposit,
+            Article::getSingleDeposit,
+            Article::setSingleDeposit,
             AccessCheckingField.DOUBLE_FORMER);
     kbItemNumber =
         new AccessCheckingField<>(
             Article::getKbNumber, Article::setKbNumber, controller::validateKBNumber);
     supplierItemNumber =
         new AccessCheckingField<>(
-            ArticleBase::getSuppliersItemNumber,
-            ArticleBase::setSuppliersItemNumber,
+            Article::getSuppliersItemNumber,
+            Article::setSuppliersItemNumber,
             AccessCheckingField.INT_FORMER);
     crateDeposit =
         new AccessCheckingField<>(
-            ArticleBase::getContainerDeposit,
-            ArticleBase::setContainerDeposit,
+            Article::getContainerDeposit,
+            Article::setContainerDeposit,
             AccessCheckingField.DOUBLE_FORMER);
     containerSize =
         new AccessCheckingField<>(
-            ArticleBase::getContainerSize,
-            ArticleBase::setContainerSize,
+            Article::getContainerSize,
+            Article::setContainerSize,
             AccessCheckingField.DOUBLE_FORMER);
-    supplier = new AccessCheckingComboBox<>(ArticleBase::getSupplier, ArticleBase::setSupplier);
+    supplier = new AccessCheckingComboBox<>(Article::getSupplier, Article::setSupplier);
     priceList = new AccessCheckingComboBox<>(Article::getPriceList, Article::setPriceList);
     metricUnits =
-        new AccessCheckingComboBox<>(ArticleBase::getMetricUnits, ArticleBase::setMetricUnits);
+        new AccessCheckingComboBox<>(Article::getMetricUnits, Article::setMetricUnits);
     barcode =
         new AccessCheckingField<>(
-            ArticleBase::getBarcode, ArticleBase::setBarcode, controller::validateBarcode);
+            Article::getBarcode, Article::setBarcode, controller::validateBarcode);
     showInShoppingMask = new AccessCheckBox<>(Article::isShowInShop, Article::setShowInShop);
     weighable = new AccessCheckBox<>(Article::isWeighable, Article::setWeighable);
-    vat = new AccessCheckingComboBox<>(ArticleBase::getVat, ArticleBase::setVat);
+    vat = new AccessCheckingComboBox<>(Article::getVat, Article::setVat);
     surchargeGroup =
         new AccessCheckingComboBox<>(
             e -> {

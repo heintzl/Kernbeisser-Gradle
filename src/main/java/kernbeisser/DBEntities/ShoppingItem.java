@@ -156,52 +156,42 @@ public class ShoppingItem implements Serializable {
   @Getter @Transient private String lastDeliveryMonth = "";
 
   /**
-   * @param articleBase most ShoppingItem properties are copied from given article. surcharge gets
+   * @param article most ShoppingItem properties are copied from given article. surcharge gets
    *     calculated
    * @param discount percentage of netprice reduction
    * @param hasContainerDiscount if true reduced surcharge is applied
    */
-  public ShoppingItem(ArticleBase articleBase, int discount, boolean hasContainerDiscount) {
+  public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
-    this.amount = articleBase.getAmount();
-    double offerNetPrice = articleBase.getOfferNetPrice();
+    this.amount = article.getAmount();
+    double offerNetPrice = article.getOfferNetPrice();
     if (offerNetPrice == -999.0) {
-      this.itemNetPrice = articleBase.getNetPrice();
+      this.itemNetPrice = article.getNetPrice();
       this.specialOffer = false;
     } else {
       this.itemNetPrice = offerNetPrice;
       this.specialOffer = true;
     }
-    this.name = (specialOffer ? Setting.OFFER_PREFIX.getStringValue() : "") + articleBase.getName();
-    this.metricUnits = articleBase.getMetricUnits();
-    this.vat = articleBase.getVat();
+    this.name = (specialOffer ? Setting.OFFER_PREFIX.getStringValue() : "") + article.getName();
+    this.metricUnits = article.getMetricUnits();
+    this.vat = article.getVat();
     if (this.vat != null) {
       this.vatValue = vat.getValue();
     }
     this.surcharge =
-        articleBase.getSurchargeGroup().getSurcharge()
+        article.getSurchargeGroup().getSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1)
             / 100.0;
     this.discount = discount;
-    supplier = articleBase.getSupplier();
+    supplier = article.getSupplier();
     if (supplier != null) {
-      this.suppliersShortName = articleBase.getSupplier().getShortName();
+      this.suppliersShortName = article.getSupplier().getShortName();
     }
-    this.suppliersItemNumber = articleBase.getSuppliersItemNumber();
-    this.singleDeposit = articleBase.getSingleDeposit();
-    this.containerDeposit = articleBase.getContainerDeposit();
-    this.containerSize = articleBase.getContainerSize();
+    this.suppliersItemNumber = article.getSuppliersItemNumber();
+    this.singleDeposit = article.getSingleDeposit();
+    this.containerDeposit = article.getContainerDeposit();
+    this.containerSize = article.getContainerSize();
     this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
-  }
-
-  /**
-   * @param article Article constructor provides some more fields than ArticleBase. surcharge is
-   *     taken directly from article
-   * @param discount percentage of netprice reduction
-   * @param hasContainerDiscount if true reduced surcharge is applied
-   */
-  public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
-    this((ArticleBase) article, discount, hasContainerDiscount);
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
     this.articleSurcharge =

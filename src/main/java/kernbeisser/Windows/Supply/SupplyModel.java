@@ -12,7 +12,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -24,24 +23,12 @@ import lombok.Getter;
 
 public class SupplyModel implements IModel<SupplyController> {
 
-  private final Set<ArticleBase> print = new HashSet<>();
+  private final Set<Article> print = new HashSet<>();
   @Getter private final Collection<ShoppingItem> shoppingItems = new ArrayList<>();
 
-  public Article findNextTo(ArticleBase articleKornkraft) {
+  public Article findNextTo(Article articleKornkraft) {
     return Article.nextArticleTo(
         articleKornkraft.getSuppliersItemNumber(), Supplier.getKKSupplier());
-  }
-
-  public Article persistArticleBase(
-      ArticleBase ab, boolean weighable, PriceList priceList, int kbNumber) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Article article = Article.fromArticleBase(ab, weighable, priceList, kbNumber);
-    em.persist(article);
-    em.flush();
-    et.commit();
-    return article;
   }
 
   public int getNextUnusedKBNumber(int kbNumber) {
@@ -87,31 +74,11 @@ public class SupplyModel implements IModel<SupplyController> {
         .setParameter("sin", suppliersItemNumber);
   }
 
-  private TypedQuery<ArticleBase> getArticleBaseViaSuppliersItemNumber(
-      Supplier supplier, int suppliersItemNumber, EntityManager entityManager)
-      throws NoResultException {
-    return entityManager
-        .createQuery(
-            "select a from ArticleBase a where supplier.id = :sid and suppliersItemNumber = :sin",
-            ArticleBase.class)
-        .setParameter("sid", supplier.getId())
-        .setParameter("sin", suppliersItemNumber);
-  }
 
-  public boolean isArticle(ArticleBase a) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      a.getKernbeisserArticle(em);
-      return true;
-    } catch (NoResultException e) {
-      return false;
-    }
-  }
-
-  public Collection<ArticleBase> findBySuppliersItemNumber(
+  public Article findBySuppliersItemNumber(
       Supplier supplier, int suppliersItemNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return getArticleBaseViaSuppliersItemNumber(supplier, suppliersItemNumber, em).getResultList();
+    return Article.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
   }
 
   public Collection<PriceList> getAllPriceLists() {
@@ -132,7 +99,7 @@ public class SupplyModel implements IModel<SupplyController> {
         .exportPdf("Drucke Ladenschilder", Tools::showUnexpectedErrorWarning);
   }
 
-  public void togglePrint(ArticleBase bases) {
+  public void togglePrint(Article bases) {
     if (!print.remove(bases)) print.add(bases);
   }
 
@@ -141,6 +108,11 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   public boolean articleExists(int suppliersItemNumber) {
-    return findBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersItemNumber).size() != 0;
+    try {
+      findBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersItemNumber);
+      return true;
+    }catch (NoResultException e){
+      return false;
+    }
   }
 }

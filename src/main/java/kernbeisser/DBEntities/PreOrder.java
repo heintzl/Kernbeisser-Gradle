@@ -30,7 +30,7 @@ public class PreOrder implements Serializable {
   @JoinColumn
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_WRITE)})
-  private ArticleBase article;
+  private Article article;
 
   @ManyToOne
   @JoinColumn

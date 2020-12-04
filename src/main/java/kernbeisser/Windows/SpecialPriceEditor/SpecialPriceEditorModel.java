@@ -8,7 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.ArticleBase;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -30,12 +30,12 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
     em.close();
   }
 
-  public void addOffer(ArticleBase article, Offer offer) {
+  public void addOffer(Article article, Offer offer) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
-    ArticleBase i =
-        em.createQuery("select i from ArticleBase i where id = :id", ArticleBase.class)
+    Article i =
+        em.createQuery("select i from Article i where id = :id", Article.class)
             .setParameter("id", article.getId())
             .getSingleResult();
     offer.setArticle(i);
@@ -45,14 +45,14 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
     em.close();
   }
 
-  public Collection<ArticleBase> searchArticle(
+  public Collection<Article> searchArticle(
       String search, int maxResults, boolean onlyActionArticle) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     return em.createQuery(
-            "select a from ArticleBase a where "
+            "select a from Article a where "
                 + "(a.name like :s or cast(a.suppliersItemNumber as string) like :s)"
                 + (onlyActionArticle ? " and a.id in (select article.id from Offer)" : ""),
-            ArticleBase.class)
+            Article.class)
         .setParameter("s", "%" + search + "%")
         .getResultList();
   }
