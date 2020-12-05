@@ -16,6 +16,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,6 +24,8 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.swing.*;
 import javax.swing.text.*;
+import kernbeisser.CustomComponents.AccessChecking.Getter;
+import kernbeisser.CustomComponents.AccessChecking.Setter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
@@ -204,8 +207,43 @@ public class Tools {
         });
   }
 
-  public static void add(Object o) {
+  public static void resetId(Object o) {
     Tools.setId(o, Tools.getId(Tools.createWithoutConstructor(o.getClass())));
+  }
+
+  public static <T, V> Map<V, Collection<T>> group(Collection<T> collection, Getter<T, V> getter) {
+    HashMap<V, Collection<T>> collectionHashMap = new HashMap<>();
+    for (T t : collection) {
+      collectionHashMap.computeIfAbsent(getter.get(t), k -> new ArrayList<>()).add(t);
+    }
+    return collectionHashMap;
+  }
+
+  public static <T, V> void fillUniqueFieldWithNextAvailable(
+      Collection<T> collection, Getter<T, V> getter, Setter<T, V> setter, UnaryOperator<V> next) {
+    Set<V> values = new HashSet<>(collection.size());
+    Collection<T> task = new ArrayList<>();
+    for (T t : collection) {
+      if (!values.add(getter.get(t))) task.add(t);
+    }
+    for (T t : task) {
+      V value = next.apply(getter.get(t));
+      while (values.contains(value)) {
+        value = next.apply(value);
+      }
+      if (!values.add(value)) System.out.println("HOW?");
+      setter.set(t, value);
+    }
+  }
+
+  public static <T, V> Set<V> createSet(Collection<T> collection, Getter<T, V> tvGetter) {
+    HashSet<V> out = new HashSet<>(collection.size());
+    collection.forEach(e -> out.add(tvGetter.get(e)));
+    return out;
+  }
+
+  public static void add(Object o) {
+    resetId(o);
     persist(o);
   }
 

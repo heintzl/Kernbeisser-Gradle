@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManager;
-import kernbeisser.DBEntities.ArticleBase;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Tasks.DTO.Catalog;
@@ -76,24 +76,23 @@ public class CatalogDataInterpreter {
   }
 
   public static void linkArticles(
-      List<? extends ArticleBase> articleBases,
-      HashMap<Long, SurchargeGroup> surchargeGroupHashMap) {
-    for (ArticleBase current : articleBases) {
+      List<Article> articleBases, HashMap<Long, SurchargeGroup> surchargeGroupHashMap) {
+    for (Article current : articleBases) {
       SurchargeGroup ref = surchargeGroupHashMap.get((long) current.getSuppliersItemNumber());
       if (ref != null) current.setSurchargeGroup(ref);
     }
   }
 
-  public static void autoLinkArticle(List<? extends ArticleBase> articleBases) {
+  public static void autoLinkArticle(List<Article> articleBases) {
     SurchargeGroup undef = SurchargeGroup.undefined();
-    ArticleBase last = findNext(0, articleBases);
-    ArticleBase next = last;
-    articleBases.sort(Comparator.comparingInt(ArticleBase::getSuppliersItemNumber));
-    for (ArticleBase articleBase : articleBases) {
+    Article last = findNext(0, articleBases);
+    Article next = last;
+    articleBases.sort(Comparator.comparingInt(Article::getSuppliersItemNumber));
+    for (Article articleBase : articleBases) {
       if (!articleBase.getSurchargeGroup().equals(undef)) last = articleBase;
     }
     for (int i = 0; i < articleBases.size(); i++) {
-      ArticleBase current = articleBases.get(i);
+      Article current = articleBases.get(i);
       if (next.getSuppliersItemNumber() <= current.getSuppliersItemNumber())
         next = findNext(i + 1, articleBases);
       if (diff(current, next) > diff(current, last))
@@ -102,14 +101,14 @@ public class CatalogDataInterpreter {
     }
   }
 
-  public static int diff(ArticleBase a, ArticleBase b) {
+  public static int diff(Article a, Article b) {
     return Math.abs(a.getSuppliersItemNumber() - b.getSuppliersItemNumber());
   }
 
-  public static ArticleBase findNext(int offset, List<? extends ArticleBase> articleBases) {
+  public static Article findNext(int offset, List<Article> articleBases) {
     SurchargeGroup undef = SurchargeGroup.undefined();
     for (int i = 0; i < articleBases.size(); i++) {
-      ArticleBase current = articleBases.get((offset + i) % articleBases.size());
+      Article current = articleBases.get((offset + i) % articleBases.size());
       if (!current.getSurchargeGroup().equals(undef)) {
         return current;
       }

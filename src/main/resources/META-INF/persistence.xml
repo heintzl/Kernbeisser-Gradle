@@ -12,7 +12,7 @@
         <class>kernbeisser.DBEntities.CatalogDataSource</class>
         <class>kernbeisser.DBEntities.Article</class>
         <class>kernbeisser.DBEntities.User</class>
-        <class>kernbeisser.DBEntities.ArticleKornkraft</class>
+        <class>kernbeisser.DBEntities.IgnoredDifference</class>
         <class>kernbeisser.DBEntities.UserGroup</class>
         <class>kernbeisser.DBEntities.ShoppingItem</class>
         <class>kernbeisser.DBEntities.SaleSession</class>
@@ -27,7 +27,6 @@
         <class>kernbeisser.DBEntities.UserSettingValue</class>
         <class>kernbeisser.DBEntities.Inventory</class>
         <class>kernbeisser.DBEntities.InventoryState</class>
-        <class>kernbeisser.DBEntities.ArticleBase</class>
         <class>kernbeisser.DBEntities.Shelf</class>
         <class>kernbeisser.DBEntities.IgnoredDialog</class>
         <properties>

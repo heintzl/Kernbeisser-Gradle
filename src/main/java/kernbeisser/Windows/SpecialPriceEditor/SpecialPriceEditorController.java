@@ -12,7 +12,7 @@ import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.DatePicker.DatePickerController;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
-import kernbeisser.DBEntities.ArticleBase;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public class SpecialPriceEditorController
     extends Controller<SpecialPriceEditorView, SpecialPriceEditorModel> {
 
-  @Linked private final SearchBoxController<ArticleBase> searchBoxController;
+  @Linked private final SearchBoxController<Article> searchBoxController;
 
   @Linked
   private final AtomicReference<Boolean> filterOnlyActionArticle = new AtomicReference<>(false);
@@ -35,16 +35,16 @@ public class SpecialPriceEditorController
   public SpecialPriceEditorController() {
     super(new SpecialPriceEditorModel());
     this.searchBoxController =
-        new SearchBoxController<ArticleBase>(
+        new SearchBoxController<Article>(
             this::search,
-            new Column<ArticleBase>() {
+            new Column<Article>() {
               @Override
               public String getName() {
                 return "Name";
               }
 
               @Override
-              public Object getValue(ArticleBase article) throws PermissionKeyRequiredException {
+              public Object getValue(Article article) throws PermissionKeyRequiredException {
                 return article.getName();
               }
 
@@ -58,20 +58,20 @@ public class SpecialPriceEditorController
                 return Column.DEFAULT_STRIPED_RENDERER;
               }
             },
-            Column.create("Packungsmenge", ArticleBase::getAmount),
-            Column.create("Lieferant", ArticleBase::getSupplier),
-            Column.create("Lieferanten Nr.", ArticleBase::getSuppliersItemNumber));
+            Column.create("Packungsmenge", Article::getAmount),
+            Column.create("Lieferant", Article::getSupplier),
+            Column.create("Lieferanten Nr.", Article::getSuppliersItemNumber));
     searchBoxController.addSelectionListener(this::load);
   }
 
-  private Collection<ArticleBase> search(String s, int i) {
+  private Collection<Article> search(String s, int i) {
     if (!isInViewInitialize()) {
       load(null);
     }
     return model.searchArticle(s, i, filterOnlyActionArticle.get());
   }
 
-  void load(ArticleBase article) {
+  void load(Article article) {
     var view = getView();
     view.setSpecialNetPrice(0);
     if (article == null) {
@@ -138,7 +138,7 @@ public class SpecialPriceEditorController
   public void add() {
     try {
       Offer o = collect();
-      ArticleBase base = searchBoxController.getSelectedObject();
+      Article base = searchBoxController.getSelectedObject();
       if (o.getSpecialNetPrice() > base.getNetPrice() && !getView().commitStrangeNetPrice()) return;
       model.addOffer(base, collect());
       getView().setOffers(searchBoxController.getSelectedObject().getAllOffers());

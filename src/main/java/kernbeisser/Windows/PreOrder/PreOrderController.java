@@ -37,7 +37,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     try {
       PreOrder order = obtainFromView();
       noArticleFound();
-      getView().setKkNumber(0);
+      getView().resetArticleNr();
       model.add(order);
       getView().addPreOrder(order);
     } catch (NoResultException e) {
@@ -56,7 +56,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void noArticleFound() {
-    ArticleKornkraft empty = new ArticleKornkraft();
+    Article empty = new Article();
     empty.setName("Kein Artikel gefunden");
     empty.setSurchargeGroup(new SurchargeGroup());
     pasteDataInView(empty);
@@ -68,7 +68,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     return true;
   }
 
-  void pasteDataInView(ArticleKornkraft articleKornkraft) {
+  void pasteDataInView(Article articleKornkraft) {
     var view = getView();
     view.setAmount(String.valueOf(1));
     view.setContainerSize(articleKornkraft.getContainerSize() + "");
@@ -80,7 +80,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   private PreOrder obtainFromView() {
     PreOrder preOrder = new PreOrder();
-    ArticleKornkraft article = findArticle();
+    Article article = findArticle();
     var view = getView();
     preOrder.setUser(view.getUser());
     preOrder.setArticle(article);
@@ -89,12 +89,12 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     return preOrder;
   }
 
-  private ArticleKornkraft findArticle() {
+  private Article findArticle() {
     if (getView().getKkNumber() == 0) throw new NoResultException();
     return model.getItemByKkNumber(getView().getKkNumber());
   }
 
-  void insert(ArticleKornkraft articleBase) {
+  void insert(Article articleBase) {
     if (articleBase == null) throw new NullPointerException("cannot insert null as PreOrder");
     PreOrder preOrder = new PreOrder();
     var view = getView();

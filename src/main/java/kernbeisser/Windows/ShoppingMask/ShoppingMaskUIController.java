@@ -8,7 +8,6 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -163,10 +162,15 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   void searchBySupplierItemsNumber() {
+    Supplier supplier = getView().getSupplier();
+    if (supplier == null) getView().noSupplierSelected();
     getView().defaultSettings();
     ShoppingItem found =
         model.getBySupplierItemNumber(
-            getView().getSuppliersNumber(), getView().getDiscount(), getView().isPreordered());
+            supplier,
+            getView().getSuppliersNumber(),
+            getView().getDiscount(),
+            getView().isPreordered());
     if (found != null) {
       getView().loadItemStats(found);
     } else {
@@ -216,7 +220,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   ShoppingItem createCustomItem(Supplier supplier) {
-    ArticleBase articleBase = new ArticleBase();
+    Article articleBase = new Article();
     articleBase.setSupplier(supplier);
     articleBase.setVat(getView().getVat());
     return new ShoppingItem(articleBase, getView().getDiscount(), getView().isPreordered());
@@ -232,8 +236,9 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
           return model.getByKbNumber(kbArticleNumber, discount, preordered);
         }
         int suppliersNumber = getView().getSuppliersNumber();
-        if (suppliersNumber != 0) {
-          return model.getBySupplierItemNumber(suppliersNumber, discount, preordered);
+        if (suppliersNumber != 0 && getView().getSupplier() != null) {
+          return model.getBySupplierItemNumber(
+              getView().getSupplier(), suppliersNumber, discount, preordered);
         }
         throw new UndefinedInputException();
 
@@ -244,7 +249,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         return ShoppingItem.createProduce(getRelevantPrice(), getView().isPreordered());
 
       case CUSTOM_PRODUCT:
-        ArticleBase customArticle = new Article();
+        Article customArticle = new Article();
 
         customArticle.setName(getView().getItemName());
         customArticle.setSupplier(getView().getSupplier());

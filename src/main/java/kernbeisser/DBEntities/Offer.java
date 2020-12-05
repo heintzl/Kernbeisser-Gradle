@@ -47,5 +47,5 @@ public class Offer implements Serializable {
   @JoinColumn(nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.OFFER_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.OFFER_ID_WRITE)})
-  private ArticleBase article;
+  private Article article;
 }

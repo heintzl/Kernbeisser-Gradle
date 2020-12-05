@@ -1,9 +1,9 @@
 package kernbeisser.Windows.ShoppingMask;
 
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.ArticleBase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Data;
 
@@ -27,14 +27,15 @@ public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
     return null;
   }
 
-  ShoppingItem getBySupplierItemNumber(int suppliersNumber, int discount, boolean preordered) {
+  ShoppingItem getBySupplierItemNumber(
+      Supplier supplier, int suppliersNumber, int discount, boolean preordered) {
 
-    Article article = Article.getBySuppliersItemNumber(suppliersNumber);
+    Article article = Article.getBySuppliersItemNumber(supplier, suppliersNumber);
     if (article != null) {
       return new ShoppingItem(article, discount, preordered);
     }
     if (preordered) {
-      ArticleBase articleBase = ArticleBase.getBySuppliersItemNumber(suppliersNumber);
+      Article articleBase = Article.getBySuppliersItemNumber(supplier, suppliersNumber);
       if (articleBase != null) {
         return new ShoppingItem(articleBase, discount, preordered);
       }
@@ -48,7 +49,7 @@ public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
       return new ShoppingItem(article, discount, preordered);
     }
     if (preordered) {
-      ArticleBase articleBase = ArticleBase.getByBarcode(barcode);
+      Article articleBase = Article.getByBarcode(barcode);
       if (articleBase != null) {
         return new ShoppingItem(articleBase, discount, preordered);
       }

@@ -64,12 +64,20 @@ public class SurchargeGroup implements Serializable, Cloneable {
     return out;
   }
 
+  public static SurchargeGroup defaultForSupplier(Supplier supplier) {
+    SurchargeGroup sg = new SurchargeGroup();
+    sg.setName(supplier.getName());
+    sg.setSurcharge(supplier.getDefaultSurcharge());
+    Tools.persist(sg);
+    return sg;
+  }
+
   @Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_READ)
   public double getSurcharge() {
     if (surcharge == null) {
       return parent == null
           ? supplier == null
-              ? Setting.DEFAULT_SURCHARGE.getDoubleValue()
+              ? Setting.SURCHARGE_DEFAULT.getDoubleValue()
               : supplier.getDefaultSurcharge()
           : parent.getSurcharge();
     } else return surcharge;

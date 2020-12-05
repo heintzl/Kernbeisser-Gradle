@@ -7,25 +7,19 @@ import java.util.Collection;
 import javax.persistence.NoResultException;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.AccessChecking.AccessCheckingField;
 import kernbeisser.CustomComponents.AccessChecking.ObjectForm;
-import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
-import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.ArticleBase;
-import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Exeptions.CannotParseException;
@@ -40,18 +34,17 @@ public class SupplyView implements IView<SupplyController> {
   private JComboBox<Supplier> supplier;
   private JButton add;
   private ObjectTable<ShoppingItem> shoppingItems;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<ArticleBase, Double>
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Double>
       containerSize;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<ArticleBase, Double>
-      netPrice;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<ArticleBase, String> name;
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, Double> netPrice;
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, String> name;
   private DoubleParseField amount;
   private JButton commit;
   private JButton cancel;
 
   @Linked private SupplyController controller;
 
-  private ObjectForm<ArticleBase> objectForm;
+  private ObjectForm<Article> objectForm;
 
   @Override
   public void initialize(SupplyController controller) {
@@ -81,7 +74,7 @@ public class SupplyView implements IView<SupplyController> {
     commit.addActionListener(e -> controller.commit());
   }
 
-  public ObjectForm<ArticleBase> getObjectForm() {
+  public ObjectForm<Article> getObjectForm() {
     return objectForm;
   }
 
@@ -137,16 +130,14 @@ public class SupplyView implements IView<SupplyController> {
   }
 
   private void createUIComponents() {
-    name =
-        new AccessCheckingField<>(
-            ArticleBase::getName, ArticleBase::setName, AccessCheckingField.NONE);
+    name = new AccessCheckingField<>(Article::getName, Article::setName, AccessCheckingField.NONE);
     netPrice =
         new AccessCheckingField<>(
-            ArticleBase::getNetPrice, ArticleBase::setNetPrice, AccessCheckingField.DOUBLE_FORMER);
+            Article::getNetPrice, Article::setNetPrice, AccessCheckingField.DOUBLE_FORMER);
     containerSize =
         new AccessCheckingField<>(
-            ArticleBase::getContainerSize,
-            ArticleBase::setContainerSize,
+            Article::getContainerSize,
+            Article::setContainerSize,
             AccessCheckingField.DOUBLE_FORMER);
     Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
     Icon unselected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0xC7C7C7));
@@ -167,7 +158,7 @@ public class SupplyView implements IView<SupplyController> {
                 controller::togglePrint));
   }
 
-  ArticleBase select(Collection<ArticleBase> collection) {
+  Article select(Collection<Article> collection) {
     return SelectionDialog.select(
         getTopComponent(), "Bitte wählen sie den gemeinten Artikel aus.", collection);
   }
@@ -191,29 +182,6 @@ public class SupplyView implements IView<SupplyController> {
   @Override
   public String getTitle() {
     return "Lieferung eingeben";
-  }
-
-  public void verifyArticleAutofill(Article article, Collection<PriceList> priceLists) {
-    AdvancedComboBox<PriceList> priceListAdvancedComboBox = new AdvancedComboBox<>();
-    IntegerParseField kbNumber = new IntegerParseField();
-    kbNumber.setText(article.getKbNumber() + "");
-    priceListAdvancedComboBox.setItems(priceLists);
-    priceListAdvancedComboBox.setSelectedItem(article.getPriceList());
-    JCheckBox weighable = new JCheckBox("Auswiegware:", article.isWeighable());
-    JOptionPane.showMessageDialog(
-        getTopComponent(),
-        new Object[] {
-          new JLabel("Preisliste:"),
-          priceListAdvancedComboBox,
-          new JLabel("Kernbeissernr."),
-          kbNumber,
-          weighable
-        },
-        "Artikel vervollständigen",
-        JOptionPane.INFORMATION_MESSAGE);
-    article.setKbNumber(kbNumber.getSafeValue());
-    article.setPriceList(priceListAdvancedComboBox.getSelected());
-    article.setWeighable(weighable.isSelected());
   }
 
   public void repaintTable() {

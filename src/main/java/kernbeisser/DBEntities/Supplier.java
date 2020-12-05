@@ -92,7 +92,7 @@ public class Supplier implements Serializable {
   }
 
   private static Supplier getOrCreateSupplierByShortName(
-      String shortName, String defaultName, int defaultSurcharge) {
+      String shortName, String defaultName, double defaultSurcharge) {
     try {
       return getSupplierByShortName(shortName);
     } catch (NoResultException e) {
@@ -113,17 +113,17 @@ public class Supplier implements Serializable {
 
   public static Supplier getKKSupplier() {
     return getOrCreateSupplierByShortName(
-        "KK", "Kornkraft Großhandel", Setting.SURCHARGE_DEFAULT.getIntValue());
+        "KK", "Kornkraft Großhandel", Setting.SURCHARGE_DEFAULT.getDoubleValue());
   }
 
   public static Supplier getBakerySupplier() {
     return getOrCreateSupplierByShortName(
-        "AWB", "Kennung Backwaren", Setting.SURCHARGE_BAKERY.getIntValue());
+        "AWB", "Kennung Backwaren", Setting.SURCHARGE_BAKERY.getDoubleValue());
   }
 
   public static Supplier getProduceSupplier() {
     return getOrCreateSupplierByShortName(
-        "AWO", "Kennung Obst&Gemüse", Setting.SURCHARGE_PRODUCE.getIntValue());
+        "AWO", "Kennung Obst&Gemüse", Setting.SURCHARGE_PRODUCE.getDoubleValue());
   }
 
   public static Supplier getSolidaritySupplier() {

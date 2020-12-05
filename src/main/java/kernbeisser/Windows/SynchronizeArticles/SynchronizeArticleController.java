@@ -2,12 +2,10 @@ package kernbeisser.Windows.SynchronizeArticles;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
-import org.jetbrains.annotations.NotNull;
 
 public class SynchronizeArticleController
     extends Controller<SynchronizeArticleView, SynchronizeArticleModel> {
@@ -16,16 +14,9 @@ public class SynchronizeArticleController
     super(new SynchronizeArticleModel());
   }
 
-  @NotNull
-  @Override
-  public SynchronizeArticleModel getModel() {
-    return model;
-  }
-
   @Override
   public void fillView(SynchronizeArticleView synchronizeArticleView) {
-    synchronizeArticleView.setDifferences(model.getAllDifferences());
-    synchronizeArticleView.setAllDiffsTypes(DifferenceType.values());
+    getView().setAllDiffs(MappedDifferences.values());
   }
 
   @Override
@@ -33,64 +24,59 @@ public class SynchronizeArticleController
     return new PermissionKey[0];
   }
 
-  public double getDifference(ArticleDifference<?> difference) {
-    try {
-      ArticleDifference<Number> numberDifference = (ArticleDifference<Number>) difference;
-      return Math.abs(
-              numberDifference.getCatalogVersion().doubleValue()
-                  / numberDifference.getKernbeisserVersion().doubleValue())
-          - 1;
-    } catch (ClassCastException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      throw new RuntimeException(e);
+  public void useKernbeisser() {
+    apply(true);
+  }
+
+  public void useKernbeisserAndIgnore() {
+    for (ArticleDifference<?> selectedObject : getView().getSelectedObjects()) {
+      getView().remove(selectedObject);
+      model.resolveAndIgnoreDifference(selectedObject);
     }
   }
 
-  void importCatalog() {
+  public void useKornkraft() {
+    apply(false);
+  }
+
+  private void apply(boolean useCurrent) {
+    for (ArticleDifference<?> selectedObject : getView().getSelectedObjects()) {
+      getView().remove(selectedObject);
+      model.resolveDifference(selectedObject, useCurrent);
+    }
+  }
+
+  public void setProductGroups() {
     try {
-      getView().setImportCatalogAvailable(false);
-      Catalog.updateCatalog(
-          Files.lines(
-              getView().requestInputFile("csv", "bnn", "BNN", "txt").toPath(),
-              Catalog.DEFAULT_ENCODING),
-          () -> {
-            getView().setImportCatalogAvailable(true);
-            getView().importSuccessful();
-            model.refreshDiffs();
-            getView().setDifferences(model.getAllDifferences());
-          });
-      getView().progressStarted();
+      model.setProductGroups(Files.lines(getView().requestInputFile("json", "JSON").toPath()));
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
   }
 
-  public void filter() {
-    getView().setObjectFilter();
-  }
-
-  void useKernbeisser() {
-    model.resolve(getView().getSelectedObjects(), true);
-    getView().setDifferences(model.getAllDifferences());
-  }
-
-  void useKornkraft() {
-    model.resolve(getView().getSelectedObjects(), false);
-    getView().setDifferences(model.getAllDifferences());
-  }
-
-  void linkSurchargeGroups() {
+  public void importCatalog() {
     try {
-      model.setProductGroups(
-          Files.lines(getView().requestInputFile("json").toPath(), Catalog.DEFAULT_ENCODING));
-      getView().surchargeGroupsSet();
+      model.load(
+          Files.lines(
+              getView().requestInputFile("csv", "BNN", "bnn", "txt", "TXT").toPath(),
+              Catalog.DEFAULT_ENCODING));
+
+      getView().setDifferences(model.getAllDiffs());
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
   }
 
   @Override
-  public boolean commitClose() {
-    return model.getAllDifferences().size() == 0 || getView().commitClose();
+  protected boolean commitClose() {
+    if (model.isCatalogLoaded()) {
+      try {
+        model.pushToDB();
+      } catch (UnsupportedOperationException e) {
+        getView().mergeDiffsFirst();
+        return false;
+      }
+    }
+    return true;
   }
 }

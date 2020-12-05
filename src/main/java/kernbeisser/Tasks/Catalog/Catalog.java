@@ -1,81 +1,29 @@
 package kernbeisser.Tasks.Catalog;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.ArticleBase;
-import kernbeisser.DBEntities.ArticleKornkraft;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Main;
 
 public class Catalog {
 
   public static Charset DEFAULT_ENCODING = Charset.forName("IBM850");
 
-  public static void updateCatalog(Stream<String> lines, Runnable onSuccess) {
-    Main.logger.info("Updating catalog");
-    new Thread(
-            () -> {
-              EntityManager em = DBConnection.getEntityManager();
-              EntityTransaction et = em.getTransaction();
-              et.begin();
-              HashMap<Integer, ArticleKornkraft> before = new HashMap<>();
-              em.createQuery("select a from ArticleKornkraft a", ArticleKornkraft.class)
-                  .getResultStream()
-                  .forEach(e -> before.put(e.getSuppliersItemNumber(), e));
-              em.flush();
-              ArrayList<ArticleKornkraft> newCatalog = new ArrayList<>(before.size());
-              lines
-                  .skip(1)
-                  .forEach(
-                      row -> {
-                        String[] parts = row.split(";");
-                        try {
-                          ArticleKornkraft base = before.get(Integer.parseInt(parts[0]));
-                          newCatalog.add(
-                              parseArticle(base == null ? new ArticleKornkraft() : base, parts));
-                        } catch (CannotParseException | NumberFormatException e) {
-                          Main.logger.warn("Ignored ArticleKornKraft because " + e.getMessage());
-                        }
-                      });
-              setDeposit(newCatalog);
-              int c = 0;
-              SurchargeGroup undefined = SurchargeGroup.undefined();
-              for (ArticleKornkraft articleKornkraft : newCatalog) {
-                if (articleKornkraft.getSurchargeGroup() == null) {
-                  articleKornkraft.setSurchargeGroup(undefined);
-                }
-                em.persist(articleKornkraft);
-                if (c % 500 == 0) em.flush();
-                c++;
-              }
-              em.flush();
-              et.commit();
-              em.close();
-              onSuccess.run();
-              autoLinkAllUndefArticles(Supplier.getKKSupplier());
-            })
-        .start();
-  }
-
   public static void autoLinkAllUndefArticles(Supplier supplier) {
     EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
-    List<ArticleBase> articleBases =
-        em.createQuery("select a from ArticleBase a where a.supplier = :s", ArticleBase.class)
+    List<Article> articleBases =
+        em.createQuery("select a from Article a where a.supplier = :s", Article.class)
             .setParameter("s", supplier)
             .getResultList();
     CatalogDataInterpreter.autoLinkArticle(articleBases);
@@ -84,8 +32,7 @@ public class Catalog {
     em.close();
   }
 
-  public static ArticleKornkraft parseArticle(ArticleKornkraft base, String[] source)
-      throws CannotParseException {
+  public static Article parseArticle(Article base, String[] source) throws CannotParseException {
     try {
       if (source.length < 42) {
         throw new CannotParseException(
@@ -135,7 +82,7 @@ public class Catalog {
     }
   }
 
-  public static void setDeposit(Collection<ArticleKornkraft> catalog) {
+  public static void setDeposit(Collection<Article> catalog) {
     HashMap<Integer, Double> priceBySuppliersNumber = new HashMap<>();
     catalog.forEach((a) -> priceBySuppliersNumber.put(a.getSuppliersItemNumber(), a.getNetPrice()));
     catalog.forEach(
