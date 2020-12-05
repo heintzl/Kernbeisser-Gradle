@@ -21,16 +21,6 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.begin();
   }
 
-  Collection<User> getAllUser() {
-    List<User> result =
-        em.createQuery(
-                "select u from User u where upper(username) != 'KERNBEISSER' order by firstName,surname asc",
-                User.class)
-            .getResultList();
-    result.add(0, User.getKernbeisserUser());
-    return result;
-  }
-
   Article getItemByKkNumber(int kkNumber) {
     return Article.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber);
   }
