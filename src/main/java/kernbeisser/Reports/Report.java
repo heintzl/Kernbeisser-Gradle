@@ -59,11 +59,10 @@ public abstract class Report {
     } catch (JRException e) {
       if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
         Tools.showPrintAbortedWarning(e, true);
-        throw new RuntimeException(e);
       } else {
         Tools.showUnexpectedErrorWarning(e);
-        throw new RuntimeException(e);
       }
+      throw new RuntimeException(e);
     }
   }
 
@@ -109,7 +108,11 @@ public abstract class Report {
   }
 
   public void sendToPrinter(String message, Consumer<Throwable> exConsumer) {
-    sendToPrinter(false, message, exConsumer);
+    if (Setting.PRINTER.getValue().equals("PDF-Export")) {
+      exportPdf(message, Report::pdfExportException);
+    } else {
+      sendToPrinter(false, message, exConsumer);
+    }
   }
 
   public void sendToPrinter(
@@ -120,7 +123,7 @@ public abstract class Report {
               ProgressMonitor pm =
                   new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 2);
               pm.setProgress(1);
-              pm.setNote("Exportiere PDF..");
+              pm.setNote("Druck wird erstellt...");
               JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
               printExporter.setExporterInput(new SimpleExporterInput(getJspPrint()));
               PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(getJspPrint());
