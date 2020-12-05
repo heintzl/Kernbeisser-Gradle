@@ -8,6 +8,7 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.StatementType;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
@@ -38,6 +39,10 @@ public class UserInfoView implements IView<UserInfoController> {
   private JLabel key;
   private JLabel city;
   private JButton printBon;
+  JComboBox transactionStatementType;
+  JRadioButton optCurrent;
+  private JRadioButton optLast;
+  private JButton printStatement;
 
   @Linked private UserInfoController controller;
 
@@ -184,6 +189,11 @@ public class UserInfoView implements IView<UserInfoController> {
         });
     printBon.setEnabled(false);
     printBon.addActionListener(e -> controller.openPurchase());
+    printStatement.addActionListener(
+        e ->
+            controller.printStatement(
+                (StatementType) transactionStatementType.getSelectedItem(),
+                optCurrent.isSelected()));
   }
 
   @Override

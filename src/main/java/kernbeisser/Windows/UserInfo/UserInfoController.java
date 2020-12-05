@@ -2,9 +2,13 @@ package kernbeisser.Windows.UserInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.StatementType;
+import kernbeisser.Reports.TransactionStatement;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Purchase.PurchaseController;
@@ -124,6 +128,15 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
     } else {
       userInfoView.pasteUser(model.getUser());
     }
+    userInfoView.optCurrent.setSelected(true);
+    userInfoView.transactionStatementType.setModel(
+        new DefaultComboBoxModel<>(StatementType.values()));
+
     loadCurrentSite();
+  }
+
+  public void printStatement(StatementType statementType, boolean current) {
+    new TransactionStatement(model.getUser(), statementType, current)
+        .sendToPrinter("Auszug wird erstellt...", Tools::showUnexpectedErrorWarning);
   }
 }
