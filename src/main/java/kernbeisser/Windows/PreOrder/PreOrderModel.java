@@ -1,14 +1,12 @@
 package kernbeisser.Windows.PreOrder;
 
 import java.util.Collection;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
