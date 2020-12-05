@@ -18,7 +18,9 @@ public enum UserSetting {
     }
   },
   FONT_SCALE_FACTOR("1"),
-  CREATE_BEEP_SOUND("true");
+  CREATE_BEEP_SOUND("true"),
+  PRINT_RECEIPT("true");
+
   private final String defaultValue;
 
   UserSetting(String defaultValue) {

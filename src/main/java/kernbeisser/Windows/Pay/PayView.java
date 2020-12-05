@@ -17,9 +17,10 @@ public class PayView implements IView<PayController> {
   private JPanel shoppingListPanel;
   private ShoppingCartView shoppingCartView;
 
-  private JCheckBox printReceipt;
+  JCheckBox printReceipt;
   private JButton commitPayment;
   private JButton cancel;
+  JButton setCustomerStandard;
   private PayController controller;
 
   @Linked private ShoppingCartController shoppingCartController;
