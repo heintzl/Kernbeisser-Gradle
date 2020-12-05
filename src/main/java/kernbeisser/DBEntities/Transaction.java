@@ -65,6 +65,10 @@ public class Transaction {
     return Tools.getAll(Transaction.class, condition);
   }
 
+  public String getDescription() {
+    return info.isEmpty() ? transactionType.toString() : info;
+  }
+
   public static Transaction doTransaction(
       EntityManager em,
       User from,

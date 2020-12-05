@@ -3,10 +3,7 @@ package kernbeisser.Windows.PreOrder;
 import java.awt.event.KeyEvent;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.BarcodeCapture;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.PreOrder;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
@@ -112,7 +109,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   @Override
   public void fillView(PreOrderView preOrderView) {
     preOrderView.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
-    preOrderView.setUser(model.getAllUser());
+    preOrderView.setUser(User.getAllUserFullNames(true));
     preOrderView.setPreOrders(model.getAllPreOrders());
     noArticleFound();
   }

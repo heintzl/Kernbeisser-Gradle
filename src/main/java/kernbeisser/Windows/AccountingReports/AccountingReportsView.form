@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kernbeisser.Windows.AccountingReports.AccountingReportsView">
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="0" left="0" bottom="0" right="0"/>
+    <margin top="5" left="10" bottom="5" right="10"/>
     <constraints>
-      <xy x="20" y="20" width="751" height="400"/>
+      <xy x="20" y="20" width="855" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -72,38 +72,25 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="1af7c" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="days">
-                <constraints>
-                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties/>
-              </component>
-              <vspacer id="4dd27">
-                <constraints>
-                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
-                </constraints>
-              </vspacer>
               <component id="d3fd5" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="6" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
+                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <text value="Anzahl Tage bis heute:"/>
                 </properties>
               </component>
-              <component id="c2b8e" class="javax.swing.JRadioButton" binding="optBonrolle">
+              <component id="c2b8e" class="javax.swing.JRadioButton" binding="optTillRoll">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <text value="Bonrolle"/>
                 </properties>
               </component>
-              <component id="73e27" class="javax.swing.JRadioButton" binding="optLadendienstEndabrechnung">
+              <component id="73e27" class="javax.swing.JRadioButton" binding="optAccountingReport">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
@@ -112,6 +99,110 @@
                   <text value="Ladendienst Endabrechnung"/>
                 </properties>
               </component>
+              <component id="b525a" class="javax.swing.JRadioButton" binding="optUserBalance">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Guthabenstände"/>
+                </properties>
+              </component>
+              <component id="daaaa" class="javax.swing.JRadioButton" binding="optKeyUserList">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Benutzerschlüssel"/>
+                </properties>
+              </component>
+              <component id="ac5df" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Sortierung:"/>
+                </properties>
+              </component>
+              <component id="7944b" class="javax.swing.JRadioButton" binding="optTransactionStatement">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Kontoauszug"/>
+                </properties>
+              </component>
+              <component id="ec9d5" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <labelFor value="d71a"/>
+                  <text value="Mitglied:"/>
+                </properties>
+              </component>
+              <component id="d71a" class="kernbeisser.CustomComponents.ComboBox.AdvancedComboBox" binding="user">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <model/>
+                </properties>
+              </component>
+              <component id="ddb46" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="6" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Umfang:"/>
+                </properties>
+              </component>
+              <component id="4cfe5" class="javax.swing.JComboBox" binding="transactionStatementType">
+                <constraints>
+                  <grid row="3" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <model/>
+                </properties>
+              </component>
+              <component id="1af7c" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="days">
+                <constraints>
+                  <grid row="4" column="2" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="18b6d" class="javax.swing.JComboBox" binding="userKeySortOrder">
+                <constraints>
+                  <grid row="5" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <model/>
+                </properties>
+              </component>
+              <component id="31ac9" class="javax.swing.JCheckBox" binding="userBalanceWithNames" default-binding="true">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Klarnamen ausgeben"/>
+                </properties>
+              </component>
+              <vspacer id="fa104">
+                <constraints>
+                  <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+              </vspacer>
               <component id="dc24" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -120,6 +211,13 @@
                 <properties>
                   <text value="von Bonnummer:"/>
                 </properties>
+              </component>
+              <component id="3947b" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="startBon">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag top="0" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
+                </constraints>
+                <properties/>
               </component>
               <component id="28963" class="javax.swing.JLabel">
                 <constraints>
@@ -130,37 +228,12 @@
                   <text value="bis Bonnummer:"/>
                 </properties>
               </component>
-              <component id="3947b" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="startBon">
-                <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties/>
-              </component>
               <component id="a4a39" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="endBon">
                 <constraints>
                   <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="0" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties/>
-              </component>
-              <component id="b525a" class="javax.swing.JRadioButton" binding="optUserBalance">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <text value="Guthabenstände"/>
-                </properties>
-              </component>
-              <component id="31ac9" class="javax.swing.JCheckBox" binding="userBalanceWithNames" default-binding="true">
-                <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <text value="Klarnamen ausgeben"/>
-                </properties>
               </component>
               <component id="d0f97" class="javax.swing.JCheckBox" binding="accountingReportWithNames">
                 <constraints>
@@ -171,31 +244,22 @@
                   <text value="Klarnamen ausgeben"/>
                 </properties>
               </component>
-              <component id="daaaa" class="javax.swing.JRadioButton" binding="optKeyUserList">
+              <component id="e22dd" class="javax.swing.JRadioButton" binding="optLast">
                 <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
-                  <text value="Benutzerschlüssel"/>
+                  <text value="letzer"/>
                 </properties>
               </component>
-              <component id="ac5df" class="javax.swing.JLabel">
+              <component id="7707" class="javax.swing.JRadioButton" binding="optCurrent">
                 <constraints>
-                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="6" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
+                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
-                  <text value="Sortierung:"/>
-                </properties>
-              </component>
-              <component id="18b6d" class="javax.swing.JComboBox" binding="userKeySortOrder">
-                <constraints>
-                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <model/>
+                  <text value="aktueller"/>
                 </properties>
               </component>
             </children>
@@ -210,6 +274,11 @@
       <member id="c2b8e"/>
       <member id="b525a"/>
       <member id="daaaa"/>
+      <member id="7944b"/>
+    </group>
+    <group name="statement">
+      <member id="e22dd"/>
+      <member id="7707"/>
     </group>
   </buttonGroups>
 </form>
