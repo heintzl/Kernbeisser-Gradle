@@ -28,7 +28,7 @@ public enum Setting {
   },
   DEFAULT_MAX_SEARCH("500"),
   CONTAINER_SURCHARGE_REDUCTION("0.5"),
-  SURCHARGE_DEFAULT("18"),
+  SURCHARGE_DEFAULT("0.18"),
   SURCHARGE_BAKERY("13"),
   SURCHARGE_PRODUCE("23"),
   DEFAULT_THEME(Theme.LIGHT),
@@ -52,7 +52,6 @@ public enum Setting {
   PRINTER("OS_default"),
   LAST_PRINTED_BON_NR("-1"),
   OFFER_PREFIX("*AK* "),
-  DEFAULT_SURCHARGE("23.0"),
   PREORDERRETARD_THRESHOLD("10");
 
   // defines the type to like in java style
