@@ -156,6 +156,8 @@ public class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
   private SurchargeGroup surchargeGroup;
 
+  @Getter @Setter private Double obsoleteSurcharge;
+
   public static List<Article> getAll(String condition) {
     return Tools.getAll(Article.class, condition);
   }

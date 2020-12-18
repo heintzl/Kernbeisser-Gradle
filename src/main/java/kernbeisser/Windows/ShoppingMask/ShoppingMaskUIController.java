@@ -7,10 +7,7 @@ import javax.swing.JOptionPane;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
@@ -254,6 +251,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         customArticle.setName(getView().getItemName());
         customArticle.setSupplier(getView().getSupplier());
         customArticle.setVat(getView().getVat());
+        customArticle.setSurchargeGroup(SurchargeGroup.undefined());
         customArticle.setNetPrice(
             getView().isPreordered()
                 ? getView().getNetPrice()

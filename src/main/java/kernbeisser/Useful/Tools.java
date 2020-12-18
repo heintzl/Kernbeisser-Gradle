@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -27,6 +28,8 @@ import javax.swing.text.*;
 import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.CustomComponents.AccessChecking.Setter;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -780,5 +783,57 @@ public class Tools {
 
   public static void openFile(String filePath) {
     openFile(new File(filePath));
+  }
+
+  public static void productSurchargeToGroup() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    Map<SurchargeGroup, List<Article>> articleMap =
+        em.createQuery(
+                "Select a from Article a where a.obsoleteSurcharge is not null", Article.class)
+            .getResultStream()
+            .collect(Collectors.groupingBy(Article::getSurchargeGroup, Collectors.toList()));
+    Map<SurchargeGroup, Map<Double, Long>> surchargeMap = new HashMap<>();
+    articleMap.forEach(
+        (k, v) ->
+            surchargeMap.put(
+                k,
+                v.stream()
+                    .collect(
+                        Collectors.groupingBy(
+                            Article::getObsoleteSurcharge, Collectors.counting()))));
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    surchargeMap.forEach(
+        (k, v) -> {
+          k.setSurcharge(
+              v.entrySet().stream()
+                  .max(Comparator.comparingLong(Map.Entry::getValue))
+                  .get()
+                  .getKey());
+          em.persist(k);
+          if (v.size() != 1) {
+            System.out.println(
+                k.toString()
+                    + ": "
+                    + v
+                    + "\n"
+                    + articleMap.get(k).stream()
+                        .filter(a -> !a.getObsoleteSurcharge().equals(k.getSurcharge()))
+                        .sorted(Comparator.comparingDouble(Article::getObsoleteSurcharge))
+                        .map(
+                            a ->
+                                "  "
+                                    + a.getObsoleteSurcharge()
+                                    + " ->"
+                                    + a.getSupplier().getShortName()
+                                    + a.getSuppliersItemNumber()
+                                    + ": "
+                                    + a.getName())
+                        .collect(Collectors.joining("\n")));
+          }
+        });
+    em.flush();
+    et.commit();
+    em.close();
   }
 }
