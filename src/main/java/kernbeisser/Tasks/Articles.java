@@ -53,6 +53,7 @@ public class Articles {
     }
     // columns[7] look at line 311
     article.setVat(Boolean.parseBoolean(rawArticleValues[8]) ? VAT.LOW : VAT.HIGH);
+    article.setObsoleteSurcharge(Integer.parseInt(rawArticleValues[9]) / 1000.);
     article.setSingleDeposit(Integer.parseInt(rawArticleValues[10]) / 100.);
     article.setContainerDeposit(Integer.parseInt(rawArticleValues[11]) / 100.);
     article.setMetricUnits(
