@@ -57,7 +57,7 @@ public class SynchronizeArticleController
   public void importCatalog() {
     try {
       model.load(
-          Files.lines(
+          Files.readAllLines(
               getView().requestInputFile("csv", "BNN", "bnn", "txt", "TXT").toPath(),
               Catalog.DEFAULT_ENCODING));
 

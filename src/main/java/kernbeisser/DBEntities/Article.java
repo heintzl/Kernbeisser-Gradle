@@ -60,6 +60,8 @@ public class Article {
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_WRITE)})
+  // maybe rename to splittable, because it describes if a article should not always become sold as
+  // one entire piece
   private boolean weighable;
 
   @Column
@@ -249,6 +251,10 @@ public class Article {
         .findFirst()
         .orElseGet(ShoppingItem::new)
         .getCreateDate();
+  }
+
+  public double getPriceFor(MetricUnits m, double amount) {
+    return getNetPrice() * amount * m.getBaseFactor();
   }
 
   @Override

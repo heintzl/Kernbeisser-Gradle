@@ -4,14 +4,17 @@ import java.lang.reflect.Field;
 import java.util.function.Function;
 import javax.persistence.*;
 import kernbeisser.Useful.Tools;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Table
 @Entity
+@Setter(AccessLevel.NONE)
 public class CatalogDataSource {
-  private String artikelNr;
+  private Integer artikelNr;
   private String aenderungskennung;
   private Integer aenderungsDatum;
   private Integer aenderungsZeit;
@@ -88,24 +91,26 @@ public class CatalogDataSource {
 
   public CatalogDataSource() {}
 
-  public static CatalogDataSource parseRow(String row) {
+  public static CatalogDataSource parseRow(String[] parts) {
     CatalogDataSource out = new CatalogDataSource();
     Field[] declaredFields = CatalogDataSource.class.getDeclaredFields();
-    String[] parts = row.split(";");
     for (int i = 0; i < declaredFields.length; i++) {
       try {
-        if (parts[i].replace(" ", "").equals("")) continue;
         Field declaredField = declaredFields[i];
         declaredField.setAccessible(true);
         Class<?> type = declaredField.getType();
         if (type.equals(String.class)) declaredField.set(out, parts[i]);
-        else if (type.equals(Double.class))
-          declaredField.set(
-              out, tryParse(parts[i].replace(",", ".".replace(" ", "")), Double::parseDouble));
-        else if (type.equals(Integer.class))
-          declaredField.set(out, tryParse(parts[i].replace(" ", ""), Integer::parseInt));
-        else if (type.equals(Long.class))
-          declaredField.set(out, tryParse(parts[i].replace(" ", ""), Long::parseLong));
+        else {
+          if (!parts[i].replace(" ", "").equals("")) {
+            if (type.equals(Double.class))
+              declaredField.set(
+                  out, tryParse(parts[i].replace(",", ".".replace(" ", "")), Double::parseDouble));
+            else if (type.equals(Integer.class))
+              declaredField.set(out, tryParse(parts[i].replace(" ", ""), Integer::parseInt));
+            else if (type.equals(Long.class))
+              declaredField.set(out, tryParse(parts[i].replace(" ", ""), Long::parseLong));
+          }
+        }
       } catch (NumberFormatException | IllegalAccessException e) {
         System.err.println(i);
         System.err.println(declaredFields[i]);

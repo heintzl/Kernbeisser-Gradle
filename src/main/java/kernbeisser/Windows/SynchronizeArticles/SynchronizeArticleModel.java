@@ -74,13 +74,13 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
     return out;
   }
 
-  public void load(Stream<String> source) {
+  public void load(Collection<String> source) {
     collected = new ArrayList<>();
     diffs = loadSource(source, MappedDifferences.values());
   }
 
   private Set<ArticleDifference<?>> loadSource(
-      Stream<String> source, MappedDifferences... differences) {
+      Collection<String> source, MappedDifferences... differences) {
     Supplier kkSupplier = Supplier.getKKSupplier();
     SurchargeGroup undefined = SurchargeGroup.undefined();
     PriceList coveredIntake = PriceList.getCoveredIntakePriceList();
@@ -91,35 +91,38 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
 
     HashSet<ArticleDifference<?>> out = new HashSet<>();
     HashMap<Integer, Double> deposit = new HashMap<>(10000);
-    HashSet<Integer> suppliersItemNumbers = new HashSet<>();
-    source
+    source.stream()
         .skip(1)
         .map(e -> e.split(";"))
-        .peek(
+        .forEach(
             e -> {
               try {
                 deposit.put(Integer.parseInt(e[0]), Double.parseDouble(e[37].replace(",", ".")));
               } catch (NumberFormatException ignored) {
               }
-            })
+            });
+    HashSet<Integer> suppliersItemNumbers = new HashSet<>();
+    source.stream()
+        .skip(1)
+        .map(e -> e.split(";"))
         .forEach(
             columns -> {
               try {
-                int suppliersItemNumber = Integer.parseInt(columns[0]);
-                if (!suppliersItemNumbers.add(suppliersItemNumber)) return;
-                Article current = currentState.get(suppliersItemNumber);
+                Article current = null;
+                try {
+                  int suppliersItemNumber = Integer.parseInt(columns[0]);
+                  if (!suppliersItemNumbers.add(suppliersItemNumber)) return;
+                  current = currentState.get(suppliersItemNumber);
+                } catch (NumberFormatException ignored) {
+                }
+
                 Article articleSocket;
                 if (current == null) {
                   articleSocket = createNewBase(kkSupplier, coveredIntake, undefined);
                 } else {
                   articleSocket = Tools.clone(current);
                 }
-                Article article = parseArticle(articleSocket, columns);
-                Double singleDepositValue = deposit.get((int) article.getSingleDeposit());
-                Double containerDepositValue = deposit.get((int) article.getContainerDeposit());
-                article.setSingleDeposit(singleDepositValue == null ? 0 : singleDepositValue);
-                article.setContainerDeposit(
-                    containerDepositValue == null ? 0 : containerDepositValue);
+                Article article = parseArticle(articleSocket, deposit, kkSupplier, columns);
                 collected.add(article);
                 if (current != null) {
                   Collection<IgnoredDifference> ignoredDifferences =
@@ -135,7 +138,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
                   }
                 }
 
-              } catch (CannotParseException | NumberFormatException e) {
+              } catch (CannotParseException e) {
                 Main.logger.warn("Ignored ArticleKornKraft because " + e.getMessage());
               }
             });
