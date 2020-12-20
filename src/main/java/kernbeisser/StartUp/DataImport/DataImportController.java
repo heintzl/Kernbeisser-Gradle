@@ -114,8 +114,8 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       Stream<String> article =
           Files.lines(
               getPackagePath().resolve(packageDefinition.getArticles()), StandardCharsets.UTF_8);
-      Stream<String> kkCatalog =
-          Files.lines(
+      Collection<String> kkCatalog =
+          Files.readAllLines(
               getPackagePath().resolve(packageDefinition.getKornkraftCatalog()),
               Catalog.DEFAULT_ENCODING);
       Stream<String> productsJson =

@@ -1,6 +1,11 @@
 package kernbeisser.Enums;
 
+import kernbeisser.DBEntities.Article;
 import kernbeisser.Useful.Named;
+
+
+//defines the relation between price and amount
+//
 
 public enum MetricUnits implements Named {
   GRAM("Gramm", "g") {},
@@ -39,10 +44,14 @@ public enum MetricUnits implements Named {
     this.shortName = shortName;
   }
 
+  public double inUnit(MetricUnits metricUnits,double amount){
+    return (amount * getBaseFactor()) / metricUnits.getBaseFactor();
+  }
+
   public static MetricUnits parseString(String identifier) {
     for (MetricUnits value : values()) {
-      if (value.shortName.toUpperCase().equals(identifier.toUpperCase())
-          || value.name.toUpperCase().equals(identifier.toUpperCase())) {
+      if (value.shortName.equalsIgnoreCase(identifier)
+          || value.name.equalsIgnoreCase(identifier)) {
         return value;
       }
     }
@@ -65,26 +74,5 @@ public enum MetricUnits implements Named {
 
   public String getShortName() {
     return shortName;
-  }
-
-  public static MetricUnits fromString(String source) {
-    if (source.toUpperCase().contains("L")) {
-      return MetricUnits.LITER;
-    } else if (source.toUpperCase().contains("ML")) {
-      return MetricUnits.MILLILITER;
-    } else if (source.toUpperCase().contains("KG")) {
-      return MetricUnits.KILOGRAM;
-    } else if (source.toUpperCase().contains("G")) {
-      return MetricUnits.GRAM;
-    }
-    if (source.toUpperCase().contains("ST")) {
-      return MetricUnits.PIECE;
-    }
-    for (MetricUnits value : MetricUnits.values()) {
-      if (value.getShortName().equals(source) || value.getName().equals(source)) {
-        return value;
-      }
-    }
-    return MetricUnits.NONE;
   }
 }

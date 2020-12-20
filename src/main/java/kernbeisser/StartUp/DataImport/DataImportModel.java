@@ -158,7 +158,7 @@ public class DataImportModel implements IModel<DataImportController> {
 
   void parseArticle(
       Stream<String> f,
-      Stream<String> kornkraftCatalog,
+      Collection<String> kornkraftCatalog,
       Stream<String> productsJson,
       Consumer<Integer> progress) {
     readArticles(f);
@@ -185,7 +185,7 @@ public class DataImportModel implements IModel<DataImportController> {
     et.commit();
   }
 
-  private void readCatalog(Stream<String> kornkraftCatalog) {
+  private void readCatalog(Collection<String> kornkraftCatalog) {
     SynchronizeArticleModel model = new SynchronizeArticleModel();
     model.load(kornkraftCatalog);
     model.resolveAllFor(true);

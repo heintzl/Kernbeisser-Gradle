@@ -36,7 +36,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             true,
             Column.create("Name", Article::getName, LEFT),
             Column.create(
-                "Packungsgröße", e -> (e.getAmount()) + e.getMetricUnits().getShortName(), RIGHT),
+                "Packungsgröße", e -> e.getAmount()+ e.getMetricUnits().getShortName(), RIGHT),
             Column.create("Ladennummer", Article::getKbNumber, RIGHT),
             Column.create("Lieferant", Article::getSupplier, LEFT),
             Column.create("Lieferantenummer", Article::getSuppliersItemNumber, RIGHT),
