@@ -1,25 +1,19 @@
 package kernbeisser.Tasks.Catalog;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import kernbeisser.CustomComponents.AccessChecking.Setter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogDataSource;
-import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.CannotParseException;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Useful.ObjectInputReader;
 
 public class Catalog {
 
@@ -43,7 +37,9 @@ public class Catalog {
     em.close();
   }
 
-  public static Article parseArticle(Article base,HashMap<Integer, Double> deposit,Supplier kkSupplier, String[] source) throws CannotParseException {
+  public static Article parseArticle(
+      Article base, HashMap<Integer, Double> deposit, Supplier kkSupplier, String[] source)
+      throws CannotParseException {
     if (source.length < 42) {
       throw new CannotParseException(
           "Article doesn't have the minimum of 42 columns:\n" + Arrays.toString(source));
@@ -52,12 +48,18 @@ public class Catalog {
     base.setSuppliersItemNumber(catalogDataSource.getArtikelNr());
     base.setName(catalogDataSource.getBezeichnung());
     base.setWeighable(catalogDataSource.getGewichtsartikel().equals("J"));
-    base.setSingleDeposit(!catalogDataSource.getPfandNrLadeneinheit().equals("") ? deposit.get(Integer.parseInt(catalogDataSource.getPfandNrLadeneinheit())) : 0);
-    base.setContainerDeposit(!catalogDataSource.getPfandNrBestelleinheit().equals("") ? deposit.get(Integer.parseInt(catalogDataSource.getPfandNrBestelleinheit())) : 0);
+    base.setSingleDeposit(
+        !catalogDataSource.getPfandNrLadeneinheit().equals("")
+            ? deposit.get(Integer.parseInt(catalogDataSource.getPfandNrLadeneinheit()))
+            : 0);
+    base.setContainerDeposit(
+        !catalogDataSource.getPfandNrBestelleinheit().equals("")
+            ? deposit.get(Integer.parseInt(catalogDataSource.getPfandNrBestelleinheit()))
+            : 0);
     base.setBarcode(catalogDataSource.getEANladen());
     base.setProducer(catalogDataSource.getHersteller());
     base.setVerified(false);
-    base.setInfo(catalogDataSource.getBezeichnung2()+"\n"+catalogDataSource.getBezeichnung3());
+    base.setInfo(catalogDataSource.getBezeichnung2() + "\n" + catalogDataSource.getBezeichnung3());
     base.setContainerSize(catalogDataSource.getBestelleinheitsMenge());
     base.setVat(catalogDataSource.getMwstKennung() == 2 ? VAT.HIGH : VAT.LOW);
     base.setSupplier(kkSupplier);
@@ -68,14 +70,17 @@ public class Catalog {
         String[] parts = catalogDataSource.getLadeneinheit().split("x");
         double x = filterDouble(parts[0]);
         double y = filterDouble(parts[1]);
-        extractAmount(base,x*y);
-      }else {
-        double parsedAmount = Double.parseDouble(
-            CHARACTER_FILTER.matcher(catalogDataSource.getLadeneinheit()).replaceAll("")
-                .replace(",", "."));
+        extractAmount(base, x * y);
+      } else {
+        double parsedAmount =
+            Double.parseDouble(
+                CHARACTER_FILTER
+                    .matcher(catalogDataSource.getLadeneinheit())
+                    .replaceAll("")
+                    .replace(",", "."));
         extractAmount(base, parsedAmount);
       }
-    }catch (NumberFormatException e){
+    } catch (NumberFormatException e) {
       double parsedAmount = base.getContainerSize();
       extractAmount(base, parsedAmount);
       base.setContainerSize(1);
@@ -84,10 +89,10 @@ public class Catalog {
     return base;
   }
 
-  private static MetricUnits extractUnit(String source){
-    source = source.replace("x"," x ");
+  private static MetricUnits extractUnit(String source) {
+    source = source.replace("x", " x ");
     int lastSep = source.lastIndexOf(" ");
-    source = (lastSep == -1 ? source : source.substring(lastSep)).toUpperCase().replace(" ","");
+    source = (lastSep == -1 ? source : source.substring(lastSep)).toUpperCase().replace(" ", "");
     switch (source) {
       case "ML":
         return MetricUnits.MILLILITER;
@@ -140,27 +145,28 @@ public class Catalog {
       case "SATZ":
         return MetricUnits.PIECE;
       default:
-        String filtered = source.replaceAll("[^A-Z]","");
-        if(filtered.equals(source)) {
+        String filtered = source.replaceAll("[^A-Z]", "");
+        if (filtered.equals(source)) {
           System.out.println(source + " : " + filtered);
           return MetricUnits.NONE;
-        }
-        else return extractUnit(filtered);
+        } else return extractUnit(filtered);
     }
   }
 
-  private static double filterDouble(String s){
-    return Double.parseDouble(CHARACTER_FILTER.matcher(s).replaceAll("").replace(",","."));
+  private static double filterDouble(String s) {
+    return Double.parseDouble(CHARACTER_FILTER.matcher(s).replaceAll("").replace(",", "."));
   }
 
   private static void extractAmount(Article base, double parsedAmount) {
-    switch (base.getMetricUnits()){
+    switch (base.getMetricUnits()) {
       case KILOGRAM:
-        base.setAmount((int)Math.round(MetricUnits.KILOGRAM.inUnit(MetricUnits.GRAM,parsedAmount)));
+        base.setAmount(
+            (int) Math.round(MetricUnits.KILOGRAM.inUnit(MetricUnits.GRAM, parsedAmount)));
         base.setMetricUnits(MetricUnits.GRAM);
         break;
       case LITER:
-        base.setAmount((int)Math.round(MetricUnits.LITER.inUnit(MetricUnits.MILLILITER,parsedAmount)));
+        base.setAmount(
+            (int) Math.round(MetricUnits.LITER.inUnit(MetricUnits.MILLILITER, parsedAmount)));
         base.setMetricUnits(MetricUnits.MILLILITER);
         break;
       default:
@@ -168,5 +174,4 @@ public class Catalog {
         break;
     }
   }
-
 }

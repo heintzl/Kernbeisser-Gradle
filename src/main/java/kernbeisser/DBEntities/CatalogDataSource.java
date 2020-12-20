@@ -6,7 +6,6 @@ import javax.persistence.*;
 import kernbeisser.Useful.Tools;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 

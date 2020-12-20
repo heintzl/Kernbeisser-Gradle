@@ -80,7 +80,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
   }
 
   private Set<ArticleDifference<?>> loadSource(
-      Collection<String> source,MappedDifferences... differences) {
+      Collection<String> source, MappedDifferences... differences) {
     Supplier kkSupplier = Supplier.getKKSupplier();
     SurchargeGroup undefined = SurchargeGroup.undefined();
     PriceList coveredIntake = PriceList.getCoveredIntakePriceList();
@@ -91,9 +91,16 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
 
     HashSet<ArticleDifference<?>> out = new HashSet<>();
     HashMap<Integer, Double> deposit = new HashMap<>(10000);
-    source.stream().skip(1).map(e -> e.split(";")).forEach(e -> {
-      try{deposit.put(Integer.parseInt(e[0]), Double.parseDouble(e[37].replace(",", ".")));}catch (NumberFormatException ignored){}
-    });
+    source.stream()
+        .skip(1)
+        .map(e -> e.split(";"))
+        .forEach(
+            e -> {
+              try {
+                deposit.put(Integer.parseInt(e[0]), Double.parseDouble(e[37].replace(",", ".")));
+              } catch (NumberFormatException ignored) {
+              }
+            });
     HashSet<Integer> suppliersItemNumbers = new HashSet<>();
     source.stream()
         .skip(1)
@@ -106,7 +113,8 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
                   int suppliersItemNumber = Integer.parseInt(columns[0]);
                   if (!suppliersItemNumbers.add(suppliersItemNumber)) return;
                   current = currentState.get(suppliersItemNumber);
-                }catch (NumberFormatException ignored){}
+                } catch (NumberFormatException ignored) {
+                }
 
                 Article articleSocket;
                 if (current == null) {
@@ -114,7 +122,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
                 } else {
                   articleSocket = Tools.clone(current);
                 }
-                Article article = parseArticle(articleSocket,deposit,kkSupplier, columns);
+                Article article = parseArticle(articleSocket, deposit, kkSupplier, columns);
                 collected.add(article);
                 if (current != null) {
                   Collection<IgnoredDifference> ignoredDifferences =
@@ -124,8 +132,8 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
                         new ArticleDifference<>(difference, current, article);
                     if (!difference.equal(current, article)
                         && (ignoredDifferences == null
-                        || !ignoredDifferences.contains(
-                        IgnoredDifference.from(articleDifference))))
+                            || !ignoredDifferences.contains(
+                                IgnoredDifference.from(articleDifference))))
                       out.add(articleDifference);
                   }
                 }

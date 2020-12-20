@@ -1,10 +1,8 @@
 package kernbeisser.Enums;
 
-import kernbeisser.DBEntities.Article;
 import kernbeisser.Useful.Named;
 
-
-//defines the relation between price and amount
+// defines the relation between price and amount
 //
 
 public enum MetricUnits implements Named {
@@ -44,14 +42,13 @@ public enum MetricUnits implements Named {
     this.shortName = shortName;
   }
 
-  public double inUnit(MetricUnits metricUnits,double amount){
+  public double inUnit(MetricUnits metricUnits, double amount) {
     return (amount * getBaseFactor()) / metricUnits.getBaseFactor();
   }
 
   public static MetricUnits parseString(String identifier) {
     for (MetricUnits value : values()) {
-      if (value.shortName.equalsIgnoreCase(identifier)
-          || value.name.equalsIgnoreCase(identifier)) {
+      if (value.shortName.equalsIgnoreCase(identifier) || value.name.equalsIgnoreCase(identifier)) {
         return value;
       }
     }
