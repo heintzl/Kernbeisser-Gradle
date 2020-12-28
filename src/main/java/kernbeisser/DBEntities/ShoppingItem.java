@@ -193,6 +193,9 @@ public class ShoppingItem implements Serializable {
     this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
+    if (hasContainerDiscount && this.weighAble) {
+      this.itemNetPrice *= this.amount * this.metricUnits.getBaseFactor();
+    }
     this.articleSurcharge =
         article.getSurchargeGroup().getSurcharge()
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
