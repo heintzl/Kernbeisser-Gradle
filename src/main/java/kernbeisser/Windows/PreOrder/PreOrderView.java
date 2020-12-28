@@ -1,9 +1,12 @@
 package kernbeisser.Windows.PreOrder;
 
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import javax.swing.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -61,12 +64,19 @@ public class PreOrderView implements IView<PreOrderController> {
     preOrders =
         new ObjectTable<>(
             Column.create("Benutzer", e -> e.getUser().getFullName()),
-            Column.create("Anzahl", PreOrder::getAmount),
             Column.create("Ladennummer", PreOrder::getKBNumber),
             Column.create("Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber()),
             Column.create("Produktname", e -> e.getArticle().getName()),
             Column.create(
-                "Netto-Preis", e -> e.getArticle().getNetPrice() + "€", SwingConstants.RIGHT));
+                "Netto-Preis",
+                e ->
+                    String.format(
+                        "%.2f€",
+                        PreOrderModel.containerNetPrice(e.getArticle()), SwingConstants.RIGHT)),
+            Column.create("Anzahl", PreOrder::getAmount),
+            Column.createIcon(
+                IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
+
     user = new AdvancedComboBox<>(User::getFullName);
   }
 
@@ -107,20 +117,46 @@ public class PreOrderView implements IView<PreOrderController> {
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            controller.searchKK();
+            if (controller.searchKK()) {
+              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                amount.selectAll();
+                amount.requestFocusInWindow();
+              }
+            }
           }
         });
+
+    user.addActionListener(e -> userAction());
+
     add.addActionListener(e -> controller.add());
+
     preOrders.addKeyListener(
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_DELETE) controller.delete();
+            if (e.getKeyCode() == KeyEvent.VK_DELETE) controller.delete(getSelectedOrder());
           }
         });
-    kkNumber.addActionListener(e -> controller.add());
+
+    amount.addActionListener(e -> controller.add());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
+
     close.addActionListener(e -> back());
+  }
+
+  private void userAction() {
+    if (controller.searchKK()) {
+      amount.requestFocusInWindow();
+    } else {
+      kkNumber.requestFocusInWindow();
+    }
+    enableControls(!user.getSelectedItem().equals(null));
+  }
+
+  void enableControls(boolean active) {
+    kkNumber.setEnabled(active);
+    amount.setEnabled(active);
+    add.setEnabled(active);
   }
 
   @Override

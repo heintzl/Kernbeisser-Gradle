@@ -1,6 +1,7 @@
 package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.*;
@@ -20,16 +21,19 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     return model;
   }
 
-  void searchKK() {
+  boolean searchKK() {
     PreOrderView view = getView();
     if (view.getKkNumber() != 0) {
       try {
         pasteDataInView(model.getItemByKkNumber(view.getKkNumber()));
+        return true;
       } catch (NoResultException e) {
         noArticleFound();
+        return false;
       }
     } else {
       noArticleFound();
+      return false;
     }
   }
 
@@ -45,14 +49,13 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
-  void delete() {
-    PreOrder selected = getView().getSelectedOrder();
-    if (selected == null) {
+  void delete(PreOrder preOrder) {
+    if (preOrder == null) {
       getView().noPreOrderSelected();
       return;
     }
-    model.remove(selected);
-    getView().remove(selected);
+    model.remove(preOrder);
+    getView().remove(preOrder);
   }
 
   void noArticleFound() {
@@ -71,10 +74,12 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   void pasteDataInView(Article articleKornkraft) {
     var view = getView();
     view.setAmount(String.valueOf(1));
-    view.setContainerSize(articleKornkraft.getContainerSize() + "");
-    view.setNetPrice(articleKornkraft.getNetPrice());
+    double containerSize = articleKornkraft.getContainerSize();
+    view.setContainerSize(new DecimalFormat("0.###").format(containerSize));
+    view.setNetPrice(model.containerNetPrice(articleKornkraft));
     view.setSellingPrice(
-        String.format("%.2f", new ShoppingItem(articleKornkraft, 0, false).getRetailPrice()));
+        String.format(
+            "%.2f€", new ShoppingItem(articleKornkraft, 0, true).getRetailPrice() * containerSize));
     view.setItemName(articleKornkraft.getName());
   }
 
@@ -94,14 +99,14 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     return model.getItemByKkNumber(getView().getKkNumber());
   }
 
-  void insert(Article articleBase) {
-    if (articleBase == null) throw new NullPointerException("cannot insert null as PreOrder");
+  void insert(Article article) {
+    if (article == null) throw new NullPointerException("cannot insert null as PreOrder");
     PreOrder preOrder = new PreOrder();
     var view = getView();
     preOrder.setUser(view.getUser());
-    preOrder.setArticle(articleBase);
+    preOrder.setArticle(article);
     preOrder.setAmount(view.getAmount());
-    preOrder.setInfo(articleBase.getInfo());
+    preOrder.setInfo(article.getInfo());
     model.add(preOrder);
     getView().addPreOrder(preOrder);
   }
@@ -111,6 +116,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     preOrderView.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
     preOrderView.setUser(User.getAllUserFullNames(true));
     preOrderView.setPreOrders(model.getAllPreOrders());
+    preOrderView.enableControls(false);
     noArticleFound();
   }
 
