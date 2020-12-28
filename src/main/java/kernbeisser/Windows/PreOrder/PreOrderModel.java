@@ -6,6 +6,7 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PreOrder;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Useful.Tools;
@@ -39,6 +40,10 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   Collection<PreOrder> getAllPreOrders() {
     return em.createQuery("select p from PreOrder p", PreOrder.class).getResultList();
+  }
+
+  static double containerNetPrice(Article article) {
+    return new ShoppingItem(article, 0, true).getItemNetPrice() * article.getContainerSize();
   }
 
   public void close() {
