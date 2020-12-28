@@ -21,8 +21,7 @@
           </component>
         </children>
       </scrollpane>
-      <grid id="54b9d" binding="insertSection" layout-manager="GridLayoutManager" row-count="2" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
+      <grid id="54b9d" binding="insertSection" layout-manager="GridBagLayout">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -32,12 +31,14 @@
           <component id="3c80b" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="amount">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties/>
           </component>
           <component id="fc434" class="javax.swing.JLabel" binding="containerSize">
             <constraints>
-              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Label"/>
@@ -45,7 +46,8 @@
           </component>
           <component id="44b3" class="javax.swing.JLabel" binding="sellingPrice">
             <constraints>
-              <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Label"/>
@@ -53,7 +55,8 @@
           </component>
           <component id="826af" class="javax.swing.JLabel" binding="name">
             <constraints>
-              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Label"/>
@@ -62,6 +65,7 @@
           <component id="be695" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Produktname"/>
@@ -70,6 +74,7 @@
           <component id="c2dd3" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Gebindegröße"/>
@@ -78,6 +83,7 @@
           <component id="3ede1" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Verkaufspreis"/>
@@ -85,15 +91,19 @@
           </component>
           <component id="dce6a" class="kernbeisser.CustomComponents.PermissionButton" binding="add">
             <constraints>
-              <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
+              <alignmentY value="0.0"/>
+              <horizontalTextPosition value="0"/>
               <text value="Übernehmen"/>
             </properties>
           </component>
           <component id="780fd" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Anzahl"/>
@@ -102,6 +112,7 @@
           <component id="ef033" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Nettopreis"/>
@@ -109,7 +120,8 @@
           </component>
           <component id="85fe7" class="javax.swing.JLabel" binding="netPrice">
             <constraints>
-              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Label"/>
@@ -118,6 +130,7 @@
           <component id="de08c" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Lieferantennr."/>
@@ -126,12 +139,16 @@
           <component id="bea5e" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="kkNumber">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties/>
           </component>
           <component id="d2549" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="321" height="16"/>
+              </grid>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Benutzer"/>
@@ -139,9 +156,15 @@
           </component>
           <component id="ad051" class="kernbeisser.CustomComponents.ComboBox.AdvancedComboBox" binding="user" custom-create="true">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false">
+                <preferred-size width="321" height="30"/>
+                <maximum-size width="30" height="-1"/>
+              </grid>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
-            <properties/>
+            <properties>
+              <alignmentX value="0.0"/>
+            </properties>
           </component>
         </children>
       </grid>
