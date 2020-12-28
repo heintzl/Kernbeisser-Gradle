@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.BarcodeCapture;
+import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
@@ -12,8 +13,19 @@ import org.jetbrains.annotations.NotNull;
 
 public class PreOrderController extends Controller<PreOrderView, PreOrderModel> {
 
+  KeyCapture keyCapture;
+
   public PreOrderController() {
     super(new PreOrderModel());
+    keyCapture = new KeyCapture();
+    PreOrderView view = getView();
+    keyCapture.add(KeyEvent.VK_F2, () -> view.fnKeyAction("2"));
+    keyCapture.add(KeyEvent.VK_F3, () -> view.fnKeyAction("3"));
+    keyCapture.add(KeyEvent.VK_F4, () -> view.fnKeyAction("4"));
+    keyCapture.add(KeyEvent.VK_F5, () -> view.fnKeyAction("5"));
+    keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
+    keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
+    keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
   }
 
   @Override
@@ -73,7 +85,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   void pasteDataInView(Article articleKornkraft) {
     var view = getView();
-    view.setAmount(String.valueOf(1));
+    // view.setAmount(String.valueOf(1));
     double containerSize = articleKornkraft.getContainerSize();
     view.setContainerSize(new DecimalFormat("0.###").format(containerSize));
     view.setNetPrice(model.containerNetPrice(articleKornkraft));
@@ -127,7 +139,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {
-    return new BarcodeCapture(this::processBarcode).processKeyEvent(e);
+    return (new BarcodeCapture(this::processBarcode).processKeyEvent(e)
+        || keyCapture.processKeyEvent(e));
   }
 
   private void processBarcode(String s) {

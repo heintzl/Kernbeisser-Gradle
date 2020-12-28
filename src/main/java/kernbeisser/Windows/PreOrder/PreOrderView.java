@@ -108,6 +108,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void resetArticleNr() {
     kkNumber.setText("");
+    amount.setText("1");
     kkNumber.requestFocusInWindow();
   }
 
@@ -126,7 +127,7 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
 
-    user.addActionListener(e -> userAction());
+    user.addActionListener(e -> userAction(false));
 
     add.addActionListener(e -> controller.add());
 
@@ -144,13 +145,19 @@ public class PreOrderView implements IView<PreOrderController> {
     close.addActionListener(e -> back());
   }
 
-  private void userAction() {
+  private void userAction(boolean fromFnKey) {
+    if (!fromFnKey) enableControls(true);
     if (controller.searchKK()) {
       amount.requestFocusInWindow();
+      if (fromFnKey) controller.add();
     } else {
       kkNumber.requestFocusInWindow();
     }
-    enableControls(!user.getSelectedItem().equals(null));
+  }
+
+  void fnKeyAction(String i) {
+    setAmount(i);
+    userAction(true);
   }
 
   void enableControls(boolean active) {
