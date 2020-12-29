@@ -288,6 +288,8 @@ public class ShoppingItem implements Serializable {
             + RawPrice.SOLIDARITY.getName()
             + " MWSt. "
             + (vat == VAT.HIGH ? "voll" : "ermäßigt");
+    solidarity.vat = vat;
+    solidarity.vatValue = vat.getValue();
     return solidarity;
   }
 
