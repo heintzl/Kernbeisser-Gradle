@@ -34,9 +34,7 @@ public class SoloShoppingMaskController
   @Override
   @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[]{
-        PermissionKey.ACTION_OPEN_SOLO_SHOPPING_MASK
-    };
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_SOLO_SHOPPING_MASK};
   }
 
   public ShoppingMaskUIView getShoppingMaskView() {

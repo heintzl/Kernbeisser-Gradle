@@ -2,7 +2,6 @@ package kernbeisser.Windows.ChangePassword;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
@@ -126,6 +125,4 @@ public class ChangePasswordController extends Controller<ChangePasswordView, Cha
   public void fillView(ChangePasswordView changePasswordView) {
     changePasswordView.setVerifyWithOldEnable(model.verifyWithOldPassword());
   }
-
-
 }

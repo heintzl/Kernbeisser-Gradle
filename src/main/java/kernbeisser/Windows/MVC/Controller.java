@@ -26,9 +26,9 @@ import kernbeisser.Windows.ViewContainer;
 import lombok.Getter;
 
 public abstract class Controller<
-    V extends IView<? extends Controller<? extends V, ? extends M>>,
-    M extends IModel<? extends Controller<? extends V, ? extends M>> > implements RestrictedAccess
-{
+        V extends IView<? extends Controller<? extends V, ? extends M>>,
+        M extends IModel<? extends Controller<? extends V, ? extends M>>>
+    implements RestrictedAccess {
 
   @Getter(lazy = true)
   private final Collection<Controller<?, ?>> subControllers = findSubControllers();
@@ -42,7 +42,11 @@ public abstract class Controller<
   public Controller(M model) throws PermissionKeyRequiredException {
     this.model = model;
     if (!PermissionSet.MASTER.hasPermissions(getRequiredKeys())) {
-      throw new PermissionKeyRequiredException("the PermissionSet doesn't contain the required keys: "+Arrays.toString(getRequiredKeys())+ " to open this controller: "+getClass().getCanonicalName());
+      throw new PermissionKeyRequiredException(
+          "the PermissionSet doesn't contain the required keys: "
+              + Arrays.toString(getRequiredKeys())
+              + " to open this controller: "
+              + getClass().getCanonicalName());
     }
   }
 
@@ -71,8 +75,8 @@ public abstract class Controller<
 
   public abstract void fillView(V v);
 
-  public static RestrictedAccess getRestrictedAccess(Class<? extends Controller<?,?>> clazz){
-    return StaticMethodTransformer.createStaticInterface(RestrictedAccess.class,clazz);
+  public static RestrictedAccess getRestrictedAccess(Class<? extends Controller<?, ?>> clazz) {
+    return StaticMethodTransformer.createStaticInterface(RestrictedAccess.class, clazz);
   }
 
   public ViewContainer openIn(ViewContainer container) {
@@ -140,9 +144,8 @@ public abstract class Controller<
     }
   }
 
-
   private void instantiateView() {
-    Class<V> viewClass = getViewClass((Class<? extends Controller<V,M>>) getClass());
+    Class<V> viewClass = getViewClass((Class<? extends Controller<V, M>>) getClass());
     view = Tools.createWithoutConstructor(viewClass);
     linkViewControllerFields(view, this);
     callSetupUiMethod(view);
@@ -222,7 +225,10 @@ public abstract class Controller<
     return inViewInitialize;
   }
 
-  public static <V extends IView<? extends Controller<? extends V, ? extends M>>, M extends IModel<? extends Controller<? extends V, ? extends M>>> Class<V> getViewClass(Class<? extends Controller<V, M>> controllerClass) {
+  public static <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>>
+      Class<V> getViewClass(Class<? extends Controller<V, M>> controllerClass) {
     Type type = controllerClass.getGenericSuperclass();
 
     while (!(type instanceof ParameterizedType)

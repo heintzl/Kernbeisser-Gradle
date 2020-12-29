@@ -1,6 +1,5 @@
 package kernbeisser.Windows.InventoryMenu;
 
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
 
 public class InventoryMenuController extends Controller<InventoryMenuView, InventoryMenuModel> {
@@ -11,6 +10,4 @@ public class InventoryMenuController extends Controller<InventoryMenuView, Inven
 
   @Override
   public void fillView(InventoryMenuView inventoryMenuView) {}
-
-
 }

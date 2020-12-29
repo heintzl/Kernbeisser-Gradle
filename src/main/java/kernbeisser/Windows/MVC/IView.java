@@ -12,8 +12,8 @@ import kernbeisser.Windows.ViewContainer;
 import org.jetbrains.annotations.NotNull;
 
 public interface IView<
-    C extends Controller<? extends IView<? extends C>, ? extends IModel<? extends C>>> extends
-    StaticInterface {
+        C extends Controller<? extends IView<? extends C>, ? extends IModel<? extends C>>>
+    extends StaticInterface {
 
   void initialize(C controller);
 

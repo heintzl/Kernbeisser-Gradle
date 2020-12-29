@@ -4,7 +4,6 @@ import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.ViewContainer;
@@ -31,8 +30,6 @@ public class SelectorController<T> extends Controller<SelectorView<T>, SelectorM
     tSelectorView.setColumns(model.getColumns());
     tSelectorView.setTitle(model.getTitle());
   }
-
-
 
   public void remove() {
     var view = getView();

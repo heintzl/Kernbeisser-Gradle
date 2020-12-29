@@ -4,7 +4,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MaskLoader;
@@ -18,7 +17,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
 
   @Linked private String title;
   private boolean openWindow = false;
-  private boolean addAvailable,removeAvailable,editAvailable;
+  private boolean addAvailable, removeAvailable, editAvailable;
 
   public ObjectViewController(
       String title,
@@ -108,10 +107,6 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     getView().setAddAvailable(addAvailable);
     checkSelectedObject();
   }
-
-
-
-
 
   public SearchBoxView<T> getSearchBoxView() {
     return searchBoxController.getView();

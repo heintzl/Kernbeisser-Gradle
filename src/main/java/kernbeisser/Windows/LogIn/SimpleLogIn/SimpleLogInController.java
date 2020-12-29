@@ -3,7 +3,6 @@ package kernbeisser.Windows.LogIn.SimpleLogIn;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import javax.swing.*;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
@@ -31,8 +30,6 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
 
   @Override
   public void fillView(SimpleLogInView simpleLogInView) {}
-
-
 
   public void logIn() {
     var view = getView();

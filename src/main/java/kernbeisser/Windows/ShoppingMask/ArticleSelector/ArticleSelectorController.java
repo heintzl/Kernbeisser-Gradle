@@ -7,7 +7,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -65,8 +64,6 @@ public class ArticleSelectorController
 
   @Override
   public void fillView(ArticleSelectorView articleSelectorView) {}
-
-
 
   public SearchBoxView<Article> getSearchBoxView() {
     return searchBoxController.getView();

@@ -71,8 +71,6 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
     objectViewController.setSearch("");
   }
 
-
-
   public ObjectViewView<Article> getObjectView() {
     return objectViewController.getView();
   }

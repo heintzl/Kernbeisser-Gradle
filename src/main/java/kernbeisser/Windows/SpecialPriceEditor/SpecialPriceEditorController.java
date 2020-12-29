@@ -14,7 +14,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -209,8 +208,6 @@ public class SpecialPriceEditorController
               YearMonth.of(year, 12),
             });
   }
-
-
 
   public void loadMonth() {
     getView()

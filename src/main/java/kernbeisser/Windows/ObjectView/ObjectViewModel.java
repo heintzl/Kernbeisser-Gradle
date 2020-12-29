@@ -40,11 +40,11 @@ public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
         .openIn(new SubWindow(window));
   }
 
-  boolean isAvailable(Mode mode){
+  boolean isAvailable(Mode mode) {
     try {
-      maskLoader.accept(null,mode);
+      maskLoader.accept(null, mode);
       return true;
-    }catch (PermissionKeyRequiredException e){
+    } catch (PermissionKeyRequiredException e) {
       return false;
     }
   }

@@ -2,7 +2,6 @@ package kernbeisser.Windows.CollectionView;
 
 import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +28,6 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
     getView().setColumns(model.getColumns());
     getView().setEditable(model.isEditable());
   }
-
-
 
   public void selectAvailable() {
     T object = getView().getSelectedAvailableObject();

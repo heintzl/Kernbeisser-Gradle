@@ -33,11 +33,11 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
   public PermissionKey[] getRequiredKeys() {
     switch (getModel().getMode()) {
       case ADD:
-        return new PermissionKey[]{PermissionKey.ADD_ARTICLE};
+        return new PermissionKey[] {PermissionKey.ADD_ARTICLE};
       case EDIT:
-        return new PermissionKey[]{PermissionKey.EDIT_ARTICLE};
+        return new PermissionKey[] {PermissionKey.EDIT_ARTICLE};
       case REMOVE:
-        return new PermissionKey[]{PermissionKey.REMOVE_ARTICLE};
+        return new PermissionKey[] {PermissionKey.REMOVE_ARTICLE};
     }
     throw new UnsupportedOperationException("undefined mode");
   }
@@ -53,8 +53,6 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
     // after
     editArticleView.getArticleObjectForm().setSource(model.getSource());
   }
-
-
 
   String validateName(String name) throws CannotParseException {
     var view = getView();

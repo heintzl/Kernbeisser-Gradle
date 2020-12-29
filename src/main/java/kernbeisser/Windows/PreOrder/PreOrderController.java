@@ -114,8 +114,6 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     noArticleFound();
   }
 
-
-
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {
     return new BarcodeCapture(this::processBarcode).processKeyEvent(e);

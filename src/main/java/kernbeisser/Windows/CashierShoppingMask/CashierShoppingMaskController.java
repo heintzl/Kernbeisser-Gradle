@@ -64,8 +64,6 @@ public class CashierShoppingMaskController
     }
   }
 
-
-
   @Override
   protected boolean commitClose() {
     if (model.isShoppingMaskOpened()) {
@@ -96,8 +94,8 @@ public class CashierShoppingMaskController
   @Override
   @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[]{
-        PermissionKey.ACTION_OPEN_CASHIER_MASK,
+    return new PermissionKey[] {
+      PermissionKey.ACTION_OPEN_CASHIER_MASK,
     };
   }
 }

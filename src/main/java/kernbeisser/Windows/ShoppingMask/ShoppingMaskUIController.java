@@ -319,8 +319,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     keyCapture.addCTRL(KeyEvent.VK_F, view::openSearchWindow);
   }
 
-
-
   void startPay() {
     if (shoppingCartController.getItems().size() > 0) {
       new PayController(

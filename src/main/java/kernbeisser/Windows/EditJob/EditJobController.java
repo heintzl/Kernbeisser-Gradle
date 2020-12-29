@@ -42,13 +42,13 @@ public class EditJobController extends Controller<EditJobView, EditJobModel> {
 
   @Override
   public PermissionKey[] getRequiredKeys() {
-    switch (getModel().getMode()){
+    switch (getModel().getMode()) {
       case ADD:
-        return new PermissionKey[]{PermissionKey.ADD_JOB};
+        return new PermissionKey[] {PermissionKey.ADD_JOB};
       case EDIT:
-        return new PermissionKey[]{PermissionKey.EDIT_JOB};
+        return new PermissionKey[] {PermissionKey.EDIT_JOB};
       case REMOVE:
-        return new PermissionKey[]{PermissionKey.REMOVE_JOB};
+        return new PermissionKey[] {PermissionKey.REMOVE_JOB};
     }
     throw new UnsupportedOperationException("undefined mode");
   }

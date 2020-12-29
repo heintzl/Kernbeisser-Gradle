@@ -19,15 +19,21 @@ import kernbeisser.Windows.MVC.IView;
 
 public class ControllerButton extends JButton {
 
-  public <V extends IView<? extends Controller<? extends V, ? extends M>>,M extends IModel<? extends Controller<? extends V, ? extends M>>,C extends Controller<V,M>> ControllerButton(
-    Supplier<C> controller, Class<C> clazz) {
+  public <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>,
+          C extends Controller<V, M>>
+      ControllerButton(Supplier<C> controller, Class<C> clazz) {
     this(controller, clazz, Controller::openTab);
   }
 
-  public <V extends IView<? extends Controller<? extends V, ? extends M>>,M extends IModel<? extends Controller<? extends V, ? extends M>>,C extends Controller<V,M>> ControllerButton(
-      Supplier<C> controller, Class<C> clazz, Consumer<C> action) {
+  public <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>,
+          C extends Controller<V, M>>
+      ControllerButton(Supplier<C> controller, Class<C> clazz, Consumer<C> action) {
     Class<V> vClass = Controller.getViewClass(clazz);
-    IView<?> iView = StaticMethodTransformer.createStaticInterface(IView.class,vClass);
+    IView<?> iView = StaticMethodTransformer.createStaticInterface(IView.class, vClass);
     setIcon(
         IconFontSwing.buildIcon(
             iView.getTabIcon(), Tools.scaleWithLabelScalingFactor(16), new Color(0xFF00CCFF)));
@@ -39,15 +45,15 @@ public class ControllerButton extends JButton {
     setHorizontalAlignment(SwingConstants.LEFT);
     Tools.scaleFont(this, 1.1);
     addActionListener(e -> action.accept(controller.get()));
-    SwingUtilities.invokeLater(() ->{
-      try {
-        preLoadControllerRef.set(controller.get());
-        setEnabled(true);
-      }catch (PermissionKeyRequiredException e){
-        setEnabled(false);
-      }
-    }
-    );
+    SwingUtilities.invokeLater(
+        () -> {
+          try {
+            preLoadControllerRef.set(controller.get());
+            setEnabled(true);
+          } catch (PermissionKeyRequiredException e) {
+            setEnabled(false);
+          }
+        });
   }
 
   public static ControllerButton empty() {

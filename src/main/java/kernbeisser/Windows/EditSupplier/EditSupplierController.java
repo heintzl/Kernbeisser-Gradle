@@ -41,8 +41,6 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
     view.getObjectForm().setSource(getModel().getSupplier());
   }
 
-
-
   public void commit() {
     var view = getView();
     if (view.getObjectForm().applyMode(model.getMode())) {
@@ -82,13 +80,13 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
 
   @Override
   public PermissionKey[] getRequiredKeys() {
-    switch (getModel().getMode()){
+    switch (getModel().getMode()) {
       case ADD:
-        return new PermissionKey[]{PermissionKey.ADD_SUPPLIER};
+        return new PermissionKey[] {PermissionKey.ADD_SUPPLIER};
       case EDIT:
-        return new PermissionKey[]{PermissionKey.EDIT_SUPPLIER};
+        return new PermissionKey[] {PermissionKey.EDIT_SUPPLIER};
       case REMOVE:
-        return new PermissionKey[]{PermissionKey.REMOVE_SUPPLIER};
+        return new PermissionKey[] {PermissionKey.REMOVE_SUPPLIER};
     }
     throw new UnsupportedOperationException("undefined mode");
   }

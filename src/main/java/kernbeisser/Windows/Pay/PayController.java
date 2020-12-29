@@ -8,7 +8,6 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
@@ -78,20 +77,20 @@ public class PayController extends Controller<PayView, PayModel> {
     view.fillShoppingCart(model.getShoppingCart());
     view.setCustomerStandard.setVisible(false);
     User customer = model.getSaleSession().getCustomer();
-    String customerDisplayText = customer.getFirstName().substring(0,1) + ". " + customer.getSurname();
+    String customerDisplayText =
+        customer.getFirstName().substring(0, 1) + ". " + customer.getSurname();
     view.setCustomerStandard.setText("für " + customerDisplayText + " merken");
-    view.setCustomerStandard.addActionListener(e -> {
-      model.safeStandardPrint(view.printReceipt.isSelected());
-      customerStandardVisibility(view);
-    });
+    view.setCustomerStandard.addActionListener(
+        e -> {
+          model.safeStandardPrint(view.printReceipt.isSelected());
+          customerStandardVisibility(view);
+        });
     view.printReceipt.setSelected(model.readStandardPrint());
     view.printReceipt.addActionListener(e -> customerStandardVisibility(view));
-
   }
 
   private void customerStandardVisibility(PayView view) {
-    view.setCustomerStandard.setVisible(view.printReceipt.isSelected() != model.readStandardPrint());
+    view.setCustomerStandard.setVisible(
+        view.printReceipt.isSelected() != model.readStandardPrint());
   }
-
-
 }

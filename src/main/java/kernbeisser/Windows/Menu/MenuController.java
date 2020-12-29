@@ -1,7 +1,6 @@
 package kernbeisser.Windows.Menu;
 
 import javax.swing.*;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -22,8 +21,6 @@ public class MenuController extends Controller<MenuView, MenuModel> {
 
   @Override
   public void fillView(MenuView menuView) {}
-
-
 
   private boolean alreadyAsked = false;
 

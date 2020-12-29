@@ -28,8 +28,6 @@ public class SettingController extends Controller<SettingView, SettingModel> {
     view.setValues(Arrays.asList(Setting.values()));
   }
 
-
-
   public void apply() {
     var view = getView();
     switch (Setting.getExpectedType(model.getSelectedSettingValue()).getSimpleName()) {
@@ -125,9 +123,6 @@ public class SettingController extends Controller<SettingView, SettingModel> {
   @Override
   @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[]{
-        PermissionKey.ACTION_OPEN_APPLICATION_SETTINGS
-    };
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_APPLICATION_SETTINGS};
   }
-
 }

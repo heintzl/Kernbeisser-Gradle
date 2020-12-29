@@ -1,6 +1,5 @@
 package kernbeisser.StartUp.LogIn;
 
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +16,4 @@ public class DBLogInController extends Controller<DBLogInView, DBLogInModel> {
 
   @Override
   public void fillView(DBLogInView dbLogInView) {}
-
-
 }

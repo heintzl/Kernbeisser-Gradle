@@ -5,7 +5,6 @@ import javax.persistence.EntityManager;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
@@ -65,8 +64,6 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     tSearchBoxView.setColumns(Arrays.asList(model.getColumns()));
     invokeSearch();
   }
-
-
 
   public void setSearch(String s) {
     getView().setSearch(s);

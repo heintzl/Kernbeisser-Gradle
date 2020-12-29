@@ -4,7 +4,6 @@ import java.util.Collection;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -36,8 +35,6 @@ public class PurchaseController extends Controller<PurchaseView, PurchaseModel> 
     fillShoppingCart();
     cartController.setValueAfterLabel("Damaliges Guthaben nach dem Einkauf:");
   }
-
-
 
   public void printBon() {
     PayModel.print(model.getLoaded());
