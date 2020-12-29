@@ -226,12 +226,16 @@ public class Article {
 
   public static Article getBySuppliersItemNumber(
       Supplier supplier, int suppliersNumber, EntityManager em) {
-    return em.createQuery(
-            "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
-            Article.class)
-        .setParameter("s", supplier)
-        .setParameter("n", suppliersNumber)
-        .getSingleResult();
+    try {
+      return em.createQuery(
+              "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
+              Article.class)
+          .setParameter("s", supplier)
+          .setParameter("n", suppliersNumber)
+          .getSingleResult();
+    } catch (NoResultException ignored) {
+      return null;
+    }
   }
 
   public static Article getByBarcode(long barcode) {

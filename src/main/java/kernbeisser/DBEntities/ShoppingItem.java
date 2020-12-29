@@ -147,8 +147,6 @@ public class ShoppingItem implements Serializable {
 
   @Getter @Transient private boolean solidaritySurcharge = false;
 
-  @Getter @Transient private double articleSurcharge;
-
   @Getter @Transient private boolean specialOffer;
   // required for article labels and pricelists
   @Getter @Transient private String shortBarcode = "";
@@ -179,7 +177,9 @@ public class ShoppingItem implements Serializable {
       this.vatValue = vat.getValue();
     }
     this.surcharge =
-        article.getSurchargeGroup().getSurcharge()
+        (supplier == null
+                ? SurchargeGroup.undefined().getSurcharge()
+                : article.getSurchargeGroup().getSurcharge())
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
     this.discount = discount;
     supplier = article.getSupplier();
@@ -196,9 +196,6 @@ public class ShoppingItem implements Serializable {
     if (hasContainerDiscount && this.weighAble) {
       this.itemNetPrice *= this.amount * this.metricUnits.getBaseFactor();
     }
-    this.articleSurcharge =
-        article.getSurchargeGroup().getSurcharge()
-            * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
   }
 
   public static ShoppingItem createReportItem(Article article) {
@@ -288,6 +285,8 @@ public class ShoppingItem implements Serializable {
             + RawPrice.SOLIDARITY.getName()
             + " MWSt. "
             + (vat == VAT.HIGH ? "voll" : "ermäßigt");
+    solidarity.vat = vat;
+    solidarity.vatValue = vat.getValue();
     return solidarity;
   }
 

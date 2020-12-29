@@ -490,6 +490,15 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         getContent(), "Es gibt nichts zu bezahlen!", "Storno", JOptionPane.WARNING_MESSAGE);
   }
 
+  public void messageNoSupplier() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Um nach der Lieferantennummer suchen zu können,\nmuss als erstes ein Lieferant ausgewählt werden.",
+        "Lieferant nicht ausgewählt",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
   public String inputStornoRetailPrice(double itemRetailPrice, boolean retry) {
     String initValue = MessageFormat.format("{0, number, 0.00}", itemRetailPrice).trim();
     String message = "";
@@ -887,14 +896,5 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         + controller.getModel().getSaleSession().getCustomer().getSurname()
         + ", "
         + controller.getModel().getSaleSession().getCustomer().getFirstName();
-  }
-
-  public void noSupplierSelected() {
-    Tools.beep();
-    JOptionPane.showMessageDialog(
-        getContent(),
-        "Um nach der Lieferantennummer suchen zu können,\nmust du als erstes ein Lieferanten auswählen.",
-        "Lieferant nicht ausgewählt",
-        JOptionPane.WARNING_MESSAGE);
   }
 }
