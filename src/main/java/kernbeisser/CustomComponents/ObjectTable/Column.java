@@ -216,7 +216,7 @@ public interface Column<T> {
 
       @Override
       public void onAction(T t) {
-        onAction.accept(t);
+        if (onlyIf.test(t)) onAction.accept(t);
       }
     };
   }
