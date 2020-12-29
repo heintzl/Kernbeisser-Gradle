@@ -39,7 +39,8 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
     switch (getModel().getMode()) {
       case ADD:
         editArticleView.setActionTitle("Als neuen Artikel aufnehmen");
-        editArticleView.setActionIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
+        editArticleView.setActionIcon(
+            IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
         break;
       case EDIT:
         editArticleView.setActionTitle("Änderungen übernehmen");

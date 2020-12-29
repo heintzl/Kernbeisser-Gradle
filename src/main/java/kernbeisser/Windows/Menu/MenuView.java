@@ -142,9 +142,10 @@ public class MenuView implements IView<MenuController> {
               try {
                 return new SoloShoppingMaskController();
               } catch (NotEnoughCreditException e) {
-                openSelfShoppingMask.setToolTipText("Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
-                    + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
-                    + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.");
+                openSelfShoppingMask.setToolTipText(
+                    "Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
+                        + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
+                        + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.");
                 throw new PermissionKeyRequiredException();
               }
             },

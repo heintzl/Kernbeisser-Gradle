@@ -37,8 +37,9 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
             model.getValue(),
             model.getSaleSession().getCustomer().getUserGroup().getSolidaritySurcharge(),
             true);
-    if (model.getSaleSession().getCustomer().getUserGroup().getValue() <= 0 && !model.getSaleSession().getCustomer().hasPermission(PermissionKey.GO_UNDER_MIN)) {
-       throw new NotEnoughCreditException();
+    if (model.getSaleSession().getCustomer().getUserGroup().getValue() <= 0
+        && !model.getSaleSession().getCustomer().hasPermission(PermissionKey.GO_UNDER_MIN)) {
+      throw new NotEnoughCreditException();
     }
   }
 
