@@ -1,10 +1,11 @@
 package kernbeisser.Windows.PreOrder;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import javax.persistence.NoResultException;
+import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
@@ -103,7 +104,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     // view.setAmount(String.valueOf(1));
     double containerSize = articleKornkraft.getContainerSize();
     view.setContainerSize(new DecimalFormat("0.###").format(containerSize));
-    view.setNetPrice(model.containerNetPrice(articleKornkraft));
+    view.setNetPrice(PreOrderModel.containerNetPrice(articleKornkraft));
     view.setSellingPrice(
         String.format(
             "%.2f€", new ShoppingItem(articleKornkraft, 0, true).getRetailPrice() * containerSize));
@@ -153,7 +154,6 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     preOrderView.enableControls(false);
     preOrderView.setAmount("1");
     preOrderView.searchArticle.addActionListener(e -> openSearchWindow());
-
     noArticleFound();
   }
 
@@ -178,5 +178,18 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   public void printChecklist() {
     model.printCheckList();
+  }
+
+  public void exportPreOrder() {
+    PreOrderView view = getView();
+    try {
+      if (model.exportPreOrder(view.getContent()) == JFileChooser.APPROVE_OPTION) {
+        view.messageExportSuccess();
+      } else {
+        view.messageExportCanceled();
+      }
+    } catch (IOException e) {
+      view.messageExportError(e);
+    }
   }
 }

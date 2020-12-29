@@ -144,7 +144,7 @@ public class PreOrderView implements IView<PreOrderController> {
     amount.addActionListener(e -> controller.add());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
     searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
-
+    bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
   }
 
@@ -209,5 +209,32 @@ public class PreOrderView implements IView<PreOrderController> {
         "Konnte keinen Kornkraft-Artikel mit Barcode \"" + barcode + "\" finden",
         "Artikel nicht gefunden",
         JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void messageExportError(Throwable e) {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Der Export ist fehlgeschlagen. Ursache: \n" + e.getMessage(),
+        "Vorbestellungsexport",
+        JOptionPane.ERROR_MESSAGE);
+  }
+
+  public void messageExportSuccess() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Die Vorbestellung wurde erfolgreich exportiert",
+        "Vorbestellungsexport",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void messageExportCanceled() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Der Export der Vorbestellung wurde abgebrochen",
+        "Vorbestellungsexport",
+        JOptionPane.WARNING_MESSAGE);
   }
 }
