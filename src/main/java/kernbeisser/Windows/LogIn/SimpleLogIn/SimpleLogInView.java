@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -74,6 +75,7 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
   }
 
   @Override
+  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.SIGN_IN;
   }

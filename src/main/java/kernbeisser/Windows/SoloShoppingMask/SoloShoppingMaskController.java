@@ -4,6 +4,7 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -31,8 +32,9 @@ public class SoloShoppingMaskController
   public void fillView(SoloShoppingMaskView soloShoppingMaskView) {}
 
   @Override
+  @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_SOLO_SHOPPING_MASK};
   }
 
   public ShoppingMaskUIView getShoppingMaskView() {

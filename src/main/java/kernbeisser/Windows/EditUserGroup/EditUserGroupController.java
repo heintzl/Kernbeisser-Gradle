@@ -8,6 +8,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -45,6 +46,7 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   }
 
   @Override
+  @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
     return new PermissionKey[] {};
   }

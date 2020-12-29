@@ -7,6 +7,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +55,7 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
     delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, new Color(189, 101, 85)));
     add.addActionListener(e -> controller.add());
     edit.addActionListener(e -> controller.edit());
-    delete.addActionListener(e -> controller.delete());
+    delete.addActionListener(e -> controller.remove());
     back.addActionListener(e -> back());
   }
 
@@ -64,6 +65,7 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
   }
 
   @Override
+  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.PENCIL;
   }

@@ -16,6 +16,7 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -81,6 +82,7 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
   }
 
   @Override
+  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.PERCENT;
   }

@@ -3,7 +3,7 @@ package kernbeisser.Windows.ObjectView;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
-import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.MaskLoader;
@@ -17,6 +17,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
 
   @Linked private String title;
   private boolean openWindow = false;
+  private boolean addAvailable, removeAvailable, editAvailable;
 
   public ObjectViewController(
       String title,
@@ -27,6 +28,9 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     super(new ObjectViewModel<>(loader, items, copyAdd));
     this.title = title;
     searchBoxController = new SearchBoxController<T>(items, columns);
+    addAvailable = getModel().isAvailable(Mode.ADD);
+    editAvailable = getModel().isAvailable(Mode.EDIT);
+    removeAvailable = getModel().isAvailable(Mode.REMOVE);
   }
 
   void select() {
@@ -35,13 +39,13 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
 
   void checkSelectedObject() {
     var view = getView();
-    view.setAddAvailable(!openWindow);
+    view.setAddAvailable(!openWindow && addAvailable);
     if (openWindow || searchBoxController.getSelectedObject() == null) {
       view.setEditAvailable(false);
       view.setRemoveAvailable(false);
     } else {
-      view.setEditAvailable(true);
-      view.setRemoveAvailable(true);
+      view.setEditAvailable(editAvailable);
+      view.setRemoveAvailable(removeAvailable);
     }
   }
 
@@ -77,7 +81,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     checkSelectedObject();
   }
 
-  void delete() {
+  void remove() {
     var view = getView();
     if (view.commitDelete()) {
       model.remove(searchBoxController.getSelectedObject());
@@ -100,12 +104,8 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     searchBoxController.addSelectionListener(e -> select());
     searchBoxController.addDoubleClickListener(e -> edit());
     searchBoxController.addLostSelectionListener(this::checkSelectedObject);
+    getView().setAddAvailable(addAvailable);
     checkSelectedObject();
-  }
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
   }
 
   public SearchBoxView<T> getSearchBoxView() {

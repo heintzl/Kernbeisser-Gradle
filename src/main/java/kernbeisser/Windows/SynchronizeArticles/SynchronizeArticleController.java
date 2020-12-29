@@ -2,7 +2,6 @@ package kernbeisser.Windows.SynchronizeArticles;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
@@ -17,11 +16,6 @@ public class SynchronizeArticleController
   @Override
   public void fillView(SynchronizeArticleView synchronizeArticleView) {
     getView().setAllDiffs(MappedDifferences.values());
-  }
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
   }
 
   public void useKernbeisser() {

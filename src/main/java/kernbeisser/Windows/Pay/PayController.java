@@ -8,7 +8,6 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
@@ -93,10 +92,6 @@ public class PayController extends Controller<PayView, PayModel> {
   private void customerStandardVisibility(PayView view) {
     view.setCustomerStandard.setVisible(
         view.printReceipt.isSelected() != model.readStandardPrint());
-  }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
   }
 }

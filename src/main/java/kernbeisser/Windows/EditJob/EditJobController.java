@@ -16,7 +16,7 @@ public class EditJobController extends Controller<EditJobView, EditJobModel> {
 
   public EditJobController(Job job, Mode mode) {
     super(new EditJobModel(job != null ? job : Proxy.getSecureInstance(new Job()), mode));
-    if (mode == Mode.REMOVE) {
+    if (job != null && mode == Mode.REMOVE) {
       try {
         Tools.delete(job);
       } catch (PersistenceException e) {
@@ -42,7 +42,15 @@ public class EditJobController extends Controller<EditJobView, EditJobModel> {
 
   @Override
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
+    switch (getModel().getMode()) {
+      case ADD:
+        return new PermissionKey[] {PermissionKey.ADD_JOB};
+      case EDIT:
+        return new PermissionKey[] {PermissionKey.EDIT_JOB};
+      case REMOVE:
+        return new PermissionKey[] {PermissionKey.REMOVE_JOB};
+    }
+    throw new UnsupportedOperationException("undefined mode");
   }
 
   public void commit() {

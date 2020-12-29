@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class EditUserController extends Controller<EditUserView, EditUserModel> {
   public EditUserController(User user, Mode mode) {
     super(new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode));
-    if (mode == Mode.REMOVE) {
+    if (user != null && mode == Mode.REMOVE) {
       Tools.delete(user);
     }
   }
@@ -47,9 +47,15 @@ public class EditUserController extends Controller<EditUserView, EditUserModel> 
 
   @Override
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {
-      PermissionKey.USER_USERNAME_READ,
-    };
+    switch (getModel().getMode()) {
+      case ADD:
+        return new PermissionKey[] {PermissionKey.ADD_USER};
+      case EDIT:
+        return new PermissionKey[] {PermissionKey.EDIT_USER};
+      case REMOVE:
+        return new PermissionKey[] {PermissionKey.REMOVE_USER};
+    }
+    throw new UnsupportedOperationException("undefined mode");
   }
 
   void doAction() {

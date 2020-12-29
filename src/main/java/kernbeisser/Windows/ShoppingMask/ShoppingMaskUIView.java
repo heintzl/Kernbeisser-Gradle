@@ -25,6 +25,7 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -849,6 +850,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   @Override
+  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.SHOPPING_CART;
   }

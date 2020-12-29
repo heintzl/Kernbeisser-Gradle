@@ -3,6 +3,7 @@ package kernbeisser.Windows.MVC.ComponentController;
 import javax.swing.JComponent;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ public class ComponentView implements IView<ComponentController> {
   }
 
   @Override
+  @StaticAccessPoint
   public IconCode getTabIcon() {
     return controller != null ? controller.getIcon() : FontAwesome.WINDOW_MAXIMIZE;
   }

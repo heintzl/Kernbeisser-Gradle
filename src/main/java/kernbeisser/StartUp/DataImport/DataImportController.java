@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import kernbeisser.DBEntities.*;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Security.PermissionSet;
@@ -194,9 +193,4 @@ public class DataImportController extends Controller<DataImportView, DataImportM
 
   @Override
   public void fillView(DataImportView dataImportView) {}
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
 }

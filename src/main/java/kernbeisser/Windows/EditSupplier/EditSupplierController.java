@@ -16,7 +16,7 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
 
   public EditSupplierController(Supplier supplier, Mode mode) {
     super(new EditSupplierModel(supplier, mode));
-    if (mode.equals(Mode.REMOVE)) {
+    if (supplier != null && mode.equals(Mode.REMOVE)) {
       try {
         Tools.delete(supplier);
       } catch (PersistenceException e) {
@@ -39,11 +39,6 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
   public void fillView(EditSupplierView editSupplierView) {
     var view = getView();
     view.getObjectForm().setSource(getModel().getSupplier());
-  }
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
   }
 
   public void commit() {
@@ -81,5 +76,18 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
       default:
         throw new UnsupportedOperationException(model.getMode() + " is not supported");
     }
+  }
+
+  @Override
+  public PermissionKey[] getRequiredKeys() {
+    switch (getModel().getMode()) {
+      case ADD:
+        return new PermissionKey[] {PermissionKey.ADD_SUPPLIER};
+      case EDIT:
+        return new PermissionKey[] {PermissionKey.EDIT_SUPPLIER};
+      case REMOVE:
+        return new PermissionKey[] {PermissionKey.REMOVE_SUPPLIER};
+    }
+    throw new UnsupportedOperationException("undefined mode");
   }
 }

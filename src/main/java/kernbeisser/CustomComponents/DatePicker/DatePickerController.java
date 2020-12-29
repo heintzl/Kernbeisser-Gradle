@@ -11,7 +11,6 @@ import java.util.Locale;
 import java.util.function.Consumer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainer;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -84,11 +83,6 @@ public class DatePickerController extends Controller<DatePickerView, DatePickerM
   public void fillView(DatePickerView datePickerView) {
     datePickerView.setMoths(Month.values());
     loadMonth();
-  }
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
   }
 
   public static void requestDate(ViewContainer current, Consumer<Instant> select) {

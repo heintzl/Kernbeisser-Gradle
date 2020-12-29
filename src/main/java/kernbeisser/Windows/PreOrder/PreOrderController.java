@@ -158,11 +158,6 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
-
-  @Override
   protected boolean processKeyboardInput(KeyEvent e) {
     return (new BarcodeCapture(this::processBarcode).processKeyEvent(e)
         || keyCapture.processKeyEvent(e));

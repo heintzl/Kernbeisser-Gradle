@@ -2,6 +2,7 @@ package kernbeisser.Windows.ObjectView;
 
 import java.util.Collection;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.MaskLoader;
@@ -37,6 +38,15 @@ public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
         .accept(copyValuesToAdd ? selected : null, Mode.ADD)
         .withCloseEvent(closeEvent)
         .openIn(new SubWindow(window));
+  }
+
+  boolean isAvailable(Mode mode) {
+    try {
+      maskLoader.accept(null, mode);
+      return true;
+    } catch (PermissionKeyRequiredException e) {
+      return false;
+    }
   }
 
   void remove(T selected) {

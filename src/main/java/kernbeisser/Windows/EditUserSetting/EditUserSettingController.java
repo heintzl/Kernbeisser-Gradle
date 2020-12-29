@@ -3,7 +3,6 @@ package kernbeisser.Windows.EditUserSetting;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Useful.Tools;
@@ -30,11 +29,6 @@ public class EditUserSettingController
     editUserSettingView.setSelectedTheme(
         UserSetting.THEME.getEnumValue(Theme.class, model.getUser()));
     editUserSettingView.setFontSize(UserSetting.FONT_SCALE_FACTOR.getFloatValue(model.getUser()));
-  }
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
   }
 
   public void fontChanged() {

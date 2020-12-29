@@ -37,17 +37,9 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
             model.getValue(),
             model.getSaleSession().getCustomer().getUserGroup().getSolidaritySurcharge(),
             true);
-    if (model.getSaleSession().getCustomer().getUserGroup().getValue() <= 0) {
-      if (model.getSaleSession().getCustomer().hasPermission(PermissionKey.GO_UNDER_MIN)) {
-        RememberDialog.showDialog(
-            model.getSaleSession().getCustomer(),
-            null,
-            "Ihr Guthaben beträgt weniger als 0.01€.\n"
-                + "Bitte sei dir bewusst,\n"
-                + "dass Schulden Zinsen verursachen.");
-      } else {
-        throw new NotEnoughCreditException();
-      }
+    if (model.getSaleSession().getCustomer().getUserGroup().getValue() <= 0
+        && !model.getSaleSession().getCustomer().hasPermission(PermissionKey.GO_UNDER_MIN)) {
+      throw new NotEnoughCreditException();
     }
   }
 
@@ -317,11 +309,14 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     keyCapture.add(KeyEvent.VK_END, () -> view.articleTypeChange(ArticleType.ARTICLE_NUMBER));
     keyCapture.addALT(KeyEvent.VK_S, view::openSearchWindow);
     keyCapture.addCTRL(KeyEvent.VK_F, view::openSearchWindow);
-  }
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
+    if (model.getSaleSession().getCustomer().hasPermission(PermissionKey.GO_UNDER_MIN)) {
+      RememberDialog.showDialog(
+          model.getSaleSession().getCustomer(),
+          null,
+          "Ihr Guthaben beträgt weniger als 0.01€.\n"
+              + "Bitte sei dir bewusst,\n"
+              + "dass Schulden Zinsen verursachen.");
+    }
   }
 
   void startPay() {

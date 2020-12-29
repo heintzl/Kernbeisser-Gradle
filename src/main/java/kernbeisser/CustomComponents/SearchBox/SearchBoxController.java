@@ -5,7 +5,6 @@ import javax.persistence.EntityManager;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
@@ -64,11 +63,6 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
   public void fillView(SearchBoxView<T> tSearchBoxView) {
     tSearchBoxView.setColumns(Arrays.asList(model.getColumns()));
     invokeSearch();
-  }
-
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
   }
 
   public void setSearch(String s) {

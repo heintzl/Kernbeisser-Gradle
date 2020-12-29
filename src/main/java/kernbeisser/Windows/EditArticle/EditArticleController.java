@@ -1,4 +1,4 @@
-package kernbeisser.Windows.EditItem;
+package kernbeisser.Windows.EditArticle;
 
 import java.awt.*;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -8,48 +8,54 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
-import org.jetbrains.annotations.NotNull;
 
-public class EditItemController extends Controller<EditItemView, EditItemModel> {
+public class EditArticleController extends Controller<EditArticleView, EditArticleModel> {
 
-  public EditItemController(Article article, Mode mode) {
-    super(new EditItemModel(article != null ? article : new Article(), mode));
-    var view = getView();
-    switch (mode) {
-      case ADD:
-        view.setActionTitle("Als neuen Artikel aufnehmen");
-        view.setActionIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
-        break;
-      case EDIT:
-        view.setActionTitle("Änderungen übernehmen");
-        getView()
-            .setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(0x0000BB)));
-        break;
+  public EditArticleController(Article article, Mode mode) {
+    super(new EditArticleModel(article != null ? article : new Article(), mode));
+    if (article != null && mode == Mode.REMOVE) {
+      Tools.delete(article);
     }
   }
 
   @Override
-  public @NotNull EditItemModel getModel() {
-    return model;
-  }
-
-  @Override
-  public void fillView(EditItemView editItemView) {
-    editItemView.setPriceLists(model.getAllPriceLists());
-    editItemView.setSuppliers(model.getAllSuppliers());
-    editItemView.setUnits(model.getAllUnits());
-    editItemView.setVATs(model.getAllVATs());
-    editItemView.setSurchargeGroup(model.getAllSurchargeGroups());
-
-    // after
-    editItemView.getArticleObjectForm().setSource(model.getSource());
-  }
-
-  @Override
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
+    switch (getModel().getMode()) {
+      case ADD:
+        return new PermissionKey[] {PermissionKey.ADD_ARTICLE};
+      case EDIT:
+        return new PermissionKey[] {PermissionKey.EDIT_ARTICLE};
+      case REMOVE:
+        return new PermissionKey[] {PermissionKey.REMOVE_ARTICLE};
+    }
+    throw new UnsupportedOperationException("undefined mode");
+  }
+
+  @Override
+  public void fillView(EditArticleView editArticleView) {
+    switch (getModel().getMode()) {
+      case ADD:
+        editArticleView.setActionTitle("Als neuen Artikel aufnehmen");
+        editArticleView.setActionIcon(
+            IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
+        break;
+      case EDIT:
+        editArticleView.setActionTitle("Änderungen übernehmen");
+        getView()
+            .setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(0x0000BB)));
+        break;
+    }
+
+    editArticleView.setPriceLists(model.getAllPriceLists());
+    editArticleView.setSuppliers(model.getAllSuppliers());
+    editArticleView.setUnits(model.getAllUnits());
+    editArticleView.setVATs(model.getAllVATs());
+    editArticleView.setSurchargeGroup(model.getAllSurchargeGroups());
+    // after
+    editArticleView.getArticleObjectForm().setSource(model.getSource());
   }
 
   String validateName(String name) throws CannotParseException {
@@ -58,7 +64,7 @@ public class EditItemController extends Controller<EditItemView, EditItemModel> 
       case EDIT:
         if (name.equals(model.getSource().getName())) return name;
       case ADD:
-        if (EditItemModel.nameExists(name)) {
+        if (EditArticleModel.nameExists(name)) {
           view.nameAlreadyExists();
           throw new CannotParseException("Name already taken");
         } else return name;
