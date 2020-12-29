@@ -33,6 +33,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private JButton close;
   private JButton abhakplanButton;
   private JButton bestellungExportierenButton;
+  JButton searchArticle;
 
   @Linked private PreOrderController controller;
 
@@ -142,6 +143,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
     amount.addActionListener(e -> controller.add());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
+    searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
 
     close.addActionListener(e -> back());
   }
@@ -161,10 +163,11 @@ public class PreOrderView implements IView<PreOrderController> {
     userAction(true);
   }
 
-  void enableControls(boolean active) {
-    kkNumber.setEnabled(active);
-    amount.setEnabled(active);
-    add.setEnabled(active);
+  void enableControls(boolean enabled) {
+    searchArticle.setEnabled(enabled);
+    kkNumber.setEnabled(enabled);
+    amount.setEnabled(enabled);
+    add.setEnabled(enabled);
   }
 
   @Override

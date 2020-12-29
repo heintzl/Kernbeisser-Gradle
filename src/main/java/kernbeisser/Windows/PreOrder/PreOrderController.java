@@ -1,5 +1,6 @@
 package kernbeisser.Windows.PreOrder;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.util.Collection;
@@ -9,6 +10,8 @@ import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
@@ -135,6 +138,13 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     getView().addPreOrder(preOrder);
   }
 
+  void openSearchWindow() {
+    new ArticleSelectorController(this::pasteDataInView)
+        .withCloseEvent(() -> getView().searchArticle.setEnabled(true))
+        .openIn(new SubWindow(getView().traceViewContainer()));
+    getView().searchArticle.setEnabled(false);
+  }
+
   @Override
   public void fillView(PreOrderView preOrderView) {
     preOrderView.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
@@ -142,6 +152,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     preOrderView.setPreOrders(model.getAllPreOrders());
     preOrderView.enableControls(false);
     preOrderView.setAmount("1");
+    preOrderView.searchArticle.addActionListener(e -> openSearchWindow());
+
     noArticleFound();
   }
 
