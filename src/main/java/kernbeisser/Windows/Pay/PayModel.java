@@ -1,6 +1,5 @@
 package kernbeisser.Windows.Pay;
 
-import java.awt.event.ActionListener;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -140,11 +139,13 @@ public class PayModel implements IModel<PayController> {
     invoice.sendToPrinter("Bon wird erstellt", (e) -> Tools.showUnexpectedErrorWarning(e));
   }
 
-    public void safeStandardPrint(boolean printReceipt) {
-      UserSetting.PRINT_RECEIPT.setValue(saleSession.getCustomer(),printReceipt);
-    }
+  public void safeStandardPrint(boolean printReceipt) {
+    UserSetting.PRINT_RECEIPT.setValue(saleSession.getCustomer(), printReceipt);
+  }
 
   public boolean readStandardPrint() {
-    return UserSetting.PRINT_RECEIPT.getValue(saleSession.getCustomer()).equals(Boolean.TRUE.toString());
+    return UserSetting.PRINT_RECEIPT
+        .getValue(saleSession.getCustomer())
+        .equals(Boolean.TRUE.toString());
   }
 }
