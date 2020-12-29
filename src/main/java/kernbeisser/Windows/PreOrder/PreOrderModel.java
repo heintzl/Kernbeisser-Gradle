@@ -1,12 +1,16 @@
 package kernbeisser.Windows.PreOrder;
 
+import java.awt.*;
+import java.io.IOException;
 import java.util.Collection;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PreOrder;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -41,6 +45,10 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return em.createQuery("select p from PreOrder p", PreOrder.class).getResultList();
   }
 
+  static double containerNetPrice(Article article) {
+    return new ShoppingItem(article, 0, true).getItemNetPrice() * article.getContainerSize();
+  }
+
   public void close() {
     em.flush();
     et.commit();
@@ -58,5 +66,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
     saveData();
     PreOrderChecklist checklist = new PreOrderChecklist(getAllPreOrders());
     checklist.sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
+  }
+
+  public int exportPreOrder(Component parent) throws IOException {
+    return CSVExport.exportPreOrder(parent, getAllPreOrders());
   }
 }
