@@ -3,8 +3,6 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import static java.text.MessageFormat.format;
 
 import java.awt.*;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -29,7 +27,6 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   private JLabel value;
   private JPanel main;
   private ObjectTable<ShoppingItem> shoppingItems;
-  private JLabel headerDelete;
   private JScrollPane tablePanel;
   private JLabel valueAfterLabel;
   private boolean autoScrollDown;
@@ -70,6 +67,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   }
 
   private void createUIComponents() {
+    int depositKbNumber = ShoppingItem.createDeposit(0.0).getKbNumber();
     shoppingItems =
         new ObjectTable<>(
             new Column<ShoppingItem>() {
@@ -122,7 +120,8 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
       Predicate<ShoppingItem> predicate =
           item ->
               !(item.getName().equals(RawPrice.PRODUCE.getName())
-                  || item.getName().equals(RawPrice.BAKERY.getName()));
+                  || item.getName().equals(RawPrice.BAKERY.getName())
+                  || item.getKbNumber() == depositKbNumber);
       shoppingItems.addColumn(
           Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x0B315A)),
@@ -135,9 +134,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               predicate));
       shoppingItems.addColumn(
           Column.createIcon(
-              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
-              controller::delete,
-              predicate));
+              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
     }
     shoppingItems.getTableHeader().setBackground(Color.BLACK);
     shoppingItems.getTableHeader().setForeground(Color.LIGHT_GRAY);
@@ -151,12 +148,9 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
     tablePanel
         .getVerticalScrollBar()
         .addAdjustmentListener(
-            new AdjustmentListener() {
-              @Override
-              public void adjustmentValueChanged(AdjustmentEvent e) {
-                if (autoScrollDown) e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-                autoScrollDown = false;
-              }
+            e -> {
+              if (autoScrollDown) e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+              autoScrollDown = false;
             });
   }
 
