@@ -2,6 +2,7 @@ package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
+import java.util.Collection;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
@@ -70,6 +71,17 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     getView().remove(preOrder);
   }
 
+  void delete(Collection<PreOrder> preOrders) {
+    if (preOrders.size() == 0) {
+      getView().noPreOrderSelected();
+      return;
+    }
+    for (PreOrder preOrder : preOrders) {
+      model.remove(preOrder);
+      getView().remove(preOrder);
+    }
+  }
+
   void noArticleFound() {
     Article empty = new Article();
     empty.setName("Kein Artikel gefunden");
@@ -129,6 +141,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     preOrderView.setUser(User.getAllUserFullNames(true));
     preOrderView.setPreOrders(model.getAllPreOrders());
     preOrderView.enableControls(false);
+    preOrderView.setAmount("1");
     noArticleFound();
   }
 
