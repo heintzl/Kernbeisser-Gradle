@@ -160,7 +160,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
 
   void searchBySupplierItemsNumber() {
     Supplier supplier = getView().getSupplier();
-    if (supplier == null) getView().noSupplierSelected();
+    if (supplier == null) getView().messageNoSupplier();
     getView().defaultSettings();
     ShoppingItem found =
         model.getBySupplierItemNumber(
