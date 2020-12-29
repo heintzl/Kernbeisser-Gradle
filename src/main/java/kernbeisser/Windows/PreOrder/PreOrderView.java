@@ -1,9 +1,12 @@
 package kernbeisser.Windows.PreOrder;
 
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import javax.swing.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -30,6 +33,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private JButton close;
   private JButton abhakplanButton;
   private JButton bestellungExportierenButton;
+  JButton searchArticle;
 
   @Linked private PreOrderController controller;
 
@@ -61,12 +65,20 @@ public class PreOrderView implements IView<PreOrderController> {
     preOrders =
         new ObjectTable<>(
             Column.create("Benutzer", e -> e.getUser().getFullName()),
-            Column.create("Anzahl", PreOrder::getAmount),
-            Column.create("Ladennummer", PreOrder::getKBNumber),
-            Column.create("Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber()),
+            Column.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
+            Column.create(
+                "Kornkraftnummer",
+                e -> e.getArticle().getSuppliersItemNumber(),
+                SwingConstants.RIGHT),
             Column.create("Produktname", e -> e.getArticle().getName()),
             Column.create(
-                "Netto-Preis", e -> e.getArticle().getNetPrice() + "€", SwingConstants.RIGHT));
+                "Netto-Preis",
+                e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())),
+                SwingConstants.RIGHT),
+            Column.create("Anzahl", PreOrder::getAmount, SwingConstants.CENTER),
+            Column.createIcon(
+                IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
+
     user = new AdvancedComboBox<>(User::getFullName);
   }
 
@@ -86,8 +98,8 @@ public class PreOrderView implements IView<PreOrderController> {
     sellingPrice.setText(s);
   }
 
-  PreOrder getSelectedOrder() {
-    return preOrders.getSelectedObject();
+  Collection<PreOrder> getSelectedOrders() {
+    return preOrders.getSelectedObjects();
   }
 
   void noItemFound() {
@@ -98,6 +110,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void resetArticleNr() {
     kkNumber.setText("");
+    amount.setText("1");
     kkNumber.requestFocusInWindow();
   }
 
@@ -107,20 +120,54 @@ public class PreOrderView implements IView<PreOrderController> {
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            controller.searchKK();
+            if (controller.searchKK()) {
+              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                amount.selectAll();
+                amount.requestFocusInWindow();
+              }
+            }
           }
         });
+
+    user.addActionListener(e -> userAction(false));
+
     add.addActionListener(e -> controller.add());
+
     preOrders.addKeyListener(
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_DELETE) controller.delete();
+            if (e.getKeyCode() == KeyEvent.VK_DELETE) controller.delete(getSelectedOrders());
           }
         });
-    kkNumber.addActionListener(e -> controller.add());
+
+    amount.addActionListener(e -> controller.add());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
+    searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
+    bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
+  }
+
+  private void userAction(boolean fromFnKey) {
+    if (!fromFnKey) enableControls(true);
+    if (controller.searchKK()) {
+      amount.requestFocusInWindow();
+      if (fromFnKey) controller.add();
+    } else {
+      kkNumber.requestFocusInWindow();
+    }
+  }
+
+  void fnKeyAction(String i) {
+    setAmount(i);
+    userAction(true);
+  }
+
+  void enableControls(boolean enabled) {
+    searchArticle.setEnabled(enabled);
+    kkNumber.setEnabled(enabled);
+    amount.setEnabled(enabled);
+    add.setEnabled(enabled);
   }
 
   @Override
@@ -162,5 +209,32 @@ public class PreOrderView implements IView<PreOrderController> {
         "Konnte keinen Kornkraft-Artikel mit Barcode \"" + barcode + "\" finden",
         "Artikel nicht gefunden",
         JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void messageExportError(Throwable e) {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Der Export ist fehlgeschlagen. Ursache: \n" + e.getMessage(),
+        "Vorbestellungsexport",
+        JOptionPane.ERROR_MESSAGE);
+  }
+
+  public void messageExportSuccess() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Die Vorbestellung wurde erfolgreich exportiert",
+        "Vorbestellungsexport",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void messageExportCanceled() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Der Export der Vorbestellung wurde abgebrochen",
+        "Vorbestellungsexport",
+        JOptionPane.WARNING_MESSAGE);
   }
 }

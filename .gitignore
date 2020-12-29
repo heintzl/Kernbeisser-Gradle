@@ -188,7 +188,7 @@ gradle-app.setting
 
 # reports
 /reports/*.jrprint
-/reports/*.pdf
+/reports/**/*.pdf
 /reports/*.jasper
 
 #misc

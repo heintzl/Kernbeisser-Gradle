@@ -785,6 +785,10 @@ public class Tools {
     openFile(new File(filePath));
   }
 
+  public static String userDefaultPath() {
+    return System.getProperty("user.home") + File.separator + "Documents" + File.separator;
+  }
+
   public static void productSurchargeToGroup() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     Map<SurchargeGroup, List<Article>> articleMap =
