@@ -8,6 +8,7 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 
@@ -15,17 +16,8 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
 
   public EditArticleController(Article article, Mode mode) {
     super(new EditArticleModel(article != null ? article : new Article(), mode));
-    var view = getView();
-    switch (mode) {
-      case ADD:
-        view.setActionTitle("Als neuen Artikel aufnehmen");
-        view.setActionIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
-        break;
-      case EDIT:
-        view.setActionTitle("Änderungen übernehmen");
-        getView()
-            .setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(0x0000BB)));
-        break;
+    if (article != null && mode == Mode.REMOVE) {
+      Tools.delete(article);
     }
   }
 
@@ -44,12 +36,23 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
 
   @Override
   public void fillView(EditArticleView editArticleView) {
+    switch (getModel().getMode()) {
+      case ADD:
+        editArticleView.setActionTitle("Als neuen Artikel aufnehmen");
+        editArticleView.setActionIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x00EE00)));
+        break;
+      case EDIT:
+        editArticleView.setActionTitle("Änderungen übernehmen");
+        getView()
+            .setActionIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(0x0000BB)));
+        break;
+    }
+
     editArticleView.setPriceLists(model.getAllPriceLists());
     editArticleView.setSuppliers(model.getAllSuppliers());
     editArticleView.setUnits(model.getAllUnits());
     editArticleView.setVATs(model.getAllVATs());
     editArticleView.setSurchargeGroup(model.getAllSurchargeGroups());
-
     // after
     editArticleView.getArticleObjectForm().setSource(model.getSource());
   }

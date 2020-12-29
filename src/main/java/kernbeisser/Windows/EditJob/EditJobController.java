@@ -16,7 +16,7 @@ public class EditJobController extends Controller<EditJobView, EditJobModel> {
 
   public EditJobController(Job job, Mode mode) {
     super(new EditJobModel(job != null ? job : Proxy.getSecureInstance(new Job()), mode));
-    if (mode == Mode.REMOVE) {
+    if (job != null && mode == Mode.REMOVE) {
       try {
         Tools.delete(job);
       } catch (PersistenceException e) {

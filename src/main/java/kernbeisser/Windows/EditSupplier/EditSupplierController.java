@@ -16,7 +16,7 @@ public class EditSupplierController extends Controller<EditSupplierView, EditSup
 
   public EditSupplierController(Supplier supplier, Mode mode) {
     super(new EditSupplierModel(supplier, mode));
-    if (mode.equals(Mode.REMOVE)) {
+    if (supplier != null && mode.equals(Mode.REMOVE)) {
       try {
         Tools.delete(supplier);
       } catch (PersistenceException e) {

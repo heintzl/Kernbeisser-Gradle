@@ -6,6 +6,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
@@ -141,12 +142,10 @@ public class MenuView implements IView<MenuController> {
               try {
                 return new SoloShoppingMaskController();
               } catch (NotEnoughCreditException e) {
-                JOptionPane.showMessageDialog(
-                    getTopComponent(),
-                    "Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
-                        + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
-                        + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.");
-                return null;
+                openSelfShoppingMask.setToolTipText("Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
+                    + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
+                    + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.");
+                throw new PermissionKeyRequiredException();
               }
             },
             SoloShoppingMaskController.class,

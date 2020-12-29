@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class EditUserController extends Controller<EditUserView, EditUserModel> {
   public EditUserController(User user, Mode mode) {
     super(new EditUserModel(user == null ? Proxy.getSecureInstance(new User()) : user, mode));
-    if (mode == Mode.REMOVE) {
+    if (user != null && mode == Mode.REMOVE) {
       Tools.delete(user);
     }
   }
