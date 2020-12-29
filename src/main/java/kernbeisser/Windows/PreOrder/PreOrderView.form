@@ -17,7 +17,14 @@
         <children>
           <component id="b6908" class="kernbeisser.CustomComponents.ObjectTable.ObjectTable" binding="preOrders" custom-create="true">
             <constraints/>
-            <properties/>
+            <properties>
+              <doubleBuffered value="false"/>
+              <dragEnabled value="false"/>
+              <intercellSpacing width="3" height="1"/>
+              <rowMargin value="1"/>
+              <rowSelectionAllowed value="true"/>
+              <showHorizontalLines value="true"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
@@ -92,7 +99,7 @@
           <component id="dce6a" class="kernbeisser.CustomComponents.PermissionButton" binding="add">
             <constraints>
               <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
+              <gridbag top="0" left="3" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <alignmentY value="0.0"/>
@@ -160,7 +167,7 @@
                 <preferred-size width="321" height="30"/>
                 <maximum-size width="30" height="-1"/>
               </grid>
-              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
+              <gridbag top="0" left="0" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <alignmentX value="0.0"/>
