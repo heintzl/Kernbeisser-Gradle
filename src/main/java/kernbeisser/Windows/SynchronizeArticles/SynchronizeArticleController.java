@@ -19,10 +19,7 @@ public class SynchronizeArticleController
     getView().setAllDiffs(MappedDifferences.values());
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public void useKernbeisser() {
     apply(true);

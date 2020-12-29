@@ -32,10 +32,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
   @Override
   public void fillView(SimpleLogInView simpleLogInView) {}
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public void logIn() {
     var view = getView();

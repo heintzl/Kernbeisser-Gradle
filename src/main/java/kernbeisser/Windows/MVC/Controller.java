@@ -14,8 +14,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Security.PermissionSet;
+import kernbeisser.Security.StaticMethodTransformer.RestrictedAccess;
+import kernbeisser.Security.StaticMethodTransformer.StaticMethodTransformer;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -24,7 +27,8 @@ import lombok.Getter;
 
 public abstract class Controller<
     V extends IView<? extends Controller<? extends V, ? extends M>>,
-    M extends IModel<? extends Controller<? extends V, ? extends M>>> {
+    M extends IModel<? extends Controller<? extends V, ? extends M>> > implements RestrictedAccess
+{
 
   @Getter(lazy = true)
   private final Collection<Controller<?, ?>> subControllers = findSubControllers();
@@ -35,8 +39,11 @@ public abstract class Controller<
 
   @Getter protected final M model;
 
-  public Controller(M model) {
+  public Controller(M model) throws PermissionKeyRequiredException {
     this.model = model;
+    if (!PermissionSet.MASTER.hasPermissions(getRequiredKeys())) {
+      throw new PermissionKeyRequiredException("the PermissionSet doesn't contain the required keys: "+Arrays.toString(getRequiredKeys())+ " to open this controller: "+getClass().getCanonicalName());
+    }
   }
 
   private final Collection<CloseEvent> closeEvents = new ArrayList<>();
@@ -64,8 +71,8 @@ public abstract class Controller<
 
   public abstract void fillView(V v);
 
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
+  public static RestrictedAccess getRestrictedAccess(Class<? extends Controller<?,?>> clazz){
+    return StaticMethodTransformer.createStaticInterface(RestrictedAccess.class,clazz);
   }
 
   public ViewContainer openIn(ViewContainer container) {
@@ -133,25 +140,9 @@ public abstract class Controller<
     }
   }
 
-  public final Class<V> getViewClass() {
-    Type type = getClass().getGenericSuperclass();
-
-    while (!(type instanceof ParameterizedType)
-        || ((ParameterizedType) type).getRawType() != Controller.class) {
-      if (type instanceof ParameterizedType) {
-        type = ((Class<?>) ((ParameterizedType) type).getRawType()).getGenericSuperclass();
-      } else {
-        type = ((Class<?>) type).getGenericSuperclass();
-      }
-    }
-    Type out = ((ParameterizedType) type).getActualTypeArguments()[0];
-    if (out instanceof ParameterizedType) {
-      return (Class<V>) ((ParameterizedType) out).getRawType();
-    } else return (Class<V>) out;
-  }
 
   private void instantiateView() {
-    Class<V> viewClass = getViewClass();
+    Class<V> viewClass = getViewClass((Class<? extends Controller<V,M>>) getClass());
     view = Tools.createWithoutConstructor(viewClass);
     linkViewControllerFields(view, this);
     callSetupUiMethod(view);
@@ -229,5 +220,22 @@ public abstract class Controller<
 
   protected final boolean isInViewInitialize() {
     return inViewInitialize;
+  }
+
+  public static <V extends IView<? extends Controller<? extends V, ? extends M>>, M extends IModel<? extends Controller<? extends V, ? extends M>>> Class<V> getViewClass(Class<? extends Controller<V, M>> controllerClass) {
+    Type type = controllerClass.getGenericSuperclass();
+
+    while (!(type instanceof ParameterizedType)
+        || ((ParameterizedType) type).getRawType() != Controller.class) {
+      if (type instanceof ParameterizedType) {
+        type = ((Class<?>) ((ParameterizedType) type).getRawType()).getGenericSuperclass();
+      } else {
+        type = ((Class<?>) type).getGenericSuperclass();
+      }
+    }
+    Type out = ((ParameterizedType) type).getActualTypeArguments()[0];
+    if (out instanceof ParameterizedType) {
+      return (Class<V>) ((ParameterizedType) out).getRawType();
+    } else return (Class<V>) out;
   }
 }

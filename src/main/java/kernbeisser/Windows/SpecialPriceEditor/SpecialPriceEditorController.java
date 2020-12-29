@@ -210,10 +210,7 @@ public class SpecialPriceEditorController
             });
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public void loadMonth() {
     getView()

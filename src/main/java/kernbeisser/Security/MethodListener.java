@@ -12,9 +12,9 @@ public interface MethodListener extends MethodHandler {
   @Override
   default Object invoke(Object proxy, Method proxyMethod, Method original, Object[] args)
       throws Throwable {
-    preMethod(original);
+    preMethod(proxyMethod);
     Object out = original.invoke(proxy, args);
-    afterMethod(original);
+    afterMethod(proxyMethod);
     return out;
   }
 }

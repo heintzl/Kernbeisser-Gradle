@@ -195,8 +195,5 @@ public class DataImportController extends Controller<DataImportView, DataImportM
   @Override
   public void fillView(DataImportView dataImportView) {}
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 }

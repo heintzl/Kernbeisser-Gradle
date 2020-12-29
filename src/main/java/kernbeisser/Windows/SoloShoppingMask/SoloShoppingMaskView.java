@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
@@ -43,6 +44,7 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
   }
 
   @Override
+  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.SHOPPING_CART;
   }

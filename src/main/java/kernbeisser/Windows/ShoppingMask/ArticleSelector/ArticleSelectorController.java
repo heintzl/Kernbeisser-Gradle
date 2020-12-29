@@ -66,10 +66,7 @@ public class ArticleSelectorController
   @Override
   public void fillView(ArticleSelectorView articleSelectorView) {}
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public SearchBoxView<Article> getSearchBoxView() {
     return searchBoxController.getView();

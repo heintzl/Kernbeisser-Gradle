@@ -127,8 +127,5 @@ public class ChangePasswordController extends Controller<ChangePasswordView, Cha
     changePasswordView.setVerifyWithOldEnable(model.verifyWithOldPassword());
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 }

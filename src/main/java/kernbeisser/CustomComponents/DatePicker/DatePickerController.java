@@ -86,10 +86,7 @@ public class DatePickerController extends Controller<DatePickerView, DatePickerM
     loadMonth();
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public static void requestDate(ViewContainer current, Consumer<Instant> select) {
     new DatePickerController() {

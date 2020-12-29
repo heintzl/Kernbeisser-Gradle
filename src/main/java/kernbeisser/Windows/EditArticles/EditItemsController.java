@@ -1,4 +1,4 @@
-package kernbeisser.Windows.EditItems;
+package kernbeisser.Windows.EditArticles;
 
 import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
@@ -9,8 +9,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.EditItem.EditItemController;
+import kernbeisser.Windows.EditArticle.EditArticleController;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
@@ -31,7 +30,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
     objectViewController =
         new ObjectViewController<>(
             "Artikel bearbeiten",
-            EditItemController::new,
+            EditArticleController::new,
             Article::defaultSearch,
             true,
             Column.create("Name", Article::getName, LEFT),
@@ -72,10 +71,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
     objectViewController.setSearch("");
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public ObjectViewView<Article> getObjectView() {
     return objectViewController.getView();

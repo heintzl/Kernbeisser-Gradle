@@ -319,10 +319,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     keyCapture.addCTRL(KeyEvent.VK_F, view::openSearchWindow);
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   void startPay() {
     if (shoppingCartController.getItems().size() > 0) {

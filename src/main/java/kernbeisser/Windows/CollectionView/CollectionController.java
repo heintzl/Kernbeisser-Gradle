@@ -30,10 +30,7 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
     getView().setEditable(model.isEditable());
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public void selectAvailable() {
     T object = getView().getSelectedAvailableObject();

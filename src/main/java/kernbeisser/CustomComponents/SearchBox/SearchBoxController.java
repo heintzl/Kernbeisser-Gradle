@@ -66,10 +66,7 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     invokeSearch();
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public void setSearch(String s) {
     getView().setSearch(s);

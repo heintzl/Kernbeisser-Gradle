@@ -1,4 +1,4 @@
-package kernbeisser.Windows.EditItems;
+package kernbeisser.Windows.EditArticles;
 
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;

@@ -11,6 +11,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.ActionPermission;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
@@ -171,6 +172,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   }
 
   @Override
+  @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
     return PermissionKey.find(Permission.class).toArray(new PermissionKey[0]);
   }

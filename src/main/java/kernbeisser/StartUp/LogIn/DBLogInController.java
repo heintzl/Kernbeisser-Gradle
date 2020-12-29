@@ -18,8 +18,5 @@ public class DBLogInController extends Controller<DBLogInView, DBLogInModel> {
   @Override
   public void fillView(DBLogInView dbLogInView) {}
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 }

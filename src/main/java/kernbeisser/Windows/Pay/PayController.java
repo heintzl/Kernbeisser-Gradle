@@ -93,8 +93,5 @@ public class PayController extends Controller<PayView, PayModel> {
     view.setCustomerStandard.setVisible(view.printReceipt.isSelected() != model.readStandardPrint());
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 }

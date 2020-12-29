@@ -1,4 +1,4 @@
-package kernbeisser.Windows.EditItem;
+package kernbeisser.Windows.EditArticle;
 
 import java.awt.Dimension;
 import java.util.Collection;
@@ -21,7 +21,7 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class EditItemView implements IView<EditItemController> {
+public class EditArticleView implements IView<EditArticleController> {
   private JButton commit;
   private JButton cancel;
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingField<Article, String> itemName;
@@ -53,7 +53,7 @@ public class EditItemView implements IView<EditItemController> {
 
   private ObjectForm<Article> articleObjectForm;
 
-  @Linked private EditItemController controller;
+  @Linked private EditArticleController controller;
 
   private void createUIComponents() {
     itemName =
@@ -152,7 +152,7 @@ public class EditItemView implements IView<EditItemController> {
   }
 
   @Override
-  public void initialize(EditItemController controller) {
+  public void initialize(EditArticleController controller) {
     cancel.addActionListener((e) -> back());
     commit.addActionListener((e) -> controller.doAction());
     itemName.setInputVerifier(new NotNullVerifier());

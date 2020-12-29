@@ -12,8 +12,5 @@ public class InventoryMenuController extends Controller<InventoryMenuView, Inven
   @Override
   public void fillView(InventoryMenuView inventoryMenuView) {}
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 }

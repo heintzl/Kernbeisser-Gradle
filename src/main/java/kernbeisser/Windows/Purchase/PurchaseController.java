@@ -37,10 +37,7 @@ public class PurchaseController extends Controller<PurchaseView, PurchaseModel> 
     cartController.setValueAfterLabel("Damaliges Guthaben nach dem Einkauf:");
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public void printBon() {
     PayModel.print(model.getLoaded());

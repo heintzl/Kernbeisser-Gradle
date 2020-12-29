@@ -1,4 +1,4 @@
-package kernbeisser.Windows.EditItem;
+package kernbeisser.Windows.EditArticle;
 
 import java.util.Collection;
 import javax.persistence.EntityManager;
@@ -14,11 +14,11 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
-public class EditItemModel implements IModel<EditItemController> {
+public class EditArticleModel implements IModel<EditArticleController> {
   private final Mode mode;
   private final Article article;
 
-  EditItemModel(Article article, Mode mode) {
+  EditArticleModel(Article article, Mode mode) {
     this.mode = mode;
     this.article = article;
   }

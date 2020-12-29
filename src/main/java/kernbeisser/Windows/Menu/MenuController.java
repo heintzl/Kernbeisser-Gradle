@@ -23,10 +23,7 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   @Override
   public void fillView(MenuView menuView) {}
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   private boolean alreadyAsked = false;
 

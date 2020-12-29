@@ -8,6 +8,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Security.Proxy;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
@@ -47,9 +48,15 @@ public class EditUserController extends Controller<EditUserView, EditUserModel> 
 
   @Override
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {
-      PermissionKey.USER_USERNAME_READ,
-    };
+    switch (getModel().getMode()){
+      case ADD:
+        return new PermissionKey[]{PermissionKey.ADD_USER};
+      case EDIT:
+        return new PermissionKey[]{PermissionKey.EDIT_USER};
+      case REMOVE:
+        return new PermissionKey[]{PermissionKey.REMOVE_USER};
+    }
+    throw new UnsupportedOperationException("undefined mode");
   }
 
   void doAction() {

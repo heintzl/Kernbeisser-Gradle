@@ -32,10 +32,7 @@ public class SelectorController<T> extends Controller<SelectorView<T>, SelectorM
     tSelectorView.setTitle(model.getTitle());
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public void remove() {
     var view = getView();

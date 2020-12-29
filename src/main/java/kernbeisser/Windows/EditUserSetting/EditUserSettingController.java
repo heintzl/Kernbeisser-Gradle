@@ -32,10 +32,7 @@ public class EditUserSettingController
     editUserSettingView.setFontSize(UserSetting.FONT_SCALE_FACTOR.getFloatValue(model.getUser()));
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   public void fontChanged() {
     Font before = UIManager.getFont("Label.font");

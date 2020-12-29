@@ -114,10 +114,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     noArticleFound();
   }
 
-  @Override
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[0];
-  }
+
 
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {

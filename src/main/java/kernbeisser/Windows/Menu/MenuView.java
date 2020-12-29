@@ -10,7 +10,7 @@ import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
-import kernbeisser.Windows.EditItems.EditItemsController;
+import kernbeisser.Windows.EditArticles.EditItemsController;
 import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSuppliers.EditSuppliers;
 import kernbeisser.Windows.EditSurchargeGroups.EditSurchargeGroupController;
