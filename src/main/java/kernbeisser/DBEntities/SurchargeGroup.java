@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
+import kernbeisser.CustomComponents.ObjectTree.CachedNode;
+import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
@@ -130,5 +132,30 @@ public class SurchargeGroup implements Serializable, Cloneable {
   public String pathString() {
     if (parent == null) return name;
     return parent.pathString() + ":" + name;
+  }
+
+  public List<SurchargeGroup> getSubGroups() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery(
+            "select s from SurchargeGroup s where s.parent.id = :id", SurchargeGroup.class)
+        .setParameter("id", id)
+        .getResultList();
+  }
+
+  public static Node<SurchargeGroup> asMappedNode(Supplier s) {
+    SurchargeGroup head =
+        new SurchargeGroup() {
+          @Override
+          public List<SurchargeGroup> getSubGroups() {
+            @Cleanup EntityManager em = DBConnection.getEntityManager();
+            return em.createQuery(
+                    "select s from SurchargeGroup s where supplier.id = :sid and parent = NULL",
+                    SurchargeGroup.class)
+                .setParameter("sid", s.getId())
+                .getResultList();
+          }
+        };
+    head.setName(s.getName());
+    return new CachedNode<>(null, head, SurchargeGroup::getSubGroups);
   }
 }

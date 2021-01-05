@@ -1,6 +1,5 @@
 package kernbeisser.Windows.EditSurchargeGroups;
 
-import java.util.ArrayList;
 import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
 import kernbeisser.CustomComponents.ObjectTree.Node;
@@ -48,9 +47,7 @@ public class EditSurchargeGroupController
   }
 
   void setSurchargeGroupsFor(Supplier s) {
-    getView()
-        .setSurchargeGroups(
-            Node.createHead(new SurchargeGroup(), new ArrayList<>(model.getSurchargeGroupTree(s))));
+    getView().setSurchargeGroups(model.getSurchargeGroupTree(s));
     getView().setAllSuperGroups(model.getAllFromSupplier(s));
     getView().getObjectForm().setSource(defaultSurchargeGroupFor(s));
   }

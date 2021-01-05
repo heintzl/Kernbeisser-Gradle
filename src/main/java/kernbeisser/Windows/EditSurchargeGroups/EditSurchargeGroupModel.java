@@ -19,8 +19,8 @@ public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupControl
     return Supplier.getAll(null);
   }
 
-  Collection<Node<SurchargeGroup>> getSurchargeGroupTree(Supplier supplier) {
-    return Node.createMappingNode(getAllFromSupplier(supplier), SurchargeGroup::getParent);
+  Node<SurchargeGroup> getSurchargeGroupTree(Supplier supplier) {
+    return SurchargeGroup.asMappedNode(supplier);
   }
 
   Collection<SurchargeGroup> getAllFromSupplier(Supplier supplier) {
