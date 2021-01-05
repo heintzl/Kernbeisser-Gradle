@@ -43,8 +43,8 @@ public class IgnoredDifference {
 
   public static IgnoredDifference from(ArticleDifference<?> difference) {
     IgnoredDifference out = new IgnoredDifference();
-    out.article = difference.getCurrent();
-    out.original = String.valueOf(difference.getCurrentVersion());
+    out.article = difference.getArticle();
+    out.original = String.valueOf(difference.getPreviousVersion());
     out.difference = (MappedDifferences) difference.getArticleDifference();
     out.ignoredChange = String.valueOf(difference.getNewVersion());
     return out;

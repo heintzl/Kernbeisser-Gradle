@@ -41,11 +41,11 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   public void initialize(SynchronizeArticleController controller) {
     back.addActionListener(e -> back());
     differences.setColumns(
-        Column.create("Artikel", e -> e.getCurrent().getName()),
-        Column.create("Kornkraftnummer", e -> e.getCurrent().getSuppliersItemNumber()),
+        Column.create("Artikel", e -> e.getArticle().getName()),
+        Column.create("Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber()),
         Column.create("Unterschied", e -> e.getArticleDifference().getName()),
         Column.create("Abweichung", e -> String.format("%.2f%%", e.distance())),
-        Column.create("Kernbeisser", ArticleDifference::getCurrentVersion),
+        Column.create("Kernbeisser", ArticleDifference::getPreviousVersion),
         Column.create("Katalog", ArticleDifference::getNewVersion));
     selectAll.addActionListener(
         e -> {
