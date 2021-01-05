@@ -177,10 +177,11 @@ public class DataImportModel implements IModel<DataImportController> {
             catalog,
             CatalogDataInterpreter.extractSurchargeGroups(
                 CatalogDataInterpreter.extractGroupsTree(catalog), em));
-    List<Article> articles = em.createQuery("select a from Article a where supplier = :s", Article.class).setParameter("s", Supplier.getKKSupplier())
-        .getResultList();
-    CatalogDataInterpreter.linkArticles(articles,
-        surchargeGroupHashMap);
+    List<Article> articles =
+        em.createQuery("select a from Article a where supplier = :s", Article.class)
+            .setParameter("s", Supplier.getKKSupplier())
+            .getResultList();
+    CatalogDataInterpreter.linkArticles(articles, surchargeGroupHashMap);
     CatalogDataInterpreter.autoLinkArticle(articles);
     articles.forEach(em::persist);
     em.flush();

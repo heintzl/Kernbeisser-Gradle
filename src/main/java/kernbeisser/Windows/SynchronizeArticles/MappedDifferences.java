@@ -17,7 +17,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return Math.abs((Double) b/ (Double) a);
+      return Math.abs((Double) b / (Double) a);
     }
   },
   CONTAINER_SIZE("Gebinde-Größe") {
@@ -33,7 +33,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return Math.abs((Double) b/ (Double) a);
+      return Math.abs((Double) b / (Double) a);
     }
   },
   DEPOSIT("Pfand") {
@@ -49,7 +49,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return Math.abs((Double) b/ (Double) a);
+      return Math.abs((Double) b / (Double) a);
     }
   },
   CONTAINER_DOPSIT("Kisten-Pfand") {
@@ -70,7 +70,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return Math.abs((Double) b/ (Double) a);
+      return Math.abs((Double) b / (Double) a);
     }
   },
   AMOUNT("Menge") {
