@@ -84,8 +84,11 @@ public class CatalogDataInterpreter {
   }
 
   public static void autoLinkArticle(List<Article> articleBases) {
-    SurchargeGroup undef = SurchargeGroup.undefined();
-    Article last = findNext(0, articleBases);
+    autoLinkArticle(articleBases, SurchargeGroup.undefined());
+  }
+
+  public static void autoLinkArticle(List<Article> articleBases, SurchargeGroup undef) {
+    Article last = findNext(0, articleBases, undef);
     Article next = last;
     articleBases.sort(Comparator.comparingInt(Article::getSuppliersItemNumber));
     for (Article articleBase : articleBases) {
@@ -94,7 +97,7 @@ public class CatalogDataInterpreter {
     for (int i = 0; i < articleBases.size(); i++) {
       Article current = articleBases.get(i);
       if (next.getSuppliersItemNumber() <= current.getSuppliersItemNumber())
-        next = findNext(i + 1, articleBases);
+        next = findNext(i + 1, articleBases, undef);
       if (diff(current, next) > diff(current, last))
         current.setSurchargeGroup(last.getSurchargeGroup());
       else current.setSurchargeGroup(next.getSurchargeGroup());
@@ -105,8 +108,7 @@ public class CatalogDataInterpreter {
     return Math.abs(a.getSuppliersItemNumber() - b.getSuppliersItemNumber());
   }
 
-  public static Article findNext(int offset, List<Article> articleBases) {
-    SurchargeGroup undef = SurchargeGroup.undefined();
+  public static Article findNext(int offset, List<Article> articleBases, SurchargeGroup undef) {
     for (int i = 0; i < articleBases.size(); i++) {
       Article current = articleBases.get((offset + i) % articleBases.size());
       if (!current.getSurchargeGroup().equals(undef)) {

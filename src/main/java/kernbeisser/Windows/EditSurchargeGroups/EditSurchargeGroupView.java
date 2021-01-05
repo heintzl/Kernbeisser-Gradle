@@ -112,9 +112,16 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
         "Die Zuschlagsgruppe kann nicht gelöscht werden,\nda noch Artikel auf sie verweissen!");
   }
 
+  public boolean shouldBecomeAutoLinked() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Sollen die Artikel automatisch einer anderen Zuschlagsgruppe zugeteilt werden, um anschließend den Vorgang zu wiederholen?")
+        == 0;
+  }
+
   boolean shouldDelete() {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Soll die Zuschlagsgruppe wirklich gelöscht werde?")
+            getTopComponent(), "Soll die Zuschlagsgruppe wirklich gelöscht werden?")
         == 0;
   }
 }

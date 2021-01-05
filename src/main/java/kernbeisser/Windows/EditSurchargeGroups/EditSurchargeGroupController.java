@@ -66,13 +66,21 @@ public class EditSurchargeGroupController
   }
 
   void removeSurchargeGroup() {
+    removeSurchargeGroup(false);
+  }
+
+  void removeSurchargeGroup(boolean alreadyVerified) {
     try {
-      if (getView().shouldDelete()) applyMode(Mode.REMOVE);
+      if (alreadyVerified || getView().shouldDelete()) applyMode(Mode.REMOVE);
     } catch (PersistenceException persistenceException) {
       try {
         throw persistenceException.getCause();
       } catch (ConstraintViolationException exception) {
         getView().constraintViolationException();
+        if (!alreadyVerified && getView().shouldBecomeAutoLinked()) {
+          model.autoLinkAllInSurchargeGroup(getView().getObjectForm().getOriginal().getId());
+          removeSurchargeGroup(true);
+        }
       } catch (Throwable throwable) {
         Tools.showUnexpectedErrorWarning(throwable);
       }
