@@ -14,23 +14,21 @@ public enum Setting {
     @Override
     public void changeValue(Object s) {
       super.changeValue(s);
-      JOptionPane.showMessageDialog(
-          null, "Bitte starten sie das Programm neu um mwSt. zu aktualiesieren");
+      JOptionPane.showMessageDialog(null, "Programm bitte neu starten, um MwSt. zu aktualisieren");
     }
   },
   VAT_HIGH("0.19") {
     @Override
     public void changeValue(Object s) {
       super.changeValue(s);
-      JOptionPane.showMessageDialog(
-          null, "Bitte starten sie das Programm neu um mwSt. zu aktualiesieren");
+      JOptionPane.showMessageDialog(null, "Programm bitte neu starten, um MwSt. zu aktualisieren");
     }
   },
   DEFAULT_MAX_SEARCH("500"),
   CONTAINER_SURCHARGE_REDUCTION("0.5"),
   SURCHARGE_DEFAULT("0.18"),
-  SURCHARGE_BAKERY("13"),
-  SURCHARGE_PRODUCE("23"),
+  SURCHARGE_BAKERY("0.13"),
+  SURCHARGE_PRODUCE("0.23"),
   DEFAULT_THEME(Theme.LIGHT),
   INFO_LINE_LAST_CATALOG("notDefined"),
   UPDATE_CATALOG_FROM_INTERNET("false"),
@@ -49,7 +47,14 @@ public enum Setting {
   LABEL_SCALE_FACTOR("1.5"),
   WARN_OVER_TRANSACTION_VALUE("1000."),
   OPEN_MULTIPLE_SHOPPING_MASK("true"),
-  PRINTER("OS_default"),
+  PRINTER("OS_default") {
+    @Override
+    public void changeValue(Object s) {
+      super.changeValue(s);
+      JOptionPane.showMessageDialog(
+          null, "Programm bitte neu starten, um Druckereinstellung zu aktualisieren");
+    }
+  },
   LAST_PRINTED_BON_NR("-1"),
   OFFER_PREFIX("*AK* "),
   PREORDERRETARD_THRESHOLD("10");
