@@ -141,6 +141,7 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
       }
     }
     if ((itemMultiplier + number) / containerSize == 1.
+        && i.getContainerDeposit() != 0
         && (!model.getItems().stream()
             .anyMatch(
                 e ->
