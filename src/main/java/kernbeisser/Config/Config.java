@@ -67,8 +67,6 @@ public final class Config {
 
   private File imagePath = new File("images");
 
-  private boolean dbIsInitialized = false;
-
   @Setter private DBAccess dbAccess = new DBAccess();
 
   private Reports reports = new Reports();
@@ -96,7 +94,7 @@ public final class Config {
   @Data
   public static class Reports {
     private File reportDirectory = new File(".");
-    private File outputDirectory = new File(".");
+    private File outputDirectory = new File("../output");
     private HashMap<String, String> reports = new HashMap<>();
   }
 }
