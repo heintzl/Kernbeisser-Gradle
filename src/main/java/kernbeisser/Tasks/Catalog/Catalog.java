@@ -104,6 +104,15 @@ public class Catalog {
         return MetricUnits.GRAM;
       case "":
         return MetricUnits.NONE;
+      case "SACHETS":
+      case "ERPACK":
+      case "FLASCHEN":
+      case "EN":
+      case "TBL":
+      case "KSTEN":
+      case "DOSE":
+      case "REGAL":
+      case "MUSTER":
       case "PLAKAT":
       case "DISPLAY":
       case "PROSPEKT":

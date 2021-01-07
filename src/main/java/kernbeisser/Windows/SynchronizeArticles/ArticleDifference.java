@@ -4,30 +4,29 @@ import kernbeisser.DBEntities.Article;
 import lombok.Getter;
 
 public class ArticleDifference<T> {
-  public ArticleDifference(
-      Difference<Article, T> articleDifference, Article current, Article newVersion) {
+  public ArticleDifference(Difference<Article, T> articleDifference, T old, Article article) {
     this.articleDifference = articleDifference;
-    this.current = current;
-    this.newVersion = newVersion;
+    this.previousVersion = old;
+    this.article = article;
   }
 
   @Getter private final Difference<Article, T> articleDifference;
-  @Getter private final Article current;
-  private final Article newVersion;
+  private final T previousVersion;
+  @Getter private final Article article;
 
   public void pushCurrentIntoNew() {
-    articleDifference.transfer(current, newVersion);
+    articleDifference.set(article, previousVersion);
   }
 
   public double distance() {
-    return articleDifference.distance(current, newVersion);
+    return articleDifference.distance(articleDifference.get(article), previousVersion);
   }
 
-  public T getCurrentVersion() {
-    return articleDifference.get(current);
+  public T getPreviousVersion() {
+    return previousVersion;
   }
 
   public T getNewVersion() {
-    return articleDifference.get(newVersion);
+    return articleDifference.get(article);
   }
 }

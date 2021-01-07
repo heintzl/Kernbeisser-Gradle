@@ -22,7 +22,6 @@ import kernbeisser.Main;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
 import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Tasks.DTO.KornkraftGroup;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import org.hibernate.Session;
@@ -81,16 +80,21 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
 
   private Set<ArticleDifference<?>> loadSource(
       Collection<String> source, MappedDifferences... differences) {
+    // loads all constants to speedup operations
     Supplier kkSupplier = Supplier.getKKSupplier();
     SurchargeGroup undefined = SurchargeGroup.undefined();
     PriceList coveredIntake = PriceList.getCoveredIntakePriceList();
 
+    // loads the current state of the articles into the cache
     HashMap<Integer, Article> currentState = loadCurrentState();
+
+    // loads the auto ignored differences
     HashMap<Integer, Collection<IgnoredDifference>> currentIgnoredDifferences =
         loadIgnoreDifferences();
 
     HashSet<ArticleDifference<?>> out = new HashSet<>();
     HashMap<Integer, Double> deposit = new HashMap<>(10000);
+    // creating deposit reference map
     source.stream()
         .skip(1)
         .map(e -> e.split(";"))
@@ -102,39 +106,50 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
               }
             });
     HashSet<Integer> suppliersItemNumbers = new HashSet<>();
+    Object[] prevValues = new Object[differences.length];
     source.stream()
         .skip(1)
         .map(e -> e.split(";"))
         .forEach(
             columns -> {
+              // reading the actual article and map differences
               try {
                 Article current = null;
                 try {
+                  // checks if the suppliersItemNumber already exists, if that's the case the
+                  // article become ignored
+                  // the default reason for a duplicate entry is that an special price offer is set
+                  // on the article
                   int suppliersItemNumber = Integer.parseInt(columns[0]);
                   if (!suppliersItemNumbers.add(suppliersItemNumber)) return;
+                  // loads the current state of the article from the cache
                   current = currentState.get(suppliersItemNumber);
                 } catch (NumberFormatException ignored) {
                 }
-
-                Article articleSocket;
                 if (current == null) {
-                  articleSocket = createNewBase(kkSupplier, coveredIntake, undefined);
-                } else {
-                  articleSocket = Tools.clone(current);
+                  collected.add(
+                      parseArticle(
+                          createNewBase(kkSupplier, coveredIntake, undefined),
+                          deposit,
+                          kkSupplier,
+                          columns));
+                  return;
                 }
-                Article article = parseArticle(articleSocket, deposit, kkSupplier, columns);
-                collected.add(article);
-                if (current != null) {
-                  Collection<IgnoredDifference> ignoredDifferences =
-                      currentIgnoredDifferences.get(current.getSuppliersItemNumber());
-                  for (MappedDifferences difference : differences) {
+                for (int i = 0; i < differences.length; i++) {
+                  prevValues[i] = differences[i].get(current);
+                }
+                parseArticle(current, deposit, kkSupplier, columns);
+                Collection<IgnoredDifference> ignoredDifferences =
+                    currentIgnoredDifferences.get(current.getSuppliersItemNumber());
+                for (int i = 0; i < differences.length; i++) {
+                  if (!differences[i].equal(prevValues[i], differences[i].get(current))) {
                     ArticleDifference<?> articleDifference =
-                        new ArticleDifference<>(difference, current, article);
-                    if (!difference.equal(current, article)
-                        && (ignoredDifferences == null
-                            || !ignoredDifferences.contains(
-                                IgnoredDifference.from(articleDifference))))
+                        new ArticleDifference<>(differences[i], prevValues[i], current);
+                    if (ignoredDifferences == null
+                        || !ignoredDifferences.contains(
+                            IgnoredDifference.from(articleDifference))) {
                       out.add(articleDifference);
+                    }
                   }
                 }
 
@@ -162,6 +177,8 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
         new HashSet<>(
             em.createQuery("select a.kbNumber" + " from Article a", Integer.class).getResultList());
     HashSet<Integer> inUse = new HashSet<>();
+    // filters 0 as a valid kbNumber
+    inUse.add(0);
     for (Article article : collected) {
       if (!inUse.add(article.getKbNumber())) {
         int out = article.getKbNumber() + 1;

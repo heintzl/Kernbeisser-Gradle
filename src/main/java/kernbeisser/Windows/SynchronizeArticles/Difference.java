@@ -6,10 +6,10 @@ import kernbeisser.CustomComponents.AccessChecking.Setter;
 public interface Difference<P, V> extends Getter<P, V>, Setter<P, V> {
   String getName();
 
-  double distance(P a, P b);
+  double distance(V a, V b);
 
-  default boolean equal(P a, P b) {
-    return get(a).equals(get(b));
+  default boolean equal(V a, V b) {
+    return a.equals(b);
   }
 
   default void transfer(P from, P to) {

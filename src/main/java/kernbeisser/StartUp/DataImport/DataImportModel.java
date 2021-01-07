@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
@@ -176,11 +177,13 @@ public class DataImportModel implements IModel<DataImportController> {
             catalog,
             CatalogDataInterpreter.extractSurchargeGroups(
                 CatalogDataInterpreter.extractGroupsTree(catalog), em));
-    CatalogDataInterpreter.linkArticles(
+    List<Article> articles =
         em.createQuery("select a from Article a where supplier = :s", Article.class)
             .setParameter("s", Supplier.getKKSupplier())
-            .getResultList(),
-        surchargeGroupHashMap);
+            .getResultList();
+    CatalogDataInterpreter.linkArticles(articles, surchargeGroupHashMap);
+    CatalogDataInterpreter.autoLinkArticle(articles);
+    articles.forEach(em::persist);
     em.flush();
     et.commit();
   }

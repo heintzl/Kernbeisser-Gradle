@@ -160,6 +160,10 @@ public class ObjectForm<P> {
     }
   }
 
+  public P getOriginal() {
+    return original;
+  }
+
   private void checkValidSource() {
     if (original == null) throw new UnsupportedOperationException("no source specified");
   }
