@@ -2,10 +2,9 @@
   "imagePath": {
     "path": "images"
   },
-  "dbIsInitialized": false,
   "dbAccess": {
-    "url": "",
-    "username": "",
+    "url": "jdbc:mysql://localhost/kernbeisser",
+    "username": "Application",
     "password": ""
   },
   "reports": {
@@ -13,7 +12,7 @@
       "path": "reports"
     },
     "outputDirectory": {
-      "path": "reports/output"
+      "path": "output"
     },
     "reports": {
       "userBalanceFileName": "GuthabenUebersicht.jrxml",

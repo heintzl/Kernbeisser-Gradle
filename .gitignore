@@ -197,3 +197,4 @@ gradle-app.setting
 /src/main/java/kernbeisser/Config/IgnoreThis.java
 
 # End of https://www.gitignore.io/api/java,linux,gradle,windows,intellij
+/output/
