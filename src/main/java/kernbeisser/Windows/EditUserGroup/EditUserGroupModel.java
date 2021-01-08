@@ -5,7 +5,6 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
-import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Windows.MVC.IModel;

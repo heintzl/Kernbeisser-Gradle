@@ -2,8 +2,8 @@ package kernbeisser.Windows.SynchronizeArticles;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
 import kernbeisser.Tasks.Catalog.Catalog;
+import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
 import kernbeisser.Tasks.Catalog.Merge.MappedDifferences;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;

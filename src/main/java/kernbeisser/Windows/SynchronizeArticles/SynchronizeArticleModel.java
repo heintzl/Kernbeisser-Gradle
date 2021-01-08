@@ -10,8 +10,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
+import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
 import kernbeisser.Tasks.Catalog.Merge.CatalogMergeSession;
 import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Tasks.DTO.KornkraftGroup;
@@ -19,7 +19,6 @@ import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
 public class SynchronizeArticleModel implements IModel<SynchronizeArticleController> {
-
 
   private CatalogMergeSession mergeSession;
 
@@ -33,7 +32,6 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
     surchargeGroupHashMap.replaceAll((a, b) -> nameRef.get(b.pathString()));
   }
 
-
   public void load(Collection<String> source) {
     mergeSession = new CatalogMergeSession(source);
   }
@@ -43,10 +41,8 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
   }
 
   public void resolveDifference(ArticleDifference<?> articleDifference, boolean useCurrent) {
-    mergeSession.resolveDifference(articleDifference,useCurrent);
+    mergeSession.resolveDifference(articleDifference, useCurrent);
   }
-
-
 
   void setProductGroups(Stream<String> source) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();

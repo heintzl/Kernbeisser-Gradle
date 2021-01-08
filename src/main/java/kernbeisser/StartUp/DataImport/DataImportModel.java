@@ -34,7 +34,6 @@ import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
-import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleModel;
 import lombok.Cleanup;
 
 public class DataImportModel implements IModel<DataImportController> {

@@ -29,11 +29,10 @@ public class CatalogMergeSession {
     et.begin();
   }
 
-  @Getter
-  private final Set<ArticleDifference<?>> diffs;
+  @Getter private final Set<ArticleDifference<?>> diffs;
   private final Collection<Article> collected;
 
-  public CatalogMergeSession(Collection<String> catalogSource){
+  public CatalogMergeSession(Collection<String> catalogSource) {
     collected = new ArrayList<>();
     diffs = loadSource(catalogSource, MappedDifferences.values());
   }
@@ -130,7 +129,7 @@ public class CatalogMergeSession {
                         new ArticleDifference<>(differences[i], prevValues[i], current);
                     if (ignoredDifferences == null
                         || !ignoredDifferences.contains(
-                        IgnoredDifference.from(articleDifference))) {
+                            IgnoredDifference.from(articleDifference))) {
                       out.add(articleDifference);
                     }
                   }
