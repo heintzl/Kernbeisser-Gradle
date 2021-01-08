@@ -105,7 +105,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
           @Override
           public boolean isDisplayed(ArticleDifference<?> difference) {
-            return type.equals(difference.getArticleDifference()) && (!filterDiff || allowedDiff > Math.abs(difference.distance()));
+            return type.equals(difference.getArticleDifference())
+                && (!filterDiff || allowedDiff > Math.abs(difference.distance()));
           }
         });
   }

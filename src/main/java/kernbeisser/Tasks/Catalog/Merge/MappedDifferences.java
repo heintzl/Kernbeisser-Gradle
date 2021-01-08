@@ -18,7 +18,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return Math.abs((Double) b / (Double) a) -1;
+      return Math.abs((Double) b / (Double) a) - 1;
     }
   },
   CONTAINER_SIZE("Gebinde-Größe") {
@@ -34,7 +34,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return Math.abs((Double) b / (Double) a)-1;
+      return Math.abs((Double) b / (Double) a) - 1;
     }
   },
   DEPOSIT("Pfand") {
@@ -50,7 +50,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return Math.abs((Double) b / (Double) a)-1;
+      return Math.abs((Double) b / (Double) a) - 1;
     }
   },
   CONTAINER_DOPSIT("Kisten-Pfand") {
@@ -71,7 +71,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return Math.abs((Double) b / (Double) a)-1;
+      return Math.abs((Double) b / (Double) a) - 1;
     }
   },
   AMOUNT("Menge") {
@@ -87,7 +87,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return Math.abs((double) (Integer) b / (double) (Integer) a)-1;
+      return Math.abs((double) (Integer) b / (double) (Integer) a) - 1;
     }
   },
   NAME("Name") {
@@ -105,8 +105,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
     public double distance(Object a, Object b) {
       return ((double)
               Tools.calculate(((String) a).replaceAll(" ", ""), ((String) b).replaceAll(" ", ""))
-          / ((String) b).replaceAll(" ", "").length()
-      );
+          / ((String) b).replaceAll(" ", "").length());
     }
   };
 
