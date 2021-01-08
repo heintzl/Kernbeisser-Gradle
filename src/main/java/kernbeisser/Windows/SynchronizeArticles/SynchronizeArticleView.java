@@ -15,6 +15,9 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
+import kernbeisser.Tasks.Catalog.Merge.Difference;
+import kernbeisser.Tasks.Catalog.Merge.MappedDifferences;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +47,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
         Column.create("Artikel", e -> e.getArticle().getName()),
         Column.create("Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber()),
         Column.create("Unterschied", e -> e.getArticleDifference().getName()),
-        Column.create("Abweichung", e -> String.format("%.2f%%", e.distance())),
+        Column.create("Abweichung", e -> String.format("%.2f%%", e.distance() * 100)),
         Column.create("Kernbeisser", ArticleDifference::getPreviousVersion),
         Column.create("Katalog", ArticleDifference::getNewVersion));
     selectAll.addActionListener(
@@ -53,6 +56,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
           differences.selectAll();
         });
     maxAllowedDiff.addActionListener(e -> setObjectFilter());
+    filter.addActionListener(e -> setObjectFilter());
     useKernbeisser.addActionListener(e -> controller.useKernbeisser());
     useKornkraft.addActionListener(e -> controller.useKornkraft());
     removeSelection.addActionListener(e -> differences.clearSelection());
@@ -101,8 +105,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
           @Override
           public boolean isDisplayed(ArticleDifference<?> difference) {
-            return type.equals(difference.getArticleDifference()) && filterDiff
-                || difference.distance() < allowedDiff;
+            return type.equals(difference.getArticleDifference())
+                && (!filterDiff || allowedDiff > Math.abs(difference.distance()));
           }
         });
   }
@@ -160,5 +164,6 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     JOptionPane.showMessageDialog(
         getTopComponent(),
         "Bitte Korrigieren sie alle Konflikte bevor sie den Katalog persistieren.");
+    differences.setRowFilter(null);
   }
 }

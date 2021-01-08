@@ -5,7 +5,6 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
-import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Windows.MVC.IModel;
@@ -25,9 +24,8 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     user = Proxy.removeProxy(User.getById(user.getId()));
   }
 
-  void changeUserGroup(int user, int destination) throws CannotLogInException {
+  void changeUserGroup(int user, int destination) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    User dbUser = em.find(User.class, user);
     Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
   }
 

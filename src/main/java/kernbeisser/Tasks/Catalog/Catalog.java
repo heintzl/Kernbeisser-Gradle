@@ -3,11 +3,7 @@ package kernbeisser.Tasks.Catalog;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Pattern;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogDataSource;
 import kernbeisser.DBEntities.Supplier;
@@ -22,20 +18,6 @@ public class Catalog {
   public static Pattern NUMBER_FILTER = Pattern.compile("\\d*[,.]?\\d*");
   public static Pattern CHARACTER_FILTER = Pattern.compile("[a-zA-z ]*");
   public static Pattern DIM3AMOUNT = Pattern.compile("\\d*[,.]?\\d* x \\d*[,.]?\\d*");
-
-  public static void autoLinkAllUndefArticles(Supplier supplier) {
-    EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    List<Article> articleBases =
-        em.createQuery("select a from Article a where a.supplier = :s", Article.class)
-            .setParameter("s", supplier)
-            .getResultList();
-    CatalogDataInterpreter.autoLinkArticle(articleBases);
-    articleBases.forEach(em::persist);
-    et.commit();
-    em.close();
-  }
 
   public static Article parseArticle(
       Article base, HashMap<Integer, Double> deposit, Supplier kkSupplier, String[] source)

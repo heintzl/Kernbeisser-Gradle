@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Security.PermissionSet;

@@ -92,6 +92,5 @@ public class PayController extends Controller<PayView, PayModel> {
   private void customerStandardVisibility(PayView view) {
     view.setCustomerStandard.setVisible(
         view.printReceipt.isSelected() != model.readStandardPrint());
-
   }
 }
