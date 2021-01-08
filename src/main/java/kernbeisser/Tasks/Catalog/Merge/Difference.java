@@ -1,4 +1,4 @@
-package kernbeisser.Windows.SynchronizeArticles;
+package kernbeisser.Tasks.Catalog.Merge;
 
 import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.CustomComponents.AccessChecking.Setter;

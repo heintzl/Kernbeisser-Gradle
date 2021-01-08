@@ -1,7 +1,8 @@
-package kernbeisser.Windows.SynchronizeArticles;
+package kernbeisser.Tasks.Catalog.Merge;
 
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Useful.Tools;
 
 public enum MappedDifferences implements Difference<Article, Object> {
   PRICE("Preis") {
@@ -102,7 +103,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
     @Override
     public double distance(Object a, Object b) {
-      return 0;
+      return ((double)Tools.calculate(((String) a).replaceAll(" ",""),((String) b).replaceAll(" ","")) / ((String) b).replaceAll(" ","").length() * 100.);
     }
   };
 

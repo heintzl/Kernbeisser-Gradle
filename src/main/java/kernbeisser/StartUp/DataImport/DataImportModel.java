@@ -28,6 +28,7 @@ import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Main;
 import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
+import kernbeisser.Tasks.Catalog.Merge.CatalogMergeSession;
 import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.ErrorCollector;
@@ -189,10 +190,9 @@ public class DataImportModel implements IModel<DataImportController> {
   }
 
   private void readCatalog(Collection<String> kornkraftCatalog) {
-    SynchronizeArticleModel model = new SynchronizeArticleModel();
-    model.load(kornkraftCatalog);
-    model.resolveAllFor(true);
-    model.pushToDB();
+    CatalogMergeSession mergeSession = new CatalogMergeSession(kornkraftCatalog);
+    mergeSession.resolveAllFor(true);
+    mergeSession.pushToDB();
   }
 
   private void readArticles(Stream<String> f) {

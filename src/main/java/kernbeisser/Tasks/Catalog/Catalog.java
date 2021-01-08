@@ -23,20 +23,6 @@ public class Catalog {
   public static Pattern CHARACTER_FILTER = Pattern.compile("[a-zA-z ]*");
   public static Pattern DIM3AMOUNT = Pattern.compile("\\d*[,.]?\\d* x \\d*[,.]?\\d*");
 
-  public static void autoLinkAllUndefArticles(Supplier supplier) {
-    EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    List<Article> articleBases =
-        em.createQuery("select a from Article a where a.supplier = :s", Article.class)
-            .setParameter("s", supplier)
-            .getResultList();
-    CatalogDataInterpreter.autoLinkArticle(articleBases);
-    articleBases.forEach(em::persist);
-    et.commit();
-    em.close();
-  }
-
   public static Article parseArticle(
       Article base, HashMap<Integer, Double> deposit, Supplier kkSupplier, String[] source)
       throws CannotParseException {

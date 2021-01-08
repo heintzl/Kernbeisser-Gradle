@@ -25,9 +25,8 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     user = Proxy.removeProxy(User.getById(user.getId()));
   }
 
-  void changeUserGroup(int user, int destination) throws CannotLogInException {
+  void changeUserGroup(int user, int destination) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    User dbUser = em.find(User.class, user);
     Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
   }
 

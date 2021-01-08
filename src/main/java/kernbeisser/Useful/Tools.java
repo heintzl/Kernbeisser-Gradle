@@ -1,5 +1,7 @@
 package kernbeisser.Useful;
 
+import static java.lang.Math.min;
+
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -839,5 +841,35 @@ public class Tools {
     em.flush();
     et.commit();
     em.close();
+  }
+
+  public static int calculate(String x, String y) {
+    int[][] dp = new int[x.length() + 1][y.length() + 1];
+
+    for (int i = 0; i <= x.length(); i++) {
+      for (int j = 0; j <= y.length(); j++) {
+        if (i == 0) {
+          dp[i][j] = j;
+        }
+        else if (j == 0) {
+          dp[i][j] = i;
+        }
+        else {
+          dp[i][j] = min(dp[i - 1][j - 1]
+                  + costOfSubstitution(x.charAt(i - 1), y.charAt(j - 1)),
+              dp[i - 1][j] + 1,
+              dp[i][j - 1] + 1);
+        }
+      }
+    }
+
+    return dp[x.length()][y.length()];
+  }
+  public static int min(int a,int b,int c){
+    return Math.min(Math.min(a,b),c);
+  }
+
+  public static int costOfSubstitution(char a, char b) {
+    return a == b ? 0 : 1;
   }
 }
