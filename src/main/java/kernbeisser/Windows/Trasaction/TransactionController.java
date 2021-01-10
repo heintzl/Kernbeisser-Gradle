@@ -1,5 +1,7 @@
 package kernbeisser.Windows.Trasaction;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.util.function.Predicate;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -32,7 +34,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   void transfer() {
     var view = getView();
-    if (!view.confirm()) {
+    if (!view.confirm(model.getCount())) {
       return;
     }
     unsafeTransfer();
@@ -46,7 +48,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
       view.transactionRejected();
       return;
     }
-    view.success();
+    view.success(model.getCount());
     model.getTransactions().clear();
     view.setTransactions(model.getTransactions());
     refreshTable();
@@ -64,19 +66,22 @@ public class TransactionController extends Controller<TransactionView, Transacti
       view.invalidValue();
       return;
     }
-    if (view.getValue() < 0 && !view.requestUserTransactionCommit()) {
-      return;
-    }
     try {
       transaction.setFromUser(view.getFrom());
-    } catch (NoResultException e) {
+    } catch (NoResultException | NullPointerException e) {
       view.invalidFrom();
       return;
     }
     try {
       transaction.setToUser(view.getTo());
-    } catch (NoResultException e) {
+    } catch (NoResultException | NullPointerException e) {
       view.invalidTo();
+      return;
+    }
+    if (model.getTransactionType() != TransactionType.PAYIN
+        && view.getFrom().equals(User.getKernbeisserUser())
+        && isNullOrEmpty(view.getInfo())) {
+      view.invalidPayin();
       return;
     }
     transaction.setValue(view.getValue());
@@ -157,12 +162,12 @@ public class TransactionController extends Controller<TransactionView, Transacti
   public boolean commitClose() {
     var view = getView();
     if (model.getTransactions().size() > 0) {
-      switch (view.commitUnsavedTransactions()) {
+      switch (view.commitUnsavedTransactions(model.getCount())) {
         case 0:
           unsafeTransfer();
           return true;
         case 1:
-          view.transactionsDeleted();
+          view.transactionsDeleted(model.getCount());
           return true;
         case 2:
           return false;

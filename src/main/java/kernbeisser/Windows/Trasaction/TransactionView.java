@@ -141,8 +141,14 @@ public class TransactionView implements IView<TransactionController> {
     to = new AdvancedComboBox<>(User::getFullName);
   }
 
-  void success() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Die Überweisung/en wurde/n durchgeführt");
+  void success(int count) {
+    String suffix = "", suffix1 = "";
+    if (count != 1) {
+      suffix = "en";
+      suffix1 = "n";
+    }
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Die Überweisung" + suffix + " wurde" + suffix1 + " durchgeführt");
   }
 
   boolean confirmExtraHeightTransaction() {
@@ -152,20 +158,30 @@ public class TransactionView implements IView<TransactionController> {
         == 0;
   }
 
-  boolean confirm() {
+  boolean confirm(int count) {
+    String suffix = "", suffix1 = "";
+    if (count != 1) {
+      suffix = "en";
+      suffix1 = "n";
+    }
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Sollen die eingetragenen Überweisungen getätigt werden?")
+            getTopComponent(),
+            "Soll"
+                + suffix
+                + " die aufgelistete"
+                + suffix1
+                + " Überweisung"
+                + suffix
+                + " getätigt werden?")
         == 0;
   }
 
   void invalidFrom() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(), "Der eingetragen Absender kann nicht gefunden werden!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Der Absender kann nicht gefunden werden!");
   }
 
   void invalidTo() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(), "Der eingetragen Empfänger kann nicht gefunden werden!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Der Empfänger kann nicht gefunden werden!");
   }
 
   public double getValue() {
@@ -193,25 +209,49 @@ public class TransactionView implements IView<TransactionController> {
         getTopComponent(), "Der eingegebene Betrag muss größer als 0€ sein");
   }
 
-  public boolean requestUserTransactionCommit() {
-    return JOptionPane.showConfirmDialog(
-            getTopComponent(),
-            "Der angegebene Preis ist negativ, das entspricht einer Auszahlung.\n"
-                + "Ist das korrekt?")
-        == 0;
+  public void invalidPayin() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Wenn diese Überweisung eine Guthabeneinzahlung ist, muss sie über den "
+            + "Menüpunkt \"Guthaben buchen\" durchgeführt werden.\nWenn es eine andere Art "
+            + "der Übertragung vom Kernbeißerkonto ist, muss das im Info-Feld vermerkt werden, "
+            + "z.B. durch Angabe einer Belegnummer");
   }
 
-  public int commitUnsavedTransactions() {
+  public int commitUnsavedTransactions(int count) {
+    String suffix = "", suffix1 = "";
+    if (count != 1) {
+      suffix = "en";
+      suffix1 = "n";
+    }
     return JOptionPane.showConfirmDialog(
         getTopComponent(),
-        "Sollen die eingegebenen Überweisungen getätigt werden?",
-        "Achtung: Überweisungen wurden noch nicht übernommen",
+        "Soll"
+            + suffix
+            + " die eingegebene"
+            + suffix1
+            + " Überweisung"
+            + suffix
+            + " getätigt werden?",
+        "Achtung: Überweisung" + suffix + " wurde" + suffix1 + " noch nicht übernommen",
         JOptionPane.YES_NO_CANCEL_OPTION);
   }
 
-  public void transactionsDeleted() {
+  public void transactionsDeleted(int count) {
+    String suffix = "", suffix1 = "";
+    if (count != 1) {
+      suffix = "en";
+      suffix1 = "n";
+    }
     JOptionPane.showMessageDialog(
-        getTopComponent(), "Die eingegeben Überweisungen wurden nicht übernommen");
+        getTopComponent(),
+        "Die eingegebene"
+            + suffix1
+            + " Überweisung"
+            + suffix
+            + " wurde"
+            + suffix1
+            + " nicht übernommen");
   }
 
   public String getInfo() {
