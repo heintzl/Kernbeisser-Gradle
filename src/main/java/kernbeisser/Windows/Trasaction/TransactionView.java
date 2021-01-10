@@ -11,6 +11,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
@@ -27,8 +28,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class TransactionView implements IView<TransactionController> {
   private JButton transferTransactions;
-  private JTextField to;
-  private JTextField from;
+  private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<User> to;
+  private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<User> from;
   private JCheckBox fromKBValue;
   private DoubleParseField value;
   private ObjectTable<Transaction> transactions;
@@ -87,21 +88,29 @@ public class TransactionView implements IView<TransactionController> {
     this.transactions.setObjects(transactions);
   }
 
-  String getTo() {
-    return to.getText();
+  User getTo() {
+    return to.getSelected();
   }
 
-  void setTo(String s) {
+  AdvancedComboBox<User> getToControl() {
+    return to;
+  }
+
+  void setTo(User u) {
     toKernbeisser.setSelected(false);
-    to.setText(s);
+    to.setSelectedItem(u);
   }
 
-  String getFrom() {
-    return from.getText();
+  User getFrom() {
+    return from.getSelected();
   }
 
-  void setFrom(String s) {
-    from.setText(s);
+  AdvancedComboBox<User> getFromControl() {
+    return from;
+  }
+
+  void setFrom(User u) {
+    from.setSelectedItem(u);
   }
 
   void setFromKBEnable(boolean b) {
@@ -127,6 +136,8 @@ public class TransactionView implements IView<TransactionController> {
             Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
             Column.create("Info", Transaction::getInfo));
     searchBoxView = userSearchBoxController.getView();
+    from = new AdvancedComboBox<>(User::getFullName);
+    to = new AdvancedComboBox<>(User::getFullName);
   }
 
   void success() {
@@ -238,10 +249,10 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (fromKBValue.isSelected()) {
               toKernbeisser.setSelected(false);
-              from.setText(controller.getKernbeisserUsername());
+              from.setSelectedItem(controller.getKernbeisserUser());
               from.setEnabled(false);
             } else {
-              from.setText(controller.getLoggedInUsername());
+              from.setSelectedItem(controller.getLoggedInUser());
               from.setEnabled(true);
             }
           }
@@ -256,10 +267,10 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (toKernbeisser.isSelected()) {
               fromKBValue.setSelected(false);
-              to.setText(controller.getKernbeisserUsername());
+              to.setSelectedItem(controller.getKernbeisserUser());
               to.setEnabled(false);
             } else {
-              to.setText("");
+              to.setSelectedItem(null);
               to.setEnabled(true);
             }
           }
@@ -475,7 +486,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   public void transactionAdded() {
-    if (!toKernbeisser.isSelected()) to.setText("");
+    if (!toKernbeisser.isSelected()) to.setSelectedItem(null);
   }
 
   @Override
@@ -483,22 +494,22 @@ public class TransactionView implements IView<TransactionController> {
     return "Überweisungen (" + controller.getTransactionTypeName() + ")";
   }
 
-  public void pastUsername(String username) {
+  public void pastUser(User user) {
     if (lastFocusOnFrom) {
       if (from.isEnabled()) {
-        from.setText(username);
+        from.setSelectedItem(user);
         return;
       }
       if (to.isEnabled()) {
-        to.setText(username);
+        to.setSelectedItem(user);
       }
     } else {
       if (to.isEnabled()) {
-        to.setText(username);
+        to.setSelectedItem(user);
         return;
       }
       if (from.isEnabled()) {
-        from.setText(username);
+        from.setSelectedItem(user);
       }
     }
   }

@@ -45,7 +45,7 @@
                   <text value="An"/>
                 </properties>
               </component>
-              <component id="973c2" class="javax.swing.JTextField" binding="to">
+              <component id="192f8" class="kernbeisser.CustomComponents.ComboBox.AdvancedComboBox" binding="to" custom-create="true">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -380,7 +380,7 @@
                   <text value="Von"/>
                 </properties>
               </component>
-              <component id="6c251" class="javax.swing.JTextField" binding="from">
+              <component id="63596" class="kernbeisser.CustomComponents.ComboBox.AdvancedComboBox" binding="from" custom-create="true">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>

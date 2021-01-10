@@ -28,14 +28,14 @@ public class TransactionController extends Controller<TransactionView, Transacti
             Column.create("Vorname", User::getFirstName),
             Column.create("Username", User::getUsername),
             Column.create("Guthaben", User::getRoundedValue));
-    userSearchBoxController.addSelectionListener(e -> getView().pastUsername(e.getUsername()));
+    userSearchBoxController.addSelectionListener(e -> getView().pastUser(e));
   }
 
   private void loadPreSettings(TransactionType transactionType) {
     switch (transactionType) {
       case PAYIN:
         getView().setFromEnabled(false);
-        getView().setFrom(User.getKernbeisserUser().getUsername());
+        getView().setFrom(User.getKernbeisserUser());
         break;
     }
   }
@@ -77,13 +77,13 @@ public class TransactionController extends Controller<TransactionView, Transacti
       return;
     }
     try {
-      transaction.setFromUser(model.findUser(view.getFrom()));
+      transaction.setFromUser(view.getFrom());
     } catch (NoResultException e) {
       view.invalidFrom();
       return;
     }
     try {
-      transaction.setToUser(model.findUser(view.getTo()));
+      transaction.setToUser(view.getTo());
     } catch (NoResultException e) {
       view.invalidTo();
       return;
@@ -117,10 +117,12 @@ public class TransactionController extends Controller<TransactionView, Transacti
   @Override
   public void fillView(TransactionView transactionView) {
     var view = getView();
+    User.populateUserComboBox(view.getToControl(), false, e -> true);
+    User.populateUserComboBox(view.getFromControl(), true, e -> true);
     view.setFromEnabled(
         model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_OTHER));
     view.setFromKBEnable(model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_KB));
-    view.setFrom(LogInModel.getLoggedIn().getUsername());
+    view.setFrom(LogInModel.getLoggedIn());
     refreshTable();
     loadPreSettings(model.getTransactionType());
   }
@@ -146,12 +148,12 @@ public class TransactionController extends Controller<TransactionView, Transacti
     }
   }
 
-  String getKernbeisserUsername() {
-    return User.getKernbeisserUser().getUsername();
+  User getKernbeisserUser() {
+    return User.getKernbeisserUser();
   }
 
-  public String getLoggedInUsername() {
-    return LogInModel.getLoggedIn().getUsername();
+  public User getLoggedInUser() {
+    return LogInModel.getLoggedIn();
   }
 
   public String getTransactionTypeName() {
