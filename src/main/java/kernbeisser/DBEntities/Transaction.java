@@ -77,11 +77,15 @@ public class Transaction {
       TransactionType transactionType,
       String info)
       throws InvalidTransactionException {
+
     if (from.getUserGroup().getId() == to.getUserGroup().getId())
       throw new kernbeisser.Exeptions.InvalidTransactionException();
     UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
     UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
+
     double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
+    value = Tools.roundCurrency(value);
+
     if (transactionType != TransactionType.INITIALIZE) {
       if (fromUG.getValue() - value < minValue) {
         if (!from.hasPermission(PermissionKey.GO_UNDER_MIN)) {
@@ -93,7 +97,7 @@ public class Transaction {
                   + "€");
         }
       }
-      if (toUG.getValue() + value < minValue) {
+      if (value < 0 && toUG.getValue() + value < minValue) {
         if (!to.hasPermission(PermissionKey.GO_UNDER_MIN)) {
           throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the receiving user ["
@@ -143,7 +147,7 @@ public class Transaction {
     try {
       Method method = UserGroup.class.getDeclaredMethod("setValue", double.class);
       method.setAccessible(true);
-      method.invoke(transaction, value);
+      method.invoke(transaction, Tools.roundCurrency(value));
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
       Tools.showUnexpectedErrorWarning(e);
     }

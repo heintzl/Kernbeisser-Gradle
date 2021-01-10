@@ -339,7 +339,7 @@ public class ShoppingItem implements Serializable {
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
   public double calculateItemRetailPrice(double netPrice) {
-    return Math.round(100. * calculatePreciseRetailPrice(netPrice)) / 100.;
+    return Tools.roundCurrency(calculatePreciseRetailPrice(netPrice));
   }
 
   public ShoppingItem createItemDeposit(int number, boolean isContainer) {
