@@ -3,10 +3,12 @@ package kernbeisser.DBEntities;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Predicate;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
@@ -402,5 +404,11 @@ public class User implements Serializable {
             .getResultList();
     if (withKbUser) result.add(0, User.getKernbeisserUser());
     return result;
+  }
+
+  public static void populateUserComboBox(
+      AdvancedComboBox<User> box, boolean withKbUser, Predicate<User> filter) {
+    box.removeAllItems();
+    getAllUserFullNames(withKbUser).stream().filter(filter).forEach(box::addItem);
   }
 }
