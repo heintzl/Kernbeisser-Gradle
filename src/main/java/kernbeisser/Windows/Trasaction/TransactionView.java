@@ -11,10 +11,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
-import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class TransactionView implements IView<TransactionController> {
   private JButton transferTransactions;
-  private JTextField to;
-  private JTextField from;
+  private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<User> to;
+  private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<User> from;
   private JCheckBox fromKBValue;
   private DoubleParseField value;
   private ObjectTable<Transaction> transactions;
@@ -37,7 +37,7 @@ public class TransactionView implements IView<TransactionController> {
   private JButton back;
   private JButton delete;
 
-  // Fast transaction buttons only paste there value into the from field
+  // Fast transaction buttons only paste their value into the from field
   private JButton a10;
   private JButton a20;
   private JButton a25;
@@ -74,11 +74,10 @@ public class TransactionView implements IView<TransactionController> {
   private JButton a900;
   private JButton a1000;
 
-  private SearchBoxView<User> searchBoxView;
   private JLabel sum;
   private JLabel count;
   private PermissionField info;
-  private JCheckBox toKernbeisser;
+  private JCheckBox toKBValue;
 
   @Linked private SearchBoxController<User> userSearchBoxController;
   @Linked private TransactionController controller;
@@ -87,30 +86,41 @@ public class TransactionView implements IView<TransactionController> {
     this.transactions.setObjects(transactions);
   }
 
-  String getTo() {
-    return to.getText();
+  User getTo() {
+    return to.getSelected();
   }
 
-  void setTo(String s) {
-    toKernbeisser.setSelected(false);
-    to.setText(s);
+  AdvancedComboBox<User> getToControl() {
+    return to;
   }
 
-  String getFrom() {
-    return from.getText();
+  void setTo(User u) {
+    toKBValue.setSelected(false);
+    to.setSelectedItem(u);
   }
 
-  void setFrom(String s) {
-    from.setText(s);
+  User getFrom() {
+    return from.getSelected();
+  }
+
+  AdvancedComboBox<User> getFromControl() {
+    return from;
+  }
+
+  void setFrom(User u) {
+    from.setSelectedItem(u);
   }
 
   void setFromKBEnable(boolean b) {
     fromKBValue.setEnabled(b);
   }
 
+  void setToKBEnable(boolean b) {
+    toKBValue.setEnabled(b);
+  }
+
   void setFromEnabled(boolean b) {
     from.setEnabled(b);
-    searchBoxView.getContent().setVisible(b);
   }
 
   private void createUIComponents() {
@@ -126,11 +136,19 @@ public class TransactionView implements IView<TransactionController> {
                 "An", e -> e.getToUser().getSurname() + ", " + e.getToUser().getFirstName()),
             Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
             Column.create("Info", Transaction::getInfo));
-    searchBoxView = userSearchBoxController.getView();
+    //    searchBoxView = userSearchBoxController.getView();
+    from = new AdvancedComboBox<>(User::getFullName);
+    to = new AdvancedComboBox<>(User::getFullName);
   }
 
-  void success() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Die Überweisung/en wurde/n durchgeführt");
+  void success(int count) {
+    String suffix = "", suffix1 = "";
+    if (count != 1) {
+      suffix = "en";
+      suffix1 = "n";
+    }
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Die Überweisung" + suffix + " wurde" + suffix1 + " durchgeführt");
   }
 
   boolean confirmExtraHeightTransaction() {
@@ -140,20 +158,30 @@ public class TransactionView implements IView<TransactionController> {
         == 0;
   }
 
-  boolean confirm() {
+  boolean confirm(int count) {
+    String suffix = "", suffix1 = "";
+    if (count != 1) {
+      suffix = "en";
+      suffix1 = "n";
+    }
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Sollen die eingetragenen Überweisungen getätigt werden?")
+            getTopComponent(),
+            "Soll"
+                + suffix
+                + " die aufgelistete"
+                + suffix1
+                + " Überweisung"
+                + suffix
+                + " getätigt werden?")
         == 0;
   }
 
   void invalidFrom() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(), "Der eingetragen Absender kann nicht gefunden werden!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Der Absender kann nicht gefunden werden!");
   }
 
   void invalidTo() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(), "Der eingetragen Empfänger kann nicht gefunden werden!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Der Empfänger kann nicht gefunden werden!");
   }
 
   public double getValue() {
@@ -181,25 +209,49 @@ public class TransactionView implements IView<TransactionController> {
         getTopComponent(), "Der eingegebene Betrag muss größer als 0€ sein");
   }
 
-  public boolean requestUserTransactionCommit() {
-    return JOptionPane.showConfirmDialog(
-            getTopComponent(),
-            "Der angegebene Preis ist negativ, das entspricht einer Auszahlung.\n"
-                + "Ist das korrekt?")
-        == 0;
+  public void invalidPayin() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Wenn diese Überweisung eine Guthabeneinzahlung ist, muss sie über den "
+            + "Menüpunkt \"Guthaben buchen\" durchgeführt werden.\nWenn es eine andere Art "
+            + "der Übertragung vom Kernbeißerkonto ist, muss das im Info-Feld vermerkt werden, "
+            + "z.B. durch Angabe einer Belegnummer");
   }
 
-  public int commitUnsavedTransactions() {
+  public int commitUnsavedTransactions(int count) {
+    String suffix = "", suffix1 = "";
+    if (count != 1) {
+      suffix = "en";
+      suffix1 = "n";
+    }
     return JOptionPane.showConfirmDialog(
         getTopComponent(),
-        "Sollen die eingegebenen Überweisungen getätigt werden?",
-        "Achtung: Überweisungen wurden noch nicht übernommen",
+        "Soll"
+            + suffix
+            + " die eingegebene"
+            + suffix1
+            + " Überweisung"
+            + suffix
+            + " getätigt werden?",
+        "Achtung: Überweisung" + suffix + " wurde" + suffix1 + " noch nicht übernommen",
         JOptionPane.YES_NO_CANCEL_OPTION);
   }
 
-  public void transactionsDeleted() {
+  public void transactionsDeleted(int count) {
+    String suffix = "", suffix1 = "";
+    if (count != 1) {
+      suffix = "en";
+      suffix1 = "n";
+    }
     JOptionPane.showMessageDialog(
-        getTopComponent(), "Die eingegeben Überweisungen wurden nicht übernommen");
+        getTopComponent(),
+        "Die eingegebene"
+            + suffix1
+            + " Überweisung"
+            + suffix
+            + " wurde"
+            + suffix1
+            + " nicht übernommen");
   }
 
   public String getInfo() {
@@ -237,29 +289,29 @@ public class TransactionView implements IView<TransactionController> {
             if (lastState == fromKBValue.isSelected()) return;
             lastState = !lastState;
             if (fromKBValue.isSelected()) {
-              toKernbeisser.setSelected(false);
-              from.setText(controller.getKernbeisserUsername());
+              toKBValue.setSelected(false);
+              from.setSelectedItem(controller.getKernbeisserUser());
               from.setEnabled(false);
             } else {
-              from.setText(controller.getLoggedInUsername());
+              from.setSelectedItem(controller.getLoggedInUser());
               from.setEnabled(true);
             }
           }
         });
-    toKernbeisser.addChangeListener(
+    toKBValue.addChangeListener(
         new ChangeListener() {
           private boolean lastState = false;
 
           @Override
           public void stateChanged(ChangeEvent e) {
-            if (lastState == toKernbeisser.isSelected()) return;
+            if (lastState == toKBValue.isSelected()) return;
             lastState = !lastState;
-            if (toKernbeisser.isSelected()) {
+            if (toKBValue.isSelected()) {
               fromKBValue.setSelected(false);
-              to.setText(controller.getKernbeisserUsername());
+              to.setSelectedItem(controller.getKernbeisserUser());
               to.setEnabled(false);
             } else {
-              to.setText("");
+              to.setSelectedItem(null);
               to.setEnabled(true);
             }
           }
@@ -475,31 +527,14 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   public void transactionAdded() {
-    if (!toKernbeisser.isSelected()) to.setText("");
+    if (!toKBValue.isSelected()) {
+      to.setSelectedItem(null);
+      to.repaint();
+    }
   }
 
   @Override
   public String getTitle() {
     return "Überweisungen (" + controller.getTransactionTypeName() + ")";
-  }
-
-  public void pastUsername(String username) {
-    if (lastFocusOnFrom) {
-      if (from.isEnabled()) {
-        from.setText(username);
-        return;
-      }
-      if (to.isEnabled()) {
-        to.setText(username);
-      }
-    } else {
-      if (to.isEnabled()) {
-        to.setText(username);
-        return;
-      }
-      if (from.isEnabled()) {
-        from.setText(username);
-      }
-    }
   }
 }
