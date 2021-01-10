@@ -15,7 +15,6 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
-import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
@@ -38,7 +37,7 @@ public class TransactionView implements IView<TransactionController> {
   private JButton back;
   private JButton delete;
 
-  // Fast transaction buttons only paste there value into the from field
+  // Fast transaction buttons only paste their value into the from field
   private JButton a10;
   private JButton a20;
   private JButton a25;
@@ -75,11 +74,10 @@ public class TransactionView implements IView<TransactionController> {
   private JButton a900;
   private JButton a1000;
 
-  private SearchBoxView<User> searchBoxView;
   private JLabel sum;
   private JLabel count;
   private PermissionField info;
-  private JCheckBox toKernbeisser;
+  private JCheckBox toKBValue;
 
   @Linked private SearchBoxController<User> userSearchBoxController;
   @Linked private TransactionController controller;
@@ -97,7 +95,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   void setTo(User u) {
-    toKernbeisser.setSelected(false);
+    toKBValue.setSelected(false);
     to.setSelectedItem(u);
   }
 
@@ -117,9 +115,12 @@ public class TransactionView implements IView<TransactionController> {
     fromKBValue.setEnabled(b);
   }
 
+  void setToKBEnable(boolean b) {
+    toKBValue.setEnabled(b);
+  }
+
   void setFromEnabled(boolean b) {
     from.setEnabled(b);
-    searchBoxView.getContent().setVisible(b);
   }
 
   private void createUIComponents() {
@@ -135,7 +136,7 @@ public class TransactionView implements IView<TransactionController> {
                 "An", e -> e.getToUser().getSurname() + ", " + e.getToUser().getFirstName()),
             Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
             Column.create("Info", Transaction::getInfo));
-    searchBoxView = userSearchBoxController.getView();
+    //    searchBoxView = userSearchBoxController.getView();
     from = new AdvancedComboBox<>(User::getFullName);
     to = new AdvancedComboBox<>(User::getFullName);
   }
@@ -248,7 +249,7 @@ public class TransactionView implements IView<TransactionController> {
             if (lastState == fromKBValue.isSelected()) return;
             lastState = !lastState;
             if (fromKBValue.isSelected()) {
-              toKernbeisser.setSelected(false);
+              toKBValue.setSelected(false);
               from.setSelectedItem(controller.getKernbeisserUser());
               from.setEnabled(false);
             } else {
@@ -257,15 +258,15 @@ public class TransactionView implements IView<TransactionController> {
             }
           }
         });
-    toKernbeisser.addChangeListener(
+    toKBValue.addChangeListener(
         new ChangeListener() {
           private boolean lastState = false;
 
           @Override
           public void stateChanged(ChangeEvent e) {
-            if (lastState == toKernbeisser.isSelected()) return;
+            if (lastState == toKBValue.isSelected()) return;
             lastState = !lastState;
-            if (toKernbeisser.isSelected()) {
+            if (toKBValue.isSelected()) {
               fromKBValue.setSelected(false);
               to.setSelectedItem(controller.getKernbeisserUser());
               to.setEnabled(false);
@@ -486,31 +487,14 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   public void transactionAdded() {
-    if (!toKernbeisser.isSelected()) to.setSelectedItem(null);
+    if (!toKBValue.isSelected()) {
+      to.setSelectedItem(null);
+      to.repaint();
+    }
   }
 
   @Override
   public String getTitle() {
     return "Überweisungen (" + controller.getTransactionTypeName() + ")";
-  }
-
-  public void pastUser(User user) {
-    if (lastFocusOnFrom) {
-      if (from.isEnabled()) {
-        from.setSelectedItem(user);
-        return;
-      }
-      if (to.isEnabled()) {
-        to.setSelectedItem(user);
-      }
-    } else {
-      if (to.isEnabled()) {
-        to.setSelectedItem(user);
-        return;
-      }
-      if (from.isEnabled()) {
-        from.setSelectedItem(user);
-      }
-    }
   }
 }

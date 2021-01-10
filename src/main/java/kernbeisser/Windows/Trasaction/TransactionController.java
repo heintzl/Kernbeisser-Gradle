@@ -1,9 +1,8 @@
 package kernbeisser.Windows.Trasaction;
 
+import java.util.function.Predicate;
 import javax.persistence.NoResultException;
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
-import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
@@ -12,28 +11,19 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
-import kernbeisser.Windows.MVC.Linked;
 import lombok.var;
 
 public class TransactionController extends Controller<TransactionView, TransactionModel> {
 
-  @Linked private final SearchBoxController<User> userSearchBoxController;
-
   public TransactionController(User user, TransactionType transactionType) {
     super(new TransactionModel(user, transactionType));
-    userSearchBoxController =
-        new SearchBoxController<>(
-            User::defaultSearch,
-            Column.create("Nachname", User::getSurname),
-            Column.create("Vorname", User::getFirstName),
-            Column.create("Username", User::getUsername),
-            Column.create("Guthaben", User::getRoundedValue));
-    userSearchBoxController.addSelectionListener(e -> getView().pastUser(e));
   }
 
   private void loadPreSettings(TransactionType transactionType) {
     switch (transactionType) {
       case PAYIN:
+        getView().setFromKBEnable(false);
+        getView().setToKBEnable(false);
         getView().setFromEnabled(false);
         getView().setFrom(User.getKernbeisserUser());
         break;
@@ -60,6 +50,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
     model.getTransactions().clear();
     view.setTransactions(model.getTransactions());
     refreshTable();
+    refreshTooltip(view.getFromControl());
   }
 
   void addTransaction() {
@@ -107,24 +98,59 @@ public class TransactionController extends Controller<TransactionView, Transacti
     view.setCount(model.getCount());
     view.setSum(model.getSum());
     view.transactionAdded();
-    userSearchBoxController.invokeSearch();
   }
 
-  public SearchBoxView<User> getSearchBoxView() {
-    return userSearchBoxController.getView();
+  private void setToolTip(AdvancedComboBox<User> box, Predicate<User> condition) {
+    User u = (User) box.getSelectedItem();
+    if (condition.test(u)) {
+      if (u == null || u == User.getKernbeisserUser()) {
+        box.setToolTipText("");
+      } else {
+        box.setToolTipText(String.format("Aktuelles Guthaben: %.2f€", u.getUserGroup().getValue()));
+      }
+    }
+  }
+
+  private void refreshTooltip(AdvancedComboBox<User> box) {
+    if (box.getToolTipText() != null && !box.getToolTipText().equals("")) {
+      setToolTip(box, u -> true);
+    }
+  }
+
+  private void addUserTooltip(AdvancedComboBox<User> box, Predicate<User> condition) {
+    box.addActionListener(e -> setToolTip(box, condition));
   }
 
   @Override
   public void fillView(TransactionView transactionView) {
     var view = getView();
-    User.populateUserComboBox(view.getToControl(), false, e -> true);
-    User.populateUserComboBox(view.getFromControl(), true, e -> true);
+    AdvancedComboBox<User> fromControl = view.getFromControl();
+    AdvancedComboBox<User> toControl = view.getToControl();
+    if (model.getTransactionType() == TransactionType.PAYIN) {
+      User.populateUserComboBox(toControl, false, e -> true);
+      fromControl.removeAllItems();
+      fromControl.addItem(User.getKernbeisserUser());
+    } else {
+      User.populateUserComboBox(toControl, true, e -> true);
+      User.populateUserComboBox(fromControl, true, e -> true);
+    }
+
     view.setFromEnabled(
         model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_OTHER));
     view.setFromKBEnable(model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_KB));
-    view.setFrom(LogInModel.getLoggedIn());
     refreshTable();
     loadPreSettings(model.getTransactionType());
+
+    boolean allowUserGroupValue =
+        model.getOwner().hasPermission(PermissionKey.USER_GROUP_VALUE_READ);
+    if (allowUserGroupValue) {
+      addUserTooltip(toControl, u -> true);
+    }
+    if (model.getTransactionType() != TransactionType.PAYIN) {
+      addUserTooltip(fromControl, u -> (allowUserGroupValue || u.equals(getLoggedInUser())));
+    }
+
+    fromControl.setSelectedItem(LogInModel.getLoggedIn());
   }
 
   @Override
