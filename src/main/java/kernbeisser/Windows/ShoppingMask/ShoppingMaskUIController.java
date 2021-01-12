@@ -222,7 +222,10 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         boolean preordered = getView().isPreordered();
         int kbArticleNumber = getView().getKBArticleNumber();
         if (kbArticleNumber != 0) {
-          return model.getByKbNumber(kbArticleNumber, discount, preordered);
+          ShoppingItem item = model.getByKbNumber(kbArticleNumber, discount, preordered);
+          if (item != null) {
+            return item;
+          }
         }
         int suppliersNumber = getView().getSuppliersNumber();
         if (suppliersNumber != 0 && getView().getSupplier() != null) {
