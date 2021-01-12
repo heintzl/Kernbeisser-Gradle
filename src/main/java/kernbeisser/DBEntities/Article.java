@@ -158,6 +158,11 @@ public class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
   private SurchargeGroup surchargeGroup;
 
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_WRITE)})
+  private boolean shopRange;
+
   @Getter @Setter private Double obsoleteSurcharge;
 
   public static List<Article> getAll(String condition) {
