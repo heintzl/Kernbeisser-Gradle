@@ -21,7 +21,7 @@ public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
   }
 
   ShoppingItem getByKbNumber(int kbNumber, int discount, boolean preordered) {
-    Article article = Article.getByKbNumber(kbNumber);
+    Article article = Article.getByKbNumber(kbNumber, true);
     if (article != null) {
       return new ShoppingItem(article, discount, preordered);
     }

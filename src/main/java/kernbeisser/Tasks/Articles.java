@@ -73,6 +73,7 @@ public class Articles {
     // TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
     article.setVerified(Boolean.parseBoolean(rawArticleValues[36]));
     article.setSurchargeGroup(surchargeGroup);
+    article.setShopRange(true);
     return article;
   }
 

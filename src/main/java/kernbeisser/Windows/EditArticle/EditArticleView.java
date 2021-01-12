@@ -50,6 +50,7 @@ public class EditArticleView implements IView<EditArticleController> {
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article, VAT> vat;
   private JPanel main;
   private AccessCheckingComboBox<Article, SurchargeGroup> surchargeGroup;
+  private kernbeisser.CustomComponents.AccessChecking.AccessCheckBox<Article> shopRange;
 
   private ObjectForm<Article> articleObjectForm;
 
@@ -105,6 +106,7 @@ public class EditArticleView implements IView<EditArticleController> {
               return e.getSurchargeGroup();
             },
             Article::setSurchargeGroup);
+    shopRange = new AccessCheckBox<>(Article::isShopRange, Article::setShopRange);
   }
 
   void setUnits(MetricUnits[] metricUnits) {
@@ -179,7 +181,8 @@ public class EditArticleView implements IView<EditArticleController> {
             barcode,
             showInShoppingMask,
             weighable,
-            surchargeGroup);
+            surchargeGroup,
+            shopRange);
   }
 
   void setActionTitle(String s) {

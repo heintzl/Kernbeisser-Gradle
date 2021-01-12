@@ -106,6 +106,8 @@ public enum PermissionKey {
   ARTICLE_SINGLE_DEPOSIT_WRITE(Article.class),
   ARTICLE_CONTAINER_DEPOSIT_READ(Article.class),
   ARTICLE_CONTAINER_DEPOSIT_WRITE(Article.class),
+  ARTICLE_SHOP_RANGE_READ(Article.class),
+  ARTICLE_SHOP_RANGE_WRITE(Article.class),
   CONTAINER_ID_READ(PreOrder.class),
   CONTAINER_ID_WRITE(PreOrder.class),
   CONTAINER_ITEM_READ(PreOrder.class),

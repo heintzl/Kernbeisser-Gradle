@@ -16,6 +16,7 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
   private JCheckBox onlyWithoutBarcode;
   private SearchBoxView<Article> searchBox;
   private JCheckBox showInShopArticles;
+  private JCheckBox showShopRange;
 
   @Linked private ArticleSelectorController controller;
 
@@ -29,6 +30,10 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
     return showInShopArticles != null && showInShopArticles.isSelected();
   }
 
+  boolean searchOnlyShopRange() {
+    return showShopRange != null && showShopRange.isSelected();
+  }
+
   private void createUIComponents() {
     searchBox = searchBoxController.getView();
   }
@@ -37,12 +42,14 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
   public void initialize(ArticleSelectorController controller) {
     onlyWithoutBarcode.addActionListener(e -> controller.refreshSearch());
     showInShopArticles.addActionListener(e -> controller.refreshSearch());
+    showShopRange.setSelected(true);
+    showShopRange.addActionListener(e -> controller.refreshSearch());
     chooseButton.addActionListener(e -> controller.choose());
   }
 
   @Override
   public @NotNull Dimension getSize() {
-    return new Dimension(500, 600);
+    return new Dimension(700, 600);
   }
 
   @Override

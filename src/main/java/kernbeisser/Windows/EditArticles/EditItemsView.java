@@ -12,12 +12,19 @@ public class EditItemsView implements IView<EditItemsController> {
   private JPanel main;
   private JButton choosePriceList;
   private ObjectViewView<Article> objectView;
+  private JCheckBox showShopRange;
 
   @Linked private EditItemsController controller;
+
+  boolean showOnlyShopRange() {
+    return showShopRange != null && showShopRange.isSelected();
+  }
 
   @Override
   public void initialize(EditItemsController controller) {
     choosePriceList.addActionListener(e -> controller.openPriceListSelection());
+    showShopRange.setSelected(true);
+    showShopRange.addActionListener(e -> controller.refreshList());
   }
 
   @Override
