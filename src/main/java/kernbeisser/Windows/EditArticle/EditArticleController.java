@@ -1,12 +1,14 @@
 package kernbeisser.Windows.EditArticle;
 
 import java.awt.*;
+import java.util.Arrays;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.ShopRange;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
@@ -54,6 +56,7 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
     editArticleView.setUnits(model.getAllUnits());
     editArticleView.setVATs(model.getAllVATs());
     editArticleView.setSurchargeGroup(model.getAllSurchargeGroups());
+    editArticleView.setShopRanges(Arrays.asList(ShopRange.values()));
     // after
     editArticleView.getArticleObjectForm().setSource(model.getSource());
   }
