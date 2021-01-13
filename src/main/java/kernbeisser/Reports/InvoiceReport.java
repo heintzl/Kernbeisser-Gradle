@@ -33,8 +33,7 @@ public class InvoiceReport extends Report {
   @Override
   Map<String, Object> getReportParams() {
     Collection<ShoppingItem> items = purchase.getAllItems();
-    double credit =
-        purchase.getSession().getCustomer().getUserGroup().getValue() - purchase.getSum();
+    double credit = purchase.getSession().getCustomer().getUserGroup().getValue();
     Map<String, Object> reportParams = new HashMap<>();
     reportParams.put("BonNo", purchase.getId());
     reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
