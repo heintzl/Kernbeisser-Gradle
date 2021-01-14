@@ -140,7 +140,7 @@ public class SupplyView implements IView<SupplyController> {
             Article::setContainerSize,
             AccessCheckingField.DOUBLE_FORMER);
     Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
-    Icon unselected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0xC7C7C7));
+    Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
     shoppingItems =
         new ObjectTable<ShoppingItem>(
             Column.create("Lieferant", ShoppingItem::getSupplier),
