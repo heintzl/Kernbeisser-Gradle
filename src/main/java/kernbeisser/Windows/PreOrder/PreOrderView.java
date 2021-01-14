@@ -3,6 +3,7 @@ package kernbeisser.Windows.PreOrder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.MessageFormat;
 import java.util.Collection;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -35,6 +36,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private JButton bestellungExportierenButton;
   JButton searchArticle;
 
+  private JPopupMenu popupSelectionColumn;
   @Linked private PreOrderController controller;
 
   void setInsertSectionEnabled(boolean b) {
@@ -62,8 +64,23 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   private void createUIComponents() {
+    Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
+    Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
+    JMenuItem popupSelectAll = new JMenuItem("alle Auswählen");
+    popupSelectAll.addActionListener(e -> setAllDelivered(true));
+    JMenuItem popupDeselectAll = new JMenuItem("alle Abwählen");
+    popupDeselectAll.addActionListener(e -> setAllDelivered(false));
+    popupSelectionColumn = new JPopupMenu();
+    popupSelectionColumn.add(popupSelectAll);
+    popupSelectionColumn.add(popupDeselectAll);
     preOrders =
-        new ObjectTable<>(
+        new ObjectTable<PreOrder>(
+            Column.createIcon(
+                "ausgeliefert",
+                e -> controller.isDelivered(e) ? selected : unselected,
+                controller::toggleDelivery,
+                e -> showSelectionPopup(),
+                100),
             Column.create("Benutzer", e -> e.getUser().getFullName()),
             Column.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
             Column.create(
@@ -75,11 +92,22 @@ public class PreOrderView implements IView<PreOrderController> {
                 "Netto-Preis",
                 e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())),
                 SwingConstants.RIGHT),
-            Column.create("Anzahl", PreOrder::getAmount, SwingConstants.CENTER),
+            Column.create(
+                "Anzahl", PreOrder::getAmount, SwingConstants.CENTER, true, controller::editAmount),
             Column.createIcon(
                 IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
 
     user = new AdvancedComboBox<>(User::getFullName);
+  }
+
+  private void showSelectionPopup() {
+    Point mousePosition = preOrders.getMousePosition();
+    popupSelectionColumn.show(preOrders, mousePosition.x, mousePosition.y);
+  }
+
+  void setAllDelivered(boolean allDelivered) {
+    controller.setAllDelivered(allDelivered);
+    popupSelectionColumn.setVisible(false);
   }
 
   void setPreOrders(Collection<PreOrder> preOrders) {
@@ -112,6 +140,10 @@ public class PreOrderView implements IView<PreOrderController> {
     kkNumber.setText("");
     amount.setText("1");
     kkNumber.requestFocusInWindow();
+  }
+
+  void repaintTable() {
+    preOrders.repaint();
   }
 
   @Override
@@ -170,22 +202,16 @@ public class PreOrderView implements IView<PreOrderController> {
     add.setEnabled(enabled);
   }
 
-  @Override
-  public @NotNull JComponent getContent() {
-    return main;
-  }
-
-  @Override
-  public String getTitle() {
-    return "Vorbestellung";
-  }
-
   public User getUser() {
     return (User) user.getSelectedItem();
   }
 
   public void addPreOrder(PreOrder order) {
     preOrders.add(order);
+  }
+
+  public void refreshPreOrder(PreOrder order) {
+    preOrders.replace(order, order);
   }
 
   public void noPreOrderSelected() {
@@ -236,5 +262,41 @@ public class PreOrderView implements IView<PreOrderController> {
         "Der Export der Vorbestellung wurde abgebrochen",
         "Vorbestellungsexport",
         JOptionPane.WARNING_MESSAGE);
+  }
+
+  public String inputAmount(int amount, boolean retry) {
+    String initValue = MessageFormat.format("{0, number, 0}", amount).trim();
+    String message = "";
+    String response = "";
+    if (retry) { // item is piece, first try
+      message = "Die Eingabe ist ungültig. Bitte hier eine gültige Anzahl > 0 eingeben:";
+    } else { // item is piece later try
+      message = "Bitte neue Anzahl eingeben:";
+    }
+    Tools.beep();
+    response =
+        (String)
+            JOptionPane.showInputDialog(
+                getContent(),
+                message,
+                "Anzahl anpassen",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                initValue);
+    if (response != null) {
+      response = response.trim();
+    }
+    return response;
+  }
+
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
+
+  @Override
+  public String getTitle() {
+    return "Vorbestellung";
   }
 }
