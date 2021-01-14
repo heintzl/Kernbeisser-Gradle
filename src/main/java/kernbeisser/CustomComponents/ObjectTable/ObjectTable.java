@@ -1,5 +1,6 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -49,14 +50,20 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
         new MouseAdapter() {
           @Override
           public void mouseReleased(MouseEvent e) {
-            if (getSelectedRow() == -1) {
+            T selection;
+            int row, column;
+            if (getSelectedRow() == -1 && !e.isPopupTrigger()) {
               return;
             }
-            T selection = getSelectedObject();
+            Point mousePosition = e.getPoint();
+            JTable t = (JTable)e.getSource();
+            row = t.rowAtPoint(mousePosition);
+            column = convertColumnIndexToModel(t.columnAtPoint(mousePosition));
+            selection = getFromRow(row);
             ObjectTable.this
                 .columns
-                .get(convertColumnIndexToModel(getSelectedColumn()))
-                .onAction(selection);
+                .get(convertColumnIndexToModel(column))
+                .onAction(e, selection);
             invokeSelectionListeners(selection);
           }
         });
