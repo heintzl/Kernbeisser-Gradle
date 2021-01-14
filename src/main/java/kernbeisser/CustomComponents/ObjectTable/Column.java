@@ -131,12 +131,16 @@ public interface Column<T> {
   }
 
   static <T> Column<T> createIcon(
-          String name, Function<T, Icon> iconFunction, Consumer<T> consumer) {
+      String name, Function<T, Icon> iconFunction, Consumer<T> consumer) {
     return createIcon(name, iconFunction, consumer, null, DEFAULT_ICON_WIDTH);
   }
 
   static <T> Column<T> createIcon(
-      String name, Function<T, Icon> iconFunction, Consumer<T> consumer, Consumer<T> rmConsumer, int width) {
+      String name,
+      Function<T, Icon> iconFunction,
+      Consumer<T> consumer,
+      Consumer<T> rmConsumer,
+      int width) {
     return new Column<T>() {
       @Override
       public String getName() {
