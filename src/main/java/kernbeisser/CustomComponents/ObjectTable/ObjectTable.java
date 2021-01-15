@@ -60,7 +60,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             row = t.rowAtPoint(mousePosition);
             column = convertColumnIndexToModel(t.columnAtPoint(mousePosition));
             selection = getFromRow(row);
-            ObjectTable.this.columns.get(convertColumnIndexToModel(column)).onAction(e, selection);
+            ObjectTable.this.columns.get(column).onAction(e, selection);
             invokeSelectionListeners(selection);
           }
         });
