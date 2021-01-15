@@ -4,10 +4,12 @@ import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
+import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -67,6 +69,7 @@ public class CashierShoppingMaskController
   @Override
   protected boolean commitClose() {
     if (model.isShoppingMaskOpened()) {
+      if (Purchase.getLastBonNo() <= Setting.LAST_PRINTED_BON_NR.getLongValue()) return true;
       if (!getView().commitClose()) return false;
       model.printTillRoll(this::handleResult);
     }
