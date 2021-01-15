@@ -73,6 +73,7 @@ public class Articles {
     // Integer::parseInt));
     // TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
     article.setVerified(Boolean.parseBoolean(rawArticleValues[36]));
+    article.setShopRange(ShopRange.IN_RANGE);
     return article;
   }
 

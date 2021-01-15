@@ -4,14 +4,13 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.PreOrder;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.Supplier;
-import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.ShopRange;
 import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Useful.Tools;
@@ -20,6 +19,7 @@ import kernbeisser.Windows.MVC.IModel;
 public class PreOrderModel implements IModel<PreOrderController> {
   private final EntityManager em = DBConnection.getEntityManager();
   private EntityTransaction et = em.getTransaction();
+  private final Set<PreOrder> delivery = new HashSet<>();
 
   {
     et.begin();
@@ -39,9 +39,14 @@ public class PreOrderModel implements IModel<PreOrderController> {
     em.flush();
   }
 
-  public void remove(PreOrder selected) {
+  private void removeLazy(PreOrder selected) {
     em.remove(selected);
     em.flush();
+  }
+
+  public void remove(PreOrder selected) {
+    delivery.remove(selected);
+    removeLazy(selected);
   }
 
   public Article getByBarcode(String s) {
@@ -57,6 +62,15 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public void close() {
+    delivery.forEach(
+        p -> {
+          Article article = p.getArticle();
+          if (p.getUser().equals(User.getKernbeisserUser()) && !article.isShopRange()) {
+            article.setShopRange(ShopRange.IN_RANGE);
+            em.merge(article);
+          }
+          removeLazy(p);
+        });
     em.flush();
     et.commit();
     em.close();
@@ -71,11 +85,30 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   public void printCheckList() {
     saveData();
-    PreOrderChecklist checklist = new PreOrderChecklist(getAllPreOrders());
-    checklist.sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
+    new PreOrderChecklist(getAllPreOrders())
+        .sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
   }
 
   public int exportPreOrder(Component parent) throws IOException {
     return CSVExport.exportPreOrder(parent, getAllPreOrders());
+  }
+
+  void toggleDelivery(PreOrder p) {
+    if (!delivery.remove(p)) delivery.add(p);
+  }
+
+  boolean isDelivered(PreOrder p) {
+    return delivery.contains(p);
+  }
+
+  public void setAllDelivered(boolean allDelivered) {
+    delivery.clear();
+    if (allDelivered) {
+      delivery.addAll(getAllPreOrders());
+    }
+  }
+
+  public void setAmount(PreOrder preOrder, int amount) {
+    preOrder.setAmount(amount);
   }
 }
