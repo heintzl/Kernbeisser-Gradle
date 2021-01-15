@@ -190,7 +190,7 @@ public class Article {
             Tools.tryParseInt(search) > 0
                 ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
                 : 1)
-        .setParameter("l",Tools.tryParseLong(search))
+        .setParameter("l", Tools.tryParseLong(search))
         .setParameter("s", search + "%")
         .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
         .setParameter("u", search.toUpperCase() + "%");

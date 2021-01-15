@@ -195,7 +195,6 @@ public class Tools {
     }
   }
 
-
   public static <T> void delete(Object o) {
     if (o != null) delete(o.getClass(), getId(o));
   }

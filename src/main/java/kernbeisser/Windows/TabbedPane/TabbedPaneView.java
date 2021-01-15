@@ -28,6 +28,7 @@ public class TabbedPaneView implements IView<kernbeisser.Windows.TabbedPane.Tabb
 
   void removeTab(int index) {
     tabbedPane.removeTabAt(index);
+    if(index != 0) setSelected(0);
   }
 
   public ViewContainer prepareViewContainer() {
@@ -54,6 +55,7 @@ public class TabbedPaneView implements IView<kernbeisser.Windows.TabbedPane.Tabb
                     () -> tabbedPane.setSelectedIndex(indexOf(getLoaded())))
                 .getMain());
         tabbedPane.setSelectedIndex(indexInTable);
+        controller.getView().getFocusOnInitialize().requestFocus();
       }
 
       private void close() {

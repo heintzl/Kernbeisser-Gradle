@@ -14,8 +14,7 @@ public class BarcodeCapture {
 
   private boolean currentlyCapturingBarcode = false;
   private final StringBuilder barcode = new StringBuilder();
-  @Getter
-  private final Consumer<String> barcodeConsumer;
+  @Getter private final Consumer<String> barcodeConsumer;
   private final Timer timeoutTimer =
       new Timer(
           Setting.SCANNER_TIMEOUT.getIntValue(),
@@ -29,7 +28,7 @@ public class BarcodeCapture {
               if (response != null) {
                 try {
                   getBarcodeConsumer().accept(response);
-                }catch (Throwable e){
+                } catch (Throwable e) {
                   stopChaining();
                   Main.logger.error("Barcode cmd execution failed");
                   Tools.showUnexpectedErrorWarning(e);
@@ -56,13 +55,12 @@ public class BarcodeCapture {
     this.barcodeConsumer = barcodeConsumer;
   }
 
-  public void startChaining(){
+  public void startChaining() {
     currentlyCapturingBarcode = true;
     timeoutTimer.start();
   }
 
-
-  public void stopChaining(){
+  public void stopChaining() {
     timeoutTimer.stop();
     barcode.setLength(0);
     currentlyCapturingBarcode = false;
@@ -71,7 +69,8 @@ public class BarcodeCapture {
   public boolean processKeyEvent(KeyEvent e) {
     if (this.currentlyCapturingBarcode) {
       timeoutTimer.restart();
-      if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getKeyEventValue() && e.getID() == KeyEvent.KEY_RELEASED) {
+      if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getKeyEventValue()
+          && e.getID() == KeyEvent.KEY_RELEASED) {
         timeoutTimer.stop();
         barcodeConsumer.accept(barcode.toString());
         stopChaining();

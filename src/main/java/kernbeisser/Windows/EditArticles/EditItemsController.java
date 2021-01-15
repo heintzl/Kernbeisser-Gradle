@@ -10,7 +10,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.EditArticle.EditArticleController;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
@@ -51,9 +50,13 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
 
     this.capture =
         new BarcodeCapture(
-            e -> objectViewController.getModel().openEdit(getView().traceViewContainer(),
-                Article.getByBarcode(Long.parseLong(e)),
-                objectViewController::search));
+            e ->
+                objectViewController
+                    .getModel()
+                    .openEdit(
+                        getView().traceViewContainer(),
+                        Article.getByBarcode(Long.parseLong(e)),
+                        objectViewController::search));
   }
 
   private Collection<Article> search(String query, int max) {

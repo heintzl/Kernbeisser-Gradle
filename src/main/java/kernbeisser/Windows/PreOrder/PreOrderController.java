@@ -51,7 +51,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   void add() {
     try {
       PreOrder order = obtainFromView();
-      if(order.getUser() == null){
+      if (order.getUser() == null) {
         getView().notifyNoUserSelected();
         return;
       }
@@ -128,7 +128,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   void insert(Article article) {
     if (article == null) throw new NullPointerException("cannot insert null as PreOrder");
     var view = getView();
-    if(view.getUser() == null){
+    if (view.getUser() == null) {
       getView().notifyNoUserSelected();
       return;
     }
