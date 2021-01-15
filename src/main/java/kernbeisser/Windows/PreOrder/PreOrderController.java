@@ -18,19 +18,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class PreOrderController extends Controller<PreOrderView, PreOrderModel> {
 
-  KeyCapture keyCapture;
+  private final KeyCapture keyCapture;
+  private final BarcodeCapture barcodeCapture;
 
   public PreOrderController() {
     super(new PreOrderModel());
     keyCapture = new KeyCapture();
-    PreOrderView view = getView();
-    keyCapture.add(KeyEvent.VK_F2, () -> view.fnKeyAction("2"));
-    keyCapture.add(KeyEvent.VK_F3, () -> view.fnKeyAction("3"));
-    keyCapture.add(KeyEvent.VK_F4, () -> view.fnKeyAction("4"));
-    keyCapture.add(KeyEvent.VK_F5, () -> view.fnKeyAction("5"));
-    keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
-    keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
-    keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
+    barcodeCapture = new BarcodeCapture(this::processBarcode);
   }
 
   @Override
@@ -45,11 +39,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
         pasteDataInView(model.getItemByKkNumber(view.getKkNumber()));
         return true;
       } catch (NoResultException e) {
-        noArticleFound();
+        setDefaultInput();
         return false;
       }
     } else {
-      noArticleFound();
+      setDefaultInput();
       return false;
     }
   }
@@ -57,10 +51,13 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   void add() {
     try {
       PreOrder order = obtainFromView();
-      noArticleFound();
-      getView().resetArticleNr();
+      if(order.getUser() == null){
+        getView().notifyNoUserSelected();
+        return;
+      }
       model.add(order);
       getView().addPreOrder(order);
+      setDefaultInput();
     } catch (NoResultException e) {
       getView().noItemFound();
     }
@@ -86,11 +83,12 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
-  void noArticleFound() {
+  void setDefaultInput() {
     Article empty = new Article();
     empty.setName("Kein Artikel gefunden");
     empty.setSurchargeGroup(new SurchargeGroup());
     pasteDataInView(empty);
+    getView().resetArticleNr();
   }
 
   @Override
@@ -129,12 +127,17 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   void insert(Article article) {
     if (article == null) throw new NullPointerException("cannot insert null as PreOrder");
-    PreOrder preOrder = new PreOrder();
     var view = getView();
+    if(view.getUser() == null){
+      getView().notifyNoUserSelected();
+      return;
+    }
+    PreOrder preOrder = new PreOrder();
     preOrder.setUser(view.getUser());
     preOrder.setArticle(article);
     preOrder.setAmount(view.getAmount());
     preOrder.setInfo(article.getInfo());
+
     model.add(preOrder);
     getView().addPreOrder(preOrder);
   }
@@ -147,20 +150,26 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   @Override
-  public void fillView(PreOrderView preOrderView) {
-    preOrderView.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
-    preOrderView.setUser(User.getAllUserFullNames(true));
-    preOrderView.setPreOrders(model.getAllPreOrders());
-    preOrderView.enableControls(false);
-    preOrderView.setAmount("1");
-    preOrderView.searchArticle.addActionListener(e -> openSearchWindow());
-    noArticleFound();
+  public void fillView(PreOrderView view) {
+    keyCapture.add(KeyEvent.VK_F2, () -> view.fnKeyAction("2"));
+    keyCapture.add(KeyEvent.VK_F3, () -> view.fnKeyAction("3"));
+    keyCapture.add(KeyEvent.VK_F4, () -> view.fnKeyAction("4"));
+    keyCapture.add(KeyEvent.VK_F5, () -> view.fnKeyAction("5"));
+    keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
+    keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
+    keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
+    view.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
+    view.setUser(User.getAllUserFullNames(true));
+    view.setPreOrders(model.getAllPreOrders());
+    view.enableControls(false);
+    view.setAmount("1");
+    view.searchArticle.addActionListener(e -> openSearchWindow());
+    setDefaultInput();
   }
 
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {
-    return (new BarcodeCapture(this::processBarcode).processKeyEvent(e)
-        || keyCapture.processKeyEvent(e));
+    return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
   }
 
   private void processBarcode(String s) {

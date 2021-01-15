@@ -237,4 +237,16 @@ public class PreOrderView implements IView<PreOrderController> {
         "Vorbestellungsexport",
         JOptionPane.WARNING_MESSAGE);
   }
+
+  public void notifyNoUserSelected() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Die Vorbestellung kann nicht aufgenommen werden,"
+            + "\nda der Nutzer noch nicht ausgewählt wurde."
+            + "\nBitte wählen sie zunächst einen Benutzer aus,"
+            + "\nauf dessen Namen die Vorbestellung ausgeführt werden soll.",
+        "Kein Benutzer ausgewählt",
+        JOptionPane.WARNING_MESSAGE);
+  }
 }
