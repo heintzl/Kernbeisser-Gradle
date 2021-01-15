@@ -4,9 +4,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
@@ -166,15 +171,15 @@ public class Article {
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
     return em.createQuery(
-            "select i from Article i where kbNumber = :n"
-                + " or suppliersItemNumber = :n"
-                + " or i.supplier.shortName like :s"
-                + " or i.supplier.name like :s"
-                + " or UPPER(i.name) like :ds"
-                + " or mod(barcode,:bl) = :n"
-                + " or UPPER( i.priceList.name) like :u"
-                + " order by i.name asc",
-            Article.class)
+        "select i from Article i where kbNumber = :n"
+            + " or suppliersItemNumber = :n"
+            + " or i.supplier.shortName like :s"
+            + " or i.supplier.name like :s"
+            + " or UPPER(i.name) like :ds"
+            + " or mod(barcode,:bl) = :n"
+            + " or UPPER( i.priceList.name) like :u"
+            + " order by i.name asc",
+        Article.class)
         .setParameter("n", Tools.tryParseInteger(search))
         .setParameter(
             "bl",
@@ -184,6 +189,35 @@ public class Article {
         .setParameter("s", search + "%")
         .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
         .setParameter("u", search.toUpperCase() + "%");
+  }
+
+  //implement later
+  public static javax.persistence.criteria.Predicate defaultSearchAlgorithm(EntityManager em,String search,PriceList p,boolean inShopRange){
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<Article> criteriaQuery = cb.createQuery(Article.class);
+    Root<Article> root = criteriaQuery.from(Article.class);
+    return cb.and(Tools.asAvailable(true, javax.persistence.criteria.Predicate.class,
+        () -> cb.or(
+            Tools.asAvailable(true, javax.persistence.criteria.Predicate.class,
+                () -> cb.equal(root.get("kbNumber"),Integer.parseInt(search)),
+                () -> cb.equal(root.get("suppliersItemNumber"),Integer.parseInt(search)),
+                () -> cb.like(root.get("supplier.shortName"),search+"%"),
+                () -> cb.like(root.get("supplier.name"),search + "%"),
+                () -> cb.equal(cb.upper(root.get("name")),(search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase()),
+                () -> cb.equal(cb.upper(root.get("priceList.name")),search.toUpperCase()),
+                () -> cb.equal(cb.mod(root.get("barcode"), (int) (Math.pow(10, Math.ceil(Math.log10(Integer.parseInt(search)))))),
+                    search.toUpperCase())
+            )
+        ),
+        () -> {
+          if(p == null)return null;
+          return cb.equal(root.get("priceList"),p);
+        },
+        () -> {
+          if(!inShopRange)return null;
+          return cb.isTrue(root.get("shopRange"));
+        }
+    ));
   }
 
   public static Collection<Article> defaultSearch(String search, int maxResults) {
@@ -227,8 +261,8 @@ public class Article {
   public static Article getBySuppliersItemNumber(
       Supplier supplier, int suppliersNumber, EntityManager em) {
     return em.createQuery(
-            "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
-            Article.class)
+        "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
+        Article.class)
         .setParameter("s", supplier)
         .setParameter("n", suppliersNumber)
         .getSingleResult();
@@ -244,8 +278,8 @@ public class Article {
   public Instant getLastDelivery() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     return em.createQuery(
-            "select i from ShoppingItem i where purchase.id is null and suppliersItemNumber = :k order by i.createDate desc",
-            ShoppingItem.class)
+        "select i from ShoppingItem i where purchase.id is null and suppliersItemNumber = :k order by i.createDate desc",
+        ShoppingItem.class)
         .setParameter("k", this.getSuppliersItemNumber())
         .getResultStream()
         .findFirst()
@@ -270,8 +304,8 @@ public class Article {
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier) {
     return em.createQuery(
-            "select a from Article a where supplier = :s order by abs(a.suppliersItemNumber - :sn) asc",
-            Article.class)
+        "select a from Article a where supplier = :s order by abs(a.suppliersItemNumber - :sn) asc",
+        Article.class)
         .setParameter("s", supplier)
         .setParameter("sn", suppliersItemNumber)
         .setMaxResults(1)
@@ -292,8 +326,8 @@ public class Article {
     try {
       double offerNetPrice =
           em.createQuery(
-                  "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
-                  Offer.class)
+              "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
+              Offer.class)
               .setParameter("id", id)
               .setParameter("d", Instant.now())
               .getSingleResult()

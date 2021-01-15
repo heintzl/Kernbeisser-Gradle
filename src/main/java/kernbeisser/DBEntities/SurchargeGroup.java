@@ -66,14 +66,6 @@ public class SurchargeGroup implements Serializable, Cloneable {
     return out;
   }
 
-  public static SurchargeGroup defaultForSupplier(Supplier supplier) {
-    SurchargeGroup sg = new SurchargeGroup();
-    sg.setName(supplier.getName());
-    sg.setSurcharge(supplier.getDefaultSurcharge());
-    Tools.persist(sg);
-    return sg;
-  }
-
   @Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_READ)
   public double getSurcharge() {
     if (surcharge == null) {
@@ -111,24 +103,6 @@ public class SurchargeGroup implements Serializable, Cloneable {
     return Objects.equals(id, that.id);
   }
 
-  public static SurchargeGroup undefined() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      return em.createQuery(
-              "select s from SurchargeGroup s where s.name = 'UNDEFINED'", SurchargeGroup.class)
-          .getSingleResult();
-    } catch (NoResultException e) {
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      SurchargeGroup surchargeGroup = new SurchargeGroup();
-      surchargeGroup.setName("UNDEFINED");
-      em.persist(surchargeGroup);
-      em.flush();
-      et.commit();
-      return surchargeGroup;
-    }
-  }
-
   public String pathString() {
     if (parent == null) return name;
     return parent.pathString() + ":" + name;
@@ -157,5 +131,9 @@ public class SurchargeGroup implements Serializable, Cloneable {
         };
     head.setName(s.getName());
     return new CachedNode<>(null, head, SurchargeGroup::getSubGroups);
+  }
+
+  public static String defaultListNameQualifier(Supplier s){
+    return "@"+s.getName()+" standart Aufschlag";
   }
 }

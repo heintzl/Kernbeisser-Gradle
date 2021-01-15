@@ -64,6 +64,8 @@ public enum PermissionKey {
   ARTICLE_LOSS_WRITE(Article.class),
   ARTICLE_INFO_READ(Article.class),
   ARTICLE_INFO_WRITE(Article.class),
+  ARTICLE_SHOP_RANGE_READ(Article.class),
+  ARTICLE_SHOP_RANGE_WRITE(Article.class),
   ARTICLE_SOLD_READ(Article.class),
   ARTICLE_SOLD_WRITE(Article.class),
   ARTICLE_OFFERS_READ(Article.class),

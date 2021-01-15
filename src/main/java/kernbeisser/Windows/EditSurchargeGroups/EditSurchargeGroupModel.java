@@ -32,16 +32,27 @@ public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupControl
         .getResultList();
   }
 
+
+  //tries to find another
   public void autoLinkAllInSurchargeGroup(int surchargeGroupId) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
+    SurchargeGroup surchargeGroup = em.find(SurchargeGroup.class, surchargeGroupId);
     List<Article> allArticles =
-        em.createQuery("select a from Article a", Article.class).getResultList();
-    CatalogDataInterpreter.autoLinkArticle(
-        allArticles, em.find(SurchargeGroup.class, surchargeGroupId));
-    allArticles.forEach(em::persist);
-    em.flush();
-    et.commit();
+        em.createQuery("select a from Article a where supplier = :sid", Article.class)
+            .setParameter("sid",surchargeGroup.getSupplier())
+            .getResultList();
+    if (!allArticles.stream().allMatch(e -> e.getSurchargeGroup().equals(surchargeGroup))) {
+      CatalogDataInterpreter.autoLinkArticle(
+          allArticles, surchargeGroup);
+      allArticles.forEach(em::persist);
+      em.flush();
+      et.commit();
+    } else {
+      et.rollback();
+      throw new UnsupportedOperationException("the supplier: " + surchargeGroup.getSupplier()
+          + " doesn't have any optional surcharge groups");
+    }
   }
 }

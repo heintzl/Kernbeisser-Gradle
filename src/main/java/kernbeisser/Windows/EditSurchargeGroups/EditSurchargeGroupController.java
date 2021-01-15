@@ -75,8 +75,12 @@ public class EditSurchargeGroupController
       } catch (ConstraintViolationException exception) {
         getView().constraintViolationException();
         if (!alreadyVerified && getView().shouldBecomeAutoLinked()) {
-          model.autoLinkAllInSurchargeGroup(getView().getObjectForm().getOriginal().getId());
-          removeSurchargeGroup(true);
+          try {
+            model.autoLinkAllInSurchargeGroup(getView().getObjectForm().getOriginal().getId());
+            removeSurchargeGroup(true);
+          }catch (UnsupportedOperationException e){
+            Tools.showUnexpectedErrorWarning(e);
+          }
         }
       } catch (Throwable throwable) {
         Tools.showUnexpectedErrorWarning(throwable);
