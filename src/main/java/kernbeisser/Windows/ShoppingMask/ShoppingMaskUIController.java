@@ -246,7 +246,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         customArticle.setName(getView().getItemName());
         customArticle.setSupplier(getView().getSupplier());
         customArticle.setVat(getView().getVat());
-        customArticle.setSurchargeGroup(SurchargeGroup.undefined());
+        customArticle.setSurchargeGroup(getView().getSupplier().getDefaultSurchargeGroup());
         customArticle.setNetPrice(
             getView().isPreordered()
                 ? getView().getNetPrice()

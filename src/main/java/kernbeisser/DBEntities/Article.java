@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
@@ -190,6 +193,49 @@ public class Article {
         .setParameter("s", search + "%")
         .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
         .setParameter("u", search.toUpperCase() + "%");
+  }
+
+  // implement later
+  public static javax.persistence.criteria.Predicate defaultSearchAlgorithm(
+      EntityManager em, String search, PriceList p, boolean inShopRange) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<Article> criteriaQuery = cb.createQuery(Article.class);
+    Root<Article> root = criteriaQuery.from(Article.class);
+    return cb.and(
+        Tools.asAvailable(
+            true,
+            javax.persistence.criteria.Predicate.class,
+            () ->
+                cb.or(
+                    Tools.asAvailable(
+                        true,
+                        javax.persistence.criteria.Predicate.class,
+                        () -> cb.equal(root.get("kbNumber"), Integer.parseInt(search)),
+                        () -> cb.equal(root.get("suppliersItemNumber"), Integer.parseInt(search)),
+                        () -> cb.like(root.get("supplier.shortName"), search + "%"),
+                        () -> cb.like(root.get("supplier.name"), search + "%"),
+                        () ->
+                            cb.equal(
+                                cb.upper(root.get("name")),
+                                (search.length() > 3 ? "%" + search + "%" : search + "%")
+                                    .toUpperCase()),
+                        () -> cb.equal(cb.upper(root.get("priceList.name")), search.toUpperCase()),
+                        () ->
+                            cb.equal(
+                                cb.mod(
+                                    root.get("barcode"),
+                                    (int)
+                                        (Math.pow(
+                                            10, Math.ceil(Math.log10(Integer.parseInt(search)))))),
+                                search.toUpperCase()))),
+            () -> {
+              if (p == null) return null;
+              return cb.equal(root.get("priceList"), p);
+            },
+            () -> {
+              if (!inShopRange) return null;
+              return cb.isTrue(root.get("shopRange"));
+            }));
   }
 
   public static Collection<Article> defaultSearch(String search, int maxResults) {

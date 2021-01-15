@@ -60,7 +60,8 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
             .setParameter("s", Supplier.getKKSupplier())
             .getResultList();
     CatalogDataInterpreter.linkArticles(articleBases, kornkraftGroupHashMap);
-    CatalogDataInterpreter.autoLinkArticle(articleBases);
+    CatalogDataInterpreter.autoLinkArticle(
+        articleBases, Supplier.getKKSupplier().getDefaultSurchargeGroup(em));
     articleBases.forEach(em::persist);
     em.flush();
     et.commit();

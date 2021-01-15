@@ -25,8 +25,8 @@ public class Articles {
       HashSet<Long> barcodes,
       HashSet<String> names,
       HashMap<String, Supplier> suppliers,
-      HashMap<String, PriceList> priceLists,
-      SurchargeGroup surchargeGroup)
+      HashMap<Supplier, SurchargeGroup> defaultGroup,
+      HashMap<String, PriceList> priceLists)
       throws CannotParseException {
     Article article = new Article();
     article.setName(rawArticleValues[1].replace("%", "Prozent"));
@@ -40,6 +40,7 @@ public class Articles {
     article.setAmount(Integer.parseInt(rawArticleValues[3]));
     article.setNetPrice(Integer.parseInt(rawArticleValues[4]) / 100.);
     article.setSupplier(suppliers.get(rawArticleValues[5].replace("GRE", "GR")));
+    article.setSurchargeGroup(defaultGroup.get(article.getSupplier()));
     try {
       Long ib = Long.parseLong(rawArticleValues[6]);
       if (!barcodes.contains(ib)) {
@@ -72,7 +73,6 @@ public class Articles {
     // Integer::parseInt));
     // TODO: article.setInvPrice(Integer.parseInt(columns[30])/100.);
     article.setVerified(Boolean.parseBoolean(rawArticleValues[36]));
-    article.setSurchargeGroup(surchargeGroup);
     article.setShopRange(ShopRange.IN_RANGE);
     return article;
   }
