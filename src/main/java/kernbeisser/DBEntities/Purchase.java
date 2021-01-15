@@ -99,8 +99,8 @@ public class Purchase {
   public static long getLastBonNo() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
-      Object result = em.createQuery("select max(id) from Purchase p").getSingleResult();
-      return (result == null ? -1 : (long) result);
+      Long result = em.createQuery("select max(id) from Purchase p", Long.class).getSingleResult();
+      return (result == null ? -1 : result);
     } catch (NoResultException e) {
       return -1;
     }

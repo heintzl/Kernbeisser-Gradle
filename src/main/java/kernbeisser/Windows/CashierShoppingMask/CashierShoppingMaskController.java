@@ -68,16 +68,21 @@ public class CashierShoppingMaskController
 
   @Override
   protected boolean commitClose() {
-    if (model.isShoppingMaskOpened()) {
-      if (Purchase.getLastBonNo() <= Setting.LAST_PRINTED_BON_NR.getLongValue()) return true;
-      if (!getView().commitClose()) return false;
-      model.printTillRoll(this::handleResult);
-    }
+    if (Purchase.getLastBonNo() <= Setting.LAST_PRINTED_BON_NR.getLongValue()) return true;
+    if (!getView().commitClose()) return false;
+    model.printTillRoll(this::handleResult);
     return true;
   }
 
   private void handleResult(Boolean b) {
-    // TODO: IDK really know it
+    if (!b) {
+      long missedBons = Purchase.getLastBonNo() - Setting.LAST_PRINTED_BON_NR.getLongValue();
+      if (missedBons > 20) {
+        getView().messageDoPanic(missedBons);
+      } else {
+        getView().messageDontPanic();
+      }
+    }
   }
 
   public SearchBoxView<User> getSearchBoxView() {

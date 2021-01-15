@@ -2,14 +2,10 @@ package kernbeisser.Windows.CashierShoppingMask;
 
 import java.util.Collection;
 import java.util.function.Consumer;
-import javax.persistence.EntityManager;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Reports.AccountingReport;
-import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Data;
 
@@ -19,41 +15,16 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
     return User.defaultSearch(searchQuery, 500);
   }
 
-  boolean isShoppingMaskOpened() {
-    long from = Setting.LAST_PRINTED_BON_NR.getLongValue();
-    long id = getLastAssistedPurchaseId();
-    return (from < id);
-  }
-
   void printTillRoll(Consumer<Boolean> resultConsumer) {
     long from = Setting.LAST_PRINTED_BON_NR.getLongValue();
-    long id = getLastAssistedPurchaseId();
-    if (from == id) {
-      resultConsumer.accept(false);
-      return;
-    }
-    Setting.LAST_PRINTED_BON_NR.changeValue(id);
+    long id = Purchase.getLastBonNo();
     AccountingReport accountingReportManager = new AccountingReport(from + 1, id, false);
-    accountingReportManager.exportPdf(
+    accountingReportManager.sendToPrinter(
         "Ladendienst wird gedruckt",
         (e) -> {
-          Setting.LAST_PRINTED_BON_NR.changeValue(from);
           resultConsumer.accept(false);
-          Tools.showUnexpectedErrorWarning(e);
         });
     resultConsumer.accept(true);
+    Setting.LAST_PRINTED_BON_NR.setValue(id);
   };
-
-  long getLastAssistedPurchaseId() {
-    EntityManager em = DBConnection.getEntityManager();
-    Long id =
-        em.createQuery(
-                "select max(p.id) from Purchase p where p.session.seller.id = :lid and p.session.sessionType = :t",
-                Long.class)
-            .setParameter("lid", LogInModel.getLoggedIn().getId())
-            .setParameter("t", SaleSessionType.ASSISTED)
-            .getSingleResult();
-    em.close();
-    return id == null ? Long.MAX_VALUE : id;
-  }
 }
