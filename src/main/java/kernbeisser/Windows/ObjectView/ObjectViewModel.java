@@ -22,7 +22,7 @@ public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
     this.copyValuesToAdd = copyValuesToAdd;
   }
 
-  ViewContainer openEdit(ViewContainer window, T selected, CloseEvent closeEvent) {
+  public ViewContainer openEdit(ViewContainer window, T selected, CloseEvent closeEvent) {
     return maskLoader
         .accept(selected, Mode.EDIT)
         .withCloseEvent(closeEvent)
@@ -33,7 +33,7 @@ public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
     return itemSupplier.search(search, max);
   }
 
-  ViewContainer openAdd(ViewContainer window, T selected, CloseEvent closeEvent) {
+  public ViewContainer openAdd(ViewContainer window, T selected, CloseEvent closeEvent) {
     return maskLoader
         .accept(copyValuesToAdd ? selected : null, Mode.ADD)
         .withCloseEvent(closeEvent)

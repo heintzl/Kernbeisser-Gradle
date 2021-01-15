@@ -179,19 +179,19 @@ public class Tools {
     return t;
   }
 
-  public static long tryParseLong(String s) {
-    try {
-      return Long.parseLong(s);
-    } catch (NumberFormatException e) {
-      return 0;
-    }
-  }
-
-  public static int tryParseInteger(String s) {
+  public static int tryParseInt(String s) {
     try {
       return Integer.parseInt(s);
     } catch (NumberFormatException e) {
       return Integer.MIN_VALUE;
+    }
+  }
+
+  public static long tryParseLong(String s) {
+    try {
+      return Long.parseLong(s);
+    } catch (NumberFormatException e) {
+      return Long.MIN_VALUE;
     }
   }
 

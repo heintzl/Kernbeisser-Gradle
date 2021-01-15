@@ -264,6 +264,19 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
+
+  public void notifyNoUserSelected() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Die Vorbestellung kann nicht aufgenommen werden,"
+            + "\nda der Nutzer noch nicht ausgewählt wurde."
+            + "\nBitte wählen sie zunächst einen Benutzer aus,"
+            + "\nauf dessen Namen die Vorbestellung ausgeführt werden soll.",
+        "Kein Benutzer ausgewählt",
+        JOptionPane.WARNING_MESSAGE);
+   }
+
   public String inputAmount(int amount, boolean retry) {
     String initValue = MessageFormat.format("{0, number, 0}", amount).trim();
     String message = "";

@@ -3,6 +3,7 @@ package kernbeisser.Windows.PreOrder;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.EntityManager;
@@ -29,6 +30,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public void add(PreOrder preOrder) {
+    Objects.requireNonNull(preOrder.getUser());
     if (preOrder.getUser().equals(User.getKernbeisserUser())) {
       Article a = em.find(Article.class, preOrder.getArticle().getId());
       em.persist(a);

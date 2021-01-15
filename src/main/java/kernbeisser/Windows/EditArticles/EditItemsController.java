@@ -50,10 +50,13 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
 
     this.capture =
         new BarcodeCapture(
-            e -> {
-              objectViewController.setSearch(e);
-              objectViewController.search();
-            });
+            e ->
+                objectViewController
+                    .getModel()
+                    .openEdit(
+                        getView().traceViewContainer(),
+                        Article.getByBarcode(Long.parseLong(e)),
+                        objectViewController::search));
   }
 
   private Collection<Article> search(String query, int max) {
