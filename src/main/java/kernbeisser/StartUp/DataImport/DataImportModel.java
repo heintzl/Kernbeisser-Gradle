@@ -94,6 +94,9 @@ public class DataImportModel implements IModel<DataImportController> {
           supplier.setLocation(columns[6]);
           supplier.setKeeper(columns[7]);
           supplier.setDefaultSurcharge(Integer.parseInt(columns[8]) / 100.);
+          SurchargeGroup surchargeGroup = new SurchargeGroup();
+          surchargeGroup.setSupplier(supplier);
+          surchargeGroup.setName(supplier.getName() + " standart Aufschlag");
           em.persist(supplier);
         });
     progress.accept(2);
@@ -182,7 +185,8 @@ public class DataImportModel implements IModel<DataImportController> {
             .setParameter("s", Supplier.getKKSupplier())
             .getResultList();
     CatalogDataInterpreter.linkArticles(articles, surchargeGroupHashMap);
-    CatalogDataInterpreter.autoLinkArticle(articles);
+    CatalogDataInterpreter.autoLinkArticle(
+        articles, Supplier.getKKSupplier().getDefaultSurchargeGroup(em));
     articles.forEach(em::persist);
     em.flush();
     et.commit();
@@ -202,17 +206,18 @@ public class DataImportModel implements IModel<DataImportController> {
     HashSet<String> names = new HashSet<>();
     HashMap<String, PriceList> priceListHashMap = new HashMap<>();
     HashMap<String, Supplier> suppliers = new HashMap<>();
+    HashMap<Supplier, SurchargeGroup> defaultGroup = new HashMap<>();
     HashMap<Article, Collection<Offer>> articleCollectionHashMap = new HashMap<>(5000);
     Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
     Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
+    suppliers.values().forEach(e -> defaultGroup.put(e, e.getDefaultSurchargeGroup(em)));
     ErrorCollector errorCollector = new ErrorCollector();
-    SurchargeGroup undef = SurchargeGroup.undefined();
     f.forEach(
         e -> {
           String[] columns = e.split(";");
           try {
             articleCollectionHashMap.put(
-                Articles.parse(columns, barcode, names, suppliers, priceListHashMap, undef),
+                Articles.parse(columns, barcode, names, suppliers, defaultGroup, priceListHashMap),
                 Articles.extractOffers(columns));
           } catch (CannotParseException ex) {
             errorCollector.collect(ex);

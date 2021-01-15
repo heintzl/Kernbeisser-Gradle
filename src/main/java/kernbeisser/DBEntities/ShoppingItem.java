@@ -178,7 +178,8 @@ public class ShoppingItem implements Serializable {
     }
     this.surcharge =
         (supplier == null
-                ? SurchargeGroup.undefined().getSurcharge()
+                // is unsafe call
+                ? Supplier.getKKSupplier().getDefaultSurchargeGroup().getSurcharge()
                 : article.getSurchargeGroup().getSurcharge())
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
     this.discount = discount;
@@ -246,7 +247,7 @@ public class ShoppingItem implements Serializable {
       article.setMetricUnits(MetricUnits.NONE);
       article.setVat(vat);
       article.setSupplier(supplier);
-      article.setSurchargeGroup(SurchargeGroup.defaultForSupplier(supplier));
+      article.setSurchargeGroup(supplier.getDefaultSurchargeGroup(em));
       em.persist(article);
       em.flush();
       et.commit();

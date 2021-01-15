@@ -64,7 +64,7 @@ public class CatalogMergeSession {
       Collection<String> source, MappedDifferences... differences) {
     // loads all constants to speedup operations
     Supplier kkSupplier = Supplier.getKKSupplier();
-    SurchargeGroup undefined = SurchargeGroup.undefined();
+    SurchargeGroup kkDefaultSurchargeGroup = kkSupplier.getDefaultSurchargeGroup();
     PriceList coveredIntake = PriceList.getCoveredIntakePriceList();
 
     // loads the current state of the articles into the cache
@@ -111,7 +111,7 @@ public class CatalogMergeSession {
                 if (current == null) {
                   collected.add(
                       parseArticle(
-                          createNewBase(kkSupplier, coveredIntake, undefined),
+                          createNewBase(kkSupplier, coveredIntake, kkDefaultSurchargeGroup),
                           deposit,
                           kkSupplier,
                           columns));

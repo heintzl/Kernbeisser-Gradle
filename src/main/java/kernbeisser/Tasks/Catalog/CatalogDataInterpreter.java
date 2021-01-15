@@ -83,10 +83,6 @@ public class CatalogDataInterpreter {
     }
   }
 
-  public static void autoLinkArticle(List<Article> articleBases) {
-    autoLinkArticle(articleBases, SurchargeGroup.undefined());
-  }
-
   public static void autoLinkArticle(List<Article> articleBases, SurchargeGroup undef) {
     Article last = findNext(0, articleBases, undef);
     Article next = last;

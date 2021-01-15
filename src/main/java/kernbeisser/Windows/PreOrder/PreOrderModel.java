@@ -10,6 +10,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Useful.Tools;
@@ -28,6 +29,10 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public void add(PreOrder preOrder) {
+    if (preOrder.getUser().equals(User.getKernbeisserUser())) {
+      Article a = em.find(Article.class, preOrder.getArticle().getId());
+      em.persist(a);
+    }
     em.persist(preOrder);
     em.flush();
   }
