@@ -29,7 +29,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public void add(PreOrder preOrder) {
-    if(preOrder.getUser().equals(User.getKernbeisserUser())) {
+    if (preOrder.getUser().equals(User.getKernbeisserUser())) {
       Article a = em.find(Article.class, preOrder.getArticle().getId());
       em.persist(a);
     }

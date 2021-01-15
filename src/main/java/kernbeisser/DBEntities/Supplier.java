@@ -89,16 +89,21 @@ public class Supplier implements Serializable {
     return getDefaultSurchargeGroup(em);
   }
 
-  public SurchargeGroup getDefaultSurchargeGroup(EntityManager em){
+  public SurchargeGroup getDefaultSurchargeGroup(EntityManager em) {
     try {
-      return em.createQuery("select sg from SurchargeGroup sg where sg.parent = NULL and sg.supplier = :s and name = :n",SurchargeGroup.class).setParameter("s",this).setParameter("n",SurchargeGroup.defaultListNameQualifier(this)).getSingleResult();
-    }catch (NoResultException e){
+      return em.createQuery(
+              "select sg from SurchargeGroup sg where sg.parent = NULL and sg.supplier = :s and name = :n",
+              SurchargeGroup.class)
+          .setParameter("s", this)
+          .setParameter("n", SurchargeGroup.defaultListNameQualifier(this))
+          .getSingleResult();
+    } catch (NoResultException e) {
       SurchargeGroup defaultGroup = new SurchargeGroup();
       defaultGroup.setSupplier(this);
       defaultGroup.setName(SurchargeGroup.defaultListNameQualifier(this));
       if (em.isJoinedToTransaction()) {
         em.persist(defaultGroup);
-      }else {
+      } else {
         EntityTransaction et = em.getTransaction();
         et.begin();
         em.persist(defaultGroup);

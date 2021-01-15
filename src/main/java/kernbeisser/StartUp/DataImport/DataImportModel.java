@@ -185,7 +185,8 @@ public class DataImportModel implements IModel<DataImportController> {
             .setParameter("s", Supplier.getKKSupplier())
             .getResultList();
     CatalogDataInterpreter.linkArticles(articles, surchargeGroupHashMap);
-    CatalogDataInterpreter.autoLinkArticle(articles,Supplier.getKKSupplier().getDefaultSurchargeGroup(em));
+    CatalogDataInterpreter.autoLinkArticle(
+        articles, Supplier.getKKSupplier().getDefaultSurchargeGroup(em));
     articles.forEach(em::persist);
     em.flush();
     et.commit();
@@ -205,18 +206,18 @@ public class DataImportModel implements IModel<DataImportController> {
     HashSet<String> names = new HashSet<>();
     HashMap<String, PriceList> priceListHashMap = new HashMap<>();
     HashMap<String, Supplier> suppliers = new HashMap<>();
-    HashMap<Supplier,SurchargeGroup> defaultGroup = new HashMap<>();
+    HashMap<Supplier, SurchargeGroup> defaultGroup = new HashMap<>();
     HashMap<Article, Collection<Offer>> articleCollectionHashMap = new HashMap<>(5000);
     Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
     Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
-    suppliers.values().forEach(e -> defaultGroup.put(e,e.getDefaultSurchargeGroup(em)));
+    suppliers.values().forEach(e -> defaultGroup.put(e, e.getDefaultSurchargeGroup(em)));
     ErrorCollector errorCollector = new ErrorCollector();
     f.forEach(
         e -> {
           String[] columns = e.split(";");
           try {
             articleCollectionHashMap.put(
-                Articles.parse(columns, barcode, names, suppliers,defaultGroup, priceListHashMap),
+                Articles.parse(columns, barcode, names, suppliers, defaultGroup, priceListHashMap),
                 Articles.extractOffers(columns));
           } catch (CannotParseException ex) {
             errorCollector.collect(ex);

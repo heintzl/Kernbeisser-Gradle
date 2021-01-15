@@ -866,15 +866,16 @@ public class Tools {
   }
 
   @SafeVarargs
-  public static <T> T[] asAvailable(boolean filterNull,Class<T> clazz,Supplier<T> ... values){
-    T[] out = (T[]) Array.newInstance(clazz,values.length);
+  public static <T> T[] asAvailable(boolean filterNull, Class<T> clazz, Supplier<T>... values) {
+    T[] out = (T[]) Array.newInstance(clazz, values.length);
     int fillingIndex = 0;
     for (Supplier<T> value : values) {
       try {
         out[fillingIndex++] = filterNull ? Objects.requireNonNull(value.get()) : value.get();
-      }catch (Throwable ignored){}
+      } catch (Throwable ignored) {
+      }
     }
-    return Arrays.copyOf(out,fillingIndex);
+    return Arrays.copyOf(out, fillingIndex);
   }
 
   public static int min(int a, int b, int c) {

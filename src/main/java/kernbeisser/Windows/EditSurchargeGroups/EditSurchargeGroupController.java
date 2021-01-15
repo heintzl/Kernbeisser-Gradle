@@ -78,7 +78,7 @@ public class EditSurchargeGroupController
           try {
             model.autoLinkAllInSurchargeGroup(getView().getObjectForm().getOriginal().getId());
             removeSurchargeGroup(true);
-          }catch (UnsupportedOperationException e){
+          } catch (UnsupportedOperationException e) {
             Tools.showUnexpectedErrorWarning(e);
           }
         }

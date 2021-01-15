@@ -133,7 +133,7 @@ public class SurchargeGroup implements Serializable, Cloneable {
     return new CachedNode<>(null, head, SurchargeGroup::getSubGroups);
   }
 
-  public static String defaultListNameQualifier(Supplier s){
-    return "@"+s.getName()+" standart Aufschlag";
+  public static String defaultListNameQualifier(Supplier s) {
+    return "@" + s.getName() + " standart Aufschlag";
   }
 }

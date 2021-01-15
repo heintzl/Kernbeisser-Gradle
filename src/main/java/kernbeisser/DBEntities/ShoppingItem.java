@@ -178,7 +178,7 @@ public class ShoppingItem implements Serializable {
     }
     this.surcharge =
         (supplier == null
-            //is unsafe call
+                // is unsafe call
                 ? Supplier.getKKSupplier().getDefaultSurchargeGroup().getSurcharge()
                 : article.getSurchargeGroup().getSurcharge())
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
