@@ -16,6 +16,7 @@ import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -50,7 +51,7 @@ public class EditArticleView implements IView<EditArticleController> {
   private kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox<Article, VAT> vat;
   private JPanel main;
   private AccessCheckingComboBox<Article, SurchargeGroup> surchargeGroup;
-  private kernbeisser.CustomComponents.AccessChecking.AccessCheckBox<Article> shopRange;
+  private AccessCheckingComboBox<Article, ShopRange> shopRange;
 
   private ObjectForm<Article> articleObjectForm;
 
@@ -106,7 +107,9 @@ public class EditArticleView implements IView<EditArticleController> {
               return e.getSurchargeGroup();
             },
             Article::setSurchargeGroup);
-    shopRange = new AccessCheckBox<>(Article::isShopRange, Article::setShopRange);
+    shopRange =
+        new AccessCheckingComboBox<Article, ShopRange>(
+            Article::getShopRange, Article::setShopRange);
   }
 
   void setUnits(MetricUnits[] metricUnits) {
@@ -126,6 +129,11 @@ public class EditArticleView implements IView<EditArticleController> {
   void setSuppliers(Collection<Supplier> suppliers) {
     supplier.removeAllItems();
     suppliers.forEach(supplier::addItem);
+  }
+
+  void setShopRanges(Collection<ShopRange> shopRanges) {
+    shopRange.removeAllItems();
+    shopRanges.forEach(shopRange::addItem);
   }
 
   void setSurchargeGroup(Collection<SurchargeGroup> surchargeGroups) {

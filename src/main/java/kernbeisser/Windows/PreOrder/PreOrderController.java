@@ -101,7 +101,6 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   void pasteDataInView(Article articleKornkraft) {
     var view = getView();
-    // view.setAmount(String.valueOf(1));
     double containerSize = articleKornkraft.getContainerSize();
     view.setContainerSize(new DecimalFormat("0.###").format(containerSize));
     view.setNetPrice(PreOrderModel.containerNetPrice(articleKornkraft));
@@ -140,7 +139,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void openSearchWindow() {
-    new ArticleSelectorController(this::pasteDataInView)
+    new ArticleSelectorController(
+            p -> {
+              pasteDataInView(p);
+              getView().setKkNumber(p.getSuppliersItemNumber());
+            })
         .withCloseEvent(() -> getView().searchArticle.setEnabled(true))
         .openIn(new SubWindow(getView().traceViewContainer()));
     getView().searchArticle.setEnabled(false);
@@ -186,5 +189,42 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     } catch (IOException e) {
       view.messageExportError(e);
     }
+  }
+
+  void toggleDelivery(PreOrder p) {
+    model.toggleDelivery(p);
+    getView().repaintTable();
+  }
+
+  boolean isDelivered(PreOrder p) {
+    return model.isDelivered(p);
+  }
+
+  void setAllDelivered(boolean allDelivered) {
+    model.setAllDelivered(allDelivered);
+    getView().repaintTable();
+  }
+
+  public void editAmount(PreOrder preOrder) {
+    String response = getView().inputAmount(preOrder.getAmount(), false);
+    boolean exit = false;
+    do {
+      if (response == null || response.equals("")) {
+        return;
+      } else {
+        try {
+          int alteredAmount = Integer.parseInt(response);
+          if (alteredAmount > 0) {
+            model.setAmount(preOrder, alteredAmount);
+            getView().refreshPreOrder(preOrder);
+            exit = true;
+          } else {
+            throw (new NumberFormatException());
+          }
+        } catch (NumberFormatException exception) {
+          response = getView().inputAmount(preOrder.getAmount(), true);
+        }
+      }
+    } while (!exit);
   }
 }

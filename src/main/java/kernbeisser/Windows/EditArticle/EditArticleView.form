@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="20" y="20" width="554" height="669"/>
+      <xy x="20" y="20" width="554" height="678"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -228,13 +228,11 @@
                   </component>
                 </children>
               </grid>
-              <component id="a7a2f" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckBox" binding="shopRange" custom-create="true">
+              <component id="66055" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingComboBox" binding="shopRange" custom-create="true">
                 <constraints>
                   <grid row="18" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
-                <properties>
-                  <text value="Im Sortiment"/>
-                </properties>
+                <properties/>
               </component>
             </children>
           </grid>

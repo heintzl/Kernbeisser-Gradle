@@ -13,6 +13,7 @@ import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Proxy;
@@ -164,7 +165,7 @@ public class Article {
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_WRITE)})
-  private boolean shopRange;
+  private ShopRange shopRange;
 
   @Getter @Setter private Double obsoleteSurcharge;
 
@@ -257,19 +258,21 @@ public class Article {
     return Proxy.getSecureInstances(out);
   }
 
+  public boolean isShopRange() {
+    return shopRange == ShopRange.IN_RANGE || shopRange == ShopRange.PERMANENT_RANGE;
+  }
+
   public static Article getByKbNumber(int kbNumber, boolean filterShopRange) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
-      return em.createQuery(
-              "select i from Article i where kbNumber = :n"
-                  + (filterShopRange ? " and shopRange = 1" : ""),
-              Article.class)
+      return em.createQuery("select i from Article i where kbNumber = :n", Article.class)
           .setParameter("n", kbNumber)
-          .getSingleResult();
+          .getResultStream()
+          .filter(a -> !(filterShopRange && !a.isShopRange()))
+          .findAny()
+          .orElse(null);
     } catch (NoResultException e) {
       return null;
-    } finally {
-      em.close();
     }
   }
 
