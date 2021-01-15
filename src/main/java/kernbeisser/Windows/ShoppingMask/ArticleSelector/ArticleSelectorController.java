@@ -35,17 +35,22 @@ public class ArticleSelectorController
   }
 
   private Collection<Article> search(String query, int max) {
-    getView();
+    ArticleSelectorView view = getView();
     return Article.getDefaultAll(
         query,
-        createFilter(getView().searchOnlyWithoutBarcode(), getView().searchOnlyShowInShop()),
+        createFilter(
+            view.searchOnlyWithoutBarcode(),
+            view.searchOnlyShowInShop(),
+            view.searchOnlyShopRange()),
         max);
   }
 
-  private Predicate<Article> createFilter(boolean filterBarcode, boolean filterShowInShoppingCart) {
+  private Predicate<Article> createFilter(
+      boolean filterBarcode, boolean filterShowInShoppingCart, boolean filterShopRange) {
     return e ->
         !(filterBarcode && e.getBarcode() != null)
-            && !(filterShowInShoppingCart && !e.isShowInShop());
+            && !(filterShowInShoppingCart && !e.isShowInShop())
+            && !(filterShopRange && !e.isShopRange());
   }
 
   void refreshSearch() {

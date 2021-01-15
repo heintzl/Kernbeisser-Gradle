@@ -4,6 +4,7 @@ import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
@@ -31,7 +32,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
         new ObjectViewController<>(
             "Artikel bearbeiten",
             EditArticleController::new,
-            Article::defaultSearch,
+            this::search,
             true,
             Column.create("Name", Article::getName, LEFT),
             Column.create(
@@ -55,6 +56,15 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             });
   }
 
+  private Collection<Article> search(String query, int max) {
+    return Article.getDefaultAll(
+        query, e -> (!(getView().showOnlyShopRange() && !e.isShopRange())), max);
+  }
+
+  void refreshList() {
+    objectViewController.search();
+  }
+
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {
     return capture.processKeyEvent(e);
@@ -69,6 +79,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
   @Override
   public void fillView(EditItemsView editItemsView) {
     objectViewController.setSearch("");
+    refreshList();
   }
 
   public ObjectViewView<Article> getObjectView() {

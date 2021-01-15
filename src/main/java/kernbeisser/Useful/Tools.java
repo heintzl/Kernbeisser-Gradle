@@ -885,4 +885,8 @@ public class Tools {
   public static int costOfSubstitution(char a, char b) {
     return a == b ? 0 : 1;
   }
+
+  public static double roundCurrency(double value) {
+    return Math.round(100. * value) / 100.;
+  }
 }

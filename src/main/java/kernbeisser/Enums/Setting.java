@@ -8,7 +8,7 @@ import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
 
 public enum Setting {
-  DB_VERSION("0.2.4"),
+  DB_VERSION("0.9.0"),
   DB_INITIALIZED("false"),
   VAT_LOW("0.07") {
     @Override

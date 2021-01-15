@@ -76,7 +76,7 @@ public class Users {
   }
 
   public static double getValue(String[] rawData) {
-    return Double.parseDouble(rawData[23].replace(",", "."));
+    return Tools.roundCurrency(Double.parseDouble(rawData[23].replace(",", ".")));
   }
 
   private static void generateUsername(HashSet<String> usernames, User user) {

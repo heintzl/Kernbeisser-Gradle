@@ -161,6 +161,11 @@ public class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
   private SurchargeGroup surchargeGroup;
 
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_WRITE)})
+  private boolean shopRange;
+
   @Getter @Setter private Double obsoleteSurcharge;
 
   public static List<Article> getAll(String condition) {
@@ -252,10 +257,13 @@ public class Article {
     return Proxy.getSecureInstances(out);
   }
 
-  public static Article getByKbNumber(int kbNumber) {
+  public static Article getByKbNumber(int kbNumber, boolean filterShopRange) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
-      return em.createQuery("select i from Article i where kbNumber = :n", Article.class)
+      return em.createQuery(
+              "select i from Article i where kbNumber = :n"
+                  + (filterShopRange ? " and shopRange = 1" : ""),
+              Article.class)
           .setParameter("n", kbNumber)
           .getSingleResult();
     } catch (NoResultException e) {
