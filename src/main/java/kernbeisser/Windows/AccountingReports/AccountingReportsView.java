@@ -33,6 +33,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JComboBox<StatementType> transactionStatementType;
   private JRadioButton optLast;
   private JRadioButton optCurrent;
+  private JRadioButton optPermissionHolders;
+  private JCheckBox permissionHoldersWithKeys;
   private Map<JComponent, JRadioButton> optionalComponents;
 
   @Linked private AccountingReportsController controller;
@@ -64,6 +66,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
           user.getSelected(),
           (StatementType) transactionStatementType.getSelectedItem(),
           optCurrent.isSelected());
+    } else if (optPermissionHolders.isSelected()) {
+      controller.exportPermissionHolders(getExportType(), permissionHoldersWithKeys.isSelected());
     }
   }
 
@@ -73,10 +77,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   }
 
   private void enableComponents() {
-    optionalComponents.forEach(
-        (c, opt) -> {
-          c.setEnabled(opt.isSelected());
-        });
+    optionalComponents.forEach((c, opt) -> c.setEnabled(opt.isSelected()));
   }
 
   @Override
@@ -92,6 +93,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     optionalComponents.put(optCurrent, optTransactionStatement);
     optionalComponents.put(transactionStatementType, optTransactionStatement);
     optionalComponents.put(userKeySortOrder, optKeyUserList);
+    optionalComponents.put(permissionHoldersWithKeys, optPermissionHolders);
 
     days.setText("1");
     cancel.addActionListener(e -> back());
@@ -105,11 +107,9 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     }
     optCurrent.setSelected(true);
     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));
-    optKeyUserList.addActionListener(e -> enableComponents());
-    optTillRoll.addActionListener(e -> enableComponents());
-    optUserBalance.addActionListener(e -> enableComponents());
-    optTransactionStatement.addActionListener(e -> enableComponents());
-    optAccountingReport.addActionListener(e -> enableComponents());
+    optionalComponents.values().stream()
+        .distinct()
+        .forEach(c -> c.addActionListener(e -> enableComponents()));
     enableComponents();
   }
 

@@ -62,6 +62,7 @@ public class PreOrder implements Serializable {
     return Tools.getAll(PreOrder.class, condition);
   }
 
+  // required for PreOrderChecklist Report
   public boolean isRetarded() {
     return ChronoUnit.DAYS.between(createDate, Instant.now())
         > Setting.PREORDERRETARD_THRESHOLD.getIntValue();
@@ -77,6 +78,10 @@ public class PreOrder implements Serializable {
         .getResultStream()
         .findFirst()
         .orElse(-1);
+  }
+
+  public boolean isShopOrder() {
+    return user.equals(User.getKernbeisserUser());
   }
 
   @Override

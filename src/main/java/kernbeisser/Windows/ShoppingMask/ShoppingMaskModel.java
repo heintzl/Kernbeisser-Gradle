@@ -5,6 +5,8 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Data;
 
@@ -15,7 +17,11 @@ public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
   private SaleSession saleSession;
   private boolean payWindowOpen;
 
-  ShoppingMaskModel(SaleSession saleSession) {
+  ShoppingMaskModel(SaleSession saleSession) throws NotEnoughCreditException {
+    if (saleSession.getCustomer().getUserGroup().getValue() <= 0
+        && !saleSession.getCustomer().hasPermission(PermissionKey.GO_UNDER_MIN)) {
+      throw new NotEnoughCreditException();
+    }
     this.saleSession = saleSession;
     this.value = saleSession.getCustomer().getUserGroup().getValue();
   }

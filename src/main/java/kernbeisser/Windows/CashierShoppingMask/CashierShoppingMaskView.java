@@ -87,4 +87,20 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
                 + "und den Ladendienst-Report ausdrucken möchtest?")
         == 0;
   }
+
+  public void messageDontPanic() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Der Ausdruck ist fehlgeschlagen! Das ist nicht so schlimm,\n"
+            + "die Bons von heute erscheinen dann erst beim nächsten erfolgreichen Ausdruck!");
+  }
+
+  public void messageDoPanic(long no) {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Der Ausdruck ist fehlgeschlagen! Da jetzt schon seit "
+            + no
+            + " Bons kein \n"
+            + "Bericht erstellt wurde, sollte die It-Gruppe informiert werden.");
+  }
 }

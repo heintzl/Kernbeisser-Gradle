@@ -11,7 +11,6 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -37,10 +36,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
             model.getValue(),
             model.getSaleSession().getCustomer().getUserGroup().getSolidaritySurcharge(),
             true);
-    if (model.getSaleSession().getCustomer().getUserGroup().getValue() <= 0
-        && !model.getSaleSession().getCustomer().hasPermission(PermissionKey.GO_UNDER_MIN)) {
-      throw new NotEnoughCreditException();
-    }
   }
 
   private double getRelevantPrice() {
@@ -285,7 +280,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   void loadShoppingItem(ShoppingItem item) {
-    if (item.getKbNumber() != 0) searchWindowResult(item.extractArticle());
+    if (item.getKbNumber() > 0) searchWindowResult(item.extractArticle());
   }
 
   @Override
@@ -312,7 +307,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     keyCapture.add(KeyEvent.VK_END, () -> view.articleTypeChange(ArticleType.ARTICLE_NUMBER));
     keyCapture.addALT(KeyEvent.VK_S, view::openSearchWindow);
     keyCapture.addCTRL(KeyEvent.VK_F, view::openSearchWindow);
-    if (model.getSaleSession().getCustomer().hasPermission(PermissionKey.GO_UNDER_MIN)) {
+    if (model.getSaleSession().getCustomer().getUserGroup().getValue() <= 0) {
       RememberDialog.showDialog(
           model.getSaleSession().getCustomer(),
           null,

@@ -32,6 +32,8 @@ import kernbeisser.CustomComponents.AccessChecking.Setter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -888,5 +890,18 @@ public class Tools {
 
   public static double roundCurrency(double value) {
     return Math.round(100. * value) / 100.;
+  }
+
+  public static void setKeyPermissions() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.createQuery("select u from User u", User.class)
+        .getResultStream()
+        .filter(u -> u.getKernbeisserKey() >= 0)
+        .peek(u -> u.getPermissions().add(PermissionConstants.KEY_PERMISSION.getPermission()))
+        .forEach(em::persist);
+    em.flush();
+    et.commit();
   }
 }

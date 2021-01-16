@@ -20,6 +20,7 @@
       "transactionStatement": "Kontoauszug.jrxml",
       "tillrollFileName": "Bonrolle.jrxml",
       "preOrderChecklist": "Abhakplan.jrxml",
+      "permissionHolders": "RollenInhaber.jrxml",
       "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
       "keyUserListFileName": "BenutzerSchlüssel.jrxml",
       "invoiceFileName": "Kerni_Rechnung.jrxml",
