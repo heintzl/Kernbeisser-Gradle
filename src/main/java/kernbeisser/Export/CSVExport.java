@@ -6,11 +6,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.DBEntities.PreOrder;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -39,17 +42,26 @@ public class CSVExport {
     if (csvWriter == null) {
       return JFileChooser.CANCEL_OPTION;
     } else {
-      List<String[]> orders =
+      Map<Integer, List<PreOrder>> orderMap =
           preOrders.stream()
-              .map(
-                  p ->
-                      new String[] {
-                        Integer.toString(p.getKBNumber()),
-                        Integer.toString(p.getAmount()),
-                        (p.getUser().getFullName() + ": " + p.getArticle().getName())
-                            .replace(';', '#')
-                      })
-              .collect(Collectors.toList());
+              .filter(p -> p.getArticle().getSupplier().equals(Supplier.getKKSupplier()))
+              .collect(Collectors.groupingBy(p -> p.getArticle().getSuppliersItemNumber()));
+      List<String[]> orders = new ArrayList<>();
+      orderMap.forEach(
+          (i, preOrderList) ->
+              orders.add(
+                  new String[] {
+                    Integer.toString(i),
+                    Long.toString(
+                        preOrderList.stream()
+                            .collect(Collectors.summarizingInt(PreOrder::getAmount))
+                            .getSum()),
+                    preOrderList.stream()
+                        .map(p -> p.isShopOrder() ? "KB" : "VB")
+                        .distinct()
+                        .sorted()
+                        .collect(Collectors.joining(",")),
+                  }));
       orders.add(0, new String[] {"artnr", "menge", "kommentar"});
       csvWriter.writeAll(orders);
       return JFileChooser.APPROVE_OPTION;
