@@ -1,17 +1,17 @@
 package kernbeisser.Reports;
 
-import kernbeisser.DBEntities.PreOrder;
-
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
+import kernbeisser.DBEntities.Permission;
 
 public class PermissionHolders extends Report {
-  private final Collection<PreOrder> preorder;
+  private final Collection<Permission> permissions;
 
-  public PermissionHolders(Collection<PreOrder> preorder) {
-    super("preOrderChecklist", "preOrderChecklist" + LocalDate.now().toString());
-    this.preorder = preorder;
+  public PermissionHolders(Collection<Permission> permissions) {
+    super("permissionHolders", "RollenInhaber" + LocalDate.now().toString());
+    this.permissions = permissions;
   }
 
   @Override
@@ -21,6 +21,8 @@ public class PermissionHolders extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    return preorder;
+    return permissions.stream()
+        .flatMap(p -> PermissionHolderBean.createBeans(p).stream())
+        .collect(Collectors.toList());
   }
 }

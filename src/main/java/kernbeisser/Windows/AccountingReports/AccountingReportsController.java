@@ -58,10 +58,11 @@ public class AccountingReportsController
     }
   }
 
-  public void exportUserBalance(ExportTypes exportType, boolean selected) {
+  public void exportUserBalance(ExportTypes exportType, boolean userBalanceWithNames) {
     var view = getView();
     try {
-      model.exportUserBalance(exportType, selected, (e) -> consumePdfException(e, exportType));
+      model.exportUserBalance(
+          exportType, userBalanceWithNames, (e) -> consumePdfException(e, exportType));
       view.back();
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);
@@ -84,6 +85,17 @@ public class AccountingReportsController
     try {
       model.exportTransactionStatement(
           exportType, user, statementType, current, (e) -> consumePdfException(e, exportType));
+      view.back();
+    } catch (UnsupportedOperationException e) {
+      view.messageNotImplemented(exportType);
+    }
+  }
+
+  public void exportPermissionHolders(ExportTypes exportType, boolean permissionHoldersWithKeys) {
+    var view = getView();
+    try {
+      model.exportPermissionHolders(
+          exportType, permissionHoldersWithKeys, (e) -> consumePdfException(e, exportType));
       view.back();
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);

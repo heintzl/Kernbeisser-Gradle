@@ -199,7 +199,7 @@
               </component>
               <vspacer id="fa104">
                 <constraints>
-                  <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
               </vspacer>
@@ -262,6 +262,26 @@
                   <text value="aktueller"/>
                 </properties>
               </component>
+              <component id="84d6d" class="javax.swing.JRadioButton" binding="optPermissionHolders">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Rolleninhaber"/>
+                </properties>
+              </component>
+              <component id="f6157" class="javax.swing.JCheckBox" binding="permissionHoldersWithKeys">
+                <constraints>
+                  <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="inkl. Schlüsselinhabern"/>
+                  <verticalAlignment value="3"/>
+                  <verticalTextPosition value="0"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>
@@ -275,6 +295,7 @@
       <member id="b525a"/>
       <member id="daaaa"/>
       <member id="7944b"/>
+      <member id="84d6d"/>
     </group>
     <group name="statement">
       <member id="e22dd"/>

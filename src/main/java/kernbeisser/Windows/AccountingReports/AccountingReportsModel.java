@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import javax.persistence.EntityManager;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
@@ -117,6 +118,22 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
         exportType,
         new TransactionStatement(user, statementType, current),
         "Benutzer-Schlüssel-Liste wird erstellt",
+        consumePdfException);
+  }
+
+  public void exportPermissionHolders(
+      ExportTypes exportType, boolean withKeys, Consumer<Throwable> consumePdfException) {
+    List<Permission> permissions =
+        DBConnection.getEntityManager()
+            .createQuery(
+                "Select p from Permission p where not p.name like '@%'"
+                    + (withKeys ? " or p.name = '@Key_Permission'" : ""),
+                Permission.class)
+            .getResultList();
+    exportReport(
+        exportType,
+        new PermissionHolders(permissions),
+        "Rolleninhaber-Bericht wird erstellt",
         consumePdfException);
   }
 }
