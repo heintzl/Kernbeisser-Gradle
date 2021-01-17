@@ -1,9 +1,11 @@
 package kernbeisser.Windows.EditArticle;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
@@ -16,11 +18,23 @@ import lombok.var;
 
 public class EditArticleController extends Controller<EditArticleView, EditArticleModel> {
 
+  private BarcodeCapture capture;
+
   public EditArticleController(Article article, Mode mode) {
     super(new EditArticleModel(article != null ? article : new Article(), mode));
     if (article != null && mode == Mode.REMOVE) {
       Tools.delete(article);
     }
+    capture = new BarcodeCapture(this::pasteBarcode);
+  }
+
+  private void pasteBarcode(String s) {
+    getView().setBarcode(s);
+  }
+
+  @Override
+  protected boolean processKeyboardInput(KeyEvent e) {
+    return capture.processKeyEvent(e);
   }
 
   @Override
