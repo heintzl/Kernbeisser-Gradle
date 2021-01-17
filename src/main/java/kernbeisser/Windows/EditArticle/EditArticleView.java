@@ -16,6 +16,7 @@ import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Windows.MVC.IView;
@@ -228,5 +229,15 @@ public class EditArticleView implements IView<EditArticleController> {
 
   public MetricUnits getMetricUnits() {
     return (MetricUnits) metricUnits.getSelectedItem();
+  }
+
+  public void setBarcode(String s) {
+    if (PermissionKey.ARTICLE_BARCODE_WRITE.userHas()
+        && JOptionPane.showConfirmDialog(
+                getTopComponent(), "Soll der Barcode auf " + s + " gesetzt werden?")
+            == 0) {
+      barcode.setText(s);
+      barcode.inputChanged();
+    }
   }
 }
