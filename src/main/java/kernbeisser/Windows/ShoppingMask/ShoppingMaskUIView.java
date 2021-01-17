@@ -80,8 +80,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private JButton checkout;
   private JButton cancelSalesSession;
   private JButton searchArticle;
-  private JLabel salesPerson1;
-  private JLabel salesPerson2;
+  private JLabel salesPersonInfo;
   private JLabel depositUnit;
   private ShoppingCartView shoppingCartView;
   private JLabel containerSizeLabel;
@@ -138,9 +137,11 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     customerInfoName.setText(customerDisplayName);
     customerCredit.setText(
         format("{0, number, 0.00}\u20AC", saleSession.getCustomer().getUserGroup().getValue()));
-    salesPerson1.setText(saleSession.getSeller().getFullName());
-    salesPerson2.setText(
-        saleSession.getSecondSeller() != null ? saleSession.getSecondSeller().getFullName() : "");
+    salesPersonInfo.setText(
+        saleSession.getSeller().getFullName()
+            + (saleSession.getSecondSeller() != null
+                ? " / " + saleSession.getSecondSeller().getFullName()
+                : ""));
   }
 
   private void supplierChange() {
