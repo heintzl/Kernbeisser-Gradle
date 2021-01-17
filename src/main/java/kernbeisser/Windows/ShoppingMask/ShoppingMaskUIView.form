@@ -659,30 +659,6 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="a17f1" class="javax.swing.JLabel">
-                    <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="20" bottom="5" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <minimumSize width="45" height="15"/>
-                      <preferredSize width="45" height="15"/>
-                      <text value="Name:"/>
-                    </properties>
-                  </component>
-                  <component id="ec9c3" class="javax.swing.JLabel" binding="customerInfoName">
-                    <constraints>
-                      <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="5" right="0" weightx="1.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <minimumSize width="86" height="15"/>
-                      <preferredSize width="86" height="15"/>
-                      <text value="&lt;&lt;Name&gt;&gt;"/>
-                    </properties>
-                  </component>
                   <component id="db574" class="javax.swing.JLabel">
                     <constraints>
                       <grid row="0" column="5" row-span="4" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -696,12 +672,14 @@
                   <component id="f310a" class="javax.swing.JLabel" binding="salesPersonInfo">
                     <constraints>
                       <grid row="4" column="5" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="5" right="15" weightx="0.0" weighty="0.0"/>
+                      <gridbag top="0" left="0" bottom="5" right="15" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
+                      <maximumSize width="-1" height="22"/>
                       <minimumSize width="149" height="15"/>
-                      <preferredSize width="149" height="15"/>
+                      <opaque value="false"/>
+                      <preferredSize width="200" height="22"/>
                       <text value="(Selbsteingabe) / LD1"/>
                     </properties>
                   </component>
@@ -737,30 +715,32 @@
                       <text value="Kunden-Info"/>
                     </properties>
                   </component>
-                  <component id="7c0a6" class="javax.swing.JLabel">
-                    <constraints>
-                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="20" bottom="5" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <minimumSize width="71" height="15"/>
-                      <preferredSize width="71" height="15"/>
-                      <text value="Guthaben:"/>
-                    </properties>
-                  </component>
                   <component id="94b58" class="javax.swing.JLabel" binding="customerCredit">
                     <constraints>
-                      <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                      <grid row="4" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
                       </grid>
-                      <gridbag top="0" left="5" bottom="5" right="5" weightx="1.0" weighty="0.0"/>
+                      <gridbag top="0" left="5" bottom="5" right="10" weightx="1.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
+                      <maximumSize width="-1" height="22"/>
                       <minimumSize width="50" height="15"/>
-                      <preferredSize width="50" height="15"/>
-                      <text value=""/>
+                      <preferredSize width="-1" height="15"/>
+                      <text value="0,00€"/>
+                    </properties>
+                  </component>
+                  <component id="7c0a6" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="10" bottom="5" right="0" weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <font size="16" style="0"/>
+                      <maximumSize width="-1" height="22"/>
+                      <minimumSize width="71" height="15"/>
+                      <preferredSize width="100" height="15"/>
+                      <text value="Guthaben:"/>
                     </properties>
                   </component>
                 </children>
