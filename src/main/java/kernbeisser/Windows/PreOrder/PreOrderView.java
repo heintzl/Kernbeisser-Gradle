@@ -264,7 +264,6 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
-
   public void notifyNoUserSelected() {
     Tools.beep();
     JOptionPane.showMessageDialog(
@@ -275,7 +274,7 @@ public class PreOrderView implements IView<PreOrderController> {
             + "\nauf dessen Namen die Vorbestellung ausgeführt werden soll.",
         "Kein Benutzer ausgewählt",
         JOptionPane.WARNING_MESSAGE);
-   }
+  }
 
   public String inputAmount(int amount, boolean retry) {
     String initValue = MessageFormat.format("{0, number, 0}", amount).trim();
