@@ -80,8 +80,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private JButton checkout;
   private JButton cancelSalesSession;
   private JButton searchArticle;
-  private JLabel salesPerson1;
-  private JLabel salesPerson2;
+  private JLabel salesPersonInfo;
   private JLabel depositUnit;
   private ShoppingCartView shoppingCartView;
   private JLabel containerSizeLabel;
@@ -131,16 +130,15 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   void loadUserInfo(SaleSession saleSession) {
-    // TODO display customerName instead of LoginName
     String customerDisplayName = saleSession.getCustomer().getFullName();
     customerName.setText(customerDisplayName);
-
-    customerInfoName.setText(customerDisplayName);
     customerCredit.setText(
         format("{0, number, 0.00}\u20AC", saleSession.getCustomer().getUserGroup().getValue()));
-    salesPerson1.setText(saleSession.getSeller().getFullName());
-    salesPerson2.setText(
-        saleSession.getSecondSeller() != null ? saleSession.getSecondSeller().getFullName() : "");
+    salesPersonInfo.setText(
+        saleSession.getSeller().getFullName()
+            + (saleSession.getSecondSeller() != null
+                ? " / " + saleSession.getSecondSeller().getFullName()
+                : ""));
   }
 
   private void supplierChange() {
@@ -676,32 +674,45 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     return shoppingListPanel.getSize();
   }
 
+  public static void resizeFonts(JPanel p, float fontSize) {
+    for (Component c : p.getComponents()) {
+      if (c instanceof JPanel) {
+        resizeFonts((JPanel) c, fontSize);
+      } else {
+        c.setFont(c.getFont().deriveFont(fontSize));
+      }
+    }
+  }
+
   public ShoppingMaskUIController getController() {
     return controller;
   }
 
   @Override
   public void initialize(ShoppingMaskUIController controller) {
+    float fontSize = Setting.LABEL_SCALE_FACTOR.getFloatValue() * 8f + 4f;
+    resizeFonts(ShoppingItemPanel, fontSize);
     articleTypesWithSettablePrice =
         EnumSet.of(ArticleType.CUSTOM_PRODUCT, ArticleType.BAKED_GOODS, ArticleType.PRODUCE);
     depositArticleTypes = EnumSet.of(ArticleType.DEPOSIT, ArticleType.RETURN_DEPOSIT);
     checkout.addActionListener(e -> doCheckout());
     emptyShoppingCart.addActionListener(e -> controller.emptyShoppingCart());
     cancelSalesSession.addActionListener(e -> doCancel());
-
-    searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
+    float iconSize = fontSize * 1.25f;
+    searchArticle.setIcon(
+        IconFontSwing.buildIcon(FontAwesome.SEARCH, iconSize, new Color(49, 114, 128)));
     searchArticle.addActionListener(e -> openSearchWindow());
     addPrice.setIcon(
-        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
     addPrice.addActionListener(e -> addToCart());
     addNetPrice.setIcon(
-        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
     addNetPrice.addActionListener(e -> addToCart());
     addDeposit.setIcon(
-        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
     addDeposit.addActionListener(e -> addToCart());
     addAmount.setIcon(
-        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
     addAmount.addActionListener(e -> addToCart());
 
     optProduce.addItemListener(e -> articleTypeChange(ArticleType.PRODUCE));
@@ -722,6 +733,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         e -> {
           if (isWeighable) {
             amount.setText("");
+          } else {
+            if (amount.getText().isEmpty()) amount.setText("1");
           }
           amount.selectAll();
           amount.requestFocusInWindow();
