@@ -353,9 +353,9 @@ public class User implements Serializable {
             builder.and(
                 builder.or(
                     builder.equal(
-                        root.get("to").get("userGroup").get("id"), getUserGroup().getId()),
+                        root.get("toUser").get("userGroup").get("id"), getUserGroup().getId()),
                     builder.equal(
-                        root.get("from").get("userGroup").get("id"), getUserGroup().getId()))),
+                        root.get("fromUser").get("userGroup").get("id"), getUserGroup().getId()))),
             builder.lessThan(root.get("date"), instant));
     double value = 0;
     for (Transaction transaction : em.createQuery(query).getResultList()) {
