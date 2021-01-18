@@ -674,7 +674,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     return shoppingListPanel.getSize();
   }
 
-  private void resizeFonts(JPanel p, float fontSize) {
+  public static void resizeFonts(JPanel p, float fontSize) {
     for (Component c : p.getComponents()) {
       if (c instanceof JPanel) {
         resizeFonts((JPanel) c, fontSize);
@@ -690,7 +690,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   @Override
   public void initialize(ShoppingMaskUIController controller) {
-    float fontSize = (Setting.LABEL_SCALE_FACTOR.getFloatValue() * 1.3f) * 10;
+    float fontSize = Setting.LABEL_SCALE_FACTOR.getFloatValue() * 8f + 4f;
     resizeFonts(ShoppingItemPanel, fontSize);
     articleTypesWithSettablePrice =
         EnumSet.of(ArticleType.CUSTOM_PRODUCT, ArticleType.BAKED_GOODS, ArticleType.PRODUCE);
