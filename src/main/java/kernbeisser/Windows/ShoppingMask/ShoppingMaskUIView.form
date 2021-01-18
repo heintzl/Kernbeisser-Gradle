@@ -3,19 +3,17 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1284" height="800"/>
+      <xy x="214" y="28" width="1284" height="914"/>
     </constraints>
     <properties>
-      <minimumSize width="1280" height="800"/>
-      <preferredSize width="1280" height="800"/>
+      <minimumSize width="-1" height="-1"/>
+      <preferredSize width="-1" height="-1"/>
     </properties>
     <border type="none"/>
     <children>
       <splitpane id="639a9">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="200" height="200"/>
-          </grid>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <continuousLayout value="false"/>
@@ -32,14 +30,20 @@
               <background color="-1"/>
               <focusCycleRoot value="false"/>
               <focusTraversalPolicyProvider value="true"/>
-              <minimumSize width="400" height="900"/>
-              <preferredSize width="400" height="900"/>
+              <inheritsPopupMenu value="false"/>
+              <maximumSize width="-1" height="-1"/>
+              <minimumSize width="-1" height="-1"/>
+              <preferredSize width="-1" height="-1"/>
             </properties>
             <border type="none"/>
             <children>
               <grid id="f9529" binding="westUpperPanel" layout-manager="FlowLayout" hgap="5" vgap="22" flow-align="1">
                 <constraints border-constraint="North"/>
-                <properties/>
+                <properties>
+                  <doubleBuffered value="false"/>
+                  <minimumSize width="251" height="55"/>
+                  <preferredSize width="251" height="55"/>
+                </properties>
                 <border type="none">
                   <font size="16"/>
                   <title-color color="-4473925"/>
@@ -59,18 +63,35 @@
                       <text value="Einkäufer"/>
                     </properties>
                   </component>
+                  <component id="891d8" class="javax.swing.JButton" binding="editUser">
+                    <constraints/>
+                    <properties>
+                      <borderPainted value="false"/>
+                      <contentAreaFilled value="false"/>
+                      <inheritsPopupMenu value="true"/>
+                      <label value=""/>
+                      <minimumSize width="40" height="30"/>
+                      <preferredSize width="40" height="30"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
               <grid id="f551f" binding="ShoppingItemPanel" layout-manager="GridBagLayout">
                 <constraints border-constraint="Center"/>
                 <properties>
-                  <autoscrolls value="true"/>
+                  <autoscrolls value="false"/>
+                  <doubleBuffered value="true"/>
                   <enabled value="true"/>
                   <foreground color="-1"/>
-                  <minimumSize width="400" height="656"/>
-                  <preferredSize width="400" height="800"/>
+                  <maximumSize width="-1" height="-1"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <preferredSize width="-1" height="-1"/>
                   <visible value="true"/>
                 </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="false"/>
+                </clientProperties>
                 <border type="none" title="Einkaufs-Artikel" title-position="1">
                   <font style="3"/>
                   <title-color color="-16752083"/>
@@ -344,18 +365,6 @@
                           <text value="&amp;Artikelnr./Barcode"/>
                         </properties>
                       </component>
-                      <component id="13206" class="javax.swing.JRadioButton" binding="optCustomProduct">
-                        <constraints>
-                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                          <gridbag weightx="1.0" weighty="1.0"/>
-                        </constraints>
-                        <properties>
-                          <focusTraversalPolicyProvider value="false"/>
-                          <font size="16" style="0"/>
-                          <label value="Selbstdefinierter Artikel"/>
-                          <text value="Selbstde&amp;finierter Artikel"/>
-                        </properties>
-                      </component>
                       <component id="5ed2c" class="javax.swing.JRadioButton" binding="optDeposit">
                         <constraints>
                           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -378,6 +387,18 @@
                           <font size="16" style="0"/>
                           <label value="Pfand zurück"/>
                           <text value="Pfand &amp;zurück"/>
+                        </properties>
+                      </component>
+                      <component id="13206" class="javax.swing.JRadioButton" binding="optCustomProduct">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <focusTraversalPolicyProvider value="false"/>
+                          <font size="16" style="0"/>
+                          <label value="Selbstdefinierter Artikel"/>
+                          <text value="Selbstde&amp;finierter Artikel"/>
                         </properties>
                       </component>
                     </children>
@@ -404,12 +425,6 @@
                       <text value=""/>
                     </properties>
                   </component>
-                  <vspacer id="bfb00">
-                    <constraints>
-                      <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="0.1"/>
-                    </constraints>
-                  </vspacer>
                   <grid id="7f71f" binding="reductionPanel" layout-manager="GridBagLayout">
                     <constraints>
                       <grid row="11" column="0" row-span="1" col-span="9" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -616,6 +631,12 @@
                       <text value="Lieferant:"/>
                     </properties>
                   </component>
+                  <vspacer id="73dd3">
+                    <constraints>
+                      <grid row="12" column="5" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="1.0"/>
+                    </constraints>
+                  </vspacer>
                 </children>
               </grid>
             </children>
@@ -625,42 +646,22 @@
               <splitpane position="right"/>
             </constraints>
             <properties>
-              <minimumSize width="500" height="900"/>
-              <preferredSize width="500" height="900"/>
+              <minimumSize width="-1" height="-1"/>
+              <preferredSize width="-1" height="-1"/>
             </properties>
             <border type="none"/>
             <children>
               <grid id="7919b" binding="eastUpperPanel" layout-manager="GridBagLayout">
                 <constraints border-constraint="North"/>
                 <properties>
-                  <minimumSize width="300" height="74"/>
-                  <preferredSize width="300" height="74"/>
+                  <minimumSize width="300" height="55"/>
+                  <preferredSize width="300" height="55"/>
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="a17f1" class="javax.swing.JLabel">
-                    <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="20" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Name:"/>
-                    </properties>
-                  </component>
-                  <component id="ec9c3" class="javax.swing.JLabel" binding="customerInfoName">
-                    <constraints>
-                      <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="&lt;&lt;Name&gt;&gt;"/>
-                    </properties>
-                  </component>
                   <component id="db574" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="0" column="4" row-span="4" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="5" row-span="4" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="1.0"/>
                     </constraints>
                     <properties>
@@ -668,68 +669,23 @@
                       <text value="Dienst-Info"/>
                     </properties>
                   </component>
-                  <component id="f310a" class="javax.swing.JLabel" binding="salesPerson1">
+                  <component id="f310a" class="javax.swing.JLabel" binding="salesPersonInfo">
                     <constraints>
-                      <grid row="4" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="0" right="15" weightx="0.0" weighty="0.0"/>
+                      <grid row="4" column="5" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="0" bottom="5" right="15" weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
                       <font size="16" style="0"/>
+                      <maximumSize width="-1" height="22"/>
+                      <minimumSize width="149" height="15"/>
+                      <opaque value="false"/>
+                      <preferredSize width="200" height="22"/>
                       <text value="(Selbsteingabe) / LD1"/>
-                    </properties>
-                  </component>
-                  <component id="7c0a6" class="javax.swing.JLabel">
-                    <constraints>
-                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="20" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="Guthaben:"/>
-                    </properties>
-                  </component>
-                  <component id="94b58" class="javax.swing.JLabel" binding="customerCredit">
-                    <constraints>
-                      <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <gridbag top="0" left="0" bottom="10" right="0" weightx="1.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <minimumSize width="50" height="22"/>
-                      <preferredSize width="50" height="22"/>
-                      <text value="&lt;&lt;100000,00 €&gt;&gt;"/>
-                    </properties>
-                  </component>
-                  <component id="d4a9e" class="javax.swing.JLabel" binding="salesPerson2">
-                    <constraints>
-                      <grid row="5" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="10" bottom="10" right="15" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <font size="16" style="0"/>
-                      <text value="optional: LD2"/>
-                    </properties>
-                  </component>
-                  <component id="891d8" class="javax.swing.JButton" binding="editUser">
-                    <constraints>
-                      <grid row="4" column="3" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="0" bottom="10" right="10" weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <borderPainted value="false"/>
-                      <contentAreaFilled value="false"/>
-                      <inheritsPopupMenu value="true"/>
-                      <label value=""/>
-                      <minimumSize width="40" height="30"/>
-                      <preferredSize width="40" height="30"/>
-                      <text value=""/>
                     </properties>
                   </component>
                   <component id="62553" class="javax.swing.JSeparator">
                     <constraints>
-                      <grid row="0" column="1" row-span="4" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="1" row-span="4" col-span="4" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="5" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties>
@@ -740,7 +696,7 @@
                   </component>
                   <component id="b936b" class="javax.swing.JSeparator">
                     <constraints>
-                      <grid row="0" column="5" row-span="4" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="6" row-span="4" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="5" bottom="0" right="15" weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties>
@@ -759,6 +715,34 @@
                       <text value="Kunden-Info"/>
                     </properties>
                   </component>
+                  <component id="94b58" class="javax.swing.JLabel" binding="customerCredit">
+                    <constraints>
+                      <grid row="4" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                      <gridbag top="0" left="5" bottom="5" right="10" weightx="1.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <font size="16" style="0"/>
+                      <maximumSize width="-1" height="22"/>
+                      <minimumSize width="50" height="15"/>
+                      <preferredSize width="-1" height="15"/>
+                      <text value="0,00€"/>
+                    </properties>
+                  </component>
+                  <component id="7c0a6" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="10" bottom="5" right="0" weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <font size="16" style="0"/>
+                      <maximumSize width="-1" height="22"/>
+                      <minimumSize width="71" height="15"/>
+                      <preferredSize width="100" height="15"/>
+                      <text value="Guthaben:"/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
               <grid id="1177e" binding="shoppingCartPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
@@ -766,8 +750,9 @@
                 <properties>
                   <autoscrolls value="true"/>
                   <enabled value="true"/>
-                  <minimumSize width="373" height="201"/>
-                  <preferredSize width="467" height="800"/>
+                  <maximumSize width="-1" height="-1"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <preferredSize width="-1" height="-1"/>
                 </properties>
                 <border type="none" title="Einkauf" title-position="1">
                   <font style="3"/>
@@ -778,6 +763,11 @@
                     <constraints border-constraint="Center"/>
                     <properties>
                       <background color="-1"/>
+                      <maximumSize width="-1" height="-1"/>
+                      <minimumSize width="-1" height="-1"/>
+                      <opaque value="false"/>
+                      <preferredSize width="-1" height="-1"/>
+                      <requestFocusEnabled value="true"/>
                     </properties>
                     <border type="none"/>
                     <children>
@@ -790,7 +780,9 @@
                     <constraints border-constraint="South"/>
                     <properties>
                       <autoscrolls value="true"/>
-                      <maximumSize width="32767" height="40"/>
+                      <maximumSize width="-1" height="40"/>
+                      <minimumSize width="-1" height="40"/>
+                      <preferredSize width="-1" height="40"/>
                     </properties>
                     <border type="none"/>
                     <children>
