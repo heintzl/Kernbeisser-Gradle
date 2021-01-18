@@ -39,11 +39,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
         pasteDataInView(model.getItemByKkNumber(view.getKkNumber()));
         return true;
       } catch (NoResultException e) {
-        setDefaultInput();
+        noArticleFound();
         return false;
       }
     } else {
-      setDefaultInput();
+      noArticleFound();
       return false;
     }
   }
@@ -57,7 +57,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       }
       model.add(order);
       getView().addPreOrder(order);
-      setDefaultInput();
+      noArticleFound();
+      getView().resetArticleNr();
     } catch (NoResultException e) {
       getView().noItemFound();
     }
@@ -83,12 +84,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
-  void setDefaultInput() {
+  void noArticleFound() {
     Article empty = new Article();
     empty.setName("Kein Artikel gefunden");
     empty.setSurchargeGroup(new SurchargeGroup());
     pasteDataInView(empty);
-    getView().resetArticleNr();
   }
 
   @Override
@@ -167,7 +167,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     view.enableControls(false);
     view.setAmount("1");
     view.searchArticle.addActionListener(e -> openSearchWindow());
-    setDefaultInput();
+    noArticleFound();
   }
 
   @Override
