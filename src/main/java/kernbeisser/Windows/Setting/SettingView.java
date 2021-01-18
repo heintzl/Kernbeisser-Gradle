@@ -29,9 +29,9 @@ public class SettingView implements IView<SettingController> {
         IconFontSwing.buildIcon(FontAwesome.TRASH, 20, resetSettings.getForeground()));
     resetSettings.setHorizontalTextPosition(SwingConstants.LEFT);
     settingValues.setColumns(
-        Column.create("Setting", Setting::toString, SwingConstants.LEFT),
+        Column.create("Einstellung", Setting::toString, SwingConstants.LEFT),
         Column.create("Wert", Setting::getValue, SwingConstants.LEFT),
-        Column.create("Standart", Setting::getDefaultValue, SwingConstants.LEFT));
+        Column.create("Standard", Setting::getDefaultValue, SwingConstants.LEFT));
     settingValues.addSelectionListener(controller::select);
     applyChange.addActionListener(e -> controller.apply());
     cancel.addActionListener(e -> controller.cancel());
