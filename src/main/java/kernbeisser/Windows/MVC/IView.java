@@ -23,17 +23,20 @@ public interface IView<
   @NotNull
   default Dimension getSize() {
     Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+    Insets insets =
+        Toolkit.getDefaultToolkit().getScreenInsets(this.getContent().getGraphicsConfiguration());
+    dimension.setSize(
+        dimension.getWidth() - insets.left - insets.right,
+        dimension.height - insets.top - insets.bottom);
     if (DBConnection.isInitialized()) {
       dimension.setSize(
-          Math.min(dimension.getWidth(), Setting.APP_DEFAULT_WIDTH.getIntValue()),
-          Math.min(dimension.getHeight(), Setting.APP_DEFAULT_HEIGHT.getIntValue()));
+          Math.min(dimension.width, Setting.APP_DEFAULT_WIDTH.getIntValue()),
+          Math.min(dimension.height, Setting.APP_DEFAULT_HEIGHT.getIntValue()));
     } else {
       dimension.setSize(
+          Math.min(dimension.width, Integer.parseInt(Setting.APP_DEFAULT_WIDTH.getDefaultValue())),
           Math.min(
-              dimension.getWidth(), Integer.parseInt(Setting.APP_DEFAULT_WIDTH.getDefaultValue())),
-          Math.min(
-              dimension.getHeight(),
-              Integer.parseInt(Setting.APP_DEFAULT_HEIGHT.getDefaultValue())));
+              dimension.height, Integer.parseInt(Setting.APP_DEFAULT_HEIGHT.getDefaultValue())));
     }
     return dimension;
   }
