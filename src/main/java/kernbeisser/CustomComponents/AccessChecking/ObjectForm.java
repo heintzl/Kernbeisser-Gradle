@@ -3,6 +3,7 @@ package kernbeisser.CustomComponents.AccessChecking;
 import javax.swing.*;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class ObjectForm<P> {
   private ObjectValidator<P> objectValidator = input -> input;
 
-  private final Bounded<P, ?>[] boundedFields;
+  private final ObjectFormComponent<P>[] components;
 
   private boolean checkInputVerifier = true;
 
@@ -18,12 +19,13 @@ public class ObjectForm<P> {
   private P accessModel;
 
   @SafeVarargs
-  public ObjectForm(Bounded<P, ?>... boundedFields) {
-    for (Bounded<P, ?> boundedField : boundedFields) {
+  public ObjectForm(ObjectFormComponent<P> ... boundedFields) {
+    for (ObjectFormComponent<P> boundedField : boundedFields) {
       if (boundedField == null)
         throw new NullPointerException("cannot create ObjectFrom with null fields");
     }
-    this.boundedFields = boundedFields;
+
+    this.components = boundedFields;
   }
 
   public void setSource(P data) {
@@ -35,112 +37,88 @@ public class ObjectForm<P> {
   }
 
   public P getData() throws CannotParseException {
-    return getData(false);
-  }
-
-  public P getData(boolean pingErrors) throws CannotParseException {
     checkValidSource();
+    P originalCopy = Tools.clone(original);
     boolean success = true;
-    P originalCopy = Tools.clone(original);
-    for (Bounded<P, ?> boundedField : boundedFields) {
-      try {
-        if ((boundedField.isInputChanged() || boundedField.canRead(accessModel))
-            && boundedField.canWrite(accessModel)) {
-          boundedField.writeInto(originalCopy);
-        }
-      } catch (CannotParseException e) {
-        success = false;
-        if (pingErrors) boundedField.markWrongInput();
+    for (ObjectFormComponent<P> component : components){
+        if(component instanceof BoundedWriteProperty) {
+          try {
+            if (component instanceof Predictable && !((Predictable) component)
+                .isPropertyWriteable(accessModel))
+              continue;
+            ((BoundedWriteProperty<P, ?>) component).set(originalCopy);
+          } catch (PermissionKeyRequiredException e) {
+            ((BoundedWriteProperty<?, ?>) component).setPropertyEditable(false);
+          } catch (CannotParseException e){
+            if (!(e instanceof SilentParseException)) {
+              ((BoundedWriteProperty<?, ?>) component).setInvalidInput();
+            }
+            success = false;
+          }
       }
     }
-    if (!success) throw new CannotParseException();
-    return originalCopy;
-  }
-
-  public P getDataIgnoreWrongInput() {
-    P originalCopy = Tools.clone(original);
-    for (Bounded<P, ?> boundedField : boundedFields) {
-      try {
-        if ((boundedField.isInputChanged() || boundedField.canRead(accessModel))
-            && boundedField.canWrite(accessModel)) {
-          boundedField.writeInto(originalCopy);
-        }
-      } catch (CannotParseException ignored) {
-      }
-    }
-    return originalCopy;
-  }
-
-  private boolean isValidInput(Bounded<P, ?> bounded) {
-    return bounded.validInput()
-        && (!checkInputVerifier
-            || !(bounded instanceof JComponent)
-            || ((JComponent) bounded).getInputVerifier() == null
-            || ((JComponent) bounded).getInputVerifier().verify((JComponent) bounded));
+    if(!success)throw new CannotParseException();
+    return objectValidator.validate(originalCopy);
   }
 
   private void setData(@NotNull P data) {
-    for (Bounded<P, ?> boundedField : boundedFields) {
-      boundedField.setObjectData(data);
+    for (ObjectFormComponent<P> boundedField : components) {
+      if(boundedField instanceof BoundedReadProperty){
+        try {
+          if (boundedField instanceof Predictable && !((Predictable) boundedField)
+              .isPropertyReadable(accessModel))
+            continue;
+          ((BoundedReadProperty<P, ?>) boundedField).setValue(data);
+        }catch (PermissionKeyRequiredException e){
+          ((BoundedReadProperty<?, ?>) boundedField).setReadable(false);
+        }
+      }
     }
   }
 
   public void refreshAccess() {
     checkValidSource();
-    for (Bounded<P, ?> boundedField : boundedFields) {
-      boundedField.setReadable(boundedField.canRead(accessModel));
-      boundedField.setWriteable(boundedField.canWrite(accessModel));
+    for (ObjectFormComponent<P> boundedField : components) {
+      setAccess(boundedField);
     }
   }
 
-  public void markErrors() {
-    checkValidSource();
-    for (Bounded<P, ?> field : boundedFields) {
-      if (!isValidInput(field)) {
-        field.markWrongInput();
-      }
+  private void setAccess(ObjectFormComponent<P> component){
+    if(component instanceof Predictable){
+      if (component instanceof BoundedReadProperty)
+        ((BoundedReadProperty<?, ?>) component).setReadable(((Predictable<P>) component).isPropertyReadable(accessModel));
+      if(component instanceof BoundedWriteProperty)
+        ((BoundedWriteProperty<?, ?>) component).setPropertyEditable(((Predictable<P>) component).isPropertyWriteable(accessModel));
     }
-  }
-
-  public boolean isValid() {
-    boolean valid = true;
-    for (Bounded<P, ?> field : boundedFields) {
-      valid = valid && field.validInput();
-    }
-    return valid;
   }
 
   public boolean persistAsNewEntity() {
     checkValidSource();
     try {
-      P data = getData(true);
-      try {
-        objectValidator.validate(data);
-      } catch (CannotParseException e) {
-        return false;
-      }
+      P data = getData();
       Tools.add(Proxy.removeProxy(data));
       JOptionPane.showMessageDialog(null, "Das Objeckt wurde erfolgreich persistiert");
       return true;
     } catch (CannotParseException e) {
-      JOptionPane.showMessageDialog(null, "Die folgenden Felder wurden nicht korrekt ausgefüllt");
+      notifyException(e);
       return false;
     }
+  }
+
+
+  private static void notifyException(CannotParseException e){
+    if(!(e instanceof SilentParseException))
+      JOptionPane.showMessageDialog(null, "Die folgenden Felder wurden nicht korrekt ausgefüllt");
   }
 
   public boolean persistChanges() {
     checkValidSource();
     try {
-      P data = getData(true);
-      try {
-        objectValidator.validate(data);
-      } catch (CannotParseException e) {
-        return false;
-      }
+      P data = getData();
       Tools.edit(Tools.getId(original), (Proxy.removeProxy(data)));
       return true;
     } catch (CannotParseException e) {
-      JOptionPane.showMessageDialog(null, "Die folgenden Felder wurden nicht korrekt ausgefüllt");
+      notifyException(e);
       return false;
     }
   }

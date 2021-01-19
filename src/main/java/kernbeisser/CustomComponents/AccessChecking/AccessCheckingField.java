@@ -4,29 +4,30 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.function.Function;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import kernbeisser.Enums.Colors;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Useful.Tools;
+import kernbeisser.Security.Proxy;
 
-public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, V> {
+public class AccessCheckingField<P, V> extends JTextField implements
+    ObjectFormComponent<P>, BoundedReadProperty<P,V>,
+    BoundedWriteProperty<P,V>, Predictable<P>, DocumentListener{
 
   private final FocusListener noReadPermissionMaker =
       new FocusAdapter() {
         @Override
         public void focusGained(FocusEvent e) {
           e.getComponent().setForeground(UIManager.getColor("Label.foreground"));
-          ((JTextComponent) e.getComponent()).setText("");
+          AccessCheckingField.super.setText("");
           e.getComponent().removeFocusListener(this);
         }
       };
 
-  @Override
-  public void inputChanged() {
-    inputChanged = true;
-  }
-
+  private final Color foregroundDefault = getForeground();
+  private final Color backgroundDefault = getBackground();
   private boolean inputChanged = false;
 
   private final Setter<P, V> setter;
@@ -39,81 +40,88 @@ public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, 
     this.getter = getter;
     this.setter = setter;
     this.stringTransformer = stringTransformer;
-    addKeyListener(
-        new KeyAdapter() {
-          @Override
-          public void keyTyped(KeyEvent e) {
-            inputChanged = true;
-          }
-        });
+    getDocument().addDocumentListener(this);
   }
 
   @Override
-  public boolean isInputChanged() {
-    return inputChanged;
+  public void setPropertyEditable(boolean v) {
+    setEnabled(v);
   }
 
   @Override
-  public void setObjectData(P data) {
-    try {
-      setText(stringTransformer.toString(getter.get(data)));
-    } catch (PermissionKeyRequiredException e) {
-      setText("Keine Leseberechtigung");
-      setForeground(Color.RED);
-      addFocusListener(noReadPermissionMaker);
-    }
+  public void setInvalidInput() {
+    if(getText().equals(""))
+      setBackground(new Color(0xFF9999));
+    else setForeground(Color.RED);
   }
 
   @Override
-  public void writeInto(P p) throws CannotParseException {
-    try {
-      setter.set(p, stringTransformer.fromString(getText()));
-    } catch (PermissionKeyRequiredException ignored) {
-
-    }
+  public V get(P p) throws PermissionKeyRequiredException {
+    return getter.get(p);
   }
 
   @Override
-  public Getter<P, V> getGetter() {
-    return getter;
+  public boolean isPropertyReadable(P parent) {
+    return Proxy.hasPermission(getter,parent);
   }
 
   @Override
-  public Setter<P, V> getSetter() {
-    return setter;
+  public boolean isPropertyWriteable(P parent) {
+    return Proxy.hasPermission(setter,parent);
   }
 
-  public void setWriteable(boolean b) {
-    setEnabled(b);
+  @Override
+  public V getData() throws CannotParseException {
+    return stringTransformer.fromString(getText());
   }
 
-  public void setReadable(boolean b) {
-    if (!b) {
-      setText("Keine Leseberechtigung");
+  @Override
+  public void set(P p, V t) throws PermissionKeyRequiredException {
+    if(inputChanged) setter.set(p,t);
+  }
+
+  @Override
+  public void setData(V v) {
+    super.setText(stringTransformer.toString(v));
+    inputChanged = false;
+  }
+
+  @Override
+  public void setReadable(boolean v) {
+    if (!v) {
+      super.setText("Keine Leseberechtigung");
       setForeground(Color.RED);
       addFocusListener(noReadPermissionMaker);
     } else {
       if (getText().equals("Keine Leseberechtigung")) {
-        setText("");
+        super.setText("");
       }
       setForeground(Colors.LABEL_FOREGROUND.getColor());
       removeFocusListener(noReadPermissionMaker);
     }
   }
 
-  @Override
-  public void markWrongInput() {
-    Tools.showHint(this);
+  void removeInvalidInputMark(){
+    setForeground(foregroundDefault);
+    setBackground(backgroundDefault);
   }
 
   @Override
-  public boolean validInput() {
-    try {
-      stringTransformer.fromString(getText());
-      return true;
-    } catch (CannotParseException e) {
-      return false;
-    }
+  public void insertUpdate(DocumentEvent e) {
+    inputChanged = true;
+    removeInvalidInputMark();
+  }
+
+  @Override
+  public void removeUpdate(DocumentEvent e) {
+    inputChanged = true;
+    removeInvalidInputMark();
+  }
+
+  @Override
+  public void changedUpdate(DocumentEvent e) {
+    inputChanged = true;
+    removeInvalidInputMark();
   }
 
   public interface StringTransformer<V> {
@@ -140,6 +148,12 @@ public class AccessCheckingField<P, V> extends JTextField implements Bounded<P, 
           }
         }
       };
+
+  @Override
+  public void setText(String t) {
+    inputChanged = true;
+    super.setText(t);
+  }
 
   public static final StringTransformer<Double> DOUBLE_FORMER =
       new StringTransformer<Double>() {

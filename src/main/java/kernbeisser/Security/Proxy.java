@@ -4,6 +4,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import kernbeisser.CustomComponents.AccessChecking.Getter;
+import kernbeisser.CustomComponents.AccessChecking.Setter;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 import lombok.SneakyThrows;
 
@@ -111,6 +114,29 @@ public class Proxy {
     return ProxyFactory.getHandler((javassist.util.proxy.Proxy) o);
   }
 
+  public static <T,V> boolean hasPermission(Getter<T,V> getter,T parent){
+    try {
+       getter.get(parent);
+      return true;
+    }catch (PermissionKeyRequiredException e){
+      return false;
+    }
+  }
+
+  public static <T,V> boolean hasPermission(Setter<T,V> setter,T parent){
+    try {
+      try {
+        setter.set(parent, null);
+        return true;
+      } catch (NullPointerException ignored) {
+        Tools.invokeWithDefault(e -> setter.set(parent, (V) e));
+        return true;
+      }
+    } catch (PermissionKeyRequiredException e) {
+      return false;
+    }
+  }
+
   public static <T> T removeProxy(T t) {
     if (!isProxyInstance(t)) return t;
     Class<?> proxyClass = t.getClass();
@@ -124,5 +150,6 @@ public class Proxy {
       e.printStackTrace();
       return t;
     }
+
   }
 }

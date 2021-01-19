@@ -1,10 +1,13 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
+import java.awt.Color;
 import javax.swing.*;
+import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 
-public class AccessCheckBox<P> extends JCheckBox implements Bounded<P, Boolean> {
+public class AccessCheckBox<P> extends JCheckBox implements ObjectFormComponent<P>, BoundedReadProperty<P,Boolean>, BoundedWriteProperty<P,Boolean>, Predictable<P> {
 
   private boolean inputChanged = false;
 
@@ -18,42 +21,6 @@ public class AccessCheckBox<P> extends JCheckBox implements Bounded<P, Boolean> 
   }
 
   @Override
-  public void inputChanged() {
-    inputChanged = true;
-  }
-
-  @Override
-  public boolean isInputChanged() {
-    return inputChanged;
-  }
-
-  @Override
-  public void setObjectData(P data) {
-    try {
-      setSelected(getter.get(data));
-    } catch (PermissionKeyRequiredException ignored) {
-    }
-  }
-
-  @Override
-  public void writeInto(P p) {
-    try {
-      setter.set(p, isSelected());
-    } catch (PermissionKeyRequiredException ignored) {
-    }
-  }
-
-  @Override
-  public Getter<P, Boolean> getGetter() {
-    return getter;
-  }
-
-  @Override
-  public Setter<P, Boolean> getSetter() {
-    return setter;
-  }
-
-  @Override
   public void setReadable(boolean b) {
     if (!b) {
       setText(getText() + "[Unbekannt]");
@@ -63,17 +30,44 @@ public class AccessCheckBox<P> extends JCheckBox implements Bounded<P, Boolean> 
   }
 
   @Override
-  public void setWriteable(boolean b) {
-    setEnabled(b);
+  public void setPropertyEditable(boolean v) {
+    setEnabled(v);
   }
 
   @Override
-  public void markWrongInput() {
-    Tools.showHint(this);
+  public void setInvalidInput() {
+    setForeground(Color.RED);
   }
 
   @Override
-  public boolean validInput() {
-    return true;
+  public Boolean get(P p) throws PermissionKeyRequiredException {
+    return getter.get(p);
+  }
+
+  @Override
+  public boolean isPropertyReadable(P parent) {
+    return Proxy.hasPermission(getter,parent);
+  }
+
+  @Override
+  public boolean isPropertyWriteable(P parent) {
+    return Proxy.hasPermission(setter,parent);
+  }
+
+  @Override
+  public void setData(Boolean aBoolean) {
+    setSelected(aBoolean);
+  }
+
+  @Override
+  public void set(P p, Boolean t) throws PermissionKeyRequiredException {
+    if (inputChanged) {
+      setter.set(p,t);
+    }
+  }
+
+  @Override
+  public Boolean getData() {
+    return isSelected();
   }
 }

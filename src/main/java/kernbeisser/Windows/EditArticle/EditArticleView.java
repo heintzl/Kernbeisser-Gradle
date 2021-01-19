@@ -19,6 +19,7 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +82,7 @@ public class EditArticleView implements IView<EditArticleController> {
         new AccessCheckingField<>(
             Article::getSuppliersItemNumber,
             Article::setSuppliersItemNumber,
-            AccessCheckingField.INT_FORMER);
+            controller::validateSuppliersItemNumber);
     crateDeposit =
         new AccessCheckingField<>(
             Article::getContainerDeposit,
@@ -104,7 +105,7 @@ public class EditArticleView implements IView<EditArticleController> {
     surchargeGroup =
         new AccessCheckingComboBox<>(
             e -> {
-              controller.loadSurchargeGroupsFor();
+              controller.loadSurchargeGroupsFor(getSelectedSupplier());
               return e.getSurchargeGroup();
             },
             Article::setSurchargeGroup);
@@ -114,10 +115,7 @@ public class EditArticleView implements IView<EditArticleController> {
   }
 
   void setUnits(MetricUnits[] metricUnits) {
-    this.metricUnits.removeAllItems();
-    for (MetricUnits u : metricUnits) {
-      this.metricUnits.addItem(u);
-    }
+    this.metricUnits.setItems(metricUnits);
   }
 
   void setVATs(VAT[] vaTs) {
@@ -128,23 +126,19 @@ public class EditArticleView implements IView<EditArticleController> {
   }
 
   void setSuppliers(Collection<Supplier> suppliers) {
-    supplier.removeAllItems();
-    suppliers.forEach(supplier::addItem);
+    supplier.setItems(suppliers);
   }
 
   void setShopRanges(Collection<ShopRange> shopRanges) {
-    shopRange.removeAllItems();
-    shopRanges.forEach(shopRange::addItem);
+    shopRange.setItems(shopRanges);
   }
 
   void setSurchargeGroup(Collection<SurchargeGroup> surchargeGroups) {
-    surchargeGroup.removeAllItems();
-    surchargeGroups.forEach(surchargeGroup::addItem);
+    surchargeGroup.setItems(surchargeGroups);
   }
 
   void setPriceLists(Collection<PriceList> priceLists) {
-    priceList.removeAllItems();
-    priceLists.forEach(priceList::addItem);
+    priceList.setItems(priceLists);
   }
 
   public ObjectForm<Article> getArticleObjectForm() {
@@ -191,7 +185,16 @@ public class EditArticleView implements IView<EditArticleController> {
             showInShoppingMask,
             weighable,
             surchargeGroup,
-            shopRange);
+            shopRange,
+            vat
+        );
+    supplier.addActionListener(e -> {
+      try {
+        controller.loadSurchargeGroupsFor(supplier.getSelected());
+      } catch (NullPointerException nullPointerException) {
+        controller.loadSurchargeGroupsFor(Supplier.getKKSupplier());
+      }
+    });
   }
 
   void setActionTitle(String s) {
@@ -209,7 +212,6 @@ public class EditArticleView implements IView<EditArticleController> {
 
   public void setKbNumber(int nextUnusedArticleNumber) {
     kbItemNumber.setText(nextUnusedArticleNumber + "");
-    kbItemNumber.inputChanged();
   }
 
   public void nameAlreadyExists() {
@@ -237,7 +239,18 @@ public class EditArticleView implements IView<EditArticleController> {
                 getTopComponent(), "Soll der Barcode auf " + s + " gesetzt werden?")
             == 0) {
       barcode.setText(s);
-      barcode.inputChanged();
     }
+  }
+
+  public boolean isSameArticle(Article nearest) {
+    return JOptionPane.showConfirmDialog(getTopComponent(),"Es wurde ein Artikel gefunden der einen sehr identischen Namen hat:\n"+ nearest.toString()+"\nWollen sie trozedem einen neuen Artikel erstellen?") == 0;
+  }
+
+  public Supplier getSelectedSupplier() {
+    return supplier.getSelected();
+  }
+
+  public void suppliersItemNumberNotAvailable() {
+    JOptionPane.showMessageDialog(getTopComponent(),"Die gewählte Lieferantennummer ist bereits für diesen Lieferant vergeben!");
   }
 }
