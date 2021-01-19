@@ -5,11 +5,16 @@ import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.StripedRenderer;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.EditArticle.EditArticleController;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
@@ -34,7 +39,29 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             EditArticleController::new,
             this::search,
             true,
-            Column.create("Name", Article::getName, LEFT),
+            new Column<Article>() {
+              @Override
+              public String getName() {
+                return "Name";
+              }
+
+              @Override
+              public Object getValue(Article article) throws PermissionKeyRequiredException {
+                return article.getName();
+              }
+
+              @Override
+              public void adjust(TableColumn column) {
+                column.setMinWidth(600);
+              }
+
+              @Override
+              public TableCellRenderer getRenderer() {
+                StripedRenderer renderer = new StripedRenderer();
+                renderer.setAlignmentX(LEFT);
+                return renderer;
+              }
+            },
             Column.create(
                 "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName(), RIGHT),
             Column.create("Ladennummer", Article::getKbNumber, RIGHT),
