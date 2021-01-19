@@ -1,5 +1,8 @@
 package kernbeisser.Windows.EditUserGroup;
 
+import java.util.ArrayList;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.CustomComponents.Dialogs.LogInDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -22,7 +25,19 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
     super(new EditUserGroupModel(user));
     userGroupSearchBoxController =
         new SearchBoxController<>(
-            UserGroup::defaultSearch,
+            (s, m) ->
+                UserGroup.defaultSearch(s, m).stream()
+                    .filter(
+                        new Predicate<UserGroup>() {
+                          final UserGroup kernbeisserUserGroup =
+                              User.getKernbeisserUser().getUserGroup();
+
+                          @Override
+                          public boolean test(UserGroup userGroup) {
+                            return !kernbeisserUserGroup.equals(userGroup);
+                          }
+                        })
+                    .collect(Collectors.toCollection(ArrayList::new)),
             Column.create("Mitglieder", UserGroup::getMemberString, SwingConstants.LEFT),
             Column.create(
                 "Solidarzuschlag",
