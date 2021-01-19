@@ -68,14 +68,14 @@ public class EditUserController extends Controller<EditUserView, EditUserModel> 
   void refreshUsername() {
     if (model.getMode() == Mode.ADD) {
       var view = getView();
-      User data = view.getObjectForm().getDataIgnoreWrongInput();
-      if (data.getSurname() != null && data.getFirstName() != null) {
+      String firstName = view.getFirstName();
+      String surName = view.getSurname();
+      if (surName != null && firstName != null) {
         getView()
             .setUsername(
                 model
                     .generateUsername(
-                        data.getFirstName().toLowerCase().replace(" ", ""),
-                        data.getSurname().toLowerCase())
+                        firstName.toLowerCase().replace(" ", ""), surName.toLowerCase())
                     .replace(" ", ""));
       }
     }

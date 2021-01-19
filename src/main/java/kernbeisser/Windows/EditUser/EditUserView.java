@@ -202,7 +202,6 @@ public class EditUserView implements IView<EditUserController> {
 
   public void setUsername(String username) {
     this.username.setText(username);
-    this.username.inputChanged();
   }
 
   @Override
@@ -217,5 +216,13 @@ public class EditUserView implements IView<EditUserController> {
       default:
         return "Benutzer-Formular";
     }
+  }
+
+  public String getFirstName() {
+    return firstName.getText();
+  }
+
+  public String getSurname() {
+    return lastName.getText();
   }
 }

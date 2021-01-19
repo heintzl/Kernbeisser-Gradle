@@ -3,13 +3,18 @@ package kernbeisser.Windows.EditArticle;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+import java.util.Optional;
+import javax.persistence.NoResultException;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.AccessChecking.SilentParseException;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Useful.Tools;
@@ -73,6 +78,41 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
     editArticleView.setShopRanges(Arrays.asList(ShopRange.values()));
     // after
     editArticleView.getArticleObjectForm().setSource(model.getSource());
+    editArticleView.getArticleObjectForm().setObjectValidator(this::validateArticle);
+  }
+
+  int validateSuppliersItemNumber(String suppliersItemNumberRaw) throws CannotParseException {
+    try {
+      int suppliersItemNumber = Integer.parseInt(suppliersItemNumberRaw);
+      try {
+        Article article =
+            Article.getBySuppliersItemNumber(getView().getSelectedSupplier(), suppliersItemNumber);
+        if (getModel().getMode() == Mode.EDIT
+            && article.getId() == getView().getArticleObjectForm().getOriginal().getId())
+          return suppliersItemNumber;
+        getView().suppliersItemNumberNotAvailable();
+        throw new CannotParseException();
+      } catch (NoResultException n) {
+        return suppliersItemNumber;
+      }
+    } catch (NumberFormatException e) {
+      throw new CannotParseException();
+    }
+  }
+
+  private Article validateArticle(Article article) throws CannotParseException {
+    if (model.getMode() == Mode.ADD) {
+      Optional<Article> nearestOpt = model.findNearestArticle(article);
+      if (!nearestOpt.isPresent()) return article;
+      Article nearest = nearestOpt.get();
+      int distance = Tools.calculate(article.getName(), nearest.getName());
+      if (distance < Setting.WARN_ARTICLE_DIFFERENCE.getIntValue()) {
+        if (!getView().isSameArticle(nearest)) {
+          throw new SilentParseException();
+        }
+      }
+    }
+    return article;
   }
 
   String validateName(String name) throws CannotParseException {
@@ -100,7 +140,9 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
         case ADD:
           if (!(model.kbNumberExists(number) > -1)) return number;
           else if (view.kbNumberAlreadyExists()) {
-            return model.nextUnusedArticleNumber(number);
+            int next = model.nextUnusedArticleNumber(number);
+            view.setKbNumber(next);
+            return next;
           } else {
             throw new CannotParseException("Number is already taken");
           }
@@ -155,7 +197,7 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
     return amount * units.getBaseFactor() + "";
   }
 
-  public void loadSurchargeGroupsFor() {
-    getView().setSurchargeGroup(model.getAllSurchargeGroups());
+  public void loadSurchargeGroupsFor(Supplier supplier) {
+    getView().setSurchargeGroup(model.getAllSurchargeGroupsFor(supplier));
   }
 }

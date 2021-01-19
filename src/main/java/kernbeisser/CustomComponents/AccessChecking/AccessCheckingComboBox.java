@@ -1,12 +1,18 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
+import java.awt.Color;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Useful.Tools;
+import kernbeisser.Security.Proxy;
 import org.jetbrains.annotations.Nullable;
 
-public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements Bounded<P, V> {
+public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
+    implements ObjectFormComponent<P>,
+        BoundedWriteProperty<P, V>,
+        BoundedReadProperty<P, V>,
+        Predictable<P> {
   private boolean inputChanged = false;
 
   @lombok.Setter private boolean allowNull;
@@ -22,25 +28,6 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
     addActionListener(e -> inputChanged = true);
   }
 
-  @Override
-  public void inputChanged() {
-    inputChanged = true;
-  }
-
-  @Override
-  public boolean isInputChanged() {
-    return inputChanged;
-  }
-
-  @Override
-  public void setObjectData(P data) {
-    try {
-      setSelectedItem(getter.get(data));
-    } catch (PermissionKeyRequiredException ignored) {
-
-    }
-  }
-
   @Nullable
   @Override
   public Object getSelectedItem() {
@@ -51,27 +38,9 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
   }
 
   @Override
-  public void writeInto(P p) throws CannotParseException {
-    try {
-      int selectedIndex = getSelectedIndex();
-      if (selectedIndex > -1) {
-        setter.set(p, (V) getSelectedItem());
-      } else {
-        if (!allowNull) throw new CannotParseException();
-        else setter.set(p, null);
-      }
-    } catch (PermissionKeyRequiredException ignored) {
-    }
-  }
-
-  @Override
-  public Getter<P, V> getGetter() {
-    return getter;
-  }
-
-  @Override
-  public Setter<P, V> getSetter() {
-    return setter;
+  public void setSelectedItem(Object anObject) {
+    inputChanged = true;
+    super.setSelectedItem(anObject);
   }
 
   @Override
@@ -80,8 +49,7 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
       super.removeItem(NO_READ_PERMISSION);
     } else {
       super.removeItem(NO_READ_PERMISSION);
-      super.addItem(NO_READ_PERMISSION);
-      setSelectedItem(NO_READ_PERMISSION);
+      super.setSelectedItem(NO_READ_PERMISSION);
     }
   }
 
@@ -105,22 +73,47 @@ public class AccessCheckingComboBox<P, V> extends JComboBox<Object> implements B
   }
 
   @Override
-  public void addItem(Object item) {
-    addValue((V) item);
+  public void setPropertyEditable(boolean v) {
+    super.setEnabled(v);
   }
 
   @Override
-  public void setWriteable(boolean b) {
-    setEnabled(b);
+  public void setInvalidInput() {
+    setForeground(Color.RED);
   }
 
   @Override
-  public void markWrongInput() {
-    Tools.showHint(this);
+  public V get(P p) throws PermissionKeyRequiredException {
+    return getter.get(p);
   }
 
   @Override
-  public boolean validInput() {
-    return getSelectedIndex() > -1;
+  public boolean isPropertyReadable(P parent) {
+    return Proxy.hasPermission(getter, parent);
+  }
+
+  @Override
+  public boolean isPropertyWriteable(P parent) {
+    return Proxy.hasPermission(setter, parent);
+  }
+
+  @Override
+  public void setData(V v) {
+    super.setSelectedItem(v);
+  }
+
+  @Override
+  public void set(P p, V t) throws PermissionKeyRequiredException {
+    if (inputChanged) setter.set(p, t);
+  }
+
+  @Override
+  public V getData() throws CannotParseException {
+    try {
+      return getSelected();
+    } catch (NullPointerException e) {
+      if (allowNull) return null;
+      else throw new CannotParseException("field requires not null property");
+    }
   }
 }

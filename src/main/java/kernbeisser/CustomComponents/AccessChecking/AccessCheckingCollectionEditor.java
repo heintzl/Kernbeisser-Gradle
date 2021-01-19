@@ -1,21 +1,20 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 
 public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> extends JButton
-    implements Bounded<P, C> {
+    implements ObjectFormComponent<P>, BoundedReadProperty<P, C>, BoundedWriteProperty<P, C> {
   private final Getter<P, C> getter;
   private final Setter<P, C> setter;
-  private boolean changed = false;
 
   private boolean editable;
 
@@ -40,60 +39,37 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
   }
 
   @Override
-  public void inputChanged() {
-    changed = true;
-  }
-
-  @Override
-  public boolean isInputChanged() {
-    return changed;
-  }
-
-  @Override
-  public void setObjectData(P data) {
-    try {
-      this.data = getter.get(data);
-    } catch (PermissionKeyRequiredException e) {
-      editable = false;
-    }
-  }
-
-  @Override
-  public void writeInto(P p) throws CannotParseException {
-    try {
-      setter.set(p, data);
-    } catch (PermissionKeyRequiredException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Override
-  public void markWrongInput() {
-    Tools.showUnexpectedErrorWarning(new Exception("Unknown error happened"));
-  }
-
-  @Override
-  public Getter<P, C> getGetter() {
-    return getter;
-  }
-
-  @Override
-  public Setter<P, C> getSetter() {
-    return setter;
-  }
-
-  @Override
   public void setReadable(boolean b) {
-    setEnabled(b);
+    setEnabled(false);
   }
 
   @Override
-  public void setWriteable(boolean b) {
-    editable = b;
+  public void setPropertyEditable(boolean v) {
+    editable = v;
   }
 
   @Override
-  public boolean validInput() {
-    return true;
+  public void setInvalidInput() {
+    setForeground(Color.RED);
+  }
+
+  @Override
+  public C get(P p) throws PermissionKeyRequiredException {
+    return getter.get(p);
+  }
+
+  @Override
+  public void setData(C vs) {
+    data = vs;
+  }
+
+  @Override
+  public void set(P p, C t) throws PermissionKeyRequiredException {
+    setter.set(p, t);
+  }
+
+  @Override
+  public C getData() throws CannotParseException {
+    return data;
   }
 }

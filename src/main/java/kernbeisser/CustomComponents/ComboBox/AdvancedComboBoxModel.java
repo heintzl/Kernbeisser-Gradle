@@ -95,9 +95,9 @@ public class AdvancedComboBoxModel<T> implements MutableComboBoxModel<T> {
   public void removeElementAt(int index) {
     try {
       selected = values.get(index - 1);
+      triggerRemoveEvent(index, index);
     } catch (ArrayIndexOutOfBoundsException e) {
       selected = values.stream().findAny().orElse(null);
     }
-    triggerRemoveEvent(index, index);
   }
 }

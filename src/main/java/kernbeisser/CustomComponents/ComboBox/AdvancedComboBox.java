@@ -30,11 +30,14 @@ public class AdvancedComboBox<T> extends JComboBox<T> {
   public void setItems(List<T> items) {
     checkModel();
     ((AdvancedComboBoxModel<T>) getModel()).setValues(items);
+    if (getSelectedIndex() == -1 && items.size() > 0) {
+      setSelectedIndex(0);
+    }
   }
 
   public void setItems(Collection<T> items) {
-    setItems(new ArrayList<>(items));
     removeAllItems();
+    setItems(new ArrayList<>(items));
   }
 
   public T getSelected() {
