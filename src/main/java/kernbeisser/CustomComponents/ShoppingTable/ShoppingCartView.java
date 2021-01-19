@@ -48,17 +48,14 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
     value.setText(String.format("%.2f€", s));
   }
 
-  String inputNoOfContainers(ShoppingItem item, boolean retry) {
-    String initValue =
-        MessageFormat.format(
-                "{0,number,0}", Math.floor(item.getItemMultiplier() / item.getContainerSize()))
-            .trim();
+  String inputNoOfContainers(int containers, double containerSize, boolean retry) {
+    String initValue = MessageFormat.format("{0,number,0}", containers).trim();
     String message =
         MessageFormat.format(
             retry
                 ? "Eingabe kann nicht verarbeitet werden, bitte noch einmal versuchen. Für wie viele {0,number,0}er Pfand-Gebinde soll Pfand berechnet werden?"
                 : "Die eingegebene Menge passt in ein oder mehrere {0,number,0}er Pfand-Gebinde. Für wie viele Gebinde soll Pfand berechnet werden?",
-            item.getContainerSize());
+            containerSize);
     String response = JOptionPane.showInputDialog(getContent(), message, initValue);
     if (response != null) {
       response = response.trim();
@@ -134,7 +131,9 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               predicate));
       shoppingItems.addColumn(
           Column.createIcon(
-              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
+              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
+              controller::delete,
+              i -> i.getKbNumber() != depositKbNumber));
     }
     shoppingItems.getTableHeader().setBackground(Color.BLACK);
     shoppingItems.getTableHeader().setForeground(Color.LIGHT_GRAY);

@@ -22,28 +22,47 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
     this.editable = editable;
   }
 
-  public void addShoppingItem(ShoppingItem item) {
+  private int extractContainerDeposit(ShoppingItem item) {
+    return model.getItems().stream()
+        .filter(i -> i.getName().contains("Gebinde") && i.getParentItem().equals(item))
+        .map(ShoppingItem::getItemMultiplier)
+        .findFirst()
+        .orElse(0);
+  }
+
+  public void mergeShoppingItem(ShoppingItem item, boolean fromShoppingMask) {
     // TODO should throw exception if !editable
     if (!editable) return;
     ShoppingItem addedItem = model.addItem(item);
-    if (item.getItemMultiplier() != addedItem.getItemMultiplier())
-      RememberDialog.showDialog(
-          LogInModel.getLoggedIn(),
-          getView().getContent(),
-          "Der Artikel ist bereits im Einkaufswagen vorhanden.\nDie Menge von "
-              + addedItem.getName()
-              + " wurde auf "
-              + addedItem.getItemMultiplier()
-              + " geändert.",
-          "Artikel existiert bereits im Einkaufswagen");
+    if (addedItem == null) return;
+    if (item.getItemMultiplier() != addedItem.getItemMultiplier()) {
+      if (fromShoppingMask) {
+        RememberDialog.showDialog(
+            LogInModel.getLoggedIn(),
+            getView().getContent(),
+            "Der Artikel ist bereits im Einkaufswagen vorhanden.\nDie Menge von "
+                + addedItem.getName()
+                + " wurde auf "
+                + addedItem.getItemMultiplier()
+                + " geändert.",
+            "Artikel existiert bereits im Einkaufswagen");
+      } else {
+        if (addedItem.getItemMultiplier() <= 0) {
+          model.getItems().remove(addedItem);
+        }
+      }
+    }
     if (item.getSingleDeposit() != 0) {
       model.addItem(addedItem.createSingleDeposit(item.getItemMultiplier()));
     }
-    if (item.getContainerDeposit() != 0 && item.getContainerSize() > 0) {
-      if (Math.abs(item.getItemMultiplier()) >= item.getContainerSize()) {
-        int containers = 0;
+    double containerSize = item.getContainerSize();
+    if (containerSize > 0 && item.getContainerDeposit() != 0) {
+      int containers =
+          ((int) ((addedItem.getItemMultiplier()) / containerSize)
+              - Math.round(extractContainerDeposit(addedItem)));
+      if (containers != 0) {
         boolean exit = false;
-        String response = getView().inputNoOfContainers(item, false);
+        String response = getView().inputNoOfContainers(containers, containerSize, false);
         do {
           if (response == null || response.equals("")) {
             exit = true;
@@ -57,13 +76,17 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
                 throw (new NumberFormatException());
               }
             } catch (NumberFormatException exception) {
-              response = getView().inputNoOfContainers(item, true);
+              response = getView().inputNoOfContainers(containers, containerSize, true);
             }
           }
         } while (!exit);
       }
     }
     refresh();
+  }
+
+  public void addShoppingItem(ShoppingItem item) {
+    mergeShoppingItem(item, true);
   }
 
   double getPrice(ShoppingItem item) {
@@ -83,7 +106,7 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
   void delete(ShoppingItem i) {
     // TODO should throw exception if !editable
     if (!editable) return;
-    model.getItems().removeIf(e -> e.getParentItem() == i || e.equals(i));
+    model.delete(i);
     refresh();
   }
 
@@ -104,52 +127,11 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
   }
 
   public void manipulateShoppingItemAmount(ShoppingItem i, int number) {
-    final int itemMultiplier = i.getItemMultiplier();
-    final double containerSize = i.getContainerSize();
-    final int itemNumber = i.isContainerDiscount() ? (int) (number * i.getContainerSize()) : number;
-    model
-        .getItems()
-        .removeIf(
-            e -> {
-              if (e.equals(i)) {
-                e.setItemMultiplier(itemMultiplier + itemNumber);
-                return e.getItemMultiplier() <= 0;
-              }
-              if (e.getParentItem() == null || (!e.getParentItem().equals(i))) return false;
-              if (e.getName().contains("Gebinde")) {
-                if (e.getParentItem().getItemMultiplier() <= 0) return true;
-                int before = (int) (itemMultiplier / containerSize);
-                int after = (int) ((itemMultiplier + itemNumber) / containerSize);
-                e.setItemMultiplier(e.getItemMultiplier() + after - before);
-              } else {
-                e.setItemMultiplier(e.getItemMultiplier() + itemNumber);
-              }
-              return e.getItemMultiplier() <= 0;
-            });
-    if (number > 0 && i.getSingleDeposit() != 0) {
-      boolean depositFound = false;
-      for (ShoppingItem item : model.getItems()) {
-        if (item.getParentItem() != null
-            && item.getParentItem().equals(i)
-            && !item.getName().contains("Gebinde")) {
-          depositFound = true;
-          break;
-        }
-      }
-      if (!depositFound) {
-        model.addItemBehind(i.createItemDeposit(itemNumber, false), i);
-      }
-    }
-    if ((itemMultiplier + number) / containerSize == 1.
-        && i.getContainerDeposit() != 0
-        && (!model.getItems().stream()
-            .anyMatch(
-                e ->
-                    e.getParentItem() != null
-                        && e.getParentItem().equals(i)
-                        && e.getName().contains("Gebinde")))) {
-      model.addItemBehind(i.createItemDeposit(1, true), i);
-    }
+    ShoppingItem newItem =
+        new ShoppingItem(i.extractArticle(), i.getDiscount(), i.isContainerDiscount());
+    newItem.setItemMultiplier(
+        i.isContainerDiscount() ? (int) (number * i.getContainerSize()) : number);
+    mergeShoppingItem(newItem, false);
     refresh();
   }
 

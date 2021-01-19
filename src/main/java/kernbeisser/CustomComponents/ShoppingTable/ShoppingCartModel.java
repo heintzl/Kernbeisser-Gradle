@@ -16,6 +16,10 @@ public class ShoppingCartModel implements IModel<ShoppingCartController> {
     this.userSurcharge = userSurcharge;
   }
 
+  public void delete(ShoppingItem i) {
+    shoppingItems.removeIf(e -> e.getParentItem() == i || e.equals(i));
+  }
+
   ShoppingItem addItem(ShoppingItem newItem) {
     return addItemAtIndex(newItem, shoppingItems.size());
   }
@@ -31,17 +35,18 @@ public class ShoppingCartModel implements IModel<ShoppingCartController> {
   ShoppingItem addItemAtIndex(ShoppingItem newItem, int atIndex) {
     ShoppingItem existingItem = getShoppingItem(newItem);
     if (existingItem != null) {
-      existingItem.setItemMultiplier(
-          newItem.getItemMultiplier() + existingItem.getItemMultiplier());
-      return existingItem;
+      int newMultiplier = newItem.getItemMultiplier() + existingItem.getItemMultiplier();
+      if (newMultiplier <= 0) {
+        delete(existingItem);
+        return null;
+      } else {
+        existingItem.setItemMultiplier(newMultiplier);
+        return existingItem;
+      }
     } else {
       shoppingItems.add(atIndex, newItem);
       return newItem;
     }
-  }
-
-  public void increaseItemSpace() {
-    this.shoppingItems.ensureCapacity(shoppingItems.size() + 2);
   }
 
   @Nullable
