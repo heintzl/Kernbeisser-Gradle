@@ -58,7 +58,7 @@ public enum Setting {
   LAST_PRINTED_BON_NR("-1"),
   OFFER_PREFIX("*AK* "),
   PREORDERRETARD_THRESHOLD("10"),
-  WARN_ARTICLE_DIFFERENCE("10") ;
+  WARN_ARTICLE_DIFFERENCE("10");
   // defines the type to like in java style
   // Value: Type:
   // 0.0    double

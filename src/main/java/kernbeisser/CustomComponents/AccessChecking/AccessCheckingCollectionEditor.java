@@ -7,13 +7,12 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 
 public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> extends JButton
-    implements ObjectFormComponent<P>, BoundedReadProperty<P,C>, BoundedWriteProperty<P,C> {
+    implements ObjectFormComponent<P>, BoundedReadProperty<P, C>, BoundedWriteProperty<P, C> {
   private final Getter<P, C> getter;
   private final Setter<P, C> setter;
 
@@ -38,7 +37,6 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
     new CollectionController<V>(data, values, editable, columns)
         .openIn(new SubWindow(IView.traceViewContainer(getParent())));
   }
-
 
   @Override
   public void setReadable(boolean b) {
@@ -67,7 +65,7 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
 
   @Override
   public void set(P p, C t) throws PermissionKeyRequiredException {
-    setter.set(p,t);
+    setter.set(p, t);
   }
 
   @Override

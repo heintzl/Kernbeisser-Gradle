@@ -75,8 +75,7 @@ public class EditUserController extends Controller<EditUserView, EditUserModel> 
             .setUsername(
                 model
                     .generateUsername(
-                        firstName.toLowerCase().replace(" ", ""),
-                        surName.toLowerCase())
+                        firstName.toLowerCase().replace(" ", ""), surName.toLowerCase())
                     .replace(" ", ""));
       }
     }

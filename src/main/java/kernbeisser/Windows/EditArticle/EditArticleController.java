@@ -85,24 +85,25 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
     try {
       int suppliersItemNumber = Integer.parseInt(suppliersItemNumberRaw);
       try {
-        Article article = Article.getBySuppliersItemNumber(getView().getSelectedSupplier(),suppliersItemNumber);
-        if(getModel().getMode() == Mode.EDIT && article.getId() == getView().getArticleObjectForm().getOriginal().getId())
+        Article article =
+            Article.getBySuppliersItemNumber(getView().getSelectedSupplier(), suppliersItemNumber);
+        if (getModel().getMode() == Mode.EDIT
+            && article.getId() == getView().getArticleObjectForm().getOriginal().getId())
           return suppliersItemNumber;
         getView().suppliersItemNumberNotAvailable();
         throw new CannotParseException();
-      }catch (NoResultException n){
+      } catch (NoResultException n) {
         return suppliersItemNumber;
       }
-    }catch (NumberFormatException e){
+    } catch (NumberFormatException e) {
       throw new CannotParseException();
     }
   }
 
   private Article validateArticle(Article article) throws CannotParseException {
-    if(model.getMode() == Mode.ADD) {
+    if (model.getMode() == Mode.ADD) {
       Optional<Article> nearestOpt = model.findNearestArticle(article);
-      if (!nearestOpt.isPresent())
-        return article;
+      if (!nearestOpt.isPresent()) return article;
       Article nearest = nearestOpt.get();
       int distance = Tools.calculate(article.getName(), nearest.getName());
       if (distance < Setting.WARN_ARTICLE_DIFFERENCE.getIntValue()) {
@@ -113,9 +114,6 @@ public class EditArticleController extends Controller<EditArticleView, EditArtic
     }
     return article;
   }
-
-
-
 
   String validateName(String name) throws CannotParseException {
     var view = getView();

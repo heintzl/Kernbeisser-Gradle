@@ -6,12 +6,13 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Proxy;
-import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.Nullable;
 
-public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V> implements
-    ObjectFormComponent<P>,
-    BoundedWriteProperty<P,V>, BoundedReadProperty<P,V>, Predictable<P> {
+public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
+    implements ObjectFormComponent<P>,
+        BoundedWriteProperty<P, V>,
+        BoundedReadProperty<P, V>,
+        Predictable<P> {
   private boolean inputChanged = false;
 
   @lombok.Setter private boolean allowNull;
@@ -71,7 +72,6 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V> implements
     }
   }
 
-
   @Override
   public void setPropertyEditable(boolean v) {
     super.setEnabled(v);
@@ -89,12 +89,12 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V> implements
 
   @Override
   public boolean isPropertyReadable(P parent) {
-    return Proxy.hasPermission(getter,parent);
+    return Proxy.hasPermission(getter, parent);
   }
 
   @Override
   public boolean isPropertyWriteable(P parent) {
-    return Proxy.hasPermission(setter,parent);
+    return Proxy.hasPermission(setter, parent);
   }
 
   @Override
@@ -104,15 +104,15 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V> implements
 
   @Override
   public void set(P p, V t) throws PermissionKeyRequiredException {
-    if(inputChanged) setter.set(p,t);
+    if (inputChanged) setter.set(p, t);
   }
 
   @Override
   public V getData() throws CannotParseException {
     try {
       return getSelected();
-    }catch (NullPointerException e){
-      if(allowNull)return null;
+    } catch (NullPointerException e) {
+      if (allowNull) return null;
       else throw new CannotParseException("field requires not null property");
     }
   }

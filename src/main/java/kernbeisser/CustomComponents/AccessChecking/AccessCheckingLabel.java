@@ -4,8 +4,8 @@ import javax.swing.JLabel;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Proxy;
 
-public class AccessCheckingLabel<T> extends JLabel implements BoundedReadProperty<T,String>, Predictable<T> {
-
+public class AccessCheckingLabel<T> extends JLabel
+    implements BoundedReadProperty<T, String>, Predictable<T> {
 
   private final Getter<T, String> getter;
 
@@ -32,7 +32,7 @@ public class AccessCheckingLabel<T> extends JLabel implements BoundedReadPropert
 
   @Override
   public boolean isPropertyReadable(T parent) {
-    return Proxy.hasPermission(getter,parent);
+    return Proxy.hasPermission(getter, parent);
   }
 
   @Override

@@ -6,15 +6,17 @@ import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.JTextComponent;
 import kernbeisser.Enums.Colors;
 import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Proxy;
 
-public class AccessCheckingField<P, V> extends JTextField implements
-    ObjectFormComponent<P>, BoundedReadProperty<P,V>,
-    BoundedWriteProperty<P,V>, Predictable<P>, DocumentListener{
+public class AccessCheckingField<P, V> extends JTextField
+    implements ObjectFormComponent<P>,
+        BoundedReadProperty<P, V>,
+        BoundedWriteProperty<P, V>,
+        Predictable<P>,
+        DocumentListener {
 
   private final FocusListener noReadPermissionMaker =
       new FocusAdapter() {
@@ -50,8 +52,7 @@ public class AccessCheckingField<P, V> extends JTextField implements
 
   @Override
   public void setInvalidInput() {
-    if(getText().equals(""))
-      setBackground(new Color(0xFF9999));
+    if (getText().equals("")) setBackground(new Color(0xFF9999));
     else setForeground(Color.RED);
   }
 
@@ -62,12 +63,12 @@ public class AccessCheckingField<P, V> extends JTextField implements
 
   @Override
   public boolean isPropertyReadable(P parent) {
-    return Proxy.hasPermission(getter,parent);
+    return Proxy.hasPermission(getter, parent);
   }
 
   @Override
   public boolean isPropertyWriteable(P parent) {
-    return Proxy.hasPermission(setter,parent);
+    return Proxy.hasPermission(setter, parent);
   }
 
   @Override
@@ -77,7 +78,7 @@ public class AccessCheckingField<P, V> extends JTextField implements
 
   @Override
   public void set(P p, V t) throws PermissionKeyRequiredException {
-    if(inputChanged) setter.set(p,t);
+    if (inputChanged) setter.set(p, t);
   }
 
   @Override
@@ -101,7 +102,7 @@ public class AccessCheckingField<P, V> extends JTextField implements
     }
   }
 
-  void removeInvalidInputMark(){
+  void removeInvalidInputMark() {
     setForeground(foregroundDefault);
     setBackground(backgroundDefault);
   }

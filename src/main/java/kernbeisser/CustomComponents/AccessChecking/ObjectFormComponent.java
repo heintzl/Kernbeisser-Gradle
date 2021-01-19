@@ -1,5 +1,3 @@
 package kernbeisser.CustomComponents.AccessChecking;
 
-public interface ObjectFormComponent <P> {
-
-}
+public interface ObjectFormComponent<P> {}

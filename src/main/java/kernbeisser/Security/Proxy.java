@@ -114,16 +114,16 @@ public class Proxy {
     return ProxyFactory.getHandler((javassist.util.proxy.Proxy) o);
   }
 
-  public static <T,V> boolean hasPermission(Getter<T,V> getter,T parent){
+  public static <T, V> boolean hasPermission(Getter<T, V> getter, T parent) {
     try {
-       getter.get(parent);
+      getter.get(parent);
       return true;
-    }catch (PermissionKeyRequiredException e){
+    } catch (PermissionKeyRequiredException e) {
       return false;
     }
   }
 
-  public static <T,V> boolean hasPermission(Setter<T,V> setter,T parent){
+  public static <T, V> boolean hasPermission(Setter<T, V> setter, T parent) {
     try {
       try {
         setter.set(parent, null);
@@ -150,6 +150,5 @@ public class Proxy {
       e.printStackTrace();
       return t;
     }
-
   }
 }

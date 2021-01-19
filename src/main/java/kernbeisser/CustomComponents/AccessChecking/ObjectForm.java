@@ -19,7 +19,7 @@ public class ObjectForm<P> {
   private P accessModel;
 
   @SafeVarargs
-  public ObjectForm(ObjectFormComponent<P> ... boundedFields) {
+  public ObjectForm(ObjectFormComponent<P>... boundedFields) {
     for (ObjectFormComponent<P> boundedField : boundedFields) {
       if (boundedField == null)
         throw new NullPointerException("cannot create ObjectFrom with null fields");
@@ -40,36 +40,34 @@ public class ObjectForm<P> {
     checkValidSource();
     P originalCopy = Tools.clone(original);
     boolean success = true;
-    for (ObjectFormComponent<P> component : components){
-        if(component instanceof BoundedWriteProperty) {
-          try {
-            if (component instanceof Predictable && !((Predictable) component)
-                .isPropertyWriteable(accessModel))
-              continue;
-            ((BoundedWriteProperty<P, ?>) component).set(originalCopy);
-          } catch (PermissionKeyRequiredException e) {
-            ((BoundedWriteProperty<?, ?>) component).setPropertyEditable(false);
-          } catch (CannotParseException e){
-            if (!(e instanceof SilentParseException)) {
-              ((BoundedWriteProperty<?, ?>) component).setInvalidInput();
-            }
-            success = false;
+    for (ObjectFormComponent<P> component : components) {
+      if (component instanceof BoundedWriteProperty) {
+        try {
+          if (component instanceof Predictable
+              && !((Predictable) component).isPropertyWriteable(accessModel)) continue;
+          ((BoundedWriteProperty<P, ?>) component).set(originalCopy);
+        } catch (PermissionKeyRequiredException e) {
+          ((BoundedWriteProperty<?, ?>) component).setPropertyEditable(false);
+        } catch (CannotParseException e) {
+          if (!(e instanceof SilentParseException)) {
+            ((BoundedWriteProperty<?, ?>) component).setInvalidInput();
           }
+          success = false;
+        }
       }
     }
-    if(!success)throw new CannotParseException();
+    if (!success) throw new CannotParseException();
     return objectValidator.validate(originalCopy);
   }
 
   private void setData(@NotNull P data) {
     for (ObjectFormComponent<P> boundedField : components) {
-      if(boundedField instanceof BoundedReadProperty){
+      if (boundedField instanceof BoundedReadProperty) {
         try {
-          if (boundedField instanceof Predictable && !((Predictable) boundedField)
-              .isPropertyReadable(accessModel))
-            continue;
+          if (boundedField instanceof Predictable
+              && !((Predictable) boundedField).isPropertyReadable(accessModel)) continue;
           ((BoundedReadProperty<P, ?>) boundedField).setValue(data);
-        }catch (PermissionKeyRequiredException e){
+        } catch (PermissionKeyRequiredException e) {
           ((BoundedReadProperty<?, ?>) boundedField).setReadable(false);
         }
       }
@@ -83,12 +81,14 @@ public class ObjectForm<P> {
     }
   }
 
-  private void setAccess(ObjectFormComponent<P> component){
-    if(component instanceof Predictable){
+  private void setAccess(ObjectFormComponent<P> component) {
+    if (component instanceof Predictable) {
       if (component instanceof BoundedReadProperty)
-        ((BoundedReadProperty<?, ?>) component).setReadable(((Predictable<P>) component).isPropertyReadable(accessModel));
-      if(component instanceof BoundedWriteProperty)
-        ((BoundedWriteProperty<?, ?>) component).setPropertyEditable(((Predictable<P>) component).isPropertyWriteable(accessModel));
+        ((BoundedReadProperty<?, ?>) component)
+            .setReadable(((Predictable<P>) component).isPropertyReadable(accessModel));
+      if (component instanceof BoundedWriteProperty)
+        ((BoundedWriteProperty<?, ?>) component)
+            .setPropertyEditable(((Predictable<P>) component).isPropertyWriteable(accessModel));
     }
   }
 
@@ -105,9 +105,8 @@ public class ObjectForm<P> {
     }
   }
 
-
-  private static void notifyException(CannotParseException e){
-    if(!(e instanceof SilentParseException))
+  private static void notifyException(CannotParseException e) {
+    if (!(e instanceof SilentParseException))
       JOptionPane.showMessageDialog(null, "Die folgenden Felder wurden nicht korrekt ausgefüllt");
   }
 

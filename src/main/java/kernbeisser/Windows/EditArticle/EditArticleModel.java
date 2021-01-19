@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.swing.SwingUtilities;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
@@ -104,11 +103,10 @@ public class EditArticleModel implements IModel<EditArticleController> {
     }
   }
 
-  public Collection<SurchargeGroup> getAllSurchargeGroupsFor(Supplier s){
+  public Collection<SurchargeGroup> getAllSurchargeGroupsFor(Supplier s) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     return em.createQuery(
-        "select s from SurchargeGroup s where supplier = :sid",
-        SurchargeGroup.class)
+            "select s from SurchargeGroup s where supplier = :sid", SurchargeGroup.class)
         .setParameter("sid", s)
         .getResultList();
   }
@@ -119,10 +117,12 @@ public class EditArticleModel implements IModel<EditArticleController> {
   }
 
   public Optional<Article> findNearestArticle(Article a) {
-    @Cleanup
-    EntityManager em = DBConnection.getEntityManager();
-    return em.createQuery("select a from Article a where supplier = :s and id != :id", Article.class).setParameter("id",a.getId()).setParameter("s",a.getSupplier()).getResultStream()
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery(
+            "select a from Article a where supplier = :s and id != :id", Article.class)
+        .setParameter("id", a.getId())
+        .setParameter("s", a.getSupplier())
+        .getResultStream()
         .min(Comparator.comparingInt(e -> Tools.calculate(a.getName(), e.getName())));
   }
-
 }

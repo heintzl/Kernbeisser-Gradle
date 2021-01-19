@@ -2,12 +2,14 @@ package kernbeisser.CustomComponents.AccessChecking;
 
 import java.awt.Color;
 import javax.swing.*;
-import kernbeisser.Exeptions.CannotParseException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Proxy;
-import kernbeisser.Useful.Tools;
 
-public class AccessCheckBox<P> extends JCheckBox implements ObjectFormComponent<P>, BoundedReadProperty<P,Boolean>, BoundedWriteProperty<P,Boolean>, Predictable<P> {
+public class AccessCheckBox<P> extends JCheckBox
+    implements ObjectFormComponent<P>,
+        BoundedReadProperty<P, Boolean>,
+        BoundedWriteProperty<P, Boolean>,
+        Predictable<P> {
 
   private boolean inputChanged = false;
 
@@ -46,12 +48,12 @@ public class AccessCheckBox<P> extends JCheckBox implements ObjectFormComponent<
 
   @Override
   public boolean isPropertyReadable(P parent) {
-    return Proxy.hasPermission(getter,parent);
+    return Proxy.hasPermission(getter, parent);
   }
 
   @Override
   public boolean isPropertyWriteable(P parent) {
-    return Proxy.hasPermission(setter,parent);
+    return Proxy.hasPermission(setter, parent);
   }
 
   @Override
@@ -62,7 +64,7 @@ public class AccessCheckBox<P> extends JCheckBox implements ObjectFormComponent<
   @Override
   public void set(P p, Boolean t) throws PermissionKeyRequiredException {
     if (inputChanged) {
-      setter.set(p,t);
+      setter.set(p, t);
     }
   }
 

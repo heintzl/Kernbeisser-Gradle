@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Security.ActionPermission;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -415,20 +414,19 @@ public enum PermissionKey {
     return out;
   }
 
-  public static PermissionKey[] combine(PermissionKey[] ... permissionKeys){
+  public static PermissionKey[] combine(PermissionKey[]... permissionKeys) {
     return Arrays.stream(permissionKeys).flatMap(Arrays::stream).toArray(PermissionKey[]::new);
   }
 
-  public static PermissionKey[] allReadPermissions(Class<?> c){
+  public static PermissionKey[] allReadPermissions(Class<?> c) {
     return with(e -> e.clazz.equals(c) && e.name().endsWith("READ"));
   }
 
-  public static PermissionKey[] allWritePermissions(Class<?> c){
+  public static PermissionKey[] allWritePermissions(Class<?> c) {
     return with(e -> e.clazz.equals(c) && e.name().endsWith("WRITE"));
   }
 
-  public static PermissionKey[] with(Predicate<PermissionKey> keyPredicate){
+  public static PermissionKey[] with(Predicate<PermissionKey> keyPredicate) {
     return Arrays.stream(values()).filter(keyPredicate).toArray(PermissionKey[]::new);
   }
-
 }

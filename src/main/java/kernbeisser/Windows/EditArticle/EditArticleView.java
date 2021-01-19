@@ -19,7 +19,6 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -186,15 +185,15 @@ public class EditArticleView implements IView<EditArticleController> {
             weighable,
             surchargeGroup,
             shopRange,
-            vat
-        );
-    supplier.addActionListener(e -> {
-      try {
-        controller.loadSurchargeGroupsFor(supplier.getSelected());
-      } catch (NullPointerException nullPointerException) {
-        controller.loadSurchargeGroupsFor(Supplier.getKKSupplier());
-      }
-    });
+            vat);
+    supplier.addActionListener(
+        e -> {
+          try {
+            controller.loadSurchargeGroupsFor(supplier.getSelected());
+          } catch (NullPointerException nullPointerException) {
+            controller.loadSurchargeGroupsFor(Supplier.getKKSupplier());
+          }
+        });
   }
 
   void setActionTitle(String s) {
@@ -243,7 +242,12 @@ public class EditArticleView implements IView<EditArticleController> {
   }
 
   public boolean isSameArticle(Article nearest) {
-    return JOptionPane.showConfirmDialog(getTopComponent(),"Es wurde ein Artikel gefunden der einen sehr identischen Namen hat:\n"+ nearest.toString()+"\nWollen sie trozedem einen neuen Artikel erstellen?") == 0;
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Es wurde ein Artikel gefunden der einen sehr identischen Namen hat:\n"
+                + nearest.toString()
+                + "\nWollen sie trozedem einen neuen Artikel erstellen?")
+        == 0;
   }
 
   public Supplier getSelectedSupplier() {
@@ -251,6 +255,8 @@ public class EditArticleView implements IView<EditArticleController> {
   }
 
   public void suppliersItemNumberNotAvailable() {
-    JOptionPane.showMessageDialog(getTopComponent(),"Die gewählte Lieferantennummer ist bereits für diesen Lieferant vergeben!");
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Die gewählte Lieferantennummer ist bereits für diesen Lieferant vergeben!");
   }
 }
