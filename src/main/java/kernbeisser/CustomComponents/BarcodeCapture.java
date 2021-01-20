@@ -72,7 +72,12 @@ public class BarcodeCapture {
       if (e.getKeyCode() == Setting.SCANNER_SUFFIX_KEY.getKeyEventValue()
           && e.getID() == KeyEvent.KEY_RELEASED) {
         timeoutTimer.stop();
-        barcodeConsumer.accept(barcode.toString());
+        try {
+          barcodeConsumer.accept(barcode.toString());
+        } catch (Throwable throwable) {
+          stopChaining();
+          throw throwable;
+        }
         stopChaining();
       } else if (e.getID() == KeyEvent.KEY_TYPED) {
         barcode.append(e.getKeyChar());

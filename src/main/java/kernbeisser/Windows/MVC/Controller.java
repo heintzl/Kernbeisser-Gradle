@@ -60,14 +60,29 @@ public abstract class Controller<
     KeyboardFocusManager.getCurrentKeyboardFocusManager()
         .addKeyEventDispatcher(
             new KeyEventDispatcher() {
+              private transient boolean isAlreadyOpened = false;
+
               @Override
               public boolean dispatchKeyEvent(KeyEvent e) {
                 try {
-                  return ControllerReference.traceBack(e.getComponent())
-                      .getController()
-                      .processKeyboardInput(e);
+                  ControllerReference.traceBack(
+                      e.getComponent(),
+                      controllerReference ->
+                          controllerReference.getController().processKeyboardInput(e));
+                  return true;
                 } catch (UnsupportedOperationException ignored) {
-                  return false;
+                  if (isAlreadyOpened) {
+                    Tools.beep();
+                    return true;
+                  }
+                  if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()
+                      && e.getID() == KeyEvent.KEY_RELEASED) {
+                    isAlreadyOpened = true;
+                    JOptionPane.showMessageDialog(
+                        e.getComponent(), "In diesem Fenster ist keine Barcode-Eingabe möglich");
+                    isAlreadyOpened = false;
+                  }
+                  return true;
                 }
               }
             });
@@ -212,13 +227,7 @@ public abstract class Controller<
   }
 
   protected boolean processKeyboardInput(KeyEvent e) {
-    if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()) {
-      JOptionPane.showMessageDialog(
-          view.getTopComponent(), "In diesem Fenster ist keine Barcode-Eingabe möglich");
-      return true;
-    } else {
-      return false;
-    }
+    return false;
   }
 
   protected final boolean isInViewInitialize() {
