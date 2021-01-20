@@ -2,6 +2,7 @@ package kernbeisser.StartUp.LogIn;
 
 import java.awt.event.ActionEvent;
 import javax.swing.*;
+import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +14,7 @@ public class DBLogInController extends Controller<DBLogInView, DBLogInModel> {
     getView().setConnectionValid(model.isServiceAvailable(getView().getDBAccess()));
   }
 
-  public DBLogInController() {
+  public DBLogInController() throws ClassIsSingletonException {
     super(new DBLogInModel());
     logInTimer.start();
   }
