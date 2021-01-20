@@ -74,7 +74,7 @@ public abstract class Controller<
                 } catch (UnsupportedOperationException ignored) {
                   if (isAlreadyOpened) {
                     Tools.beep();
-                    return true;
+                    return false;
                   }
                   if (DBConnection.isInitialized()
                       && e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()
@@ -84,7 +84,7 @@ public abstract class Controller<
                         e.getComponent(), "In diesem Fenster ist keine Barcode-Eingabe möglich");
                     isAlreadyOpened = false;
                   }
-                  return true;
+                  return false;
                 }
               }
             });
