@@ -18,6 +18,22 @@ public class DBConnection {
 
   private static EntityManagerFactory entityManagerFactory = null;
 
+  public static boolean checkValidDBAccess(DBAccess dbAccessData) {
+    HashMap<String, String> properties = new HashMap<>(3);
+    properties.put("javax.persistence.jdbc.user", dbAccessData.getUsername());
+    properties.put("javax.persistence.jdbc.url", dbAccessData.getUrl());
+    properties.put("javax.persistence.jdbc.password", dbAccessData.getPassword());
+    try {
+      Persistence.createEntityManagerFactory("Kernbeisser", properties).close();
+      return true;
+    } catch (ServiceException e) {
+      return false;
+    } catch (Exception e) {
+      Tools.showUnexpectedErrorWarning(e);
+      return false;
+    }
+  }
+
   public static boolean tryLogIn(DBAccess dbAccessData) {
     Main.logger.info(
         "Try to Login in with Username: \""

@@ -1,14 +1,16 @@
 package kernbeisser.StartUp.LogIn;
 
+import java.awt.*;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class DBLogInView implements IView<DBLogInController> {
+public class DBLogInView implements IView<DBLogInController>, DocumentListener {
   private JButton logIn;
   private JTextField url;
   private JTextField username;
@@ -23,22 +25,11 @@ public class DBLogInView implements IView<DBLogInController> {
     DBAccess access = Config.getConfig().getDbAccess();
     url.setText(access.getUrl());
     username.setText(access.getUsername());
-    logIn.addActionListener(
-        e -> {
-          DBAccess newAccess =
-              new DBAccess(url.getText(), username.getText(), new String(password.getPassword()));
-          if (DBConnection.tryLogIn(newAccess)) {
-            Config.getConfig().setDbAccess(newAccess);
-            Config.safeFile();
-            JOptionPane.showMessageDialog(
-                getTopComponent(), "Die Verbindung wurde erfolgreich erstellt!");
-            back();
-          } else {
-            JOptionPane.showMessageDialog(
-                getTopComponent(),
-                "Es kann leider keine Verbindung hergestellt werden,\n bitte \u00fcberpr\u00fcfen sie die Eingaben nach Fehlern");
-          }
-        });
+    logIn.addActionListener(e -> controller.logIn());
+    username.addActionListener(e -> controller.logIn());
+    username.getDocument().addDocumentListener(this);
+    password.addActionListener(e -> controller.logIn());
+    password.getDocument().addDocumentListener(this);
     cancel.addActionListener(e -> back());
   }
 
@@ -50,5 +41,40 @@ public class DBLogInView implements IView<DBLogInController> {
   @Override
   public String getTitle() {
     return "Datenbankverbindung";
+  }
+
+  void connectionValid() {
+    JOptionPane.showMessageDialog(getTopComponent(), "Die Verbindung wurde erfolgreich erstellt!");
+  }
+
+  void connectionRefused() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Es kann leider keine Verbindung hergestellt werden,\n bitte \u00fcberpr\u00fcfen sie die Eingaben nach Fehlern");
+  }
+
+  public DBAccess getDBAccess() {
+    return new DBAccess(url.getText(), username.getText(), new String(password.getPassword()));
+  }
+
+  public void setConnectionValid(boolean serviceAvailable) {
+    username.setForeground(serviceAvailable ? Color.RED : Color.BLACK);
+    password.setForeground(serviceAvailable ? Color.RED : Color.BLACK);
+    url.setForeground(serviceAvailable ? Color.RED : Color.BLACK);
+  }
+
+  @Override
+  public void insertUpdate(DocumentEvent e) {
+    controller.connectionChanged();
+  }
+
+  @Override
+  public void removeUpdate(DocumentEvent e) {
+    controller.connectionChanged();
+  }
+
+  @Override
+  public void changedUpdate(DocumentEvent e) {
+    controller.connectionChanged();
   }
 }
