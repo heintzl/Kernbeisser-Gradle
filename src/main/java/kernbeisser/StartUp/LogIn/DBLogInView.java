@@ -30,6 +30,7 @@ public class DBLogInView implements IView<DBLogInController>, DocumentListener {
     username.getDocument().addDocumentListener(this);
     password.addActionListener(e -> controller.logIn());
     password.getDocument().addDocumentListener(this);
+    password.setText(access.getPassword());
     cancel.addActionListener(e -> back());
   }
 
@@ -58,23 +59,32 @@ public class DBLogInView implements IView<DBLogInController>, DocumentListener {
   }
 
   public void setConnectionValid(boolean serviceAvailable) {
-    username.setForeground(serviceAvailable ? Color.RED : Color.BLACK);
-    password.setForeground(serviceAvailable ? Color.RED : Color.BLACK);
-    url.setForeground(serviceAvailable ? Color.RED : Color.BLACK);
+    username.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
+    password.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
+    url.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
+  }
+
+  private void defaultColor() {
+    username.setForeground(Color.BLACK);
+    password.setForeground(Color.BLACK);
+    url.setForeground(Color.BLACK);
   }
 
   @Override
   public void insertUpdate(DocumentEvent e) {
     controller.connectionChanged();
+    defaultColor();
   }
 
   @Override
   public void removeUpdate(DocumentEvent e) {
     controller.connectionChanged();
+    defaultColor();
   }
 
   @Override
   public void changedUpdate(DocumentEvent e) {
     controller.connectionChanged();
+    defaultColor();
   }
 }

@@ -8,6 +8,7 @@ import javax.persistence.Persistence;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Main;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
@@ -61,7 +62,11 @@ public class DBConnection {
   public static void logInWithConfig() {
     if (!tryLogIn(Config.getConfig().getDBAccessData())) {
       synchronized (DB_LOGIN_LOCK) {
-        new DBLogInController().withCloseEvent(DB_LOGIN_LOCK::notify).openIn(new JFrameWindow());
+        try {
+          new DBLogInController().withCloseEvent(DB_LOGIN_LOCK::notify).openIn(new JFrameWindow());
+        } catch (ClassIsSingletonException ignored) {
+          return;
+        }
       }
       synchronized (DB_LOGIN_LOCK) {
         try {

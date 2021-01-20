@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.StaticMethodTransformer.StaticMethodTransformer;
 import kernbeisser.Useful.Tools;
@@ -50,7 +51,7 @@ public class ControllerButton extends JButton {
           try {
             preLoadControllerRef.set(controller.get());
             setEnabled(true);
-          } catch (PermissionKeyRequiredException e) {
+          } catch (PermissionKeyRequiredException | ClassIsSingletonException e) {
             setEnabled(false);
           }
         });
