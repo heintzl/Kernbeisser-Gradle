@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.PermissionSet;
@@ -75,7 +76,8 @@ public abstract class Controller<
                     Tools.beep();
                     return true;
                   }
-                  if (e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()
+                  if (DBConnection.isInitialized()
+                      && e.getKeyCode() == Setting.SCANNER_PREFIX_KEY.getKeyEventValue()
                       && e.getID() == KeyEvent.KEY_RELEASED) {
                     isAlreadyOpened = true;
                     JOptionPane.showMessageDialog(
