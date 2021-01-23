@@ -30,8 +30,7 @@ public class DBConnection {
     } catch (ServiceException e) {
       return false;
     } catch (Exception e) {
-      Tools.showUnexpectedErrorWarning(e);
-      return false;
+      return true;
     }
   }
 

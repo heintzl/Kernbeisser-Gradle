@@ -67,7 +67,13 @@ public final class Config {
 
   private File imagePath = new File("images");
 
-  @Setter private DBAccess dbAccess = new DBAccess();
+  @Getter(AccessLevel.PRIVATE)
+  private DBAccess dbAccess = new DBAccess();
+
+  public void setDbAccess(DBAccess dbAccess) {
+    dbAccess.setPassword(dbAccess.getPassword().replace(new String(IgnoreThis.ignoreMe), ""));
+    this.dbAccess = dbAccess;
+  }
 
   private Reports reports = new Reports();
 

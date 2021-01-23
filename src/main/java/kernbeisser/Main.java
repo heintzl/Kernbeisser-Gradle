@@ -49,22 +49,35 @@ public class Main {
     }
   }
 
-  public static void checkRequiredMemory(String[] args) {
+  public static String getPath() {
     try {
-      String currentPath =
-          Main.class
-              .getProtectionDomain()
-              .getCodeSource()
-              .getLocation()
-              .toURI()
-              .getPath()
-              .replace('/', File.separator.charAt(0))
-              .substring(1);
-      if (args.length == 0 && Runtime.getRuntime().maxMemory() / 1024 / 1024 < 980) {
-        Runtime.getRuntime().exec("java -Xmx1024m -jar " + currentPath + " restart");
-        System.exit(0);
-      }
-    } catch (URISyntaxException | IOException e) {
+      return Main.class
+          .getProtectionDomain()
+          .getCodeSource()
+          .getLocation()
+          .toURI()
+          .getPath()
+          .replace('/', File.separator.charAt(0))
+          .substring(1);
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static void checkRequiredMemory(String[] args) {
+    if (args.length == 0 && Runtime.getRuntime().maxMemory() / 1024 / 1024 < 980) {
+      restart("-Xmx1024m");
+    }
+  }
+
+  public static void restart(String arg) {
+    try {
+      Main.logger.info("Restarting Jar...");
+      Runtime.getRuntime()
+          .exec("java " + (arg == null ? "" : arg) + " -jar " + getPath() + " restart");
+      System.exit(0);
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }

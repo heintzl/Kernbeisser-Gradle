@@ -22,7 +22,7 @@ public class DBLogInView implements IView<DBLogInController>, DocumentListener {
 
   @Override
   public void initialize(DBLogInController controller) {
-    DBAccess access = Config.getConfig().getDbAccess();
+    DBAccess access = Config.getConfig().getDBAccessData();
     url.setText(access.getUrl());
     username.setText(access.getUsername());
     logIn.addActionListener(e -> controller.logIn());
