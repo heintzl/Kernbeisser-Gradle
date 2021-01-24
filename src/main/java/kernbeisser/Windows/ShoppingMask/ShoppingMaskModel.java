@@ -44,7 +44,8 @@ public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
     }
   }
 
-  ShoppingItem getByBarcode(long barcode, int discount, boolean preordered) throws NoResultException {
+  ShoppingItem getByBarcode(long barcode, int discount, boolean preordered)
+      throws NoResultException {
     return new ShoppingItem(Article.getByBarcode(barcode), discount, preordered);
   }
 }

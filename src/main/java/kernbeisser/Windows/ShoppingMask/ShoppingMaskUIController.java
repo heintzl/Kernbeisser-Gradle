@@ -167,7 +167,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     getView().setOptArticleNo();
     try {
       ShoppingItem found =
-              model.getByBarcode(barcode, getView().getDiscount(), getView().isPreordered());
+          model.getByBarcode(barcode, getView().getDiscount(), getView().isPreordered());
       getView().loadItemStats(found);
       if (!getView().isPreordered()) {
         getView().addToCart();

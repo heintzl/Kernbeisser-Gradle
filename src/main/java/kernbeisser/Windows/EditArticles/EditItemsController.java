@@ -5,6 +5,7 @@ import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -75,15 +76,20 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             Column.create("Preisliste", Article::getPriceList, LEFT),
             Column.create("Barcode", Article::getBarcode, RIGHT));
 
-    this.capture =
-        new BarcodeCapture(
-            e ->
-                objectViewController
-                    .getModel()
-                    .openEdit(
-                        getView().traceViewContainer(),
-                        Article.getByBarcode(Long.parseLong(e)),
-                        objectViewController::search));
+    this.capture = new BarcodeCapture(this::openByBarcode);
+  }
+
+  private void openByBarcode(String s) {
+    try {
+      objectViewController
+          .getModel()
+          .openEdit(
+              getView().traceViewContainer(),
+              Article.getByBarcode(Long.parseLong(s)),
+              objectViewController::search);
+    } catch (NoResultException e) {
+      getView().messageBarcodeNotFound(s);
+    }
   }
 
   private Collection<Article> search(String query, int max) {
