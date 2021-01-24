@@ -38,8 +38,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class MenuView implements IView<MenuController> {
 
-  private UserInfoView infoPanel;
   private JPanel main;
+  private UserInfoView infoPanel;
+  private JPanel menuPanel;
   private kernbeisser.CustomComponents.ControllerButton openCashierShoppingMask;
   private ControllerButton editPriceList;
   private ControllerButton editArticles;
