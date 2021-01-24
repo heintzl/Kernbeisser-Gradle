@@ -3,6 +3,7 @@ package kernbeisser.StartUp.LogIn;
 import kernbeisser.Config.Config;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Exeptions.ClassIsSingletonException;
+import kernbeisser.Main;
 import kernbeisser.Windows.MVC.IModel;
 
 public class DBLogInModel implements IModel<DBLogInController> {
@@ -23,19 +24,12 @@ public class DBLogInModel implements IModel<DBLogInController> {
   }
 
   public boolean saveService(Config.DBAccess access) {
-    Config.DBAccess before = Config.getConfig().getDbAccess();
-    try {
+    if (DBConnection.checkValidDBAccess(access)) {
       Config.getConfig().setDbAccess(access);
-      if (DBConnection.tryLogIn(access)) {
-        Config.safeFile();
-        return true;
-      } else {
-        Config.getConfig().setDbAccess(before);
-        return false;
-      }
-    } catch (Throwable t) {
-      Config.getConfig().setDbAccess(before);
-      throw t;
+      Config.safeFile();
+      Main.restart(null);
+      return true;
     }
+    return false;
   }
 }
