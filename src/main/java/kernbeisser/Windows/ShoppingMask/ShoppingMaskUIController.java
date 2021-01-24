@@ -3,6 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
+import javax.persistence.NoResultException;
 import javax.swing.JOptionPane;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
@@ -164,14 +165,14 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
 
   void searchByBarcode(long barcode) {
     getView().setOptArticleNo();
-    ShoppingItem found =
-        model.getByBarcode(barcode, getView().getDiscount(), getView().isPreordered());
-    if (found != null) {
+    try {
+      ShoppingItem found =
+          model.getByBarcode(barcode, getView().getDiscount(), getView().isPreordered());
       getView().loadItemStats(found);
       if (!getView().isPreordered()) {
         getView().addToCart();
       }
-    } else {
+    } catch (NoResultException e) {
       getView().messageBarcodeNotFound(barcode);
       getView().setKbNumber("");
     }
