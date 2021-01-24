@@ -1,9 +1,7 @@
 package kernbeisser.Windows.TabbedPane;
 
 import java.awt.Color;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.ControllerReference;
@@ -55,7 +53,8 @@ public class TabbedPaneView implements IView<kernbeisser.Windows.TabbedPane.Tabb
                     () -> tabbedPane.setSelectedIndex(indexOf(getLoaded())))
                 .getMain());
         tabbedPane.setSelectedIndex(indexInTable);
-        controller.getView().getFocusOnInitialize().requestFocus();
+        SwingUtilities.invokeLater(
+            () -> controller.getView().getFocusOnInitialize().requestFocus());
       }
 
       private void close() {
