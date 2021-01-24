@@ -25,7 +25,15 @@ public class ControllerButton extends JButton {
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
       ControllerButton(Supplier<C> controller, Class<C> clazz) {
-    this(controller, clazz, Controller::openTab);
+    this(controller, clazz, false);
+  }
+
+  public <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>,
+          C extends Controller<V, M>>
+      ControllerButton(Supplier<C> controller, Class<C> clazz, boolean preInit) {
+    this(controller, clazz, Controller::openTab, preInit);
   }
 
   public <
@@ -33,6 +41,15 @@ public class ControllerButton extends JButton {
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
       ControllerButton(Supplier<C> controller, Class<C> clazz, Consumer<C> action) {
+    this(controller, clazz, action, false);
+  }
+
+  public <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>,
+          C extends Controller<V, M>>
+      ControllerButton(
+          Supplier<C> controller, Class<C> clazz, Consumer<C> action, boolean preInit) {
     Class<V> vClass = Controller.getViewClass(clazz);
     IView<?> iView = StaticMethodTransformer.createStaticInterface(IView.class, vClass);
     setIcon(
@@ -42,25 +59,28 @@ public class ControllerButton extends JButton {
         IconFontSwing.buildIcon(
             iView.getTabIcon(), Tools.scaleWithLabelScalingFactor(16), new Color(0x04ACCD)));
     AtomicReference<C> preLoadControllerRef = new AtomicReference<>();
-    setEnabled(false);
     setHorizontalAlignment(SwingConstants.LEFT);
     Tools.scaleFont(this, 1.1);
     addActionListener(e -> action.accept(controller.get()));
-    SwingUtilities.invokeLater(
-        () -> {
-          try {
-            preLoadControllerRef.set(controller.get());
-            setEnabled(true);
-          } catch (PermissionKeyRequiredException | ClassIsSingletonException e) {
-            setEnabled(false);
-          }
-        });
+    if (preInit) {
+      setEnabled(false);
+      SwingUtilities.invokeLater(
+          () -> {
+            try {
+              preLoadControllerRef.set(controller.get());
+              setEnabled(true);
+            } catch (PermissionKeyRequiredException | ClassIsSingletonException e) {
+              setEnabled(false);
+            }
+          });
+    }
   }
 
   public static ControllerButton empty() {
     return new ControllerButton(
         () -> new ComponentController(new JPanel()),
         ComponentController.class,
-        Controller::openTab);
+        Controller::openTab,
+        false);
   }
 }
