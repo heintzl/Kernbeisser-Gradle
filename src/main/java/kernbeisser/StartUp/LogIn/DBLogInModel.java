@@ -19,17 +19,11 @@ public class DBLogInModel implements IModel<DBLogInController> {
 
   public static transient boolean alreadyOpened = false;
 
-  public boolean isServiceAvailable(Config.DBAccess access) {
-    return DBConnection.checkValidDBAccess(access);
-  }
-
-  public boolean saveService(Config.DBAccess access) {
+  public void saveService(Config.DBAccess access) {
     if (DBConnection.checkValidDBAccess(access)) {
       Config.getConfig().setDbAccess(access);
       Config.safeFile();
       Main.restart(null);
-      return true;
     }
-    return false;
   }
 }

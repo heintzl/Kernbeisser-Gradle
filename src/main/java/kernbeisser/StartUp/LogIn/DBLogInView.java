@@ -2,15 +2,13 @@ package kernbeisser.StartUp.LogIn;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class DBLogInView implements IView<DBLogInController>, DocumentListener {
+public class DBLogInView implements IView<DBLogInController> {
   private JButton logIn;
   private JTextField url;
   private JTextField username;
@@ -27,9 +25,7 @@ public class DBLogInView implements IView<DBLogInController>, DocumentListener {
     username.setText(access.getUsername());
     logIn.addActionListener(e -> controller.logIn());
     username.addActionListener(e -> controller.logIn());
-    username.getDocument().addDocumentListener(this);
     password.addActionListener(e -> controller.logIn());
-    password.getDocument().addDocumentListener(this);
     password.setText(access.getPassword());
     cancel.addActionListener(e -> back());
   }
@@ -68,23 +64,5 @@ public class DBLogInView implements IView<DBLogInController>, DocumentListener {
     username.setForeground(Color.BLACK);
     password.setForeground(Color.BLACK);
     url.setForeground(Color.BLACK);
-  }
-
-  @Override
-  public void insertUpdate(DocumentEvent e) {
-    controller.connectionChanged();
-    defaultColor();
-  }
-
-  @Override
-  public void removeUpdate(DocumentEvent e) {
-    controller.connectionChanged();
-    defaultColor();
-  }
-
-  @Override
-  public void changedUpdate(DocumentEvent e) {
-    controller.connectionChanged();
-    defaultColor();
   }
 }

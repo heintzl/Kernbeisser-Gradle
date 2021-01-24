@@ -60,19 +60,10 @@ public class DBConnection {
 
   public static void logInWithConfig() {
     if (!tryLogIn(Config.getConfig().getDBAccessData())) {
-      synchronized (DB_LOGIN_LOCK) {
-        try {
-          new DBLogInController().withCloseEvent(DB_LOGIN_LOCK::notify).openIn(new JFrameWindow());
-        } catch (ClassIsSingletonException ignored) {
-          return;
-        }
-      }
-      synchronized (DB_LOGIN_LOCK) {
-        try {
-          DB_LOGIN_LOCK.wait();
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
+      try {
+        new DBLogInController().withCloseEvent(DB_LOGIN_LOCK::notify).openIn(new JFrameWindow());
+      } catch (ClassIsSingletonException e) {
+        Tools.showUnexpectedErrorWarning(e);
       }
     }
   }
@@ -84,7 +75,7 @@ public class DBConnection {
   }
 
   public static EntityManager getEntityManager() {
-    if (entityManagerFactory == null) {
+    if (!isInitialized()) {
       logInWithConfig();
     }
     return entityManagerFactory.createEntityManager();
