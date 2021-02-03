@@ -175,7 +175,7 @@ public interface Column<T> {
                   int column) {
                 setIcon(iconFunction.apply((T) value));
                 return super.getTableCellRendererComponent(
-                    table, "", isSelected, hasFocus, row, column);
+                    table, null, isSelected, hasFocus, row, column);
               }
             };
         renderer.setHorizontalAlignment(DEFAULT_ALIGNMENT);
@@ -214,9 +214,9 @@ public interface Column<T> {
                   boolean hasFocus,
                   int row,
                   int column) {
-                setIcon((boolean) value ? icon : null);
+                setIcon((value != null && (boolean) value) ? icon : null);
                 return super.getTableCellRendererComponent(
-                    table, "", isSelected, hasFocus, row, column);
+                    table, null, isSelected, hasFocus, row, column);
               }
             };
         renderer.setHorizontalAlignment(DEFAULT_ALIGNMENT);
