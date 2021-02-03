@@ -52,7 +52,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
           public void mouseReleased(MouseEvent e) {
             T selection;
             int row, column;
-            if (getSelectedRow() == -1 && !e.isPopupTrigger()) {
+            if (getSelectedRow() == -1 && e.getButton() == MouseEvent.BUTTON1) {
               return;
             }
             Point mousePosition = e.getPoint();
