@@ -14,7 +14,7 @@ import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.*;
-import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 

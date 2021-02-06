@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kernbeisser.Forms.FormImplemetations.User.UserView">
+  <grid id="27dc6" binding="userDataPanel" custom-create="true" layout-manager="GridBagLayout">
+    <constraints>
+      <xy x="20" y="20" width="592" height="748"/>
+    </constraints>
+    <properties>
+      <autoscrolls value="true"/>
+      <background color="-1"/>
+      <doubleBuffered value="true"/>
+      <minimumSize width="250" height="250"/>
+      <preferredSize width="400" height="565"/>
+    </properties>
+    <border type="none" title="Benutzerdaten" title-position="1">
+      <font style="3"/>
+      <title-color color="-16752083"/>
+    </border>
+    <children>
+      <component id="a829c" class="javax.swing.JLabel" binding="lblVorname">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Vorname:"/>
+        </properties>
+      </component>
+      <component id="449ae" class="javax.swing.JLabel" binding="lblNachname">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Nachname:"/>
+        </properties>
+      </component>
+      <component id="b749d" class="javax.swing.JLabel" binding="lblStrasse">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Strasse:"/>
+        </properties>
+      </component>
+      <component id="fadf3" class="javax.swing.JLabel" binding="lblPlz">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="PLZ:"/>
+        </properties>
+      </component>
+      <component id="ba466" class="javax.swing.JLabel" binding="lblOrt">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Ort:"/>
+        </properties>
+      </component>
+      <component id="cc290" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="firstName" custom-create="true">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <opaque value="false"/>
+        </properties>
+      </component>
+      <component id="bf8fc" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="lastName" custom-create="true">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="e65ac" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="street" custom-create="true">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="b6dac" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="15" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+          <text value="Kontakt"/>
+        </properties>
+      </component>
+      <component id="7d460" class="javax.swing.JLabel" binding="grpUser">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="15" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+          <text value="Name"/>
+        </properties>
+      </component>
+      <component id="69b1a" class="javax.swing.JLabel" binding="grpAddress">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="15" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+          <text value="Adresse"/>
+        </properties>
+      </component>
+      <component id="ab460" class="javax.swing.JLabel" binding="lblTelefon1">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Telefon (fest):"/>
+        </properties>
+      </component>
+      <component id="5c96b" class="javax.swing.JLabel" binding="lblTelefon2">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Telefon (mobil):"/>
+        </properties>
+      </component>
+      <component id="96506" class="javax.swing.JLabel" binding="grpLogin">
+        <constraints>
+          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="15" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+          <text value="Anmeldung"/>
+        </properties>
+      </component>
+      <component id="564d7" class="javax.swing.JLabel" binding="lblUsername">
+        <constraints>
+          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Nutzername:"/>
+        </properties>
+      </component>
+      <component id="73cb" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="postalCode" custom-create="true">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="e835c" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="town" custom-create="true">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="92c81" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="phone1" custom-create="true">
+        <constraints>
+          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="8c52b" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="phone2" custom-create="true">
+        <constraints>
+          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="5bb5c" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="username" custom-create="true">
+        <constraints>
+          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <enabled value="false"/>
+        </properties>
+      </component>
+      <component id="b658" class="javax.swing.JLabel" binding="lblRolle">
+        <constraints>
+          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Rolle:"/>
+        </properties>
+      </component>
+      <component id="fef57" class="javax.swing.JLabel" binding="lblHasKey">
+        <constraints>
+          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Schlüssel:"/>
+        </properties>
+      </component>
+      <component id="6b5b7" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="hasKey">
+        <constraints>
+          <grid row="15" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <opaque value="false"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="91e6e" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckBox" binding="isEmployee" custom-create="true">
+        <constraints>
+          <grid row="17" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <opaque value="false"/>
+        </properties>
+      </component>
+      <component id="216de" class="javax.swing.JLabel" binding="lblIsEmployee">
+        <constraints>
+          <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Mitarbeiter:"/>
+        </properties>
+      </component>
+      <component id="a2ac" class="javax.swing.JLabel" binding="grpGenossenschaft">
+        <constraints>
+          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="15" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+          <text value="Genossenschaft"/>
+        </properties>
+      </component>
+      <component id="5bdd0" class="javax.swing.JLabel" binding="lblZusatzdienste">
+        <constraints>
+          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Zusatzdienste:"/>
+        </properties>
+      </component>
+      <component id="380ab" class="javax.swing.JLabel" binding="lblAnteile">
+        <constraints>
+          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Anteile:"/>
+        </properties>
+      </component>
+      <component id="e6006" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="shares" custom-create="true">
+        <constraints>
+          <grid row="21" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.7" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="63441" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor" binding="chgJobs" custom-create="true">
+        <constraints>
+          <grid row="18" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Dienste..."/>
+        </properties>
+      </component>
+      <component id="25b2f" class="javax.swing.JLabel" binding="lblDienste">
+        <constraints>
+          <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Dienste:"/>
+        </properties>
+      </component>
+      <component id="c4647" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="extraJobs" custom-create="true">
+        <constraints>
+          <grid row="20" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="fab36" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="0" bottom="0" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+        </properties>
+      </component>
+      <component id="29dfe" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="0" bottom="0" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+        </properties>
+      </component>
+      <component id="13b92" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="14" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="0" bottom="0" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+        </properties>
+      </component>
+      <component id="dc3fc" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="0" bottom="0" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+        </properties>
+      </component>
+      <component id="4d0d8" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="0" bottom="0" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font/>
+          <foreground color="-16752083"/>
+        </properties>
+      </component>
+      <component id="3de03" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor" binding="editPermission" custom-create="true">
+        <constraints>
+          <grid row="13" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Rollen bearbeiten"/>
+        </properties>
+      </component>
+      <component id="ed24e" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Schlüsselnummer:"/>
+        </properties>
+      </component>
+      <component id="c1643" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="keyNumber" custom-create="true">
+        <constraints>
+          <grid row="16" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="b9221" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="email" custom-create="true">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="ac70a" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="E-Mail"/>
+        </properties>
+      </component>
+      <component id="b716b" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="25" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="0"/>
+          <text value="Benutzergruppe"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

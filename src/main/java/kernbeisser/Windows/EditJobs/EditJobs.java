@@ -2,14 +2,14 @@ package kernbeisser.Windows.EditJobs;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Job;
-import kernbeisser.Windows.EditJob.EditJobController;
-import kernbeisser.Windows.ObjectView.ObjectViewController;
+import kernbeisser.Forms.FormImplemetations.Job.JobController;
+import kernbeisser.Forms.ObjectView.ObjectViewController;
 
 public class EditJobs extends ObjectViewController<Job> {
   public EditJobs() {
     super(
         "Jobs bearbeiten",
-        EditJobController::new,
+        new JobController(),
         Job::defaultSearch,
         true,
         Column.create("Name", Job::getName),

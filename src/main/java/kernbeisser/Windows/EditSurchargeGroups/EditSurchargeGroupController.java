@@ -6,7 +6,7 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.hibernate.exception.ConstraintViolationException;
@@ -20,7 +20,6 @@ public class EditSurchargeGroupController
 
   @Override
   public void fillView(EditSurchargeGroupView editSurchargeGroupView) {
-    getView().getObjectForm().setObjectValidator(this::validate);
     editSurchargeGroupView.setSuppliers(model.getAllSuppliers());
     loadForCurrentSupplier();
   }

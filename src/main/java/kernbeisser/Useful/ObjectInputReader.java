@@ -1,7 +1,7 @@
 package kernbeisser.Useful;
 
 import java.util.List;
-import kernbeisser.CustomComponents.AccessChecking.Setter;
+import kernbeisser.Security.Utils.Setter;
 
 public class ObjectInputReader<T> {
 

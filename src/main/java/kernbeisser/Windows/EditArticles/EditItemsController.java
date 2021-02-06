@@ -5,7 +5,6 @@ import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
-import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.BarcodeCapture;
@@ -14,13 +13,14 @@ import kernbeisser.CustomComponents.ObjectTable.StripedRenderer;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Windows.EditArticle.EditArticleController;
+import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
+import kernbeisser.Forms.ObjectView.ObjectViewController;
+import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
-import kernbeisser.Windows.ObjectView.ObjectViewController;
-import kernbeisser.Windows.ObjectView.ObjectViewView;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
     objectViewController =
         new ObjectViewController<>(
             "Artikel bearbeiten",
-            EditArticleController::new,
+            new ArticleController(),
             this::search,
             true,
             new Column<Article>() {
@@ -77,13 +77,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
 
     this.capture =
         new BarcodeCapture(
-            e ->
-                objectViewController
-                    .getModel()
-                    .openEdit(
-                        getView().traceViewContainer(),
-                        Article.getByBarcode(Long.parseLong(e)),
-                        objectViewController::search));
+            e -> objectViewController.openForm(Article.getByBarcode(Long.parseLong(e)), Mode.EDIT));
   }
 
   private Collection<Article> search(String query, int max) {

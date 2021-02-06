@@ -3,8 +3,10 @@ package kernbeisser.Windows.AccountingReports;
 import java.util.Collection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
@@ -100,6 +102,12 @@ public class AccountingReportsController
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);
     }
+  }
+
+  @Override
+  @StaticAccessPoint
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[] {};
   }
 
   @Override

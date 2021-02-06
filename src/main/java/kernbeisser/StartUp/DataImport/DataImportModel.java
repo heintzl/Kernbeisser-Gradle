@@ -24,7 +24,7 @@ import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
-import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Main;
 import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
