@@ -9,7 +9,7 @@ import kernbeisser.DBEntities.CatalogDataSource;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 
 public class Catalog {
 

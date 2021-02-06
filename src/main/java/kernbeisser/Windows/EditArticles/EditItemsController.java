@@ -15,13 +15,14 @@ import kernbeisser.CustomComponents.ObjectTable.StripedRenderer;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Windows.EditArticle.EditArticleController;
+import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
+import kernbeisser.Forms.ObjectView.ObjectViewController;
+import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
-import kernbeisser.Windows.ObjectView.ObjectViewController;
-import kernbeisser.Windows.ObjectView.ObjectViewView;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
     objectViewController =
         new ObjectViewController<>(
             "Artikel bearbeiten",
-            EditArticleController::new,
+            new ArticleController(),
             this::search,
             true,
             new Column<Article>() {
@@ -75,21 +76,9 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             Column.create("Gebindegröße", Article::getContainerSize, RIGHT),
             Column.create("Preisliste", Article::getPriceList, LEFT),
             Column.create("Barcode", Article::getBarcode, RIGHT));
-
-    this.capture = new BarcodeCapture(this::openByBarcode);
-  }
-
-  private void openByBarcode(String s) {
-    try {
-      objectViewController
-          .getModel()
-          .openEdit(
-              getView().traceViewContainer(),
-              Article.getByBarcode(Long.parseLong(s)),
-              objectViewController::search);
-    } catch (NoResultException e) {
-      getView().messageBarcodeNotFound(s);
-    }
+    this.capture =
+        new BarcodeCapture(
+            e -> objectViewController.openForm(Article.getByBarcode(Long.parseLong(e)), Mode.EDIT))
   }
 
   private Collection<Article> search(String query, int max) {

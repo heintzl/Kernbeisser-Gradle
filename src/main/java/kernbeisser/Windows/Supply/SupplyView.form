@@ -59,7 +59,7 @@
               <text value="Gebindegröße"/>
             </properties>
           </component>
-          <component id="61f14" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="containerSize" custom-create="true">
+          <component id="61f14" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="containerSize" custom-create="true">
             <constraints>
               <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -81,7 +81,7 @@
               <text value="Artikelname"/>
             </properties>
           </component>
-          <component id="4dd0c" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="name" custom-create="true">
+          <component id="4dd0c" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="name" custom-create="true">
             <constraints>
               <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -113,7 +113,7 @@
               <text value="Gebindeanzahl"/>
             </properties>
           </component>
-          <component id="e953c" class="kernbeisser.CustomComponents.AccessChecking.AccessCheckingField" binding="netPrice" custom-create="true">
+          <component id="e953c" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="netPrice" custom-create="true">
             <constraints>
               <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

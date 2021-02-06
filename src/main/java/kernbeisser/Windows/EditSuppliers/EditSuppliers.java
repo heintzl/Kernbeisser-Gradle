@@ -2,14 +2,14 @@ package kernbeisser.Windows.EditSuppliers;
 
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.Windows.EditSupplier.EditSupplierController;
-import kernbeisser.Windows.ObjectView.ObjectViewController;
+import kernbeisser.Forms.FormImplemetations.Supplier.SupplierController;
+import kernbeisser.Forms.ObjectView.ObjectViewController;
 
 public class EditSuppliers extends ObjectViewController<Supplier> {
   public EditSuppliers() {
     super(
         "Lieferanten bearbeiten",
-        EditSupplierController::new,
+        new SupplierController(),
         Supplier::defaultSearch,
         true,
         Column.create("Name", Supplier::getName),

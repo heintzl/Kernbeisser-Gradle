@@ -5,7 +5,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Windows.MVC.Controller;
 
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
@@ -39,7 +39,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   public ShoppingItem addItem(double amount) throws CannotParseException {
     checkInput();
-    Article article = getView().getObjectForm().getData();
+    Article article = getView().getObjectForm().getData(null);
     ShoppingItem item = new ShoppingItem(article, 0, true);
     item.setItemMultiplier((int) Math.round(amount * item.getContainerSize()));
     model.getShoppingItems().add(item);

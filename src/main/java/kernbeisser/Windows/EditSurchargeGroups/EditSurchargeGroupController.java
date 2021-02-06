@@ -1,12 +1,13 @@
 package kernbeisser.Windows.EditSurchargeGroups;
 
+import java.util.Collection;
 import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Exeptions.CannotParseException;
+import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.hibernate.exception.ConstraintViolationException;
@@ -20,19 +21,17 @@ public class EditSurchargeGroupController
 
   @Override
   public void fillView(EditSurchargeGroupView editSurchargeGroupView) {
-    getView().getObjectForm().setObjectValidator(this::validate);
     editSurchargeGroupView.setSuppliers(model.getAllSuppliers());
     loadForCurrentSupplier();
   }
 
-  private SurchargeGroup validate(SurchargeGroup surchargeGroup) throws CannotParseException {
+  public void validate(SurchargeGroup surchargeGroup, Mode mode) throws CannotParseException {
     if (surchargeGroup.equals(surchargeGroup.getParent())) {
       JOptionPane.showMessageDialog(
           getView().getTopComponent(),
           "Eine Zuschlagstabelle darf sich nicht selbst als Übergruppe haben,\nbitte wähle eine andere aus.");
       throw new CannotParseException("cannot have SurchargeGroup with itself as a parent");
     }
-    return surchargeGroup;
   }
 
   void loadForCurrentSupplier() {
@@ -95,5 +94,13 @@ public class EditSurchargeGroupController
   private void applyMode(Mode mode) {
     getView().getObjectForm().applyMode(mode);
     loadForCurrentSupplier();
+  }
+
+  public Collection<SurchargeGroup> getSurchargeGroups() {
+    return model.getAllFromSupplier(getView().getSelectedSupplier());
+  }
+
+  public Collection<Supplier> getSuppliers() {
+    return model.getAllSuppliers();
   }
 }

@@ -3,11 +3,10 @@ package kernbeisser.Windows.Menu;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ControllerButton;
-import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
@@ -16,7 +15,6 @@ import kernbeisser.Windows.EditArticles.EditItemsController;
 import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSuppliers.EditSuppliers;
 import kernbeisser.Windows.EditSurchargeGroups.EditSurchargeGroupController;
-import kernbeisser.Windows.EditUser.EditUserController;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.EditUserSetting.EditUserSettingController;
 import kernbeisser.Windows.EditUsers.EditUsers;
@@ -104,8 +102,8 @@ public class MenuView implements IView<MenuController> {
             Controller::openTab);
     editOwnUser =
         new ControllerButton(
-            () -> new EditUserController(LogInModel.getLoggedIn(), Mode.EDIT),
-            EditUserController.class,
+            controller::generateEditOwnUserController,
+            FormEditorController.class,
             Controller::openTab);
     // NOT IMPLEMENTED
     editUserSettings =
@@ -157,9 +155,7 @@ public class MenuView implements IView<MenuController> {
             });
     addBeginner =
         new ControllerButton(
-            () -> new EditUserController(User.generateBeginnerUser(), Mode.ADD),
-            EditUserController.class,
-            Controller::openTab);
+            controller::generateAddBeginnerForm, FormEditorController.class, Controller::openTab);
     editSuppliers =
         new ControllerButton(EditSuppliers::new, EditSuppliers.class, Controller::openTab);
 

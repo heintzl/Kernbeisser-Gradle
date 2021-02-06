@@ -240,19 +240,33 @@ public abstract class Controller<
           V extends IView<? extends Controller<? extends V, ? extends M>>,
           M extends IModel<? extends Controller<? extends V, ? extends M>>>
       Class<V> getViewClass(Class<? extends Controller<V, M>> controllerClass) {
-    Type type = controllerClass.getGenericSuperclass();
-
-    while (!(type instanceof ParameterizedType)
-        || ((ParameterizedType) type).getRawType() != Controller.class) {
+    for (Class<?> c = controllerClass; !c.equals(Object.class); c = c.getSuperclass()) {
+      Type type = c.getGenericSuperclass();
       if (type instanceof ParameterizedType) {
-        type = ((Class<?>) ((ParameterizedType) type).getRawType()).getGenericSuperclass();
-      } else {
-        type = ((Class<?>) type).getGenericSuperclass();
+        for (Type actualTypeArgument : (((ParameterizedType) type).getActualTypeArguments())) {
+          Class<V> viewClass;
+          if (actualTypeArgument instanceof ParameterizedType) {
+            viewClass = (Class<V>) ((ParameterizedType) actualTypeArgument).getRawType();
+          } else viewClass = (Class<V>) actualTypeArgument;
+          if (isViewClassOf(controllerClass, viewClass)) return viewClass;
+        }
       }
     }
-    Type out = ((ParameterizedType) type).getActualTypeArguments()[0];
-    if (out instanceof ParameterizedType) {
-      return (Class<V>) ((ParameterizedType) out).getRawType();
-    } else return (Class<V>) out;
+    throw new RuntimeException("cannot find view class in controller class");
+  }
+
+  public static <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>>
+      boolean isViewClassOf(
+          Class<? extends Controller<V, M>> controllerClass, Class<? extends V> viewClass) {
+    for (Method method : viewClass.getDeclaredMethods()) {
+      if (method.getName().equals("initialize")
+          && method.getParameterTypes().length == 1
+          && method.getParameterTypes()[0].isAssignableFrom(controllerClass)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

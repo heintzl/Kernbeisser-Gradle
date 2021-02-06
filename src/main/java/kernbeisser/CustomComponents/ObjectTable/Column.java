@@ -12,8 +12,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import kernbeisser.CustomComponents.AccessChecking.Getter;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Security.Utils.Getter;
 import org.intellij.lang.annotations.MagicConstant;
 
 public interface Column<T> {

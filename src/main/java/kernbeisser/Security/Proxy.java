@@ -4,9 +4,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import kernbeisser.CustomComponents.AccessChecking.Getter;
-import kernbeisser.CustomComponents.AccessChecking.Setter;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Security.Utils.Getter;
+import kernbeisser.Security.Utils.Setter;
 import kernbeisser.Useful.Tools;
 import lombok.SneakyThrows;
 
