@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.ShopRange;
@@ -49,7 +50,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     removeLazy(selected);
   }
 
-  public Article getByBarcode(String s) {
+  public Article getByBarcode(String s) throws NoResultException {
     return Article.getByBarcode(Long.parseLong(s));
   }
 

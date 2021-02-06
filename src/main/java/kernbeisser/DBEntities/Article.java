@@ -293,7 +293,7 @@ public class Article {
         .getSingleResult();
   }
 
-  public static Article getByBarcode(long barcode) {
+  public static Article getByBarcode(long barcode) throws NoResultException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     return em.createQuery("select a from Article a where barcode = :b", Article.class)
         .setParameter("b", barcode)

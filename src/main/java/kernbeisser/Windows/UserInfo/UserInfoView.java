@@ -1,6 +1,10 @@
 package kernbeisser.Windows.UserInfo;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.Collection;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -43,6 +47,7 @@ public class UserInfoView implements IView<UserInfoController> {
   JRadioButton optCurrent;
   private JRadioButton optLast;
   private JButton printStatement;
+  private JTextPane infoText;
 
   @Linked private UserInfoController controller;
 
@@ -174,6 +179,16 @@ public class UserInfoView implements IView<UserInfoController> {
     return shoppingHistory.getSelectedObject();
   }
 
+  private String getBuildDate() {
+    try {
+      File jarFile =
+          new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+      return Date.INSTANT_DATE.format(Files.getLastModifiedTime(jarFile.toPath()).toInstant());
+    } catch (IOException | URISyntaxException e) {
+      return "(nicht gefunden)";
+    }
+  }
+
   @Override
   public void initialize(UserInfoController controller) {
     for (Component component : firstName.getParent().getComponents()) {
@@ -194,6 +209,23 @@ public class UserInfoView implements IView<UserInfoController> {
             controller.printStatement(
                 (StatementType) transactionStatementType.getSelectedItem(),
                 optCurrent.isSelected()));
+    infoText.setEditorKit(new javax.swing.text.html.HTMLEditorKit());
+    infoText.setEditable(false);
+    infoText.setText(
+        "<HTML><BODY>"
+            + "<table border=\"0\">"
+            + "<tr><td colspan=\"2\"><h1>Kernbeißer Ladenprogramm</h1></td></tr>"
+            + "<tr><td valign=\"top\"><i>Beschreibung:</i></td>"
+            + "<td>Dieses Programm wurde für den Ladenbetrieb der Kernbeißer Verbraucher-Erzeuger-Genossenschaft"
+            + " in Braunschweig (https://www.kernbeisser-bs.de) entwickelt. "
+            + "Es wurde in Java als quelloffene Software implementiert.</td></tr>"
+            + "<tr><td><i>Sourcecode:</i></td><td><a href=\"https://github.com/julikiller98/Kernbeisser-Gradle\">"
+            + "https://github.com/julikiller98/Kernbeisser-Gradle</a></td></tr>"
+            + "<tr><td><div><i>Erstellt am:</i></td><td>"
+            + getBuildDate()
+            + "</td></tr>"
+            + "</table>"
+            + "<BODY></HTML>");
   }
 
   @Override

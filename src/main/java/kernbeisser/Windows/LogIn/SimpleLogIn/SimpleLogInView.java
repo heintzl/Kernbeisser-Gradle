@@ -52,11 +52,6 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
     username.addActionListener(e -> password.requestFocus());
     // TODO the following lines are for testing only! Remove from production code
     File file = new File("testUser.txt");
-    try {
-      file.createNewFile();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
     if (file.exists()) {
       try {
         List<String> fileLines = Files.readAllLines(file.toPath());

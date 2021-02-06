@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Menu;
 
+import java.awt.*;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ControllerButton;
 import kernbeisser.Enums.TransactionType;
@@ -176,7 +177,11 @@ public class MenuView implements IView<MenuController> {
             () ->
                 new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
             TransactionController.class);
-    openCashierShoppingMask.requestFocusInWindow();
+  }
+
+  @Override
+  public Component getFocusOnInitialize() {
+    return openSelfShoppingMask;
   }
 
   @Override
