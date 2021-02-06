@@ -89,24 +89,28 @@ public class ArticleView implements IView<ArticleController> {
             Article::getContainerSize,
             Article::setContainerSize,
             AccessCheckingField.DOUBLE_FORMER);
-    supplier = new AccessCheckingComboBox<>(Article::getSupplier, Article::setSupplier);
-    priceList = new AccessCheckingComboBox<>(Article::getPriceList, Article::setPriceList);
-    metricUnits = new AccessCheckingComboBox<>(Article::getMetricUnits, Article::setMetricUnits);
+    supplier =
+        new AccessCheckingComboBox<>(
+            Article::getSupplier, Article::setSupplier, controller::getSuppliers);
+    priceList =
+        new AccessCheckingComboBox<>(
+            Article::getPriceList, Article::setPriceList, controller::getPriceLists);
+    metricUnits =
+        new AccessCheckingComboBox<>(
+            Article::getMetricUnits, Article::setMetricUnits, controller::getMetricUnits);
     barcode =
         new AccessCheckingField<>(Article::getBarcode, Article::setBarcode, controller::parseLong);
     showInShoppingMask = new AccessCheckBox<>(Article::isShowInShop, Article::setShowInShop);
     weighable = new AccessCheckBox<>(Article::isWeighable, Article::setWeighable);
-    vat = new AccessCheckingComboBox<>(Article::getVat, Article::setVat);
+    vat = new AccessCheckingComboBox<>(Article::getVat, Article::setVat, controller::getVats);
     surchargeGroup =
         new AccessCheckingComboBox<>(
-            e -> {
-              controller.loadSurchargeGroupsFor(getSelectedSupplier());
-              return e.getSurchargeGroup();
-            },
-            Article::setSurchargeGroup);
+            Article::getSurchargeGroup,
+            Article::setSurchargeGroup,
+            () -> controller.getAllForSuppler(supplier.getSelected()));
     shopRange =
         new AccessCheckingComboBox<Article, ShopRange>(
-            Article::getShopRange, Article::setShopRange);
+            Article::getShopRange, Article::setShopRange, controller::getAllShopRages);
   }
 
   void setUnits(MetricUnits[] metricUnits) {

@@ -3,6 +3,7 @@ package kernbeisser.Forms.ObjectForm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Predicate;
 import javax.swing.*;
 import kernbeisser.Enums.Mode;
@@ -188,7 +189,7 @@ public class ObjectForm<P> {
           public void validate(P input, Mode mode) throws CannotParseException {
             switch (mode) {
               case EDIT:
-                if (component.get(original).equals(component.get(input))) return;
+                if (Objects.equals(component.get(original), component.get(input))) return;
               case ADD:
                 if (exists.test(component.get(input))) {
                   component.setInvalidInput();

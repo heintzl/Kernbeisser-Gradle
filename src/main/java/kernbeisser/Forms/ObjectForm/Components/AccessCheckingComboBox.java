@@ -24,13 +24,20 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
 
   private static final Object NO_READ_PERMISSION = "<Keine Leseberechtigung>";
 
+  private final Source<V> source;
+
   private final Setter<P, V> setter;
   private final Getter<P, V> getter;
 
-  public AccessCheckingComboBox(Getter<P, V> getter, Setter<P, V> setter) {
+  public AccessCheckingComboBox(Getter<P, V> getter, Setter<P, V> setter, Source<V> source) {
     this.getter = getter;
     this.setter = setter;
+    this.source = source;
     addActionListener(e -> inputChanged = true);
+  }
+
+  private void pullSource() {
+    setItems(source.query());
   }
 
   @Nullable
@@ -104,6 +111,7 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
 
   @Override
   public void setData(V v) {
+    pullSource();
     super.setSelectedItem(v);
   }
 

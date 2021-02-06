@@ -3,15 +3,19 @@ package kernbeisser.Forms.FormImplemetations.Article;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShopRange;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.Exceptions.SilentParseException;
@@ -38,14 +42,7 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
   }
 
   @Override
-  public void fillView(ArticleView articleView) {
-    articleView.setPriceLists(model.getAllPriceLists());
-    articleView.setSuppliers(model.getAllSuppliers());
-    articleView.setUnits(model.getAllUnits());
-    articleView.setVATs(model.getAllVATs());
-    articleView.setSurchargeGroup(model.getAllSurchargeGroups());
-    articleView.setShopRanges(Arrays.asList(ShopRange.values()));
-  }
+  public void fillView(ArticleView articleView) {}
 
   void validateArticle(Article article, Mode mode) throws CannotParseException {
     if (mode == Mode.ADD) {
@@ -78,6 +75,10 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
 
   public void loadSurchargeGroupsFor(Supplier supplier) {
     getView().setSurchargeGroup(model.getAllSurchargeGroupsFor(supplier));
+  }
+
+  public Collection<SurchargeGroup> getAllForSuppler(Supplier s) {
+    return model.getAllSurchargeGroupsFor(s);
   }
 
   @Override
@@ -151,5 +152,25 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
     }
 
     ;
+  }
+
+  public Collection<Supplier> getSuppliers() {
+    return model.getAllSuppliers();
+  }
+
+  public Collection<PriceList> getPriceLists() {
+    return model.getAllPriceLists();
+  }
+
+  public Collection<MetricUnits> getMetricUnits() {
+    return Arrays.asList(model.getAllUnits());
+  }
+
+  public Collection<VAT> getVats() {
+    return Arrays.asList(model.getAllVATs());
+  }
+
+  public Collection<ShopRange> getAllShopRages() {
+    return Arrays.asList(ShopRange.values().clone());
   }
 }

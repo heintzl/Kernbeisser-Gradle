@@ -14,10 +14,11 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
-import kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel;
+import kernbeisser.Forms.ObjectForm.Components.DataAnchor;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,16 +34,23 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
   private JButton delete;
   private JButton edit;
   private JButton add;
-  private AccessCheckingComboBox<SurchargeGroup, Supplier> surchargeGroupSupplier;
   private JButton selectNoParent;
-  private AccessCheckingLabel<SurchargeGroup> exactSurcharge;
 
   @Getter private ObjectForm<SurchargeGroup> objectForm;
+
+  @Linked private EditSurchargeGroupController controller;
 
   @Override
   public void initialize(EditSurchargeGroupController controller) {
     supplier.addActionListener(e -> controller.loadForCurrentSupplier());
-    objectForm = new ObjectForm<>(name, superGroup, surcharge);
+    objectForm =
+        new ObjectForm<>(
+            name,
+            superGroup,
+            surcharge,
+            new DataAnchor<>(
+                SurchargeGroup::setSupplier, () -> (Supplier) supplier.getSelectedItem()));
+    objectForm.registerObjectValidator(controller::validate);
     selectNoParent.addActionListener(e -> superGroup.setSelectedItem(null));
     add.addActionListener(e -> controller.addSurchargeGroup());
     edit.addActionListener(e -> controller.editSurchargeGroup());
@@ -62,12 +70,10 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
   }
 
   void setSuppliers(Iterable<Supplier> suppliers) {
-    surchargeGroupSupplier.removeAllItems();
     supplier.removeAllItems();
     suppliers.forEach(
         e -> {
           supplier.addItem(e);
-          surchargeGroupSupplier.addItem(e);
         });
   }
 
@@ -97,9 +103,9 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
             e -> e.getSurcharge() * 100,
             (e, v) -> e.setSurcharge(v / 100),
             AccessCheckingField.DOUBLE_FORMER);
-    superGroup = new AccessCheckingComboBox<>(SurchargeGroup::getParent, SurchargeGroup::setParent);
-    surchargeGroupSupplier =
-        new AccessCheckingComboBox<>(SurchargeGroup::getSupplier, SurchargeGroup::setSupplier);
+    superGroup =
+        new AccessCheckingComboBox<>(
+            SurchargeGroup::getParent, SurchargeGroup::setParent, controller::getSurchargeGroups);
   }
 
   public Supplier getSelectedSupplier() {
