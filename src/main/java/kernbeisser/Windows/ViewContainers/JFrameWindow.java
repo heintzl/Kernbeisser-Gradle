@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ViewContainers;
 
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -18,6 +19,8 @@ public class JFrameWindow extends JFrame implements ViewContainer {
     add(view.getContent());
     setTitle(view.getTitle());
     setSize(view.getSize());
+    Image icon = Toolkit.getDefaultToolkit().createImage("Icon.png");
+    setIconImage(icon);
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     addWindowListener(
         new WindowAdapter() {
