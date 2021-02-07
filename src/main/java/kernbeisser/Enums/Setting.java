@@ -8,7 +8,8 @@ import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
 
 public enum Setting {
-  DB_VERSION("0.9.0"),
+  // removed some duplicated enum constrains Permission
+  DB_VERSION("0.9.1"),
   DB_INITIALIZED("false"),
   VAT_LOW("0.07") {
     @Override

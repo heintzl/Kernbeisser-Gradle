@@ -7,7 +7,9 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.hibernate.exception.ConstraintViolationException;
@@ -102,5 +104,11 @@ public class EditSurchargeGroupController
 
   public Collection<Supplier> getSuppliers() {
     return model.getAllSuppliers();
+  }
+
+  @Override
+  @StaticAccessPoint
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_EDIT_SURCHARGE_GROUPS};
   }
 }

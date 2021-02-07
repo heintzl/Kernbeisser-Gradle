@@ -5,7 +5,9 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.Controller;
 
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
@@ -72,5 +74,11 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   public boolean becomePrinted(ShoppingItem e) {
     return model.becomePrinted(e.extractArticleBySupplierNumber());
+  }
+
+  @Override
+  @StaticAccessPoint
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_SUPPLY};
   }
 }

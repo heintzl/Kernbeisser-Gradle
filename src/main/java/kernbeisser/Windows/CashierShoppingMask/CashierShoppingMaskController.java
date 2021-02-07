@@ -103,7 +103,7 @@ public class CashierShoppingMaskController
   @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
     return new PermissionKey[] {
-      PermissionKey.ACTION_OPEN_CASHIER_MASK,
+      PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK,
     };
   }
 }

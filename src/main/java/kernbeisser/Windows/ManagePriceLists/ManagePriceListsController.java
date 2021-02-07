@@ -7,6 +7,8 @@ import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -138,4 +140,10 @@ public class ManagePriceListsController
 
   @Override
   public void fillView(ManagePriceListsView managePriceListsView) {}
+
+  @Override
+  @StaticAccessPoint
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_MANAGE_PRICE_LISTS};
+  }
 }

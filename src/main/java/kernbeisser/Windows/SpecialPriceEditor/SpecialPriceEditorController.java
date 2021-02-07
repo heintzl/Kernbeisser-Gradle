@@ -14,9 +14,11 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.var;
@@ -219,5 +221,11 @@ public class SpecialPriceEditorController
                     .atEndOfMonth()
                     .atStartOfDay(ZoneId.systemDefault())
                     .toInstant()));
+  }
+
+  @Override
+  @StaticAccessPoint
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_SPECIAL_PRICE_EDITOR};
   }
 }
