@@ -63,7 +63,7 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   @Override
   @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {};
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_EDIT_USER_GROUP};
   }
 
   public void leaveUserGroup() {

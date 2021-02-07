@@ -174,7 +174,10 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   @Override
   @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
-    return PermissionKey.find(Permission.class).toArray(new PermissionKey[0]);
+    return PermissionKey.combine(
+        PermissionKey.allReadPermissions(Permission.class),
+        PermissionKey.allWritePermissions(PermissionKey.class),
+        new PermissionKey[] {PermissionKey.ACTION_OPEN_PERMISSION_MANAGEMENT});
   }
 
   public void importFrom(File selectedFile) throws FileNotFoundException {

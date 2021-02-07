@@ -3,6 +3,7 @@ package kernbeisser.Windows.Menu;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ControllerButton;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -104,7 +105,9 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             controller::generateEditOwnUserController,
             FormEditorController.class,
-            Controller::openTab);
+            Controller::openTab,
+            false,
+            new PermissionKey[] {PermissionKey.ACTION_EDIT_OWN_DATA});
     // NOT IMPLEMENTED
     editUserSettings =
         new ControllerButton(
@@ -155,7 +158,11 @@ public class MenuView implements IView<MenuController> {
             });
     addBeginner =
         new ControllerButton(
-            controller::generateAddBeginnerForm, FormEditorController.class, Controller::openTab);
+            controller::generateAddBeginnerForm,
+            FormEditorController.class,
+            Controller::openTab,
+            false,
+            new PermissionKey[] {PermissionKey.ACTION_ADD_BEGINNER});
     editSuppliers =
         new ControllerButton(EditSuppliers::new, EditSuppliers.class, Controller::openTab);
 

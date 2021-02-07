@@ -3,8 +3,10 @@ package kernbeisser.Windows.EditUserSetting;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -54,5 +56,11 @@ public class EditUserSettingController
       Tools.showUnexpectedErrorWarning(e);
     }
     SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getContent());
+  }
+
+  @Override
+  @StaticAccessPoint
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_EDIT_USER_SETTING};
   }
 }

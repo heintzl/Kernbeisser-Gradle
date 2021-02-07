@@ -107,7 +107,7 @@ public class AccountingReportsController
   @Override
   @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {};
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_ACCOUNTING_REPORTS};
   }
 
   @Override

@@ -3,8 +3,10 @@ package kernbeisser.Windows.EditUsers;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
+import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 
 public class EditUsers extends ObjectViewController<User> {
   public EditUsers() {
@@ -21,5 +23,11 @@ public class EditUsers extends ObjectViewController<User> {
             u -> String.format("%.2f€", u.getUserGroup().getValue()),
             SwingConstants.RIGHT,
             Column.NUMBER_SORTER));
+  }
+
+  @Override
+  @StaticAccessPoint
+  public PermissionKey[] getRequiredKeys() {
+    return new PermissionKey[] {PermissionKey.ACTION_OPEN_EDIT_USERS};
   }
 }

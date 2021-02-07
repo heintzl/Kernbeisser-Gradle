@@ -11,12 +11,13 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Security.PermissionSet;
 import kernbeisser.Security.StaticMethodTransformer.RestrictedAccess;
 import kernbeisser.Security.StaticMethodTransformer.StaticMethodTransformer;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IModel;
@@ -54,6 +55,19 @@ public class ControllerButton extends JButton {
           C extends Controller<V, M>>
       ControllerButton(
           Supplier<C> controllerInitializer, Class<C> clazz, Consumer<C> action, boolean preInit) {
+    this(controllerInitializer, clazz, action, preInit, new PermissionKey[0]);
+  }
+
+  public <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>,
+          C extends Controller<V, M>>
+      ControllerButton(
+          Supplier<C> controllerInitializer,
+          Class<C> clazz,
+          Consumer<C> action,
+          boolean preInit,
+          PermissionKey[] injected) {
     Class<V> vClass = Controller.getViewClass(clazz);
     IView<?> iView = StaticMethodTransformer.createStaticInterface(IView.class, vClass);
     setIcon(
@@ -68,7 +82,8 @@ public class ControllerButton extends JButton {
     // checking if the user has the required access to open up the window
     RestrictedAccess accessModel =
         StaticMethodTransformer.createStaticInterface(RestrictedAccess.class, clazz);
-    if (LogInModel.getLoggedIn().hasPermission(accessModel.getRequiredKeys())) {
+    if (PermissionSet.MASTER.hasPermissions(
+        PermissionKey.combine(accessModel.getRequiredKeys(), injected))) {
       AtomicReference<SoftReference<C>> controllerRef =
           new AtomicReference<>(new SoftReference<>(null));
       if (preInit) {
