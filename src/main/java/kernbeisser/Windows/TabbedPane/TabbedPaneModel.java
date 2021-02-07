@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IModel;
-import kernbeisser.Windows.ViewContainer;
 import kernbeisser.Windows.ViewContainers.JFrameWindow;
 import lombok.Getter;
 import lombok.experimental.Delegate;
@@ -12,7 +11,7 @@ import lombok.experimental.Delegate;
 public class TabbedPaneModel implements IModel<TabbedPaneController> {
   public static TabbedPaneController MAIN_PANEL = createWithWindow();
 
-  @Delegate @Getter private final List<ViewContainer> tabs = new ArrayList<>();
+  @Delegate @Getter private final List<TabViewContainer> tabs = new ArrayList<>();
 
   private static TabbedPaneController createWithWindow() {
     TabbedPaneController controller = new TabbedPaneController();
