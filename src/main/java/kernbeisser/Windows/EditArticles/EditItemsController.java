@@ -5,7 +5,6 @@ import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
