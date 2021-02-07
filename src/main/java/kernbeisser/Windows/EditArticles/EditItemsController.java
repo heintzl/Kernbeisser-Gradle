@@ -5,7 +5,6 @@ import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -78,7 +77,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             Column.create("Barcode", Article::getBarcode, RIGHT));
     this.capture =
         new BarcodeCapture(
-            e -> objectViewController.openForm(Article.getByBarcode(Long.parseLong(e)), Mode.EDIT))
+            e -> objectViewController.openForm(Article.getByBarcode(Long.parseLong(e)), Mode.EDIT));
   }
 
   private Collection<Article> search(String query, int max) {

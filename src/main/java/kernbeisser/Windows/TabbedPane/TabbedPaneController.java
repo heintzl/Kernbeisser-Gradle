@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.ControllerReference;
 import kernbeisser.Windows.ViewContainer;
 import lombok.var;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,7 +18,7 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
   @Override
   public void fillView(TabbedPaneView tabbedPaneView) {}
 
-  public void closeViewContainer(ViewContainer container, int index) {
+  public void closeViewContainer(ViewContainer container, int index, ViewContainer newFocus) {
     var view = getView();
     if (container.getLoaded() == null) view.removeTab(index);
     else {
@@ -26,6 +27,9 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
         view.removeTab(index);
         getModel().remove(container);
       }
+    }
+    if (newFocus != null) {
+      getView().setSelected(model.indexOf(newFocus));
     }
   }
 
@@ -38,16 +42,28 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
         super.getSubControllers());
   }
 
-  public ViewContainer createTabViewContainer() {
-    var view = getView();
-    ViewContainer container = view.prepareViewContainer();
+  public TabViewContainer createTabViewContainer() {
+    TabViewContainer container = new TabViewContainer(this);
     getModel().add(container);
     return container;
   }
 
   public void kill(Controller<?, ?> controller) {
     var view = getView();
-    view.removeTab(view.indexOf(controller));
+    view.removeTab(indexOf(controller));
     getModel().removeController(controller);
+  }
+
+  int indexOf(Controller<?, ?> controller) {
+    for (int i = 0; i < getView().getTabbedPane().getTabCount(); i++) {
+      if (ControllerReference.isOn(getView().getTabbedPane().getComponentAt(i), controller))
+        return i;
+    }
+    throw new UnsupportedOperationException("cannot find index for controller");
+  }
+
+  public TabViewContainer getSelectedTabViewContainer() {
+    int selection = getView().getTabbedPane().getSelectedIndex();
+    return selection != -1 ? model.get(selection) : null;
   }
 }
