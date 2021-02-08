@@ -22,7 +22,7 @@
       "preOrderChecklist": "Abhakplan.jrxml",
       "permissionHolders": "RollenInhaber.jrxml",
       "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
-      "keyUserListFileName": "BenutzerSchlüssel.jrxml",
+      "keyUserListFileName": "BenutzerSchluessel.jrxml",
       "invoiceFileName": "Kerni_Rechnung.jrxml",
       "priceList": "Preisliste.jrxml"
     }
