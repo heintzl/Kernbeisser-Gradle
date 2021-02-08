@@ -130,7 +130,12 @@ public class MenuView implements IView<MenuController> {
             AccountingReportsController.class,
             Controller::openTab);
     changeDBConnection =
-        new ControllerButton(DBLogInController::new, DBLogInController.class, Controller::openTab);
+        new ControllerButton(
+            DBLogInController::new,
+            DBLogInController.class,
+            Controller::openTab,
+            false,
+            new PermissionKey[] {PermissionKey.ACTION_OPEN_DB_LOG_IN});
     editJobs = new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab);
     editApplicationSettings =
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
