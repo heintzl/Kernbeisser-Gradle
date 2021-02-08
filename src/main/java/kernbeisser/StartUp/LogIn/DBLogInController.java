@@ -1,7 +1,5 @@
 package kernbeisser.StartUp.LogIn;
 
-import static kernbeisser.Enums.PermissionKey.ACTION_OPEN_DB_LOG_IN;
-
 import javax.swing.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.ClassIsSingletonException;
@@ -36,6 +34,6 @@ public class DBLogInController extends Controller<DBLogInView, DBLogInModel> {
   @Override
   @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {ACTION_OPEN_DB_LOG_IN};
+    return new PermissionKey[] {};
   }
 }
