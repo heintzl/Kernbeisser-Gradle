@@ -2,6 +2,7 @@ package kernbeisser.Windows.TabbedPane;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.ControllerReference;
@@ -65,5 +66,24 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
   public TabViewContainer getSelectedTabViewContainer() {
     int selection = getView().getTabbedPane().getSelectedIndex();
     return selection != -1 ? model.get(selection) : null;
+  }
+
+  public int indexOf(Class<Controller<?, ?>> controllerClass) {
+    for (int i = 0; i < model.size(); i++) {
+      try {
+        if (Objects.requireNonNull(model.get(i)).getLoaded().getClass().equals(controllerClass))
+          return i;
+      } catch (NullPointerException ignored) {
+      }
+    }
+    return -1;
+  }
+
+  public boolean isInstanceOpen(Class<?> c) {
+    return model.stream().parallel().anyMatch(e -> e.getLoaded().getClass().equals(c));
+  }
+
+  public void setSelectedIndex(int index) {
+    getView().setSelected(index);
   }
 }
