@@ -22,6 +22,7 @@ import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 
 public class ControllerButton extends JButton {
 
@@ -100,6 +101,11 @@ public class ControllerButton extends JButton {
       }
       addActionListener(
           e -> {
+            int index = TabbedPaneModel.MAIN_PANEL.indexOf((Class<Controller<?, ?>>) clazz);
+            if (index != -1) {
+              TabbedPaneModel.MAIN_PANEL.setSelectedIndex(index);
+              return;
+            }
             C controller = controllerRef.get().get();
             if (controller == null) {
               try {
