@@ -12,6 +12,7 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Components.DataAnchor;
@@ -35,6 +36,7 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
   private JButton edit;
   private JButton add;
   private JButton selectNoParent;
+  private JButton calculateSurcharge;
 
   @Getter private ObjectForm<SurchargeGroup> objectForm;
 
@@ -58,6 +60,10 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
     commit.addActionListener(e -> back());
     superGroup.setAllowNull(true);
     objectTree.addSelectionListener(controller::surchargeGroupSelected);
+    if (Setting.IS_DEFAULT_SURCHARGES.getBooleanValue()) {
+      calculateSurcharge.setVisible(true);
+      calculateSurcharge.addActionListener(e -> controller.calculateSurchargeValues());
+    }
   }
 
   void setAllSuperGroups(Collection<SurchargeGroup> superGroups) {

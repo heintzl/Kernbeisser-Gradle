@@ -60,7 +60,9 @@ public enum Setting {
   OFFER_PREFIX("*AK* "),
   PREORDERRETARD_THRESHOLD("10"),
   WARN_ARTICLE_DIFFERENCE("10"),
-  VALIDATE_EMAIL_SYNTAX("false");
+  VALIDATE_EMAIL_SYNTAX("false"),
+  IS_DEFAULT_SURCHARGES("true");
+
   // defines the type to like in java style
   // Value: Type:
   // 0.0    double

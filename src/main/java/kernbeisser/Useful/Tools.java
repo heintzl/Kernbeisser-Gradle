@@ -793,8 +793,9 @@ public class Tools {
     return System.getProperty("user.home") + File.separator + "Documents" + File.separator;
   }
 
-  public static void productSurchargeToGroup() {
+  public static Map<SurchargeGroup, Map<Double, List<String>>> productSurchargeToGroup() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    Map<SurchargeGroup, Map<Double, List<String>>> result = new HashMap<>();
     Map<SurchargeGroup, List<Article>> articleMap =
         em.createQuery(
                 "Select a from Article a where a.obsoleteSurcharge is not null", Article.class)
@@ -838,11 +839,33 @@ public class Tools {
                                     + ": "
                                     + a.getName())
                         .collect(Collectors.joining("\n")));
+            Map<Double, List<String>> groupResult = new HashMap<>();
+            v.forEach(
+                (d, l) -> {
+                  List<String> prodList = new ArrayList();
+                  if (d != k.getSurcharge()) {
+                    prodList =
+                        articleMap.get(k).stream()
+                            .filter(a -> a.getObsoleteSurcharge().equals(d))
+                            .map(
+                                a ->
+                                    a.getSupplier().getShortName()
+                                        + a.getSuppliersItemNumber()
+                                        + ": "
+                                        + a.getName())
+                            .collect(Collectors.toList());
+                  } else {
+                    prodList.add("(" + l + " Artikel)");
+                  }
+                  groupResult.put(d, prodList);
+                });
+            result.put(k, groupResult);
           }
         });
     em.flush();
     et.commit();
     em.close();
+    return result;
   }
 
   public static int calculate(String x, String y) {

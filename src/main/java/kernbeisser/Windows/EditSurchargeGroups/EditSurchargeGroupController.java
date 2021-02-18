@@ -1,13 +1,22 @@
 package kernbeisser.Windows.EditSurchargeGroups;
 
+import com.google.gson.GsonBuilder;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
+import kernbeisser.Config.Config;
 import kernbeisser.CustomComponents.ObjectTree.Node;
+import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
@@ -61,6 +70,27 @@ public class EditSurchargeGroupController
 
   void editSurchargeGroup() {
     applyMode(Mode.EDIT);
+  }
+
+  void calculateSurchargeValues() {
+    Map<SurchargeGroup, Map<Double, List<String>>> calcResult = Tools.productSurchargeToGroup();
+    SettingValue.setValue(Setting.IS_DEFAULT_SURCHARGES, "false");
+    try {
+      File resultFile =
+          Config.getConfig()
+              .getReports()
+              .getOutputDirectory()
+              .toPath()
+              .resolve("AufschlagsBerechnung.json")
+              .toAbsolutePath()
+              .toFile();
+      FileWriter fileWriter = new FileWriter(resultFile);
+      fileWriter.write(new GsonBuilder().setPrettyPrinting().create().toJson(calcResult));
+      fileWriter.flush();
+      fileWriter.close();
+    } catch (IOException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
   }
 
   void removeSurchargeGroup() {
