@@ -130,7 +130,7 @@
                       <font/>
                       <hideActionText value="false"/>
                       <requestFocusEnabled value="false"/>
-                      <text value="Einkauf beginnen"/>
+                      <text value="Ladendienst beginnen"/>
                     </properties>
                   </component>
                   <component id="e7d92" class="kernbeisser.CustomComponents.ControllerButton" binding="order" custom-create="true">

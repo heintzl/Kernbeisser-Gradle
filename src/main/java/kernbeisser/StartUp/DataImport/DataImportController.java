@@ -108,7 +108,8 @@ public class DataImportController extends Controller<DataImportView, DataImportM
     try {
       PackageDefinition packageDefinition = extractPackageDefinition();
       Stream<String> suppliers =
-          Files.lines(getPackagePath().resolve(packageDefinition.getSuppliers()));
+          Files.lines(
+              getPackagePath().resolve(packageDefinition.getSuppliers()), StandardCharsets.UTF_8);
       Stream<String> article =
           Files.lines(
               getPackagePath().resolve(packageDefinition.getArticles()), StandardCharsets.UTF_8);

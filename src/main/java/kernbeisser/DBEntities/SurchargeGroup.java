@@ -134,6 +134,6 @@ public class SurchargeGroup implements Serializable, Cloneable {
   }
 
   public static String defaultListNameQualifier(Supplier s) {
-    return "@" + s.getName() + " standart Aufschlag";
+    return "@" + s.getName() + " Standard Aufschlag";
   }
 }

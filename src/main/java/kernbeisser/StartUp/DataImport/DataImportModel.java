@@ -96,7 +96,7 @@ public class DataImportModel implements IModel<DataImportController> {
           supplier.setDefaultSurcharge(Integer.parseInt(columns[8]) / 100.);
           SurchargeGroup surchargeGroup = new SurchargeGroup();
           surchargeGroup.setSupplier(supplier);
-          surchargeGroup.setName(supplier.getName() + " standart Aufschlag");
+          surchargeGroup.setName(supplier.getName() + " Standard Aufschlag");
           em.persist(supplier);
         });
     progress.accept(2);

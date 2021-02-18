@@ -83,6 +83,10 @@ public final class Config {
       logger.debug("No DBAccess.Password found in config file.");
       logger.info("Using embedded password for DBConnection.");
       dbAccess.setPassword(new String(IgnoreThis.ignoreMe));
+      String url = dbAccess.getUrl();
+      if (!url.contains("?CharacterEncoding")) {
+        dbAccess.setUrl(url + "?characterEncoding=UTF-8");
+      }
     }
     return dbAccess;
   }
