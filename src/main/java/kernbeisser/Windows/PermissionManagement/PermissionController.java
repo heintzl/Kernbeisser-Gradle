@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import javax.persistence.PersistenceException;
@@ -12,7 +13,6 @@ import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.ActionPermission;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +21,8 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   public PermissionController() {
     super(new PermissionModel());
   }
+
+  private Permission lastSelection;
 
   private void change(Permission permission, PermissionKey key) {
     // if(LogInModel.getLoggedIn().hasPermission(Key.find(KeyCategory.PERMISSIONS)))
@@ -34,101 +36,68 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     } else {
       model.addKey(permission, key);
     }
-    getView().setValues(model.getAllPermissions());
     loadSolutions();
   }
 
   void loadSolutions() {
-    Column<Permission> nameColumn = Column.create("Berechtigung", Permission::getName);
-    Collection<Column<Permission>> keyColumns =
-        getView().getCategory() != ActionPermission.class
-            ? Tools.transform(
-                PermissionKey.find(getView().getCategory(), true, false),
-                e ->
+    Collection<Permission> permissions = Permission.getAll(null);
+    Column<PermissionKey> nameColumn =
+        Column.create(
+            "Schlüssel-Name",
+            e ->
+                e.name()
+                    .replace("_WRITE", "")
+                    .replace("_READ", "")
+                    .replace("CHANGE_ALL", "Alle Bearbeiten"));
+    ArrayList<Column<PermissionKey>> permissionColumns = new ArrayList<>();
+    permissionColumns.add(nameColumn);
+    Collection<PermissionKey> readPermission =
+        PermissionKey.find(getView().getCategory(), true, false);
+    Collection<PermissionKey> writePermission =
+        PermissionKey.find(getView().getCategory(), false, true);
+    permissionColumns.addAll(
+        permissions.stream()
+            .map(
+                permission ->
                     Column.create(
-                        e.name()
-                            .replaceFirst(e.name().split("_")[0] + "_", "")
-                            .replace("_READ", ""),
-                        p -> {
-                          boolean read = p.contains(e);
-                          boolean write =
-                              p.contains(
-                                  PermissionKey.valueOf(e.name().replaceAll("_READ", "_WRITE")));
-
+                        permission.getName(),
+                        (PermissionKey permissionKey) -> {
+                          if (permissionKey.getClazz() == null) {
+                            boolean read = permission.getKeySet().containsAll(readPermission);
+                            boolean write = permission.getKeySet().containsAll(writePermission);
+                            return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
+                          }
+                          if (permissionKey.getClazz().equals(ActionPermission.class)) {
+                            return permission.contains(permissionKey) ? "Ja" : "Nein";
+                          }
+                          boolean read = permission.contains(permissionKey);
+                          boolean write = permission.contains(permissionKey.getWriteKey());
                           return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
                         },
-                        s -> change(s, e)))
-            : Tools.transform(
-                PermissionKey.find(getView().getCategory()),
-                e ->
-                    Column.create(
-                        e.name().replace(e.name().split("_")[0] + "_", ""),
-                        permission -> permission.contains(e) ? "Ja" : "Nein",
-                        s -> soloChange(s, e)));
-    ArrayList<Column<Permission>> columns = new ArrayList<>(keyColumns.size() + 2);
-    columns.add(nameColumn);
-    if (getView().getCategory() != ActionPermission.class) {
-      columns.add(
-          Column.create(
-              "Alle " + getView().getCategory() + " Berechtigungen",
-              permission -> {
-                boolean read = true;
-                boolean write = true;
-                for (PermissionKey key : PermissionKey.find(getView().getCategory())) {
-                  if (!permission.contains(key)) {
-                    read = (read && (!key.name().endsWith("READ")));
-                    write = (write && (!key.name().endsWith("WRITE")));
-                    if (!read && !write) {
-                      break;
-                    }
-                  }
-                }
-                return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
-              },
-              permission -> {
-                Collection<PermissionKey> keys = PermissionKey.find(getView().getCategory());
-                boolean read = true;
-                boolean write = true;
-                for (PermissionKey key : keys) {
-                  if (!permission.contains(key)) {
-                    read = (read && (!key.name().endsWith("READ")));
-                    write = (write && (!key.name().endsWith("WRITE")));
-                    if (!read && !write) {
-                      break;
-                    }
-                  }
-                }
-                if (read && write) {
-                  model.removeKeys(permission, keys);
-                } else if (read) {
-                  model.addKeys(
-                      permission,
-                      keys.stream()
-                          .filter(e -> e.name().endsWith("WRITE"))
-                          .collect(Collectors.toCollection(ArrayList::new)));
-                } else {
-                  model.addKeys(
-                      permission,
-                      keys.stream()
-                          .filter(e -> e.name().endsWith("READ"))
-                          .collect(Collectors.toCollection(ArrayList::new)));
-                }
-                getView().setValues(model.getAllPermissions());
-                loadSolutions();
-              }));
-    }
-    columns.addAll(keyColumns);
-    getView().setColumns(columns);
-  }
-
-  private void soloChange(Permission s, PermissionKey e) {
-    if (s.contains(e)) {
-      model.removeKey(s, e);
-    } else {
-      model.addKey(s, e);
-    }
-    getView().setValues(model.getAllPermissions());
-    loadSolutions();
+                        e -> {
+                          lastSelection = permission;
+                          if (e.getClazz() == null) {
+                            boolean read = permission.getKeySet().containsAll(readPermission);
+                            boolean write = permission.getKeySet().containsAll(writePermission);
+                            if (read) {
+                              if (write) {
+                                model.removeKeys(permission, readPermission);
+                                model.removeKeys(permission, writePermission);
+                              } else model.addKeys(permission, writePermission);
+                            } else model.addKeys(permission, readPermission);
+                          }
+                          change(permission, e);
+                        }))
+            .collect(Collectors.toCollection(ArrayList::new)));
+    getView()
+        .setValues(
+            Arrays.asList(
+                PermissionKey.with(
+                    e ->
+                        e.getClazz() == null
+                            || (e.getClazz().equals(getView().getCategory())
+                                & !e.name().endsWith("_WRITE")))));
+    getView().setColumns(permissionColumns);
   }
 
   public void addPermission() {
@@ -138,19 +107,18 @@ public class PermissionController extends Controller<PermissionView, PermissionM
       getView().nameIsNotUnique();
       addPermission();
     }
-
-    getView().setValues(model.getAllPermissions());
+    loadSolutions();
   }
 
   public void deletePermission() {
     try {
-      model.deletePermission(getView().getSelectedObject());
-      getView().setValues(model.getAllPermissions());
+      model.deletePermission(lastSelection);
+      loadSolutions();
       getView().successfulDeleted();
     } catch (PersistenceException e) {
       if (getView().permissionIsInUse()) {
-        model.removeUserFromPermission(getView().getSelectedObject());
-        getView().setValues(model.getAllPermissions());
+        model.removeUserFromPermission(lastSelection);
+        loadSolutions();
         getView().successfulDeleted();
       }
     }
@@ -167,7 +135,6 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     // boolean p = LogInModel.getLoggedIn().hasPermission(Key.PERMISSION_KEY_SET_WRITE);
     // getView().setAddEnable(p);
     // getView().setDeleteEnable(p);
-    getView().setValues(model.getAllPermissions());
     loadSolutions();
   }
 
@@ -182,7 +149,6 @@ public class PermissionController extends Controller<PermissionView, PermissionM
 
   public void importFrom(File selectedFile) throws FileNotFoundException {
     PermissionRepresentation.putInDB(selectedFile);
-    getView().setValues(model.getAllPermissions());
     loadSolutions();
   }
 
