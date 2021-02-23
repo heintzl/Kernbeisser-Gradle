@@ -9,13 +9,13 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.Permission;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class PermissionView implements IView<PermissionController> {
-  private ObjectTable<Permission> permission;
+  private ObjectTable<PermissionKey> permission;
   private JPanel main;
   private JComboBox<Class> category;
   private JButton back;
@@ -26,7 +26,7 @@ public class PermissionView implements IView<PermissionController> {
 
   @Linked private PermissionController controller;
 
-  Permission getSelectedObject() {
+  PermissionKey getSelectedObject() {
     return permission.getSelectedObject();
   }
 
@@ -46,10 +46,10 @@ public class PermissionView implements IView<PermissionController> {
     delete.setEnabled(b);
   }
 
-  void setColumns(Collection<Column<Permission>> permissionColumns) {
+  void setColumns(Collection<Column<PermissionKey>> permissionColumns) {
     permission.setColumns(permissionColumns);
     int i = 0;
-    for (Column<Permission> permissionColumn : permissionColumns) {
+    for (Column<PermissionKey> permissionColumn : permissionColumns) {
       int s =
           (int)
               (permission
@@ -64,7 +64,7 @@ public class PermissionView implements IView<PermissionController> {
     }
   }
 
-  void setValues(Collection<Permission> permissions) {
+  void setValues(Collection<PermissionKey> permissions) {
     this.permission.setObjects(permissions);
   }
 
