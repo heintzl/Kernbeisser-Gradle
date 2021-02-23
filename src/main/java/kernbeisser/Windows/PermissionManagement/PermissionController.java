@@ -90,16 +90,16 @@ public class PermissionController extends Controller<PermissionView, PermissionM
                         }))
             .collect(Collectors.toCollection(ArrayList::new)));
     Collection<PermissionKey> values = new ArrayList<>();
-    if(!getView().getCategory().equals(ActionPermission.class))values.add(PermissionKey.CHANGE_ALL);
+    if (!getView().getCategory().equals(ActionPermission.class))
+      values.add(PermissionKey.CHANGE_ALL);
     values.addAll(
         Arrays.asList(
             PermissionKey.with(
                 e ->
                     e.getClazz() != null
                         && (e.getClazz().equals(getView().getCategory())
-                        & !e.name().endsWith("_WRITE")))));
-    getView()
-        .setValues(values);
+                            & !e.name().endsWith("_WRITE")))));
+    getView().setValues(values);
     getView().setColumns(permissionColumns);
   }
 
