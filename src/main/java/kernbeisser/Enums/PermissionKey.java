@@ -11,8 +11,9 @@ import kernbeisser.Windows.LogIn.LogInModel;
 public enum PermissionKey {
 
   // (only for CollectionProxy)
-  READ_ITERABLE_VALUE(ActionPermission.class),
-  MODIFY_ITERABLE_VALUE(ActionPermission.class),
+  READ_ITERABLE_VALUE(null),
+  MODIFY_ITERABLE_VALUE(null),
+  CHANGE_ALL(null),
 
   // VALUE
   GO_UNDER_MIN(ActionPermission.class),
@@ -436,11 +437,11 @@ public enum PermissionKey {
   }
 
   public static PermissionKey[] allReadPermissions(Class<?> c) {
-    return with(e -> e.clazz.equals(c) && e.name().endsWith("READ"));
+    return with(e -> e.clazz != null && e.clazz.equals(c) && e.name().endsWith("READ"));
   }
 
   public static PermissionKey[] allWritePermissions(Class<?> c) {
-    return with(e -> e.clazz.equals(c) && e.name().endsWith("WRITE"));
+    return with(e -> e.clazz != null && e.clazz.equals(c) && e.name().endsWith("WRITE"));
   }
 
   public static PermissionKey[] with(Predicate<PermissionKey> keyPredicate) {
