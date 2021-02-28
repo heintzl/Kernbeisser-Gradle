@@ -56,10 +56,9 @@ public class PermissionView implements IView<PermissionController> {
                       .getFontMetrics(permission.getFont())
                       .getStringBounds(permissionColumn.getName(), null)
                       .getWidth()
-                  + 50);
+                  + 10);
       permission.getColumnModel().getColumn(i).setMinWidth(s);
-      permission.getColumnModel().getColumn(i).setMaxWidth(s);
-      permission.getColumnModel().getColumn(i).setWidth(s);
+      permission.getColumnModel().getColumn(i).setPreferredWidth(s + (i == 0 ? 100 : 0));
       i++;
     }
   }
