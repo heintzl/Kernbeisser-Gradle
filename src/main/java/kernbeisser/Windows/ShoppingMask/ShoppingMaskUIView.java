@@ -21,7 +21,6 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ArticleType;
-import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
@@ -382,6 +381,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   void loadItemStats(ShoppingItem shoppingItem) {
     currentItem = shoppingItem;
+    isWeighable = shoppingItem.isWeighAble();
+    String itemPriceUnits = shoppingItem.getPriceUnits().getShortName();
     setSupplier(shoppingItem.getSupplier());
     setKbNumber(
         shoppingItem.getKbNumber() != 0 ? Integer.toString(shoppingItem.getKbNumber()) : "");
@@ -396,19 +397,14 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       articleName.setCaretPosition(0);
     }
     price.setText(String.format("%.2f", (shoppingItem.getItemRetailPrice())));
-    priceUnit.setText(isPreordered ? "€/Geb." : shoppingItem.isWeighAble() ? "€/kg" : "€");
+    priceUnit.setText(isPreordered ? "€/Geb." : isWeighable ? "€/" + itemPriceUnits : "€");
     netPrice.setText(String.format("%.2f", shoppingItem.getItemNetPrice()));
     netPriceUnit.setText(priceUnit.getText());
-    amountUnit.setText(
-        isPreordered
-            ? "Geb."
-            : shoppingItem.isWeighAble() ? shoppingItem.getPriceUnits().getShortName() : "stk.");
-    isWeighable = shoppingItem.isWeighAble();
+    amountUnit.setText(shoppingItem.getSalesUnits().getShortName());
     containerSize.setText(
         new DecimalFormat("##.###")
             .format(shoppingItem.getContainerSize() * (isWeighable ? 1000 : 1)));
-    containerUnit.setText(
-        (isWeighable ? shoppingItem.getPriceUnits() : MetricUnits.PIECE).getShortName());
+    containerUnit.setText(shoppingItem.getContainerUnits().getShortName());
     try {
       if (shoppingItem.getVatValue() > 0) setVat(shoppingItem.getVatValue());
     } catch (InvalidVATValueException e) {

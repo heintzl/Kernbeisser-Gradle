@@ -92,16 +92,17 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
                 column.setMinWidth(500);
               }
             },
-            Column.create("Inhalt", ShoppingItem::getUnitAmount, SwingConstants.RIGHT),
+            Column.create("Inhalt", ShoppingItem::getContentAmount, SwingConstants.RIGHT),
             Column.create(
                 "Menge",
                 e -> {
                   if (e.isContainerDiscount()) {
-                    return e.getItemMultiplier() / e.getContainerSize() + " Gebinde";
+                    return e.getItemMultiplier() / e.getContainerSize()
+                        + MetricUnits.CONTAINER.getShortName();
                   }
                   return e.getPriceUnits() == MetricUnits.NONE
                       ? ""
-                      : e.getItemMultiplier() + e.getPriceUnits().getShortName() + " ";
+                      : e.getItemMultiplier() + e.getSalesUnits().getShortName() + " ";
                 },
                 SwingConstants.RIGHT),
             Column.create(

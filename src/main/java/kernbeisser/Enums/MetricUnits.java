@@ -31,6 +31,12 @@ public enum MetricUnits implements Named {
     public double getBaseFactor() {
       return 1;
     }
+  },
+  CONTAINER("Gebinde", "Geb.") {
+    @Override
+    public double getBaseFactor() {
+      return 1;
+    }
   };
 
   private final String shortName;

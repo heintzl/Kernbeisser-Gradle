@@ -309,20 +309,43 @@ public class ShoppingItem implements Serializable {
             100.0
                 * itemRetailPrice
                 * itemMultiplier
-                * (isContainerDiscount() || !weighAble ? 1.0 : getPriceUnits().getBaseFactor()))
+                * (!weighAble ? 1.0 : getSalesUnits().getBaseFactor()))
         / 100.0;
+  }
+
+  public MetricUnits getSalesUnits() {
+    MetricUnits salesUnits = getMetricUnits();
+    if (isContainerDiscount()) {
+      return MetricUnits.CONTAINER;
+    }
+    return getContainerUnits();
+  }
+
+  public MetricUnits getContainerUnits() {
+    if (!isWeighAble() && getMetricUnits() != MetricUnits.NONE) {
+      return MetricUnits.PIECE;
+    }
+    return getMetricUnits();
   }
 
   public MetricUnits getPriceUnits() {
     MetricUnits priceUnits = getMetricUnits();
-    if ((isContainerDiscount() || (getKbNumber() != 0 && !this.isWeighAble()))
-        && this.getMetricUnits() != MetricUnits.NONE) {
+    switch (priceUnits) {
+      case GRAM:
+        priceUnits = MetricUnits.KILOGRAM;
+        break;
+      case MILLILITER:
+        priceUnits = MetricUnits.LITER;
+        break;
+      default:
+    }
+    if ((isContainerDiscount() || !isWeighAble()) && getMetricUnits() != MetricUnits.NONE) {
       priceUnits = MetricUnits.PIECE;
     }
     return priceUnits;
   }
 
-  public String getUnitAmount() {
+  public String getContentAmount() {
     if (isWeighAble()
         || this.getMetricUnits() == MetricUnits.NONE
         || this.getMetricUnits() == MetricUnits.PIECE
