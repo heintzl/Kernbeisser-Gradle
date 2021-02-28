@@ -191,12 +191,12 @@ public class ShoppingItem implements Serializable {
     this.singleDeposit = article.getSingleDeposit();
     this.containerDeposit = article.getContainerDeposit();
     this.containerSize = article.getContainerSize();
-    this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
     if (hasContainerDiscount && this.weighAble) {
       this.itemNetPrice *= this.amount * this.metricUnits.getBaseFactor();
     }
+    this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
   }
 
   public static ShoppingItem createReportItem(Article article) {

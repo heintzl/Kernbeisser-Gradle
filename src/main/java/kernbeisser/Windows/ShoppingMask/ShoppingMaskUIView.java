@@ -395,19 +395,9 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
               : shoppingItem.getName());
       articleName.setCaretPosition(0);
     }
-    price.setText(
-        String.format(
-            "%.2f",
-            (isPreordered
-                ? shoppingItem.calculateItemRetailPrice(shoppingItem.getItemNetPrice())
-                    * shoppingItem.getContainerSize()
-                : shoppingItem.getItemRetailPrice())));
+    price.setText(String.format("%.2f", (shoppingItem.getItemRetailPrice())));
     priceUnit.setText(isPreordered ? "€/Geb." : shoppingItem.isWeighAble() ? "€/kg" : "€");
-    netPrice.setText(
-        String.format(
-            "%.2f",
-            shoppingItem.getItemNetPrice()
-                * (isPreordered ? shoppingItem.getContainerSize() : 1.0)));
+    netPrice.setText(String.format("%.2f", shoppingItem.getItemNetPrice()));
     netPriceUnit.setText(priceUnit.getText());
     amountUnit.setText(
         isPreordered
