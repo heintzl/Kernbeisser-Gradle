@@ -383,6 +383,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     currentItem = shoppingItem;
     isWeighable = shoppingItem.isWeighAble();
     String itemPriceUnits = shoppingItem.getPriceUnits().getShortName();
+    double unitNetPrice =
+        shoppingItem.getItemNetPrice() * (isPreordered && !isWeighable ? shoppingItem.getContainerSize() : 1.0);
     setSupplier(shoppingItem.getSupplier());
     setKbNumber(
         shoppingItem.getKbNumber() != 0 ? Integer.toString(shoppingItem.getKbNumber()) : "");
@@ -396,10 +398,10 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
               : shoppingItem.getName());
       articleName.setCaretPosition(0);
     }
-    price.setText(String.format("%.2f", (shoppingItem.getItemRetailPrice())));
-    priceUnit.setText(isPreordered ? "€/Geb." : isWeighable ? "€/" + itemPriceUnits : "€");
-    netPrice.setText(String.format("%.2f", shoppingItem.getItemNetPrice()));
+    netPrice.setText(String.format("%.2f", unitNetPrice));
     netPriceUnit.setText(priceUnit.getText());
+    recalculatePrice();
+    priceUnit.setText(isPreordered ? "€/Geb." : isWeighable ? "€/" + itemPriceUnits : "€");
     amountUnit.setText(shoppingItem.getSalesUnits().getShortName());
     containerSize.setText(
         new DecimalFormat("##.###")

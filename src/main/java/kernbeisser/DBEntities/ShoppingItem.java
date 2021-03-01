@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import javax.persistence.*;
-import javax.transaction.NotSupportedException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.*;
 import kernbeisser.Security.Key;
@@ -314,7 +313,6 @@ public class ShoppingItem implements Serializable {
   }
 
   public MetricUnits getSalesUnits() {
-    MetricUnits salesUnits = getMetricUnits();
     if (isContainerDiscount()) {
       return MetricUnits.CONTAINER;
     }
@@ -457,10 +455,6 @@ public class ShoppingItem implements Serializable {
     ShoppingItem newInstance = new ShoppingItem();
     Tools.copyInto(this, newInstance);
     return newInstance;
-  }
-
-  public void addToRetailPrice(double addedRetailPrice) throws NotSupportedException {
-    throw new NotSupportedException();
   }
 
   @Key(PermissionKey.SHOPPING_ITEM_METRIC_UNITS_READ)
