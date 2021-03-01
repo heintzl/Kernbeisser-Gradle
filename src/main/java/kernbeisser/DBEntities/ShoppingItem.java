@@ -175,14 +175,14 @@ public class ShoppingItem implements Serializable {
     if (this.vat != null) {
       this.vatValue = vat.getValue();
     }
+    this.discount = discount;
+    supplier = article.getSupplier();
     this.surcharge =
         (supplier == null
                 // is unsafe call
                 ? Supplier.getKKSupplier().getDefaultSurchargeGroup().getSurcharge()
                 : article.getSurchargeGroup().getSurcharge())
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
-    this.discount = discount;
-    supplier = article.getSupplier();
     if (supplier != null) {
       this.suppliersShortName = article.getSupplier().getShortName();
     }
