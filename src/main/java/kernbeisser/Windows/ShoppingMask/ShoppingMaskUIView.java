@@ -330,16 +330,21 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     variablePercentage.setEnabled(
         priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
 
-    if (type == ArticleType.PRODUCE) {
-      loadItemStats(Objects.requireNonNull(ShoppingItem.createProduce(0.0, isPreordered)));
-      this.articleName.setText("Obst & Gemüse");
-      price.selectAll();
-      price.requestFocusInWindow();
-    } else if (type == ArticleType.BAKED_GOODS) {
-      loadItemStats(Objects.requireNonNull(ShoppingItem.createBakeryProduct(0.0, isPreordered)));
-      price.selectAll();
-      this.articleName.setText("Backwaren");
-      price.requestFocusInWindow();
+    if (type == ArticleType.PRODUCE || type == ArticleType.BAKED_GOODS) {
+      if (type == ArticleType.PRODUCE) {
+        loadItemStats(Objects.requireNonNull(ShoppingItem.createProduce(0.0, isPreordered)));
+        this.articleName.setText("Obst & Gemüse");
+      } else {
+        loadItemStats(Objects.requireNonNull(ShoppingItem.createBakeryProduct(0.0, isPreordered)));
+        this.articleName.setText("Backwaren");
+      }
+      if (isPreordered) {
+        netPrice.requestFocusInWindow();
+        netPrice.selectAll();
+      } else {
+        price.requestFocusInWindow();
+        price.selectAll();
+      }
     } else if (type == ArticleType.DEPOSIT) {
       this.articleName.setText("Pfand-Behälter");
       deposit.requestFocusInWindow();
@@ -384,7 +389,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     isWeighable = shoppingItem.isWeighAble();
     String itemPriceUnits = shoppingItem.getPriceUnits().getShortName();
     double unitNetPrice =
-        shoppingItem.getItemNetPrice() * (isPreordered && !isWeighable ? shoppingItem.getContainerSize() : 1.0);
+        shoppingItem.getItemNetPrice()
+            * (isPreordered && !isWeighable ? shoppingItem.getContainerSize() : 1.0);
     setSupplier(shoppingItem.getSupplier());
     setKbNumber(
         shoppingItem.getKbNumber() != 0 ? Integer.toString(shoppingItem.getKbNumber()) : "");
