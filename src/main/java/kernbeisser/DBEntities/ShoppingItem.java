@@ -343,6 +343,18 @@ public class ShoppingItem implements Serializable {
     return priceUnits;
   }
 
+  public String getDisplayAmount() {
+
+    if (isContainerDiscount() && !isWeighAble() && getContainerSize() != 0.0) {
+      return Math.round(getItemMultiplier() / getContainerSize())
+          + " "
+          + MetricUnits.CONTAINER.getShortName();
+    }
+    return getPriceUnits() == MetricUnits.NONE
+        ? ""
+        : getItemMultiplier() + " " + getSalesUnits().getShortName();
+  }
+
   public String getContentAmount() {
     if (isWeighAble()
         || this.getMetricUnits() == MetricUnits.NONE

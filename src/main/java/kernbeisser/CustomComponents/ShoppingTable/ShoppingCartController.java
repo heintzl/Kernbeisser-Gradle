@@ -43,7 +43,9 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
             "Der Artikel ist bereits im Einkaufswagen vorhanden.\nDie Menge von "
                 + addedItem.getName()
                 + " wurde auf "
-                + addedItem.getItemMultiplier()
+                + (addedItem.getDisplayAmount() == ""
+                    ? addedItem.getRetailPrice() + "€"
+                    : addedItem.getDisplayAmount())
                 + " geändert.",
             "Artikel existiert bereits im Einkaufswagen");
       } else {
