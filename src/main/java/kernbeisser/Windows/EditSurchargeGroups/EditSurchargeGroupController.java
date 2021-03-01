@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
 import kernbeisser.Config.Config;
@@ -32,7 +34,11 @@ public class EditSurchargeGroupController
 
   @Override
   public void fillView(EditSurchargeGroupView editSurchargeGroupView) {
-    editSurchargeGroupView.setSuppliers(model.getAllSuppliers());
+    editSurchargeGroupView.setSuppliers(
+        model.getAllSuppliers().stream()
+            .sorted(Comparator.comparing(Supplier::getName))
+            .collect(Collectors.toList()));
+    editSurchargeGroupView.setSupplier(Supplier.getKKSupplier());
     loadForCurrentSupplier();
   }
 
