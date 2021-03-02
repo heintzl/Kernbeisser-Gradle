@@ -17,7 +17,7 @@ public class ShoppingCartModel implements IModel<ShoppingCartController> {
   }
 
   public void delete(ShoppingItem i) {
-    shoppingItems.removeIf(e -> e.getParentItem().equals(i) || e.equals(i));
+    shoppingItems.removeIf(e -> e.getParentItem() == i || e.equals(i));
   }
 
   ShoppingItem addItem(ShoppingItem newItem) {
