@@ -42,9 +42,9 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
             getView().getContent(),
             "Der Artikel ist bereits im Einkaufswagen vorhanden.\nDie Menge von "
                 + addedItem.getName()
-                + " wurde auf "
-                + (addedItem.getDisplayAmount() == ""
-                    ? addedItem.getRetailPrice() + "€"
+                + " wird auf "
+                + (addedItem.getDisplayAmount().equals("")
+                    ? String.format("%.2f €", addedItem.getRetailPrice())
                     : addedItem.getDisplayAmount())
                 + " geändert.",
             "Artikel existiert bereits im Einkaufswagen");
@@ -89,10 +89,6 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
 
   public void addShoppingItem(ShoppingItem item) {
     mergeShoppingItem(item, true);
-  }
-
-  double getPrice(ShoppingItem item) {
-    return item.getRetailPrice();
   }
 
   public void refresh() {

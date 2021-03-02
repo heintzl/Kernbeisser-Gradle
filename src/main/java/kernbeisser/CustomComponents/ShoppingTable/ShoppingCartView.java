@@ -92,7 +92,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               }
             },
             Column.create("Inhalt", ShoppingItem::getContentAmount, SwingConstants.RIGHT),
-            Column.create("Menge", e -> e.getDisplayAmount(), SwingConstants.RIGHT),
+            Column.create("Menge", ShoppingItem::getDisplayAmount, SwingConstants.RIGHT),
             Column.create(
                 "Rabatt",
                 e ->
@@ -101,7 +101,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
                         : (e.getDiscount() != 0 ? e.getDiscount() + "% " : " "),
                 SwingConstants.RIGHT),
             Column.create(
-                "Preis", e -> String.format("%.2f€ ", e.getRetailPrice()), SwingConstants.RIGHT));
+                "Preis", e -> String.format("%.2f € ", e.getRetailPrice()), SwingConstants.RIGHT));
     if (editable) {
       Predicate<ShoppingItem> predicate =
           item ->
