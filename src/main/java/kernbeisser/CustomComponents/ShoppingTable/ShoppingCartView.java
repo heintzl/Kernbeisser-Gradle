@@ -107,7 +107,8 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
           item ->
               !(item.getName().equals(RawPrice.PRODUCE.getName())
                   || item.getName().equals(RawPrice.BAKERY.getName())
-                  || item.getKbNumber() == depositKbNumber);
+                  || item.getKbNumber() == depositKbNumber
+                  || item.getItemMultiplier() < 0);
       shoppingItems.addColumn(
           Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x0B315A)),

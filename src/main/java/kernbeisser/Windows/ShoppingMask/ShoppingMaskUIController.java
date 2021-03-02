@@ -1,5 +1,9 @@
 package kernbeisser.Windows.ShoppingMask;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.Objects;
+import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
@@ -21,11 +25,6 @@ import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
-
-import javax.persistence.NoResultException;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.util.Objects;
 
 public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, ShoppingMaskModel> {
   @Linked private final ShoppingCartController shoppingCartController;
@@ -69,6 +68,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
               throw (new NumberFormatException());
             }
           } catch (NumberFormatException exception) {
+            exit = false;
             response = getView().inputStornoRetailPrice(item.getItemRetailPrice(), true);
           }
         }
@@ -80,7 +80,8 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   void emptyShoppingCart() {
-    if (shoppingCartController.getItems().size() != 0 && getView().confirmEmptyCart()) shoppingCartController.emptyCart();
+    if (shoppingCartController.getItems().size() != 0 && getView().confirmEmptyCart())
+      shoppingCartController.emptyCart();
   }
 
   boolean addToShoppingCart() {
@@ -113,7 +114,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
                     : 1.0);
         item.setItemMultiplier((int) Math.round(itemMultiplier));
         if (itemMultiplier % 1 != 0) {
-          getView().messageRoundedMultiplier(item.getDisplayAmount()) ;
+          getView().messageRoundedMultiplier(item.getDisplayAmount());
         }
       }
 
@@ -179,18 +180,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     }
   }
 
-  double calculatePrice(Article article) {
-    ShoppingItem shoppingItem = new ShoppingItem(article, 0, getView().isPreordered());
-    return shoppingItem.getItemRetailPrice()
-        * (getView().isPreordered() ? article.getContainerSize() : 1);
-  }
-
-  double calculateNetPrice(Article article) {
-    ShoppingItem shoppingItem = new ShoppingItem(article, 0, getView().isPreordered());
-    return shoppingItem.getItemNetPrice()
-        * (getView().isPreordered() ? article.getContainerSize() : 1);
-  }
-
   public double recalculatePrice(double newNetPrice) {
     try {
       ShoppingItem item = extractShoppingItemFromUI();
@@ -198,11 +187,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     } catch (UndefinedInputException e) {
       return 0.0;
     }
-  }
-
-  double getPrice(Article article) {
-    ShoppingItem shoppingItem = new ShoppingItem(article, 0, false);
-    return shoppingItem.getItemRetailPrice();
   }
 
   ShoppingItem createCustomItem(Supplier supplier) {
@@ -253,8 +237,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         customArticle.setMetricUnits(MetricUnits.PIECE);
         customArticle.setContainerSize(1.);
 
-        ShoppingItem customItem = new ShoppingItem(customArticle, 0, getView().isPreordered());
-        return customItem;
+        return new ShoppingItem(customArticle, 0, getView().isPreordered());
 
       case DEPOSIT:
         if (getView().getDeposit() < 0) {

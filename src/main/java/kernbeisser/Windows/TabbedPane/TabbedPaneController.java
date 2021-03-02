@@ -26,8 +26,7 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
       if (newFocus != null) {
         getView().setSelected(model.indexOf(newFocus));
       }
-    }
-    else {
+    } else {
       if (container.getLoaded().requestClose()) {
         container.getLoaded().notifyClosed();
         view.removeTab(index);

@@ -520,30 +520,30 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   public boolean confirmClose() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Soll der Einkauf wirklich abgebrochen werden?",
-        "Einkauf abbrechen",
-        JOptionPane.YES_NO_OPTION)
+            getTopComponent(),
+            "Soll der Einkauf wirklich abgebrochen werden?",
+            "Einkauf abbrechen",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
   public boolean confirmStorno() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Soll die Ware wirklich storniert werden?",
-        stornoMessageTitle,
-        JOptionPane.YES_NO_OPTION)
+            getContent(),
+            "Soll die Ware wirklich storniert werden?",
+            stornoMessageTitle,
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
   public boolean confirmEmptyCart() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Sollen wirklich alle Artikel gelöscht werden?",
-        "Alle Artikel löschen",
-        JOptionPane.YES_NO_OPTION)
+            getContent(),
+            "Sollen wirklich alle Artikel gelöscht werden?",
+            "Alle Artikel löschen",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
