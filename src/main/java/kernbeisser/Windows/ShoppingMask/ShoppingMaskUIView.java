@@ -109,7 +109,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   private void doCancel() {
-    controller.emptyShoppingCart();
     back();
   }
 
@@ -479,7 +478,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public void messageCartIsEmpty() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-        getContent(), "Es gibt nichts zu bezahlen!", "Storno", JOptionPane.WARNING_MESSAGE);
+        getContent(), "Es gibt nichts zu bezahlen!", "Leerer Einkauf", JOptionPane.WARNING_MESSAGE);
   }
 
   public void messageNoSupplier() {
@@ -521,28 +520,42 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   public boolean confirmClose() {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Soll der Einkauf wirklich abgebrochen werden?")
+        getTopComponent(),
+        "Soll der Einkauf wirklich abgebrochen werden?",
+        "Einkauf abbrechen",
+        JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
-  public int confirmStorno() {
+  public boolean confirmStorno() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
         getContent(),
         "Soll die Ware wirklich storniert werden?",
         stornoMessageTitle,
-        JOptionPane.YES_NO_OPTION);
+        JOptionPane.YES_NO_OPTION)
+        == 0;
   }
 
-  public int confirmRoundedMultiplier(int roundedMultiplier) {
+  public boolean confirmEmptyCart() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
         getContent(),
-        "Die Menge an Artikeln muss ganzzahlig sein. Soll die Menge auf "
+        "Sollen wirklich alle Artikel gelöscht werden?",
+        "Alle Artikel löschen",
+        JOptionPane.YES_NO_OPTION)
+        == 0;
+  }
+
+  public void messageRoundedMultiplier(String roundedMultiplier) {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Die Menge an Artikeln muss ganzzahlig sein. Sie wird auf "
             + roundedMultiplier
-            + "gerundet werden?",
+            + " gerundet.",
         "Ungültige Mengenangabe",
-        JOptionPane.YES_NO_OPTION);
+        JOptionPane.WARNING_MESSAGE);
   }
 
   // Getters and Setters BEGIN

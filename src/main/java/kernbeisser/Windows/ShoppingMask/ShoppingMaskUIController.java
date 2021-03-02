@@ -1,14 +1,12 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import java.awt.Dimension;
-import java.awt.event.KeyEvent;
-import java.util.Objects;
-import javax.persistence.NoResultException;
-import javax.swing.JOptionPane;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
@@ -23,6 +21,11 @@ import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.NoResultException;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, ShoppingMaskModel> {
   @Linked private final ShoppingCartController shoppingCartController;
@@ -52,7 +55,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
       response = getView().inputStornoRetailPrice(item.getItemRetailPrice(), false);
       do {
         if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
-          exit = true;
           result = false;
         } else {
           try {
@@ -72,13 +74,13 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         }
       } while (!exit);
     } else if (!piece && item.getRetailPrice() < 0) {
-      result = (getView().confirmStorno() == JOptionPane.YES_OPTION);
+      result = (getView().confirmStorno());
     }
     return result;
   }
 
   void emptyShoppingCart() {
-    shoppingCartController.emptyCart();
+    if (shoppingCartController.getItems().size() != 0 && getView().confirmEmptyCart()) shoppingCartController.emptyCart();
   }
 
   boolean addToShoppingCart() {
@@ -109,11 +111,10 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
                 * (item.isContainerDiscount() && !item.isWeighAble()
                     ? item.getContainerSize()
                     : 1.0);
-        if (itemMultiplier % 1 != 0) {
-          if (getView().confirmRoundedMultiplier((int) Math.round(itemMultiplier))
-              != JOptionPane.YES_OPTION) ;
-        }
         item.setItemMultiplier((int) Math.round(itemMultiplier));
+        if (itemMultiplier % 1 != 0) {
+          getView().messageRoundedMultiplier(item.getDisplayAmount()) ;
+        }
       }
 
       if (item.getItemMultiplier() != 0
