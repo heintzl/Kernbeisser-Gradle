@@ -21,16 +21,20 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
 
   public void closeViewContainer(ViewContainer container, int index, ViewContainer newFocus) {
     var view = getView();
-    if (container.getLoaded() == null) view.removeTab(index);
-    else {
+    if (container.getLoaded() == null) {
+      view.removeTab(index);
+      if (newFocus != null) {
+        getView().setSelected(model.indexOf(newFocus));
+      }
+    } else {
       if (container.getLoaded().requestClose()) {
         container.getLoaded().notifyClosed();
         view.removeTab(index);
         getModel().remove(container);
+        if (newFocus != null) {
+          getView().setSelected(model.indexOf(newFocus));
+        }
       }
-    }
-    if (newFocus != null) {
-      getView().setSelected(model.indexOf(newFocus));
     }
   }
 

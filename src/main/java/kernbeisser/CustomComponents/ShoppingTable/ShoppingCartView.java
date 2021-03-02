@@ -14,7 +14,6 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.RawPrice;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.MVC.IView;
@@ -92,18 +91,8 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
                 column.setMinWidth(500);
               }
             },
-            Column.create("Inhalt", ShoppingItem::getUnitAmount, SwingConstants.RIGHT),
-            Column.create(
-                "Menge",
-                e -> {
-                  if (e.isContainerDiscount()) {
-                    return e.getItemMultiplier() / e.getContainerSize() + " Gebinde";
-                  }
-                  return e.getPriceUnits() == MetricUnits.NONE
-                      ? ""
-                      : e.getItemMultiplier() + e.getPriceUnits().getShortName() + " ";
-                },
-                SwingConstants.RIGHT),
+            Column.create("Inhalt", ShoppingItem::getContentAmount, SwingConstants.RIGHT),
+            Column.create("Menge", ShoppingItem::getDisplayAmount, SwingConstants.RIGHT),
             Column.create(
                 "Rabatt",
                 e ->
@@ -112,13 +101,14 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
                         : (e.getDiscount() != 0 ? e.getDiscount() + "% " : " "),
                 SwingConstants.RIGHT),
             Column.create(
-                "Preis", e -> String.format("%.2f€ ", e.getRetailPrice()), SwingConstants.RIGHT));
+                "Preis", e -> String.format("%.2f € ", e.getRetailPrice()), SwingConstants.RIGHT));
     if (editable) {
       Predicate<ShoppingItem> predicate =
           item ->
               !(item.getName().equals(RawPrice.PRODUCE.getName())
                   || item.getName().equals(RawPrice.BAKERY.getName())
-                  || item.getKbNumber() == depositKbNumber);
+                  || item.getKbNumber() == depositKbNumber
+                  || item.getItemMultiplier() < 0);
       shoppingItems.addColumn(
           Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x0B315A)),
@@ -133,7 +123,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
           Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
               controller::delete,
-              i -> i.getKbNumber() != depositKbNumber));
+              i -> i.getKbNumber() != depositKbNumber || i.getParentItem() == null));
     }
     shoppingItems.getTableHeader().setBackground(Color.BLACK);
     shoppingItems.getTableHeader().setForeground(Color.LIGHT_GRAY);

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import javax.persistence.*;
-import javax.transaction.NotSupportedException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.*;
 import kernbeisser.Security.Key;
@@ -176,14 +175,14 @@ public class ShoppingItem implements Serializable {
     if (this.vat != null) {
       this.vatValue = vat.getValue();
     }
+    this.discount = discount;
+    supplier = article.getSupplier();
     this.surcharge =
         (supplier == null
                 // is unsafe call
                 ? Supplier.getKKSupplier().getDefaultSurchargeGroup().getSurcharge()
                 : article.getSurchargeGroup().getSurcharge())
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
-    this.discount = discount;
-    supplier = article.getSupplier();
     if (supplier != null) {
       this.suppliersShortName = article.getSupplier().getShortName();
     }
@@ -191,12 +190,12 @@ public class ShoppingItem implements Serializable {
     this.singleDeposit = article.getSingleDeposit();
     this.containerDeposit = article.getContainerDeposit();
     this.containerSize = article.getContainerSize();
-    this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
     if (hasContainerDiscount && this.weighAble) {
       this.itemNetPrice *= this.amount * this.metricUnits.getBaseFactor();
     }
+    this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
   }
 
   public static ShoppingItem createReportItem(Article article) {
@@ -309,20 +308,54 @@ public class ShoppingItem implements Serializable {
             100.0
                 * itemRetailPrice
                 * itemMultiplier
-                * (isContainerDiscount() || !weighAble ? 1.0 : getPriceUnits().getBaseFactor()))
+                * (!weighAble ? 1.0 : getSalesUnits().getBaseFactor()))
         / 100.0;
+  }
+
+  public MetricUnits getSalesUnits() {
+    if (isContainerDiscount()) {
+      return MetricUnits.CONTAINER;
+    }
+    return getContainerUnits();
+  }
+
+  public MetricUnits getContainerUnits() {
+    if (!isWeighAble() && getMetricUnits() != MetricUnits.NONE) {
+      return MetricUnits.PIECE;
+    }
+    return getMetricUnits();
   }
 
   public MetricUnits getPriceUnits() {
     MetricUnits priceUnits = getMetricUnits();
-    if ((isContainerDiscount() || (getKbNumber() != 0 && !this.isWeighAble()))
-        && this.getMetricUnits() != MetricUnits.NONE) {
+    switch (priceUnits) {
+      case GRAM:
+        priceUnits = MetricUnits.KILOGRAM;
+        break;
+      case MILLILITER:
+        priceUnits = MetricUnits.LITER;
+        break;
+      default:
+    }
+    if ((isContainerDiscount() || !isWeighAble()) && getMetricUnits() != MetricUnits.NONE) {
       priceUnits = MetricUnits.PIECE;
     }
     return priceUnits;
   }
 
-  public String getUnitAmount() {
+  public String getDisplayAmount() {
+
+    if (isContainerDiscount() && !isWeighAble() && getContainerSize() != 0.0) {
+      return Math.round(getItemMultiplier() / getContainerSize())
+          + " "
+          + MetricUnits.CONTAINER.getShortName();
+    }
+    return getPriceUnits() == MetricUnits.NONE
+        ? ""
+        : getItemMultiplier() + " " + getSalesUnits().getShortName();
+  }
+
+  public String getContentAmount() {
     if (isWeighAble()
         || this.getMetricUnits() == MetricUnits.NONE
         || this.getMetricUnits() == MetricUnits.PIECE
@@ -434,10 +467,6 @@ public class ShoppingItem implements Serializable {
     ShoppingItem newInstance = new ShoppingItem();
     Tools.copyInto(this, newInstance);
     return newInstance;
-  }
-
-  public void addToRetailPrice(double addedRetailPrice) throws NotSupportedException {
-    throw new NotSupportedException();
   }
 
   @Key(PermissionKey.SHOPPING_ITEM_METRIC_UNITS_READ)

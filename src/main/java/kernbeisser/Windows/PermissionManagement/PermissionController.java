@@ -3,9 +3,7 @@ package kernbeisser.Windows.PermissionManagement;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -40,7 +38,8 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   }
 
   void loadSolutions() {
-    Collection<Permission> permissions = Permission.getAll(null);
+    List<Permission> permissions = Permission.getAll(null);
+    Collections.reverse(permissions);
     Column<PermissionKey> nameColumn =
         Column.create(
             "Schlüssel-Name",
@@ -135,9 +134,6 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   @Override
   public void fillView(PermissionView permissionView) {
     getView().setCategories(model.getAllKeyCategories());
-    // boolean p = LogInModel.getLoggedIn().hasPermission(Key.PERMISSION_KEY_SET_WRITE);
-    // getView().setAddEnable(p);
-    // getView().setDeleteEnable(p);
     loadSolutions();
   }
 

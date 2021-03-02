@@ -77,10 +77,11 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
 
   void setSuppliers(Iterable<Supplier> suppliers) {
     supplier.removeAllItems();
-    suppliers.forEach(
-        e -> {
-          supplier.addItem(e);
-        });
+    suppliers.forEach(supplier::addItem);
+  }
+
+  void setSupplier(Supplier sup) {
+    supplier.setSelectedItem(sup);
   }
 
   @Override

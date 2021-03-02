@@ -1,14 +1,16 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
 import javax.persistence.NoResultException;
-import javax.swing.JOptionPane;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
@@ -52,7 +54,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
       response = getView().inputStornoRetailPrice(item.getItemRetailPrice(), false);
       do {
         if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
-          exit = true;
           result = false;
         } else {
           try {
@@ -67,18 +68,20 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
               throw (new NumberFormatException());
             }
           } catch (NumberFormatException exception) {
+            exit = false;
             response = getView().inputStornoRetailPrice(item.getItemRetailPrice(), true);
           }
         }
       } while (!exit);
     } else if (!piece && item.getRetailPrice() < 0) {
-      result = (getView().confirmStorno() == JOptionPane.YES_OPTION);
+      result = (getView().confirmStorno());
     }
     return result;
   }
 
   void emptyShoppingCart() {
-    shoppingCartController.emptyCart();
+    if (shoppingCartController.getItems().size() != 0 && getView().confirmEmptyCart())
+      shoppingCartController.emptyCart();
   }
 
   boolean addToShoppingCart() {
@@ -109,11 +112,10 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
                 * (item.isContainerDiscount() && !item.isWeighAble()
                     ? item.getContainerSize()
                     : 1.0);
-        if (itemMultiplier % 1 != 0) {
-          if (getView().confirmRoundedMultiplier((int) Math.round(itemMultiplier))
-              != JOptionPane.YES_OPTION) ;
-        }
         item.setItemMultiplier((int) Math.round(itemMultiplier));
+        if (itemMultiplier % 1 != 0) {
+          getView().messageRoundedMultiplier(item.getDisplayAmount());
+        }
       }
 
       if (item.getItemMultiplier() != 0
@@ -178,18 +180,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     }
   }
 
-  double calculatePrice(Article article) {
-    ShoppingItem shoppingItem = new ShoppingItem(article, 0, getView().isPreordered());
-    return shoppingItem.getItemRetailPrice()
-        * (getView().isPreordered() ? article.getContainerSize() : 1);
-  }
-
-  double calculateNetPrice(Article article) {
-    ShoppingItem shoppingItem = new ShoppingItem(article, 0, getView().isPreordered());
-    return shoppingItem.getItemNetPrice()
-        * (getView().isPreordered() ? article.getContainerSize() : 1);
-  }
-
   public double recalculatePrice(double newNetPrice) {
     try {
       ShoppingItem item = extractShoppingItemFromUI();
@@ -197,11 +187,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     } catch (UndefinedInputException e) {
       return 0.0;
     }
-  }
-
-  double getPrice(Article article) {
-    ShoppingItem shoppingItem = new ShoppingItem(article, 0, false);
-    return shoppingItem.getItemRetailPrice();
   }
 
   ShoppingItem createCustomItem(Supplier supplier) {
@@ -252,8 +237,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         customArticle.setMetricUnits(MetricUnits.PIECE);
         customArticle.setContainerSize(1.);
 
-        ShoppingItem customItem = new ShoppingItem(customArticle, 0, getView().isPreordered());
-        return customItem;
+        return new ShoppingItem(customArticle, 0, getView().isPreordered());
 
       case DEPOSIT:
         if (getView().getDeposit() < 0) {

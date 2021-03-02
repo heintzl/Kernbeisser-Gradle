@@ -21,7 +21,6 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ArticleType;
-import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
@@ -110,7 +109,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   private void doCancel() {
-    controller.emptyShoppingCart();
     back();
   }
 
@@ -331,16 +329,21 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     variablePercentage.setEnabled(
         priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
 
-    if (type == ArticleType.PRODUCE) {
-      loadItemStats(Objects.requireNonNull(ShoppingItem.createProduce(0.0, isPreordered)));
-      this.articleName.setText("Obst & Gemüse");
-      price.selectAll();
-      price.requestFocusInWindow();
-    } else if (type == ArticleType.BAKED_GOODS) {
-      loadItemStats(Objects.requireNonNull(ShoppingItem.createBakeryProduct(0.0, isPreordered)));
-      price.selectAll();
-      this.articleName.setText("Backwaren");
-      price.requestFocusInWindow();
+    if (type == ArticleType.PRODUCE || type == ArticleType.BAKED_GOODS) {
+      if (type == ArticleType.PRODUCE) {
+        loadItemStats(Objects.requireNonNull(ShoppingItem.createProduce(0.0, isPreordered)));
+        this.articleName.setText("Obst & Gemüse");
+      } else {
+        loadItemStats(Objects.requireNonNull(ShoppingItem.createBakeryProduct(0.0, isPreordered)));
+        this.articleName.setText("Backwaren");
+      }
+      if (isPreordered) {
+        netPrice.requestFocusInWindow();
+        netPrice.selectAll();
+      } else {
+        price.requestFocusInWindow();
+        price.selectAll();
+      }
     } else if (type == ArticleType.DEPOSIT) {
       this.articleName.setText("Pfand-Behälter");
       deposit.requestFocusInWindow();
@@ -382,6 +385,11 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   void loadItemStats(ShoppingItem shoppingItem) {
     currentItem = shoppingItem;
+    isWeighable = shoppingItem.isWeighAble();
+    String itemPriceUnits = shoppingItem.getPriceUnits().getShortName();
+    double unitNetPrice =
+        shoppingItem.getItemNetPrice()
+            * (isPreordered && !isWeighable ? shoppingItem.getContainerSize() : 1.0);
     setSupplier(shoppingItem.getSupplier());
     setKbNumber(
         shoppingItem.getKbNumber() != 0 ? Integer.toString(shoppingItem.getKbNumber()) : "");
@@ -395,30 +403,15 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
               : shoppingItem.getName());
       articleName.setCaretPosition(0);
     }
-    price.setText(
-        String.format(
-            "%.2f",
-            (isPreordered
-                ? shoppingItem.calculateItemRetailPrice(shoppingItem.getItemNetPrice())
-                    * shoppingItem.getContainerSize()
-                : shoppingItem.getItemRetailPrice())));
-    priceUnit.setText(isPreordered ? "€/Geb." : shoppingItem.isWeighAble() ? "€/kg" : "€");
-    netPrice.setText(
-        String.format(
-            "%.2f",
-            shoppingItem.getItemNetPrice()
-                * (isPreordered ? shoppingItem.getContainerSize() : 1.0)));
+    netPrice.setText(String.format("%.2f", unitNetPrice));
     netPriceUnit.setText(priceUnit.getText());
-    amountUnit.setText(
-        isPreordered
-            ? "Geb."
-            : shoppingItem.isWeighAble() ? shoppingItem.getPriceUnits().getShortName() : "stk.");
-    isWeighable = shoppingItem.isWeighAble();
+    recalculatePrice();
+    priceUnit.setText(isPreordered ? "€/Geb." : isWeighable ? "€/" + itemPriceUnits : "€");
+    amountUnit.setText(shoppingItem.getSalesUnits().getShortName());
     containerSize.setText(
         new DecimalFormat("##.###")
             .format(shoppingItem.getContainerSize() * (isWeighable ? 1000 : 1)));
-    containerUnit.setText(
-        (isWeighable ? shoppingItem.getPriceUnits() : MetricUnits.PIECE).getShortName());
+    containerUnit.setText(shoppingItem.getContainerUnits().getShortName());
     try {
       if (shoppingItem.getVatValue() > 0) setVat(shoppingItem.getVatValue());
     } catch (InvalidVATValueException e) {
@@ -485,7 +478,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public void messageCartIsEmpty() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-        getContent(), "Es gibt nichts zu bezahlen!", "Storno", JOptionPane.WARNING_MESSAGE);
+        getContent(), "Es gibt nichts zu bezahlen!", "Leerer Einkauf", JOptionPane.WARNING_MESSAGE);
   }
 
   public void messageNoSupplier() {
@@ -527,28 +520,42 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   public boolean confirmClose() {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Soll der Einkauf wirklich abgebrochen werden?")
+            getTopComponent(),
+            "Soll der Einkauf wirklich abgebrochen werden?",
+            "Einkauf abbrechen",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
-  public int confirmStorno() {
+  public boolean confirmStorno() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Soll die Ware wirklich storniert werden?",
-        stornoMessageTitle,
-        JOptionPane.YES_NO_OPTION);
+            getContent(),
+            "Soll die Ware wirklich storniert werden?",
+            stornoMessageTitle,
+            JOptionPane.YES_NO_OPTION)
+        == 0;
   }
 
-  public int confirmRoundedMultiplier(int roundedMultiplier) {
+  public boolean confirmEmptyCart() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Sollen wirklich alle Artikel gelöscht werden?",
+            "Alle Artikel löschen",
+            JOptionPane.YES_NO_OPTION)
+        == 0;
+  }
+
+  public void messageRoundedMultiplier(String roundedMultiplier) {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
         getContent(),
-        "Die Menge an Artikeln muss ganzzahlig sein. Soll die Menge auf "
+        "Die Menge an Artikeln muss ganzzahlig sein. Sie wird auf "
             + roundedMultiplier
-            + "gerundet werden?",
+            + " gerundet.",
         "Ungültige Mengenangabe",
-        JOptionPane.YES_NO_OPTION);
+        JOptionPane.WARNING_MESSAGE);
   }
 
   // Getters and Setters BEGIN

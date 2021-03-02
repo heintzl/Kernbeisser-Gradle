@@ -17,7 +17,7 @@ public class ShoppingCartModel implements IModel<ShoppingCartController> {
   }
 
   public void delete(ShoppingItem i) {
-    shoppingItems.removeIf(e -> e.getParentItem() == i || e.equals(i));
+    shoppingItems.removeIf(e -> e.getParentItem().equals(i) || e.equals(i));
   }
 
   ShoppingItem addItem(ShoppingItem newItem) {
@@ -28,15 +28,11 @@ public class ShoppingCartModel implements IModel<ShoppingCartController> {
     return addItemAtIndex(newItem, shoppingItems.indexOf(getShoppingItem(behindItem)) + 1);
   }
 
-  boolean shoppingCartItemAlreadyExists(ShoppingItem item) {
-    return getShoppingItem(item) != null;
-  }
-
   ShoppingItem addItemAtIndex(ShoppingItem newItem, int atIndex) {
     ShoppingItem existingItem = getShoppingItem(newItem);
     if (existingItem != null) {
       int newMultiplier = newItem.getItemMultiplier() + existingItem.getItemMultiplier();
-      if (newMultiplier <= 0) {
+      if (newMultiplier == 0) {
         delete(existingItem);
         return null;
       } else {

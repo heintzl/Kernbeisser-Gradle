@@ -26,7 +26,7 @@ public class AccountingReport extends Report {
   public AccountingReport(long startBon, long endBon, boolean withNames) {
     super(
         "accountingReportFileName",
-        String.format("KernbeisserBuchhaltungBonUebersicht_%d_%d.pdf", startBon, endBon));
+        String.format("KernbeisserBuchhaltungBonUebersicht_%d_%d", startBon, endBon));
     this.startBon = startBon;
     this.endBon = endBon;
     this.withNames = withNames;
