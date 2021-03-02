@@ -62,7 +62,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
               if (alteredRetailPrice != item.getItemRetailPrice()) {
                 item.setItemRetailPrice(alteredRetailPrice);
               }
-              item.setName("St. " + item.getName());
               exit = true;
             } else {
               throw (new NumberFormatException());
@@ -74,6 +73,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         }
       } while (!exit);
     } else if (!piece && item.getRetailPrice() < 0) {
+      item.setName("St. " + item.getName());
       result = (getView().confirmStorno());
     }
     return result;
