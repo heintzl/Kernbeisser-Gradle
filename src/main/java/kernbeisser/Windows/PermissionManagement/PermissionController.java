@@ -44,10 +44,11 @@ public class PermissionController extends Controller<PermissionView, PermissionM
         Column.create(
             "Schlüssel-Name",
             e ->
-                e.name()
-                    .replace("_WRITE", "")
-                    .replace("_READ", "")
-                    .replace("CHANGE_ALL", "Alle Bearbeiten"));
+                PermissionKey.getPermissionHint(
+                    e.name()
+                        .replace("_WRITE", "")
+                        .replace("_READ", "")
+                        .replace("CHANGE_ALL", "Alle Bearbeiten")));
     ArrayList<Column<PermissionKey>> permissionColumns = new ArrayList<>();
     permissionColumns.add(nameColumn);
     Collection<PermissionKey> readPermission =

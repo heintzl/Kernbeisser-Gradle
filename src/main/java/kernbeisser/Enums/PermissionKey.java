@@ -1,5 +1,6 @@
 package kernbeisser.Enums;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -446,5 +447,40 @@ public enum PermissionKey {
 
   public static PermissionKey[] with(Predicate<PermissionKey> keyPredicate) {
     return Arrays.stream(values()).filter(keyPredicate).toArray(PermissionKey[]::new);
+  }
+
+  public static String getPermissionHint(String permissionName) {
+    ImmutableMap<String, String> permissionHints =
+        ImmutableMap.<String, String>builder()
+            .put("GO_UNDER_MIN", "Mindestguthaben unterschreiten")
+            .put("ACTION_OPEN_MANAGE_PRICELISTS", "Preislisten bearbeiten")
+            .put("ACTION_OPEN_SOLO_SHOPPING_MASK", "Selbsteinkauf")
+            .put("ACTION_OPEN_APPLICATION_SETTINGS", "Programmeinstellungen bearbeiten")
+            .put("ACTION_OPEN_PERMISSION_MANAGEMENT", "Berechtigungen bearbeiten")
+            .put("ACTION_OPEN_SPECIAL_PRICE_EDITOR", "Aktionsartikel bearbeiten")
+            .put("ACTION_OPEN_TRANSACTION", "Guthaben überweisen")
+            .put("ACTION_OPEN_ACCOUNTING_REPORTS", "Berichte")
+            .put("ACTION_OPEN_CASHIER_SHOPPING_MASK", "Ladendienst beginnen")
+            .put("ACTION_OPEN_CHANGE_PASSWORD", "Passwort ändern")
+            .put("ACTION_OPEN_EDIT_ARTICLES", "Artikel bearbeiten")
+            .put("ACTION_OPEN_EDIT_JOBS", "Jobs bearbeiten")
+            .put("ACTION_OPEN_EDIT_SUPPLIERS", "Lieferanten bearbeiten")
+            .put("ACTION_OPEN_EDIT_SURCHARGE_GROUPS", "Zuschlaggruppen bearbeiten")
+            .put("ACTION_OPEN_EDIT_USER_GROUP", "Nutzergruppe wechseln")
+            .put("ACTION_OPEN_EDIT_USER_SETTING", "Persönliche Programmeinstellungen bearbeiten")
+            .put("ACTION_OPEN_EDIT_USERS", "Benutzer bearbeiten")
+            .put("ACTION_OPEN_MANAGE_PRICE_LISTS", "Preislisten bearbeiten")
+            .put("ACTION_OPEN_PRE_ORDER", "Vorbestellung")
+            .put("ACTION_OPEN_SUPPLY", "Lieferung eingeben")
+            .put("ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW", "Kornkraft-Katalog synchroinisieren")
+            .put("ACTION_OPEN_DB_LOG_IN", "Datenverbindung bearbeiten")
+            .put("ACTION_ADD_BEGINNER", "Probemitglied aufnehmen")
+            .put("ACTION_EDIT_OWN_DATA", "Persönliche Informationen bearbeiten")
+            .put("ACTION_LOGIN", "Anmelden")
+            .put("ACTION_TRANSACTION_FROM_OTHER", "Überweisungen für andere tätigen")
+            .put("ACTION_TRANSACTION_FROM_KB", "Überweisungen für Kernbeißer tätigen")
+            .put("ACTION_ORDER_CONTAINER", "Artikel vorbestellen")
+            .build();
+    return permissionHints.getOrDefault(permissionName, permissionName);
   }
 }
