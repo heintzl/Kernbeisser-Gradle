@@ -395,11 +395,11 @@ public enum PermissionKey {
   }
 
   public PermissionKey getWriteKey() {
-    return valueOf(name().replace("READ", "WRITE"));
+    return valueOf(name().replace("_READ", "_WRITE"));
   }
 
   public PermissionKey getReadKey() {
-    return valueOf(name().replace("WRITE", "READ"));
+    return valueOf(name().replace("_WRITE", "_READ"));
   }
 
   public boolean userHas() {
