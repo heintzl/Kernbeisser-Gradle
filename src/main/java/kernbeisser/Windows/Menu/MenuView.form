@@ -75,7 +75,7 @@
                     <properties>
                       <font/>
                       <requestFocusEnabled value="false"/>
-                      <text value="Einstellungen"/>
+                      <text value="Persönliche Programmeinstellungen"/>
                     </properties>
                   </component>
                   <component id="46181" class="kernbeisser.CustomComponents.ControllerButton" binding="openSelfShoppingMask" custom-create="true">
