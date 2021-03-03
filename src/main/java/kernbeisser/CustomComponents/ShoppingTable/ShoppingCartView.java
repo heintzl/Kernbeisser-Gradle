@@ -1,5 +1,6 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
+import static java.lang.Math.round;
 import static java.text.MessageFormat.format;
 
 import java.awt.*;
@@ -15,6 +16,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.RawPrice;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -63,6 +65,10 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   }
 
   private void createUIComponents() {
+    float scaleFactor = Setting.LABEL_SCALE_FACTOR.getFloatValue();
+    float fontSize = 14.0f * scaleFactor;
+    float tableIconSize = 13.0f * scaleFactor;
+    int rowHeight = round(24 * scaleFactor);
     int depositKbNumber = ShoppingItem.createDeposit(0.0).getKbNumber();
     shoppingItems =
         new ObjectTable<>(
@@ -111,25 +117,25 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
                   || item.getItemMultiplier() < 0);
       shoppingItems.addColumn(
           Column.createIcon(
-              IconFontSwing.buildIcon(FontAwesome.PLUS, 20, new Color(0x0B315A)),
+              IconFontSwing.buildIcon(FontAwesome.PLUS, tableIconSize, new Color(0x0B315A)),
               controller::plus,
               predicate));
       shoppingItems.addColumn(
           Column.createIcon(
-              IconFontSwing.buildIcon(FontAwesome.MINUS, 20, new Color(0x920101)),
+              IconFontSwing.buildIcon(FontAwesome.MINUS, tableIconSize, new Color(0x920101)),
               controller::minus,
               predicate));
       shoppingItems.addColumn(
           Column.createIcon(
-              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
+              IconFontSwing.buildIcon(FontAwesome.TRASH, tableIconSize, Color.RED),
               controller::delete,
               i -> i.getKbNumber() != depositKbNumber || i.getParentItem() == null));
     }
     shoppingItems.getTableHeader().setBackground(Color.BLACK);
     shoppingItems.getTableHeader().setForeground(Color.LIGHT_GRAY);
-    shoppingItems.getTableHeader().setFont(shoppingItems.getFont().deriveFont(22.0f));
-    shoppingItems.setFont(shoppingItems.getFont().deriveFont(22.0f));
-    shoppingItems.setRowHeight(36);
+    shoppingItems.getTableHeader().setFont(shoppingItems.getFont().deriveFont(fontSize));
+    shoppingItems.setFont(shoppingItems.getFont().deriveFont(fontSize));
+    shoppingItems.setRowHeight(rowHeight);
   }
 
   @Override
