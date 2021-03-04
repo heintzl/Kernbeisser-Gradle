@@ -131,6 +131,8 @@ public class ChangePasswordController extends Controller<ChangePasswordView, Cha
   @Override
   @StaticAccessPoint
   public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_CHANGE_PASSWORD};
+    return new PermissionKey[] {
+      /*PermissionKey.ACTION_OPEN_CHANGE_PASSWORD*/
+    };
   }
 }
