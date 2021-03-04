@@ -88,6 +88,7 @@ public class UserView implements IView<UserController> {
   public void initialize(UserController controller) {
     objectForm =
         new ObjectForm<>(
+            editPermission,
             firstName,
             lastName,
             street,
@@ -101,8 +102,7 @@ public class UserView implements IView<UserController> {
             extraJobs,
             keyNumber,
             email,
-            chgJobs,
-            editPermission);
+            chgJobs);
     KeyAdapter refreshUsername =
         new KeyAdapter() {
           @Override
@@ -200,5 +200,20 @@ public class UserView implements IView<UserController> {
 
   public String getSurname() {
     return lastName.getText();
+  }
+
+  public void showPasswordToken(String resetPassword) {
+    Object message =
+        new Object[] {
+          "Das genererierte Passwort ist folgendes:\n",
+          new JTextField(resetPassword) {
+            {
+              setEditable(false);
+            }
+          },
+          "Bitte Loggen sie sich möglichst Zeitnah ein,\num das Passwort zu ändern."
+        };
+    JOptionPane.showMessageDialog(
+        getTopComponent(), message, "Generiertes Password", JOptionPane.INFORMATION_MESSAGE);
   }
 }

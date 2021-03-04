@@ -226,6 +226,17 @@ public class User implements Serializable {
     }
   }
 
+  public void setShares(int shares) {
+    if (shares > 0) {
+      permissions.add(PermissionConstants.FULL_MEMBER.getPermission());
+    } else {
+      if (this.shares > 0) {
+        permissions.remove(PermissionConstants.FULL_MEMBER.getPermission());
+      }
+    }
+    this.shares = shares;
+  }
+
   // changed from direct reference to getter to keep security
   public String getFullName() {
     return this.getFirstName() + " " + this.getSurname();
@@ -329,7 +340,7 @@ public class User implements Serializable {
 
   public static User generateBeginnerUser() {
     User user = new User();
-    user.permissions.add(PermissionConstants.BEGINNER.getPermission());
+    user.permissions.add(PermissionConstants.FULL_MEMBER.getPermission());
     PermissionSet set = new PermissionSet();
     set.loadKeys(PermissionKey.find(User.class));
     set.removePermission(PermissionKey.USER_PERMISSIONS_READ);
@@ -381,7 +392,7 @@ public class User implements Serializable {
   }
 
   public boolean isBeginner() {
-    return permissions.contains(PermissionConstants.BEGINNER.getPermission());
+    return permissions.contains(PermissionConstants.FULL_MEMBER.getPermission());
   }
 
   public void ignoreDialog(String name) {
