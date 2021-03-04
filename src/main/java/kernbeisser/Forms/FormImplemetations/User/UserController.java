@@ -5,12 +5,14 @@ import java.util.function.Supplier;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.Users;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +28,30 @@ public class UserController extends FormController<UserView, UserModel, User> {
 
   public void validateUser(User user, Mode mode) throws CannotParseException {
     if (mode == Mode.ADD) {
+      String passwordToken = Users.generateToken();
       user.setPassword(
           BCrypt.withDefaults()
-              .hashToString(Setting.HASH_COSTS.getIntValue(), "start".toCharArray()));
+              .hashToString(Setting.HASH_COSTS.getIntValue(), passwordToken.toCharArray()));
       user.setForcePasswordChange(true);
       user.setUserGroup(new UserGroup());
       Tools.persist(user.getUserGroup());
+      getView().showPasswordToken(passwordToken);
+    }
+    if (mode != Mode.REMOVE) {
+      int shares = user.getShares();
+      boolean fullMember =
+          user.getPermissions().contains(PermissionConstants.FULL_MEMBER.getPermission());
+      if (shares > 0 && !fullMember) {
+        if (getView().askForAddPermissionFullMember()) {
+          user.getPermissions().add(PermissionConstants.FULL_MEMBER.getPermission());
+        }
+      } else {
+        if (fullMember) {
+          if (getView().askForRemovePermissionFullMember()) {
+            user.getPermissions().remove(PermissionConstants.FULL_MEMBER.getPermission());
+          }
+        }
+      }
     }
   }
 

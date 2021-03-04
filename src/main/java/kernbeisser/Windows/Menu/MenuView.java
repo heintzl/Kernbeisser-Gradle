@@ -10,6 +10,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
+import kernbeisser.Windows.AdminTools.AdminToolController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.EditArticles.EditItemsController;
@@ -56,7 +57,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton changeDBConnection;
   private ControllerButton editApplicationSettings;
   private ControllerButton order;
-  private ControllerButton placeHolderControllerButton1;
+  private ControllerButton adminTools;
   private ControllerButton placeHolderControllerButton2;
   private ControllerButton openSelfShoppingMask;
   private ControllerButton addBeginner;
@@ -141,7 +142,7 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
     order = new ControllerButton(PreOrderController::new, PreOrderController.class);
     // NOT IMPLEMENTED
-    placeHolderControllerButton1 = ControllerButton.empty();
+    adminTools = new ControllerButton(AdminToolController::new, AdminToolController.class);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();
     openSelfShoppingMask =

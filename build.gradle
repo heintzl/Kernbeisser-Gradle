@@ -42,6 +42,7 @@ dependencies {
 
     implementation 'com.google.guava:guava:30.0-jre'
     implementation 'com.opencsv:opencsv:5.3'
+    implementation group: 'org.ow2.asm', name: 'asm', version: '7.0'
 }
 task fatJar(type: Jar) {
     manifest {

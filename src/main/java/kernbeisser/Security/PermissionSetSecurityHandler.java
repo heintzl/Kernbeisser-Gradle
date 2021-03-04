@@ -10,13 +10,14 @@ import kernbeisser.Security.IterableProtection.CollectionProxy;
 import kernbeisser.Security.IterableProtection.MapProxy;
 import kernbeisser.Security.IterableProtection.ProxyIterable;
 import kernbeisser.Security.IterableProtection.SetProxy;
+import lombok.Getter;
 
 public class PermissionSetSecurityHandler implements MethodHandler {
 
   public static PermissionSetSecurityHandler ON_LOGGED_IN =
       new PermissionSetSecurityHandler(PermissionSet.MASTER);
 
-  private final PermissionSet permissionSet;
+  @Getter private final PermissionSet permissionSet;
 
   public PermissionSetSecurityHandler(PermissionSet keys) {
     this.permissionSet = keys;

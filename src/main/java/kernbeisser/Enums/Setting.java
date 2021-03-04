@@ -61,7 +61,8 @@ public enum Setting {
   PREORDERRETARD_THRESHOLD("10"),
   WARN_ARTICLE_DIFFERENCE("10"),
   VALIDATE_EMAIL_SYNTAX("false"),
-  IS_DEFAULT_SURCHARGES("true");
+  IS_DEFAULT_SURCHARGES("true"),
+  PASSWORD_TOKEN_GENERATION_LENGTH("8");
 
   // defines the type to like in java style
   // Value: Type:
