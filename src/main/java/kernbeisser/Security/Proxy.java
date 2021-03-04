@@ -1,12 +1,13 @@
 package kernbeisser.Security;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
+import kernbeisser.Unsafe.PermissionKeyMethodVisitor;
 import kernbeisser.Useful.Tools;
 import lombok.SneakyThrows;
 
@@ -115,26 +116,27 @@ public class Proxy {
   }
 
   public static <T, V> boolean hasPermission(Getter<T, V> getter, T parent) {
-    try {
-      getter.get(parent);
-      return true;
-    } catch (PermissionKeyRequiredException e) {
-      return false;
+    if (parent instanceof javassist.util.proxy.Proxy) {
+      MethodHandler methodHandler = getHandler(parent);
+      if (methodHandler instanceof PermissionSetSecurityHandler) {
+        return ((PermissionSetSecurityHandler) methodHandler)
+            .getPermissionSet()
+            .contains(peekPermissions(getter));
+      }
     }
+    return true;
   }
 
   public static <T, V> boolean hasPermission(Setter<T, V> setter, T parent) {
-    try {
-      try {
-        setter.set(parent, null);
-        return true;
-      } catch (NullPointerException ignored) {
-        Tools.invokeWithDefault(e -> setter.set(parent, (V) e));
-        return true;
+    if (parent instanceof javassist.util.proxy.Proxy) {
+      MethodHandler methodHandler = getHandler(parent);
+      if (methodHandler instanceof PermissionSetSecurityHandler) {
+        return ((PermissionSetSecurityHandler) methodHandler)
+            .getPermissionSet()
+            .contains(peekPermissions(setter));
       }
-    } catch (PermissionKeyRequiredException e) {
-      return false;
     }
+    return true;
   }
 
   public static <T> T removeProxy(T t) {
@@ -150,5 +152,15 @@ public class Proxy {
       e.printStackTrace();
       return t;
     }
+  }
+
+  /**
+   * peeks the into the byte code of the specified method and all sub methods. It searches for
+   * PermissionKey annotations and collect them in a permissionSet, the result is permissionSet with
+   * all possible required permissions. //TODO: maybe soft cache the results of the scans
+   */
+  @SneakyThrows
+  public static PermissionSet peekPermissions(Serializable interfaceLambdaImp) {
+    return PermissionKeyMethodVisitor.accessedKeys(interfaceLambdaImp);
   }
 }

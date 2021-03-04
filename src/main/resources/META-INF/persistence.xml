@@ -34,7 +34,7 @@
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.auto" value="create"/>
-            <property name="hibernate.generate_statistics" value="true"/>
+            <property name="hibernate.generate_statistics" value="false"/>
             <property name="hibernate.cache.use_second_level_cache" value="false"/>
         </properties>
     </persistence-unit>

@@ -227,13 +227,6 @@ public class User implements Serializable {
   }
 
   public void setShares(int shares) {
-    if (shares > 0) {
-      permissions.add(PermissionConstants.FULL_MEMBER.getPermission());
-    } else {
-      if (this.shares > 0) {
-        permissions.remove(PermissionConstants.FULL_MEMBER.getPermission());
-      }
-    }
     this.shares = shares;
   }
 

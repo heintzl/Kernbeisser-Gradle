@@ -216,4 +216,16 @@ public class UserView implements IView<UserController> {
     JOptionPane.showMessageDialog(
         getTopComponent(), message, "Generiertes Password", JOptionPane.INFORMATION_MESSAGE);
   }
+
+  public boolean askForAddPermissionFullMember() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(), "Soll der Mitglied-Status zu \"Mitglied\" geändert werden?")
+        == 0;
+  }
+
+  public boolean askForRemovePermissionFullMember() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(), "Soll der Mitglied-Status zu \"kein Mitglied\" geändert werden?")
+        == 0;
+  }
 }
