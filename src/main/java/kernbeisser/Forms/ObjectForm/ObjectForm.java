@@ -27,7 +27,6 @@ public class ObjectForm<P> {
   private boolean checkInputVerifier = true;
 
   private P original;
-  private P accessModel;
 
   @SafeVarargs
   public ObjectForm(ObjectFormComponent<P>... boundedFields) {
@@ -42,7 +41,6 @@ public class ObjectForm<P> {
   public void setSource(P data) {
     if (data == null) throw new NullPointerException("cannot set null as source for ObjectView");
     this.original = data;
-    this.accessModel = Tools.clone(original);
     refreshAccess();
     setData(data);
   }
@@ -55,7 +53,7 @@ public class ObjectForm<P> {
       if (component instanceof BoundedWriteProperty) {
         try {
           if (component instanceof Predictable
-              && !((Predictable) component).isPropertyWriteable(accessModel)) continue;
+              && !((Predictable) component).isPropertyWriteable(originalCopy)) continue;
           ((BoundedWriteProperty<P, ?>) component).set(originalCopy);
         } catch (PermissionKeyRequiredException e) {
           ((BoundedWriteProperty<?, ?>) component).setPropertyEditable(false);
@@ -77,7 +75,7 @@ public class ObjectForm<P> {
       if (boundedField instanceof BoundedReadProperty) {
         try {
           if (boundedField instanceof Predictable
-              && !((Predictable) boundedField).isPropertyReadable(accessModel)) continue;
+              && !((Predictable) boundedField).isPropertyReadable(original)) continue;
           ((BoundedReadProperty<P, ?>) boundedField).setValue(data);
         } catch (PermissionKeyRequiredException e) {
           ((BoundedReadProperty<?, ?>) boundedField).setReadable(false);
@@ -97,10 +95,10 @@ public class ObjectForm<P> {
     if (component instanceof Predictable) {
       if (component instanceof BoundedReadProperty)
         ((BoundedReadProperty<?, ?>) component)
-            .setReadable(((Predictable<P>) component).isPropertyReadable(accessModel));
+            .setReadable(((Predictable<P>) component).isPropertyReadable(original));
       if (component instanceof BoundedWriteProperty)
         ((BoundedWriteProperty<?, ?>) component)
-            .setPropertyEditable(((Predictable<P>) component).isPropertyWriteable(accessModel));
+            .setPropertyEditable(((Predictable<P>) component).isPropertyWriteable(original));
     }
   }
 
