@@ -42,10 +42,10 @@ public abstract class Controller<
 
   public Controller(M model) throws PermissionKeyRequiredException {
     this.model = model;
-    if (!PermissionSet.MASTER.hasPermissions(getRequiredKeys())) {
+    if (!PermissionSet.MASTER.contains(getRequiredKeys())) {
       throw new PermissionKeyRequiredException(
           "the PermissionSet doesn't contain the required keys: "
-              + Arrays.toString(getRequiredKeys())
+              + getRequiredKeys().asPermissionSet()
               + " to open this controller: "
               + getClass().getCanonicalName());
     }

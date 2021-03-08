@@ -10,13 +10,14 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
+@Requires(value = PermissionKey.ACTION_OPEN_PRE_ORDER)
 public class PreOrderController extends Controller<PreOrderView, PreOrderModel> {
 
   private final KeyCapture keyCapture;
@@ -236,11 +237,5 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
         }
       }
     } while (!exit);
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_PRE_ORDER};
   }
 }

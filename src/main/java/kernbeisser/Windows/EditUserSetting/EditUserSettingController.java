@@ -6,12 +6,13 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
+@Requires(PermissionKey.ACTION_OPEN_EDIT_USER_SETTING)
 public class EditUserSettingController
     extends Controller<EditUserSettingView, EditUserSettingModel> {
 
@@ -56,11 +57,5 @@ public class EditUserSettingController
       Tools.showUnexpectedErrorWarning(e);
     }
     SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getContent());
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_EDIT_USER_SETTING};
   }
 }

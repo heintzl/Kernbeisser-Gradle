@@ -18,13 +18,14 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.var;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
+@Requires(PermissionKey.ACTION_OPEN_SPECIAL_PRICE_EDITOR)
 public class SpecialPriceEditorController
     extends Controller<SpecialPriceEditorView, SpecialPriceEditorModel> {
 
@@ -221,11 +222,5 @@ public class SpecialPriceEditorController
                     .atEndOfMonth()
                     .atStartOfDay(ZoneId.systemDefault())
                     .toInstant()));
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_SPECIAL_PRICE_EDITOR};
   }
 }

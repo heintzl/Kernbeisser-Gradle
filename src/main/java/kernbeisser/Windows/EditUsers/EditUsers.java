@@ -6,8 +6,9 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 
+@Requires(PermissionKey.ACTION_OPEN_EDIT_USERS)
 public class EditUsers extends ObjectViewController<User> {
   public EditUsers() {
     super(
@@ -23,11 +24,5 @@ public class EditUsers extends ObjectViewController<User> {
             u -> String.format("%.2f€", u.getUserGroup().getValue()),
             SwingConstants.RIGHT,
             Column.NUMBER_SORTER));
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_EDIT_USERS};
   }
 }

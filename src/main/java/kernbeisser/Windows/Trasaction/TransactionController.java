@@ -11,11 +11,12 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 
+@Requires(PermissionKey.ACTION_OPEN_TRANSACTION)
 public class TransactionController extends Controller<TransactionView, TransactionModel> {
 
   public TransactionController(User user, TransactionType transactionType) {
@@ -190,11 +191,5 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   public String getTransactionTypeName() {
     return model.getTransactionType().toString();
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_TRANSACTION};
   }
 }

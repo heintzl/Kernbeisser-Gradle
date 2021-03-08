@@ -8,12 +8,16 @@ import java.util.stream.Collectors;
 import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.Enums.KeyCollection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.ActionPermission;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
+@Requires(
+    value = PermissionKey.ACTION_OPEN_PERMISSION_MANAGEMENT,
+    collections = {KeyCollection.ALL_PERMISSION_READ, KeyCollection.ALL_PERMISSION_WRITE})
 public class PermissionController extends Controller<PermissionView, PermissionModel> {
 
   public PermissionController() {
@@ -136,15 +140,6 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   public void fillView(PermissionView permissionView) {
     getView().setCategories(model.getAllKeyCategories());
     loadSolutions();
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return PermissionKey.combine(
-        PermissionKey.allReadPermissions(Permission.class),
-        PermissionKey.allWritePermissions(PermissionKey.class),
-        new PermissionKey[] {PermissionKey.ACTION_OPEN_PERMISSION_MANAGEMENT});
   }
 
   public void importFrom(File selectedFile) throws FileNotFoundException {
