@@ -3,13 +3,14 @@ package kernbeisser.Windows.SynchronizeArticles;
 import java.io.IOException;
 import java.nio.file.Files;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
 import kernbeisser.Tasks.Catalog.Merge.MappedDifferences;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 
+@Requires(PermissionKey.ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW)
 public class SynchronizeArticleController
     extends Controller<SynchronizeArticleView, SynchronizeArticleModel> {
 
@@ -76,11 +77,5 @@ public class SynchronizeArticleController
       }
     }
     return true;
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW};
   }
 }

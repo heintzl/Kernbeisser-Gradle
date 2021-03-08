@@ -11,12 +11,13 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
+@Requires(PermissionKey.ACTION_OPEN_EDIT_USER_GROUP)
 public class EditUserGroupController extends Controller<EditUserGroupView, EditUserGroupModel> {
 
   @Linked private final SearchBoxController<UserGroup> userGroupSearchBoxController;
@@ -58,12 +59,6 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   @Override
   public void fillView(EditUserGroupView editUserGroupView) {
     getView().setCurrentUserGroup(model.getUser().getUserGroup());
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_EDIT_USER_GROUP};
   }
 
   public void leaveUserGroup() {

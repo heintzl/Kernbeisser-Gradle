@@ -6,11 +6,12 @@ import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 
+@Requires(PermissionKey.ACTION_OPEN_ACCOUNTING_REPORTS)
 public class AccountingReportsController
     extends Controller<AccountingReportsView, AccountingReportsModel> {
 
@@ -102,12 +103,6 @@ public class AccountingReportsController
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);
     }
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_ACCOUNTING_REPORTS};
   }
 
   @Override

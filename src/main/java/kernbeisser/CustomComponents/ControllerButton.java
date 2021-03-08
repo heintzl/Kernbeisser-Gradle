@@ -83,8 +83,8 @@ public class ControllerButton extends JButton {
     // checking if the user has the required access to open up the window
     RestrictedAccess accessModel =
         StaticMethodTransformer.createStaticInterface(RestrictedAccess.class, clazz);
-    if (PermissionSet.MASTER.hasPermissions(
-        PermissionKey.combine(accessModel.getRequiredKeys(), injected))) {
+    if (PermissionSet.MASTER.contains(
+        PermissionSet.asPermissionSet(injected).or(accessModel.getRequiredKeys()))) {
       AtomicReference<SoftReference<C>> controllerRef =
           new AtomicReference<>(new SoftReference<>(null));
       if (preInit) {

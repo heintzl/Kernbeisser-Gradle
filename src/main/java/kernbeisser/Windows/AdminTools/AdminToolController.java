@@ -4,11 +4,12 @@ import java.awt.event.ActionEvent;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 
+@Requires(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)
 public class AdminToolController extends Controller<AdminToolView, AdminToolModel> {
 
   public AdminToolController() throws PermissionKeyRequiredException {
@@ -31,11 +32,5 @@ public class AdminToolController extends Controller<AdminToolView, AdminToolMode
     new EditUserGroupController(getView().getSelectedUser())
         .withCloseEvent(() -> fillView(getView()))
         .openIn(new SubWindow(getView().traceViewContainer()));
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_ADMIN_TOOLS};
   }
 }

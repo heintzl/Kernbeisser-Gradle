@@ -93,6 +93,24 @@ public class PermissionSet {
     return true;
   }
 
+  /** does simple bitwise or operator */
+  public PermissionSet or(PermissionSet permissionSet) {
+    PermissionSet out = new PermissionSet();
+    for (int i = 0; i < bits.length; i++) {
+      out.bits[i] = bits[i] | permissionSet.bits[i];
+    }
+    return out;
+  }
+
+  /** returns the current set without the permissions delivered in the @Arg permissionSet */
+  public PermissionSet minus(PermissionSet permissionSet) {
+    PermissionSet out = new PermissionSet();
+    for (int i = 0; i < bits.length; i++) {
+      out.bits[i] = bits[i] & (~permissionSet.bits[i]);
+    }
+    return out;
+  }
+
   /**
    * enables / disable all bits(Permissions)
    *
@@ -102,7 +120,12 @@ public class PermissionSet {
     Arrays.fill(bits, b ? -1L : 0L);
   }
 
-  public Set<PermissionKey> asSet() {
+  /**
+   * returns the PermissionSet as a set
+   *
+   * @return a HashSet with all the permissions contained in the PermissionSet
+   */
+  public Set<PermissionKey> asPermissionSet() {
     HashSet<PermissionKey> permissionKeys = new HashSet<>();
     for (PermissionKey value : PermissionKey.values()) {
       if (hasPermission(value)) permissionKeys.add(value);
@@ -110,12 +133,21 @@ public class PermissionSet {
     return permissionKeys;
   }
 
-  @Override
-  public String toString() {
+  /** returns the PermissionSet as a binary String */
+  public String asBinaryString() {
     StringBuilder sb = new StringBuilder();
     for (long bit : bits) {
       sb.append(String.format("%032d", new BigInteger(Long.toBinaryString(bit))));
     }
     return sb.toString();
+  }
+
+  /** returns a permissionSet with all the Permissions */
+  public static PermissionSet asPermissionSet(PermissionKey[] keys) {
+    PermissionSet ps = new PermissionSet();
+    for (PermissionKey key : keys) {
+      ps.addPermission(key);
+    }
+    return ps;
   }
 }

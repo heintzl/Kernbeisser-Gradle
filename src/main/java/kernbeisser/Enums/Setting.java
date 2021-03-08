@@ -64,7 +64,7 @@ public enum Setting {
   IS_DEFAULT_SURCHARGES("true"),
   PASSWORD_TOKEN_GENERATION_LENGTH("8");
 
-  // defines the type to like in java style
+  // defines the type like in java style
   // Value: Type:
   // 0.0    double
   // 0.0f   float

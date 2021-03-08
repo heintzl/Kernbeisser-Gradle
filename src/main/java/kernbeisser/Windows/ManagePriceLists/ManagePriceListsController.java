@@ -8,10 +8,11 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
+@Requires(PermissionKey.ACTION_OPEN_MANAGE_PRICE_LISTS)
 public class ManagePriceListsController
     extends Controller<ManagePriceListsView, ManagePriceListsModel> implements ActionListener {
 
@@ -140,10 +141,4 @@ public class ManagePriceListsController
 
   @Override
   public void fillView(ManagePriceListsView managePriceListsView) {}
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_MANAGE_PRICE_LISTS};
-  }
 }

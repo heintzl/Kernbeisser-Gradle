@@ -41,15 +41,11 @@ public class UserController extends FormController<UserView, UserModel, User> {
       int shares = user.getShares();
       boolean fullMember =
           user.getPermissions().contains(PermissionConstants.FULL_MEMBER.getPermission());
-      if (shares > 0 && !fullMember) {
-        if (getView().askForAddPermissionFullMember()) {
-          user.getPermissions().add(PermissionConstants.FULL_MEMBER.getPermission());
-        }
+      if (shares > 0 && !fullMember && getView().askForAddPermissionFullMember()) {
+        user.getPermissions().add(PermissionConstants.FULL_MEMBER.getPermission());
       } else {
-        if (fullMember) {
-          if (getView().askForRemovePermissionFullMember()) {
-            user.getPermissions().remove(PermissionConstants.FULL_MEMBER.getPermission());
-          }
+        if (fullMember && getView().askForRemovePermissionFullMember()) {
+          user.getPermissions().remove(PermissionConstants.FULL_MEMBER.getPermission());
         }
       }
     }

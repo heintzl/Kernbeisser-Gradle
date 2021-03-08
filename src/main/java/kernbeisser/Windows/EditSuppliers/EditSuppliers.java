@@ -5,8 +5,9 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.Supplier.SupplierController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 
+@Requires(PermissionKey.ACTION_OPEN_EDIT_SUPPLIERS)
 public class EditSuppliers extends ObjectViewController<Supplier> {
   public EditSuppliers() {
     super(
@@ -23,11 +24,5 @@ public class EditSuppliers extends ObjectViewController<Supplier> {
         Column.create("Email", Supplier::getEmail),
         Column.create("Telefonnummer", Supplier::getPhoneNumber),
         Column.create("Fax", Supplier::getFax));
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_EDIT_SUPPLIERS};
   }
 }

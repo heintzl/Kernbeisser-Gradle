@@ -11,7 +11,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.NotEnoughCreditException;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -19,6 +19,7 @@ import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
+@Requires(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK)
 public class CashierShoppingMaskController
     extends Controller<CashierShoppingMaskView, CashierShoppingMaskModel> {
 
@@ -97,13 +98,5 @@ public class CashierShoppingMaskController
   @Override
   public void fillView(CashierShoppingMaskView cashierShoppingMaskView) {
     cashierShoppingMaskView.setAllSecondarySellers(User.getAll(null));
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {
-      PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK,
-    };
   }
 }

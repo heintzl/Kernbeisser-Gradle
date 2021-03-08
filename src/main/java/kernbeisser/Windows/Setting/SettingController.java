@@ -4,12 +4,13 @@ import java.util.Arrays;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Security.Requires;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
+@Requires(PermissionKey.ACTION_OPEN_APPLICATION_SETTINGS)
 public class SettingController extends Controller<SettingView, SettingModel> {
   public SettingController() {
     super(new SettingModel());
@@ -118,11 +119,5 @@ public class SettingController extends Controller<SettingView, SettingModel> {
     view.setSelectedSetting(settingValue);
     view.setEditEnable(true);
     model.setSelectedValue(settingValue);
-  }
-
-  @Override
-  @StaticAccessPoint
-  public PermissionKey[] getRequiredKeys() {
-    return new PermissionKey[] {PermissionKey.ACTION_OPEN_APPLICATION_SETTINGS};
   }
 }
