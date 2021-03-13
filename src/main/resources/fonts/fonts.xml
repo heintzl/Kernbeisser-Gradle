@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+    <fontFamily name="LiberationSans">
+        <normal><![CDATA[fonts/LiberationSans/LiberationSans-Regular.ttf]]></normal>
+        <bold><![CDATA[fonts/LiberationSans/LiberationSans-Bold.ttf]]></bold>
+        <italic><![CDATA[fonts/LiberationSans/LiberationSans-Italic.ttf]]></italic>
+        <bolditalic><![CDATA[fonts/LiberationSans/LiberationSans-BoldItalic.ttf]]></bolditalic>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+        <exportFonts/>
+    </fontFamily>
+    <fontFamily name="LiberationSansNarrow">
+        <normal><![CDATA[fonts/LiberationSans/LiberationSansNarrow-Regular.ttf]]></normal>
+        <bold><![CDATA[fonts/LiberationSans/LiberationSansNarrow-Bold.ttf]]></bold>
+        <italic><![CDATA[fonts/LiberationSans/LiberationSansNarrow-Italic.ttf]]></italic>
+        <bolditalic><![CDATA[fonts/LiberationSans/LiberationSansNarrow-BoldItalic.ttf]]></bolditalic>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+        <exportFonts/>
+    </fontFamily>
+    <fontFamily name="Ubuntu">
+        <normal>fonts/Ubuntu/Ubuntu-R.ttf</normal>
+        <bold>fonts/Ubuntu/Ubuntu-B.ttf</bold>
+        <italic>fonts/Ubuntu/Ubuntu-RI.ttf</italic>
+        <boldItalic>fonts/Ubuntu/Ubuntu-BI.ttf</boldItalic>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="Ubuntu Light">
+        <normal>fonts/UbuntuLight/Ubuntu-M.ttf</normal>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+</fontFamilies>
