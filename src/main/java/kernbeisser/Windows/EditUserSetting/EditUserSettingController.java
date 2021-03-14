@@ -1,6 +1,8 @@
 package kernbeisser.Windows.EditUserSetting;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
@@ -13,8 +15,8 @@ import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
 @Requires(PermissionKey.ACTION_OPEN_EDIT_USER_SETTING)
-public class EditUserSettingController
-    extends Controller<EditUserSettingView, EditUserSettingModel> {
+public class EditUserSettingController extends Controller<EditUserSettingView, EditUserSettingModel>
+    implements ActionListener {
 
   public EditUserSettingController(User user) {
     super(new EditUserSettingModel(user));
@@ -32,6 +34,8 @@ public class EditUserSettingController
     editUserSettingView.setSelectedTheme(
         UserSetting.THEME.getEnumValue(Theme.class, model.getUser()));
     editUserSettingView.setFontSize(UserSetting.FONT_SCALE_FACTOR.getFloatValue(model.getUser()));
+    editUserSettingView.setAllowMultipleShoppingMasks(
+        UserSetting.ALLOW_MULTIPLE_SHOPPING_MASK_INSTANCES.getBooleanValue(model.getUser()));
   }
 
   public void fontChanged() {
@@ -57,5 +61,12 @@ public class EditUserSettingController
       Tools.showUnexpectedErrorWarning(e);
     }
     SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getContent());
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    if (e.getActionCommand().equals("allowMultipleShoppingMasks")) {
+      model.setOpenMultipleShoppingMasks(getView().isAllowMultipleShoppingMasksSelected());
+    }
   }
 }

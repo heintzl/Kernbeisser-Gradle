@@ -11,6 +11,8 @@ import lombok.Data;
 
 @Data
 public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskController> {
+  private boolean openLock = false;
+
   public Collection<User> searchUser(String searchQuery) {
     return User.defaultSearch(searchQuery, 500);
   }

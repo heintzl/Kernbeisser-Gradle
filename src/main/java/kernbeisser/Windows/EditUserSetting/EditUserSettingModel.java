@@ -23,4 +23,8 @@ public class EditUserSettingModel implements IModel<EditUserSettingController> {
   public void setTheme(Theme t) {
     UserSetting.THEME.setValue(user, t);
   }
+
+  void setOpenMultipleShoppingMasks(boolean value) {
+    UserSetting.ALLOW_MULTIPLE_SHOPPING_MASK_INSTANCES.setValue(user, value);
+  }
 }

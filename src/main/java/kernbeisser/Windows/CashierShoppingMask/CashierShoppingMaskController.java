@@ -10,6 +10,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Security.Requires;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -42,7 +43,7 @@ public class CashierShoppingMaskController
   private void selectUser(User tableSelection) {
     var view = getView();
     if (tableSelection != null) {
-      view.setOpenShoppingMaskEnabled(true);
+      view.setOpenShoppingMaskEnabled(!model.isOpenLock());
       view.setStartFor(tableSelection.getFirstName(), tableSelection.getSurname());
     } else {
       view.setOpenShoppingMaskEnabled(false);
@@ -50,6 +51,13 @@ public class CashierShoppingMaskController
   }
 
   public void openMaskWindow() {
+    if (model.isOpenLock()) {
+      getView().messageShoppingMaskAlreadyOpened();
+      return;
+    }
+    boolean allowMultiple =
+        UserSetting.ALLOW_MULTIPLE_SHOPPING_MASK_INSTANCES.getBooleanValue(
+            LogInModel.getLoggedIn());
     SaleSession saleSession = new SaleSession(SaleSessionType.ASSISTED);
     saleSession.setCustomer(searchBoxController.getSelectedObject());
     saleSession.setSeller(LogInModel.getLoggedIn());
@@ -61,10 +69,20 @@ public class CashierShoppingMaskController
       }
     }
     try {
-      new ShoppingMaskUIController(saleSession).openTab();
+      if (!allowMultiple) {
+        new ShoppingMaskUIController(saleSession)
+            .withCloseEvent(() -> setAllowOpen(true))
+            .openTab();
+        setAllowOpen(false);
+      } else new ShoppingMaskUIController(saleSession).openTab();
     } catch (NotEnoughCreditException e) {
       getView().notEnoughCredit();
     }
+  }
+
+  private void setAllowOpen(boolean v) {
+    model.setOpenLock(!v);
+    getView().setOpenShoppingMaskEnabled(v);
   }
 
   @Override
