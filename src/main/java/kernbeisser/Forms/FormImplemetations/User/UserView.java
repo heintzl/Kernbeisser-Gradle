@@ -37,7 +37,7 @@ public class UserView implements IView<UserController> {
   private JLabel lblTelefon2;
   private JLabel grpLogin;
   private JLabel lblUsername;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, Long> postalCode;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, String> postalCode;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, String> town;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, String> phone1;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, String> phone2;
@@ -150,8 +150,7 @@ public class UserView implements IView<UserController> {
     street =
         new AccessCheckingField<>(User::getStreet, User::setStreet, AccessCheckingField.NOT_NULL);
     postalCode =
-        new AccessCheckingField<>(
-            User::getTownCode, User::setTownCode, AccessCheckingField.LONG_FORMER);
+        new AccessCheckingField<>(User::getTownCode, User::setTownCode, AccessCheckingField.NONE);
     town = new AccessCheckingField<>(User::getTown, User::setTown, AccessCheckingField.NOT_NULL);
     phone1 =
         new AccessCheckingField<>(

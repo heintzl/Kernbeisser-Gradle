@@ -120,7 +120,7 @@ public class User implements Serializable {
   @Column
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_READ)})
-  private long townCode;
+  private String townCode;
 
   @Column
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EMAIL_WRITE)})
@@ -190,7 +190,7 @@ public class User implements Serializable {
     dbContent.phoneNumber1 = "deleted";
     dbContent.phoneNumber2 = "deleted";
     dbContent.email = "deleted";
-    dbContent.townCode = -1;
+    dbContent.townCode = "deleted";
     dbContent.town = "deleted";
     dbContent.password = "";
     dbContent.street = "deleted";
