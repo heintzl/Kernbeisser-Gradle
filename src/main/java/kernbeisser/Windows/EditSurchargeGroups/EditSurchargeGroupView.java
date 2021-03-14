@@ -8,14 +8,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Components.DataAnchor;
+import kernbeisser.Forms.ObjectForm.Components.DataListener;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
@@ -37,6 +41,7 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
   private JButton add;
   private JButton selectNoParent;
   private JButton calculateSurcharge;
+  private ObjectTable<Article> surchargeGroupArticles;
 
   @Getter private ObjectForm<SurchargeGroup> objectForm;
 
@@ -51,7 +56,8 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
             superGroup,
             surcharge,
             new DataAnchor<>(
-                SurchargeGroup::setSupplier, () -> (Supplier) supplier.getSelectedItem()));
+                SurchargeGroup::setSupplier, () -> (Supplier) supplier.getSelectedItem()),
+            new DataListener<>(SurchargeGroup::getArticles, surchargeGroupArticles::setObjects));
     objectForm.registerObjectValidator(controller::validate);
     selectNoParent.addActionListener(e -> superGroup.setSelectedItem(null));
     add.addActionListener(e -> controller.addSurchargeGroup());
@@ -113,6 +119,11 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
     superGroup =
         new AccessCheckingComboBox<>(
             SurchargeGroup::getParent, SurchargeGroup::setParent, controller::getSurchargeGroups);
+    surchargeGroupArticles =
+        new ObjectTable<>(
+            Column.create("Artikelname", Article::getName),
+            Column.create("Kbnr.", Article::getKbNumber),
+            Column.create("Lieferantennr.", Article::getSuppliersItemNumber));
   }
 
   public Supplier getSelectedSupplier() {

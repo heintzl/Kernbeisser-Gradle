@@ -13,6 +13,7 @@ public class EditUserSettingView implements IView<EditUserSettingController> {
   private JSlider fontSize;
   private JPanel main;
   private JLabel exampleText;
+  private JCheckBox openMultipleShoppingMasks;
   @Linked private EditUserSettingController controller;
 
   public void setThemes(Theme[] values) {
@@ -27,6 +28,7 @@ public class EditUserSettingView implements IView<EditUserSettingController> {
     fontSize.addChangeListener(e -> controller.fontChanged());
     commit.addActionListener(e -> controller.commit());
     themes.addActionListener(e -> controller.refreshTheme());
+    openMultipleShoppingMasks.addActionListener(controller);
   }
 
   float getFontSize() {
@@ -57,5 +59,13 @@ public class EditUserSettingView implements IView<EditUserSettingController> {
 
   public void setFontSize(float v) {
     fontSize.setValue(Math.round(v * 100));
+  }
+
+  public boolean isAllowMultipleShoppingMasksSelected() {
+    return openMultipleShoppingMasks.isSelected();
+  }
+
+  public void setAllowMultipleShoppingMasks(boolean b) {
+    openMultipleShoppingMasks.setSelected(b);
   }
 }

@@ -103,4 +103,10 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
             + " Bons kein \n"
             + "Bericht erstellt wurde, sollte die It-Gruppe informiert werden.");
   }
+
+  public void messageShoppingMaskAlreadyOpened() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Es ist bereits ein Einkaufs-Fenster geöffnet, um mehre Einkaufsfenster öffenen zu können, aktiviere dies bitte expliezit in deinen Einstellungen.");
+  }
 }
