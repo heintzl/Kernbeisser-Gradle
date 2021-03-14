@@ -136,4 +136,11 @@ public class SurchargeGroup implements Serializable, Cloneable {
   public static String defaultListNameQualifier(Supplier s) {
     return "@" + s.getName() + " Standard Aufschlag";
   }
+
+  public Collection<Article> getArticles() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery("select a from Article a where a.surchargeGroup.id = :sg", Article.class)
+        .setParameter("sg", getId())
+        .getResultList();
+  }
 }
