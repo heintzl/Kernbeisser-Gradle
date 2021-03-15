@@ -1,31 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fontFamilies>
-    <fontFamily name="LiberationSans">
-        <normal><![CDATA[fonts/LiberationSans/LiberationSans-Regular.ttf]]></normal>
-        <bold><![CDATA[fonts/LiberationSans/LiberationSans-Bold.ttf]]></bold>
-        <italic><![CDATA[fonts/LiberationSans/LiberationSans-Italic.ttf]]></italic>
-        <bolditalic><![CDATA[fonts/LiberationSans/LiberationSans-BoldItalic.ttf]]></bolditalic>
-        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
-        <exportFonts/>
-    </fontFamily>
-    <fontFamily name="LiberationSansNarrow">
-        <normal><![CDATA[fonts/LiberationSans/LiberationSansNarrow-Regular.ttf]]></normal>
-        <bold><![CDATA[fonts/LiberationSans/LiberationSansNarrow-Bold.ttf]]></bold>
-        <italic><![CDATA[fonts/LiberationSans/LiberationSansNarrow-Italic.ttf]]></italic>
-        <bolditalic><![CDATA[fonts/LiberationSans/LiberationSansNarrow-BoldItalic.ttf]]></bolditalic>
-        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
-        <exportFonts/>
-    </fontFamily>
-    <fontFamily name="Ubuntu">
-        <normal>fonts/Ubuntu/Ubuntu-R.ttf</normal>
-        <bold>fonts/Ubuntu/Ubuntu-B.ttf</bold>
-        <italic>fonts/Ubuntu/Ubuntu-RI.ttf</italic>
-        <boldItalic>fonts/Ubuntu/Ubuntu-BI.ttf</boldItalic>
+    <fontFamily name="DejaVu Serif">
+        <normal>fonts/DejaVuSerif/DejaVuSerif.ttf</normal>
+        <bold>fonts/DejaVuSerif/DejaVuSerif-Bold.ttf</bold>
+        <italic>fonts/DejaVuSerif/DejaVuSerif-Italic.ttf</italic>
+        <boldItalic>fonts/DejaVuSerif/DejaVuSerif-BoldItalic.ttf</boldItalic>
         <pdfEncoding>Identity-H</pdfEncoding>
         <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
     </fontFamily>
-    <fontFamily name="Ubuntu Light">
-        <normal>fonts/UbuntuLight/Ubuntu-M.ttf</normal>
+    <fontFamily name="DejaVu Sans Mono">
+        <normal>fonts/DejaVuSansMono/DejaVuSansMono-Oblique.ttf</normal>
+        <bold>fonts/DejaVuSansMono/DejaVuSansMono-Bold.ttf</bold>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Sans">
+        <normal>fonts/DejaVuSans/DejaVuSans-Oblique.ttf</normal>
+        <bold>fonts/DejaVuSans/DejaVuSans-Bold.ttf</bold>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Serif Condensed">
+        <normal>
+            fonts/DejaVuSerifCondensed/DejaVuSerifCondensed.ttf
+        </normal>
+        <bold>
+            fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-Bold.ttf
+        </bold>
+        <italic>
+            fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-Italic.ttf
+        </italic>
+        <boldItalic>
+            fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-BoldItalic.ttf
+        </boldItalic>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Sans Condensed">
+        <normal>fonts/DejaVuSansCondensed/DejaVuSansCondensed.ttf</normal>
+        <bold>
+            fonts/DejaVuSansCondensed/DejaVuSansCondensed-Bold.ttf
+        </bold>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Sans Light">
+        <normal>fonts/DejaVuSansLight/DejaVuSans-ExtraLight.ttf</normal>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Math TeX Gyre">
+        <normal>fonts/DejaVuMathTeXGyre/DejaVuMathTeXGyre.ttf</normal>
         <pdfEncoding>Identity-H</pdfEncoding>
         <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
     </fontFamily>
