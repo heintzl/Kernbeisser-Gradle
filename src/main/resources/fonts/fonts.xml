@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+    <fontFamily name="DejaVu Serif">
+        <normal>fonts/DejaVuSerif/DejaVuSerif.ttf</normal>
+        <bold>fonts/DejaVuSerif/DejaVuSerif-Bold.ttf</bold>
+        <italic>fonts/DejaVuSerif/DejaVuSerif-Italic.ttf</italic>
+        <boldItalic>fonts/DejaVuSerif/DejaVuSerif-BoldItalic.ttf</boldItalic>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Sans Mono">
+        <normal>fonts/DejaVuSansMono/DejaVuSansMono-Oblique.ttf</normal>
+        <bold>fonts/DejaVuSansMono/DejaVuSansMono-Bold.ttf</bold>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Sans">
+        <normal>fonts/DejaVuSans/DejaVuSans-Oblique.ttf</normal>
+        <bold>fonts/DejaVuSans/DejaVuSans-Bold.ttf</bold>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Serif Condensed">
+        <normal>fonts/DejaVuSerifCondensed/DejaVuSerifCondensed.ttf</normal>
+        <bold>fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-Bold.ttf</bold>
+        <italic>fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-Italic.ttf</italic>
+        <boldItalic>fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-BoldItalic.ttf</boldItalic>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Sans Condensed">
+        <normal>fonts/DejaVuSansCondensed/DejaVuSansCondensed.ttf</normal>
+        <bold>fonts/DejaVuSansCondensed/DejaVuSansCondensed-Bold.ttf</bold>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+    <fontFamily name="DejaVu Sans Light">
+        <normal>fonts/DejaVuSansLight/DejaVuSans-ExtraLight.ttf</normal>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+</fontFamilies>
