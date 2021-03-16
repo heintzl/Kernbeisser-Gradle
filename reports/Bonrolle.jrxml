@@ -35,7 +35,7 @@
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 					</reportElement>
 					<textElement textAlignment="Left">
-						<font isItalic="true"/>
+						<font fontName="DejaVu Sans Condensed" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Bon Nummer: " + $F{purchase.id}]]></textFieldExpression>
 				</textField>
@@ -44,7 +44,7 @@
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 					</reportElement>
 					<textElement textAlignment="Right">
-						<font isItalic="true"/>
+						<font fontName="DejaVu Sans Condensed" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[java.sql.Timestamp.from($F{purchase.createDate})]]></textFieldExpression>
 				</textField>
@@ -64,42 +64,42 @@
 			<staticText>
 				<reportElement x="0" y="0" width="280" height="20" uuid="a8e30bf7-7991-468f-8542-a3a9d1eff6dc"/>
 				<textElement markup="html">
-					<font size="14" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Bonrolle]]></text>
 			</staticText>
 			<textField pattern="dd.MM.yyyy HH:mm">
 				<reportElement style="Bold" x="250" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
 				<textElement textAlignment="Right">
-					<font size="13" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="65" y="3" width="70" height="15" uuid="836b1164-c1ef-4f4f-b6e3-99e177ea623e"/>
 				<textElement>
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Zeitraum von "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd.MM.yyyy">
 				<reportElement x="135" y="3" width="60" height="15" uuid="72ee8b98-2004-4bd8-9e37-e73fa9df5776"/>
 				<textElement>
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{start}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="187" y="3" width="20" height="15" uuid="eb69c396-e35e-4dc6-807b-95f3b2c2df20"/>
 				<textElement>
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["bis"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd.MM.yyyy">
 				<reportElement x="204" y="3" width="60" height="15" uuid="facb38aa-eb4b-4ea0-b96e-b02c8d5c1d51"/>
 				<textElement>
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ende}]]></textFieldExpression>
 			</textField>
@@ -110,14 +110,14 @@
 			<textField>
 				<reportElement x="290" y="0" width="45" height="15" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
 				<textElement textAlignment="Right">
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="335" y="0" width="44" height="15" uuid="24631cf1-5277-48a1-a10f-f758907adcdf"/>
 				<textElement textAlignment="Right">
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -130,7 +130,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font fontName="DejaVu Sans Condensed" size="8"/>
 				</textElement>
 				<text><![CDATA[Menge]]></text>
 			</staticText>
@@ -139,7 +139,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
 				</reportElement>
 				<textElement>
-					<font size="8"/>
+					<font fontName="DejaVu Sans Condensed" size="8"/>
 				</textElement>
 				<text><![CDATA[Artikel]]></text>
 			</staticText>
@@ -148,7 +148,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font fontName="DejaVu Sans Condensed" size="8"/>
 				</textElement>
 				<text><![CDATA[MWSt.]]></text>
 			</staticText>
@@ -157,7 +157,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="27414533-6336-4d60-992c-1aa382fdeece"/>
 				</reportElement>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font fontName="DejaVu Sans Condensed" size="8"/>
 				</textElement>
 				<text><![CDATA[Preis inkl. MWSt.]]></text>
 			</staticText>
@@ -169,32 +169,43 @@
 				<reportElement x="0" y="0" width="30" height="14" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{itemMultiplier}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement x="50" y="0" width="230" height="14" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
 				</reportElement>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{name} + (($F{itemMultiplier} == 1 || $F{priceUnits.shortName}=="?")? "": " à " + java.text.MessageFormat.format("{0, number,0.00}€",$F{itemRetailPrice}))]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,###.##%;(#,###.##">
 				<reportElement x="280" y="0" width="30" height="14" uuid="6efcde95-291f-43d1-b62e-72f55da53670">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{vatValue}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00€;-#,##0.00€">
 				<reportElement x="310" y="0" width="70" height="14" uuid="a062389a-bb41-4962-b7cf-77cc1e391a2a"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{retailPrice}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="32" y="0" width="18" height="14" uuid="6a89b95e-bb9a-4481-8596-94fd928f6935">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
-				<textElement textAlignment="Left"/>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{priceUnits.shortName}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -204,7 +215,7 @@
 			<staticText>
 				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
 				<textElement>
-					<font size="7"/>
+					<font fontName="DejaVu Sans Condensed" size="7"/>
 					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
 				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>

@@ -21,36 +21,21 @@
         <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
     </fontFamily>
     <fontFamily name="DejaVu Serif Condensed">
-        <normal>
-            fonts/DejaVuSerifCondensed/DejaVuSerifCondensed.ttf
-        </normal>
-        <bold>
-            fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-Bold.ttf
-        </bold>
-        <italic>
-            fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-Italic.ttf
-        </italic>
-        <boldItalic>
-            fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-BoldItalic.ttf
-        </boldItalic>
+        <normal>fonts/DejaVuSerifCondensed/DejaVuSerifCondensed.ttf</normal>
+        <bold>fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-Bold.ttf</bold>
+        <italic>fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-Italic.ttf</italic>
+        <boldItalic>fonts/DejaVuSerifCondensed/DejaVuSerifCondensed-BoldItalic.ttf</boldItalic>
         <pdfEncoding>Identity-H</pdfEncoding>
         <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
     </fontFamily>
     <fontFamily name="DejaVu Sans Condensed">
         <normal>fonts/DejaVuSansCondensed/DejaVuSansCondensed.ttf</normal>
-        <bold>
-            fonts/DejaVuSansCondensed/DejaVuSansCondensed-Bold.ttf
-        </bold>
+        <bold>fonts/DejaVuSansCondensed/DejaVuSansCondensed-Bold.ttf</bold>
         <pdfEncoding>Identity-H</pdfEncoding>
         <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
     </fontFamily>
     <fontFamily name="DejaVu Sans Light">
         <normal>fonts/DejaVuSansLight/DejaVuSans-ExtraLight.ttf</normal>
-        <pdfEncoding>Identity-H</pdfEncoding>
-        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
-    </fontFamily>
-    <fontFamily name="DejaVu Math TeX Gyre">
-        <normal>fonts/DejaVuMathTeXGyre/DejaVuMathTeXGyre.ttf</normal>
         <pdfEncoding>Identity-H</pdfEncoding>
         <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
     </fontFamily>

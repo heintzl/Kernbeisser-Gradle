@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RollenInhaber" columnCount="3" printOrder="Horizontal" pageWidth="595" pageHeight="842" columnWidth="178" columnSpacing="10" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
@@ -16,7 +16,7 @@
 				<textField>
 					<reportElement x="0" y="0" width="250" height="20" uuid="cb301b54-2814-4cd3-90a2-27a96f404cc7"/>
 					<textElement>
-						<font size="12" isBold="true"/>
+						<font fontName="DejaVu Sans Condensed" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{permission}]]></textFieldExpression>
 				</textField>
@@ -36,14 +36,14 @@
 			<staticText>
 				<reportElement x="0" y="0" width="280" height="20" uuid="a8e30bf7-7991-468f-8542-a3a9d1eff6dc"/>
 				<textElement markup="html">
-					<font size="14" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Wer darf was im Ladenprogramm?]]></text>
 			</staticText>
 			<textField pattern="dd.MM.yyyy">
 				<reportElement style="Bold" x="425" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
 				<textElement textAlignment="Right">
-					<font size="13" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
@@ -54,14 +54,14 @@
 			<textField>
 				<reportElement x="465" y="0" width="45" height="15" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
 				<textElement textAlignment="Right">
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="510" y="0" width="44" height="15" uuid="24631cf1-5277-48a1-a10f-f758907adcdf"/>
 				<textElement textAlignment="Right">
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -74,6 +74,9 @@
 		<band height="14" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="180" height="14" uuid="bc16656a-b0d5-4f43-9dfc-57e60bc30f4a"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{user.fullName}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -83,7 +86,7 @@
 			<staticText>
 				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
 				<textElement>
-					<font size="7"/>
+					<font fontName="DejaVu Sans Condensed" size="7"/>
 					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
 				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>

@@ -25,7 +25,7 @@
 				<textField>
 					<reportElement x="0" y="0" width="420" height="20" uuid="02c5579c-a688-4b75-b4ad-9adc6e296e8c"/>
 					<textElement>
-						<font fontName="Ubuntu" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans Condensed" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{user.fullName}]]></textFieldExpression>
 				</textField>
@@ -46,63 +46,63 @@
 			<staticText>
 				<reportElement x="0" y="0" width="280" height="20" uuid="dd820fd1-75ce-4c86-9b1b-d4fd89a8da6a"/>
 				<textElement markup="html">
-					<font fontName="Ubuntu" size="14" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Abhakplan Vorbestellungen Kronkraft]]></text>
 			</staticText>
 			<textField pattern="dd.MM.yyyy HH:mm">
 				<reportElement x="369" y="0" width="130" height="20" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="13" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="30" width="60" height="20" uuid="b807eccd-37c2-4275-833a-829353351db3"/>
 				<textElement>
-					<font fontName="Ubuntu" size="12" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[gelief.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="60" y="30" width="50" height="20" uuid="e5f8441f-c758-49e4-99c4-47636ca5b851"/>
 				<textElement>
-					<font fontName="Ubuntu" size="12" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[fehlt]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="110" y="30" width="50" height="20" uuid="1f7713d1-ddba-46e2-b05f-b6846da71e8f"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="12" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[Menge]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="180" y="30" width="50" height="20" uuid="f0f8b4bc-12fc-4f15-8f4c-e61afcae6b57"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="12" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[KK-Nr.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="240" y="30" width="50" height="20" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4"/>
 				<textElement>
-					<font fontName="Ubuntu" size="12" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[Produkt]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="409" y="30" width="45" height="20" uuid="979caf5a-f274-4531-b0c9-187d195a1fd9"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="12" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="454" y="30" width="44" height="20" uuid="a4aa5782-f7d1-42f1-8a00-d87a62117e2f"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="12" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -128,14 +128,14 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="716b65a5-898a-48ee-8873-f89cfdb56be9"/>
 				</reportElement>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="13"/>
+					<font fontName="DejaVu Sans Condensed" size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="150" y="1" width="10" height="16" uuid="5788b0e3-76be-435e-be6f-725db43c7019"/>
 				<textElement>
-					<font fontName="Ubuntu" size="12"/>
+					<font fontName="DejaVu Sans Condensed" size="12"/>
 				</textElement>
 				<text><![CDATA[x]]></text>
 			</staticText>
@@ -144,7 +144,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0fcc61-6f33-42f3-91b0-b2f6988d712f"/>
 				</reportElement>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="13"/>
+					<font fontName="DejaVu Sans Condensed" size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{article.suppliersItemNumber}]]></textFieldExpression>
 			</textField>
@@ -154,7 +154,7 @@
 					<printWhenExpression><![CDATA[!$F{retarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
-					<font fontName="Ubuntu" size="13"/>
+					<font fontName="DejaVu Sans Condensed" size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
@@ -164,7 +164,7 @@
 					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
-					<font fontName="Ubuntu" size="13" isBold="true" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
@@ -173,7 +173,7 @@
 					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
-					<font fontName="Ubuntu" size="12" isBold="true" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="12" isBold="true" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[Nachlief.:]]></text>
 			</staticText>

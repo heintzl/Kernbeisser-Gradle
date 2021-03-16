@@ -27,14 +27,14 @@
 			<staticText>
 				<reportElement x="0" y="0" width="280" height="20" uuid="a8e30bf7-7991-468f-8542-a3a9d1eff6dc"/>
 				<textElement markup="html">
-					<font size="14" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Benutzerschlüssel]]></text>
 			</staticText>
 			<textField pattern="dd.MM.yyyy HH:mm">
 				<reportElement style="Bold" x="425" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
 				<textElement textAlignment="Right">
-					<font size="13" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
@@ -45,14 +45,14 @@
 			<textField>
 				<reportElement x="465" y="0" width="45" height="15" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
 				<textElement textAlignment="Right">
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="510" y="0" width="44" height="15" uuid="24631cf1-5277-48a1-a10f-f758907adcdf"/>
 				<textElement textAlignment="Right">
-					<font size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -65,7 +65,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Left">
-					<font size="8" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Schlüssel]]></text>
 			</staticText>
@@ -74,7 +74,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Left">
-					<font size="8" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nutzer]]></text>
 			</staticText>
@@ -87,7 +87,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c8454755-3143-48a1-8fbd-46538ec5da37"/>
 				</reportElement>
 				<textElement>
-					<font size="7"/>
+					<font fontName="DejaVu Sans Condensed" size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
@@ -96,7 +96,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="49eb248d-ab69-42a3-840d-7c89455200fa"/>
 				</reportElement>
 				<textElement textAlignment="Left">
-					<font size="7"/>
+					<font fontName="DejaVu Sans Condensed" size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fullName}]]></textFieldExpression>
 			</textField>
@@ -107,7 +107,7 @@
 			<staticText>
 				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
 				<textElement>
-					<font size="7"/>
+					<font fontName="DejaVu Sans Condensed" size="7"/>
 					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
 				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>

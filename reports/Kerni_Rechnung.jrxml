@@ -42,14 +42,14 @@
 				<textField pattern="#,##0.00€;-#,##0.00€">
 					<reportElement x="310" y="0" width="70" height="13" uuid="27ca8d35-9997-4c0d-9b45-cfc61b4ad173"/>
 					<textElement textAlignment="Right">
-						<font fontName="Ubuntu"/>
+						<font fontName="DejaVu Sans Condensed"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{VatSumHigh}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="220" y="0" width="90" height="13" uuid="6fd6b721-ff16-41b8-b906-846701df6d5d"/>
 					<textElement textAlignment="Right">
-						<font fontName="Ubuntu"/>
+						<font fontName="DejaVu Sans Condensed"/>
 					</textElement>
 					<textFieldExpression><![CDATA["darin MWSt. " + (int) ($P{VatValueHigh} * 100) +"%:"]]></textFieldExpression>
 				</textField>
@@ -63,14 +63,14 @@
 				<textField pattern="#,##0.00€;-#,##0.00€">
 					<reportElement x="310" y="0" width="70" height="13" uuid="3dc03a00-a36a-48e8-b19b-2240f18cd599"/>
 					<textElement textAlignment="Right">
-						<font fontName="Ubuntu"/>
+						<font fontName="DejaVu Sans Condensed"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{VatSumLow}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="220" y="0" width="90" height="13" uuid="3c4ccf71-2dd5-4bb8-bd4c-ed0e7864dcb5"/>
 					<textElement textAlignment="Right">
-						<font fontName="Ubuntu"/>
+						<font fontName="DejaVu Sans Condensed"/>
 					</textElement>
 					<textFieldExpression><![CDATA["darin MWSt. " + (int) ($P{VatValueLow} * 100) +"%:"]]></textFieldExpression>
 				</textField>
@@ -83,14 +83,14 @@
 				<textField evaluationTime="Report" pattern="#,##0.00€;-#,##0.00€">
 					<reportElement x="310" y="2" width="70" height="14" uuid="ff7446e6-555f-4f29-91bd-5e9b87df553b"/>
 					<textElement textAlignment="Right">
-						<font fontName="Ubuntu" isBold="true"/>
+						<font fontName="DejaVu Sans Condensed" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{SumTotal}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="250" y="2" width="60" height="14" uuid="1ef5dd1c-9312-4fa9-aefc-ca078ee75eaa"/>
 					<textElement textAlignment="Right">
-						<font fontName="Ubuntu" isBold="true"/>
+						<font fontName="DejaVu Sans Condensed" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Summe: ]]></text>
 				</staticText>
@@ -107,14 +107,14 @@
 			<textField>
 				<reportElement x="0" y="0" width="280" height="20" uuid="d8c253f8-c688-4f18-9e83-d0ba298d7c5a"/>
 				<textElement markup="html">
-					<font fontName="Ubuntu" size="14" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Customer}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd.MM.yy HH:mm">
 				<reportElement style="Bold" x="250" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="13" isBold="true"/>
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[java.util.Date.from($P{PurchaseDate})]]></textFieldExpression>
 			</textField>
@@ -125,42 +125,42 @@
 			<staticText>
 				<reportElement x="0" y="0" width="35" height="15" uuid="cd16e1e6-5f75-4959-9246-021af1afb2c3"/>
 				<textElement>
-					<font fontName="Ubuntu" size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<text><![CDATA[Bon-Nr.]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="37" y="0" width="47" height="15" uuid="69436be7-57fc-4cd6-9411-af080fa7febf"/>
 				<textElement>
-					<font fontName="Ubuntu" size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{BonNo}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="290" y="0" width="45" height="15" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="335" y="0" width="44" height="15" uuid="24631cf1-5277-48a1-a10f-f758907adcdf"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="144" y="0" width="145" height="15" uuid="bc22d55b-ce55-4af6-8876-3ad795a01554"/>
 				<textElement>
-					<font fontName="Ubuntu" size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Seller}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="84" y="0" width="60" height="15" uuid="2b3fdbbd-e3f7-48a0-8737-9c31bed3299b"/>
 				<textElement>
-					<font fontName="Ubuntu" size="10"/>
+					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<text><![CDATA[Ladendienst:]]></text>
 			</staticText>
@@ -173,7 +173,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Ubuntu" size="8"/>
+					<font fontName="DejaVu Sans Condensed" size="8"/>
 				</textElement>
 				<text><![CDATA[Menge]]></text>
 			</staticText>
@@ -182,7 +182,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
-					<font fontName="Ubuntu" size="8"/>
+					<font fontName="DejaVu Sans Condensed" size="8"/>
 				</textElement>
 				<text><![CDATA[Artikel]]></text>
 			</staticText>
@@ -191,7 +191,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Ubuntu" size="8"/>
+					<font fontName="DejaVu Sans Condensed" size="8"/>
 				</textElement>
 				<text><![CDATA[MWSt.]]></text>
 			</staticText>
@@ -200,7 +200,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="27414533-6336-4d60-992c-1aa382fdeece"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Ubuntu" size="8"/>
+					<font fontName="DejaVu Sans Condensed" size="8"/>
 				</textElement>
 				<text><![CDATA[Preis inkl. MWSt.]]></text>
 			</staticText>
@@ -209,7 +209,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Ubuntu" size="8"/>
+					<font fontName="DejaVu Sans Condensed" size="8"/>
 				</textElement>
 				<text><![CDATA[red.]]></text>
 			</staticText>
@@ -222,7 +222,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Ubuntu"/>
+					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{itemMultiplier}]]></textFieldExpression>
 			</textField>
@@ -231,7 +231,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
-					<font fontName="Ubuntu"/>
+					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{name} + (($F{itemMultiplier} == 1 || $F{priceUnits.shortName}=="?")? "": " à " + java.text.MessageFormat.format("{0, number,0.00}€",$F{itemRetailPrice}))]]></textFieldExpression>
 			</textField>
@@ -240,14 +240,14 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Ubuntu"/>
+					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{vatValue}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00€;-#,##0.00 €">
 				<reportElement x="310" y="0" width="70" height="14" uuid="a062389a-bb41-4962-b7cf-77cc1e391a2a"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Ubuntu"/>
+					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{retailPrice}]]></textFieldExpression>
 			</textField>
@@ -256,7 +256,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="Ubuntu"/>
+					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{priceUnits.shortName}]]></textFieldExpression>
 			</textField>
@@ -265,7 +265,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Ubuntu"/>
+					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{containerDiscount}?"VB":$F{discount} == 0?"":$F{discount} + "%"]]></textFieldExpression>
 			</textField>
@@ -276,7 +276,7 @@
 			<staticText>
 				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
 				<textElement>
-					<font fontName="Ubuntu" size="7"/>
+					<font fontName="DejaVu Sans Condensed" size="7"/>
 					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
 				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>
@@ -288,7 +288,7 @@
 			<staticText>
 				<reportElement x="110" y="5" width="200" height="13" uuid="1d8505d7-b1a4-4d12-ba6c-c1d07ce7cceb"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu"/>
+					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<text><![CDATA[verbleibendes Guthaben nach dem Einkauf:]]></text>
 			</staticText>
@@ -297,21 +297,21 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu"/>
+					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Credit}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="160" y="17" width="220" height="16" uuid="be65bb8b-4b64-456f-8739-93e431107163"/>
 				<textElement textAlignment="Right">
-					<font fontName="Ubuntu" isBold="true" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" isBold="true" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{CreditWarning}?"Bitte auf das Guthaben einzahlen!":""]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="5" y="5" width="110" height="28" forecolor="#919191" uuid="63ddc39a-4af5-4884-be67-c3bf92680ce9"/>
 				<textElement>
-					<font fontName="Ubuntu" size="24"/>
+					<font fontName="DejaVu Sans Condensed" size="24"/>
 				</textElement>
 				<text><![CDATA[Muster!]]></text>
 			</staticText>
