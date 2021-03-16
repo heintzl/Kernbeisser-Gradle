@@ -35,6 +35,7 @@
 	<field name="itemRetailPrice" class="java.lang.Double"/>
 	<field name="discount" class="java.lang.Integer"/>
 	<field name="containerDiscount" class="java.lang.Boolean"/>
+	<field name="displayAmount" class="java.lang.String"/>
 	<group name="Summary VAT Hi">
 		<groupFooter>
 			<band height="13">
@@ -218,13 +219,13 @@
 	<detail>
 		<band height="16" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="30" height="14" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b">
+				<reportElement x="0" y="0" width="45" height="14" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{itemMultiplier}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{displayAmount}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement x="50" y="0" width="200" height="14" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8">
@@ -250,15 +251,6 @@
 					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{retailPrice}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="32" y="0" width="18" height="14" uuid="6a89b95e-bb9a-4481-8596-94fd928f6935">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="DejaVu Sans Condensed"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{priceUnits.shortName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="250" y="0" width="30" height="14" uuid="4d55fdb3-630e-4955-85f9-f412af812df3">

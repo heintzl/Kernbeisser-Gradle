@@ -26,6 +26,7 @@
 	<field name="itemRetailPrice" class="java.lang.Double"/>
 	<field name="purchase.createDate" class="java.time.Instant"/>
 	<field name="purchase.id" class="java.lang.Long"/>
+	<field name="displayAmount" class="java.lang.String"/>
 	<group name="Purchase">
 		<groupExpression><![CDATA[$F{purchase.id}]]></groupExpression>
 		<groupHeader>
@@ -90,7 +91,7 @@
 				<textFieldExpression><![CDATA[$P{start}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="187" y="3" width="20" height="15" uuid="eb69c396-e35e-4dc6-807b-95f3b2c2df20"/>
+				<reportElement x="188" y="3" width="20" height="15" uuid="eb69c396-e35e-4dc6-807b-95f3b2c2df20"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
@@ -166,13 +167,13 @@
 	<detail>
 		<band height="16" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="30" height="14" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b">
+				<reportElement x="0" y="0" width="45" height="14" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{itemMultiplier}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{displayAmount}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement x="50" y="0" width="230" height="14" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8">
@@ -198,15 +199,6 @@
 					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{retailPrice}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="32" y="0" width="18" height="14" uuid="6a89b95e-bb9a-4481-8596-94fd928f6935">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
-				</reportElement>
-				<textElement textAlignment="Left">
-					<font fontName="DejaVu Sans Condensed"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{priceUnits.shortName}=="?"?"":$F{priceUnits.shortName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
