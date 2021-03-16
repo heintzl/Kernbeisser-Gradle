@@ -83,13 +83,7 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
 
       @Override
       public Object getValue(Transaction valueChange) {
-
-        if (valueChange.getToUser() != null
-            && valueChange.getToUser().getId() == LogInModel.getLoggedIn().getId()) {
-          value += valueChange.getValue();
-        } else {
-          value -= valueChange.getValue();
-        }
+        value += model.getSignedTransactionValue(valueChange);
         return String.format("%.2f€", value);
       }
     };

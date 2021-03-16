@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -270,13 +271,18 @@ public class User implements Serializable {
     return true;
   }
 
+  public Collection<User> getAllGroupMembers() {
+    return getUserGroup().getMembers();
+  }
+
   public Collection<Transaction> getAllValueChanges() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Transaction> out =
         em.createQuery(
-                "select t from Transaction t where t.fromUser.id = :id or t.toUser.id = :id order by date",
+                "select t from Transaction t where t.fromUser.id in(:ids) or t.toUser.id in (:ids) order by date",
                 Transaction.class)
-            .setParameter("id", id)
+            .setParameter(
+                "ids", getAllGroupMembers().stream().map(User::getId).collect(Collectors.toList()))
             .getResultList();
     em.close();
     return out;
