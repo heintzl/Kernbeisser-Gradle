@@ -406,6 +406,13 @@ public class User implements Serializable {
     return username.equals("Admin");
   }
 
+  public boolean mayGoUnderMin() {
+    for (User u : getAllGroupMembers()) {
+      if (u.hasPermission(PermissionKey.GO_UNDER_MIN)) return true;
+    }
+    return false;
+  }
+
   public void ignoreDialog(String name) {
     IgnoredDialog ignoredDialog = new IgnoredDialog(this, name);
     @Cleanup EntityManager em = DBConnection.getEntityManager();

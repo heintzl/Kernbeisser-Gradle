@@ -89,7 +89,7 @@ public class Transaction {
 
     if (transactionType != TransactionType.INITIALIZE) {
       if (fromUG.getValue() - value < minValue) {
-        if (!from.hasPermission(PermissionKey.GO_UNDER_MIN)) {
+        if (!from.mayGoUnderMin()) {
           throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the sending user ["
                   + from.getId()
@@ -99,7 +99,7 @@ public class Transaction {
         }
       }
       if (value < 0 && toUG.getValue() + value < minValue) {
-        if (!to.hasPermission(PermissionKey.GO_UNDER_MIN)) {
+        if (!to.mayGoUnderMin()) {
           throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the receiving user ["
                   + from.getId()
