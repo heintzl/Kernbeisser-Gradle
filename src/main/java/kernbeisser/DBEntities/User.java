@@ -1,14 +1,5 @@
 package kernbeisser.DBEntities;
 
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
@@ -22,6 +13,19 @@ import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Entity
 @Table
@@ -313,7 +317,7 @@ public class User implements Serializable {
   public static User getKernbeisserUser() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
-      return em.createQuery("select u from User u where u.username like 'kernbeisser'", User.class)
+      return em.createQuery("select u from User u where u.username = 'kernbeisser'", User.class)
           .setMaxResults(1)
           .getSingleResult();
     } catch (NoResultException e) {
@@ -391,7 +395,15 @@ public class User implements Serializable {
   }
 
   public boolean isBeginner() {
-    return permissions.contains(PermissionConstants.FULL_MEMBER.getPermission());
+    return !permissions.contains(PermissionConstants.FULL_MEMBER.getPermission());
+  }
+
+  public boolean isKernbeisser() {
+    return username.equals("kernbeisser");
+  }
+
+  public boolean isSysAdmin() {
+    return username.equals("Admin");
   }
 
   public void ignoreDialog(String name) {

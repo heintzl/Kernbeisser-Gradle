@@ -1,11 +1,5 @@
 package kernbeisser.DBEntities;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.List;
-import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
@@ -17,6 +11,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
 
 @Table
 @Entity
@@ -114,7 +115,7 @@ public class Transaction {
     transaction.fromUser = from;
     transaction.info = info;
     transaction.transactionType = transactionType;
-    isValidTransaction(transaction);
+    // isValidTransaction(transaction);
     // sett
     setValue(fromUG, fromUG.getValue() - value);
     setValue(toUG, toUG.getValue() + value);
