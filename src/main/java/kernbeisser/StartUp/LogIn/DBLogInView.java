@@ -1,12 +1,13 @@
 package kernbeisser.StartUp.LogIn;
 
-import java.awt.*;
-import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class DBLogInView implements IView<DBLogInController> {
   private JButton logIn;
@@ -15,6 +16,7 @@ public class DBLogInView implements IView<DBLogInController> {
   private JPasswordField password;
   private JButton cancel;
   private JPanel main;
+  private JTextField encoding;
 
   @Linked private DBLogInController controller;
 
@@ -51,18 +53,20 @@ public class DBLogInView implements IView<DBLogInController> {
   }
 
   public DBAccess getDBAccess() {
-    return new DBAccess(url.getText(), username.getText(), new String(password.getPassword()));
+    return new DBAccess(url.getText(), username.getText(), new String(password.getPassword()), encoding.getText());
   }
 
   public void setConnectionValid(boolean serviceAvailable) {
     username.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
     password.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
     url.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
+    encoding.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
   }
 
   private void defaultColor() {
     username.setForeground(Color.BLACK);
     password.setForeground(Color.BLACK);
     url.setForeground(Color.BLACK);
+    encoding.setForeground(Color.BLACK);
   }
 }

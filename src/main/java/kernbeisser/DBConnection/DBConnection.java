@@ -1,10 +1,5 @@
 package kernbeisser.DBConnection;
 
-import java.util.HashMap;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Enums.Setting;
@@ -15,17 +10,28 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ViewContainers.JFrameWindow;
 import org.hibernate.service.spi.ServiceException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import javax.swing.*;
+import java.util.HashMap;
+
 public class DBConnection {
 
   private static EntityManagerFactory entityManagerFactory = null;
 
-  public static boolean checkValidDBAccess(DBAccess dbAccessData) {
+  private static EntityManagerFactory establishConnection(String name, DBAccess dbAccessData) {
     HashMap<String, String> properties = new HashMap<>(3);
     properties.put("javax.persistence.jdbc.user", dbAccessData.getUsername());
-    properties.put("javax.persistence.jdbc.url", dbAccessData.getUrl());
+    properties.put("javax.persistence.jdbc.url", dbAccessData.getUrl() + "?characterEncoding=" + dbAccessData.getEncoding());
     properties.put("javax.persistence.jdbc.password", dbAccessData.getPassword());
+    return Persistence.createEntityManagerFactory(name,properties);
+  }
+
+  public static boolean checkValidDBAccess(DBAccess dbAccessData) {
     try {
-      Persistence.createEntityManagerFactory("Kernbeisser", properties).close();
+      establishConnection("Kernbeisser", dbAccessData).close();
       return true;
     } catch (ServiceException e) {
       return false;
@@ -39,12 +45,8 @@ public class DBConnection {
         "Try to Login in with Username: \""
             + dbAccessData.getUsername()
             + "\" Password: ***********");
-    HashMap<String, String> properties = new HashMap<>(3);
-    properties.put("javax.persistence.jdbc.user", dbAccessData.getUsername());
-    properties.put("javax.persistence.jdbc.url", dbAccessData.getUrl());
-    properties.put("javax.persistence.jdbc.password", dbAccessData.getPassword());
     try {
-      entityManagerFactory = Persistence.createEntityManagerFactory("Kernbeisser", properties);
+      entityManagerFactory = establishConnection("Kernbeisser",dbAccessData);
       Main.logger.info("Login successful");
       return true;
     } catch (ServiceException e) {
