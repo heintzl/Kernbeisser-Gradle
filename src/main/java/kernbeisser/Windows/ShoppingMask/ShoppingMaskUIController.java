@@ -1,9 +1,5 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.util.Objects;
-import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
@@ -25,6 +21,11 @@ import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.NoResultException;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, ShoppingMaskModel> {
   @Linked private final ShoppingCartController shoppingCartController;
@@ -227,7 +228,12 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         customArticle.setName(getView().getItemName());
         customArticle.setSupplier(getView().getSupplier());
         customArticle.setVat(getView().getVat());
-        customArticle.setSurchargeGroup(getView().getSupplier().getDefaultSurchargeGroup());
+        if (getView().isPreordered()) {
+          customArticle.setSurchargeGroup(getView().getSupplier().getDefaultSurchargeGroup());
+        } else {
+          customArticle.setSurchargeGroup(Supplier.getKKSupplier().getDefaultSurchargeGroup());
+        }
+
         customArticle.setNetPrice(
             getView().isPreordered()
                 ? getView().getNetPrice()

@@ -27,6 +27,6 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
           resultConsumer.accept(false);
         });
     resultConsumer.accept(true);
-    Setting.LAST_PRINTED_BON_NR.setValue(id);
+    Setting.LAST_PRINTED_BON_NR.changeValue(id);
   };
 }

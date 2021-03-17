@@ -83,22 +83,24 @@ public final class Config {
       logger.debug("No DBAccess.Password found in config file.");
       logger.info("Using embedded password for DBConnection.");
       dbAccess.setPassword(new String(IgnoreThis.ignoreMe));
-      String url = dbAccess.getUrl();
-      if (!url.contains("?CharacterEncoding")) {
-        dbAccess.setUrl(url + "?characterEncoding=UTF-8");
-      }
+    }
+    if (dbAccess.getEncoding().replace(" ", "").isEmpty()) {
+      logger.debug("No DBAccess.Encoding found in config file.");
+      logger.info("Using UTF-8 encoding for DBConnection.");
+      dbAccess.setEncoding("UTF-8");
     }
     return dbAccess;
   }
 
   @Getter
-  @Setter(AccessLevel.PACKAGE)
+  @Setter(AccessLevel.PUBLIC)
   @AllArgsConstructor
   @NoArgsConstructor
   public static class DBAccess {
     private String url = "";
     private String username = "";
     private String password = "";
+    private String encoding = "";
   }
 
   @Data

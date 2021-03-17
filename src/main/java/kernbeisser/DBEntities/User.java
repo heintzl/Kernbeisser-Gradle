@@ -1,13 +1,5 @@
 package kernbeisser.DBEntities;
 
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Predicate;
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
@@ -21,6 +13,19 @@ import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Entity
 @Table
@@ -270,13 +275,18 @@ public class User implements Serializable {
     return true;
   }
 
+  public Collection<User> getAllGroupMembers() {
+    return getUserGroup().getMembers();
+  }
+
   public Collection<Transaction> getAllValueChanges() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<Transaction> out =
         em.createQuery(
-                "select t from Transaction t where t.fromUser.id = :id or t.toUser.id = :id order by date",
+                "select t from Transaction t where t.fromUser.id in(:ids) or t.toUser.id in (:ids) order by date",
                 Transaction.class)
-            .setParameter("id", id)
+            .setParameter(
+                "ids", getAllGroupMembers().stream().map(User::getId).collect(Collectors.toList()))
             .getResultList();
     em.close();
     return out;
@@ -307,7 +317,7 @@ public class User implements Serializable {
   public static User getKernbeisserUser() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
-      return em.createQuery("select u from User u where u.username like 'kernbeisser'", User.class)
+      return em.createQuery("select u from User u where u.username = 'kernbeisser'", User.class)
           .setMaxResults(1)
           .getSingleResult();
     } catch (NoResultException e) {
@@ -385,7 +395,22 @@ public class User implements Serializable {
   }
 
   public boolean isBeginner() {
-    return permissions.contains(PermissionConstants.FULL_MEMBER.getPermission());
+    return !permissions.contains(PermissionConstants.FULL_MEMBER.getPermission());
+  }
+
+  public boolean isKernbeisser() {
+    return username.equals("kernbeisser");
+  }
+
+  public boolean isSysAdmin() {
+    return username.equals("Admin");
+  }
+
+  public boolean mayGoUnderMin() {
+    for (User u : getAllGroupMembers()) {
+      if (u.hasPermission(PermissionKey.GO_UNDER_MIN)) return true;
+    }
+    return false;
   }
 
   public void ignoreDialog(String name) {
