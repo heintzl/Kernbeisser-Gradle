@@ -29,7 +29,15 @@ public class DBLogInView implements IView<DBLogInController> {
     username.addActionListener(e -> controller.logIn());
     password.addActionListener(e -> controller.logIn());
     password.setText(access.getPassword());
-    cancel.addActionListener(e -> back());
+    cancel.addActionListener(e -> cancel());
+  }
+
+  private void cancel() {
+    if (controller.isStartUp()) {
+      System.exit(0);
+    } else {
+      back();
+    }
   }
 
   @Override
@@ -53,7 +61,8 @@ public class DBLogInView implements IView<DBLogInController> {
   }
 
   public DBAccess getDBAccess() {
-    return new DBAccess(url.getText(), username.getText(), new String(password.getPassword()), encoding.getText());
+    return new DBAccess(
+        url.getText(), username.getText(), new String(password.getPassword()), encoding.getText());
   }
 
   public void setConnectionValid(boolean serviceAvailable) {

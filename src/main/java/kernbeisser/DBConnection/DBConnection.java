@@ -24,9 +24,11 @@ public class DBConnection {
   private static EntityManagerFactory establishConnection(String name, DBAccess dbAccessData) {
     HashMap<String, String> properties = new HashMap<>(3);
     properties.put("javax.persistence.jdbc.user", dbAccessData.getUsername());
-    properties.put("javax.persistence.jdbc.url", dbAccessData.getUrl() + "?characterEncoding=" + dbAccessData.getEncoding());
+    properties.put(
+        "javax.persistence.jdbc.url",
+        dbAccessData.getUrl() + "?characterEncoding=" + dbAccessData.getEncoding());
     properties.put("javax.persistence.jdbc.password", dbAccessData.getPassword());
-    return Persistence.createEntityManagerFactory(name,properties);
+    return Persistence.createEntityManagerFactory(name, properties);
   }
 
   public static boolean checkValidDBAccess(DBAccess dbAccessData) {
@@ -46,7 +48,7 @@ public class DBConnection {
             + dbAccessData.getUsername()
             + "\" Password: ***********");
     try {
-      entityManagerFactory = establishConnection("Kernbeisser",dbAccessData);
+      entityManagerFactory = establishConnection("Kernbeisser", dbAccessData);
       Main.logger.info("Login successful");
       return true;
     } catch (ServiceException e) {
@@ -63,9 +65,12 @@ public class DBConnection {
   public static void logInWithConfig() {
     if (!tryLogIn(Config.getConfig().getDBAccessData())) {
       try {
-        new DBLogInController().withCloseEvent(DB_LOGIN_LOCK::notify).openIn(new JFrameWindow());
+        DBLogInController.openDBLogInController(true)
+            .withCloseEvent(DB_LOGIN_LOCK::notify)
+            .openIn(new JFrameWindow());
       } catch (ClassIsSingletonException e) {
-        Tools.showUnexpectedErrorWarning(e);
+        JOptionPane.showMessageDialog(
+            JOptionPane.getRootFrame(), "Bitte starte die Anwendung neu!");
       }
     }
   }
