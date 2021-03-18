@@ -6,8 +6,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class DBLogInController extends Controller<DBLogInView, DBLogInModel> {
 
+  private boolean startUp = false;
+
   public DBLogInController() throws ClassIsSingletonException {
     super(new DBLogInModel());
+  }
+
+  public static DBLogInController openDBLogInController(boolean startUp)
+      throws ClassIsSingletonException {
+    DBLogInController dbLogInController = new DBLogInController();
+    dbLogInController.startUp = startUp;
+    return dbLogInController;
+  }
+
+  public boolean isStartUp() {
+    return startUp;
   }
 
   @Override

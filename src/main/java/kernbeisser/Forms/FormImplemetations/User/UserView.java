@@ -6,10 +6,8 @@ import java.awt.event.KeyEvent;
 import java.util.Set;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.Verifier.EmailVerifier;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
 import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
-import kernbeisser.CustomComponents.Verifier.RegexVerifier;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
@@ -18,6 +16,7 @@ import kernbeisser.Forms.ObjectForm.Components.AccessCheckBox;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +79,17 @@ public class UserView implements IView<UserController> {
     JOptionPane.showMessageDialog(null, "Password ge\u00e4ndert!");
   }
 
+  void missingContact() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Mindestens eine Kontaktmöglichkeit (Email oder Telefon) muss angegeben sein!",
+        "Angaben unvollständig",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
   void usernameAlreadyExists() {
+    Tools.beep();
     JOptionPane.showMessageDialog(getTopComponent(), "Der Benutzername ist bereits vergeben");
   }
 
@@ -113,9 +122,6 @@ public class UserView implements IView<UserController> {
     firstName.addKeyListener(refreshUsername);
     lastName.addKeyListener(refreshUsername);
     hasKey.addActionListener(e -> keyNumber.setEnabled(keyNumber.isEnabled()));
-    email.setInputVerifier(new EmailVerifier());
-    phone1.setInputVerifier(new RegexVerifier(".+"));
-    street.setInputVerifier(new NotNullVerifier());
     firstName.setInputVerifier(new NotNullVerifier());
     lastName.setInputVerifier(new NotNullVerifier());
     hasKey.setReadWrite(PermissionKey.USER_KERNBEISSER_KEY_READ);
@@ -147,14 +153,13 @@ public class UserView implements IView<UserController> {
             User::getFirstName, User::setFirstName, AccessCheckingField.NOT_NULL);
     lastName =
         new AccessCheckingField<>(User::getSurname, User::setSurname, AccessCheckingField.NOT_NULL);
-    street =
-        new AccessCheckingField<>(User::getStreet, User::setStreet, AccessCheckingField.NOT_NULL);
+    street = new AccessCheckingField<>(User::getStreet, User::setStreet, AccessCheckingField.NONE);
     postalCode =
         new AccessCheckingField<>(User::getTownCode, User::setTownCode, AccessCheckingField.NONE);
-    town = new AccessCheckingField<>(User::getTown, User::setTown, AccessCheckingField.NOT_NULL);
+    town = new AccessCheckingField<>(User::getTown, User::setTown, AccessCheckingField.NONE);
     phone1 =
         new AccessCheckingField<>(
-            User::getPhoneNumber1, User::setPhoneNumber1, AccessCheckingField.NOT_NULL);
+            User::getPhoneNumber1, User::setPhoneNumber1, AccessCheckingField.NONE);
     phone2 =
         new AccessCheckingField<>(
             User::getPhoneNumber2, User::setPhoneNumber2, AccessCheckingField.NONE);
@@ -216,15 +221,22 @@ public class UserView implements IView<UserController> {
         getTopComponent(), message, "Generiertes Password", JOptionPane.INFORMATION_MESSAGE);
   }
 
-  public boolean askForAddPermissionFullMember() {
+  public boolean askForAddPermissionFullMember(int no) {
+    Tools.beep();
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Soll der Mitglied-Status zu \"Mitglied\" geändert werden?")
+            getTopComponent(),
+            no
+                + " Anteile sind eingetragen - \n"
+                + "Soll der Mitglied-Status zu \"Mitglied\" geändert werden?")
         == 0;
   }
 
   public boolean askForRemovePermissionFullMember() {
+    Tools.beep();
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Soll der Mitglied-Status zu \"kein Mitglied\" geändert werden?")
+            getTopComponent(),
+            "0 Anteile sind eingetragen - \n"
+                + "Soll der Mitglied-Status zu \"kein Mitglied\" geändert werden?")
         == 0;
   }
 }

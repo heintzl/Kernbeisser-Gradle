@@ -1,7 +1,6 @@
 package kernbeisser.Forms.FormImplemetations.User;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import java.util.function.Supplier;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
@@ -15,6 +14,8 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Users;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 public class UserController extends FormController<UserView, UserModel, User> {
   public UserController() {
@@ -38,13 +39,18 @@ public class UserController extends FormController<UserView, UserModel, User> {
       getView().showPasswordToken(passwordToken);
     }
     if (mode != Mode.REMOVE) {
+      if ((user.getEmail() == null || user.getEmail().isEmpty())
+          && (user.getPhoneNumber1() == null || user.getPhoneNumber1().isEmpty())) {
+        getView().missingContact();
+        throw new CannotParseException();
+      }
       int shares = user.getShares();
       boolean fullMember =
           user.getPermissions().contains(PermissionConstants.FULL_MEMBER.getPermission());
-      if (shares > 0 && !fullMember && getView().askForAddPermissionFullMember()) {
+      if (shares > 0 && !fullMember && getView().askForAddPermissionFullMember(shares)) {
         user.getPermissions().add(PermissionConstants.FULL_MEMBER.getPermission());
       } else {
-        if (fullMember && getView().askForRemovePermissionFullMember()) {
+        if (shares == 0 && fullMember && getView().askForRemovePermissionFullMember()) {
           user.getPermissions().remove(PermissionConstants.FULL_MEMBER.getPermission());
         }
       }

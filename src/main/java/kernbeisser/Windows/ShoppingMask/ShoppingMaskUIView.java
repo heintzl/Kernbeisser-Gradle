@@ -1,16 +1,5 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import static java.text.MessageFormat.format;
-
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.text.DecimalFormat;
-import java.text.MessageFormat;
-import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Vector;
-import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -30,6 +19,18 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.util.EnumSet;
+import java.util.Objects;
+import java.util.Vector;
+
+import static java.text.MessageFormat.format;
 
 public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
@@ -738,7 +739,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         });
     kbNumber.addActionListener(
         e -> {
-          if (isWeighable) {
+          if (isWeighable && !isPreordered) {
             amount.setText("");
           } else {
             if (amount.getText().isEmpty()) amount.setText("1");
