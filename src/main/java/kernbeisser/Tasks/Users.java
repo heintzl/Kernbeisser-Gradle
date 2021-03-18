@@ -43,7 +43,7 @@ public class Users {
         continue;
       }
       try {
-        user.setTownCode(Integer.parseInt(s));
+        user.setTownCode(s);
       } catch (NumberFormatException e) {
         user.setTown(s);
       }
@@ -53,7 +53,7 @@ public class Users {
         // TODO
     }
     user.setEmail(stringRaw[21]);
-    // CreateDate: is't used(create new CreateDate), column 22
+    // CreateDate: isn't used(create new CreateDate), column 22
     // TransactionDates: not used, column 24
     // TransactionValues: not used, column 25
     user.setStreet(stringRaw[26]);
