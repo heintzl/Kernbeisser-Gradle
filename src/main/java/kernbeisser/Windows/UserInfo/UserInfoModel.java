@@ -2,6 +2,7 @@ package kernbeisser.Windows.UserInfo;
 
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.MVC.IModel;
 
 public class UserInfoModel implements IModel<UserInfoController> {
@@ -13,7 +14,7 @@ public class UserInfoModel implements IModel<UserInfoController> {
   }
 
   public User getUser() {
-    return user;
+    return Proxy.refresh(user);
   }
 
   public double getSignedTransactionValue(Transaction transaction) {

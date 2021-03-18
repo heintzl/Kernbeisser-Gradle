@@ -5,10 +5,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import javax.persistence.EntityManager;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
 import kernbeisser.Unsafe.PermissionKeyMethodVisitor;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public class Proxy {
@@ -152,6 +155,17 @@ public class Proxy {
       e.printStackTrace();
       return t;
     }
+  }
+
+  /** refreshes the object and ignores if the class is an instance of proxy */
+  public static <T> T refresh(T t) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    if (isProxyInstance(t)) {
+      Class<?> superClass = t.getClass().getSuperclass();
+      T unProxy = (T) em.find(superClass, Tools.getId(t));
+      return getSecureInstance(unProxy);
+    }
+    return t;
   }
 
   /**

@@ -5,10 +5,13 @@ import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.concurrent.CancellationException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -172,5 +175,27 @@ public class PermissionView implements IView<PermissionController> {
   @Override
   public String getTitle() {
     return "Berechtigungen";
+  }
+
+  public Permission inputAskForPermission(Collection<Permission> allPermissions) {
+    JPanel jPanel = new JPanel();
+    jPanel.add(new JLabel("Welche Berechtigung soll gelöscht werden?"));
+    AdvancedComboBox<Permission> permissionAdvancedComboBox =
+        new AdvancedComboBox<>(Permission::getName);
+    allPermissions.stream()
+        .filter(e -> !e.getName().startsWith("@"))
+        .forEach(permissionAdvancedComboBox::addItem);
+    jPanel.add(permissionAdvancedComboBox);
+    if (JOptionPane.showConfirmDialog(
+            getTopComponent(), jPanel, "Berechtigung auswählen", JOptionPane.OK_CANCEL_OPTION)
+        == 0) {
+      try {
+        return permissionAdvancedComboBox.getSelected();
+      } catch (NullPointerException e) {
+        throw new CancellationException();
+      }
+    } else {
+      throw new CancellationException();
+    }
   }
 }
