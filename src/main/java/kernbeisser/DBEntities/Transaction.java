@@ -1,23 +1,21 @@
 package kernbeisser.DBEntities;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
-import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.List;
 
 @Table
 @Entity
@@ -115,8 +113,6 @@ public class Transaction {
     transaction.fromUser = from;
     transaction.info = info;
     transaction.transactionType = transactionType;
-    // isValidTransaction(transaction);
-    // sett
     setValue(fromUG, fromUG.getValue() - value);
     setValue(toUG, toUG.getValue() + value);
     em.persist(fromUG);
@@ -126,22 +122,6 @@ public class Transaction {
     from.getUserGroup().setValue(from.getUserGroup().getValue() - value);
     to.getUserGroup().setValue(to.getUserGroup().getValue() + value);
     return transaction;
-  }
-
-  public static void isValidTransaction(Transaction transaction)
-      throws InvalidTransactionException {
-    double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
-    if (transaction.getFromUser().getUserGroup().getValue() - transaction.getValue() < minValue) {
-      if (!transaction.getFromUser().hasPermission(PermissionKey.GO_UNDER_MIN)) {
-        throw new InvalidTransactionException(new PermissionRequired());
-      }
-    }
-    if (transaction.getValue() < 0
-        && transaction.getToUser().getUserGroup().getValue() - transaction.getValue() < minValue) {
-      if (!transaction.getToUser().hasPermission(PermissionKey.GO_UNDER_MIN)) {
-        throw new InvalidTransactionException(new PermissionRequired());
-      }
-    }
   }
 
   private static void setValue(UserGroup transaction, double value) {

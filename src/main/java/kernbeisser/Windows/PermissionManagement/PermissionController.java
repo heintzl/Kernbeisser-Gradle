@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -118,13 +119,16 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   }
 
   public void deletePermission() {
+    Permission permission = null;
     try {
-      model.deletePermission(lastSelection);
+      permission = getView().inputAskForPermission(model.getAllPermissions());
+      model.deletePermission(permission);
       loadSolutions();
       getView().successfulDeleted();
+    } catch (CancellationException ignored) {
     } catch (PersistenceException e) {
       if (getView().permissionIsInUse()) {
-        model.removeUserFromPermission(lastSelection);
+        model.removeUserFromPermission(permission);
         loadSolutions();
         getView().successfulDeleted();
       }
