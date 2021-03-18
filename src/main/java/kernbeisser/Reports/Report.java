@@ -1,21 +1,5 @@
 package kernbeisser.Reports;
 
-import java.awt.print.PrinterAbortException;
-import java.awt.print.PrinterJob;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.Consumer;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.HashPrintServiceAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.attribute.PrintServiceAttributeSet;
-import javax.print.attribute.standard.MediaSizeName;
-import javax.print.attribute.standard.OrientationRequested;
-import javax.print.attribute.standard.PrinterName;
-import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
@@ -31,6 +15,25 @@ import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimplePrintServiceExporterConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
+
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.HashPrintServiceAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.PrintServiceAttributeSet;
+import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.OrientationRequested;
+import javax.print.attribute.standard.PrinterName;
+import javax.swing.*;
+import java.awt.print.PrinterAbortException;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public abstract class Report {
 
@@ -165,6 +168,14 @@ public abstract class Report {
 
   public void exportPdf(String message, Consumer<Throwable> exConsumer) {
 
+    Path outputFolder = getOutputFolder();
+    if (!Files.exists(outputFolder)) {
+      try {
+        Files.createDirectories(outputFolder);
+      } catch (IOException e) {
+        Tools.showUnexpectedErrorWarning(e);
+      }
+    }
     Path filePath = getOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
     new Thread(
             () -> {
