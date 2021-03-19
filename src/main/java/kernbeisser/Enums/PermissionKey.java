@@ -1,13 +1,14 @@
 package kernbeisser.Enums;
 
 import com.google.common.collect.ImmutableMap;
+import kernbeisser.DBEntities.*;
+import kernbeisser.Security.ActionPermission;
+import kernbeisser.Windows.LogIn.LogInModel;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
-import kernbeisser.DBEntities.*;
-import kernbeisser.Security.ActionPermission;
-import kernbeisser.Windows.LogIn.LogInModel;
 
 public enum PermissionKey {
 
@@ -481,6 +482,7 @@ public enum PermissionKey {
             .put("ACTION_TRANSACTION_FROM_OTHER", "Überweisungen für andere tätigen")
             .put("ACTION_TRANSACTION_FROM_KB", "Überweisungen für Kernbeißer tätigen")
             .put("ACTION_ORDER_CONTAINER", "Artikel vorbestellen")
+            .put("ACTION_OPEN_ADMIN_TOOLS", "Benutzer administrieren")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }

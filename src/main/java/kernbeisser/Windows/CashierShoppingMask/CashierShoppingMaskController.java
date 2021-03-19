@@ -1,6 +1,5 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -17,8 +16,15 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
+import kernbeisser.Windows.UserInfo.UserInfoController;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.NoResultException;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Requires(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK)
 public class CashierShoppingMaskController
@@ -30,7 +36,7 @@ public class CashierShoppingMaskController
     super(new CashierShoppingMaskModel());
     this.searchBoxController =
         new SearchBoxController<>(
-            User::defaultSearch,
+            this::searchable,
             Column.create("Vorname", User::getFirstName),
             Column.create("Nachname", User::getSurname),
             Column.create("Benutzername", User::getUsername),
@@ -40,13 +46,31 @@ public class CashierShoppingMaskController
     searchBoxController.addDoubleClickListener(e -> openMaskWindow());
   }
 
+  private Collection<User> searchable(String s, int max) {
+    CashierShoppingMaskView view = getView();
+
+    Predicate<User> filter;
+    if (view.getActiveCustomers().isSelected()) filter = User::isActive;
+    else if (view.getInactiveCustomers().isSelected()) filter = (u -> !u.isActive());
+    else if (view.getBeginnerCustomers().isSelected()) filter = User::isBeginner;
+    else filter = (u -> true);
+
+    return User.defaultSearch(s, max).stream().filter(filter).collect(Collectors.toList());
+  }
+
+  public void changeFilter() {
+    searchBoxController.invokeSearch();
+  }
+
   private void selectUser(User tableSelection) {
     var view = getView();
     if (tableSelection != null) {
       view.setOpenShoppingMaskEnabled(!model.isOpenLock());
+      view.setUserInfoEnabled(true);
       view.setStartFor(tableSelection.getFirstName(), tableSelection.getSurname());
     } else {
       view.setOpenShoppingMaskEnabled(false);
+      view.setUserInfoEnabled(false);
     }
   }
 
@@ -78,6 +102,11 @@ public class CashierShoppingMaskController
     } catch (NotEnoughCreditException e) {
       getView().notEnoughCredit();
     }
+  }
+
+  public void openUserInfo() {
+    new UserInfoController(searchBoxController.getSelectedObject())
+        .openIn(new SubWindow(getView().traceViewContainer()));
   }
 
   private void setAllowOpen(boolean v) {
@@ -116,5 +145,6 @@ public class CashierShoppingMaskController
   @Override
   public void fillView(CashierShoppingMaskView cashierShoppingMaskView) {
     cashierShoppingMaskView.setAllSecondarySellers(User.getAll(null));
+    cashierShoppingMaskView.selectActiveCustomers();
   }
 }

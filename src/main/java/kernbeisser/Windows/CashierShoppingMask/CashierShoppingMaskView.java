@@ -1,10 +1,8 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import java.awt.*;
-import java.util.Collection;
-import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -12,13 +10,23 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Collection;
 
 public class CashierShoppingMaskView implements IView<CashierShoppingMaskController> {
   private JPanel main;
   private SearchBoxView<User> searchBoxView;
   private PermissionButton openShoppingMask;
   private kernbeisser.CustomComponents.PermissionComboBox<User> secondSellerUsername;
+  @Getter private JRadioButton activeCustomers;
+  @Getter private JRadioButton inactiveCustomers;
+  @Getter private JRadioButton beginnerCustomers;
+  @Getter private JRadioButton allCustomers;
+  private JButton userInfo;
 
   @Linked private CashierShoppingMaskController controller;
 
@@ -29,6 +37,8 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   }
 
   public void setStartFor(String firstName, String surname) {
+    openShoppingMask.setIcon(
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
     openShoppingMask.setText("Einkauf für " + surname + ", " + firstName + " beginnen");
   }
 
@@ -40,9 +50,23 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
     openShoppingMask.setEnabled(b);
   }
 
+  public void setUserInfoEnabled(boolean b) {
+    userInfo.setEnabled(b);
+  }
+
+  public void selectActiveCustomers() {
+    activeCustomers.setSelected(true);
+  }
+
   @Override
   public void initialize(CashierShoppingMaskController controller) {
     openShoppingMask.addActionListener(e -> controller.openMaskWindow());
+    activeCustomers.addActionListener(e -> controller.changeFilter());
+    allCustomers.addActionListener(e -> controller.changeFilter());
+    inactiveCustomers.addActionListener(e -> controller.changeFilter());
+    beginnerCustomers.addActionListener(e -> controller.changeFilter());
+    userInfo.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
+    userInfo.addActionListener(e -> controller.openUserInfo());
   }
 
   @Override

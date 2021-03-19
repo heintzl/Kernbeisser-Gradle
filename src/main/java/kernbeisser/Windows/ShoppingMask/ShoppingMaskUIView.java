@@ -831,7 +831,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         });
     variablePercentage.addActionListener(e -> addToCart());
 
-    editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.PENCIL, 20, new Color(49, 114, 128)));
+    editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
     editUser.addActionListener(e -> controller.openUserInfo());
 
     traversalOrder.add(kbNumber);
