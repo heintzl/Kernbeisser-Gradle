@@ -20,10 +20,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -209,13 +208,22 @@ public class User implements Serializable {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     Collection<User> out =
         em.createQuery(
-                "select u from User u where u.unreadable = false and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
+                "select u from User u where u.unreadable = false and lower(u.username) != 'admin' and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
                 User.class)
             .setParameter("search", s + "%")
             .setMaxResults(max)
             .getResultList();
     em.close();
     return Proxy.getSecureInstances(out);
+  }
+
+  public boolean isActive() {
+    Instant expireDate = Instant.now().minus(180, ChronoUnit.DAYS);
+    return getAllPurchases().stream()
+        .map(Purchase::getCreateDate)
+        .max(Comparator.comparingLong(d -> d.getLong(ChronoField.INSTANT_SECONDS)))
+        .orElse(Instant.MIN)
+        .isAfter(expireDate);
   }
 
   public static User getById(int parseInt) {
@@ -395,7 +403,8 @@ public class User implements Serializable {
   }
 
   public boolean isBeginner() {
-    return !permissions.contains(PermissionConstants.FULL_MEMBER.getPermission());
+    return getAllGroupMembers().stream()
+        .noneMatch(u -> permissions.contains(PermissionConstants.FULL_MEMBER.getPermission()));
   }
 
   public boolean isKernbeisser() {
