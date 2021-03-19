@@ -2,6 +2,7 @@ package kernbeisser.Windows.CashierShoppingMask;
 
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -25,6 +26,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   @Getter private JRadioButton inactiveCustomers;
   @Getter private JRadioButton beginnerCustomers;
   @Getter private JRadioButton allCustomers;
+  private JButton userInfo;
 
   @Linked private CashierShoppingMaskController controller;
 
@@ -35,6 +37,8 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   }
 
   public void setStartFor(String firstName, String surname) {
+    openShoppingMask.setIcon(
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, 20, new Color(49, 114, 128)));
     openShoppingMask.setText("Einkauf für " + surname + ", " + firstName + " beginnen");
   }
 
@@ -44,6 +48,10 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
 
   public void setOpenShoppingMaskEnabled(boolean b) {
     openShoppingMask.setEnabled(b);
+  }
+
+  public void setUserInfoEnabled(boolean b) {
+    userInfo.setEnabled(b);
   }
 
   public void selectActiveCustomers() {
@@ -57,6 +65,8 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
     allCustomers.addActionListener(e -> controller.changeFilter());
     inactiveCustomers.addActionListener(e -> controller.changeFilter());
     beginnerCustomers.addActionListener(e -> controller.changeFilter());
+    userInfo.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
+    userInfo.addActionListener(e -> controller.openUserInfo());
   }
 
   @Override

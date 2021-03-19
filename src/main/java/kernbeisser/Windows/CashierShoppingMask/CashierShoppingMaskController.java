@@ -16,6 +16,8 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
+import kernbeisser.Windows.UserInfo.UserInfoController;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,9 +66,11 @@ public class CashierShoppingMaskController
     var view = getView();
     if (tableSelection != null) {
       view.setOpenShoppingMaskEnabled(!model.isOpenLock());
+      view.setUserInfoEnabled(true);
       view.setStartFor(tableSelection.getFirstName(), tableSelection.getSurname());
     } else {
       view.setOpenShoppingMaskEnabled(false);
+      view.setUserInfoEnabled(false);
     }
   }
 
@@ -98,6 +102,11 @@ public class CashierShoppingMaskController
     } catch (NotEnoughCreditException e) {
       getView().notEnoughCredit();
     }
+  }
+
+  public void openUserInfo() {
+    new UserInfoController(searchBoxController.getSelectedObject())
+        .openIn(new SubWindow(getView().traceViewContainer()));
   }
 
   private void setAllowOpen(boolean v) {
