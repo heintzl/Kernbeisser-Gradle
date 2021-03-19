@@ -36,8 +36,9 @@ public class FormEditorController<V> extends Controller<FormEditorView<V>, FormE
         new FormEditorController<>(
             controller,
             () -> {
-              controller.getObjectContainer().applyMode(mode);
-              controllerAtomicReference.get().getView().back();
+              if (controller.getObjectContainer().applyMode(mode)) {
+                controllerAtomicReference.get().getView().back();
+              }
             }));
     return controllerAtomicReference.get();
   }
