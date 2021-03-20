@@ -1,7 +1,10 @@
 package kernbeisser.Windows.Menu;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ControllerButton;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -69,9 +72,17 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton offerManagement;
   private ControllerButton supply;
   private ControllerButton doUserDefiniedTransaction;
+  private JButton logout;
 
   @Override
-  public void initialize(MenuController controller) {}
+  public void initialize(MenuController controller) {
+    logout.setIcon(
+        IconFontSwing.buildIcon(
+            FontAwesome.POWER_OFF,
+            25 * Setting.LABEL_SCALE_FACTOR.getFloatValue(),
+            new Color(182, 46, 4)));
+    logout.addActionListener(e -> back());
+  }
 
   @Linked private MenuController controller;
 
