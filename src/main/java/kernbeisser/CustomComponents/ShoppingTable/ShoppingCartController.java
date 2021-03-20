@@ -1,12 +1,13 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
-import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ShoppingCartController extends Controller<ShoppingCartView, ShoppingCartModel> {
   @Linked private final boolean editable;
@@ -73,6 +74,8 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
               containers = Integer.parseInt(response);
               if (Math.signum(containers) == Math.signum(item.getItemMultiplier())) {
                 model.addItemBehind(addedItem.createContainerDeposit(containers), addedItem);
+                exit = true;
+              } else if (containers == 0) {
                 exit = true;
               } else {
                 throw (new NumberFormatException());

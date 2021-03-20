@@ -1,9 +1,10 @@
 package kernbeisser.Windows.Menu;
 
-import java.awt.*;
-import javax.swing.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ControllerButton;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -37,6 +38,9 @@ import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class MenuView implements IView<MenuController> {
 
   private JPanel main;
@@ -68,9 +72,18 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton offerManagement;
   private ControllerButton supply;
   private ControllerButton doUserDefiniedTransaction;
+  private JButton logout;
 
   @Override
-  public void initialize(MenuController controller) {}
+  public void initialize(MenuController controller) {
+    logout.setIcon(
+        IconFontSwing.buildIcon(
+            FontAwesome.POWER_OFF,
+            25 * Setting.LABEL_SCALE_FACTOR.getFloatValue(),
+            new Color(182, 46, 4)));
+    logout.addActionListener(e -> back());
+    logout.setToolTipText(LogInModel.getLoggedIn().getFullName() + " vom Programm abmelden");
+  }
 
   @Linked private MenuController controller;
 
@@ -109,7 +122,6 @@ public class MenuView implements IView<MenuController> {
             Controller::openTab,
             false,
             new PermissionKey[] {PermissionKey.ACTION_EDIT_OWN_DATA});
-    // NOT IMPLEMENTED
     editUserSettings =
         new ControllerButton(
             () -> new EditUserSettingController(LogInModel.getLoggedIn()),
@@ -120,7 +132,9 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             () -> new TransactionController(LogInModel.getLoggedIn(), TransactionType.PAYIN),
             TransactionController.class,
-            Controller::openTab);
+            Controller::openTab,
+            false,
+            new PermissionKey[] {PermissionKey.ACTION_TRANSACTION_FROM_KB});
     changePermissions =
         new ControllerButton(
             PermissionController::new, PermissionController.class, Controller::openTab);

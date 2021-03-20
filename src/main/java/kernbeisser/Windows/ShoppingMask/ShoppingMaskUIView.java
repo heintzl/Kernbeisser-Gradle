@@ -424,7 +424,10 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   private void recalculatePrice() {
-    price.setText(String.format("%.2f", controller.recalculatePrice(netPrice.getSafeValue())));
+    double initPrice = 0d;
+    if (currentItem.getKbNumber() > 0 || isPreordered) {
+      price.setText(String.format("%.2f", controller.recalculatePrice(netPrice.getSafeValue())));
+    }
   }
 
   void defaultSettings() {

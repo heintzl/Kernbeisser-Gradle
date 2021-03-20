@@ -1,22 +1,28 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.*;
-import java.util.List;
-import java.util.function.Predicate;
-import javax.swing.*;
-import javax.swing.RowFilter;
-import javax.swing.table.*;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.RowFilter;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
+
 public class ObjectTable<T> extends JTable implements Iterable<T> {
   private static final Object NO_ACCESS_VALUE = "**********";
 
-  private final ArrayList<ObjectSelectionListener<T>> selectionListeners = new ArrayList<>();
+  private final Map<ObjectSelectionListener<T>, Boolean> selectionListeners = new HashMap<>();
 
   private final List<T> objects = new ArrayList<>();
 
@@ -61,7 +67,14 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             column = convertColumnIndexToModel(t.columnAtPoint(mousePosition));
             selection = getFromRow(row);
             ObjectTable.this.columns.get(column).onAction(e, selection);
-            invokeSelectionListeners(selection);
+            invokeSelectionListeners(selection, true);
+          }
+        });
+    addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            invokeSelectionListeners(getSelectedObject(), false);
           }
         });
     setRowSorter(createRowSorter());
@@ -96,10 +109,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     return objects.get(super.convertRowIndexToModel(index));
   }
 
-  private void invokeSelectionListeners(T t) {
-    for (ObjectSelectionListener<T> listener : selectionListeners) {
-      listener.selected(t);
-    }
+  private void invokeSelectionListeners(T t, boolean isMouseClk) {
+    selectionListeners.forEach(
+        (listener, dblClk) -> {
+          if (!dblClk || isMouseClk) listener.selected(t);
+        });
   }
 
   private void insertColumn(Column<T> column) {
@@ -146,11 +160,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   public void addSelectionListener(ObjectSelectionListener<T> listener) {
-    selectionListeners.add(listener);
+    selectionListeners.put(listener, false);
   }
 
   public void addDoubleClickListener(ObjectSelectionListener<T> listener) {
-    addSelectionListener(
+    selectionListeners.put(
         new ObjectSelectionListener<T>() {
           private T last;
           private long lastClick = System.nanoTime();
@@ -162,7 +176,8 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             } else last = t;
             lastClick = System.nanoTime();
           }
-        });
+        },
+        true);
   }
 
   public void addAll(Collection<T> in) {
