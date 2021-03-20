@@ -1,7 +1,5 @@
 package kernbeisser.Windows.Menu;
 
-import java.awt.*;
-import javax.swing.*;
 import kernbeisser.CustomComponents.ControllerButton;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.TransactionType;
@@ -36,6 +34,9 @@ import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class MenuView implements IView<MenuController> {
 
@@ -109,7 +110,6 @@ public class MenuView implements IView<MenuController> {
             Controller::openTab,
             false,
             new PermissionKey[] {PermissionKey.ACTION_EDIT_OWN_DATA});
-    // NOT IMPLEMENTED
     editUserSettings =
         new ControllerButton(
             () -> new EditUserSettingController(LogInModel.getLoggedIn()),
@@ -120,7 +120,9 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             () -> new TransactionController(LogInModel.getLoggedIn(), TransactionType.PAYIN),
             TransactionController.class,
-            Controller::openTab);
+            Controller::openTab,
+            false,
+            new PermissionKey[] {PermissionKey.ACTION_TRANSACTION_FROM_KB});
     changePermissions =
         new ControllerButton(
             PermissionController::new, PermissionController.class, Controller::openTab);
