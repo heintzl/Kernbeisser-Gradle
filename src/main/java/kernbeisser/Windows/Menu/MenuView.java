@@ -82,6 +82,7 @@ public class MenuView implements IView<MenuController> {
             25 * Setting.LABEL_SCALE_FACTOR.getFloatValue(),
             new Color(182, 46, 4)));
     logout.addActionListener(e -> back());
+    logout.setToolTipText(LogInModel.getLoggedIn().getFullName() + " vom Programm abmelden");
   }
 
   @Linked private MenuController controller;
