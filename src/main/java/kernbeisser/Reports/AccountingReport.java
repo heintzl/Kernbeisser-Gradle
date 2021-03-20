@@ -1,5 +1,15 @@
 package kernbeisser.Reports;
 
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.VAT;
+import kernbeisser.Exeptions.InvalidVATValueException;
+import lombok.Cleanup;
+import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.swing.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
@@ -7,15 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.swing.*;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.*;
-import kernbeisser.Enums.VAT;
-import kernbeisser.Exeptions.InvalidVATValueException;
-import lombok.Cleanup;
-import org.jetbrains.annotations.NotNull;
 
 public class AccountingReport extends Report {
 
@@ -163,11 +164,8 @@ public class AccountingReport extends Report {
     Purchase bon = em.find(Purchase.class, lastReportedBonNo);
     if (bon == null) {
       startDate =
-          em.createQuery("select t from Transaction t order by t.date asc", Transaction.class)
-              .setFirstResult(0)
-              .setMaxResults(1)
+          em.createQuery("select min(t.date) from Transaction t", Instant.class)
               .getSingleResult()
-              .getDate()
               .minusSeconds(1);
     } else {
       startDate = bon.getSession().getTransaction().getDate();
@@ -181,17 +179,17 @@ public class AccountingReport extends Report {
             .setParameter("to", endDate)
             .getResultList();
 
+    User kbUser = User.getKernbeisserUser();
     for (Transaction t : transactions) {
-      User kbUser = User.getKernbeisserUser();
-      if (t.getFromUser().equals(kbUser) || t.getToUser().equals(kbUser)) {
-        transactionSaldo += t.getValue();
+      double direction = t.getFromUser().equals(kbUser) ? -1.0 : 1.0;
+      if (direction == -1.0 || t.getToUser().equals(kbUser)) {
+        transactionSaldo -= t.getValue() * direction;
         switch (t.getTransactionType()) {
           case PURCHASE:
             transactionPurchases += t.getValue();
             break;
           case USER_GENERATED:
-            transactionSpecialPayments +=
-                t.getValue() * (t.getFromUser().equals(kbUser) ? -1.0 : 1.0);
+            transactionSpecialPayments += t.getValue() * direction;
             break;
           case PAYIN:
           case INITIALIZE:
