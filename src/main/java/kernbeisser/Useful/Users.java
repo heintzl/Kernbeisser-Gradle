@@ -12,6 +12,7 @@ import lombok.Cleanup;
 public class Users {
   public String resetPassword(User selectedUser) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     selectedUser = em.find(User.class, selectedUser.getId());
@@ -21,7 +22,6 @@ public class Users {
     selectedUser.setForcePasswordChange(true);
     em.persist(selectedUser);
     em.flush();
-    et.commit();
     return token;
   }
 

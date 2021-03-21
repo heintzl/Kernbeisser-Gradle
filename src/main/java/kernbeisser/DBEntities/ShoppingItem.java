@@ -180,7 +180,7 @@ public class ShoppingItem implements Serializable {
     this.surcharge =
         (supplier == null
                 // is unsafe call
-                ? Supplier.getKKSupplier().getDefaultSurchargeGroup().getSurcharge()
+                ? Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup().getSurcharge()
                 : article.getSurchargeGroup().getSurcharge())
             * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
     if (supplier != null) {
@@ -220,7 +220,9 @@ public class ShoppingItem implements Serializable {
       Supplier supplier,
       boolean hasContainerDiscount) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
+    et.begin();
     try {
       ShoppingItem out =
           new ShoppingItem(
@@ -239,17 +241,15 @@ public class ShoppingItem implements Serializable {
       out.setItemMultiplier((int) Math.round(price * 100.0));
       return out;
     } catch (NoResultException e) {
-      et.begin();
       Article article = new Article();
       article.setName(name);
       article.setKbNumber(kbNumber);
       article.setMetricUnits(MetricUnits.NONE);
       article.setVat(vat);
       article.setSupplier(supplier);
-      article.setSurchargeGroup(supplier.getDefaultSurchargeGroup(em));
+      article.setSurchargeGroup(supplier.getOrPersistDefaultSurchargeGroup(em));
       em.persist(article);
       em.flush();
-      et.commit();
       return createRawPriceProduct(name, price, vat, kbNumber, supplier, hasContainerDiscount);
     }
   }
@@ -398,6 +398,9 @@ public class ShoppingItem implements Serializable {
 
   public Article extractArticleBySupplierNumber() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
             "select a from Article a where suppliersItemNumber = :sn and supplier = :s",
             Article.class)
@@ -410,14 +413,13 @@ public class ShoppingItem implements Serializable {
 
   public Article extractArticle() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      return em.createQuery("SELECT i from Article i where kbNumber = " + kbNumber, Article.class)
-          .getSingleResult();
-    } catch (NoResultException e) {
-      return null;
-    } finally {
-      em.close();
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("SELECT i from Article i where kbNumber = " + kbNumber, Article.class)
+        .getResultStream()
+        .findAny()
+        .orElse(null);
   }
 
   public static double getSum(ShoppingItemSum sumType, Collection<ShoppingItem> items) {

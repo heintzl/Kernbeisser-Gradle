@@ -2,6 +2,7 @@ package kernbeisser.Windows.LogIn;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
@@ -22,6 +23,9 @@ public class LogInModel implements IModel {
 
   public static void refreshLogInData() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     loggedIn =
         Proxy.injectMethodHandler(
             em.find(User.class, loggedIn.getId()),
@@ -44,6 +48,9 @@ public class LogInModel implements IModel {
   public static void logIn(String username, char[] password)
       throws CannotLogInException, PermissionRequired {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     try {
       User user =
           em.createQuery("select u from User u where u.username = :username", User.class)

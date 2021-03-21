@@ -24,6 +24,9 @@ public class IgnoredDialog {
 
   public static Collection<IgnoredDialog> getAllFor(User user) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select i from IgnoredDialog i where i.user = :u", IgnoredDialog.class)
         .setParameter("u", user)
         .getResultList();

@@ -2,6 +2,7 @@ package kernbeisser.Forms.FormImplemetations.User;
 
 import java.util.HashSet;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -12,6 +13,9 @@ public class UserModel implements IModel<UserController> {
 
   String generateUsername(String firstName, String surname) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     @SuppressWarnings("unchecked")
     HashSet<String> usernames =
         new HashSet<String>(
@@ -33,13 +37,13 @@ public class UserModel implements IModel<UserController> {
 
   boolean usernameExists(String username) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    boolean exists =
-        em.createQuery("select id from User where username like :username")
-                .setParameter("username", username)
-                .getResultList()
-                .size()
-            > 0;
-    em.close();
-    return exists;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select id from User where username like :username")
+            .setParameter("username", username)
+            .getResultList()
+            .size()
+        > 0;
   }
 }

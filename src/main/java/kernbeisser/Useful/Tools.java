@@ -144,16 +144,20 @@ public class Tools {
 
   public static <T> List<T> getAll(Class<T> c, String condition) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    List<T> out =
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return Proxy.getSecureInstances(
         em.createQuery(
                 "select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
-            .getResultList();
-    em.close();
-    return Proxy.getSecureInstances(out);
+            .getResultList());
   }
 
   public static <T> List<T> getAllUnProxy(Class<T> c) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<T> cq = cb.createQuery(c);
     Root<T> rootEntry = cq.from(c);
@@ -256,64 +260,59 @@ public class Tools {
 
   public static void runInSession(Consumer<EntityManager> dbAction) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     dbAction.accept(em);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public static <O, V> void addToCollection(
       Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, V value) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     O db = em.find(c, key);
     collectionSupplier.apply(db).add(value);
     em.persist(db);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public static <O, V> void addMultipleToCollection(
       Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, Collection<V> value) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     O db = em.find(c, key);
     collectionSupplier.apply(db).addAll(value);
     em.persist(db);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public static <O, V> void removeMultipleFromCollection(
       Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, Collection<V> value) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     O db = em.find(c, key);
     collectionSupplier.apply(db).removeAll(value);
     em.persist(db);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public static <O, V> void removeFromCollection(
       Class<O> c, Object key, Function<O, Collection<V>> collectionSupplier, V value) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     O db = em.find(c, key);
     collectionSupplier.apply(db).remove(value);
     em.persist(db);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public static void showUnexpectedErrorWarning(Throwable e) throws RuntimeException {
@@ -347,12 +346,11 @@ public class Tools {
 
   public static <T> void persist(T value) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.persist(value);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public static int error = 0;
@@ -543,6 +541,7 @@ public class Tools {
       hashSets[i] = new HashSet<>(Arrays.asList(uniqueValues[i]));
     }
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     collection.forEach(
@@ -570,9 +569,6 @@ public class Tools {
             em.persist(value);
           }
         });
-    et.commit();
-    em.close();
-    System.out.println("persistence finished");
   }
 
   public static boolean isUnique(Field f) {
@@ -590,6 +586,9 @@ public class Tools {
 
   public static <P> Object[][] getAllValues(Class<P> parent, Field... fields) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<Object> query = cb.createQuery(Object.class);
     Root<P> root = query.from(parent);
@@ -602,7 +601,6 @@ public class Tools {
         out[field][index] = ((Object[]) objects)[field];
       }
     }
-    em.close();
     return out;
   }
 
@@ -795,6 +793,9 @@ public class Tools {
 
   public static Map<SurchargeGroup, Map<Double, List<String>>> productSurchargeToGroup() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     Map<SurchargeGroup, Map<Double, List<String>>> result = new HashMap<>();
     Map<SurchargeGroup, List<Article>> articleMap =
         em.createQuery(
@@ -810,8 +811,6 @@ public class Tools {
                     .collect(
                         Collectors.groupingBy(
                             Article::getObsoleteSurcharge, Collectors.counting()))));
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     surchargeMap.forEach(
         (k, v) -> {
           k.setSurcharge(
@@ -863,8 +862,6 @@ public class Tools {
           }
         });
     em.flush();
-    et.commit();
-    em.close();
     return result;
   }
 
@@ -917,14 +914,13 @@ public class Tools {
 
   public static void setKeyPermissions() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
-    et.begin();
     em.createQuery("select u from User u", User.class)
         .getResultStream()
         .filter(u -> u.getKernbeisserKey() >= 0)
         .peek(u -> u.getPermissions().add(PermissionConstants.KEY_PERMISSION.getPermission()))
         .forEach(em::persist);
     em.flush();
-    et.commit();
   }
 }

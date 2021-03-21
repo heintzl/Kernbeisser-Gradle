@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -30,15 +31,15 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
 
   private List<ShoppingItem> getTillrollitems(Instant start, Instant end) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    List<ShoppingItem> items =
-        em.createQuery(
-                "select si from ShoppingItem si where si.purchase.createDate between :stdate and :endate",
-                ShoppingItem.class)
-            .setParameter("stdate", start)
-            .setParameter("endate", end)
-            .getResultList();
-    em.close();
-    return items;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select si from ShoppingItem si where si.purchase.createDate between :stdate and :endate",
+            ShoppingItem.class)
+        .setParameter("stdate", start)
+        .setParameter("endate", end)
+        .getResultList();
   }
 
   private void exportReport(

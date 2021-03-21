@@ -22,16 +22,16 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
 
   void remove(Offer offer) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.remove(offer);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public void addOffer(Article article, Offer offer) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     Article i =
@@ -41,13 +41,14 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
     offer.setArticle(i);
     em.persist(offer);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public Collection<Article> searchArticle(
       String search, int maxResults, boolean onlyActionArticle) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
             "select a from Article a where "
                 + "(a.name like :s or cast(a.suppliersItemNumber as string) like :s)"
@@ -59,6 +60,9 @@ public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorControl
 
   public Collection<Offer> getAllOffersBetween(Instant from, Instant to) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<Offer> criteriaQuery = cb.createQuery(Offer.class);
     Root<Offer> root = criteriaQuery.from(Offer.class);

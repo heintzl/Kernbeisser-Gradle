@@ -51,15 +51,15 @@ public class Job {
 
   public static Collection<Job> defaultSearch(String s, int max) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<Job> out =
-        em.createQuery(
-                "select j from Job j where j.name like :s or description like :sn", Job.class)
-            .setParameter("s", s + "%")
-            .setParameter("sn", "%" + s + "%")
-            .setMaxResults(max)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select j from Job j where j.name like :s or description like :sn", Job.class)
+        .setParameter("s", s + "%")
+        .setParameter("sn", "%" + s + "%")
+        .setMaxResults(max)
+        .getResultList();
   }
 
   @Override

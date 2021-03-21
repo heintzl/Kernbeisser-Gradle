@@ -3,6 +3,7 @@ package kernbeisser.CustomComponents.Charts;
 import java.time.YearMonth;
 import java.util.HashMap;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -17,6 +18,9 @@ public class Users {
 
   public static JFreeChart createBuyChart(User user, YearMonth from, YearMonth to) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     HashMap<YearMonth, Integer> result = new HashMap<>();
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<Purchase> criteriaQuery = cb.createQuery(Purchase.class);

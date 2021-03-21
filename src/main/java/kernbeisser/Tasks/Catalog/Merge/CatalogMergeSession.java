@@ -64,7 +64,7 @@ public class CatalogMergeSession {
       Collection<String> source, MappedDifferences... differences) {
     // loads all constants to speedup operations
     Supplier kkSupplier = Supplier.getKKSupplier();
-    SurchargeGroup kkDefaultSurchargeGroup = kkSupplier.getDefaultSurchargeGroup();
+    SurchargeGroup kkDefaultSurchargeGroup = kkSupplier.getOrPersistDefaultSurchargeGroup();
     PriceList coveredIntake = PriceList.getCoveredIntakePriceList();
 
     // loads the current state of the articles into the cache

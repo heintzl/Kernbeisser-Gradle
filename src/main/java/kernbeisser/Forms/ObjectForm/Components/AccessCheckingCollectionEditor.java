@@ -29,6 +29,7 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
 
   private final Collection<V> values;
 
+  @SafeVarargs
   public AccessCheckingCollectionEditor(
       Getter<P, C> getter, Setter<P, C> setter, Collection<V> values, Column<V>... columns) {
     this.values = values;

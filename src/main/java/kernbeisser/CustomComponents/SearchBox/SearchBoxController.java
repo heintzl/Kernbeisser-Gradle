@@ -2,6 +2,7 @@ package kernbeisser.CustomComponents.SearchBox;
 
 import java.util.Arrays;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.DBConnection.DBConnection;
@@ -20,6 +21,9 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
 
   public T tryToRefresh(T t) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     try {
       return (T) em.find(t.getClass(), Tools.getId(t));
     } catch (Exception e) {

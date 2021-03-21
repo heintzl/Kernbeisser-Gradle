@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
@@ -20,26 +20,26 @@ public class ArticleModel implements IModel<ArticleController> {
 
   boolean kbNumberExists(int kbNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      em.createQuery("select id from Article where kbNumber = " + kbNumber, Integer.class)
-          .getSingleResult();
-      return true;
-    } catch (NoResultException e) {
-      return false;
-    } finally {
-      em.close();
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select id from Article where kbNumber = :kbn", Integer.class)
+        .setParameter("kbn", kbNumber)
+        .getResultStream()
+        .findAny()
+        .isPresent();
   }
 
   boolean barcodeExists(long barcode) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      em.createQuery("select id from Article where barcode = " + barcode, Integer.class)
-          .getSingleResult();
-      return true;
-    } catch (NoResultException e) {
-      return false;
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select id from Article where barcode = :b", Integer.class)
+        .setParameter("b", barcode)
+        .getResultStream()
+        .findAny()
+        .isPresent();
   }
 
   MetricUnits[] getAllUnits() {
@@ -60,35 +60,36 @@ public class ArticleModel implements IModel<ArticleController> {
 
   public int nextUnusedArticleNumber(int kbNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    int out =
-        em.createQuery(
-                    "select i.kbNumber from Article i where i.kbNumber >= :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",
-                    Integer.class)
-                .setMaxResults(1)
-                .setParameter("last", kbNumber)
-                .getSingleResult()
-            + 1;
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+                "select i.kbNumber from Article i where i.kbNumber >= :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",
+                Integer.class)
+            .setMaxResults(1)
+            .setParameter("last", kbNumber)
+            .getSingleResult()
+        + 1;
   }
 
   public static boolean nameExists(String name) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      em.createQuery("select i from Article i where i.name like :name")
-          .setMaxResults(1)
-          .setParameter("name", name)
-          .getSingleResult();
-      em.close();
-      return true;
-    } catch (NoResultException e) {
-      em.close();
-      return false;
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select i from Article i where i.name like :name")
+        .setMaxResults(1)
+        .setParameter("name", name)
+        .getResultStream()
+        .findAny()
+        .isPresent();
   }
 
   public Collection<SurchargeGroup> getAllSurchargeGroupsFor(Supplier s) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
             "select s from SurchargeGroup s where supplier = :sid", SurchargeGroup.class)
         .setParameter("sid", s)
@@ -97,11 +98,17 @@ public class ArticleModel implements IModel<ArticleController> {
 
   public Collection<SurchargeGroup> getAllSurchargeGroups() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select s from SurchargeGroup s", SurchargeGroup.class).getResultList();
   }
 
   public Optional<Article> findNearestArticle(Article a) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
             "select a from Article a where supplier = :s and id != :id", Article.class)
         .setParameter("id", a.getId())
@@ -112,16 +119,16 @@ public class ArticleModel implements IModel<ArticleController> {
 
   public boolean suppliersItemNumberExists(Supplier supplier, int suppliersItemNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      em.createQuery(
-              "select a from Article a where a.supplier = :s and a.suppliersItemNumber = :sn",
-              Article.class)
-          .setParameter("s", supplier)
-          .setParameter("sn", suppliersItemNumber)
-          .getSingleResult();
-      return true;
-    } catch (NoResultException e) {
-      return false;
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select a from Article a where a.supplier = :s and a.suppliersItemNumber = :sn",
+            Article.class)
+        .setParameter("s", supplier)
+        .setParameter("sn", suppliersItemNumber)
+        .getResultStream()
+        .findAny()
+        .isPresent();
   }
 }

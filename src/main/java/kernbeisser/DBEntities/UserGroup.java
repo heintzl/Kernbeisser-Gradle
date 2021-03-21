@@ -61,15 +61,18 @@ public class UserGroup {
 
   public Collection<User> getMembers() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<User> out =
-        em.createQuery("select u from User u where userGroup.id = " + id, User.class)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select u from User u where userGroup.id = " + id, User.class)
+        .getResultList();
   }
 
   public double calculateValue() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     double v = 0;
     for (Transaction transaction :
         em.createQuery(
@@ -81,21 +84,20 @@ public class UserGroup {
               ? v + transaction.getValue()
               : v - transaction.getValue();
     }
-    em.close();
     return v;
   }
 
   public static Collection<UserGroup> defaultSearch(String s, int i) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<UserGroup> out =
-        em.createQuery(
-                "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
-                UserGroup.class)
-            .setParameter("s", s + "%")
-            .setMaxResults(i)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
+            UserGroup.class)
+        .setParameter("s", s + "%")
+        .setMaxResults(i)
+        .getResultList();
   }
 
   public String getMemberString() {

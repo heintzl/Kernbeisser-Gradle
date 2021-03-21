@@ -36,6 +36,7 @@
             <property name="javax.persistence.jdbc.auto" value="create"/>
             <property name="hibernate.generate_statistics" value="false"/>
             <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
         </properties>
     </persistence-unit>
 </persistence>

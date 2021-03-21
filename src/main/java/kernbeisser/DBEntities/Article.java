@@ -174,27 +174,33 @@ public class Article {
   }
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
-    return em.createQuery(
-            "select i from Article i where kbNumber = :n"
-                + " or suppliersItemNumber = :n"
-                + " or i.supplier.shortName like :s"
-                + " or i.supplier.name like :s"
-                + " or UPPER(i.name) like :ds"
-                + " or barcode = :l"
-                + " or MOD(barcode,:bl) = :n"
-                + " or UPPER( i.priceList.name) like :u"
-                + " order by i.name asc",
-            Article.class)
-        .setParameter("n", Tools.tryParseInt(search))
-        .setParameter(
-            "bl",
-            Tools.tryParseInt(search) > 0
-                ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
-                : 1)
-        .setParameter("l", Tools.tryParseLong(search))
-        .setParameter("s", search + "%")
-        .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
-        .setParameter("u", search.toUpperCase() + "%");
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    TypedQuery<Article> articleTypedQuery =
+        em.createQuery(
+                "select i from Article i where kbNumber = :n"
+                    + " or suppliersItemNumber = :n"
+                    + " or i.supplier.shortName like :s"
+                    + " or i.supplier.name like :s"
+                    + " or UPPER(i.name) like :ds"
+                    + " or barcode = :l"
+                    + " or MOD(barcode,:bl) = :n"
+                    + " or UPPER( i.priceList.name) like :u"
+                    + " order by i.name asc",
+                Article.class)
+            .setParameter("n", Tools.tryParseInt(search))
+            .setParameter(
+                "bl",
+                Tools.tryParseInt(search) > 0
+                    ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
+                    : 1)
+            .setParameter("l", Tools.tryParseLong(search))
+            .setParameter("s", search + "%")
+            .setParameter(
+                "ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
+            .setParameter("u", search.toUpperCase() + "%");
+    et.commit();
+    return articleTypedQuery;
   }
 
   // implement later
@@ -242,6 +248,9 @@ public class Article {
 
   public static Collection<Article> defaultSearch(String search, int maxResults) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     Collection<Article> out = createQuery(em, search).setMaxResults(maxResults).getResultList();
     em.close();
     return Proxy.getSecureInstances(out);
@@ -250,13 +259,15 @@ public class Article {
   public static Collection<Article> getDefaultAll(
       String search, Predicate<Article> articlePredicate, int max) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     Collection<Article> out =
         createQuery(em, search)
             .getResultStream()
             .filter(articlePredicate)
             .limit(max)
             .collect(Collectors.toCollection(ArrayList::new));
-    em.close();
     return Proxy.getSecureInstances(out);
   }
 
@@ -266,35 +277,45 @@ public class Article {
 
   public static Article getByKbNumber(int kbNumber, boolean filterShopRange) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      return em.createQuery("select i from Article i where kbNumber = :n", Article.class)
-          .setParameter("n", kbNumber)
-          .getResultStream()
-          .filter(a -> !(filterShopRange && !a.isShopRange()))
-          .findAny()
-          .orElse(null);
-    } catch (NoResultException e) {
-      return null;
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select i from Article i where kbNumber = :n", Article.class)
+        .setParameter("n", kbNumber)
+        .getResultStream()
+        .filter(a -> !(filterShopRange && !a.isShopRange()))
+        .findAny()
+        .orElse(null);
   }
 
   public static Article getBySuppliersItemNumber(Supplier supplier, int suppliersNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return getBySuppliersItemNumber(supplier, suppliersNumber, em);
   }
 
   public static Article getBySuppliersItemNumber(
       Supplier supplier, int suppliersNumber, EntityManager em) {
-    return em.createQuery(
-            "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
-            Article.class)
-        .setParameter("s", supplier)
-        .setParameter("n", suppliersNumber)
-        .getSingleResult();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Article singleResult =
+        em.createQuery(
+                "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
+                Article.class)
+            .setParameter("s", supplier)
+            .setParameter("n", suppliersNumber)
+            .getSingleResult();
+    et.commit();
+    return singleResult;
   }
 
   public static Article getByBarcode(long barcode) throws NoResultException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select a from Article a where barcode = :b", Article.class)
         .setParameter("b", barcode)
         .getSingleResult();
@@ -302,6 +323,9 @@ public class Article {
 
   public Instant getLastDelivery() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
             "select i from ShoppingItem i where purchase.id is null and suppliersItemNumber = :k order by i.createDate desc",
             ShoppingItem.class)
@@ -323,6 +347,9 @@ public class Article {
 
   public static Article nextArticleTo(int suppliersItemNumber, Supplier supplier) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return nextArticleTo(em, suppliersItemNumber, supplier);
   }
 
@@ -341,26 +368,27 @@ public class Article {
 
   public Collection<Offer> getAllOffers() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select o from Offer o where article = :id", Offer.class)
-        .setParameter("id", id)
+        .setParameter("id", this.id)
         .getResultList();
   }
 
   public double getOfferNetPrice() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      double offerNetPrice =
-          em.createQuery(
-                  "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
-                  Offer.class)
-              .setParameter("id", id)
-              .setParameter("d", Instant.now())
-              .getSingleResult()
-              .getSpecialNetPrice();
-      em.close();
-      return offerNetPrice;
-    } catch (NoResultException e) {
-      return -999.0;
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select o from Offer o where o.article.id = :id and :d between fromDate and toDate",
+            Offer.class)
+        .setParameter("id", id)
+        .setParameter("d", Instant.now())
+        .getResultStream()
+        .findAny()
+        .map(Offer::getSpecialNetPrice)
+        .orElse(-999.0);
   }
 }

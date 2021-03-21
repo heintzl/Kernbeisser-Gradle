@@ -49,13 +49,13 @@ public class Permission {
 
   public static Collection<Permission> defaultSearch(String s, int max) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<Permission> out =
-        em.createQuery("select p from Permission p where p.name like :s", Permission.class)
-            .setParameter("s", s + "%")
-            .setMaxResults(max)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select p from Permission p where p.name like :s", Permission.class)
+        .setParameter("s", s + "%")
+        .setMaxResults(max)
+        .getResultList();
   }
 
   @Override
@@ -64,6 +64,10 @@ public class Permission {
   }
 
   public Collection<User> getAllUsers() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return DBConnection.getEntityManager()
         .createQuery("select u from User u where :p in(elements(u.permissions))", User.class)
         .setParameter("p", this)

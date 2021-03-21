@@ -25,6 +25,9 @@ public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupControl
 
   Collection<SurchargeGroup> getAllFromSupplier(Supplier supplier) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
             "select s from SurchargeGroup s where s.supplier = :s order by s.name asc",
             SurchargeGroup.class)

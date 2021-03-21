@@ -167,13 +167,12 @@ public class User implements Serializable {
 
   public static User getByUsername(String username) throws NoResultException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      return em.createQuery("select u from User u where u.username = :username", User.class)
-          .setParameter("username", username)
-          .getSingleResult();
-    } finally {
-      em.close();
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select u from User u where u.username = :username", User.class)
+        .setParameter("username", username)
+        .getSingleResult();
   }
 
   @kernbeisser.Security.Key(PermissionKey.USER_GROUP_VALUE_READ)
@@ -183,6 +182,7 @@ public class User implements Serializable {
 
   public static void makeUserUnreadable(User user) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     User dbContent = em.find(User.class, user.getId());
@@ -200,20 +200,20 @@ public class User implements Serializable {
     dbContent.permissions.clear();
     em.persist(dbContent);
     em.flush();
-    et.commit();
   }
 
   public static Collection<User> defaultSearch(String s, int max) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<User> out =
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return Proxy.getSecureInstances(
         em.createQuery(
                 "select u from User u where u.unreadable = false and lower(u.username) != 'admin' and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
                 User.class)
             .setParameter("search", s + "%")
             .setMaxResults(max)
-            .getResultList();
-    em.close();
-    return Proxy.getSecureInstances(out);
+            .getResultList());
   }
 
   public boolean isActive() {
@@ -288,48 +288,50 @@ public class User implements Serializable {
 
   public Collection<Transaction> getAllValueChanges() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<Transaction> out =
-        em.createQuery(
-                "select t from Transaction t where t.fromUser.id in(:ids) or t.toUser.id in (:ids) order by date",
-                Transaction.class)
-            .setParameter(
-                "ids", getAllGroupMembers().stream().map(User::getId).collect(Collectors.toList()))
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select t from Transaction t where t.fromUser.id in(:ids) or t.toUser.id in (:ids) order by date",
+            Transaction.class)
+        .setParameter(
+            "ids", getAllGroupMembers().stream().map(User::getId).collect(Collectors.toList()))
+        .getResultList();
   }
 
   public Collection<Transaction> getAllTransactions() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<Transaction> out =
-        em.createQuery(
-                "select t from Transaction t where t.fromUser.id = :id or t.toUser.id = :id",
-                Transaction.class)
-            .setParameter("id", id)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select t from Transaction t where t.fromUser.id = :id or t.toUser.id = :id",
+            Transaction.class)
+        .setParameter("id", id)
+        .getResultList();
   }
 
   public Collection<Purchase> getAllPurchases() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<Purchase> out =
-        em.createQuery("select p from Purchase p where p.session.customer.id = :id", Purchase.class)
-            .setParameter("id", id)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select p from Purchase p where p.session.customer.id = :id", Purchase.class)
+        .setParameter("id", id)
+        .getResultList();
   }
 
   public static User getKernbeisserUser() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     try {
       return em.createQuery("select u from User u where u.username = 'kernbeisser'", User.class)
           .setMaxResults(1)
           .getSingleResult();
     } catch (NoResultException e) {
-      EntityTransaction et = em.getTransaction();
-      et.begin();
       User kernbeisser = new User();
       kernbeisser.getPermissions().add(PermissionConstants.APPLICATION.getPermission());
       kernbeisser.setPassword("CANNOT LOG IN");
@@ -341,10 +343,7 @@ public class User implements Serializable {
       kernbeisser.setUserGroup(kernbeisserValue);
       em.persist(kernbeisser);
       em.flush();
-      et.commit();
       return getKernbeisserUser();
-    } finally {
-      em.close();
     }
   }
 
@@ -364,6 +363,9 @@ public class User implements Serializable {
 
   public double valueAt(Instant instant) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     CriteriaBuilder builder = em.getCriteriaBuilder();
     builder.createQuery(Transaction.class);
     CriteriaQuery<Transaction> query = builder.createQuery(Transaction.class);
@@ -424,16 +426,19 @@ public class User implements Serializable {
   public void ignoreDialog(String name) {
     IgnoredDialog ignoredDialog = new IgnoredDialog(this, name);
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.persist(ignoredDialog);
     em.flush();
-    et.commit();
     getIgnoredDialogs().add(name);
   }
 
   public static Collection<User> getAllUserFullNames(boolean withKbUser) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     List<User> result =
         em.createQuery(
                 "select u from User u where upper(username) != 'KERNBEISSER' order by firstName,surname asc",

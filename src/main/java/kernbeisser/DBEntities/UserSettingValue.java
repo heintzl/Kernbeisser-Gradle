@@ -50,6 +50,9 @@ public class UserSettingValue {
 
   private static String loadOrCreateSettingValue(UserSetting setting, User user) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     try {
       return em.createQuery(
               "select s from UserSettingValue s where userSetting = :sn and user.id = :id",
@@ -59,29 +62,25 @@ public class UserSettingValue {
           .getSingleResult()
           .value;
     } catch (NoResultException e) {
-      EntityTransaction et = em.getTransaction();
-      et.begin();
       UserSettingValue value = new UserSettingValue();
       value.value = setting.getDefaultValue();
       value.setUser(user);
       value.setUserSetting(setting);
       em.persist(value);
       em.flush();
-      et.commit();
       return loadOrCreateSettingValue(setting, user);
-    } finally {
-      em.close();
     }
   }
 
   private static Collection<UserSettingValue> getAllForUser(User user) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    List<UserSettingValue> out =
-        em.createQuery("select u from UserSettingValue u where u.id = :id", UserSettingValue.class)
-            .setParameter("id", user.getId())
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select u from UserSettingValue u where u.id = :id", UserSettingValue.class)
+        .setParameter("id", user.getId())
+        .getResultList();
   }
 
   public static String getValueFor(User user, UserSetting setting) {
@@ -119,6 +118,7 @@ public class UserSettingValue {
 
   public static void setValue(User user, UserSetting setting, String value) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.createQuery(
@@ -128,8 +128,6 @@ public class UserSettingValue {
         .setParameter("us", setting)
         .executeUpdate();
     em.flush();
-    et.commit();
-    em.close();
     loadUser(user);
   }
 }

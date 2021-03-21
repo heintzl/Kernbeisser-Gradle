@@ -97,6 +97,7 @@ public class Users {
 
   public static void switchUserGroup(int userId, int userGroupId) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     User currentUser = em.find(User.class, userId);
@@ -111,7 +112,6 @@ public class Users {
     em.persist(destination);
     currentUser.setUserGroup(destination);
     em.persist(currentUser);
-    et.commit();
     em.close();
   }
 
