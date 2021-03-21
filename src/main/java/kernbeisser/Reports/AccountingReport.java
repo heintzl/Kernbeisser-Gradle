@@ -17,6 +17,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.swing.*;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.VAT;
+import kernbeisser.Exeptions.InvalidVATValueException;
+import lombok.Cleanup;
+import org.jetbrains.annotations.NotNull;
 
 public class AccountingReport extends Report {
 
@@ -35,7 +45,9 @@ public class AccountingReport extends Report {
 
   private static List<Purchase> getPurchases(long startBon, long endBon) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     List<Purchase> purchases =
         em.createQuery("select p from Purchase p where p.id between :from and :to", Purchase.class)
             .setParameter("from", startBon)
@@ -155,6 +167,9 @@ public class AccountingReport extends Report {
 
   private static Map<String, Object> getAccountingTransactionParams(List<Purchase> purchases) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     double transactionSaldo = 0.0;
     double transactionCreditPayIn = 0.0;
     double transactionSpecialPayments = 0.0;

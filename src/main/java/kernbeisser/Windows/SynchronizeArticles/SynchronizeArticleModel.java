@@ -46,6 +46,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
 
   void setProductGroups(Stream<String> source) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     Catalog catalog = Catalog.read(source);
@@ -61,10 +62,9 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
             .getResultList();
     CatalogDataInterpreter.linkArticles(articleBases, kornkraftGroupHashMap);
     CatalogDataInterpreter.autoLinkArticle(
-        articleBases, Supplier.getKKSupplier().getDefaultSurchargeGroup(em));
+        articleBases, Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup(em));
     articleBases.forEach(em::persist);
     em.flush();
-    et.commit();
   }
 
   public Collection<ArticleDifference<?>> getAllDiffs() {

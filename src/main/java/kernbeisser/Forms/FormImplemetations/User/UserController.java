@@ -1,6 +1,7 @@
 package kernbeisser.Forms.FormImplemetations.User;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import java.util.function.Supplier;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
@@ -14,8 +15,6 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Users;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 
 public class UserController extends FormController<UserView, UserModel, User> {
   public UserController() {

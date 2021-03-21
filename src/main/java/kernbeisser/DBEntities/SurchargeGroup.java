@@ -55,15 +55,15 @@ public class SurchargeGroup implements Serializable, Cloneable {
 
   public static Collection<SurchargeGroup> defaultSearch(String s, int max) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<SurchargeGroup> out =
-        em.createQuery(
-                "select s from SurchargeGroup s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",
-                SurchargeGroup.class)
-            .setParameter("search", s + "%")
-            .setMaxResults(max)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select s from SurchargeGroup s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",
+            SurchargeGroup.class)
+        .setParameter("search", s + "%")
+        .setMaxResults(max)
+        .getResultList();
   }
 
   @Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_READ)
@@ -110,9 +110,12 @@ public class SurchargeGroup implements Serializable, Cloneable {
 
   public List<SurchargeGroup> getSubGroups() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
             "select s from SurchargeGroup s where s.parent.id = :id", SurchargeGroup.class)
-        .setParameter("id", id)
+        .setParameter("id", this.id)
         .getResultList();
   }
 
@@ -122,6 +125,9 @@ public class SurchargeGroup implements Serializable, Cloneable {
           @Override
           public List<SurchargeGroup> getSubGroups() {
             @Cleanup EntityManager em = DBConnection.getEntityManager();
+            @Cleanup(value = "commit")
+            EntityTransaction et = em.getTransaction();
+            et.begin();
             return em.createQuery(
                     "select s from SurchargeGroup s where supplier.id = :sid and parent = NULL",
                     SurchargeGroup.class)
@@ -139,6 +145,9 @@ public class SurchargeGroup implements Serializable, Cloneable {
 
   public Collection<Article> getArticles() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select a from Article a where a.surchargeGroup.id = :sg", Article.class)
         .setParameter("sg", getId())
         .getResultList();

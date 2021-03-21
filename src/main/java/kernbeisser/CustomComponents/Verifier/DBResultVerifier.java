@@ -1,6 +1,7 @@
 package kernbeisser.CustomComponents.Verifier;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -14,6 +15,9 @@ public abstract class DBResultVerifier extends TextComponentVerifier {
   @Override
   public boolean verify(JTextComponent component) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     try {
       em.createQuery(getQuery()).setParameter("s", component.getText()).getSingleResult();
       em.close();

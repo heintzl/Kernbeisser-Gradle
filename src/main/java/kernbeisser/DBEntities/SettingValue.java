@@ -51,6 +51,7 @@ public class SettingValue {
 
   public static void setValue(Setting setting, String value) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     try {
@@ -67,8 +68,6 @@ public class SettingValue {
       settingValue.value = value;
       em.persist(settingValue);
     }
-    et.commit();
-    em.close();
     getSettingValueHashMap().replace(setting, value);
   }
 

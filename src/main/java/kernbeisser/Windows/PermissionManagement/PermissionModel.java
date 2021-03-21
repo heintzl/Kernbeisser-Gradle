@@ -41,14 +41,13 @@ public class PermissionModel implements IModel<PermissionController> {
 
   void addPermission(String permissionName) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     Permission pm = new Permission();
     pm.setName(permissionName);
     em.persist(pm);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   void removeKeys(Permission permission, Collection<PermissionKey> keys) {
@@ -63,6 +62,7 @@ public class PermissionModel implements IModel<PermissionController> {
 
   public void removeUserFromPermission(Permission permission) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+
     EntityTransaction et = em.getTransaction();
     et.begin();
     // TODO: fix that inefficient query

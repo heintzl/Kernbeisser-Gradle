@@ -70,17 +70,12 @@ public class PriceList implements Serializable {
 
   private static PriceList getPriceList(String name) throws NoResultException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      PriceList out =
-          em.createQuery(
-                  "select p from PriceList p where name like '" + name + "'", PriceList.class)
-              .getSingleResult();
-      em.close();
-      return out;
-    } catch (NoResultException e) {
-      em.close();
-      throw e;
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select p from PriceList p where name like '" + name + "'", PriceList.class)
+        .getSingleResult();
   }
 
   private static PriceList getOrCreate(String name) {
@@ -106,24 +101,24 @@ public class PriceList implements Serializable {
 
   public static Collection<PriceList> getAllHeadPriceLists() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<PriceList> out =
-        em.createQuery("select p from PriceList p where p.superPriceList = null", PriceList.class)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select p from PriceList p where p.superPriceList = null", PriceList.class)
+        .getResultList();
   }
 
   public List<PriceList> getAllPriceLists() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    List<PriceList> out =
-        em.createQuery(
-                "select p from PriceList p where p.superPriceList = "
-                    + getId()
-                    + " order by p.name asc",
-                PriceList.class)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    return em.createQuery(
+            "select p from PriceList p where p.superPriceList = "
+                + getId()
+                + " order by p.name asc",
+            PriceList.class)
+        .getResultList();
   }
 
   @Override
@@ -133,6 +128,9 @@ public class PriceList implements Serializable {
 
   public List<Article> getAllArticles() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select a from Article a where a.priceList = :p", Article.class)
         .setParameter("p", this)
         .getResultList();

@@ -59,6 +59,7 @@ public class DataImportModel implements IModel<DataImportController> {
 
   void parsePriceLists(Stream<String> f, Consumer<Integer> progress) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     HashMap<String, PriceList> priceLists = new HashMap<>();
@@ -73,7 +74,6 @@ public class DataImportModel implements IModel<DataImportController> {
     progress.accept(3);
     priceLists.values().forEach(em::persist);
     em.flush();
-    et.commit();
     progress.accept(4);
   }
 
@@ -113,6 +113,7 @@ public class DataImportModel implements IModel<DataImportController> {
     User kernbeisser = User.getKernbeisserUser();
     BCrypt.Hasher hasher = BCrypt.withDefaults();
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     f.forEach(
@@ -155,8 +156,6 @@ public class DataImportModel implements IModel<DataImportController> {
           em.persist(transaction);
         });
     em.flush();
-    et.commit();
-    em.close();
     progress.accept(4);
   }
 
@@ -172,6 +171,7 @@ public class DataImportModel implements IModel<DataImportController> {
 
   private void setProductGroups(Stream<String> productGroups) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     Catalog catalog = Catalog.read(productGroups);
@@ -186,10 +186,9 @@ public class DataImportModel implements IModel<DataImportController> {
             .getResultList();
     CatalogDataInterpreter.linkArticles(articles, surchargeGroupHashMap);
     CatalogDataInterpreter.autoLinkArticle(
-        articles, Supplier.getKKSupplier().getDefaultSurchargeGroup(em));
+        articles, Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup(em));
     articles.forEach(em::persist);
     em.flush();
-    et.commit();
   }
 
   private void readCatalog(Collection<String> kornkraftCatalog) {
@@ -200,6 +199,7 @@ public class DataImportModel implements IModel<DataImportController> {
 
   private void readArticles(Stream<String> f) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     HashSet<Long> barcode = new HashSet<>(5000);
@@ -210,7 +210,7 @@ public class DataImportModel implements IModel<DataImportController> {
     HashMap<Article, Collection<Offer>> articleCollectionHashMap = new HashMap<>(5000);
     Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
     Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
-    suppliers.values().forEach(e -> defaultGroup.put(e, e.getDefaultSurchargeGroup(em)));
+    suppliers.values().forEach(e -> defaultGroup.put(e, e.getOrPersistDefaultSurchargeGroup(em)));
     ErrorCollector errorCollector = new ErrorCollector();
     f.forEach(
         e -> {
@@ -239,11 +239,11 @@ public class DataImportModel implements IModel<DataImportController> {
                     e -> e + 1));
     articles.forEach(em::persist);
     em.flush();
-    et.commit();
   }
 
   void parseJobs(Stream<String> f, Consumer<Integer> progress) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     f.forEach(
@@ -255,7 +255,6 @@ public class DataImportModel implements IModel<DataImportController> {
           em.persist(job);
         });
     em.flush();
-    et.commit();
     progress.accept(2);
   }
 }

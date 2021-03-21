@@ -1,13 +1,12 @@
 package kernbeisser.StartUp.LogIn;
 
+import java.awt.*;
+import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class DBLogInView implements IView<DBLogInController> {
   private JButton logIn;

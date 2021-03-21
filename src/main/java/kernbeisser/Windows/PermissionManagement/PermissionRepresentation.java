@@ -32,6 +32,7 @@ public class PermissionRepresentation {
   public static void putInDB(File file) throws FileNotFoundException {
     PermissionRepresentation representation = read(file);
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     HashMap<String, User> userHashMap = new HashMap<>();
@@ -56,8 +57,6 @@ public class PermissionRepresentation {
     }
     userHashMap.values().forEach(em::persist);
     em.flush();
-    et.commit();
-    em.close();
   }
 
   public static List<Permission> parsePermissions(PermissionRepresentation representation) {

@@ -70,6 +70,9 @@ public class PreOrder implements Serializable {
 
   public int getKBNumber() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
             "select a.kbNumber from Article a where  suppliersItemNumber = :i and supplier = :s",
             Integer.class)

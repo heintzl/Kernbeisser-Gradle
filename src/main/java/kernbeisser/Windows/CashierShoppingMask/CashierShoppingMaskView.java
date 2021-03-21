@@ -1,5 +1,8 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
+import java.awt.*;
+import java.util.Collection;
+import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -12,10 +15,6 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Collection;
 
 public class CashierShoppingMaskView implements IView<CashierShoppingMaskController> {
   private JPanel main;

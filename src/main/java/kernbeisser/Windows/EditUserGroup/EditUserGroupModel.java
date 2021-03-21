@@ -26,16 +26,19 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
 
   void changeUserGroup(int user, int destination) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
   }
 
   public void changeSoli(double newValue) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     UserGroup userGroup = em.find(UserGroup.class, user.getUserGroup().getId());
     userGroup.setSolidaritySurcharge(newValue);
     em.persist(userGroup);
-    et.commit();
   }
 }

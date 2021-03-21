@@ -33,6 +33,9 @@ public class SupplyModel implements IModel<SupplyController> {
 
   public int getNextUnusedKBNumber(int kbNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
                 "select a.kbNumber from Article a where a.kbNumber >= :kb and not exists (select u from Article u where u.kbNumber = a.kbNumber+1)",
                 Integer.class)
@@ -44,11 +47,15 @@ public class SupplyModel implements IModel<SupplyController> {
 
   public Article getBySuppliersItemNumber(Supplier supplier, int suppliersItemNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return getArticleViaSuppliersItemNumber(supplier, suppliersItemNumber, em).getSingleResult();
   }
 
   void commit() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     for (ShoppingItem item : shoppingItems) {
@@ -56,7 +63,6 @@ public class SupplyModel implements IModel<SupplyController> {
       em.persist(item);
     }
     em.flush();
-    et.commit();
   }
 
   Collection<Supplier> getAllSuppliers() {
@@ -81,11 +87,17 @@ public class SupplyModel implements IModel<SupplyController> {
 
   public Collection<PriceList> getAllPriceLists() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select p from PriceList p", PriceList.class).getResultList();
   }
 
   void print() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     HashMap<Integer, Article> articleHashMap = new HashMap<>();
     em.createQuery("select a from Article a", Article.class)
         .getResultStream()

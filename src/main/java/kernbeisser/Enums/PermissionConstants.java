@@ -38,22 +38,20 @@ public enum PermissionConstants {
 
   private static Permission loadOrCreate(PermissionConstants constants) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     try {
       return em.createQuery("select p from Permission p where name like :pcn", Permission.class)
           .setParameter("pcn", "@" + constants.name())
           .getSingleResult();
     } catch (NoResultException e) {
-      EntityTransaction et = em.getTransaction();
-      et.begin();
       Permission permission = new Permission();
       permission.getKeySet().addAll(Arrays.asList(constants.defaultPermissionKeys));
       permission.setName("@" + constants.name());
       em.persist(permission);
       em.flush();
-      et.commit();
       return loadOrCreate(constants);
-    } finally {
-      em.close();
     }
   }
 }

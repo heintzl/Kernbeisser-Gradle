@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.UserGroup;
 import lombok.Cleanup;
@@ -33,6 +34,9 @@ public class UserBalanceReport extends Report {
   @Override
   Collection<?> getDetailCollection() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select u from UserGroup u", UserGroup.class)
         .getResultStream()
         .map(ug -> ug.withMembersAsString(this.withNames))

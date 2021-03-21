@@ -68,12 +68,12 @@ public class Purchase {
 
   public Collection<ShoppingItem> getAllItems() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<ShoppingItem> out =
-        em.createQuery(
-                "select i from ShoppingItem i where i.purchase.id = " + id, ShoppingItem.class)
-            .getResultList();
-    em.close();
-    return out;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select i from ShoppingItem i where i.purchase.id = " + id, ShoppingItem.class)
+        .getResultList();
   }
 
   public double getFilteredSum(Predicate<ShoppingItem> filter) {
@@ -98,11 +98,12 @@ public class Purchase {
 
   public static long getLastBonNo() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      Long result = em.createQuery("select max(id) from Purchase p", Long.class).getSingleResult();
-      return (result == null ? -1 : result);
-    } catch (NoResultException e) {
-      return -1;
-    }
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select max(id) from Purchase p", Long.class)
+        .getResultStream()
+        .findAny()
+        .orElse(-1L);
   }
 }

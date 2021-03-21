@@ -31,6 +31,7 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
 
   public void setSuperPriceList(PriceList target, PriceList destination) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.createQuery("update PriceList set superPriceList = :d where id = :t")
@@ -38,7 +39,6 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
         .setParameter("t", target.getId())
         .executeUpdate();
     em.flush();
-    et.commit();
   }
 
   public void add(Node<PriceList> selectedNode, String requestName) throws PersistenceException {
@@ -50,6 +50,7 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
 
   public void moveItems(PriceList target, PriceList destination) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.createQuery("UPDATE Article set priceList = :d where priceList = :t")
@@ -57,7 +58,6 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
         .setParameter("d", destination)
         .executeUpdate();
     em.flush();
-    et.commit();
   }
 
   public void print(PriceList selectedList) {

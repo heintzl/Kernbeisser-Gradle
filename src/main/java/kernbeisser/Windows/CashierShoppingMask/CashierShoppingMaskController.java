@@ -1,5 +1,9 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -20,11 +24,6 @@ import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
-
-import javax.persistence.NoResultException;
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Requires(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK)
 public class CashierShoppingMaskController

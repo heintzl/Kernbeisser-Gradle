@@ -1,5 +1,11 @@
 package kernbeisser.DBConnection;
 
+import java.util.HashMap;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Enums.Setting;
@@ -9,13 +15,6 @@ import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ViewContainers.JFrameWindow;
 import org.hibernate.service.spi.ServiceException;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.swing.*;
-import java.util.HashMap;
 
 public class DBConnection {
 

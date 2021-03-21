@@ -84,12 +84,15 @@ public class Supplier implements Serializable {
   @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_UPDATE_DATE_WRITE)})
   private Instant updateDate;
 
-  public SurchargeGroup getDefaultSurchargeGroup() {
+  public SurchargeGroup getOrPersistDefaultSurchargeGroup() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return getDefaultSurchargeGroup(em);
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return getOrPersistDefaultSurchargeGroup(em);
   }
 
-  public SurchargeGroup getDefaultSurchargeGroup(EntityManager em) {
+  public SurchargeGroup getOrPersistDefaultSurchargeGroup(EntityManager em) {
     try {
       return em.createQuery(
               "select sg from SurchargeGroup sg where sg.parent = NULL and sg.supplier = :s and name = :n",
@@ -101,21 +104,17 @@ public class Supplier implements Serializable {
       SurchargeGroup defaultGroup = new SurchargeGroup();
       defaultGroup.setSupplier(this);
       defaultGroup.setName(SurchargeGroup.defaultListNameQualifier(this));
-      if (em.isJoinedToTransaction()) {
-        em.persist(defaultGroup);
-      } else {
-        EntityTransaction et = em.getTransaction();
-        et.begin();
-        em.persist(defaultGroup);
-        em.flush();
-        et.commit();
-      }
+      em.persist(defaultGroup);
+      em.flush();
       return defaultGroup;
     }
   }
 
   public static Supplier getSupplierByShortName(String shortName) throws NoResultException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select s from Supplier s where s.shortName like :sn", Supplier.class)
         .setParameter("sn", shortName)
         .getSingleResult();
@@ -127,7 +126,9 @@ public class Supplier implements Serializable {
       return getSupplierByShortName(shortName);
     } catch (NoResultException e) {
       @Cleanup EntityManager em = DBConnection.getEntityManager();
+      @Cleanup(value = "commit")
       EntityTransaction et = em.getTransaction();
+      et.begin();
       Supplier s = new Supplier();
       s.setName(defaultName);
       s.setShortName(shortName);
@@ -135,8 +136,6 @@ public class Supplier implements Serializable {
       et.begin();
       em.persist(s);
       em.flush();
-      et.commit();
-      em.close();
       return getSupplierByShortName(shortName);
     }
   }
@@ -175,14 +174,14 @@ public class Supplier implements Serializable {
 
   public static Collection<Supplier> defaultSearch(String s, int max) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    Collection<Supplier> suppliers =
-        em.createQuery(
-                "select s from Supplier s where s.name like :n or keeper like :n or s.phoneNumber like :n or s.fax like :n or email like :n",
-                Supplier.class)
-            .setParameter("n", "%" + s + "%")
-            .setMaxResults(max)
-            .getResultList();
-    em.close();
-    return suppliers;
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select s from Supplier s where s.name like :n or keeper like :n or s.phoneNumber like :n or s.fax like :n or email like :n",
+            Supplier.class)
+        .setParameter("n", "%" + s + "%")
+        .setMaxResults(max)
+        .getResultList();
   }
 }

@@ -24,7 +24,7 @@ gitHooks {
 
 dependencies {
     implementation 'org.hibernate:hibernate-agroal:5.3.12.Final'
-    implementation 'mysql:mysql-connector-java:5.1.6'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
     implementation 'at.favre.lib:bcrypt:0.9.0'
     implementation "com.github.jiconfont:jiconfont-font_awesome:4.7.0.1"
     implementation "com.github.jiconfont:jiconfont-swing:1.0.0"

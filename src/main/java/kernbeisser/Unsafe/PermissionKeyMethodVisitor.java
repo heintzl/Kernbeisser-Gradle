@@ -21,46 +21,30 @@ import org.objectweb.asm.Opcodes;
 
 /** faster imp of the SubMethodVisitor by buffering target methods */
 public class PermissionKeyMethodVisitor extends ClassVisitor {
-
   private int depth;
   private String targetMethodName;
   private String targetDescriptor;
   private final Set<String> visited;
-  private final PermissionSet collected = new PermissionSet();
+  private final PermissionSet collected;
 
-  @SneakyThrows
-  private static Method getByNameAndDescriptor(
-      Class<?> cl, String targetMethodName, String targetDescriptor) {
-
-    Field gSig = Method.class.getDeclaredField("signature");
-    gSig.setAccessible(true);
-    if (targetMethodName.equals("<init>")) return null;
-    do {
+  private static Method getReflectedMethod(Serializable lambda) throws Exception {
+    try {
+      Method m = lambda.getClass().getDeclaredMethod("writeReplace");
+      m.setAccessible(true);
+      SerializedLambda sl = (SerializedLambda) m.invoke(lambda);
+      Class<?> cl = Class.forName(sl.getImplClass().replace("/", "."));
+      Field gSig = Method.class.getDeclaredField("signature");
+      gSig.setAccessible(true);
       for (Method declaredMethod : cl.getDeclaredMethods()) {
-        if (declaredMethod.getName().equals(targetMethodName)
-            && targetDescriptor.equals(getSignature(declaredMethod, gSig))) {
+        if (declaredMethod.getName().equals(sl.getImplMethodName())
+            && sl.getImplMethodSignature().equals(getSignature(declaredMethod, gSig))) {
           return declaredMethod;
         }
       }
-      cl = cl.getSuperclass();
-    } while (!cl.equals(Object.class));
-    throw new UnsupportedOperationException("cannot find method");
-  }
-
-  private static Method getReflectedMethod(Serializable lambda) throws Exception {
-    Method m = lambda.getClass().getDeclaredMethod("writeReplace");
-    m.setAccessible(true);
-    SerializedLambda sl = (SerializedLambda) m.invoke(lambda);
-    Class<?> cl = Class.forName(sl.getImplClass().replace("/", "."));
-    Field gSig = Method.class.getDeclaredField("signature");
-    gSig.setAccessible(true);
-    for (Method declaredMethod : cl.getDeclaredMethods()) {
-      if (declaredMethod.getName().equals(sl.getImplMethodName())
-          && sl.getImplMethodSignature().equals(getSignature(declaredMethod, gSig))) {
-        return declaredMethod;
-      }
+      throw new UnsupportedOperationException("cannot find method");
+    } catch (NoSuchMethodException | ClassCastException e) {
+      throw new UnsupportedOperationException("not a lambda instance");
     }
-    throw new UnsupportedOperationException("cannot find method");
   }
 
   public static String getSignature(Method m, Field signature) {
@@ -93,20 +77,7 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
     return getSignature(m, sig);
   }
 
-  public PermissionKeyMethodVisitor(
-      int depth, String target, String signature, Set<String> alreadyVisited) throws Exception {
-    super(Opcodes.ASM7);
-    this.depth = depth;
-    this.targetMethodName = target;
-    this.targetDescriptor = signature;
-    this.visited = alreadyVisited;
-  }
-
-  public PermissionKeyMethodVisitor(int depth, Serializable serializable) throws Exception {
-    this(depth, getReflectedMethod(serializable));
-  }
-
-  public PermissionKeyMethodVisitor(int depth, Method method) {
+  public PermissionKeyMethodVisitor(int depth, Method method, PermissionSet collector) {
     super(Opcodes.ASM7);
     this.depth = depth;
     targetMethodName = method.getName();
@@ -116,6 +87,7 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
         method.getDeclaringClass().getName().replace(".", "/")
             + targetMethodName
             + targetDescriptor);
+    collected = collector;
   }
 
   @Override
@@ -170,9 +142,28 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
   }
 
   @SneakyThrows
-  public static PermissionSet accessedKeys(Serializable serializable) throws IOException {
-    Method method = getReflectedMethod(serializable);
-    PermissionKeyMethodVisitor subMethodVisitor = new PermissionKeyMethodVisitor(4, method);
+  public static PermissionSet accessedKeys(Serializable serializable) {
+    return accessedKeys(serializable, new PermissionSet(), -1);
+  }
+
+  @SneakyThrows
+  // searches the binary class for methods look-ups which requires permission
+  public static PermissionSet accessedKeys(
+      Serializable serializable, PermissionSet collector, int depth) {
+    try {
+      return ofMethod(getReflectedMethod(serializable), collector, depth);
+    } catch (UnsupportedOperationException e) {
+      for (Method declaredMethod : serializable.getClass().getDeclaredMethods()) {
+        ofMethod(declaredMethod, collector, depth);
+      }
+      return collector;
+    }
+  }
+
+  public static PermissionSet ofMethod(Method method, PermissionSet collector, int depth)
+      throws IOException {
+    PermissionKeyMethodVisitor subMethodVisitor =
+        new PermissionKeyMethodVisitor(depth, method, collector);
     ClassReader cr = new ClassReader(method.getDeclaringClass().getName());
     cr.accept(subMethodVisitor, 0);
     return subMethodVisitor.collected;

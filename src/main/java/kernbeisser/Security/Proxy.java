@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
@@ -160,6 +161,9 @@ public class Proxy {
   /** refreshes the object and ignores if the class is an instance of proxy */
   public static <T> T refresh(T t) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     if (isProxyInstance(t)) {
       Class<?> superClass = t.getClass().getSuperclass();
       T unProxy = (T) em.find(superClass, Tools.getId(t));

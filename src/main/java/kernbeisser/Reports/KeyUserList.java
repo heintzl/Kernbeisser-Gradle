@@ -6,8 +6,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import lombok.Cleanup;
@@ -33,10 +35,13 @@ public class KeyUserList extends Report {
   @Override
   Collection<?> getDetailCollection() {
     Comparator<User> sorter = Comparator.comparing(User::getId);
-    if (sortOrder == "Name") {
+    if (Objects.equals(sortOrder, "Name")) {
       sorter = Comparator.comparing(User::getFullName);
     }
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery("select u from User u", User.class)
         .getResultStream()
         .sorted(sorter)
