@@ -26,6 +26,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   @Getter private JRadioButton beginnerCustomers;
   @Getter private JRadioButton allCustomers;
   private JButton userInfo;
+  private JButton close;
 
   @Linked private CashierShoppingMaskController controller;
 
@@ -66,6 +67,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
     beginnerCustomers.addActionListener(e -> controller.changeFilter());
     userInfo.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
     userInfo.addActionListener(e -> controller.openUserInfo());
+    close.addActionListener(e -> back());
   }
 
   @Override

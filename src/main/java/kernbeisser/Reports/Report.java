@@ -182,12 +182,11 @@ public abstract class Report {
                   new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 2);
               pm.setProgress(1);
               pm.setNote("Exportiere PDF..");
-              // pm.setMillisToPopup(50);
               try {
                 JasperExportManager.exportReportToPdfFile(getJspPrint(), filePath.toString());
-                Tools.openFile(filePath.toFile());
                 pm.setNote("Fertig");
                 pm.close();
+                Tools.openFile(filePath.toFile());
               } catch (JRException e) {
                 if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
                   Tools.showPrintAbortedWarning(e, true);

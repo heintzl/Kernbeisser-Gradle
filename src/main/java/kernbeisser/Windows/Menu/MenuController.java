@@ -1,6 +1,5 @@
 package kernbeisser.Windows.Menu;
 
-import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormEditor.FormEditorController;
@@ -11,6 +10,8 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class MenuController extends Controller<MenuView, MenuModel> {
 
@@ -35,8 +36,10 @@ public class MenuController extends Controller<MenuView, MenuModel> {
     if (alreadyAsked) return true;
     if (JOptionPane.showConfirmDialog(
             view.getTopComponent(),
-            "Bist du sicher, dass du dich ausloggen und\n"
-                + "damit alle geöfnteten Tabs / Fenster schließen möchtest?")
+            "Bist du sicher, dass du dich abmelden und\n"
+                + "damit alle geöffneten Tabs / Fenster schließen möchtest?",
+            "Abmelden",
+            JOptionPane.YES_NO_OPTION)
         == 0) {
       SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getTopComponent());
       view.traceViewContainer().getLoaded().withCloseEvent(SimpleLogInController::new);
