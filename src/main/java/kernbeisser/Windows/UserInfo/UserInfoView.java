@@ -1,12 +1,5 @@
 package kernbeisser.Windows.UserInfo;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.util.Collection;
-import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
@@ -18,6 +11,16 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.util.Collection;
+
+import static java.lang.String.format;
 
 public class UserInfoView implements IView<UserInfoController> {
 
@@ -92,7 +95,7 @@ public class UserInfoView implements IView<UserInfoController> {
             Column.create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate())),
             Column.create("Verkäufer", e -> e.getSession().getSeller()),
             Column.create("Käufer", e -> e.getSession().getCustomer()),
-            Column.create("Summe", e -> String.format("%.2f€", e.getSum())));
+            Column.create("Summe", e -> format("%.2f€", e.getSum())));
   }
 
   void pasteUser(User user) {
@@ -134,7 +137,7 @@ public class UserInfoView implements IView<UserInfoController> {
             : "Kein zugriff");
     solidarySurcharge.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)
-            ? user.getUserGroup().getSolidaritySurcharge() + ""
+            ? format("%.1f%%", user.getUserGroup().getSolidaritySurcharge() * 100)
             : "Kein zugriff");
     createDate.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_CREATE_DATE_READ)
@@ -164,7 +167,7 @@ public class UserInfoView implements IView<UserInfoController> {
     townCode.setText(String.valueOf(user.getTownCode()));
     street.setText(user.getStreet());
     shares.setText(String.valueOf(user.getShares()));
-    solidarySurcharge.setText(user.getUserGroup().getSolidaritySurcharge() + "");
+    solidarySurcharge.setText(format("%.1f%%", user.getUserGroup().getSolidaritySurcharge()));
     createDate.setText(Date.INSTANT_DATE_TIME.format(user.getCreateDate()));
     updateDate.setText(Date.INSTANT_DATE_TIME.format(user.getUpdateDate()));
     key.setText(user.getKernbeisserKey() == -1 ? "Kein Schlüssel" : user.getKernbeisserKey() + "");

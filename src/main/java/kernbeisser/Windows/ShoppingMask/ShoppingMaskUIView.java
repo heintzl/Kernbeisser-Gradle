@@ -9,6 +9,7 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
@@ -89,6 +90,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private JComboBox supplier;
   private JButton emptyShoppingCart;
   private JComboBox vat;
+  private JLabel solidarity;
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
@@ -130,9 +132,10 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   void loadUserInfo(SaleSession saleSession) {
     String customerDisplayName = saleSession.getCustomer().getFullName();
+    UserGroup userGroup = saleSession.getCustomer().getUserGroup();
     customerName.setText(customerDisplayName);
-    customerCredit.setText(
-        format("{0, number, 0.00}\u20AC", saleSession.getCustomer().getUserGroup().getValue()));
+    customerCredit.setText(format("{0, number, 0.00}\u20AC", userGroup.getValue()));
+    solidarity.setText(format("{0, number, 0.0} %", userGroup.getSolidaritySurcharge() * 100));
     salesPersonInfo.setText(
         saleSession.getSeller().getFullName()
             + (saleSession.getSecondSeller() != null
