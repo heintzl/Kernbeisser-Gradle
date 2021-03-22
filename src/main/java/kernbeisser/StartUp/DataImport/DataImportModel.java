@@ -151,7 +151,7 @@ public class DataImportModel implements IModel<DataImportController> {
           transaction.setTransactionType(TransactionType.INITIALIZE);
           transaction.setFromUser(kernbeisser);
           transaction.setValue(Users.getValue(rawUserData));
-          transaction.setInfo("Übertrag des Guthaben des alten Kernbeisser Programmes");
+          transaction.setInfo("Übertrag des Guthabens des alten Kernbeisser Programms");
           transaction.setToUser(users[0]);
           em.persist(transaction);
         });

@@ -70,7 +70,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
                 "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName(), RIGHT),
             Column.create("Ladennummer", Article::getKbNumber, RIGHT),
             Column.create("Lieferant", Article::getSupplier, LEFT),
-            Column.create("Lieferantenummer", Article::getSuppliersItemNumber, RIGHT),
+            Column.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT),
             Column.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein", LEFT),
             Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice()), RIGHT),
             Column.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit()), RIGHT),

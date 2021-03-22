@@ -1,5 +1,14 @@
 package kernbeisser.Windows.UserInfo;
 
+import static java.lang.String.format;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.util.Collection;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
@@ -11,16 +20,6 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.util.Collection;
-
-import static java.lang.String.format;
 
 public class UserInfoView implements IView<UserInfoController> {
 
@@ -102,31 +101,31 @@ public class UserInfoView implements IView<UserInfoController> {
     phoneNumber1.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_PHONE_NUMBER1_READ)
             ? user.getPhoneNumber1()
-            : "Kein zugriff");
+            : "Kein Zugriff");
     username.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_USERNAME_READ)
             ? user.getUsername()
-            : "Kein zugriff");
+            : "Kein Zugriff");
     firstName.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_FIRST_NAME_READ)
             ? user.getFirstName()
-            : "Kein zugriff");
+            : "Kein Zugriff");
     surname.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_SURNAME_READ)
             ? user.getSurname()
-            : "Kein zugriff");
+            : "Kein Zugriff");
     email.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_EMAIL_READ)
             ? user.getEmail()
-            : "Kein zugriff");
+            : "Kein Zugriff");
     phoneNumber2.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_PHONE_NUMBER2_READ)
             ? user.getPhoneNumber2()
-            : "Kein zugriff");
+            : "Kein Zugriff");
     townCode.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_TOWN_READ)
             ? String.valueOf(user.getTownCode())
-            : "Kein zugriff");
+            : "Kein Zugriff");
     street.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_STREET_READ)
             ? user.getStreet()
@@ -134,23 +133,23 @@ public class UserInfoView implements IView<UserInfoController> {
     shares.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_SHARES_READ)
             ? String.valueOf(user.getShares())
-            : "Kein zugriff");
+            : "Kein Zugriff");
     solidarySurcharge.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)
             ? format("%.1f%%", user.getUserGroup().getSolidaritySurcharge() * 100)
-            : "Kein zugriff");
+            : "Kein Zugriff");
     createDate.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_CREATE_DATE_READ)
             ? Date.INSTANT_DATE_TIME.format(user.getCreateDate())
-            : "Kein zugriff");
+            : "Kein Zugriff");
     updateDate.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_UPDATE_DATE_READ)
             ? Date.INSTANT_DATE_TIME.format(user.getUpdateDate())
-            : "Kein zugriff");
+            : "Kein Zugriff");
     key.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_KERNBEISSER_KEY_READ)
             ? user.getKernbeisserKey() == -1 ? "Kein Schlüssel" : user.getKernbeisserKey() + ""
-            : "Kein zugriff");
+            : "Kein Zugriff");
     city.setText(
         LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_TOWN_READ)
             ? user.getTown()

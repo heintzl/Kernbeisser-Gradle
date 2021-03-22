@@ -319,8 +319,8 @@ public class Tools {
     Main.logger.error(e.getMessage(), e);
     JOptionPane.showMessageDialog(
         null,
-        "Ein Unerwarteter Fehler ist aufgetreten.\n"
-            + "Bitte melden sie den Fehler beim Entwicklerteam\n"
+        "Ein unerwarteter Fehler ist aufgetreten.\n"
+            + "Bitte melde den Fehler beim Entwicklerteam\n"
             + "oder auf Github:\n"
             + "https://github.com/julikiller98/Kernbeisser-Gradle/\n"
             + "Fehler:\n"

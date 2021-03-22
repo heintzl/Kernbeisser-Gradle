@@ -149,7 +149,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   public void cannotParseDateFormat() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Das angegebene Datum kann nicht eingelesen werden,\n bitte überprüfen sie ob das folgende Format eingehalten wurde:\n dd:mm:yyyy");
+        "Das angegebene Datum kann nicht eingelesen werden,\n bitte überprüfe, ob das folgende Format eingehalten wurde:\n dd:mm:yyyy");
   }
 
   @Override
@@ -201,7 +201,7 @@ public class SpecialPriceEditorView implements IView<SpecialPriceEditorControlle
   public boolean commitStrangeNetPrice() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Der eingengebene Aktionspreis ist höher als der Normalpreis. Ist das wirklich korrekt?")
+            "Der eingegebene Aktionspreis ist höher als der Normalpreis. Ist das wirklich korrekt?")
         == 0;
   }
 

@@ -97,7 +97,7 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
 
   @Override
   public String getTitle() {
-    return "Zuschlagesgruppen bearbeiten";
+    return "Zuschlagsgruppen bearbeiten";
   }
 
   @Override
@@ -133,13 +133,13 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
   public void constraintViolationException() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Die Zuschlagsgruppe kann nicht gelöscht werden,\nda noch Artikel auf sie verweissen!");
+        "Die Zuschlagsgruppe kann nicht gelöscht werden,\nda noch Artikel auf sie verweisen!");
   }
 
   public boolean shouldBecomeAutoLinked() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Sollen die Artikel automatisch einer anderen Zuschlagsgruppe zugeteilt werden, um anschließend den Vorgang zu wiederholen?")
+            "Sollen die Artikel automatisch einer anderen Zuschlagsgruppe zugeteilt werden um anschließend den Vorgang zu wiederholen?")
         == 0;
   }
 

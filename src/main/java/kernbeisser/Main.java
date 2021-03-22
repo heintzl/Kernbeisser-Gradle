@@ -91,11 +91,11 @@ public class Main {
     if (!Setting.DB_VERSION.getStringValue().equals(Setting.DB_VERSION.getDefaultValue())
         && JOptionPane.showConfirmDialog(
                 null,
-                "Ihre Datenbankversion entspricht nicht der aktuellsten Version.\nAktuelle Version: "
+                "Ihre Datenbankversion entspricht nicht der aktuellsten Version. per\nAktuelle Version: "
                     + Setting.DB_VERSION.getStringValue()
-                    + "\nNeuste Verstion: "
+                    + "\nNeueste Version: "
                     + Setting.DB_VERSION.getDefaultValue()
-                    + "\nWollen sie die Datenbank leeren und eine neue Datenbank instanz\nerstellen?")
+                    + "\nWillst du die Datenbank leeren und eine neue Datenbankinstanz\nerstellen?")
             == 0) {
       updateDBVersion();
     }
