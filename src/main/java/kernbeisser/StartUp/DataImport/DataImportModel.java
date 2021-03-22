@@ -1,5 +1,7 @@
 package kernbeisser.StartUp.DataImport;
 
+import static kernbeisser.Useful.Users.generateUserRelatedToken;
+
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,6 +110,7 @@ public class DataImportModel implements IModel<DataImportController> {
     HashSet<String> usernames = new HashSet<>();
     HashMap<String, Job> jobs = new HashMap<>();
     Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
+    final boolean relatedPassword = Setting.GENERATE_PASSWORD_RELATED_TO_USERNAME.getBooleanValue();
     Permission importPermission = PermissionConstants.IMPORT.getPermission();
     Permission keyPermission = PermissionConstants.KEY_PERMISSION.getPermission();
     User kernbeisser = User.getKernbeisserUser();
@@ -127,9 +130,18 @@ public class DataImportModel implements IModel<DataImportController> {
           users[0].setUserGroup(userGroup);
           users[1].setUserGroup(userGroup);
 
-          String defaultPassword = hasher.hashToString(4, "start".toCharArray());
-          users[0].setPassword(defaultPassword);
-          users[1].setPassword(defaultPassword);
+          users[0].setPassword(
+              hasher.hashToString(
+                  4,
+                  relatedPassword
+                      ? generateUserRelatedToken(users[0].getUsername()).toCharArray()
+                      : "start".toCharArray()));
+          users[1].setPassword(
+              hasher.hashToString(
+                  4,
+                  relatedPassword
+                      ? generateUserRelatedToken(users[1].getUsername()).toCharArray()
+                      : "start".toCharArray()));
 
           userGroup.setValue(Users.getValue(rawUserData));
           em.persist(userGroup);

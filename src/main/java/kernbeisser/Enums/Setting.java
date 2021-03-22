@@ -62,7 +62,8 @@ public enum Setting {
   WARN_ARTICLE_DIFFERENCE("10"),
   VALIDATE_EMAIL_SYNTAX("false"),
   IS_DEFAULT_SURCHARGES("true"),
-  PASSWORD_TOKEN_GENERATION_LENGTH("8");
+  PASSWORD_TOKEN_GENERATION_LENGTH("8"),
+  GENERATE_PASSWORD_RELATED_TO_USERNAME("false");
 
   // defines the type like in java style
   // Value: Type:

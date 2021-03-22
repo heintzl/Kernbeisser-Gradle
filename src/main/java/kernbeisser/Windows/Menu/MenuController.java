@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Menu;
 
+import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormEditor.FormEditorController;
@@ -10,8 +11,6 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class MenuController extends Controller<MenuView, MenuModel> {
 
