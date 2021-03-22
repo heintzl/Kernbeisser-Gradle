@@ -9,7 +9,7 @@ public enum PasswordStrength {
           + Setting.MIN_PASSWORD_LENGTH.getIntValue()
           + " Zeichen lang sein",
       new Color(0xEE0000)),
-  TO_LOW("zu Niedrig", new Color(0xEE0000)),
+  TO_LOW("Zu niedrig", new Color(0xEE0000)),
   LOW("Niedrig", new Color(0xFF7300)),
   NORMAL("Normal", new Color(0x00AEFF)),
   GOOD("Gut", new Color(0x44FF00)),

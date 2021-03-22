@@ -19,7 +19,7 @@ public enum MetricUnits implements Named {
       return 1;
     }
   },
-  MILLILITER("Mililiter", "ml"),
+  MILLILITER("Milliliter", "ml"),
   PIECE("Stück", "stk") {
     @Override
     public double getBaseFactor() {

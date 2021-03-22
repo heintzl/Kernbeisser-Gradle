@@ -107,7 +107,7 @@ public class ObjectForm<P> {
     try {
       P data = getData(Mode.ADD);
       Tools.add(Proxy.removeProxy(data));
-      JOptionPane.showMessageDialog(null, "Das Objeckt wurde erfolgreich persistiert");
+      JOptionPane.showMessageDialog(null, "Das Object wurde erfolgreich persistiert");
       return true;
     } catch (CannotParseException e) {
       notifyException(e);

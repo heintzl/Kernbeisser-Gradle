@@ -132,6 +132,6 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   public void messageShoppingMaskAlreadyOpened() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Es ist bereits ein Einkaufs-Fenster geöffnet, um mehre Einkaufsfenster öffenen zu können, aktiviere dies bitte expliezit in deinen Einstellungen.");
+        "Es ist bereits ein Einkaufs-Fenster geöffnet, um mehrere Einkaufsfenster öffnen zu können, aktiviere dies bitte explizit in deinen Einstellungen.");
   }
 }

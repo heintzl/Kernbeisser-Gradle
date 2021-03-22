@@ -437,7 +437,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     netPrice.setText("0.00");
     depositUnit.setText("€");
     priceUnit.setText("€");
-    articleName.setText("Kein Artikel gefunden!");
+    articleName.setText("Keinen Artikel gefunden!");
     amountUnit.setText("");
     containerUnit.setText("");
     currentItem = null;
@@ -447,7 +447,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     Tools.beep();
     JOptionPane.showMessageDialog(
         mainPanel,
-        "Es konnte kein Artikel mit den angegeben Artikelnummer / Lieferantennummer gefunden werden");
+        "Es konnte kein Artikel mit der angegeben Artikelnummer / Lieferantennummer gefunden werden");
   }
 
   void messageInvalidDiscount() {
@@ -470,7 +470,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     JOptionPane.showMessageDialog(
         getContent(),
         "Ungültiger Barcode: " + barcode,
-        "Barcode Fehler",
+        "Barcodefehler",
         JOptionPane.WARNING_MESSAGE);
   }
 
@@ -816,15 +816,14 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           variablePercentage.setEnabled(false);
           enablePreordered();
         });
-    rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für folge Artikel merken");
+    rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für Folgeartikel merken");
     pricePreordered.addChangeListener(
         e -> {
           if (pricePreordered.isSelected()) {
             rememberReductionSetting.setToolTipText("Nicht verfügbar für Vorbestellungsrabatt");
             rememberReductionSetting.setSelected(false);
           } else {
-            rememberReductionSetting.setToolTipText(
-                "Rabatt-Einstellungen für folge Artikel merken");
+            rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für Folgeartikel merken");
           }
           rememberReductionSetting.setEnabled(!pricePreordered.isSelected());
         });

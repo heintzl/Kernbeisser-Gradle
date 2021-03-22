@@ -119,13 +119,13 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     differences.setRowFilter(null);
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Es sind noch unsynchonisierte Artikel vorhanden,\nwollen sie das Fester wirklich schließen?")
+            "Es sind noch unsynchronisierte Artikel vorhanden,\nwillst du das Fenster wirklich schließen?")
         == 0;
   }
 
   @Override
   public String getTitle() {
-    return "Katalog sychonisieren";
+    return "Katalog sychronisieren";
   }
 
   public File requestInputFile(String... extensions) {
@@ -140,11 +140,11 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   }
 
   public void importSuccessful() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Katalog erfolgreich aktualiesiert!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Katalog erfolgreich aktualisiert!");
   }
 
   public void progressStarted() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Katalog wird Aktualiesiert!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Katalog wird aktualisiert!");
   }
 
   public void surchargeGroupsSet() {
@@ -163,7 +163,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   public void mergeDiffsFirst() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Bitte Korrigieren sie alle Konflikte bevor sie den Katalog persistieren.");
+        "Bitte korrigiere alle Konflikte bevor du den Katalog in die Datenbank übernimmst.");
     differences.setRowFilter(null);
   }
 }

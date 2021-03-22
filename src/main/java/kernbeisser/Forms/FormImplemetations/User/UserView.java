@@ -191,7 +191,7 @@ public class UserView implements IView<UserController> {
   }
 
   public void invalidInput() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Der eingegeben Werte sind nicht korrekt!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Die eingegeben Werte sind nicht korrekt!");
   }
 
   public void setUsername(String username) {
@@ -209,13 +209,13 @@ public class UserView implements IView<UserController> {
   public void showPasswordToken(String resetPassword) {
     Object message =
         new Object[] {
-          "Das genererierte Passwort ist folgendes:\n",
+          "Das generierte Passwort ist Folgendes:\n",
           new JTextField(resetPassword) {
             {
               setEditable(false);
             }
           },
-          "Bitte Loggen sie sich möglichst Zeitnah ein,\num das Passwort zu ändern."
+          "Bitte logge dich möglichst zeitnah ein,\num das Passwort zu ändern."
         };
     JOptionPane.showMessageDialog(
         getTopComponent(), message, "Generiertes Password", JOptionPane.INFORMATION_MESSAGE);
