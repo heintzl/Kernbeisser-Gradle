@@ -1,11 +1,5 @@
 package kernbeisser.Forms.ObjectForm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.function.Predicate;
-import javax.swing.*;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
@@ -17,12 +11,23 @@ import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
 import kernbeisser.Forms.ObjectForm.Properties.Predictable;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public class ObjectForm<P> {
   private final Collection<ObjectValidator<P>> objectValidators = new ArrayList<>();
 
   private final ObjectFormComponent<P>[] components;
+
+  @Getter @Setter private String objectDistinction = "Das Objekt";
 
   private boolean checkInputVerifier = true;
 
@@ -32,7 +37,7 @@ public class ObjectForm<P> {
   public ObjectForm(ObjectFormComponent<P>... boundedFields) {
     for (ObjectFormComponent<P> boundedField : boundedFields) {
       if (boundedField == null)
-        throw new NullPointerException("cannot create ObjectFrom with null fields");
+        throw new NullPointerException("cannot create ObjectForm with null fields");
     }
 
     this.components = boundedFields;
@@ -107,7 +112,7 @@ public class ObjectForm<P> {
     try {
       P data = getData(Mode.ADD);
       Tools.add(Proxy.removeProxy(data));
-      JOptionPane.showMessageDialog(null, "Das Object wurde erfolgreich persistiert");
+      JOptionPane.showMessageDialog(null, objectDistinction + " wurde erfolgreich angelegt");
       return true;
     } catch (CannotParseException e) {
       notifyException(e);
@@ -117,7 +122,7 @@ public class ObjectForm<P> {
 
   private static void notifyException(CannotParseException e) {
     if (!(e instanceof SilentParseException))
-      JOptionPane.showMessageDialog(null, "Die folgenden Felder wurden nicht korrekt ausgefüllt");
+      JOptionPane.showMessageDialog(null, "Die markierten Felder wurden nicht korrekt ausgefüllt");
   }
 
   public boolean persistChanges() {

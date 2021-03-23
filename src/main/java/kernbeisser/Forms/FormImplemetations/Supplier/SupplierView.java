@@ -1,6 +1,5 @@
 package kernbeisser.Forms.FormImplemetations.Supplier;
 
-import javax.swing.*;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
@@ -8,6 +7,8 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class SupplierView implements IView<SupplierController> {
 
@@ -29,6 +30,7 @@ public class SupplierView implements IView<SupplierController> {
   public void initialize(SupplierController controller) {
     objectForm =
         new ObjectForm<>(street, location, keeper, phoneNumber, fax, name, shortName, surcharge);
+    objectForm.setObjectDistinction("Der Lieferant");
     objectForm.registerUniqueCheck(
         shortName, controller::isShortNameUnique, this::shortNameAlreadyExists);
     objectForm.registerUniqueCheck(name, controller::isNameUnique, this::nameAlreadyExists);

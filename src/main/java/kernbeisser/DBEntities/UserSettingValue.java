@@ -1,9 +1,5 @@
 package kernbeisser.DBEntities;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.UserSetting;
@@ -13,6 +9,11 @@ import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 @Entity
 @Table
@@ -50,10 +51,10 @@ public class UserSettingValue {
 
   private static String loadOrCreateSettingValue(UserSetting setting, User user) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     try {
+      @Cleanup(value = "commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
       return em.createQuery(
               "select s from UserSettingValue s where userSetting = :sn and user.id = :id",
               UserSettingValue.class)
@@ -62,13 +63,18 @@ public class UserSettingValue {
           .getSingleResult()
           .value;
     } catch (NoResultException e) {
+      EntityTransaction et = em.getTransaction();
+      et.begin();
       UserSettingValue value = new UserSettingValue();
       value.value = setting.getDefaultValue();
       value.setUser(user);
       value.setUserSetting(setting);
       em.persist(value);
       em.flush();
+      et.commit();
       return loadOrCreateSettingValue(setting, user);
+    } finally {
+      em.close();
     }
   }
 
