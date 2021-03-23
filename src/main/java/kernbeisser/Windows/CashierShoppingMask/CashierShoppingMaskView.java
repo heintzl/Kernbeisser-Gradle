@@ -1,5 +1,8 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
+import java.awt.*;
+import java.util.Collection;
+import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -12,10 +15,6 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Collection;
 
 public class CashierShoppingMaskView implements IView<CashierShoppingMaskController> {
   private JPanel main;
@@ -111,8 +110,8 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
             getTopComponent(),
             "Bist du dir sicher das du den Ladendienst beenden\n"
                 + "und den Ladendienst-Report ausdrucken möchtest?",
-        "Ladendienst beenden",
-        JOptionPane.YES_NO_OPTION)
+            "Ladendienst beenden",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
