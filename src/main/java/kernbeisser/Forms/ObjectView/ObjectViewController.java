@@ -62,7 +62,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
       return;
     }
     model.setCurrentMode(mode);
-    if (mode == Mode.EDIT || (mode == Mode.ADD && model.isCopyValuesToAdd()))
+    if (mode == Mode.EDIT || (mode == Mode.ADD && model.isCopyValuesToAdd() && selection != null))
       model.getForm().getObjectContainer().setSource(selection);
     else model.getForm().getObjectContainer().setSource(model.getForm().defaultFactory().get());
     FormEditorController<T> formEditorController =
