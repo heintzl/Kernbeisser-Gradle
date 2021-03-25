@@ -1,5 +1,6 @@
 package kernbeisser.Forms.ObjectForm.Components;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import kernbeisser.Useful.Tools;
@@ -13,5 +14,9 @@ public interface Source<T> {
 
   public static <T> Source<T> of(Class<T> clazz) {
     return () -> Tools.getAll(clazz, null);
+  }
+
+  public static <T> Source<T> empty() {
+    return () -> new ArrayList<>(0);
   }
 }

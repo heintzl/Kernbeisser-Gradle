@@ -63,7 +63,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     } else if (optTransactionStatement.isSelected()) {
       controller.exportTransactionStatement(
           getExportType(),
-          user.getSelected(),
+          user.getSelected().orElse(null),
           (StatementType) transactionStatementType.getSelectedItem(),
           optCurrent.isSelected());
     } else if (optPermissionHolders.isSelected()) {

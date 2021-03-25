@@ -1,27 +1,29 @@
 package kernbeisser.Windows.PermissionAssignment;
 
 import java.util.List;
-import javax.swing.JButton;
+import java.util.Optional;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class PermissionAssignmentView implements IView<PermissionAssignmentController> {
 
-  private JButton back;
   private JPanel main;
   private AdvancedComboBox<Permission> permissions;
   private CollectionView<User> collectionView;
 
+  @Linked private CollectionController<User> user;
+
   @Override
   public void initialize(PermissionAssignmentController controller) {
-    back.addActionListener(e -> back());
-    permissions.addActionListener(controller);
+    permissions.addActionListener(controller::loadPermission);
   }
 
   void setPermissions(List<Permission> permissions) {
@@ -35,6 +37,10 @@ public class PermissionAssignmentView implements IView<PermissionAssignmentContr
 
   private void createUIComponents() {
     permissions = new AdvancedComboBox<>(Permission::getName);
-    collectionView = new CollectionView<>();
+    collectionView = user.getView();
+  }
+
+  Optional<Permission> getSelectedPermission() {
+    return permissions.getSelected();
   }
 }

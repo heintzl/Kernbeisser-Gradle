@@ -174,30 +174,27 @@ public class Article {
   }
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
-    TypedQuery<Article> articleTypedQuery =
-        em.createQuery(
-                "select i from Article i where kbNumber = :n"
-                    + " or suppliersItemNumber = :n"
-                    + " or i.supplier.shortName like :s"
-                    + " or i.supplier.name like :s"
-                    + " or UPPER(i.name) like :ds"
-                    + " or barcode = :l"
-                    + " or MOD(barcode,:bl) = :n"
-                    + " or UPPER( i.priceList.name) like :u"
-                    + " order by i.name asc",
-                Article.class)
-            .setParameter("n", Tools.tryParseInt(search))
-            .setParameter(
-                "bl",
-                Tools.tryParseInt(search) > 0
-                    ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
-                    : 1)
-            .setParameter("l", Tools.tryParseLong(search))
-            .setParameter("s", search + "%")
-            .setParameter(
-                "ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
-            .setParameter("u", search.toUpperCase() + "%");
-    return articleTypedQuery;
+    return em.createQuery(
+            "select i from Article i where kbNumber = :n"
+                + " or suppliersItemNumber = :n"
+                + " or i.supplier.shortName like :s"
+                + " or i.supplier.name like :s"
+                + " or UPPER(i.name) like :ds"
+                + " or barcode = :l"
+                + " or MOD(barcode,:bl) = :n"
+                + " or UPPER( i.priceList.name) like :u"
+                + " order by i.name asc",
+            Article.class)
+        .setParameter("n", Tools.tryParseInt(search))
+        .setParameter(
+            "bl",
+            Tools.tryParseInt(search) > 0
+                ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
+                : 1)
+        .setParameter("l", Tools.tryParseLong(search))
+        .setParameter("s", search + "%")
+        .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
+        .setParameter("u", search.toUpperCase() + "%");
   }
 
   // implement later

@@ -3,6 +3,7 @@ package kernbeisser.CustomComponents.ComboBox;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import javax.swing.JComboBox;
 import lombok.Getter;
@@ -40,10 +41,10 @@ public class AdvancedComboBox<T> extends JComboBox<T> {
     setItems(new ArrayList<>(items));
   }
 
-  public T getSelected() {
+  public Optional<T> getSelected() {
     if (getSelectedIndex() == -1) {
-      throw new NullPointerException("no selection");
+      return Optional.empty();
     }
-    return getItemAt(getSelectedIndex());
+    return Optional.of(getItemAt(getSelectedIndex()));
   }
 }

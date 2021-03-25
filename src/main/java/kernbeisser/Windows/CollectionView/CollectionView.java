@@ -22,6 +22,7 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   private JButton remove;
   private JPanel moveSec;
   private JScrollPane availableSec;
+  private JPanel actionBar;
   @Linked private CollectionController<T> controller;
 
   @Override
@@ -94,5 +95,10 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
 
   public void setChosen(Collection<T> loaded) {
     chosen.setObjects(loaded);
+  }
+
+  public CollectionView<T> asInjectedComponent() {
+    actionBar.setVisible(false);
+    return this;
   }
 }

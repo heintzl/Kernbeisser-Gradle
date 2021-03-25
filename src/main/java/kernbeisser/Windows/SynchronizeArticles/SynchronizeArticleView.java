@@ -14,7 +14,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
-import kernbeisser.DBEntities.Article;
 import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
 import kernbeisser.Tasks.Catalog.Merge.Difference;
 import kernbeisser.Tasks.Catalog.Merge.MappedDifferences;
@@ -101,7 +100,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
         new RowFilter<ArticleDifference<?>>() {
           private final double allowedDiff = getAllowedDifference();
           private final boolean filterDiff = !maxAllowedDiff.getText().equals("");
-          private final MappedDifferences type = difference.getSelected();
+          private final MappedDifferences type =
+              difference.getSelected().orElse(MappedDifferences.NAME);
 
           @Override
           public boolean isDisplayed(ArticleDifference<?> difference) {
@@ -154,10 +154,6 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
   public void setAllDiffs(MappedDifferences[] mappedDiffs) {
     difference.setItems(Arrays.asList(mappedDiffs));
-  }
-
-  public Difference<Article, ?> getSelectedDiff() {
-    return difference.getSelected();
   }
 
   public void mergeDiffsFirst() {

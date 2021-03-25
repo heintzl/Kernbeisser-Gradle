@@ -107,7 +107,9 @@ public class ArticleView implements IView<ArticleController> {
         new AccessCheckingComboBox<>(
             Article::getSurchargeGroup,
             Article::setSurchargeGroup,
-            () -> controller.getAllForSuppler(supplier.getSelected()));
+            () ->
+                controller.getAllForSuppler(
+                    supplier.getSelected().orElse(Supplier.getKKSupplier())));
     shopRange =
         new AccessCheckingComboBox<Article, ShopRange>(
             Article::getShopRange, Article::setShopRange, controller::getAllShopRages);
@@ -195,7 +197,8 @@ public class ArticleView implements IView<ArticleController> {
     supplier.addActionListener(
         e -> {
           try {
-            controller.loadSurchargeGroupsFor(supplier.getSelected());
+            controller.loadSurchargeGroupsFor(
+                supplier.getSelected().orElse(Supplier.getKKSupplier()));
           } catch (NullPointerException nullPointerException) {
             controller.loadSurchargeGroupsFor(Supplier.getKKSupplier());
           }
@@ -246,10 +249,6 @@ public class ArticleView implements IView<ArticleController> {
                 + nearest.toString()
                 + "\nWollen sie trozedem einen neuen Artikel erstellen?")
         == 0;
-  }
-
-  public Supplier getSelectedSupplier() {
-    return supplier.getSelected();
   }
 
   public void messageSuppliersItemNumberAlreadyTaken() {
