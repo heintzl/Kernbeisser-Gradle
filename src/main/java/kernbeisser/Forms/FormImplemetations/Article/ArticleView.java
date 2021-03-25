@@ -1,5 +1,8 @@
 package kernbeisser.Forms.FormImplemetations.Article;
 
+import java.awt.*;
+import java.util.Collection;
+import javax.swing.*;
 import kernbeisser.CustomComponents.Verifier.DoubleVerifier;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
 import kernbeisser.CustomComponents.Verifier.KBNumberVerifier;
@@ -19,10 +22,6 @@ import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Collection;
 
 public class ArticleView implements IView<ArticleController> {
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, String> itemName;

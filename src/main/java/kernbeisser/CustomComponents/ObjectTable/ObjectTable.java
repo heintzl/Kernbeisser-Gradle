@@ -1,23 +1,22 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Useful.Tools;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.RowFilter;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
+import javax.swing.*;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Useful.Tools;
+import org.jetbrains.annotations.NotNull;
 
 public class ObjectTable<T> extends JTable implements Iterable<T> {
   private static final Object NO_ACCESS_VALUE = "**********";

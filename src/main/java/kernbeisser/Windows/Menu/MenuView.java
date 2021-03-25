@@ -1,5 +1,7 @@
 package kernbeisser.Windows.Menu;
 
+import java.awt.*;
+import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ControllerButton;
@@ -37,9 +39,6 @@ import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.UserInfo.UserInfoView;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class MenuView implements IView<MenuController> {
 

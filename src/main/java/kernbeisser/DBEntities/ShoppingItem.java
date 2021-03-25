@@ -1,5 +1,12 @@
 package kernbeisser.DBEntities;
 
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
+import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.*;
 import kernbeisser.Security.Key;
@@ -7,14 +14,6 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.function.ToDoubleFunction;
 
 @Entity
 @Table

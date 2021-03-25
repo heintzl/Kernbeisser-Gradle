@@ -1,5 +1,11 @@
 package kernbeisser.Forms.ObjectForm;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Predicate;
+import javax.swing.*;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
@@ -14,13 +20,6 @@ import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.function.Predicate;
 
 public class ObjectForm<P> {
   private final Collection<ObjectValidator<P>> objectValidators = new ArrayList<>();

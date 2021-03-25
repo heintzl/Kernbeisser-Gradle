@@ -1,5 +1,9 @@
 package kernbeisser.DBEntities;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.UserSetting;
@@ -9,11 +13,6 @@ import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 
 @Entity
 @Table
