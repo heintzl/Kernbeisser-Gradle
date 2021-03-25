@@ -1,5 +1,15 @@
 package kernbeisser.DBEntities;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
@@ -11,17 +21,6 @@ import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /*
  extends from the main article structure ArticleBase which extends Article and ArticleKornkraft
@@ -175,33 +174,27 @@ public class Article {
   }
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    TypedQuery<Article> articleTypedQuery =
-        em.createQuery(
-                "select i from Article i where kbNumber = :n"
-                    + " or suppliersItemNumber = :n"
-                    + " or i.supplier.shortName like :s"
-                    + " or i.supplier.name like :s"
-                    + " or UPPER(i.name) like :ds"
-                    + " or barcode = :l"
-                    + " or MOD(barcode,:bl) = :n"
-                    + " or UPPER( i.priceList.name) like :u"
-                    + " order by i.name asc",
-                Article.class)
-            .setParameter("n", Tools.tryParseInt(search))
-            .setParameter(
-                "bl",
-                Tools.tryParseInt(search) > 0
-                    ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
-                    : 1)
-            .setParameter("l", Tools.tryParseLong(search))
-            .setParameter("s", search + "%")
-            .setParameter(
-                "ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
-            .setParameter("u", search.toUpperCase() + "%");
-    et.commit();
-    return articleTypedQuery;
+    return em.createQuery(
+            "select i from Article i where kbNumber = :n"
+                + " or suppliersItemNumber = :n"
+                + " or i.supplier.shortName like :s"
+                + " or i.supplier.name like :s"
+                + " or UPPER(i.name) like :ds"
+                + " or barcode = :l"
+                + " or MOD(barcode,:bl) = :n"
+                + " or UPPER( i.priceList.name) like :u"
+                + " order by i.name asc",
+            Article.class)
+        .setParameter("n", Tools.tryParseInt(search))
+        .setParameter(
+            "bl",
+            Tools.tryParseInt(search) > 0
+                ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
+                : 1)
+        .setParameter("l", Tools.tryParseLong(search))
+        .setParameter("s", search + "%")
+        .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
+        .setParameter("u", search.toUpperCase() + "%");
   }
 
   // implement later

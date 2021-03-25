@@ -1,5 +1,6 @@
 package kernbeisser.Forms.FormImplemetations.Supplier;
 
+import javax.swing.*;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
@@ -7,8 +8,6 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class SupplierView implements IView<SupplierController> {
 

@@ -28,6 +28,7 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
+import kernbeisser.Windows.PermissionAssignment.PermissionAssignmentController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.Setting.SettingController;
@@ -72,6 +73,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton supply;
   private ControllerButton doUserDefiniedTransaction;
   private JButton logout;
+  private ControllerButton permissionAssignment;
 
   @Override
   public void initialize(MenuController controller) {
@@ -203,6 +205,9 @@ public class MenuView implements IView<MenuController> {
             () ->
                 new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
             TransactionController.class);
+    permissionAssignment =
+        new ControllerButton(
+            PermissionAssignmentController::new, PermissionAssignmentController.class);
   }
 
   @Override

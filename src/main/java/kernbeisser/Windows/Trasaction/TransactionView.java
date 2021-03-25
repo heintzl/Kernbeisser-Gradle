@@ -6,6 +6,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -87,7 +88,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   User getTo() {
-    return to.getSelected();
+    return to.getSelected().orElseThrow(NoResultException::new);
   }
 
   AdvancedComboBox<User> getToControl() {
@@ -100,7 +101,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   User getFrom() {
-    return from.getSelected();
+    return from.getSelected().orElseThrow(NoResultException::new);
   }
 
   AdvancedComboBox<User> getFromControl() {

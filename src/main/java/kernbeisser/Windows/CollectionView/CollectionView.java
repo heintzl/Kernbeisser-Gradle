@@ -7,7 +7,6 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import org.apache.commons.collections4.IterableUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class CollectionView<T> implements IView<CollectionController<T>> {
@@ -23,6 +22,7 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   private JButton remove;
   private JPanel moveSec;
   private JScrollPane availableSec;
+  private JPanel actionBar;
   @Linked private CollectionController<T> controller;
 
   @Override
@@ -97,7 +97,8 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     chosen.setObjects(loaded);
   }
 
-  public Collection<T> getAllChosen() {
-    return IterableUtils.toList(chosen);
+  public CollectionView<T> asInjectedComponent() {
+    actionBar.setVisible(false);
+    return this;
   }
 }

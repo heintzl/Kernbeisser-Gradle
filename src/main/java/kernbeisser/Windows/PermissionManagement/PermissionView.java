@@ -189,11 +189,7 @@ public class PermissionView implements IView<PermissionController> {
     if (JOptionPane.showConfirmDialog(
             getTopComponent(), jPanel, "Berechtigung auswählen", JOptionPane.OK_CANCEL_OPTION)
         == 0) {
-      try {
-        return permissionAdvancedComboBox.getSelected();
-      } catch (NullPointerException e) {
-        throw new CancellationException();
-      }
+      return permissionAdvancedComboBox.getSelected().orElseThrow(CancellationException::new);
     } else {
       throw new CancellationException();
     }

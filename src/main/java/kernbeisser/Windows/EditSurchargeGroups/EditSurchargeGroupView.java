@@ -1,5 +1,7 @@
 package kernbeisser.Windows.EditSurchargeGroups;
 
+import java.util.Collection;
+import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -20,9 +22,6 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.util.Collection;
 
 public class EditSurchargeGroupView implements IView<EditSurchargeGroupController> {
 

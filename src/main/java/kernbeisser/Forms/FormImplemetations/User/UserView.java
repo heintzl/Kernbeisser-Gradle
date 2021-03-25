@@ -1,5 +1,10 @@
 package kernbeisser.Forms.FormImplemetations.User;
 
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Set;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
 import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
@@ -10,17 +15,12 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckBox;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
+import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.Set;
 
 public class UserView implements IView<UserController> {
   private JLabel lblVorname;
@@ -180,14 +180,12 @@ public class UserView implements IView<UserController> {
     editPermission =
         new AccessCheckingCollectionEditor<>(
             User::getPermissions,
-            User::setPermissions,
-            Permission.getAll(null),
+            Source.of(Permission.class),
             Column.create("Name", Permission::getName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
             User::getJobs,
-            User::setJobs,
-            Job.getAll(null),
+            Source.of(Job.class),
             Column.create("Name", Job::getName),
             Column.create("Beschreibung", Job::getDescription));
   }

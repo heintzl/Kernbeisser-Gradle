@@ -1,6 +1,7 @@
 package kernbeisser.Forms.ObjectForm.Components;
 
 import java.awt.Color;
+import java.util.Optional;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
@@ -122,11 +123,8 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
 
   @Override
   public V getData() throws CannotParseException {
-    try {
-      return getSelected();
-    } catch (NullPointerException e) {
-      if (allowNull) return null;
-      else throw new CannotParseException("field requires not null property");
-    }
+    Optional<V> optionalV = getSelected();
+    if (allowNull) return (optionalV).orElse(null);
+    else return optionalV.orElseThrow(CannotParseException::new);
   }
 }

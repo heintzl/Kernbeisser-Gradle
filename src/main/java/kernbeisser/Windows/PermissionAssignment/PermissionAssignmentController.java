@@ -1,16 +1,28 @@
 package kernbeisser.Windows.PermissionAssignment;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Forms.ObjectForm.Components.Source;
+import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 
 public class PermissionAssignmentController
-    extends Controller<PermissionAssignmentView, PermissionAssignmentModel>
-    implements ActionListener {
+    extends Controller<PermissionAssignmentView, PermissionAssignmentModel> {
+
+  @Linked private final CollectionController<User> user;
 
   public PermissionAssignmentController() throws PermissionKeyRequiredException {
     super(new PermissionAssignmentModel());
+    user =
+        new CollectionController<>(
+            new ArrayList<>(), Source.empty(), Column.create("Benutzername", User::getUsername));
   }
 
   @Override
@@ -18,6 +30,19 @@ public class PermissionAssignmentController
     permissionAssignmentView.setPermissions(model.getPermissions());
   }
 
-  @Override
-  public void actionPerformed(ActionEvent e) {}
+  public void loadPermission(ActionEvent actionEvent) {
+    Optional<Permission> permission = getView().getSelectedPermission();
+    if (!permission.isPresent()) {
+      return;
+    }
+    applyChanges();
+    user.setLoadedAndSource(model.assignedUsers(permission.get()), getModel().allUsers());
+    model.setRecent(permission.get());
+  }
+
+  private void applyChanges() {
+    Optional<Collection<User>> before = model.getRecent().map(model::assignedUsers);
+    if (!before.isPresent() || before.get().equals(user.getModel().getLoaded())) return;
+    model.setPermission(model.getRecent().get(), user.getModel().getLoaded());
+  }
 }

@@ -9,6 +9,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Collection;
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
@@ -32,6 +34,7 @@ import java.nio.file.Files;
 import java.util.Collection;
 
 import static java.lang.String.format;
+
 
 
 public class UserInfoView implements IView<UserInfoController> {
