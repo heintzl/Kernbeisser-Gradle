@@ -1,62 +1,48 @@
 package kernbeisser.Forms.ObjectForm.Components;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
+import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
-import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
+import kernbeisser.Forms.ObjectForm.Properties.Predictable;
+import kernbeisser.Security.IterableProtection.ProtectedIterable;
 import kernbeisser.Security.Utils.Getter;
-import kernbeisser.Security.Utils.Setter;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 
+// is only read because it performs operations on the object but the object stays the same
 public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> extends JButton
-    implements ObjectFormComponent<P>, BoundedReadProperty<P, C>, BoundedWriteProperty<P, C> {
+    implements ObjectFormComponent<P>, BoundedReadProperty<P, C>, Predictable<P> {
   private final Getter<P, C> getter;
-  private final Setter<P, C> setter;
-
-  private boolean editable;
 
   private C data;
 
   private final Column<V>[] columns;
 
-  private final Collection<V> values;
+  private final Source<V> values;
 
   @SafeVarargs
   public AccessCheckingCollectionEditor(
-      Getter<P, C> getter, Setter<P, C> setter, Collection<V> values, Column<V>... columns) {
+      Getter<P, C> getter, Source<V> values, Column<V>... columns) {
     this.values = values;
     this.getter = getter;
-    this.setter = setter;
     this.columns = columns;
     addActionListener(this::trigger);
   }
 
   void trigger(ActionEvent event) {
-    new CollectionController<V>(data, values, editable, columns)
+    new CollectionController<V>(data, values, columns)
         .openIn(new SubWindow(IView.traceViewContainer(getParent())));
   }
 
   @Override
   public void setReadable(boolean b) {
-    setEnabled(false);
-  }
-
-  @Override
-  public void setPropertyEditable(boolean v) {
-    editable = v;
-  }
-
-  @Override
-  public void setInvalidInput() {
-    setForeground(Color.RED);
+    setEnabled(b);
   }
 
   @Override
@@ -69,13 +55,24 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
     data = vs;
   }
 
-  @Override
-  public void set(P p, C t) throws PermissionKeyRequiredException {
-    setter.set(p, t);
+  private Optional<ProtectedIterable> protection() {
+    return Optional.ofNullable(data)
+        .map(
+            e -> {
+              if (e instanceof ProtectedIterable) {
+                return (ProtectedIterable) e;
+              }
+              return null;
+            });
   }
 
   @Override
-  public C getData() throws CannotParseException {
-    return data;
+  public boolean isPropertyReadable(P parent) {
+    return protection().map(ProtectedIterable::isReadable).orElse(true);
+  }
+
+  @Override
+  public boolean isPropertyWriteable(P parent) {
+    return protection().map(ProtectedIterable::isModifiable).orElse(true);
   }
 }

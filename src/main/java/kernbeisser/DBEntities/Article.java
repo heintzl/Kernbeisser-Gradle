@@ -174,8 +174,6 @@ public class Article {
   }
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     TypedQuery<Article> articleTypedQuery =
         em.createQuery(
                 "select i from Article i where kbNumber = :n"
@@ -199,7 +197,6 @@ public class Article {
             .setParameter(
                 "ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
             .setParameter("u", search.toUpperCase() + "%");
-    et.commit();
     return articleTypedQuery;
   }
 

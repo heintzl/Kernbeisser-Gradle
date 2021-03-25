@@ -2,15 +2,15 @@ package kernbeisser.Windows.CollectionView;
 
 import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class CollectionController<T> extends Controller<CollectionView<T>, CollectionModel<T>> {
 
-  public CollectionController(
-      Collection<T> edit, Collection<T> available, boolean editable, Column<T>[] columns) {
-    super(new CollectionModel<>(edit, available, editable, columns));
+  public CollectionController(Collection<T> edit, Source<T> available, Column<T>[] columns) {
+    super(new CollectionModel<>(edit, available, columns));
   }
 
   @NotNull
@@ -22,11 +22,10 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
   @Override
   public void fillView(CollectionView<T> tCollectionView) {
     var view = getView();
-    view.setAvailable(model.getAvailable());
-    model.getAvailable().removeAll(model.getLoaded());
-    view.setChosen(model.getLoaded());
+    view.setAvailable(model.getSource());
     getView().setColumns(model.getColumns());
-    getView().setEditable(model.isEditable());
+    getView().setEditable(model.isModifiable());
+    refresh();
   }
 
   public void selectAvailable() {
@@ -35,33 +34,27 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
       return;
     }
     model.getLoaded().add(object);
-    model.getAvailable().remove(object);
     refresh();
   }
 
   public void selectChosen() {
-    T object = getView().getSelectedChosenObject();
-    if (object == null) {
-      return;
-    }
-    model.getAvailable().add(object);
-    model.getLoaded().remove(object);
+    model.getLoaded().remove(getView().getSelectedChosenObject());
     refresh();
   }
 
   private void refresh() {
-    getView().setAvailable(model.getAvailable());
+    Collection<T> source = model.getSource();
+    source.removeAll(model.getLoaded());
     getView().setChosen(model.getLoaded());
+    getView().setAvailable(source);
   }
 
   public void selectAllAvailable() {
-    model.getLoaded().addAll(model.getAvailable());
-    model.getAvailable().clear();
+    model.getLoaded().addAll(model.getSource());
     refresh();
   }
 
   public void selectAllChosen() {
-    model.getAvailable().addAll(model.getLoaded());
     model.getLoaded().clear();
     refresh();
   }

@@ -2,53 +2,33 @@ package kernbeisser.Windows.CollectionView;
 
 import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Security.IterableProtection.ProtectedIterable;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Getter;
 
 public class CollectionModel<T> implements IModel<CollectionController<T>> {
 
-  private final Collection<T> loaded;
+  @Getter private final Collection<T> loaded;
+  private final Source<T> available;
+  @Getter private final Column<T>[] columns;
+  @Getter private final boolean modifiable;
+  @Getter private final boolean readable;
 
-  private final Collection<T> available;
-
-  private final Column<T>[] columns;
-
-  private final boolean editable;
-
-  public CollectionModel(
-      Collection<T> loaded, Collection<T> available, boolean editable, Column<T>[] columns) {
+  public CollectionModel(Collection<T> loaded, Source<T> available, Column<T>[] columns) {
     this.columns = columns;
     this.loaded = loaded;
-    this.editable = editable;
-    available.removeAll(loaded);
     this.available = available;
-  }
-
-  public Collection<T> getLoaded() {
-    return loaded;
-  }
-
-  public Collection<T> getAvailable() {
-    return available;
-  }
-
-  public Column<T>[] getColumns() {
-    return columns;
-  }
-
-  public boolean isEditable() {
-    try {
-      return ((ProtectedIterable) loaded).isModifiable();
-    } catch (ClassCastException e) {
-      return true;
+    if (loaded instanceof ProtectedIterable) {
+      modifiable = ((ProtectedIterable) loaded).isModifiable();
+      readable = ((ProtectedIterable) loaded).isReadable();
+    } else {
+      modifiable = true;
+      readable = true;
     }
   }
 
-  public boolean isReadable() {
-    try {
-      return ((ProtectedIterable) loaded).isReadable();
-    } catch (ClassCastException e) {
-      return true;
-    }
+  public Collection<T> getSource() {
+    return available.query();
   }
 }

@@ -15,6 +15,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckBox;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
+import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
@@ -179,14 +180,12 @@ public class UserView implements IView<UserController> {
     editPermission =
         new AccessCheckingCollectionEditor<>(
             User::getPermissions,
-            User::setPermissions,
-            Permission.getAll(null),
+            Source.of(Permission.class),
             Column.create("Name", Permission::getName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
             User::getJobs,
-            User::setJobs,
-            Job.getAll(null),
+            Source.of(Job.class),
             Column.create("Name", Job::getName),
             Column.create("Beschreibung", Job::getDescription));
   }

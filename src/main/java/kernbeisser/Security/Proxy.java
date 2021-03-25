@@ -3,6 +3,7 @@ package kernbeisser.Security;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javax.persistence.EntityManager;
@@ -20,19 +21,17 @@ public class Proxy {
   private static final HashMap<Class<?>, Class<?>> proxyClassCache = new HashMap<>();
 
   /**
-   * creates a empty instance of a security checked object, which is used to test functions for
-   * accessibility
+   * converts stream elements into protected instances
    *
-   * @param clazz the clazz for the Object
-   * @param <T> the type of the secure instance
-   * @return a empty proxy object
+   * @param stream the object stream
+   * @param clazz the class of the proxy
+   * @param <T> the type of the proxy elements
+   * @return a stream with proxyfied elements
    */
-  public static <T> T getEmptySecurityInstance(Class<T> clazz) {
-    if (ProxyFactory.isProxyClass(clazz)) {
-      return Tools.createWithoutConstructor(clazz);
-    }
-    return injectMethodHandler(
-        Tools.createWithoutConstructor(clazz), PermissionSetSecurityHandler.ON_LOGGED_IN);
+  public static <T> Stream<? extends T> securedStream(Stream<T> stream, Class<T> clazz) {
+    Class<? extends T> proxyClass = getProxyClass(clazz);
+    MethodHandler mh = PermissionSetSecurityHandler.ON_LOGGED_IN;
+    return stream.map(e -> injectMethodHandler(proxyClass, e, mh));
   }
 
   /**
@@ -73,12 +72,12 @@ public class Proxy {
             .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public static Class<?> getProxyClass(Class<?> clazz) {
-    Class<?> cachedClass = proxyClassCache.get(clazz);
+  public static <T> Class<? extends T> getProxyClass(Class<T> clazz) {
+    Class<? extends T> cachedClass = (Class<? extends T>) proxyClassCache.get(clazz);
     if (cachedClass == null) {
       ProxyFactory factory = new ProxyFactory();
       factory.setSuperclass(clazz);
-      cachedClass = factory.createClass();
+      cachedClass = (Class<? extends T>) factory.createClass();
       proxyClassCache.put(clazz, cachedClass);
     }
     return cachedClass;

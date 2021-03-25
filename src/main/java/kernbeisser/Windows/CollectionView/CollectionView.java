@@ -7,7 +7,6 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import org.apache.commons.collections4.IterableUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class CollectionView<T> implements IView<CollectionController<T>> {
@@ -95,9 +94,5 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
 
   public void setChosen(Collection<T> loaded) {
     chosen.setObjects(loaded);
-  }
-
-  public Collection<T> getAllChosen() {
-    return IterableUtils.toList(chosen);
   }
 }
