@@ -7,12 +7,15 @@ import java.util.Optional;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
+import kernbeisser.Security.Requires;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 
+@Requires(PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT)
 public class PermissionAssignmentController
     extends Controller<PermissionAssignmentView, PermissionAssignmentModel> {
 
