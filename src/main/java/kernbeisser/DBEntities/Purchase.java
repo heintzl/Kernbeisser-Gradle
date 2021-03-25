@@ -3,7 +3,7 @@ package kernbeisser.DBEntities;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Predicate;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
@@ -85,15 +85,11 @@ public class Purchase {
   }
 
   public double guessVatValue(VAT vat) {
-    try {
-      return getAllItems().stream()
-          .filter(si -> si.getVat() == vat)
-          .findFirst()
-          .get()
-          .getVatValue();
-    } catch (NoSuchElementException e) {
-      return 0.0;
-    }
+    return getAllItems().stream()
+        .filter(si -> si.getVat() == vat)
+        .findFirst()
+        .map(ShoppingItem::getVatValue)
+        .orElse(0.0);
   }
 
   public static long getLastBonNo() {
@@ -101,9 +97,8 @@ public class Purchase {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select max(id) from Purchase p", Long.class)
-        .getResultStream()
-        .findAny()
+    return Optional.ofNullable(
+            em.createQuery("select max(id) from Purchase p", Long.class).getSingleResult())
         .orElse(-1L);
   }
 }
