@@ -113,7 +113,7 @@ public class ControllerButton extends JButton {
               } catch (PermissionKeyRequiredException | ClassIsSingletonException exception) {
                 JOptionPane.showMessageDialog(
                     this,
-                    "Das Fenster kann nicht geöffnet werden,\nda sie nicht die benötigte Berechtigung haben.");
+                    "Das Fenster kann nicht geöffnet werden,\nda du nicht die benötigte Berechtigung hast.");
                 return;
               }
             }

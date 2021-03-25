@@ -1,16 +1,5 @@
 package kernbeisser.DBEntities;
 
-import java.io.Serializable;
-import java.time.Instant;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
@@ -24,6 +13,18 @@ import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.io.Serializable;
+import java.time.Instant;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Entity
 @Table
@@ -319,14 +320,16 @@ public class User implements Serializable {
 
   public static User getKernbeisserUser() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     try {
+      @Cleanup(value = "commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
       return em.createQuery("select u from User u where u.username = 'kernbeisser'", User.class)
           .setMaxResults(1)
           .getSingleResult();
     } catch (NoResultException e) {
+      EntityTransaction et = em.getTransaction();
+      et.begin();
       User kernbeisser = new User();
       kernbeisser.getPermissions().add(PermissionConstants.APPLICATION.getPermission());
       kernbeisser.setPassword("CANNOT LOG IN");
@@ -338,6 +341,7 @@ public class User implements Serializable {
       kernbeisser.setUserGroup(kernbeisserValue);
       em.persist(kernbeisser);
       em.flush();
+      et.commit();
       return getKernbeisserUser();
     }
   }

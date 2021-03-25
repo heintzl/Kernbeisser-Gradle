@@ -95,7 +95,7 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
       controller.changeUserGroup();
       JOptionPane.showMessageDialog(
           getTopComponent(),
-          "Du bist erfolgreich der Nutzergruppe von " + getUsername() + " beigetreiten");
+          "Du bist erfolgreich der Nutzergruppe von " + getUsername() + " beigetreten");
     } catch (CannotLogInException e) {
       JOptionPane.showMessageDialog(
           getTopComponent(), "Das eingegebene Passwort stimmt nicht überein.");

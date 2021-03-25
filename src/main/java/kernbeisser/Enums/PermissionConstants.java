@@ -1,13 +1,14 @@
 package kernbeisser.Enums;
 
-import java.util.Arrays;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import lombok.Cleanup;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import java.util.Arrays;
 
 // Permissions which become automatically generated when the application
 // requires them to prevent the functionality from the application
@@ -38,19 +39,22 @@ public enum PermissionConstants {
 
   private static Permission loadOrCreate(PermissionConstants constants) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     try {
+      @Cleanup(value = "commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
       return em.createQuery("select p from Permission p where name like :pcn", Permission.class)
           .setParameter("pcn", "@" + constants.name())
           .getSingleResult();
     } catch (NoResultException e) {
+      EntityTransaction et = em.getTransaction();
+      et.begin();
       Permission permission = new Permission();
       permission.getKeySet().addAll(Arrays.asList(constants.defaultPermissionKeys));
       permission.setName("@" + constants.name());
       em.persist(permission);
       em.flush();
+      et.commit();
       return loadOrCreate(constants);
     }
   }

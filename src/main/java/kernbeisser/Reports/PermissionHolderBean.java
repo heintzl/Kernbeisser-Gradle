@@ -21,13 +21,13 @@ public class PermissionHolderBean {
     String name = permission.getName();
     switch (name) {
       case "@KEY_PERMISSION":
-        name = "Schlüsselinhaber (Selbsteinkauf)";
+        name = "SchlüsselinhaberIn (Selbsteinkauf)";
         break;
       case "@BEGINNER":
         name = "Probemitglied";
         break;
       case "@ADMIN":
-        name = "Systemadministrator";
+        name = "SystemadministratorIn";
         break;
       case "@IMPORT":
         name = "Übernommen aus Version 1";

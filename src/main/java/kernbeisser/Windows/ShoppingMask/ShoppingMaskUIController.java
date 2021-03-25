@@ -1,16 +1,9 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.util.Objects;
-import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
@@ -25,6 +18,11 @@ import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.NoResultException;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, ShoppingMaskModel> {
   @Linked private final ShoppingCartController shoppingCartController;
@@ -299,13 +297,21 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     keyCapture.add(KeyEvent.VK_END, () -> view.articleTypeChange(ArticleType.ARTICLE_NUMBER));
     keyCapture.addALT(KeyEvent.VK_S, view::openSearchWindow);
     keyCapture.addCTRL(KeyEvent.VK_F, view::openSearchWindow);
-    if (model.getSaleSession().getCustomer().getUserGroup().getValue() <= 0) {
-      RememberDialog.showDialog(
-          model.getSaleSession().getCustomer(),
-          null,
-          "Ihr Guthaben beträgt weniger als 0.01€.\n"
-              + "Bitte sei dir bewusst,\n"
-              + "dass Schulden Zinsen verursachen.");
+    User customer = model.getSaleSession().getCustomer();
+    String infoMessage;
+    if (customer.equals(model.getSaleSession().getSeller())) {
+      infoMessage =
+          "Dein Guthaben beträgt weniger als 0.01€.\n"
+              + "Bitte sei Dir bewusst, dass Schulden Zinsen verursachen.";
+    } else {
+      infoMessage =
+          "Das Guthaben von "
+              + customer.getFullName()
+              + " beträgt weniger als 0.01€.\n"
+              + "Bitte seid Euch bewusst, dass Schulden Zinsen verursachen.";
+    }
+    if (customer.getUserGroup().getValue() <= 0) {
+      RememberDialog.showDialog(customer, null, infoMessage);
     }
   }
 

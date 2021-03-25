@@ -1,11 +1,5 @@
 package kernbeisser.Windows.EditSurchargeGroups;
 
-import java.util.Collection;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -26,6 +20,9 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.Collection;
 
 public class EditSurchargeGroupView implements IView<EditSurchargeGroupController> {
 
@@ -58,6 +55,7 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
             new DataAnchor<>(
                 SurchargeGroup::setSupplier, () -> (Supplier) supplier.getSelectedItem()),
             new DataListener<>(SurchargeGroup::getArticles, surchargeGroupArticles::setObjects));
+    objectForm.setObjectDistinction("Die Zuschlagsgruppe");
     objectForm.registerObjectValidator(controller::validate);
     selectNoParent.addActionListener(e -> superGroup.setSelectedItem(null));
     add.addActionListener(e -> controller.addSurchargeGroup());
@@ -97,7 +95,7 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
 
   @Override
   public String getTitle() {
-    return "Zuschlagesgruppen bearbeiten";
+    return "Zuschlagsgruppen bearbeiten";
   }
 
   @Override
@@ -133,13 +131,13 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
   public void constraintViolationException() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Die Zuschlagsgruppe kann nicht gelöscht werden,\nda noch Artikel auf sie verweissen!");
+        "Die Zuschlagsgruppe kann nicht gelöscht werden,\nda noch Artikel auf sie verweisen!");
   }
 
   public boolean shouldBecomeAutoLinked() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Sollen die Artikel automatisch einer anderen Zuschlagsgruppe zugeteilt werden, um anschließend den Vorgang zu wiederholen?")
+            "Sollen die Artikel automatisch einer anderen Zuschlagsgruppe zugeteilt werden um anschließend den Vorgang zu wiederholen?")
         == 0;
   }
 

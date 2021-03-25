@@ -1,5 +1,16 @@
 package kernbeisser.Reports;
 
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.VAT;
+import kernbeisser.Exeptions.InvalidVATValueException;
+import lombok.Cleanup;
+import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.swing.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
@@ -7,16 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import javax.swing.*;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.*;
-import kernbeisser.Enums.VAT;
-import kernbeisser.Exeptions.InvalidVATValueException;
-import lombok.Cleanup;
-import org.jetbrains.annotations.NotNull;
 
 public class AccountingReport extends Report {
 

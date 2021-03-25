@@ -467,7 +467,7 @@
                     </constraints>
                     <properties>
                       <actionCommand value="Kontoauszug drucken"/>
-                      <text value="Kontoasuzug drucken"/>
+                      <text value="Kontoauszug drucken"/>
                     </properties>
                   </component>
                   <component id="dc4c8" class="javax.swing.JRadioButton" binding="optCurrent">

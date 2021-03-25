@@ -1,12 +1,13 @@
 package kernbeisser.Forms.FormImplemetations.Job;
 
-import javax.swing.*;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class JobView implements IView<JobController> {
 
@@ -21,6 +22,7 @@ public class JobView implements IView<JobController> {
   @Override
   public void initialize(JobController jobController) {
     form = new ObjectForm<>(name, description);
+    form.setObjectDistinction("Der Job");
   }
 
   @Override

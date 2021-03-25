@@ -1,10 +1,5 @@
 package kernbeisser.Forms.FormImplemetations.User;
 
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.Set;
-import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
 import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
@@ -20,6 +15,12 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Set;
 
 public class UserView implements IView<UserController> {
   private JLabel lblVorname;
@@ -112,6 +113,7 @@ public class UserView implements IView<UserController> {
             keyNumber,
             email,
             chgJobs);
+    objectForm.setObjectDistinction("Der Benutzer");
     KeyAdapter refreshUsername =
         new KeyAdapter() {
           @Override
@@ -191,7 +193,7 @@ public class UserView implements IView<UserController> {
   }
 
   public void invalidInput() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Der eingegeben Werte sind nicht korrekt!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Die eingegeben Werte sind nicht korrekt!");
   }
 
   public void setUsername(String username) {
@@ -209,13 +211,13 @@ public class UserView implements IView<UserController> {
   public void showPasswordToken(String resetPassword) {
     Object message =
         new Object[] {
-          "Das genererierte Passwort ist folgendes:\n",
+          "Das generierte Passwort ist Folgendes:\n",
           new JTextField(resetPassword) {
             {
               setEditable(false);
             }
           },
-          "Bitte Loggen sie sich möglichst Zeitnah ein,\num das Passwort zu ändern."
+          "Bitte logge dich möglichst zeitnah ein,\num das Passwort zu ändern."
         };
     JOptionPane.showMessageDialog(
         getTopComponent(), message, "Generiertes Password", JOptionPane.INFORMATION_MESSAGE);

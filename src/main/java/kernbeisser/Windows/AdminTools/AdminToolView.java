@@ -49,13 +49,13 @@ public class AdminToolView implements IView<AdminToolController> {
   public void showPasswordToken(String resetPassword) {
     Object message =
         new Object[] {
-          "Das genererierte Passwort ist folgendes:\n",
+          "Das generierte Passwort ist Folgendes:\n",
           new JTextField(resetPassword) {
             {
               setEditable(false);
             }
           },
-          "Bitte Loggen sie sich möglichst Zeitnah ein,\num das Passwort zu ändern."
+          "Bitte logge dich möglichst zeitnah ein,\num das Passwort zu ändern."
         };
     JOptionPane.showMessageDialog(
         getTopComponent(), message, "Generiertes Password", JOptionPane.INFORMATION_MESSAGE);
@@ -66,7 +66,7 @@ public class AdminToolView implements IView<AdminToolController> {
             getTopComponent(),
             "Soll das Passwort von "
                 + username
-                + " wirklich zurück gesetzt werden?\nDieser Vorgang kann nicht rückgänging gemacht werden.")
+                + " wirklich zurückgesetzt werden?\nDieser Vorgang kann nicht rückgängig gemacht werden.")
         == 0;
   }
 }

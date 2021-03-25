@@ -109,7 +109,9 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
             "Bist du dir sicher das du den Ladendienst beenden\n"
-                + "und den Ladendienst-Report ausdrucken möchtest?")
+                + "und den Ladendienst-Report ausdrucken möchtest?",
+            "Ladendienst beenden",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
@@ -132,6 +134,6 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   public void messageShoppingMaskAlreadyOpened() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Es ist bereits ein Einkaufs-Fenster geöffnet, um mehre Einkaufsfenster öffenen zu können, aktiviere dies bitte expliezit in deinen Einstellungen.");
+        "Es ist bereits ein Einkaufs-Fenster geöffnet, um mehrere Einkaufsfenster öffnen zu können, aktiviere dies bitte explizit in deinen Einstellungen.");
   }
 }

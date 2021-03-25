@@ -114,7 +114,7 @@ public class SupplyView implements IView<SupplyController> {
 
   void noArticleFound() {
     containerSize.setText("0.0");
-    name.setText("Kein Atikel gefunden");
+    name.setText("Keinen Artikel gefunden");
     netPrice.setText("0.00");
   }
 
@@ -160,18 +160,18 @@ public class SupplyView implements IView<SupplyController> {
 
   Article select(Collection<Article> collection) {
     return SelectionDialog.select(
-        getTopComponent(), "Bitte wählen sie den gemeinten Artikel aus.", collection);
+        getTopComponent(), "Bitte wähle den gemeinten Artikel aus.", collection);
   }
 
   public void invalidInput() {
     JOptionPane.showMessageDialog(
-        getTopComponent(), "Bitte überpüfen sie die Rot makierten Felder nach Fehrlern!");
+        getTopComponent(), "Bitte überpüfe die rot markierten Felder nach Fehlern!");
   }
 
   public boolean commitClose() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Sind sie sich sicher das sie das Fenster schließen,\nwollen und die jetzige Eingabe beenden wollen?")
+            "Bist du sicher, dass du das Fenster schließen\nund die jetzige Eingabe beenden willst?")
         == 0;
   }
 
@@ -191,7 +191,7 @@ public class SupplyView implements IView<SupplyController> {
 
   public boolean shouldPrintLabels() {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Sollen die ausgewählten Ladenschielder ausgedruckt werden?")
+            getTopComponent(), "Sollen die ausgewählten Ladenschilder ausgedruckt werden?")
         == 0;
   }
 }

@@ -473,7 +473,7 @@ public enum PermissionKey {
             .put("ACTION_OPEN_MANAGE_PRICE_LISTS", "Preislisten bearbeiten")
             .put("ACTION_OPEN_PRE_ORDER", "Vorbestellung")
             .put("ACTION_OPEN_SUPPLY", "Lieferung eingeben")
-            .put("ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW", "Kornkraft-Katalog synchroinisieren")
+            .put("ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW", "Kornkraft-Katalog synchronisieren")
             .put("ACTION_OPEN_DB_LOG_IN", "Datenverbindung bearbeiten")
             .put("ACTION_ADD_BEGINNER", "Probemitglied aufnehmen")
             .put("ACTION_EDIT_OWN_DATA", "Persönliche Informationen bearbeiten")

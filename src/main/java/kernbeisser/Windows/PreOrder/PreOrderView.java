@@ -66,9 +66,9 @@ public class PreOrderView implements IView<PreOrderController> {
   private void createUIComponents() {
     Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
     Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
-    JMenuItem popupSelectAll = new JMenuItem("alle Auswählen");
+    JMenuItem popupSelectAll = new JMenuItem("alle auswählen");
     popupSelectAll.addActionListener(e -> setAllDelivered(true));
-    JMenuItem popupDeselectAll = new JMenuItem("alle Abwählen");
+    JMenuItem popupDeselectAll = new JMenuItem("alle abwählen");
     popupDeselectAll.addActionListener(e -> setAllDelivered(false));
     popupSelectionColumn = new JPopupMenu();
     popupSelectionColumn.add(popupSelectAll);
@@ -215,8 +215,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   public void noPreOrderSelected() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(), "Bitte wählen sie vorher eine Vorbestellung aus!");
+    JOptionPane.showMessageDialog(getTopComponent(), "Bitte wähle vorher eine Vorbestellung aus!");
   }
 
   public void remove(PreOrder selected) {
