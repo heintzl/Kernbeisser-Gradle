@@ -237,11 +237,6 @@ public class User implements Serializable {
       this.forcePasswordChange = false;
     }
   }
-
-  public void setShares(int shares) {
-    this.shares = shares;
-  }
-
   // changed from direct reference to getter to keep security
   public String getFullName() {
     return this.getFirstName() + " " + this.getSurname();

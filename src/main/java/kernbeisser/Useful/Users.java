@@ -1,6 +1,7 @@
 package kernbeisser.Useful;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -35,5 +36,16 @@ public class Users {
       sb.append(charTable[Math.abs(random.nextInt()) % charTable.length]);
     }
     return sb.toString();
+  }
+
+  public static String generateUserRelatedToken(String username) {
+    return new String(
+            BCrypt.withDefaults().hash(4, new byte[16], username.getBytes(StandardCharsets.UTF_8)),
+            StandardCharsets.UTF_8)
+        .substring(40);
+  }
+
+  public static void main(String[] args) {
+    System.out.println(generateUserRelatedToken("hello3"));
   }
 }
