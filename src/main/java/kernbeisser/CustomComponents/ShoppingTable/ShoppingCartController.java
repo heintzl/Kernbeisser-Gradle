@@ -1,13 +1,12 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
+import java.util.List;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class ShoppingCartController extends Controller<ShoppingCartView, ShoppingCartModel> {
   @Linked private final boolean editable;

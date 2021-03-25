@@ -1,5 +1,14 @@
 package kernbeisser.Windows.UserInfo;
 
+import static java.lang.String.format;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.util.Collection;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
@@ -23,6 +32,7 @@ import java.nio.file.Files;
 import java.util.Collection;
 
 import static java.lang.String.format;
+
 
 public class UserInfoView implements IView<UserInfoController> {
 

@@ -1,5 +1,15 @@
 package kernbeisser.CustomComponents.ShoppingTable;
 
+import static java.lang.Math.round;
+import static java.text.MessageFormat.format;
+
+import java.awt.*;
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.function.Predicate;
+import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -11,17 +21,6 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.function.Predicate;
-
-import static java.lang.Math.round;
-import static java.text.MessageFormat.format;
 
 public class ShoppingCartView implements IView<ShoppingCartController> {
 

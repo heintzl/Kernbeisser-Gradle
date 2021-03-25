@@ -1,5 +1,10 @@
 package kernbeisser.Windows.Trasaction;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -8,12 +13,6 @@ import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class TransactionModel implements IModel<TransactionController> {
 
