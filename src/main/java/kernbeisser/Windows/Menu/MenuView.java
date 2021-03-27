@@ -23,6 +23,8 @@ import kernbeisser.Windows.EditSurchargeGroups.EditSurchargeGroupController;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.EditUserSetting.EditUserSettingController;
 import kernbeisser.Windows.EditUsers.EditUsers;
+import kernbeisser.Windows.InfoPanel.InfoPanelController;
+import kernbeisser.Windows.InfoPanel.InfoPanelView;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
@@ -38,13 +40,13 @@ import kernbeisser.Windows.Supply.SupplyController;
 import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleController;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
-import kernbeisser.Windows.UserInfo.UserInfoView;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class MenuView implements IView<MenuController> {
 
   private JPanel main;
-  private UserInfoView infoPanel;
+  private InfoPanelView infoPanel;
   private JPanel menuPanel;
   private kernbeisser.CustomComponents.ControllerButton openCashierShoppingMask;
   private ControllerButton editPriceList;
@@ -52,7 +54,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton editSurchargeTables;
   private kernbeisser.CustomComponents.ControllerButton changePassword;
   private kernbeisser.CustomComponents.ControllerButton transactionHistory;
-  private kernbeisser.CustomComponents.ControllerButton editOwnUser;
+  private kernbeisser.CustomComponents.ControllerButton showUserInfo;
   private kernbeisser.CustomComponents.ControllerButton editUserSettings;
   private ControllerButton editUsers;
   private ControllerButton doTransactionPayIn;
@@ -94,7 +96,7 @@ public class MenuView implements IView<MenuController> {
   }
 
   private void createUIComponents() {
-    infoPanel = new UserInfoController(LogInModel.getLoggedIn()).getView();
+    infoPanel = new InfoPanelController().getView();
     openCashierShoppingMask =
         new ControllerButton(
             CashierShoppingMaskController::new, CashierShoppingMaskController.class);
@@ -116,11 +118,11 @@ public class MenuView implements IView<MenuController> {
             () -> new UserInfoController(LogInModel.getLoggedIn()),
             UserInfoController.class,
             Controller::openTab);
-    editOwnUser =
+    showUserInfo =
         new ControllerButton(
-            controller::generateEditOwnUserController,
-            FormEditorController.class,
-            Controller::openTab,
+            () -> new UserInfoController(LogInModel.getLoggedIn()),
+            UserInfoController.class,
+            c -> c.openIn(new SubWindow(traceViewContainer())).getLoaded(),
             false,
             new PermissionKey[] {PermissionKey.ACTION_EDIT_OWN_DATA});
     editUserSettings =
@@ -156,7 +158,6 @@ public class MenuView implements IView<MenuController> {
     editApplicationSettings =
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
     order = new ControllerButton(PreOrderController::new, PreOrderController.class);
-    // NOT IMPLEMENTED
     adminTools = new ControllerButton(AdminToolController::new, AdminToolController.class);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();

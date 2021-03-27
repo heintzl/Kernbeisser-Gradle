@@ -5,7 +5,6 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -56,10 +55,6 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   @Override
   protected void closed() {
     SwingUtilities.getWindowAncestor(getView().getContent()).dispose();
-  }
-
-  public FormEditorController<User> generateEditOwnUserController() {
-    return FormEditorController.open(LogInModel.getLoggedIn(), new UserController(), Mode.EDIT);
   }
 
   public FormEditorController<User> generateAddBeginnerForm() {
