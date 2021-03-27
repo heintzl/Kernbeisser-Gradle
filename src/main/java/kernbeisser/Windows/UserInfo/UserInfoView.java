@@ -1,15 +1,5 @@
 package kernbeisser.Windows.UserInfo;
 
-import static java.lang.String.format;
-
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.util.Collection;
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
@@ -17,11 +7,21 @@ import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Useful.Date;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.util.Collection;
+
+import static java.lang.String.format;
 
 public class UserInfoView implements IView<UserInfoController> {
 
@@ -51,7 +51,6 @@ public class UserInfoView implements IView<UserInfoController> {
   JRadioButton optCurrent;
   private JRadioButton optLast;
   private JButton printStatement;
-  private JTextPane infoText;
 
   @Linked private UserInfoController controller;
 
@@ -213,33 +212,6 @@ public class UserInfoView implements IView<UserInfoController> {
             controller.printStatement(
                 (StatementType) transactionStatementType.getSelectedItem(),
                 optCurrent.isSelected()));
-    infoText.setEditorKit(new javax.swing.text.html.HTMLEditorKit());
-    infoText.setEditable(false);
-    infoText.setText(
-        "<HTML><BODY>"
-            + "<table border=\"0\">"
-            + "<tr><td colspan=\"2\"><h1>Kernbeißer Ladenprogramm</h1></td></tr>"
-            + "<tr><td valign=\"top\"><i>Beschreibung:</i></td>"
-            + "<td>Dieses Programm wurde für den Ladenbetrieb der Kernbeißer Verbraucher-Erzeuger-Genossenschaft"
-            + " in Braunschweig (https://www.kernbeisser-bs.de) entwickelt. "
-            + "Es wurde in Java als quelloffene Software implementiert.</td></tr>"
-            + "<tr><td><i>Sourcecode:</i></td><td><a href=\"https://github.com/julikiller98/Kernbeisser-Gradle\">"
-            + "https://github.com/julikiller98/Kernbeisser-Gradle</a></td></tr>"
-            + "<tr><td><div><i>Erstellt am:</i></td><td>"
-            + getBuildDate()
-            + "</td></tr>"
-            + "</table>"
-            + "<BODY></HTML>");
-    infoText.addHyperlinkListener(
-        e -> {
-          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            try {
-              Desktop.getDesktop().browse(e.getURL().toURI());
-            } catch (IOException | URISyntaxException f) {
-              Tools.showUnexpectedErrorWarning(f);
-            }
-          }
-        });
   }
 
   @Override
@@ -249,7 +221,9 @@ public class UserInfoView implements IView<UserInfoController> {
 
   @Override
   public @NotNull Dimension getSize() {
-    return new Dimension(500, 500);
+    SubWindow parent = (SubWindow) controller.getContainer();
+    Dimension maxSize = parent.getParent().getSize();
+    return new Dimension((int) (maxSize.width * .8), (int) (maxSize.height * .8));
   }
 
   @Override
