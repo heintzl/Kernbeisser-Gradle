@@ -2,6 +2,7 @@ package kernbeisser.Windows.SynchronizeArticles;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Requires;
 import kernbeisser.Tasks.Catalog.Catalog;
@@ -28,10 +29,17 @@ public class SynchronizeArticleController
   }
 
   public void useKernbeisserAndIgnore() {
-    for (ArticleDifference<?> selectedObject : getView().getSelectedObjects()) {
-      getView().remove(selectedObject);
-      model.resolveAndIgnoreDifference(selectedObject);
-    }
+    new Thread(
+            () -> {
+              getView().showProgress("Änderungen werden verarbeitet...");
+              Collection<ArticleDifference<?>> selection = getView().getSelectedObjects();
+              for (ArticleDifference<?> selectedObject : selection) {
+                model.resolveAndIgnoreDifference(selectedObject);
+              }
+              getView().removeAll(selection);
+              getView().progressFinished();
+            })
+        .start();
   }
 
   public void useKornkraft() {
@@ -39,10 +47,17 @@ public class SynchronizeArticleController
   }
 
   private void apply(boolean useCurrent) {
-    for (ArticleDifference<?> selectedObject : getView().getSelectedObjects()) {
-      getView().remove(selectedObject);
-      model.resolveDifference(selectedObject, useCurrent);
-    }
+    new Thread(
+            () -> {
+              getView().showProgress("Änderungen werden verarbeitet...");
+              Collection<ArticleDifference<?>> selection = getView().getSelectedObjects();
+              for (ArticleDifference<?> selectedObject : selection) {
+                model.resolveDifference(selectedObject, useCurrent);
+              }
+              getView().removeAll(selection);
+              getView().progressFinished();
+            })
+        .start();
   }
 
   public void setProductGroups() {
@@ -70,11 +85,21 @@ public class SynchronizeArticleController
   protected boolean commitClose() {
     if (model.isCatalogLoaded()) {
       try {
-        model.pushToDB();
+        model.checkDiffs();
       } catch (UnsupportedOperationException e) {
         getView().mergeDiffsFirst();
         return false;
       }
+      new Thread(
+              () -> {
+                getView().showProgress("Datenbank wird auf den neusten Stand gebracht.");
+                model.pushToDB();
+                getView().progressFinished();
+                getView().importSuccessful();
+                getView().kill();
+              })
+          .start();
+      return false;
     }
     return true;
   }

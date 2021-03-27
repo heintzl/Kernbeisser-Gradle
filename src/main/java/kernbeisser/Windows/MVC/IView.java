@@ -1,6 +1,7 @@
 package kernbeisser.Windows.MVC;
 
 import java.awt.*;
+import java.util.Optional;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -79,5 +80,9 @@ public interface IView<
 
   default Component getFocusOnInitialize() {
     return getContent();
+  }
+
+  default void kill() {
+    Optional.ofNullable(traceViewContainer()).ifPresent(ViewContainer::kill);
   }
 }

@@ -245,7 +245,7 @@ public class Article {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Collection<Article> out = createQuery(em, search).setMaxResults(maxResults).getResultList();
+    List<Article> out = createQuery(em, search).setMaxResults(maxResults).getResultList();
     em.close();
     return Proxy.getSecureInstances(out);
   }
@@ -256,7 +256,7 @@ public class Article {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Collection<Article> out =
+    List<Article> out =
         createQuery(em, search)
             .getResultStream()
             .filter(articlePredicate)

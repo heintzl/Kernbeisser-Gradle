@@ -60,4 +60,9 @@ public class TabViewContainer implements ViewContainer {
   public void requestClose() {
     parent.closeViewContainer(this, parent.indexOf(loaded), before.get());
   }
+
+  @Override
+  public void kill() {
+    parent.kill(this, parent.indexOf(loaded), before.get());
+  }
 }

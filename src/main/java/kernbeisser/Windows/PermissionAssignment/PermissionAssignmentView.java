@@ -43,4 +43,9 @@ public class PermissionAssignmentView implements IView<PermissionAssignmentContr
   Optional<Permission> getSelectedPermission() {
     return permissions.getSelected();
   }
+
+  @Override
+  public String getTitle() {
+    return "Berechtigung erteilen";
+  }
 }

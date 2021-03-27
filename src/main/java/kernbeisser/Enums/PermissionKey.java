@@ -20,6 +20,7 @@ public enum PermissionKey {
   GO_UNDER_MIN(ActionPermission.class),
 
   // Window Permissions
+  ACTION_OPEN_PERMISSION_ASSIGNMENT(null),
   ACTION_OPEN_ADMIN_TOOLS(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICELISTS(ActionPermission.class),
   ACTION_OPEN_SOLO_SHOPPING_MASK(ActionPermission.class),
