@@ -6,8 +6,10 @@ import java.util.Collection;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -36,6 +38,9 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private AdvancedComboBox<MappedDifferences> difference;
   private DoubleParseField maxAllowedDiff;
   private JButton useKernbeisserAndIgnore;
+  private JProgressBar progressBar;
+  private JLabel progressName;
+  private JPanel progress;
 
   @Linked private SynchronizeArticleController controller;
 
@@ -143,10 +148,6 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     JOptionPane.showMessageDialog(getTopComponent(), "Katalog erfolgreich aktualisiert!");
   }
 
-  public void progressStarted() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Katalog wird aktualisiert!");
-  }
-
   public void surchargeGroupsSet() {
     JOptionPane.showMessageDialog(
         getTopComponent(), "Die Zuschlagsgruppen wurden erfolgreich gesetzt!");
@@ -161,5 +162,18 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
         getTopComponent(),
         "Bitte korrigiere alle Konflikte bevor du den Katalog in die Datenbank übernimmst.");
     differences.setRowFilter(null);
+  }
+
+  public void showProgress(String progressName) {
+    this.progressName.setText(progressName);
+    progress.setVisible(true);
+  }
+
+  public void progressFinished() {
+    progress.setVisible(false);
+  }
+
+  public void removeAll(Collection<ArticleDifference<?>> collection) {
+    differences.removeAll(collection);
   }
 }

@@ -78,4 +78,12 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
   public void pushToDB() {
     mergeSession.pushToDB();
   }
+
+  public void checkDiffs() {
+    mergeSession.checkDiffs();
+  }
+
+  public boolean hasAvailableDiffs() {
+    return mergeSession.diffsAvailable();
+  }
 }

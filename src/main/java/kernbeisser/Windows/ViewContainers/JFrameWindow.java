@@ -28,7 +28,7 @@ public class JFrameWindow extends JFrame implements ViewContainer {
           public void windowClosing(WindowEvent e) {
             if (controller.requestClose()) {
               controller.notifyClosed();
-              dispose();
+              kill();
             }
           }
         });
@@ -43,5 +43,10 @@ public class JFrameWindow extends JFrame implements ViewContainer {
   @Override
   public void requestClose() {
     this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+  }
+
+  @Override
+  public void kill() {
+    dispose();
   }
 }

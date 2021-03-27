@@ -295,4 +295,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     objects.removeIf(predicate);
     refreshModel();
   }
+
+  public void removeAll(Collection<T> collection) {
+    objects.removeAll(collection);
+    refreshModel();
+  }
 }

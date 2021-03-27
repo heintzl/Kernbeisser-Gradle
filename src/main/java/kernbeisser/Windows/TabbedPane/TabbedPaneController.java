@@ -23,6 +23,7 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
     var view = getView();
     if (container.getLoaded() == null) {
       view.removeTab(index);
+      getModel().remove(container);
       if (newFocus != null) {
         getView().setSelected(model.indexOf(newFocus));
       }
@@ -51,12 +52,6 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
     TabViewContainer container = new TabViewContainer(this);
     getModel().add(container);
     return container;
-  }
-
-  public void kill(Controller<?, ?> controller) {
-    var view = getView();
-    view.removeTab(indexOf(controller));
-    getModel().removeController(controller);
   }
 
   int indexOf(Controller<?, ?> controller) {
@@ -89,5 +84,14 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
 
   public void setSelectedIndex(int index) {
     getView().setSelected(index);
+  }
+
+  public void kill(ViewContainer container, int index, TabViewContainer newFocus) {
+    var view = getView();
+    view.removeTab(index);
+    getModel().remove(container);
+    if (newFocus != null) {
+      getView().setSelected(model.indexOf(newFocus));
+    }
   }
 }

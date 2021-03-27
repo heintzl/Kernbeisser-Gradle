@@ -177,6 +177,10 @@ public class CatalogMergeSession {
     et.commit();
   }
 
+  public boolean diffsAvailable() {
+    return diffs.isEmpty();
+  }
+
   public void resolveDifference(ArticleDifference<?> articleDifference, boolean useCurrent) {
     diffs.remove(articleDifference);
     if (useCurrent) articleDifference.pushCurrentIntoNew();

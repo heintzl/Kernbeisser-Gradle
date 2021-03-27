@@ -72,6 +72,24 @@ public class Proxy {
             .collect(Collectors.toCollection(ArrayList::new));
   }
 
+  public static <C extends List<V>, V> C getSecureInstances(C collection) {
+    try {
+      Class<?> proxyClass = getProxyClass(obtainClass(collection));
+      collection.replaceAll(
+          e -> injectMethodHandler(proxyClass, e, PermissionSetSecurityHandler.ON_LOGGED_IN));
+    } catch (UnsupportedOperationException ignored) {
+    }
+    return collection;
+  }
+
+  public static <V> Class<V> obtainClass(Collection<V> collection) {
+    return (Class<V>)
+        collection.stream()
+            .findAny()
+            .map(Object::getClass)
+            .orElseThrow(UnsupportedOperationException::new);
+  }
+
   public static <T> Class<? extends T> getProxyClass(Class<T> clazz) {
     Class<? extends T> cachedClass = (Class<? extends T>) proxyClassCache.get(clazz);
     if (cachedClass == null) {

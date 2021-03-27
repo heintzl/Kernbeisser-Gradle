@@ -8,4 +8,7 @@ public interface ViewContainer {
   Controller<?, ?> getLoaded();
 
   void requestClose();
+
+  // kills the view Container without asking the view for closing and notifying it when it's closed
+  void kill();
 }
