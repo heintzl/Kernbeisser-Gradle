@@ -2,7 +2,6 @@ package kernbeisser.Security;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -58,20 +57,13 @@ public class Proxy {
    * @return the collection c with Proxy extends v values
    */
   public static <C extends Collection<V>, V> C getSecureInstances(C collection) {
-    if (collection.size() == 0) {
-      return collection;
-    }
-    V any = collection.iterator().next();
-    if (ProxyFactory.isProxyClass(any.getClass())) {
-      return collection;
-    }
-    Class<?> proxyClass = getProxyClass(any.getClass());
-    return (C)
-        collection.stream()
-            .map(e -> injectMethodHandler(proxyClass, e, PermissionSetSecurityHandler.ON_LOGGED_IN))
-            .collect(Collectors.toCollection(ArrayList::new));
+    ArrayList<V> buffer = getSecureInstances(new ArrayList<>(collection));
+    collection.clear();
+    collection.addAll(buffer);
+    return collection;
   }
 
+  /** same as #getSecureInstances(Collection<T>) but faster list based impl. */
   public static <C extends List<V>, V> C getSecureInstances(C collection) {
     try {
       Class<?> proxyClass = getProxyClass(obtainClass(collection));
