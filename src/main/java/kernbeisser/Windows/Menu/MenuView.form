@@ -27,40 +27,18 @@
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
-                <border type="etched" title="Benutzer">
+                <border type="etched" title="Mein Kernbeißer-Konto">
                   <font size="18"/>
                 </border>
                 <children>
-                  <component id="326da" class="kernbeisser.CustomComponents.ControllerButton" binding="changePassword" custom-create="true">
-                    <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <font/>
-                      <requestFocusEnabled value="false"/>
-                      <text value="Passwort ändern"/>
-                    </properties>
-                  </component>
                   <vspacer id="a37c">
                     <constraints>
                       <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
-                  <component id="90aa8" class="kernbeisser.CustomComponents.ControllerButton" binding="transactionHistory" custom-create="true">
-                    <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <font/>
-                      <label value="Guthabenverlauf"/>
-                      <requestFocusEnabled value="false"/>
-                      <text value="Guthabenverlauf"/>
-                      <visible value="false"/>
-                    </properties>
-                  </component>
                   <component id="548e6" class="kernbeisser.CustomComponents.ControllerButton" binding="showUserInfo" custom-create="true">
                     <constraints>
-                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font/>
@@ -92,7 +70,7 @@
                   </component>
                   <component id="18fc1" class="kernbeisser.CustomComponents.ControllerButton" binding="editUserGroup" custom-create="true">
                     <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font/>
@@ -100,15 +78,37 @@
                       <text value="Nutzergruppe wechseln"/>
                     </properties>
                   </component>
+                  <component id="90aa8" class="kernbeisser.CustomComponents.ControllerButton" binding="openSelfPreorder" custom-create="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <label value="Meine Vorbestellung"/>
+                      <requestFocusEnabled value="false"/>
+                      <text value="Meine Vorbestellung"/>
+                      <visible value="true"/>
+                    </properties>
+                  </component>
                   <component id="3cf1" class="kernbeisser.CustomComponents.ControllerButton" binding="doUserDefiniedTransaction" custom-create="true">
                     <constraints>
-                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font/>
                       <label value="Guthaben überweisen"/>
                       <requestFocusEnabled value="false"/>
                       <text value="Guthaben überweisen"/>
+                    </properties>
+                  </component>
+                  <component id="326da" class="kernbeisser.CustomComponents.ControllerButton" binding="changePassword" custom-create="true">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <requestFocusEnabled value="false"/>
+                      <text value="Passwort ändern"/>
                     </properties>
                   </component>
                 </children>

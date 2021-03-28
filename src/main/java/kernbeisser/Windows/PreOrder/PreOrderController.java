@@ -3,6 +3,7 @@ package kernbeisser.Windows.PreOrder;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import javax.persistence.NoResultException;
 import javax.swing.*;
@@ -11,6 +12,7 @@ import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Requires;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -22,9 +24,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   private final KeyCapture keyCapture;
   private final BarcodeCapture barcodeCapture;
+  boolean restrictToLoggedIn;
 
-  public PreOrderController() {
+  public PreOrderController(boolean restrictToLoggedIn) {
     super(new PreOrderModel());
+    this.restrictToLoggedIn = restrictToLoggedIn;
     keyCapture = new KeyCapture();
     barcodeCapture = new BarcodeCapture(this::processBarcode);
   }
@@ -164,11 +168,18 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
     keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
     view.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
-    view.setUser(User.getAllUserFullNames(true));
-    view.setPreOrders(model.getAllPreOrders());
     view.enableControls(false);
+    if (restrictToLoggedIn) {
+      view.setUsers(Arrays.asList(LogInModel.getLoggedIn()));
+      view.setUserEnabled(false);
+    } else {
+      view.setUsers(User.getAllUserFullNames(true));
+    }
+    view.setPreOrders(model.getAllPreOrders(restrictToLoggedIn));
     view.setAmount("1");
     view.searchArticle.addActionListener(e -> openSearchWindow());
+    view.bestellungExportierenButton.setEnabled(!restrictToLoggedIn);
+    view.abhakplanButton.setEnabled(!restrictToLoggedIn);
     noArticleFound();
   }
 

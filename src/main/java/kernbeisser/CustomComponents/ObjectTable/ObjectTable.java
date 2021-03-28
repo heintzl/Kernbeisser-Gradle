@@ -115,8 +115,8 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
         });
   }
 
-  private void insertColumn(Column<T> column) {
-    columns.add(column);
+  private void insertColumn(Column<T> column, int index) {
+    columns.add(index, column);
     refreshModel();
   }
 
@@ -135,7 +135,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   public void addColumn(Column<T> column) {
-    insertColumn(column);
+    insertColumn(column, columns.size());
+  }
+
+  public void addColumnAtIndex(int index, Column<T> column) {
+    insertColumn(column, index);
   }
 
   public boolean contains(T t) {

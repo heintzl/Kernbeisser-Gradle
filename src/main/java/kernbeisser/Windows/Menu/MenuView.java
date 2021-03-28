@@ -54,7 +54,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton editArticles;
   private ControllerButton editSurchargeTables;
   private kernbeisser.CustomComponents.ControllerButton changePassword;
-  private kernbeisser.CustomComponents.ControllerButton transactionHistory;
+  private kernbeisser.CustomComponents.ControllerButton openSelfPreorder;
   private kernbeisser.CustomComponents.ControllerButton showUserInfo;
   private kernbeisser.CustomComponents.ControllerButton editUserSettings;
   private ControllerButton editUsers;
@@ -114,11 +114,6 @@ public class MenuView implements IView<MenuController> {
             () -> new ChangePasswordController(LogInModel.getLoggedIn(), true),
             ChangePasswordController.class,
             Controller::openTab);
-    transactionHistory =
-        new ControllerButton(
-            () -> new UserInfoController(LogInModel.getLoggedIn()),
-            UserInfoController.class,
-            Controller::openTab);
     showUserInfo =
         new ControllerButton(
             () -> new UserInfoController(Proxy.getSecureInstance(LogInModel.getLoggedIn())),
@@ -158,7 +153,9 @@ public class MenuView implements IView<MenuController> {
     editJobs = new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab);
     editApplicationSettings =
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
-    order = new ControllerButton(PreOrderController::new, PreOrderController.class);
+    order = new ControllerButton(() -> new PreOrderController(false), PreOrderController.class);
+    openSelfPreorder =
+        new ControllerButton(() -> new PreOrderController(true), PreOrderController.class);
     adminTools = new ControllerButton(AdminToolController::new, AdminToolController.class);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();
