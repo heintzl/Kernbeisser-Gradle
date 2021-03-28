@@ -9,17 +9,24 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Collection;
 import javax.swing.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Colors;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
+import kernbeisser.Forms.FormEditor.FormEditorController;
+import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Useful.Date;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class UserInfoView implements IView<UserInfoController> {
@@ -50,6 +57,8 @@ public class UserInfoView implements IView<UserInfoController> {
   JRadioButton optCurrent;
   private JRadioButton optLast;
   private JButton printStatement;
+  @Getter private JButton editUser;
+  private JButton close;
 
   @Linked private UserInfoController controller;
 
@@ -95,6 +104,10 @@ public class UserInfoView implements IView<UserInfoController> {
             Column.create("Verkäufer", e -> e.getSession().getSeller()),
             Column.create("Käufer", e -> e.getSession().getCustomer()),
             Column.create("Summe", e -> format("%.2f€", e.getSum())));
+  }
+
+  FormEditorController<User> generateUserController() {
+    return FormEditorController.open(LogInModel.getLoggedIn(), new UserController(), Mode.EDIT);
   }
 
   void pasteUser(User user) {
@@ -211,6 +224,11 @@ public class UserInfoView implements IView<UserInfoController> {
             controller.printStatement(
                 (StatementType) transactionStatementType.getSelectedItem(),
                 optCurrent.isSelected()));
+    editUser.addActionListener(e -> controller.editUser());
+    editUser.setIcon(
+        IconFontSwing.buildIcon(
+            FontAwesome.PENCIL, Tools.scaleWithLabelScalingFactor(16), new Color(0xFF00CCFF)));
+    close.addActionListener(e -> back());
   }
 
   @Override
