@@ -33,7 +33,12 @@ public class Proxy {
     if (parent == null || ProxyFactory.isProxyClass(parent.getClass())) {
       return parent;
     }
-    return injectMethodHandler(parent, PermissionSetSecurityHandler.ON_LOGGED_IN);
+    return injectMethodHandler(
+        parent,
+        (parent instanceof UserRelated
+                && ((UserRelated) parent).isInRelation(LogInModel.getLoggedIn()))
+            ? PermissionSetSecurityHandler.IN_RELATION_TO_OWN_USER
+            : PermissionSetSecurityHandler.ON_LOGGED_IN);
   }
 
   /**
