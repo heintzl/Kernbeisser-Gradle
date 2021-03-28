@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,9 @@ public class InfoPanelView implements IView<InfoPanelController> {
             + "<tr><td><div><i>Erstellt am:</i></td><td>"
             + getBuildDate()
             + "</td></tr>"
+            + "<tr><td colspan=\"2\"><h1>Du bist angemeldet als "
+            + LogInModel.getLoggedIn().getFullName()
+            + "</h1></td></tr>"
             + "</table>"
             + "<BODY></HTML>");
     infoText.addHyperlinkListener(
