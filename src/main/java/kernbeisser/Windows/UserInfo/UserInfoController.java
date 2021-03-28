@@ -1,6 +1,9 @@
 package kernbeisser.Windows.UserInfo;
 
+import static kernbeisser.Useful.Tools.optional;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -35,12 +38,14 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
     var view = getView();
     switch (view.getSelectedTabIndex()) {
       case 0:
-        view.setJobs(model.getUser().getJobs());
-        view.setPermissions(model.getUser().getPermissions());
-        view.setUserGroupMembers(model.getUser().getUserGroup().getMembers());
+        optional(model.getUser()::getJobs).ifPresent(view::setJobs);
+        optional(model.getUser()::getPermissions).ifPresent(view::setPermissions);
+        optional(model.getUser()::getUserGroup)
+            .flatMap(e -> optional(e::getMembers))
+            .ifPresent(view::setUserGroupMembers);
         return;
       case 1:
-        view.setShoppingHistory(model.getUser().getAllPurchases());
+        optional(model.getUser()::getAllPurchases).ifPresent(view::setShoppingHistory);
         return;
       case 2:
         Collection<Column<Transaction>> columns = new ArrayList<>();
@@ -71,7 +76,6 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
         columns.add(Column.create("Datum", Transaction::getDate));
         view.setValueHistoryColumns(columns);
         view.setValueHistory(model.getUser().getAllValueChanges());
-        return;
     }
   }
 
@@ -121,14 +125,9 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
 
   @Override
   public void fillView(UserInfoView userInfoView) {
-    if (model.getUser().getId() == LogInModel.getLoggedIn().getId()) {
-      userInfoView.pasteWithoutPermissionCheck(model.getUser());
-    } else {
-      userInfoView.pasteUser(model.getUser());
-    }
-    userInfoView.optCurrent.setSelected(true);
-    userInfoView.transactionStatementType.setModel(
-        new DefaultComboBoxModel<>(StatementType.values()));
+    userInfoView.getUserObjectForm().setSource(model.getUser());
+    userInfoView.setOptCurrentSelected(true);
+    userInfoView.setTransactionStatementTypeItems(Arrays.asList(StatementType.values()));
     User currentUser = LogInModel.getLoggedIn();
     boolean isPermitted =
         currentUser.hasPermission(PermissionKey.ACTION_OPEN_EDIT_USERS)
@@ -147,6 +146,6 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
     FormEditorController.open(model.getUser(), new UserController(), Mode.EDIT)
         .openIn(new SubWindow(getView().traceViewContainer()))
         .getLoaded();
-    getView().pasteUser(model.getUser());
+    getView().getUserObjectForm().setSource(model.getUser());
   }
 }

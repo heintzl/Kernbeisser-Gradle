@@ -192,7 +192,7 @@
                       <text value="Bearbeitungsdatum:"/>
                     </properties>
                   </component>
-                  <component id="1b331" class="javax.swing.JLabel" binding="surname">
+                  <component id="dda81" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="surname" custom-create="true">
                     <constraints>
                       <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -202,7 +202,7 @@
                       <text value="surname"/>
                     </properties>
                   </component>
-                  <component id="96228" class="javax.swing.JLabel" binding="firstName">
+                  <component id="6444e" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="firstName" custom-create="true">
                     <constraints>
                       <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -212,7 +212,7 @@
                       <text value="firstName"/>
                     </properties>
                   </component>
-                  <component id="7dfca" class="javax.swing.JLabel" binding="username">
+                  <component id="9687e" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="username" custom-create="true">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -222,7 +222,7 @@
                       <text value="username"/>
                     </properties>
                   </component>
-                  <component id="a994a" class="javax.swing.JLabel" binding="email">
+                  <component id="a6021" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="email" custom-create="true">
                     <constraints>
                       <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -232,7 +232,7 @@
                       <text value="email"/>
                     </properties>
                   </component>
-                  <component id="ccea4" class="javax.swing.JLabel" binding="phoneNumber1">
+                  <component id="b5147" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="phoneNumber1" custom-create="true">
                     <constraints>
                       <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -242,7 +242,7 @@
                       <text value="tele1"/>
                     </properties>
                   </component>
-                  <component id="aca5d" class="javax.swing.JLabel" binding="phoneNumber2">
+                  <component id="183ae" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="phoneNumber2" custom-create="true">
                     <constraints>
                       <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -252,7 +252,7 @@
                       <text value="tele2"/>
                     </properties>
                   </component>
-                  <component id="1afce" class="javax.swing.JLabel" binding="townCode">
+                  <component id="d9b96" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="townCode" custom-create="true">
                     <constraints>
                       <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -262,7 +262,7 @@
                       <text value="postalcode"/>
                     </properties>
                   </component>
-                  <component id="fef21" class="javax.swing.JLabel" binding="street">
+                  <component id="6e57d" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="street" custom-create="true">
                     <constraints>
                       <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -272,7 +272,7 @@
                       <text value="street"/>
                     </properties>
                   </component>
-                  <component id="81103" class="javax.swing.JLabel" binding="shares">
+                  <component id="1ffe7" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="shares" custom-create="true">
                     <constraints>
                       <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -282,7 +282,7 @@
                       <text value="shares"/>
                     </properties>
                   </component>
-                  <component id="a8bbe" class="javax.swing.JLabel" binding="solidarySurcharge">
+                  <component id="a52a1" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="solidarySurcharge" custom-create="true">
                     <constraints>
                       <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -292,7 +292,7 @@
                       <text value="solidarySurcharge"/>
                     </properties>
                   </component>
-                  <component id="8af1a" class="javax.swing.JLabel" binding="createDate">
+                  <component id="9fc63" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="createDate" custom-create="true">
                     <constraints>
                       <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -302,7 +302,7 @@
                       <text value="createDate"/>
                     </properties>
                   </component>
-                  <component id="59d4b" class="javax.swing.JLabel" binding="updateDate">
+                  <component id="d1273" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="updateDate" custom-create="true">
                     <constraints>
                       <grid row="13" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -325,7 +325,7 @@
                       <text value="Stadt:"/>
                     </properties>
                   </component>
-                  <component id="b0ae1" class="javax.swing.JLabel" binding="city">
+                  <component id="6bb55" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="city" custom-create="true">
                     <constraints>
                       <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -341,7 +341,7 @@
                       <text value="Schlüsselbesitz:"/>
                     </properties>
                   </component>
-                  <component id="dd30c" class="javax.swing.JLabel" binding="key">
+                  <component id="a97e0" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="key" custom-create="true">
                     <constraints>
                       <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -467,15 +467,6 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="a4f63" class="javax.swing.JComboBox" binding="transactionStatementType">
-                    <constraints>
-                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag top="0" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <model/>
-                    </properties>
-                  </component>
                   <component id="1fa6" class="javax.swing.JButton" binding="printStatement">
                     <constraints>
                       <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -503,6 +494,13 @@
                     <properties>
                       <text value="letzer"/>
                     </properties>
+                  </component>
+                  <component id="7bda7" class="kernbeisser.CustomComponents.ComboBox.AdvancedComboBox" binding="statementType">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="0.0"/>
+                    </constraints>
+                    <properties/>
                   </component>
                 </children>
               </grid>

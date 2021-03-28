@@ -38,6 +38,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
+import kernbeisser.Security.IterableProtection.ProtectedIterable;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
@@ -930,5 +931,15 @@ public class Tools {
         .peek(u -> u.getPermissions().add(PermissionConstants.KEY_PERMISSION.getPermission()))
         .forEach(em::persist);
     em.flush();
+  }
+
+  public static <T> Optional<T> optional(AccessSupplier<T> supplier) {
+    try {
+      T v = supplier.get();
+      if (v instanceof ProtectedIterable) ((ProtectedIterable) v).checkRead();
+      return Optional.of(supplier.get());
+    } catch (PermissionKeyRequiredException e) {
+      return Optional.empty();
+    }
   }
 }

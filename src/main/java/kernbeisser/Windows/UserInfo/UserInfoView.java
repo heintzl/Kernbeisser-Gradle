@@ -1,6 +1,7 @@
 package kernbeisser.Windows.UserInfo;
 
 import static java.lang.String.format;
+import static kernbeisser.Useful.Tools.optional;
 
 import java.awt.*;
 import java.io.File;
@@ -8,18 +9,21 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.List;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
+import kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel;
+import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -30,34 +34,38 @@ import org.jetbrains.annotations.NotNull;
 
 public class UserInfoView implements IView<UserInfoController> {
 
+  public static final String ACCESS_DENIED = "[Keine Berechtigung]";
+
   private JPanel main;
   private JTabbedPane tabbedPane;
   private ObjectTable<Purchase> shoppingHistory;
   private ObjectTable<Transaction> valueHistory;
-  private JLabel phoneNumber1;
-  private JLabel username;
-  private JLabel firstName;
-  private JLabel surname;
-  private JLabel email;
-  private JLabel phoneNumber2;
-  private JLabel townCode;
-  private JLabel street;
-  private JLabel shares;
-  private JLabel solidarySurcharge;
-  private JLabel createDate;
-  private JLabel updateDate;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> phoneNumber1;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> username;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> firstName;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> surname;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> email;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> phoneNumber2;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> townCode;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> street;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> shares;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> solidarySurcharge;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> createDate;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> updateDate;
   private ObjectTable<Permission> permissions;
   private ObjectTable<Job> jobs;
   private ObjectTable<User> userGroup;
-  private JLabel key;
-  private JLabel city;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> key;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> city;
   private JButton printBon;
-  JComboBox transactionStatementType;
-  JRadioButton optCurrent;
+  private JRadioButton optCurrent;
   private JRadioButton optLast;
   private JButton printStatement;
   @Getter private JButton editUser;
   private JButton close;
+  private AdvancedComboBox<StatementType> statementType;
+
+  @Getter private ObjectForm<User> userObjectForm;
 
   @Linked private UserInfoController controller;
 
@@ -103,86 +111,28 @@ public class UserInfoView implements IView<UserInfoController> {
             Column.create("Verkäufer", e -> e.getSession().getSeller()),
             Column.create("Käufer", e -> e.getSession().getCustomer()),
             Column.create("Summe", e -> format("%.2f€", e.getSum())));
+    phoneNumber1 = new AccessCheckingLabel<>(User::getPhoneNumber1);
+    username = new AccessCheckingLabel<>(User::getUsername);
+    firstName = new AccessCheckingLabel<>(User::getFirstName);
+    surname = new AccessCheckingLabel<>(User::getSurname);
+    email = new AccessCheckingLabel<>(User::getEmail);
+    phoneNumber2 = new AccessCheckingLabel<>(User::getPhoneNumber2);
+    townCode = new AccessCheckingLabel<>(User::getTownCode);
+    street = new AccessCheckingLabel<>(User::getStreet);
+    shares = new AccessCheckingLabel<>(e -> String.valueOf(e.getShares()));
+    solidarySurcharge =
+        new AccessCheckingLabel<>(
+            e -> String.format("%f%%", e.getUserGroup().getSolidaritySurcharge() * 2));
+    createDate = new AccessCheckingLabel<>(e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()));
+    updateDate = new AccessCheckingLabel<>(e -> Date.INSTANT_DATE_TIME.format(e.getUpdateDate()));
+    key =
+        new AccessCheckingLabel<>(
+            e -> String.valueOf(e.getKernbeisserKey()).replace("-1", "Kein Schlüssel"));
+    city = new AccessCheckingLabel<>(User::getTown);
   }
 
   FormEditorController<User> generateUserController() {
     return FormEditorController.open(LogInModel.getLoggedIn(), new UserController(), Mode.EDIT);
-  }
-
-  void pasteUser(User user) {
-    phoneNumber1.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_PHONE_NUMBER1_READ)
-            ? user.getPhoneNumber1()
-            : "Kein Zugriff");
-    username.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_USERNAME_READ)
-            ? user.getUsername()
-            : "Kein Zugriff");
-    firstName.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_FIRST_NAME_READ)
-            ? user.getFirstName()
-            : "Kein Zugriff");
-    surname.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_SURNAME_READ)
-            ? user.getSurname()
-            : "Kein Zugriff");
-    email.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_EMAIL_READ)
-            ? user.getEmail()
-            : "Kein Zugriff");
-    phoneNumber2.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_PHONE_NUMBER2_READ)
-            ? user.getPhoneNumber2()
-            : "Kein Zugriff");
-    townCode.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_TOWN_READ)
-            ? String.valueOf(user.getTownCode())
-            : "Kein Zugriff");
-    street.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_STREET_READ)
-            ? user.getStreet()
-            : "Kein Zugriff");
-    shares.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_SHARES_READ)
-            ? String.valueOf(user.getShares())
-            : "Kein Zugriff");
-    solidarySurcharge.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)
-            ? format("%.1f%%", user.getUserGroup().getSolidaritySurcharge() * 100)
-            : "Kein Zugriff");
-    createDate.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_CREATE_DATE_READ)
-            ? Date.INSTANT_DATE_TIME.format(user.getCreateDate())
-            : "Kein Zugriff");
-    updateDate.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_UPDATE_DATE_READ)
-            ? Date.INSTANT_DATE_TIME.format(user.getUpdateDate())
-            : "Kein Zugriff");
-    key.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_KERNBEISSER_KEY_READ)
-            ? user.getKernbeisserKey() == -1 ? "Kein Schlüssel" : user.getKernbeisserKey() + ""
-            : "Kein Zugriff");
-    city.setText(
-        LogInModel.getLoggedIn().hasPermission(PermissionKey.USER_TOWN_READ)
-            ? user.getTown()
-            : "Kein Zugriff");
-  }
-
-  void pasteWithoutPermissionCheck(User user) {
-    phoneNumber1.setText(user.getPhoneNumber1());
-    username.setText(user.getUsername());
-    firstName.setText(user.getFirstName());
-    surname.setText(user.getSurname());
-    email.setText(user.getEmail());
-    phoneNumber2.setText(user.getPhoneNumber2());
-    townCode.setText(String.valueOf(user.getTownCode()));
-    street.setText(user.getStreet());
-    shares.setText(String.valueOf(user.getShares()));
-    solidarySurcharge.setText(format("%.1f%%", user.getUserGroup().getSolidaritySurcharge()));
-    createDate.setText(Date.INSTANT_DATE_TIME.format(user.getCreateDate()));
-    updateDate.setText(Date.INSTANT_DATE_TIME.format(user.getUpdateDate()));
-    key.setText(user.getKernbeisserKey() == -1 ? "Kein Schlüssel" : user.getKernbeisserKey() + "");
-    city.setText(user.getTown());
   }
 
   int getSelectedTabIndex() {
@@ -221,13 +171,28 @@ public class UserInfoView implements IView<UserInfoController> {
     printStatement.addActionListener(
         e ->
             controller.printStatement(
-                (StatementType) transactionStatementType.getSelectedItem(),
-                optCurrent.isSelected()));
+                (StatementType) statementType.getSelectedItem(), optCurrent.isSelected()));
     editUser.addActionListener(e -> controller.editUser());
     editUser.setIcon(
         IconFontSwing.buildIcon(
             FontAwesome.PENCIL, Tools.scaleWithLabelScalingFactor(16), new Color(0xFF00CCFF)));
     close.addActionListener(e -> back());
+    userObjectForm =
+        new ObjectForm<>(
+            phoneNumber1,
+            username,
+            firstName,
+            surname,
+            email,
+            phoneNumber2,
+            townCode,
+            street,
+            shares,
+            solidarySurcharge,
+            createDate,
+            updateDate,
+            key,
+            city);
   }
 
   @Override
@@ -243,8 +208,16 @@ public class UserInfoView implements IView<UserInfoController> {
   @Override
   public String getTitle() {
     return "Benutzerinformationen von "
-        + controller.getModel().getUser().getFirstName()
+        + optional(controller.getModel().getUser()::getFirstName).orElse(ACCESS_DENIED)
         + ", "
-        + controller.getModel().getUser().getSurname();
+        + optional(controller.getModel().getUser()::getSurname).orElse(ACCESS_DENIED);
+  }
+
+  public void setOptCurrentSelected(boolean b) {
+    optCurrent.setSelected(b);
+  }
+
+  public void setTransactionStatementTypeItems(List<StatementType> asList) {
+    statementType.setItems(asList);
   }
 }
