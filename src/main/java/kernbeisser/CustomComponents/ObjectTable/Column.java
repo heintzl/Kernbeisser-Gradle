@@ -86,7 +86,6 @@ public interface Column<T> {
       Consumer<T> onAction,
       Comparator<Object> sorter) {
     return new Column<T>() {
-      private boolean read = true;
 
       @Override
       public String getName() {
@@ -95,15 +94,7 @@ public interface Column<T> {
 
       @Override
       public Object getValue(T t) {
-        if (!read) {
-          return "***********";
-        }
-        try {
-          return v.get(t);
-        } catch (PermissionKeyRequiredException e) {
-          read = false;
-          return getValue(t);
-        }
+        return v.get(t);
       }
 
       @Override
