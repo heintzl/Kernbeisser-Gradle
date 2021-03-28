@@ -166,7 +166,7 @@ public class MenuView implements IView<MenuController> {
             PreOrderController.class,
             Controller::openTab,
             false,
-            new PermissionKey[] {PermissionKey.ACTION_OPEN_SOLO_SHOPPING_MASK});
+            new PermissionKey[] {PermissionKey.ACTION_OPEN_OWN_PRE_ORDER});
     adminTools = new ControllerButton(AdminToolController::new, AdminToolController.class);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();

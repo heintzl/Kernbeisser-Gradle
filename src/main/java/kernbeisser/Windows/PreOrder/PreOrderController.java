@@ -165,7 +165,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
     keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
     keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
-    view.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
+    view.setInsertSectionEnabled(userMayEdit());
     view.enableControls(false);
     if (restrictToLoggedIn) {
       view.setUsers(Arrays.asList(LogInModel.getLoggedIn()));
@@ -179,6 +179,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     view.bestellungExportierenButton.setEnabled(!restrictToLoggedIn);
     view.abhakplanButton.setEnabled(!restrictToLoggedIn);
     noArticleFound();
+  }
+
+  boolean userMayEdit() {
+    return PermissionKey.ACTION_ORDER_CONTAINER.userHas()
+        || (restrictToLoggedIn && PermissionKey.ACTION_ORDER_OWN_CONTAINER.userHas());
   }
 
   @Override

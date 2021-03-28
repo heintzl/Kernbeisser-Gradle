@@ -89,9 +89,11 @@ public class PreOrderView implements IView<PreOrderController> {
                 e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())),
                 SwingConstants.RIGHT),
             Column.create(
-                "Anzahl", PreOrder::getAmount, SwingConstants.CENTER, true, controller::editAmount),
-            Column.createIcon(
-                IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
+                "Anzahl",
+                PreOrder::getAmount,
+                SwingConstants.CENTER,
+                true,
+                controller::editAmount));
     if (!controller.restrictToLoggedIn)
       preOrders.addColumnAtIndex(
           0,
@@ -101,6 +103,11 @@ public class PreOrderView implements IView<PreOrderController> {
               controller::toggleDelivery,
               e -> showSelectionPopup(),
               100));
+    if (controller.userMayEdit()) {
+      preOrders.addColumn(
+          Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
+    }
     user = new AdvancedComboBox<>(User::getFullName);
   }
 
