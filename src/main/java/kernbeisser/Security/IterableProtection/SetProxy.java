@@ -15,7 +15,7 @@ public class SetProxy<T> implements Set<T>, ProtectedIterable {
 
   public static <T> SetProxy<T> createWithProxyChildren(
       Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
-    return create(Proxy.getSecureInstances(collection), ps, read, modify);
+    return create(Proxy.getSecuredInstances(collection), ps, read, modify);
   }
 
   public static <T> SetProxy<T> create(

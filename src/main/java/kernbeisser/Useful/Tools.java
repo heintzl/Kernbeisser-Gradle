@@ -149,7 +149,7 @@ public class Tools {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Proxy.getSecureInstances(
+    return Proxy.getSecuredInstances(
         em.createQuery(
                 "select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
             .getResultList());
