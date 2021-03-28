@@ -15,6 +15,7 @@ import kernbeisser.Enums.ShopRange;
 import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 
 public class PreOrderModel implements IModel<PreOrderController> {
@@ -54,8 +55,14 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return Article.getByBarcode(Long.parseLong(s));
   }
 
-  Collection<PreOrder> getAllPreOrders() {
-    return em.createQuery("select p from PreOrder p", PreOrder.class).getResultList();
+  Collection<PreOrder> getAllPreOrders(boolean restricted) {
+    if (restricted) {
+      return em.createQuery("select p from PreOrder p where p.user = :u", PreOrder.class)
+          .setParameter("u", LogInModel.getLoggedIn())
+          .getResultList();
+    } else {
+      return em.createQuery("select p from PreOrder p", PreOrder.class).getResultList();
+    }
   }
 
   static double containerNetPrice(Article article) {
@@ -86,12 +93,12 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   public void printCheckList() {
     saveData();
-    new PreOrderChecklist(getAllPreOrders())
+    new PreOrderChecklist(getAllPreOrders(false))
         .sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
   }
 
   public int exportPreOrder(Component parent) throws IOException {
-    return CSVExport.exportPreOrder(parent, getAllPreOrders());
+    return CSVExport.exportPreOrder(parent, getAllPreOrders(false));
   }
 
   void toggleDelivery(PreOrder p) {
@@ -105,7 +112,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   public void setAllDelivered(boolean allDelivered) {
     delivery.clear();
     if (allDelivered) {
-      delivery.addAll(getAllPreOrders());
+      delivery.addAll(getAllPreOrders(false));
     }
   }
 

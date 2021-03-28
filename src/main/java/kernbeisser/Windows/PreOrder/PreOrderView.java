@@ -32,8 +32,8 @@ public class PreOrderView implements IView<PreOrderController> {
   private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<User> user;
   private IntegerParseField kkNumber;
   private JButton close;
-  private JButton abhakplanButton;
-  private JButton bestellungExportierenButton;
+  JButton abhakplanButton;
+  JButton bestellungExportierenButton;
   JButton searchArticle;
 
   private JPopupMenu popupSelectionColumn;
@@ -66,21 +66,17 @@ public class PreOrderView implements IView<PreOrderController> {
   private void createUIComponents() {
     Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
     Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
-    JMenuItem popupSelectAll = new JMenuItem("alle auswählen");
-    popupSelectAll.addActionListener(e -> setAllDelivered(true));
-    JMenuItem popupDeselectAll = new JMenuItem("alle abwählen");
-    popupDeselectAll.addActionListener(e -> setAllDelivered(false));
-    popupSelectionColumn = new JPopupMenu();
-    popupSelectionColumn.add(popupSelectAll);
-    popupSelectionColumn.add(popupDeselectAll);
+    if (!controller.restrictToLoggedIn) {
+      JMenuItem popupSelectAll = new JMenuItem("alle auswählen");
+      popupSelectAll.addActionListener(e -> setAllDelivered(true));
+      JMenuItem popupDeselectAll = new JMenuItem("alle abwählen");
+      popupDeselectAll.addActionListener(e -> setAllDelivered(false));
+      popupSelectionColumn = new JPopupMenu();
+      popupSelectionColumn.add(popupSelectAll);
+      popupSelectionColumn.add(popupDeselectAll);
+    }
     preOrders =
         new ObjectTable<PreOrder>(
-            Column.createIcon(
-                "ausgeliefert",
-                e -> controller.isDelivered(e) ? selected : unselected,
-                controller::toggleDelivery,
-                e -> showSelectionPopup(),
-                100),
             Column.create("Benutzer", e -> e.getUser().getFullName()),
             Column.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
             Column.create(
@@ -96,7 +92,15 @@ public class PreOrderView implements IView<PreOrderController> {
                 "Anzahl", PreOrder::getAmount, SwingConstants.CENTER, true, controller::editAmount),
             Column.createIcon(
                 IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
-
+    if (!controller.restrictToLoggedIn)
+      preOrders.addColumnAtIndex(
+          0,
+          Column.createIcon(
+              "ausgeliefert",
+              e -> controller.isDelivered(e) ? selected : unselected,
+              controller::toggleDelivery,
+              e -> showSelectionPopup(),
+              100));
     user = new AdvancedComboBox<>(User::getFullName);
   }
 
@@ -162,7 +166,6 @@ public class PreOrderView implements IView<PreOrderController> {
         });
 
     user.addActionListener(e -> userAction(false));
-
     add.addActionListener(e -> controller.add());
 
     preOrders.addKeyListener(
@@ -222,9 +225,12 @@ public class PreOrderView implements IView<PreOrderController> {
     preOrders.remove(selected);
   }
 
-  public void setUser(Collection<User> allUser) {
-    user.removeAllItems();
-    allUser.forEach(user::addItem);
+  public void setUsers(Collection<User> allUser) {
+    user.setItems(allUser);
+    if (user.getModel().getSize() > 1) {
+      user.setSelectedItem(null);
+    }
+    enableControls(controller.restrictToLoggedIn);
   }
 
   public void noArticleFoundForBarcode(String barcode) {
@@ -301,6 +307,10 @@ public class PreOrderView implements IView<PreOrderController> {
     return response;
   }
 
+  public void setUserEnabled(boolean enabled) {
+    user.setEnabled(enabled);
+  }
+
   @Override
   public @NotNull JComponent getContent() {
     return main;
@@ -308,6 +318,6 @@ public class PreOrderView implements IView<PreOrderController> {
 
   @Override
   public String getTitle() {
-    return "Vorbestellung";
+    return (controller.restrictToLoggedIn ? "Meine " : "") + "Vorbestellung";
   }
 }
