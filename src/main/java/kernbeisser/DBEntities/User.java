@@ -20,10 +20,12 @@ import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Security.PermissionSetSecurityHandler;
 import kernbeisser.Security.Proxy;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table
@@ -31,7 +33,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @EqualsAndHashCode(
     doNotUseGetters = true,
     exclude = {"ignoredDialogs"})
-public class User implements Serializable {
+public class User implements Serializable, UserRelated {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(updatable = false, insertable = false, nullable = false)
@@ -207,7 +209,7 @@ public class User implements Serializable {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Proxy.getSecureInstances(
+    return Proxy.getSecuredInstances(
         em.createQuery(
                 "select u from User u where u.unreadable = false and lower(u.username) != 'admin' and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
                 User.class)
@@ -450,5 +452,10 @@ public class User implements Serializable {
       AdvancedComboBox<User> box, boolean withKbUser, Predicate<User> filter) {
     box.removeAllItems();
     getAllUserFullNames(withKbUser).stream().filter(filter).forEach(box::addItem);
+  }
+
+  @Override
+  public boolean isInRelation(@NotNull User user) {
+    return user.getUserGroup().equals(this.getUserGroup());
   }
 }

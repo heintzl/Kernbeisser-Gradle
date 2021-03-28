@@ -9,17 +9,19 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table
 @EqualsAndHashCode(doNotUseGetters = true)
-public class PreOrder implements Serializable {
+public class PreOrder implements Serializable, UserRelated {
   @Id
   @GeneratedValue
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ID_READ)})
@@ -90,5 +92,10 @@ public class PreOrder implements Serializable {
   @Override
   public String toString() {
     return "Container[" + id + "]";
+  }
+
+  @Override
+  public boolean isInRelation(@NotNull User user) {
+    return this.user.equals(user);
   }
 }

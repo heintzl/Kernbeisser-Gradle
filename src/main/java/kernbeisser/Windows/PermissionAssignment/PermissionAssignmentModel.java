@@ -40,7 +40,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Proxy.getSecureInstances(
+    return Proxy.getSecuredInstances(
         em.createQuery("select u from User u where :pid in elements(u.permissions)", User.class)
             .setParameter("pid", permission)
             .getResultList());

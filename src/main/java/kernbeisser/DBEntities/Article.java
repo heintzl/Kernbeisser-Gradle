@@ -247,7 +247,7 @@ public class Article {
     et.begin();
     List<Article> out = createQuery(em, search).setMaxResults(maxResults).getResultList();
     em.close();
-    return Proxy.getSecureInstances(out);
+    return Proxy.getSecuredInstances(out);
   }
 
   public static Collection<Article> getDefaultAll(
@@ -262,7 +262,7 @@ public class Article {
             .filter(articlePredicate)
             .limit(max)
             .collect(Collectors.toCollection(ArrayList::new));
-    return Proxy.getSecureInstances(out);
+    return Proxy.getSecuredInstances(out);
   }
 
   public boolean isShopRange() {

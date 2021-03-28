@@ -2,36 +2,24 @@ package kernbeisser.Security;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Stream;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.User;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
 import kernbeisser.Unsafe.PermissionKeyMethodVisitor;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public class Proxy {
 
   private static final HashMap<Class<?>, Class<?>> proxyClassCache = new HashMap<>();
-
-  /**
-   * converts stream elements into protected instances
-   *
-   * @param stream the object stream
-   * @param clazz the class of the proxy
-   * @param <T> the type of the proxy elements
-   * @return a stream with proxyfied elements
-   */
-  public static <T> Stream<? extends T> securedStream(Stream<T> stream, Class<T> clazz) {
-    Class<? extends T> proxyClass = getProxyClass(clazz);
-    MethodHandler mh = PermissionSetSecurityHandler.ON_LOGGED_IN;
-    return stream.map(e -> injectMethodHandler(proxyClass, e, mh));
-  }
 
   /**
    * wraps a Object with a Proxy which is used to check if the PermissionSet contains the required
@@ -52,26 +40,54 @@ public class Proxy {
    * do the same like getSecureInstance only for a whole collection
    *
    * @param collection collection with Objects
+   * @return the collection c with Proxy extends v values
+   */
+  public static <C extends Collection<V>, V> C getSecuredInstances(C collection) {
+    return injectMultipleMethodHandlers(collection, PermissionSetSecurityHandler.ON_LOGGED_IN);
+  }
+
+  /**
+   * do the same like getSecureInstance only for a whole collection
+   *
+   * @param collection collection with Objects
    * @param <C> the collection with the values
    * @param <V> the type of the Object which gets transformed
    * @return the collection c with Proxy extends v values
    */
-  public static <C extends Collection<V>, V> C getSecureInstances(C collection) {
-    ArrayList<V> buffer = getSecureInstances(new ArrayList<>(collection));
+  public static <C extends Collection<V>, V> C injectMultipleMethodHandlers(
+      C collection, MethodHandler methodHandler) {
+    ArrayList<V> buffer = injectMultipleMethodHandlers(new ArrayList<>(collection), methodHandler);
     collection.clear();
     collection.addAll(buffer);
     return collection;
   }
 
-  /** same as #getSecureInstances(Collection<T>) but faster list based impl. */
-  public static <C extends List<V>, V> C getSecureInstances(C collection) {
+  public static <L extends List<V>, V> L getSecuredInstances(L list) {
+    User logInTarget = LogInModel.getLoggedIn();
     try {
-      Class<?> proxyClass = getProxyClass(obtainClass(collection));
-      collection.replaceAll(
-          e -> injectMethodHandler(proxyClass, e, PermissionSetSecurityHandler.ON_LOGGED_IN));
+      Class<?> proxyClass = getProxyClass(obtainClass(list));
+      list.replaceAll(
+          e ->
+              injectMethodHandler(
+                  proxyClass,
+                  e,
+                  (e instanceof UserRelated && ((UserRelated) e).isInRelation(logInTarget))
+                      ? PermissionSetSecurityHandler.IN_RELATION_TO_OWN_USER
+                      : PermissionSetSecurityHandler.ON_LOGGED_IN));
     } catch (UnsupportedOperationException ignored) {
     }
-    return collection;
+    return list;
+  }
+
+  /** same as #getSecureInstances(Collection<T>) but faster list based impl. */
+  public static <L extends List<V>, V> L injectMultipleMethodHandlers(
+      L list, MethodHandler methodHandler) {
+    try {
+      Class<?> proxyClass = getProxyClass(obtainClass(list));
+      list.replaceAll(e -> injectMethodHandler(proxyClass, e, methodHandler));
+    } catch (UnsupportedOperationException ignored) {
+    }
+    return list;
   }
 
   public static <V> Class<V> obtainClass(Collection<V> collection) {

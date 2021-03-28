@@ -21,7 +21,7 @@ public enum PermissionConstants {
   // the permission which is given to all users which has a key in the old application
   KEY_PERMISSION(PermissionKey.ACTION_LOGIN, PermissionKey.GO_UNDER_MIN),
   APPLICATION(PermissionKey.values()),
-  ON_OWN_USER(PermissionKey.find(User.class).toArray(new PermissionKey[0]));
+  IN_RELATION_TO_OWN_USER(PermissionKey.find(User.class).toArray(new PermissionKey[0]));
 
   private final Permission bounded;
 
