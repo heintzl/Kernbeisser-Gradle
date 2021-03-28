@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.*;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
@@ -56,6 +57,23 @@ public class Permission {
         .setParameter("s", s + "%")
         .setMaxResults(max)
         .getResultList();
+  }
+
+  public String getNeatName() {
+    ImmutableMap<String, String> nameTranslations =
+        ImmutableMap.<String, String>builder()
+            .put("@KEY_PERMISSION", "<Schlüssel Inhaber>")
+            .put("@IMPORT", "<Aus alter Version übernommen>")
+            .put("@FULL_MEMBER", "<Vollmitglied>")
+            .put("@APPLICATION", "<Applikation>")
+            .put("@ADMIN", "<Administration>")
+            .put("@IN_RELATION_TO_OWN_USER", "<eigene Daten>")
+            .build();
+    if (!name.startsWith("@")) {
+      return name;
+    } else {
+      return nameTranslations.getOrDefault(name, name);
+    }
   }
 
   @Override

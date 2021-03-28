@@ -65,7 +65,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
             .map(
                 permission ->
                     Column.create(
-                        permission.getName(),
+                        permission.getNeatName(),
                         (PermissionKey permissionKey) -> {
                           if (permissionKey.getClazz() == null) {
                             boolean read = permission.getKeySet().containsAll(readPermission);
