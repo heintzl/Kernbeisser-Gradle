@@ -16,7 +16,7 @@ public class CollectionProxy<T> implements Collection<T>, ProtectedIterable {
 
   public static <T> CollectionProxy<T> createWithProxyChildren(
       Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
-    return create(Proxy.getSecureInstances(collection), ps, read, modify);
+    return create(Proxy.getSecuredInstances(collection), ps, read, modify);
   }
 
   public static <T> CollectionProxy<T> create(

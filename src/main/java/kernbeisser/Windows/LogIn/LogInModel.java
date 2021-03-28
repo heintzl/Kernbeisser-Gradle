@@ -30,7 +30,7 @@ public class LogInModel implements IModel {
         Proxy.injectMethodHandler(
             em.find(User.class, loggedIn.getId()),
             new PermissionSetSecurityHandler(
-                PermissionConstants.ON_OWN_USER
+                PermissionConstants.IN_RELATION_TO_OWN_USER
                     .getPermission()
                     .getKeySet()
                     .toArray(new PermissionKey[0])));
@@ -64,7 +64,7 @@ public class LogInModel implements IModel {
             Proxy.injectMethodHandler(
                 user,
                 new PermissionSetSecurityHandler(
-                    PermissionConstants.ON_OWN_USER
+                    PermissionConstants.IN_RELATION_TO_OWN_USER
                         .getPermission()
                         .getKeySet()
                         .toArray(new PermissionKey[0])));

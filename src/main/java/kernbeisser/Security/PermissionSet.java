@@ -3,6 +3,7 @@ package kernbeisser.Security;
 import java.math.BigInteger;
 import java.util.*;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 
 /**
@@ -11,6 +12,8 @@ import kernbeisser.Enums.PermissionKey;
  */
 public class PermissionSet {
   public static final PermissionSet MASTER = new PermissionSet();
+  public static final PermissionSet IN_RELATION_TO_USER =
+      PermissionSet.ofPermission(PermissionConstants.IN_RELATION_TO_OWN_USER.getPermission());
 
   /** the java option for a c bitfield */
   private final long[] bits = new long[((PermissionKey.values().length / Long.SIZE) + 1)];
@@ -149,5 +152,17 @@ public class PermissionSet {
       ps.addPermission(key);
     }
     return ps;
+  }
+
+  public static PermissionSet ofPermission(Permission permission) {
+    PermissionSet out = new PermissionSet();
+    out.loadKeys(permission.getKeySet());
+    return out;
+  }
+
+  public static PermissionSet ofPermissions(Collection<Permission> permission) {
+    PermissionSet out = new PermissionSet();
+    out.loadPermission(permission);
+    return out;
   }
 }

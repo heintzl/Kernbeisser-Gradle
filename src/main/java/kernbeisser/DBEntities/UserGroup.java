@@ -7,14 +7,16 @@ import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 @Table
 @Entity
 @NoArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
-public class UserGroup {
+public class UserGroup implements UserRelated {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_ID_READ)})
@@ -108,5 +110,10 @@ public class UserGroup {
     }
     sb.delete(sb.length() - 2, sb.length());
     return sb.toString();
+  }
+
+  @Override
+  public boolean isInRelation(@NotNull User user) {
+    return user.getUserGroup().equals(this);
   }
 }

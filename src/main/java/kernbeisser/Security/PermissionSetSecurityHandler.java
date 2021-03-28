@@ -17,6 +17,9 @@ public class PermissionSetSecurityHandler implements MethodHandler {
   public static PermissionSetSecurityHandler ON_LOGGED_IN =
       new PermissionSetSecurityHandler(PermissionSet.MASTER);
 
+  public static PermissionSetSecurityHandler IN_RELATION_TO_OWN_USER =
+      new PermissionSetSecurityHandler(PermissionSet.IN_RELATION_TO_USER);
+
   @Getter private final PermissionSet permissionSet;
 
   public PermissionSetSecurityHandler(PermissionSet keys) {

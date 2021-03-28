@@ -12,16 +12,18 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Proxy;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.jetbrains.annotations.NotNull;
 
 @Table
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
-public class Transaction {
+public class Transaction implements UserRelated {
   @Id
   @GeneratedValue
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_READ)})
@@ -146,5 +148,11 @@ public class Transaction {
         value,
         TransactionType.PURCHASE,
         "Einkauf vom " + LocalDate.now());
+  }
+
+  @Override
+  public boolean isInRelation(@NotNull User user) {
+    return fromUser.getUserGroup().equals(user.getUserGroup())
+        || toUser.getUserGroup().equals(user.getUserGroup());
   }
 }

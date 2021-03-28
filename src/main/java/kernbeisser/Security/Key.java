@@ -9,7 +9,7 @@ import kernbeisser.Enums.PermissionKey;
 
 /**
  * Annotation to specify which keys are required to run a function in a proxy secure instance {@link
- * Proxy#getSecureInstance(Object)} {@link Proxy#getSecureInstances(Collection)}
+ * Proxy#getSecureInstance(Object)} {@link Proxy#getSecuredInstances(Collection)}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
