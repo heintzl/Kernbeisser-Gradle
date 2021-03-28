@@ -55,17 +55,18 @@
                       <label value="Guthabenverlauf"/>
                       <requestFocusEnabled value="false"/>
                       <text value="Guthabenverlauf"/>
+                      <visible value="false"/>
                     </properties>
                   </component>
-                  <component id="548e6" class="kernbeisser.CustomComponents.ControllerButton" binding="editOwnUser" custom-create="true">
+                  <component id="548e6" class="kernbeisser.CustomComponents.ControllerButton" binding="showUserInfo" custom-create="true">
                     <constraints>
                       <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font/>
-                      <label value="Persönliche Informationen bearbeiten"/>
+                      <label value="Persönliche Informationen"/>
                       <requestFocusEnabled value="false"/>
-                      <text value="Persönliche Informationen bearbeiten"/>
+                      <text value="Persönliche Informationen"/>
                     </properties>
                   </component>
                   <component id="63b63" class="kernbeisser.CustomComponents.ControllerButton" binding="editUserSettings" custom-create="true">
@@ -248,6 +249,7 @@
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
+                      <enabled value="false"/>
                       <font/>
                       <text value="&lt;PlaceHolder&gt;"/>
                     </properties>
@@ -392,7 +394,7 @@
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
               </vspacer>
-              <nested-form id="5e0fd" form-file="kernbeisser/Windows/UserInfo/UserInfoView.form" binding="infoPanel" custom-create="true">
+              <nested-form id="5e0fd" form-file="kernbeisser/Windows/InfoPanel/InfoPanelView.form" binding="infoPanel" custom-create="true">
                 <constraints>
                   <grid row="0" column="2" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <minimum-size width="500" height="500"/>

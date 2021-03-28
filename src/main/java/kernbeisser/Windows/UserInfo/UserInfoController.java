@@ -6,7 +6,11 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
+import kernbeisser.Forms.FormEditor.FormEditorController;
+import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Reports.TransactionStatement;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -125,12 +129,24 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
     userInfoView.optCurrent.setSelected(true);
     userInfoView.transactionStatementType.setModel(
         new DefaultComboBoxModel<>(StatementType.values()));
-
+    User currentUser = LogInModel.getLoggedIn();
+    boolean isPermitted =
+        currentUser.hasPermission(PermissionKey.ACTION_OPEN_EDIT_USERS)
+            || (currentUser.equals(model.getUser())
+                && currentUser.hasPermission(PermissionKey.ACTION_EDIT_OWN_DATA));
+    userInfoView.getEditUser().setEnabled(isPermitted);
     loadCurrentSite();
   }
 
   public void printStatement(StatementType statementType, boolean current) {
     new TransactionStatement(model.getUser(), statementType, current)
         .sendToPrinter("Auszug wird erstellt...", Tools::showUnexpectedErrorWarning);
+  }
+
+  public void editUser() {
+    FormEditorController.open(model.getUser(), new UserController(), Mode.EDIT)
+        .openIn(new SubWindow(getView().traceViewContainer()))
+        .getLoaded();
+    getView().pasteUser(model.getUser());
   }
 }

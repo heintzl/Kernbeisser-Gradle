@@ -1,6 +1,6 @@
 package kernbeisser.Forms.FormEditor;
 
-import java.awt.Color;
+import java.awt.*;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -17,6 +17,7 @@ public class FormEditorView<V> implements IView<FormEditorController<V>> {
   private JPanel contentPage;
   private JPanel main;
   private JButton cancel;
+  private FormEditorController controller;
 
   public JPanel getContentPage() {
     return contentPage;
@@ -24,6 +25,7 @@ public class FormEditorView<V> implements IView<FormEditorController<V>> {
 
   @Override
   public void initialize(FormEditorController<V> controller) {
+    this.controller = controller;
     saveButton.addActionListener(actionEvent -> controller.submit());
     cancel.addActionListener(e -> this.back());
   }
@@ -50,5 +52,10 @@ public class FormEditorView<V> implements IView<FormEditorController<V>> {
   @Override
   public @NotNull JComponent getContent() {
     return main;
+  }
+
+  @Override
+  public @NotNull Dimension getSize() {
+    return Tools.floatingSubwindowSize(controller);
   }
 }

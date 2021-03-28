@@ -42,6 +42,8 @@ import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
 import kernbeisser.Windows.LogIn.LogInModel;
+import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import sun.misc.Unsafe;
@@ -740,6 +742,12 @@ public class Tools {
     } catch (NumberFormatException e) {
       return value;
     }
+  }
+
+  public static Dimension floatingSubwindowSize(Controller controller) {
+    SubWindow container = (SubWindow) controller.getContainer();
+    Dimension maxSize = container.getParent().getSize();
+    return new Dimension((int) (maxSize.width * .85), (int) (maxSize.height * .85));
   }
 
   public static void openFile(File file) {

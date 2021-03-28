@@ -64,7 +64,7 @@
                   </component>
                 </children>
               </scrollpane>
-              <grid id="6bd15" layout-manager="GridLayoutManager" row-count="15" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="6bd15" layout-manager="GridLayoutManager" row-count="17" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="12" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -314,7 +314,7 @@
                   </component>
                   <vspacer id="68f64">
                     <constraints>
-                      <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
                   <component id="4c592" class="javax.swing.JLabel">
@@ -347,6 +347,22 @@
                     </constraints>
                     <properties>
                       <text value="key"/>
+                    </properties>
+                  </component>
+                  <component id="c44f7" class="javax.swing.JButton" binding="close">
+                    <constraints>
+                      <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Schließen"/>
+                    </properties>
+                  </component>
+                  <component id="c67f0" class="javax.swing.JButton" binding="editUser">
+                    <constraints>
+                      <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Bearbeiten..."/>
                     </properties>
                   </component>
                 </children>
@@ -490,27 +506,6 @@
                   </component>
                 </children>
               </grid>
-            </children>
-          </grid>
-          <grid id="3219b" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints>
-              <tabbedpane title="Info"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="83240" class="javax.swing.JTextPane" binding="infoText">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
-                  </grid>
-                </constraints>
-                <properties/>
-                <clientProperties>
-                  <charset class="java.lang.String" value=""/>
-                </clientProperties>
-              </component>
             </children>
           </grid>
         </children>
