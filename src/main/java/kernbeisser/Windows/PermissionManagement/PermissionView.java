@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -70,7 +71,7 @@ public class PermissionView implements IView<PermissionController> {
     this.permission.setObjects(permissions);
   }
 
-  void setCategories(Class<?>[] categories) {
+  void setCategories(List<Class<?>> categories) {
     category.removeAllItems();
     for (Class<?> keyCategory : categories) {
       category.addItem(keyCategory);

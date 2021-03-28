@@ -1,7 +1,7 @@
 package kernbeisser.Windows.PermissionManagement;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -25,14 +25,15 @@ public class PermissionModel implements IModel<PermissionController> {
     return Permission.getAll(null);
   }
 
-  Class<?>[] getAllKeyCategories() {
-    HashSet<Class<?>> classes = new HashSet<>();
-    for (PermissionKey value : PermissionKey.values()) {
-      if (value.getClazz() != null) {
-        classes.add(value.getClazz());
-      }
-    }
-    return classes.toArray(new Class[0]);
+  List<Class<?>> getAllKeyCategories() {
+    List<Class<?>> classes =
+        Arrays.stream(PermissionKey.values())
+            .filter(v -> v.getClazz() != null)
+            .map(PermissionKey::getClazz)
+            .distinct()
+            .sorted(Comparator.comparing(Class::getName))
+            .collect(Collectors.toList());
+    return classes;
   }
 
   void deletePermission(Permission selectedObject) {
