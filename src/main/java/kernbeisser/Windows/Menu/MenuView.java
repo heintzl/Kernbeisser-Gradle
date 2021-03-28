@@ -153,9 +153,20 @@ public class MenuView implements IView<MenuController> {
     editJobs = new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab);
     editApplicationSettings =
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
-    order = new ControllerButton(() -> new PreOrderController(false), PreOrderController.class);
+    order =
+        new ControllerButton(
+            () -> new PreOrderController(false),
+            PreOrderController.class,
+            Controller::openTab,
+            false,
+            new PermissionKey[] {PermissionKey.ACTION_OPEN_PRE_ORDER});
     openSelfPreorder =
-        new ControllerButton(() -> new PreOrderController(true), PreOrderController.class);
+        new ControllerButton(
+            () -> new PreOrderController(true),
+            PreOrderController.class,
+            Controller::openTab,
+            false,
+            new PermissionKey[] {PermissionKey.ACTION_OPEN_SOLO_SHOPPING_MASK});
     adminTools = new ControllerButton(AdminToolController::new, AdminToolController.class);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();
