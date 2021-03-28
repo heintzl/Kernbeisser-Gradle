@@ -42,6 +42,7 @@ public enum PermissionKey {
   ACTION_OPEN_EDIT_USERS(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICE_LISTS(ActionPermission.class),
   ACTION_OPEN_PRE_ORDER(ActionPermission.class),
+  ACTION_OPEN_OWN_PRE_ORDER(ActionPermission.class),
   ACTION_OPEN_SETTING(ActionPermission.class),
   ACTION_OPEN_SUPPLY(ActionPermission.class),
   ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW(ActionPermission.class),
@@ -56,6 +57,7 @@ public enum PermissionKey {
   ACTION_TRANSACTION_FROM_KB(ActionPermission.class),
   ACTION_EDIT_USER(ActionPermission.class),
   ACTION_ORDER_CONTAINER(ActionPermission.class),
+  ACTION_ORDER_OWN_CONTAINER(ActionPermission.class),
   ACTION_EDIT_PRICELIST(ActionPermission.class),
   ACTION_DELETE_PRICELIST(ActionPermission.class),
   ACTION_ADD_PRICELIST(ActionPermission.class),
@@ -472,7 +474,8 @@ public enum PermissionKey {
             .put("ACTION_OPEN_EDIT_USER_SETTING", "Persönliche Programmeinstellungen bearbeiten")
             .put("ACTION_OPEN_EDIT_USERS", "Benutzer bearbeiten")
             .put("ACTION_OPEN_MANAGE_PRICE_LISTS", "Preislisten bearbeiten")
-            .put("ACTION_OPEN_PRE_ORDER", "Vorbestellung")
+            .put("ACTION_OPEN_PRE_ORDER", "Vorbestellung für alle öffnen")
+            .put("ACTION_OPEN_OWN_PRE_ORDER", "Vorbestellung für mich öffnen")
             .put("ACTION_OPEN_SUPPLY", "Lieferung eingeben")
             .put("ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW", "Kornkraft-Katalog synchronisieren")
             .put("ACTION_OPEN_DB_LOG_IN", "Datenverbindung bearbeiten")
@@ -481,7 +484,8 @@ public enum PermissionKey {
             .put("ACTION_LOGIN", "Anmelden")
             .put("ACTION_TRANSACTION_FROM_OTHER", "Überweisungen für andere tätigen")
             .put("ACTION_TRANSACTION_FROM_KB", "Überweisungen für Kernbeißer tätigen")
-            .put("ACTION_ORDER_CONTAINER", "Artikel vorbestellen")
+            .put("ACTION_ORDER_CONTAINER", "Vorbestellungen für alle bearbeiten")
+            .put("ACTION_ORDER_OWN_CONTAINER", "Vorbestellungen für mich bearbeiten")
             .put("ACTION_OPEN_ADMIN_TOOLS", "Benutzer administrieren")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
