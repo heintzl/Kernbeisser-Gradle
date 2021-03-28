@@ -23,7 +23,11 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   @Linked private final SearchBoxController<UserGroup> userGroupSearchBoxController;
 
   public EditUserGroupController(User user) {
-    super(new EditUserGroupModel(user));
+    this(user, null);
+  }
+
+  public EditUserGroupController(User user, User caller) {
+    super(new EditUserGroupModel(user, caller));
     userGroupSearchBoxController =
         new SearchBoxController<>(
             (s, m) ->
@@ -67,9 +71,7 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   }
 
   public void changeUserGroup() throws CannotLogInException {
-    if (LogInDialog.showLogInRequest(
-        getView().getTopComponent(),
-        User.getByUsername(getView().getUsername()).getUserGroup().getMembers())) {
+    if (LogInDialog.showLogInRequest(getView().getTopComponent(), model.getLogIns())) {
       model.changeUserGroup(
           model.getUser().getId(),
           User.getByUsername(getView().getUsername()).getUserGroup().getId());

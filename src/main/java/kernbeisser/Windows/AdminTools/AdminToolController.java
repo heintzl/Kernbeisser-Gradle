@@ -6,6 +6,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Requires;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 
@@ -29,7 +30,7 @@ public class AdminToolController extends Controller<AdminToolView, AdminToolMode
   }
 
   public void openUserGroupEditor(ActionEvent actionEvent) {
-    new EditUserGroupController(getView().getSelectedUser())
+    new EditUserGroupController(getView().getSelectedUser(), LogInModel.getLoggedIn())
         .withCloseEvent(() -> fillView(getView()))
         .openIn(new SubWindow(getView().traceViewContainer()));
   }

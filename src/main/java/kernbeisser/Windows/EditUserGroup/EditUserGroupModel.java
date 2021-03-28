@@ -1,5 +1,8 @@
 package kernbeisser.Windows.EditUserGroup;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -15,9 +18,15 @@ import lombok.Data;
 public class EditUserGroupModel implements IModel<EditUserGroupController> {
 
   private User user;
+  private User caller;
 
-  public EditUserGroupModel(User user) {
+  public EditUserGroupModel(User user, User caller) {
     this.user = Proxy.removeProxy(user);
+    this.caller = caller;
+  }
+
+  public Optional<User> getCaller() {
+    return Optional.of(caller);
   }
 
   public void refreshData() {
@@ -40,5 +49,11 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     UserGroup userGroup = em.find(UserGroup.class, user.getUserGroup().getId());
     userGroup.setSolidaritySurcharge(newValue);
     em.persist(userGroup);
+  }
+
+  public Collection<User> getLogIns() {
+    Collection<User> collection = new ArrayList<>(user.getAllGroupMembers());
+    getCaller().ifPresent(collection::add);
+    return collection;
   }
 }
