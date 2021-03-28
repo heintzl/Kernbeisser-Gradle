@@ -25,7 +25,6 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -238,9 +237,7 @@ public class UserInfoView implements IView<UserInfoController> {
 
   @Override
   public @NotNull Dimension getSize() {
-    SubWindow parent = (SubWindow) controller.getContainer();
-    Dimension maxSize = parent.getParent().getSize();
-    return new Dimension((int) (maxSize.width * .8), (int) (maxSize.height * .8));
+    return Tools.floatingSubwindowSize(controller);
   }
 
   @Override

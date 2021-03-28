@@ -9,7 +9,6 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
-import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class FormEditorView<V> implements IView<FormEditorController<V>> {
@@ -57,8 +56,6 @@ public class FormEditorView<V> implements IView<FormEditorController<V>> {
 
   @Override
   public @NotNull Dimension getSize() {
-    SubWindow parent = (SubWindow) controller.getContainer();
-    Dimension maxSize = parent.getParent().getSize();
-    return new Dimension((int) (maxSize.width * .8), (int) (maxSize.height * .8));
+    return Tools.floatingSubwindowSize(controller);
   }
 }
