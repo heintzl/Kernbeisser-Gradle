@@ -39,6 +39,7 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
       if (fromShoppingMask) {
         RememberDialog.showDialog(
             LogInModel.getLoggedIn(),
+            "ArticleExistsInCart",
             getView().getContent(),
             "Der Artikel ist bereits im Einkaufswagen vorhanden.\nDie Menge von "
                 + addedItem.getName()
