@@ -310,7 +310,8 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
               + "Bitte seid Euch bewusst, dass Schulden Zinsen verursachen.";
     }
     if (customer.getUserGroup().getValue() <= 0) {
-      RememberDialog.showDialog(customer, null, infoMessage);
+      RememberDialog.showDialog(
+          customer, "CustomerDebtWarning", null, infoMessage, "Kein Guthaben vorhanden");
     }
   }
 
