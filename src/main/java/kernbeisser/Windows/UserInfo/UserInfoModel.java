@@ -1,25 +1,28 @@
 package kernbeisser.Windows.UserInfo;
 
+import javax.persistence.EntityManager;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class UserInfoModel implements IModel<UserInfoController> {
 
-  private final User user;
+  private final int userId;
 
   public UserInfoModel(User user) {
-    this.user = user;
+    this.userId = user.getId();
   }
 
   public User getUser() {
-    return Proxy.refresh(user);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.find(User.class, userId);
   }
 
   public double getSignedTransactionValue(Transaction transaction) {
     if (transaction.getToUser() != null
-        && user.getAllGroupMembers().contains(transaction.getToUser())) {
+        && getUser().getAllGroupMembers().contains(transaction.getToUser())) {
       return transaction.getValue();
     } else {
       return -transaction.getValue();

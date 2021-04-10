@@ -27,7 +27,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   void searchShoppingItem(Supplier supplier, int supNr) {
     if (supNr == 0 || last == supNr) return;
     try {
-      getView().getObjectForm().setSource(model.findBySuppliersItemNumber(supplier, supNr));
+      getView()
+          .getObjectForm()
+          .setSource(
+              model.findBySuppliersItemNumber(supplier, supNr).orElseThrow(NoResultException::new));
       last = supNr;
     } catch (NoResultException noResultException) {
       getView().noArticleFound();

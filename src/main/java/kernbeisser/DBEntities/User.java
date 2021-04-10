@@ -15,11 +15,10 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.IterableProtection.ProxyIterable;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.PermissionSetAccessManager;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
-import kernbeisser.Security.PermissionSetSecurityHandler;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -46,9 +45,7 @@ public class User implements Serializable, UserRelated {
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PERMISSIONS_WRITE)})
   @Getter(
       onMethod_ = {
-        @ProxyIterable(
-            read = {PermissionKey.USER_PERMISSIONS_READ},
-            modify = {PermissionKey.USER_PERMISSIONS_WRITE})
+        @Key({PermissionKey.USER_PERMISSIONS_READ, PermissionKey.USER_PERMISSIONS_WRITE})
       })
   private Set<Permission> permissions = new HashSet<>();
 
@@ -64,12 +61,7 @@ public class User implements Serializable, UserRelated {
 
   @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
-  @Getter(
-      onMethod_ = {
-        @ProxyIterable(
-            read = {PermissionKey.USER_JOBS_READ},
-            modify = {PermissionKey.USER_JOBS_WRITE})
-      })
+  @Getter(onMethod_ = {@Key({PermissionKey.USER_JOBS_READ, PermissionKey.USER_JOBS_WRITE})})
   @Setter(onMethod_ = {@Key({PermissionKey.USER_JOBS_WRITE})})
   private Set<Job> jobs = new HashSet<>();
 
@@ -209,13 +201,12 @@ public class User implements Serializable, UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Proxy.getSecuredInstances(
-        em.createQuery(
-                "select u from User u where u.unreadable = false and lower(u.username) != 'admin' and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
-                User.class)
-            .setParameter("search", s + "%")
-            .setMaxResults(max)
-            .getResultList());
+    return em.createQuery(
+            "select u from User u where u.unreadable = false and lower(u.username) != 'admin' and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
+            User.class)
+        .setParameter("search", s + "%")
+        .setMaxResults(max)
+        .getResultList();
   }
 
   public boolean isActive() {
@@ -228,7 +219,7 @@ public class User implements Serializable, UserRelated {
   }
 
   public static User getById(int parseInt) {
-    return Proxy.getSecureInstance(DBConnection.getEntityManager().find(User.class, parseInt));
+    return DBConnection.getEntityManager().find(User.class, parseInt);
   }
 
   @kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)
@@ -354,7 +345,8 @@ public class User implements Serializable, UserRelated {
     set.loadKeys(PermissionKey.find(User.class));
     set.removePermission(PermissionKey.USER_PERMISSIONS_READ);
     set.removePermission(PermissionKey.USER_PERMISSIONS_WRITE);
-    return Proxy.injectMethodHandler(user, new PermissionSetSecurityHandler(set));
+    Access.getExceptions().put(user, new PermissionSetAccessManager(set));
+    return user;
   }
 
   public int getIdWithoutPermission() {
@@ -456,6 +448,10 @@ public class User implements Serializable, UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return user.getUserGroup().equals(this.getUserGroup());
+    return user.userGroup.equals(this.userGroup);
+  }
+
+  public boolean userGroupEquals(UserGroup userGroup) {
+    return this.userGroup.equals(userGroup);
   }
 }

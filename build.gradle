@@ -40,9 +40,12 @@ dependencies {
     implementation 'org.jetbrains:annotations:15.0'
     implementation 'com.google.code.gson:gson:2.8.6'
 
+
+
     implementation 'com.google.guava:guava:30.0-jre'
     implementation 'com.opencsv:opencsv:5.3'
     implementation group: 'org.ow2.asm', name: 'asm', version: '7.0'
+    compile 'org.javassist:javassist:3.27.0-GA'
 }
 task fatJar(type: Jar) {
     manifest {

@@ -11,7 +11,6 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
-import kernbeisser.Security.Proxy;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.AdminTools.AdminToolController;
@@ -121,7 +120,7 @@ public class MenuView implements IView<MenuController> {
             Controller::openTab);
     showUserInfo =
         new ControllerButton(
-            () -> new UserInfoController(Proxy.getSecureInstance(LogInModel.getLoggedIn())),
+            () -> new UserInfoController(LogInModel.getLoggedIn()),
             UserInfoController.class,
             c -> c.openIn(new SubWindow(traceViewContainer())).getLoaded(),
             false,

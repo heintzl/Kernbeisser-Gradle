@@ -26,21 +26,16 @@ public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
   }
 
   ShoppingItem getByKbNumber(int kbNumber, int discount, boolean preordered) {
-    Article article = Article.getByKbNumber(kbNumber, true);
-    if (article != null) {
-      return new ShoppingItem(article, discount, preordered);
-    }
-    return null;
+    return Article.getByKbNumber(kbNumber, true)
+        .map(e -> new ShoppingItem(e, discount, preordered))
+        .orElse(null);
   }
 
   ShoppingItem getBySupplierItemNumber(
       Supplier supplier, int suppliersNumber, int discount, boolean preordered) {
-    try {
-      return new ShoppingItem(
-          Article.getBySuppliersItemNumber(supplier, suppliersNumber), discount, preordered);
-    } catch (NoResultException noResultException) {
-      return null;
-    }
+    return Article.getBySuppliersItemNumber(supplier, suppliersNumber)
+        .map(e -> new ShoppingItem(e, discount, preordered))
+        .orElse(null);
   }
 
   ShoppingItem getByBarcode(long barcode, int discount, boolean preordered)

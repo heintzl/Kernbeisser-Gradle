@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -80,7 +81,7 @@ public class SupplyModel implements IModel<SupplyController> {
         .setParameter("sin", suppliersItemNumber);
   }
 
-  public Article findBySuppliersItemNumber(Supplier supplier, int suppliersItemNumber) {
+  public Optional<Article> findBySuppliersItemNumber(Supplier supplier, int suppliersItemNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     return Article.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
   }

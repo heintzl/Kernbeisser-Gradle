@@ -9,7 +9,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.Predictable;
-import kernbeisser.Security.IterableProtection.ProtectedIterable;
+import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IView;
@@ -55,24 +55,15 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
     data = vs;
   }
 
-  private Optional<ProtectedIterable> protection() {
-    return Optional.ofNullable(data)
-        .map(
-            e -> {
-              if (e instanceof ProtectedIterable) {
-                return (ProtectedIterable) e;
-              }
-              return null;
-            });
-  }
-
   @Override
   public boolean isPropertyReadable(P parent) {
-    return protection().map(ProtectedIterable::isReadable).orElse(true);
+    return Access.hasPermission(getter, parent);
   }
 
   @Override
   public boolean isPropertyWriteable(P parent) {
-    return protection().map(ProtectedIterable::isModifiable).orElse(true);
+    return Optional.ofNullable(data)
+        .map(e -> e.getClass().getSimpleName().startsWith("Unmodifiable"))
+        .orElse(true);
   }
 }

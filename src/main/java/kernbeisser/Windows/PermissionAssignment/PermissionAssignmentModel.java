@@ -10,7 +10,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Forms.ObjectForm.Components.Source;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Setter;
@@ -40,10 +39,9 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Proxy.getSecuredInstances(
-        em.createQuery("select u from User u where :pid in elements(u.permissions)", User.class)
-            .setParameter("pid", permission)
-            .getResultList());
+    return em.createQuery("select u from User u where :pid in elements(u.permissions)", User.class)
+        .setParameter("pid", permission)
+        .getResultList();
   }
 
   public void setPermission(Permission permission, Collection<User> loaded) {

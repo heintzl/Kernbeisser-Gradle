@@ -114,6 +114,6 @@ public class UserGroup implements UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return user.getUserGroup().equals(this);
+    return user.userGroupEquals(this);
   }
 }
