@@ -38,8 +38,6 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
 import kernbeisser.Security.AccessConsumer;
 import kernbeisser.Security.AccessSupplier;
-import kernbeisser.Security.IterableProtection.ProtectedIterable;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -150,10 +148,9 @@ public class Tools {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Proxy.getSecuredInstances(
-        em.createQuery(
-                "select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
-            .getResultList());
+    return em.createQuery(
+            "select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
+        .getResultList();
   }
 
   public static <T> List<T> getAllUnProxy(Class<T> c) {
@@ -384,13 +381,9 @@ public class Tools {
 
   public static void copyInto(Object source, Object destination) {
     Class<?> clazz = source.getClass();
-    boolean isProxy = Proxy.isProxyInstance(source);
     while (!clazz.equals(Object.class)) {
       for (Field field : clazz.getDeclaredFields()) {
         if (Modifier.isStatic(field.getModifiers())) {
-          continue;
-        }
-        if (isProxy && field.getName().equals("handler")) {
           continue;
         }
         field.setAccessible(true);
@@ -406,13 +399,9 @@ public class Tools {
 
   public static <T, V extends T> void copyInto(Class<T> base, V source, V destination) {
     Class<?> clazz = base;
-    boolean isProxy = Proxy.isProxyInstance(source);
     while (!clazz.equals(Object.class)) {
       for (Field field : clazz.getDeclaredFields()) {
         if (Modifier.isStatic(field.getModifiers())) {
-          continue;
-        }
-        if (isProxy && field.getName().equals("handler")) {
           continue;
         }
         field.setAccessible(true);
@@ -935,8 +924,6 @@ public class Tools {
 
   public static <T> Optional<T> optional(AccessSupplier<T> supplier) {
     try {
-      T v = supplier.get();
-      if (v instanceof ProtectedIterable) ((ProtectedIterable) v).checkRead();
       return Optional.of(supplier.get());
     } catch (PermissionKeyRequiredException e) {
       return Optional.empty();

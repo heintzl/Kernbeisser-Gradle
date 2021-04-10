@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.IterableProtection.ProxyIterable;
 import kernbeisser.Security.Key;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,11 +27,7 @@ public class Shelf {
   @JoinColumn
   @ManyToMany
   @Getter(
-      onMethod_ = {
-        @ProxyIterable(
-            read = {PermissionKey.SHELF_ARTICLES_READ},
-            modify = {PermissionKey.SHELF_ARTICLES_WRITE})
-      })
+      onMethod_ = {@Key({PermissionKey.SHELF_ARTICLES_READ, PermissionKey.SHELF_ARTICLES_WRITE})})
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ARTICLES_WRITE)})
   private Set<Article> articles = new HashSet<>();
 }

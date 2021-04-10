@@ -11,7 +11,6 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
@@ -124,8 +123,8 @@ public class Transaction implements UserRelated {
     em.flush();
     from.getUserGroup().setValue(from.getUserGroup().getValue() - value);
     to.getUserGroup().setValue(to.getUserGroup().getValue() + value);
-    Proxy.refresh(from);
-    Proxy.refresh(to);
+    em.refresh(from);
+    em.refresh(to);
     return transaction;
   }
 
@@ -152,7 +151,6 @@ public class Transaction implements UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return fromUser.getUserGroup().equals(user.getUserGroup())
-        || toUser.getUserGroup().equals(user.getUserGroup());
+    return user.isInRelation(fromUser) || user.isInRelation(toUser);
   }
 }

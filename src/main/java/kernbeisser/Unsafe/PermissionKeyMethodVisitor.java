@@ -36,8 +36,7 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
       Field gSig = Method.class.getDeclaredField("signature");
       gSig.setAccessible(true);
       for (Method declaredMethod : cl.getDeclaredMethods()) {
-        if (declaredMethod.getName().equals(sl.getImplMethodName())
-            && sl.getImplMethodSignature().equals(getSignature(declaredMethod, gSig))) {
+        if (declaredMethod.getName().equals(sl.getImplMethodName())) {
           return declaredMethod;
         }
       }

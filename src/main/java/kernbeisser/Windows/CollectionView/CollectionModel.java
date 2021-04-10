@@ -3,7 +3,7 @@ package kernbeisser.Windows.CollectionView;
 import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Forms.ObjectForm.Components.Source;
-import kernbeisser.Security.IterableProtection.ProtectedIterable;
+import kernbeisser.Security.Access.Access;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,12 +20,8 @@ public class CollectionModel<T> implements IModel<CollectionController<T>> {
     this.source = source;
   }
 
-  public boolean isReadable() {
-    return !(loaded instanceof ProtectedIterable) || ((ProtectedIterable) loaded).isModifiable();
-  }
-
   public boolean isModifiable() {
-    return !(loaded instanceof ProtectedIterable) || ((ProtectedIterable) loaded).isModifiable();
+    return Access.isIterableModifiable(loaded);
   }
 
   public Collection<T> getSource() {

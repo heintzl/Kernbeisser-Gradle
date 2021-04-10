@@ -5,7 +5,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.Predictable;
-import kernbeisser.Security.Proxy;
+import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 
 public class AccessCheckingLabel<T> extends JLabel
@@ -37,7 +37,7 @@ public class AccessCheckingLabel<T> extends JLabel
 
   @Override
   public boolean isPropertyReadable(T parent) {
-    return Proxy.hasPermission(getter, parent);
+    return Access.hasPermission(getter, parent);
   }
 
   @Override

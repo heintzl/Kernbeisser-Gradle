@@ -4,7 +4,6 @@ import java.util.*;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.IterableProtection.ProxyIterable;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -30,13 +29,11 @@ public class Permission {
   @JoinColumn
   @Enumerated(EnumType.STRING)
   @ElementCollection(fetch = FetchType.EAGER)
+  @Setter(onMethod_ = {@Key({PermissionKey.PERMISSION_KEY_SET_WRITE})})
   @Getter(
       onMethod_ = {
-        @ProxyIterable(
-            read = {PermissionKey.PERMISSION_NAME_READ},
-            modify = {PermissionKey.PERMISSION_NAME_WRITE})
+        @Key({PermissionKey.PERMISSION_KEY_SET_READ, PermissionKey.PERMISSION_KEY_SET_WRITE})
       })
-  @Setter(onMethod_ = {@Key({PermissionKey.PERMISSION_NAME_WRITE})})
   private Set<PermissionKey> keySet = new HashSet<>();
 
   public static List<Permission> getAll(String condition) {

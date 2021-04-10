@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.persistence.*;
@@ -16,7 +17,6 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -245,9 +245,7 @@ public class Article {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    List<Article> out = createQuery(em, search).setMaxResults(maxResults).getResultList();
-    em.close();
-    return Proxy.getSecuredInstances(out);
+    return createQuery(em, search).setMaxResults(maxResults).getResultList();
   }
 
   public static Collection<Article> getDefaultAll(
@@ -256,20 +254,18 @@ public class Article {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    List<Article> out =
-        createQuery(em, search)
-            .getResultStream()
-            .filter(articlePredicate)
-            .limit(max)
-            .collect(Collectors.toCollection(ArrayList::new));
-    return Proxy.getSecuredInstances(out);
+    return createQuery(em, search)
+        .getResultStream()
+        .filter(articlePredicate)
+        .limit(max)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
   public boolean isShopRange() {
     return shopRange == ShopRange.IN_RANGE || shopRange == ShopRange.PERMANENT_RANGE;
   }
 
-  public static Article getByKbNumber(int kbNumber, boolean filterShopRange) {
+  public static Optional<Article> getByKbNumber(int kbNumber, boolean filterShopRange) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -278,28 +274,30 @@ public class Article {
         .setParameter("n", kbNumber)
         .getResultStream()
         .filter(a -> !(filterShopRange && !a.isShopRange()))
-        .findAny()
-        .orElse(null);
+        .findAny();
   }
 
-  public static Article getBySuppliersItemNumber(Supplier supplier, int suppliersNumber) {
+  public static Optional<Article> getBySuppliersItemNumber(Supplier supplier, int suppliersNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     return getBySuppliersItemNumber(supplier, suppliersNumber, em);
   }
 
-  public static Article getBySuppliersItemNumber(
+  public static Optional<Article> getBySuppliersItemNumber(
       Supplier supplier, int suppliersNumber, EntityManager em) {
+    @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Article singleResult =
-        em.createQuery(
-                "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
-                Article.class)
-            .setParameter("s", supplier)
-            .setParameter("n", suppliersNumber)
-            .getSingleResult();
-    et.commit();
-    return singleResult;
+    try {
+      return Optional.of(
+          em.createQuery(
+                  "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
+                  Article.class)
+              .setParameter("s", supplier)
+              .setParameter("n", suppliersNumber)
+              .getSingleResult());
+    } catch (NoResultException e) {
+      return Optional.empty();
+    }
   }
 
   public static Article getByBarcode(long barcode) throws NoResultException {

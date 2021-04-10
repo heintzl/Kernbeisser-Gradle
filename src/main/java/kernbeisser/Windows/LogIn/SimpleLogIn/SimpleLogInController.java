@@ -3,6 +3,7 @@ package kernbeisser.Windows.LogIn.SimpleLogIn;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import javax.swing.*;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
@@ -32,14 +33,18 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
   @Override
   public void fillView(SimpleLogInView simpleLogInView) {}
 
+  public boolean shouldForcePasswordChange(User user) {
+    return user.getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS)
+            > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()
+        || user.isForcePasswordChange();
+  }
+
   public void logIn() {
     var view = getView();
     try {
       model.logIn(view.getUsername(), view.getPassword());
       loadUserSettings();
-      if (LogInModel.getLoggedIn().getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS)
-              > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()
-          || LogInModel.getLoggedIn().isForcePasswordChange()) {
+      if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
         new ChangePasswordController(LogInModel.getLoggedIn(), true)
             .openIn(new SubWindow(view.traceViewContainer()));
       } else {
