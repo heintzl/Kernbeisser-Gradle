@@ -14,6 +14,7 @@ import kernbeisser.Security.Key;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Transaction implements UserRelated {
+
   @Id
   @GeneratedValue
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_READ)})
@@ -52,6 +54,12 @@ public class Transaction implements UserRelated {
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_TO_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_TO_WRITE)})
   private User toUser;
+
+  @JoinColumn(nullable = false)
+  @ManyToOne
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_EXECUTOR_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_EXECUTOR_WRITE)})
+  private User executorUser;
 
   @CreationTimestamp
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_DATE_READ)})
@@ -114,6 +122,7 @@ public class Transaction implements UserRelated {
     transaction.value = value;
     transaction.toUser = to;
     transaction.fromUser = from;
+    transaction.executorUser = LogInModel.getLoggedIn();
     transaction.info = info;
     transaction.transactionType = transactionType;
     setValue(fromUG, fromUG.getValue() - value);
