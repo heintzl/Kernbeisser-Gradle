@@ -327,6 +327,8 @@ public enum PermissionKey {
   TRANSACTION_DATE_WRITE(Transaction.class),
   TRANSACTION_INFO_READ(Transaction.class),
   TRANSACTION_INFO_WRITE(Transaction.class),
+  TRANSACTION_EXECUTOR_READ(Transaction.class),
+  TRANSACTION_EXECUTOR_WRITE(Transaction.class),
   ADD_USER(User.class),
   EDIT_USER(User.class),
   REMOVE_USER(User.class),

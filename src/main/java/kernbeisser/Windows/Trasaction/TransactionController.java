@@ -75,6 +75,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
       return;
     }
     try {
+      transaction.setExecutorUser(LogInModel.getLoggedIn());
       transaction.setToUser(view.getTo());
     } catch (NoResultException | NullPointerException e) {
       view.invalidTo();

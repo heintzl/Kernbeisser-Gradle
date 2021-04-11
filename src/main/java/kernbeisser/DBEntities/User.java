@@ -6,7 +6,6 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -289,10 +288,9 @@ public class User implements Serializable, UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select t from Transaction t where t.fromUser.id in(:ids) or t.toUser.id in (:ids) order by date",
+            "select t from Transaction t where t.fromUser.userGroup = :ug or t.toUser.userGroup = :ug order by date asc",
             Transaction.class)
-        .setParameter(
-            "ids", getAllGroupMembers().stream().map(User::getId).collect(Collectors.toList()))
+        .setParameter("ug", getUserGroup())
         .getResultList();
   }
 
