@@ -25,7 +25,7 @@ public class TransactionStatement extends Report {
   private final Collection<Transaction> userTransactions;
 
   public TransactionStatement(User user, StatementType statementType, boolean current) {
-    super("transactionStatement", "Kontoauszug_" + user.toString() + ".pdf");
+    super("transactionStatement", "Kontoauszug_" + user.toString());
     this.user = user;
     this.statementType = statementType;
     this.current = current;
