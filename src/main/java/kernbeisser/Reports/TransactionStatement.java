@@ -12,6 +12,7 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.StatementType;
 import lombok.Cleanup;
 
@@ -64,25 +65,26 @@ public class TransactionStatement extends Report {
     et.begin();
     userTransactions =
         em.createQuery(
-                "select t from Transaction t where (fromUser.id = :u or toUser.id = :u)",
+                "select t from Transaction t where (fromUserGroup.id = :ug or toUserGroup.id = :ug)",
                 Transaction.class)
-            .setParameter("u", user.getId())
+            .setParameter("ug", user.getUserGroup().getId())
             .getResultList();
   }
 
   @Override
   Map<String, Object> getReportParams() {
     Map<String, Object> params = new HashMap<>();
+    UserGroup userGroup = user.getUserGroup();
     double startValue =
         userTransactions.stream()
             .filter(t -> t.getDate().isBefore(startDate.toInstant()))
-            .mapToDouble(t -> (t.getFromUser().equals(user) ? -1.0 : 1.0) * t.getValue())
+            .mapToDouble(t -> (t.getFromUserGroup().equals(userGroup) ? -1.0 : 1.0) * t.getValue())
             .reduce(Double::sum)
             .orElse(0.0);
     double endValue =
         userTransactions.stream()
             .filter(t -> !t.getDate().isAfter(endDate.toInstant()))
-            .mapToDouble(t -> (t.getFromUser().equals(user) ? -1.0 : 1.0) * t.getValue())
+            .mapToDouble(t -> (t.getFromUserGroup().equals(userGroup) ? -1.0 : 1.0) * t.getValue())
             .reduce(Double::sum)
             .orElse(0.0);
     params.put("user", user);

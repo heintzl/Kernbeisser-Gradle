@@ -11,7 +11,7 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="fromUser.id" class="java.lang.Integer"/>
+	<field name="fromUserGroup" class="kernbeisser.DBEntities.UserGroup"/>
 	<field name="value" class="java.lang.Double"/>
 	<field name="fromUser.fullName" class="java.lang.String"/>
 	<field name="toUser.fullName" class="java.lang.String"/>
@@ -171,7 +171,7 @@
 					<font fontName="DejaVu Sans Condensed"/>
 					<paragraph leftIndent="4"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{user}.getId() == $F{fromUser.id}?$F{toUser.fullName}:$F{fromUser.fullName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{user}.getUserGroup().equals($F{fromUserGroup})?$F{toUser.fullName}:$F{fromUser.fullName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd.MM.yy">
 				<reportElement x="0" y="0" width="50" height="14" uuid="4151dd05-f90d-4bfb-9ed2-706a43d858b0">
@@ -185,7 +185,7 @@
 			<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
 				<reportElement x="440" y="0" width="54" height="14" uuid="8879b278-9839-485e-a9a4-e94fe986c27e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b88ff362-74cb-4ac5-93b1-36119f99d004"/>
-					<printWhenExpression><![CDATA[$F{fromUser.id} != $P{user}.getId()]]></printWhenExpression>
+					<printWhenExpression><![CDATA[!$F{fromUserGroup}.equals($P{user}.getUserGroup())]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed"/>
@@ -195,7 +195,7 @@
 			<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
 				<reportElement x="494" y="0" width="56" height="14" uuid="589d4147-35ce-4759-acda-3b74ff0e7f01">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b88ff362-74cb-4ac5-93b1-36119f99d004"/>
-					<printWhenExpression><![CDATA[$F{fromUser.id} == $P{user}.getId()]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{fromUserGroup}.equals($P{user}.getUserGroup())]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed"/>
