@@ -95,7 +95,7 @@ public class UserInfoView implements IView<UserInfoController> {
 
   public void createUIComponents() {
     valueHistory = new ObjectTable<Transaction>();
-    permissions = new ObjectTable<>(Column.create("Name", Permission::getName));
+    permissions = new ObjectTable<>(Column.create("Name", Permission::getNeatName));
     userGroup =
         new ObjectTable<User>(
             Column.create("Benutzername", User::getUsername),
