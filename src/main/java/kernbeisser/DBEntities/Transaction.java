@@ -53,6 +53,18 @@ public class Transaction implements UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_TO_WRITE)})
   private User toUser;
 
+  @JoinColumn(nullable = false)
+  @ManyToOne
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_WRITE)})
+  private UserGroup fromUserGroup;
+
+  @JoinColumn(nullable = false)
+  @ManyToOne
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_WRITE)})
+  private UserGroup toUserGroup;
+
   @CreationTimestamp
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_DATE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_DATE_WRITE)})
@@ -80,17 +92,16 @@ public class Transaction implements UserRelated {
       String info)
       throws InvalidTransactionException {
 
-    if (from.getUserGroup().getId() == to.getUserGroup().getId())
-      throw new kernbeisser.Exeptions.InvalidTransactionException();
     UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
     UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
+    if (fromUG.equals(toUG)) throw new kernbeisser.Exeptions.InvalidTransactionException();
 
     double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
     value = Tools.roundCurrency(value);
 
     if (transactionType != TransactionType.INITIALIZE) {
       if (fromUG.getValue() - value < minValue) {
-        if (!from.mayGoUnderMin()) {
+        if (fromUG.getMembers().stream().noneMatch(User::mayGoUnderMin)) {
           throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the sending user ["
                   + from.getId()
@@ -114,6 +125,8 @@ public class Transaction implements UserRelated {
     transaction.value = value;
     transaction.toUser = to;
     transaction.fromUser = from;
+    transaction.fromUserGroup = fromUG;
+    transaction.toUserGroup = toUG;
     transaction.info = info;
     transaction.transactionType = transactionType;
     setValue(fromUG, fromUG.getValue() - value);
