@@ -500,9 +500,10 @@
                         <properties>
                           <enabled value="true"/>
                           <font size="16" style="0"/>
+                          <hideActionText value="true"/>
                           <horizontalAlignment value="4"/>
                           <selected value="false"/>
-                          <text value="Einstellung merken"/>
+                          <text value="Rabatt-Einstellung merken"/>
                         </properties>
                       </component>
                       <component id="69840" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="variablePercentage">
