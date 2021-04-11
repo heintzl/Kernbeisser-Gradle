@@ -165,7 +165,6 @@ public class Transaction implements UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return fromUser.getUserGroup().equals(user.getUserGroup())
-        || toUser.getUserGroup().equals(user.getUserGroup());
+    return fromUserGroup.equals(user.getUserGroup()) || toUserGroup.equals(user.getUserGroup());
   }
 }
