@@ -14,6 +14,7 @@ import kernbeisser.Security.Key;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -75,6 +76,12 @@ public class Transaction implements UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_WRITE)})
   private String info;
 
+  @JoinColumn
+  @ManyToOne
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_WRITE)})
+  private User createdBy;
+
   public static List<Transaction> getAll(String condition) {
     return Tools.getAll(Transaction.class, condition);
   }
@@ -129,6 +136,7 @@ public class Transaction implements UserRelated {
     transaction.toUserGroup = toUG;
     transaction.info = info;
     transaction.transactionType = transactionType;
+    transaction.createdBy = LogInModel.getLoggedIn();
     setValue(fromUG, fromUG.getValue() - value);
     setValue(toUG, toUG.getValue() + value);
     em.persist(fromUG);
