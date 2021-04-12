@@ -128,6 +128,30 @@ public class Transaction implements UserRelated {
         }
       }
     }
+    return saveTransaction(em, from, to, value, transactionType, info, fromUG, toUG);
+  }
+
+  public static Transaction switchGroupTransaction(
+      EntityManager em, User user, UserGroup fromUG, UserGroup toUG, double value)
+      throws InvalidTransactionException {
+    if (fromUG.equals(toUG)) {
+      throw new InvalidTransactionException(
+          "sending and receiving UserGroup must not be identical");
+    }
+    String info = "Konto-Übertrag von " + user.getFullName();
+    return saveTransaction(em, user, user, value, TransactionType.GROUP_MERGE, info, fromUG, toUG);
+  }
+
+  @NotNull
+  private static Transaction saveTransaction(
+      EntityManager em,
+      User from,
+      User to,
+      double value,
+      TransactionType transactionType,
+      String info,
+      UserGroup fromUG,
+      UserGroup toUG) {
     Transaction transaction = new Transaction();
     transaction.value = value;
     transaction.toUser = to;

@@ -6,11 +6,14 @@ import java.util.HashSet;
 import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
+import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 
@@ -97,22 +100,30 @@ public class Users {
 
   public static void switchUserGroup(int userId, int userGroupId) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    User currentUser = em.find(User.class, userId);
-    UserGroup current = currentUser.getUserGroup();
-    UserGroup destination = em.find(UserGroup.class, userGroupId);
-    if (current.getMembers().size() < 2) {
-      destination.setInterestThisYear(
-          destination.getInterestThisYear() + current.getInterestThisYear());
-      destination.setValue(destination.getValue() + current.getValue());
-      em.remove(current);
+    try {
+      @Cleanup(value = "commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      User currentUser = em.find(User.class, userId);
+      UserGroup current = currentUser.getUserGroup();
+      UserGroup destination = em.find(UserGroup.class, userGroupId);
+      if (current.getMembers().size() < 2) {
+        Transaction.switchGroupTransaction(
+            em, currentUser, current, destination, current.getValue());
+        destination.setInterestThisYear(
+            destination.getInterestThisYear() + current.getInterestThisYear());
+      }
+      em.persist(destination);
+      currentUser.setUserGroup(destination);
+      em.persist(currentUser);
+      em.close();
+    } catch (InvalidTransactionException e) {
+      JOptionPane.showMessageDialog(
+          null,
+          "Die Kontoübertragung ist fehlgeschlagen!",
+          "Gruppenwechsel",
+          JOptionPane.ERROR_MESSAGE);
     }
-    em.persist(destination);
-    currentUser.setUserGroup(destination);
-    em.persist(currentUser);
-    em.close();
   }
 
   public static void leaveUserGroup(User user) {
