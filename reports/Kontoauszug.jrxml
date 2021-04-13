@@ -4,10 +4,11 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
 	<style name="Bold" markup="none" isBold="true"/>
-	<parameter name="user" class="kernbeisser.DBEntities.User"/>
+	<parameter name="userName" class="java.lang.String"/>
 	<parameter name="startValue" class="java.lang.Double"/>
 	<parameter name="endValue" class="java.lang.Double"/>
 	<parameter name="statementType" class="java.lang.String"/>
+	<parameter name="userGroup" class="kernbeisser.DBEntities.UserGroup"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -18,7 +19,7 @@
 	<field name="transactionType" class="java.lang.String"/>
 	<field name="date" class="java.time.Instant"/>
 	<field name="info" class="java.lang.String"/>
-	<group name="user">
+	<group name="userGroup">
 		<groupHeader>
 			<band height="14">
 				<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
@@ -79,7 +80,7 @@
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{statementType} + " für " + $P{user}.getFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{statementType} + " für " + $P{userName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -104,7 +105,7 @@
 				<textElement>
 					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{user}.getUserGroup().getMembers().size() > 1?"Gruppe: " + $P{user}.getUserGroup().getMemberString():""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{userGroup}.getMembers().size() > 1?"Gruppe: " + $P{userGroup}.getMemberString():""]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -171,7 +172,7 @@
 					<font fontName="DejaVu Sans Condensed"/>
 					<paragraph leftIndent="4"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{user}.getUserGroup().equals($F{fromUserGroup})?$F{toUser.fullName}:$F{fromUser.fullName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{userGroup}.equals($F{fromUserGroup})?$F{toUser.fullName}:$F{fromUser.fullName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd.MM.yy">
 				<reportElement x="0" y="0" width="50" height="14" uuid="4151dd05-f90d-4bfb-9ed2-706a43d858b0">
@@ -185,7 +186,7 @@
 			<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
 				<reportElement x="440" y="0" width="54" height="14" uuid="8879b278-9839-485e-a9a4-e94fe986c27e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b88ff362-74cb-4ac5-93b1-36119f99d004"/>
-					<printWhenExpression><![CDATA[!$F{fromUserGroup}.equals($P{user}.getUserGroup())]]></printWhenExpression>
+					<printWhenExpression><![CDATA[!$F{fromUserGroup}.equals($P{userGroup})]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed"/>
@@ -195,7 +196,7 @@
 			<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
 				<reportElement x="494" y="0" width="56" height="14" uuid="589d4147-35ce-4759-acda-3b74ff0e7f01">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b88ff362-74cb-4ac5-93b1-36119f99d004"/>
-					<printWhenExpression><![CDATA[$F{fromUserGroup}.equals($P{user}.getUserGroup())]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{fromUserGroup}.equals($P{userGroup})]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed"/>

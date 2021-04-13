@@ -18,6 +18,7 @@ import lombok.Cleanup;
 
 public class TransactionStatement extends Report {
 
+  private final UserGroup userGroup;
   private final User user;
   private final StatementType statementType;
   private final boolean current;
@@ -26,7 +27,15 @@ public class TransactionStatement extends Report {
   private final Collection<Transaction> userTransactions;
 
   public TransactionStatement(User user, StatementType statementType, boolean current) {
-    super("transactionStatement", "Kontoauszug_" + user.toString());
+    this(user.getUserGroup(), user, statementType, current);
+  }
+
+  public TransactionStatement(
+      UserGroup userGroup, User user, StatementType statementType, boolean current) {
+    super(
+        "transactionStatement",
+        "Kontoauszug_" + (user == null ? String.valueOf(userGroup.getId()) : user.toString()));
+    this.userGroup = userGroup;
     this.user = user;
     this.statementType = statementType;
     this.current = current;
@@ -65,16 +74,15 @@ public class TransactionStatement extends Report {
     et.begin();
     userTransactions =
         em.createQuery(
-                "select t from Transaction t where (fromUserGroup.id = :ug or toUserGroup.id = :ug)",
+                "select t from Transaction t where :ug IN (fromUserGroup.id, toUserGroup.id)",
                 Transaction.class)
-            .setParameter("ug", user.getUserGroup().getId())
+            .setParameter("ug", userGroup.getId())
             .getResultList();
   }
 
   @Override
   Map<String, Object> getReportParams() {
     Map<String, Object> params = new HashMap<>();
-    UserGroup userGroup = user.getUserGroup();
     double startValue =
         userTransactions.stream()
             .filter(t -> t.getDate().isBefore(startDate.toInstant()))
@@ -87,7 +95,12 @@ public class TransactionStatement extends Report {
             .mapToDouble(t -> (t.getFromUserGroup().equals(userGroup) ? -1.0 : 1.0) * t.getValue())
             .reduce(Double::sum)
             .orElse(0.0);
-    params.put("user", user);
+    params.put(
+        "userName",
+        user == null
+            ? userGroup.getMembersAsString() + "(" + userGroup.getId() + ")"
+            : user.getFullName());
+    params.put("userGroup", userGroup);
     params.put("startValue", startValue);
     params.put("endValue", endValue);
     String stType = statementType.toString();

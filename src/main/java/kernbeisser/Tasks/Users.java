@@ -1,6 +1,7 @@
 package kernbeisser.Tasks;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -13,7 +14,9 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Reports.TransactionStatement;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 
@@ -108,6 +111,7 @@ public class Users {
       UserGroup current = currentUser.getUserGroup();
       UserGroup destination = em.find(UserGroup.class, userGroupId);
       if (current.getMembers().size() < 2) {
+        if (!confirmGroupVoid(currentUser)) return;
         Transaction.switchGroupTransaction(
             em, currentUser, current, destination, current.getValue());
         destination.setInterestThisYear(
@@ -124,6 +128,32 @@ public class Users {
           "Gruppenwechsel",
           JOptionPane.ERROR_MESSAGE);
     }
+  }
+
+  private static boolean confirmGroupVoid(User user) {
+    Tools.beep();
+    int response =
+        JOptionPane.showConfirmDialog(
+            null,
+            "Die bisherige Benutzergruppe von "
+                + user.getFullName()
+                + " wird durch diesen Vorgang aufgelöst. Danach können die Umsätze dieser Gruppe nicht mehr nachvollzogen werden. Soll zum Abschluss ein Kontoauszug erstellt werden?",
+            "Gruppenwechsel",
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE);
+    if (response == JOptionPane.YES_OPTION) {
+      JComboBox<StatementType> statementType = new JComboBox<>();
+      Arrays.stream(StatementType.values()).forEach(s -> statementType.addItem(s));
+      statementType.setSelectedItem(StatementType.ANNUAL);
+      if (JOptionPane.showConfirmDialog(
+              null, statementType, "Art des Auszugs", JOptionPane.OK_CANCEL_OPTION)
+          == (JOptionPane.OK_OPTION)) {
+        new TransactionStatement(user, (StatementType) statementType.getSelectedItem(), true)
+            .sendToPrinter("Auszug wird erstellt", Tools::showUnexpectedErrorWarning);
+      }
+      ;
+    }
+    return response != JOptionPane.CANCEL_OPTION;
   }
 
   public static void leaveUserGroup(User user) {
