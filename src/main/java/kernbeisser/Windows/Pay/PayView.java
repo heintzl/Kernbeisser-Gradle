@@ -7,7 +7,6 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.var;
@@ -89,10 +88,5 @@ public class PayView implements IView<PayController> {
         "Du hast nicht die Berechtigung unter das minimale Guthaben von "
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
             + " zu gehen.");
-  }
-
-  @Override
-  public @NotNull Dimension getSize() {
-    return Tools.floatingSubwindowSize(controller);
   }
 }
