@@ -56,14 +56,14 @@ public class Transaction implements UserRelated {
 
   @JoinColumn(nullable = false)
   @ManyToOne
-  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROMUG_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROMUG_WRITE)})
   private UserGroup fromUserGroup;
 
   @JoinColumn(nullable = false)
   @ManyToOne
-  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROM_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_TOUG_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_TOUG_WRITE)})
   private UserGroup toUserGroup;
 
   @CreationTimestamp
@@ -78,8 +78,8 @@ public class Transaction implements UserRelated {
 
   @JoinColumn
   @ManyToOne
-  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_CREATEDBY_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_CREATEDBY_WRITE)})
   private User createdBy;
 
   public static List<Transaction> getAll(String condition) {
@@ -101,8 +101,10 @@ public class Transaction implements UserRelated {
 
     UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
     UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
-    if (fromUG.equals(toUG)) throw new kernbeisser.Exeptions.InvalidTransactionException();
-
+    if (fromUG.equals(toUG)) {
+      throw new InvalidTransactionException(
+          "sending and receiving UserGroup must not be identical");
+    }
     double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
     value = Tools.roundCurrency(value);
 
