@@ -80,6 +80,10 @@ public class UserView implements IView<UserController> {
     JOptionPane.showMessageDialog(null, "Password ge\u00e4ndert!");
   }
 
+  void setEditPermissionEnabled(boolean enabled) {
+    editPermission.setEnabled(enabled);
+  }
+
   void missingContact() {
     Tools.beep();
     JOptionPane.showMessageDialog(
@@ -181,7 +185,7 @@ public class UserView implements IView<UserController> {
         new AccessCheckingCollectionEditor<>(
             User::getPermissions,
             Source.of(Permission.class),
-            Column.create("Name", Permission::getName));
+            Column.create("Name", Permission::getNeatName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
             User::getJobs,

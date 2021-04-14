@@ -741,7 +741,8 @@ public class Tools {
   public static Dimension floatingSubwindowSize(Controller controller) {
     SubWindow container = (SubWindow) controller.getContainer();
     Dimension maxSize = container.getParent().getSize();
-    return new Dimension((int) (maxSize.width * .85), (int) (maxSize.height * .85));
+    double factor = Setting.SUBWINDOW_SIZE_FACTOR.getFloatValue();
+    return new Dimension((int) (maxSize.width * factor), (int) (maxSize.height * factor));
   }
 
   public static void openFile(File file) {

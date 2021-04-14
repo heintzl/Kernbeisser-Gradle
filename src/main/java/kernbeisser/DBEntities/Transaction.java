@@ -57,9 +57,15 @@ public class Transaction implements UserRelated {
 
   @JoinColumn(nullable = false)
   @ManyToOne
-  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_EXECUTOR_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_EXECUTOR_WRITE)})
-  private User executorUser;
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROMUG_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_FROMUG_WRITE)})
+  private UserGroup fromUserGroup;
+
+  @JoinColumn(nullable = false)
+  @ManyToOne
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_TOUG_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_TOUG_WRITE)})
+  private UserGroup toUserGroup;
 
   @CreationTimestamp
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_DATE_READ)})
@@ -70,6 +76,12 @@ public class Transaction implements UserRelated {
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_WRITE)})
   private String info;
+
+  @JoinColumn
+  @ManyToOne
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_CREATEDBY_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_CREATEDBY_WRITE)})
+  private User createdBy;
 
   public static List<Transaction> getAll(String condition) {
     return Tools.getAll(Transaction.class, condition);
@@ -88,17 +100,18 @@ public class Transaction implements UserRelated {
       String info)
       throws InvalidTransactionException {
 
-    if (from.getUserGroup().getId() == to.getUserGroup().getId())
-      throw new kernbeisser.Exeptions.InvalidTransactionException();
     UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
     UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
-
+    if (fromUG.equals(toUG)) {
+      throw new InvalidTransactionException(
+          "sending and receiving UserGroup must not be identical");
+    }
     double minValue = Setting.DEFAULT_MIN_VALUE.getDoubleValue();
     value = Tools.roundCurrency(value);
 
     if (transactionType != TransactionType.INITIALIZE) {
       if (fromUG.getValue() - value < minValue) {
-        if (!from.mayGoUnderMin()) {
+        if (fromUG.getMembers().stream().noneMatch(User::mayGoUnderMin)) {
           throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the sending user ["
                   + from.getId()
@@ -118,13 +131,39 @@ public class Transaction implements UserRelated {
         }
       }
     }
+    return saveTransaction(em, from, to, value, transactionType, info, fromUG, toUG);
+  }
+
+  public static Transaction switchGroupTransaction(
+      EntityManager em, User user, UserGroup fromUG, UserGroup toUG, double value)
+      throws InvalidTransactionException {
+    if (fromUG.equals(toUG)) {
+      throw new InvalidTransactionException(
+          "sending and receiving UserGroup must not be identical");
+    }
+    String info = "Konto-Übertrag von " + user.getFullName();
+    return saveTransaction(em, user, user, value, TransactionType.GROUP_MERGE, info, fromUG, toUG);
+  }
+
+  @NotNull
+  private static Transaction saveTransaction(
+      EntityManager em,
+      User from,
+      User to,
+      double value,
+      TransactionType transactionType,
+      String info,
+      UserGroup fromUG,
+      UserGroup toUG) {
     Transaction transaction = new Transaction();
     transaction.value = value;
     transaction.toUser = to;
     transaction.fromUser = from;
-    transaction.executorUser = LogInModel.getLoggedIn();
+    transaction.fromUserGroup = fromUG;
+    transaction.toUserGroup = toUG;
     transaction.info = info;
     transaction.transactionType = transactionType;
+    transaction.createdBy = LogInModel.getLoggedIn();
     setValue(fromUG, fromUG.getValue() - value);
     setValue(toUG, toUG.getValue() + value);
     em.persist(fromUG);
@@ -161,7 +200,6 @@ public class Transaction implements UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return fromUser.getUserGroup().equals(user.getUserGroup())
-        || toUser.getUserGroup().equals(user.getUserGroup());
+    return fromUserGroup.equals(user.getUserGroup()) || toUserGroup.equals(user.getUserGroup());
   }
 }
