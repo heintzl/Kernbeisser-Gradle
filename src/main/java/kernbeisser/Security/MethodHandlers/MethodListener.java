@@ -1,4 +1,4 @@
-package kernbeisser.Security;
+package kernbeisser.Security.MethodHandlers;
 
 import java.lang.reflect.Method;
 import javassist.util.proxy.MethodHandler;

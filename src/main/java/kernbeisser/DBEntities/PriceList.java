@@ -123,7 +123,7 @@ public class PriceList implements Serializable {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Preisliste[" + id + "]");
+    return Tools.optional(this::getName).orElse("Preisliste[" + id + "]");
   }
 
   public List<Article> getAllArticles() {

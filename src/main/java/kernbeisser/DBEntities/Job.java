@@ -64,6 +64,6 @@ public class Job {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Job[" + id + "]");
+    return Tools.optional(this::getName).orElse("Job[" + id + "]");
   }
 }

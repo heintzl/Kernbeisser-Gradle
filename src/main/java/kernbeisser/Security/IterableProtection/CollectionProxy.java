@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.PermissionSet;
-import kernbeisser.Security.PermissionSetSecurityHandler;
+import kernbeisser.Security.MethodHandlers.AbstractSecurityHandler;
+import kernbeisser.Security.MethodHandlers.ProtectedIterablePermissionSetHandler;
 import kernbeisser.Security.Proxy;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,17 +14,15 @@ public class CollectionProxy<T> implements Collection<T>, ProtectedIterable {
 
   private Collection<T> values;
 
-  public static <T> CollectionProxy<T> createWithProxyChildren(
-      Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
-    return create(Proxy.getSecuredInstances(collection), ps, read, modify);
-  }
-
   public static <T> CollectionProxy<T> create(
-      Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
+      Collection<T> collection,
+      PermissionKey[] read,
+      PermissionKey[] modify,
+      AbstractSecurityHandler methodHandler) {
     CollectionProxy<T> out = new CollectionProxy<>();
     out.values = collection;
     return Proxy.injectMethodHandler(
-        out, new PermissionSetSecurityHandler(ProtectedIterable.transform(ps, read, modify)));
+        out, new ProtectedIterablePermissionSetHandler(read, modify, methodHandler));
   }
 
   @Override

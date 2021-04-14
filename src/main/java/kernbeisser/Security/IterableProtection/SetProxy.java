@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.*;
+import kernbeisser.Security.MethodHandlers.AbstractSecurityHandler;
+import kernbeisser.Security.MethodHandlers.ProtectedIterablePermissionSetHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class SetProxy<T> implements Set<T>, ProtectedIterable {
@@ -13,17 +15,15 @@ public class SetProxy<T> implements Set<T>, ProtectedIterable {
 
   private SetProxy() {}
 
-  public static <T> SetProxy<T> createWithProxyChildren(
-      Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
-    return create(Proxy.getSecuredInstances(collection), ps, read, modify);
-  }
-
   public static <T> SetProxy<T> create(
-      Collection<T> collection, PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
+      Collection<T> collection,
+      PermissionKey[] read,
+      PermissionKey[] modify,
+      AbstractSecurityHandler methodHandler) {
     SetProxy<T> out = new SetProxy<>();
     out.values = collection;
     return Proxy.injectMethodHandler(
-        out, new PermissionSetSecurityHandler(ProtectedIterable.transform(ps, read, modify)));
+        out, new ProtectedIterablePermissionSetHandler(read, modify, methodHandler));
   }
 
   @Override

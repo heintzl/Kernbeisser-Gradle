@@ -5,29 +5,24 @@ import java.util.Map;
 import java.util.Set;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.*;
+import kernbeisser.Security.MethodHandlers.AbstractSecurityHandler;
+import kernbeisser.Security.MethodHandlers.ProtectedIterablePermissionSetHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MapProxy<K, V> implements Map<K, V>, ProtectedIterable {
 
-  private final boolean proxify;
-
   private Map<K, V> map;
-
-  private MapProxy(boolean proxify) {
-    this.proxify = proxify;
-  }
 
   public static <K, V> MapProxy<K, V> create(
       Map<K, V> map,
-      PermissionSet ps,
       PermissionKey[] read,
       PermissionKey[] modify,
-      boolean proxyfy) {
-    MapProxy<K, V> out = new MapProxy<>(proxyfy);
+      AbstractSecurityHandler methodHandler) {
+    MapProxy<K, V> out = new MapProxy<>();
     out.map = map;
     return Proxy.injectMethodHandler(
-        out, new PermissionSetSecurityHandler(ProtectedIterable.transform(ps, read, modify)));
+        out, new ProtectedIterablePermissionSetHandler(read, modify, methodHandler));
   }
 
   @Override
@@ -57,7 +52,7 @@ public class MapProxy<K, V> implements Map<K, V>, ProtectedIterable {
   @Override
   @Key(PermissionKey.READ_ITERABLE_VALUE)
   public V get(Object key) {
-    return proxify ? Proxy.getSecureInstance(map.get(key)) : map.get(key);
+    return map.get(key);
   }
 
   @Nullable

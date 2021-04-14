@@ -3,7 +3,6 @@ package kernbeisser.Security.IterableProtection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.PermissionSet;
 
 public interface ProtectedIterable {
 
@@ -30,16 +29,4 @@ public interface ProtectedIterable {
 
   @Key({PermissionKey.MODIFY_ITERABLE_VALUE})
   default void checkWrite() {}
-
-  public static PermissionSet transform(
-      PermissionSet ps, PermissionKey[] read, PermissionKey[] modify) {
-    PermissionSet permissionSet = new PermissionSet();
-    if (ps.hasPermissions(read)) {
-      permissionSet.addPermission(PermissionKey.READ_ITERABLE_VALUE);
-    }
-    if (ps.hasPermissions(modify)) {
-      permissionSet.addPermission(PermissionKey.MODIFY_ITERABLE_VALUE);
-    }
-    return permissionSet;
-  }
 }

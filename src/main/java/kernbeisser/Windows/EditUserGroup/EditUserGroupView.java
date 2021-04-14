@@ -1,6 +1,9 @@
 package kernbeisser.Windows.EditUserGroup;
 
+import static kernbeisser.Useful.Tools.optional;
+
 import java.awt.event.ActionEvent;
+import java.util.Collections;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -48,10 +51,17 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   }
 
   void setCurrentUserGroup(UserGroup userGroup) {
-    currentUserGroup.setObjects(userGroup.getMembers());
-    value.setText(toEuro(userGroup.getValue()));
-    interestThisYear.setText(toEuro(userGroup.getInterestThisYear() / 100.));
-    solidaritySurcharge.setText(String.format("%.2f%%", userGroup.getSolidaritySurcharge() * 100));
+    currentUserGroup.setObjects(optional(userGroup::getMembers).orElse(Collections.emptyList()));
+    value.setText(
+        optional(userGroup::getValue).map(this::toEuro).orElse("[Keine Leseberechtigung]"));
+    interestThisYear.setText(
+        optional(userGroup::getInterestThisYear)
+            .map(this::toEuro)
+            .orElse("[Keine Leseberechtigung]"));
+    solidaritySurcharge.setText(
+        optional(userGroup::getSolidaritySurcharge)
+            .map(e -> String.format("%.2f%%", e * 100))
+            .orElse("[Keine Leseberechtigung]"));
   }
 
   private void leaveUserGroup(ActionEvent event) {

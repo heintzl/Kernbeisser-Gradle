@@ -52,7 +52,7 @@ public class DataImportModel implements IModel<DataImportController> {
         BCrypt.withDefaults()
             .hashToString(Setting.HASH_COSTS.getIntValue(), password.toCharArray()));
     user.getPermissions().add(PermissionConstants.ADMIN.getPermission());
-    user.setUserGroup(new UserGroup());
+    user.setUserGroup(new UserGroup(0));
     em.persist(user.getUserGroup());
     em.persist(user);
     em.flush();
@@ -143,7 +143,6 @@ public class DataImportModel implements IModel<DataImportController> {
                       ? generateUserRelatedToken(users[1].getUsername()).toCharArray()
                       : "start".toCharArray()));
 
-          userGroup.setValue(Users.getValue(rawUserData));
           em.persist(userGroup);
 
           users[0].getPermissions().add(importPermission);

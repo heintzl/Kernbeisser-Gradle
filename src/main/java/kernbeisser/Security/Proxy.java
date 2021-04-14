@@ -1,6 +1,7 @@
 package kernbeisser.Security;
 
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -8,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Security.MethodHandlers.PermissionSetSecurityHandler;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
@@ -16,6 +18,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 public class Proxy {
 
@@ -30,9 +33,6 @@ public class Proxy {
    * @return a Proxy which extends T
    */
   public static <T> T getSecureInstance(T parent) {
-    if (parent == null || ProxyFactory.isProxyClass(parent.getClass())) {
-      return parent;
-    }
     return injectMethodHandler(
         parent,
         (parent instanceof UserRelated
@@ -103,7 +103,8 @@ public class Proxy {
             .orElseThrow(UnsupportedOperationException::new);
   }
 
-  public static <T> Class<? extends T> getProxyClass(Class<T> clazz) {
+  public static <T> Class<? extends T> getProxyClass(@NotNull Class<T> clazz) {
+
     Class<? extends T> cachedClass = (Class<? extends T>) proxyClassCache.get(clazz);
     if (cachedClass == null) {
       ProxyFactory factory = new ProxyFactory();
@@ -125,6 +126,7 @@ public class Proxy {
   }
 
   public static <T> T injectMethodHandler(T value, MethodHandler methodHandler) {
+    if (!isProxifyable(value)) return value;
     return injectMethodHandler(getProxyClass(value.getClass()), value, methodHandler);
   }
 
@@ -210,5 +212,16 @@ public class Proxy {
   @SneakyThrows
   public static PermissionSet peekPermissions(Serializable interfaceLambdaImp) {
     return PermissionKeyMethodVisitor.accessedKeys(interfaceLambdaImp);
+  }
+
+  public static boolean isProxifyable(Object o) {
+    if (o == null) return false;
+    Class<?> clazz = o.getClass();
+    int mods = clazz.getModifiers();
+    return (!(o instanceof javassist.util.proxy.Proxy))
+        && !Enum.class.isAssignableFrom(clazz)
+        && !clazz.isPrimitive()
+        && !Modifier.isNative(mods)
+        && !Modifier.isFinal(mods);
   }
 }

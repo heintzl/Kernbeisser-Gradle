@@ -68,7 +68,7 @@ public class Users {
   public static final int SOLIDARITY_SURCHARGE_COLUMN = 3;
 
   public static UserGroup getUserGroup(String[] rawData) {
-    UserGroup userGroup = new UserGroup();
+    UserGroup userGroup = new UserGroup(getValue(rawData));
     userGroup.setInterestThisYear(
         (int) (Float.parseFloat(rawData[INTEREST_THIS_YEAR_COLUMN].replace(",", "."))));
     userGroup.setSolidaritySurcharge(Integer.parseInt(rawData[SOLIDARITY_SURCHARGE_COLUMN]) / 100.);
@@ -116,7 +116,7 @@ public class Users {
   }
 
   public static void leaveUserGroup(User user) {
-    UserGroup newUserGroup = new UserGroup();
+    UserGroup newUserGroup = new UserGroup(0);
     Tools.persist(newUserGroup);
     switchUserGroup(user.getId(), newUserGroup.getId());
   }
