@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.temporal.ChronoField;
@@ -16,8 +17,8 @@ import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.IterableProtection.ProxyIterable;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.MethodHandlers.PermissionSetSecurityHandler;
 import kernbeisser.Security.PermissionSet;
-import kernbeisser.Security.PermissionSetSecurityHandler;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
@@ -240,11 +241,11 @@ public class User implements Serializable, UserRelated {
   }
   // changed from direct reference to getter to keep security
   public String getFullName() {
-    return this.getFirstName() + " " + this.getSurname();
+    return Tools.accessString(this::getFirstName) + " " + Tools.accessString(this::getSurname);
   }
 
   public String toString() {
-    return Tools.decide(this::getUsername, "Benutzer[" + id + "]");
+    return Tools.optional(this::getUsername).orElse("Benutzer[" + id + "]");
   }
 
   public boolean hasPermission(PermissionKey... keys) {
@@ -455,5 +456,9 @@ public class User implements Serializable, UserRelated {
   @Override
   public boolean isInRelation(@NotNull User user) {
     return user.getUserGroup().equals(this.getUserGroup());
+  }
+
+  public boolean verifyPassword(char[] password) {
+    return BCrypt.verifyer().verify(password, this.password.toCharArray()).verified;
   }
 }

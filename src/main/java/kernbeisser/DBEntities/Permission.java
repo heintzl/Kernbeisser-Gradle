@@ -78,7 +78,7 @@ public class Permission {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "Permission[" + id + "]");
+    return Tools.optional(this::getName).orElse("Permission[" + id + "]");
   }
 
   public Collection<User> getAllUsers() {

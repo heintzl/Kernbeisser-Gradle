@@ -36,10 +36,11 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
-import kernbeisser.Security.AccessConsumer;
-import kernbeisser.Security.AccessSupplier;
 import kernbeisser.Security.IterableProtection.ProtectedIterable;
 import kernbeisser.Security.Proxy;
+import kernbeisser.Security.SecuredOptional;
+import kernbeisser.Security.Utils.AccessConsumer;
+import kernbeisser.Security.Utils.AccessSupplier;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -496,14 +497,6 @@ public class Tools {
     return Thread.currentThread().getStackTrace()[2 + above];
   }
 
-  public static <T> T decide(AccessSupplier<T> supplier, T t) {
-    try {
-      return supplier.get();
-    } catch (PermissionKeyRequiredException e) {
-      return t;
-    }
-  }
-
   public static <T> void tryIt(AccessConsumer<T> consumer, T t) {
     try {
       consumer.accept(t);
@@ -934,13 +927,24 @@ public class Tools {
     em.flush();
   }
 
-  public static <T> Optional<T> optional(AccessSupplier<T> supplier) {
+  public static String accessString(AccessSupplier<String> supplier) {
+    return optional(supplier).orElse("[Keine Leseberechtigung]");
+  }
+
+  public static <T> SecuredOptional<T> optional(AccessSupplier<T> supplier) {
     try {
       T v = supplier.get();
       if (v instanceof ProtectedIterable) ((ProtectedIterable) v).checkRead();
-      return Optional.of(supplier.get());
+      return SecuredOptional.of(supplier.get());
     } catch (PermissionKeyRequiredException e) {
-      return Optional.empty();
+      return SecuredOptional.empty();
     }
+  }
+
+  public static <T> T[] append(T[] source, T... v) {
+    int originalSize = v.length;
+    source = Arrays.copyOf(source, originalSize + v.length);
+    System.arraycopy(v, 0, source, originalSize, v.length);
+    return source;
   }
 }

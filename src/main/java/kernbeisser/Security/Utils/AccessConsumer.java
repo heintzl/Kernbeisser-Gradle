@@ -1,4 +1,4 @@
-package kernbeisser.Security;
+package kernbeisser.Security.Utils;
 
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 

@@ -170,8 +170,6 @@ public class Transaction implements UserRelated {
     em.persist(toUG);
     em.persist(transaction);
     em.flush();
-    from.getUserGroup().setValue(from.getUserGroup().getValue() - value);
-    to.getUserGroup().setValue(to.getUserGroup().getValue() + value);
     Proxy.refresh(from);
     Proxy.refresh(to);
     return transaction;

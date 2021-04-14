@@ -33,7 +33,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
           BCrypt.withDefaults()
               .hashToString(Setting.HASH_COSTS.getIntValue(), passwordToken.toCharArray()));
       user.setForcePasswordChange(true);
-      user.setUserGroup(new UserGroup());
+      user.setUserGroup(new UserGroup(0));
       Tools.persist(user.getUserGroup());
       getView().showPasswordToken(passwordToken);
     }

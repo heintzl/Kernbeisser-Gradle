@@ -5,6 +5,7 @@ import java.lang.ref.SoftReference;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -110,10 +111,20 @@ public class ControllerButton extends JButton {
             if (controller == null) {
               try {
                 controller = controllerInitializer.get();
-              } catch (PermissionKeyRequiredException | ClassIsSingletonException exception) {
+              } catch (PermissionKeyRequiredException exception) {
+                exception.printStackTrace();
                 JOptionPane.showMessageDialog(
                     this,
-                    "Das Fenster kann nicht geöffnet werden,\nda du nicht die benötigte Berechtigung hast.");
+                    "Das Fenster kann nicht geöffnet werden,\nda du nicht die benötigte Berechtigung hast. \nFehlende Berechtigung/en: "
+                        + exception.getMissing().stream()
+                            .map(PermissionKey::name)
+                            .map(PermissionKey::getPermissionHint)
+                            .collect(Collectors.joining(", ")));
+                return;
+              } catch (ClassIsSingletonException exception) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Das Fenster kann nicht geöffnet werden, da dieses Fenster nur einmal geöffnet werden darf.");
                 return;
               }
             }

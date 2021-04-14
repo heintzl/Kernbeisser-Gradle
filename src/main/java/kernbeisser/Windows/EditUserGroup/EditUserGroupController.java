@@ -1,6 +1,8 @@
 package kernbeisser.Windows.EditUserGroup;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.*;
@@ -13,6 +15,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Security.Requires;
 import kernbeisser.Tasks.Users;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +55,13 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   }
 
   private void select(UserGroup userGroup) {
-    getView().setUsername(userGroup.getMembers().iterator().next().getUsername());
+    getView()
+        .setUsername(
+            Tools.optional(userGroup::getMembers)
+                .map(Collection::iterator)
+                .map(Iterator::next)
+                .map(User::getUsername)
+                .orElse("[Keine Leseberehtigung]"));
   }
 
   @Override

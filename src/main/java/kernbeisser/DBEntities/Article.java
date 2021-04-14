@@ -274,12 +274,13 @@ public class Article {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select i from Article i where kbNumber = :n", Article.class)
-        .setParameter("n", kbNumber)
-        .getResultStream()
-        .filter(a -> !(filterShopRange && !a.isShopRange()))
-        .findAny()
-        .orElse(null);
+    return Proxy.getSecureInstance(
+        em.createQuery("select i from Article i where kbNumber = :n", Article.class)
+            .setParameter("n", kbNumber)
+            .getResultStream()
+            .filter(a -> !(filterShopRange && !a.isShopRange()))
+            .findAny()
+            .orElse(null));
   }
 
   public static Article getBySuppliersItemNumber(Supplier supplier, int suppliersNumber) {
@@ -333,7 +334,7 @@ public class Article {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");
+    return Tools.optional(this::getName).orElse("ArtikelBase[" + super.toString() + "]");
   }
 
   public static Article nextArticleTo(int suppliersItemNumber, Supplier supplier) {
