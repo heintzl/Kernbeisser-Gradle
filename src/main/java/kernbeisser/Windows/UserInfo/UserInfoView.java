@@ -201,11 +201,6 @@ public class UserInfoView implements IView<UserInfoController> {
   }
 
   @Override
-  public @NotNull Dimension getSize() {
-    return Tools.floatingSubwindowSize(controller);
-  }
-
-  @Override
   public String getTitle() {
     return "Benutzerinformationen von "
         + optional(controller.getModel().getUser()::getFirstName).orElse(ACCESS_DENIED)
