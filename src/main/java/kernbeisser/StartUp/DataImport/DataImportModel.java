@@ -26,6 +26,7 @@ import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
+import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Main;
 import kernbeisser.Tasks.Articles;
@@ -157,15 +158,17 @@ public class DataImportModel implements IModel<DataImportController> {
           if (!users[1].getFirstName().equals("")) {
             em.persist(users[1]);
           }
-
-          Transaction transaction = new Transaction();
-          transaction.setTransactionType(TransactionType.INITIALIZE);
-          transaction.setFromUser(kernbeisser);
-          transaction.setValue(Users.getValue(rawUserData));
-          transaction.setInfo("Übertrag des Guthabens des alten Kernbeisser Programms");
-          transaction.setToUser(users[0]);
-          transaction.setExecutorUser(kernbeisser);
-          em.persist(transaction);
+          try {
+            Transaction.doTransaction(
+                em,
+                kernbeisser,
+                users[0],
+                Users.getValue(rawUserData),
+                TransactionType.INITIALIZE,
+                "Übertrag des Guthabens des alten Kernbeisser Programms");
+          } catch (InvalidTransactionException e) {
+            throw new RuntimeException(e);
+          }
         });
     em.flush();
     progress.accept(4);

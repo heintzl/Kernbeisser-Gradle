@@ -136,7 +136,7 @@ public class TransactionView implements IView<TransactionController> {
             Column.create(
                 "An", e -> e.getToUser().getSurname() + ", " + e.getToUser().getFirstName()),
             Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
-            Column.create("VeranlasserInn", e -> e.getExecutorUser().getFullName()),
+            // Column.create("VeranlasserInn", e -> e.getCreatedBy().getFullName()),
             Column.create("Info", Transaction::getInfo));
     //    searchBoxView = userSearchBoxController.getView();
     from = new AdvancedComboBox<>(User::getFullName);
