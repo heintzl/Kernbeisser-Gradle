@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Transaction implements UserRelated {
+
   @Id
   @GeneratedValue
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_READ)})
