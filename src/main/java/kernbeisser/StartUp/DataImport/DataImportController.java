@@ -156,6 +156,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
                     Tools.showUnexpectedErrorWarning(e);
                   }
                   view.back();
+                  Access.setDefaultManager(AccessManager.ACCESS_DENIED);
                 })
             .start();
       } else {
@@ -172,7 +173,6 @@ public class DataImportController extends Controller<DataImportView, DataImportM
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
-    Access.setDefaultManager(AccessManager.ACCESS_DENIED);
   }
 
   void cancel() {
