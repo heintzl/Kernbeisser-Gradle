@@ -6,15 +6,15 @@ import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 
-@Requires(PermissionKey.ACTION_OPEN_ACCOUNTING_REPORTS)
 public class AccountingReportsController
     extends Controller<AccountingReportsView, AccountingReportsModel> {
 
+  @Key(PermissionKey.ACTION_OPEN_ACCOUNTING_REPORTS)
   public AccountingReportsController() {
     super(new AccountingReportsModel());
   }

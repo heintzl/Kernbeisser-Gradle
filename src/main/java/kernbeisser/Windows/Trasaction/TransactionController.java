@@ -11,14 +11,14 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 
-@Requires(PermissionKey.ACTION_OPEN_TRANSACTION)
 public class TransactionController extends Controller<TransactionView, TransactionModel> {
 
+  @Key(PermissionKey.ACTION_OPEN_TRANSACTION)
   public TransactionController(User user, TransactionType transactionType) {
     super(new TransactionModel(user, transactionType));
   }

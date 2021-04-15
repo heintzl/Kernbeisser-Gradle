@@ -15,7 +15,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
-import kernbeisser.Security.PermissionSet;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
@@ -104,7 +105,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
   Thread articleThread = null;
 
   void importData() {
-    PermissionSet.MASTER.setAllBits(true);
+    Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
     try {
       PackageDefinition packageDefinition = extractPackageDefinition();
       Stream<String> suppliers =
@@ -155,6 +156,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
                     Tools.showUnexpectedErrorWarning(e);
                   }
                   view.back();
+                  Access.setDefaultManager(AccessManager.ACCESS_DENIED);
                 })
             .start();
       } else {
@@ -171,7 +173,6 @@ public class DataImportController extends Controller<DataImportView, DataImportM
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
-    PermissionSet.MASTER.setAllBits(false);
   }
 
   void cancel() {

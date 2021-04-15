@@ -1,6 +1,5 @@
 package kernbeisser.Forms.FormImplemetations.Article;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +19,7 @@ import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.Exceptions.SilentParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.var;
 
@@ -82,19 +82,16 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
   }
 
   @Override
-  public PermissionKey[] addPermission() {
-    return new PermissionKey[] {PermissionKey.ADD_USER};
-  }
+  @Key(PermissionKey.ADD_USER)
+  public void addPermission() {}
 
   @Override
-  public PermissionKey[] editPermission() {
-    return new PermissionKey[] {PermissionKey.EDIT_USER};
-  }
+  @Key(PermissionKey.EDIT_USER)
+  public void editPermission() {}
 
   @Override
-  public PermissionKey[] removePermission() {
-    return new PermissionKey[] {PermissionKey.REMOVE_USER};
-  }
+  @Key(PermissionKey.REMOVE_USER)
+  public void removePermission() {}
 
   @Override
   public ObjectForm<Article> getObjectContainer() {

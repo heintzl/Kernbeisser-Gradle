@@ -5,10 +5,10 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.Job.JobController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 
-@Requires(PermissionKey.ACTION_OPEN_EDIT_JOBS)
 public class EditJobs extends ObjectViewController<Job> {
+  @Key(PermissionKey.ACTION_OPEN_EDIT_JOBS)
   public EditJobs() {
     super(
         "Jobs bearbeiten",

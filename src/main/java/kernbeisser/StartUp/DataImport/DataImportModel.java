@@ -29,6 +29,8 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Main;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Tasks.Articles;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
 import kernbeisser.Tasks.Catalog.Merge.CatalogMergeSession;
@@ -42,10 +44,12 @@ import lombok.Cleanup;
 public class DataImportModel implements IModel<DataImportController> {
 
   void createAdmin(String password) {
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     User user = new User();
+    Access.getExceptions().put(user, AccessManager.NO_ACCESS_CHECKING);
     user.setFirstName("System");
     user.setSurname("Admin");
     user.setUsername("Admin");
@@ -57,7 +61,7 @@ public class DataImportModel implements IModel<DataImportController> {
     em.persist(user.getUserGroup());
     em.persist(user);
     em.flush();
-    et.commit();
+    Access.getExceptions().remove(user);
   }
 
   void parsePriceLists(Stream<String> f, Consumer<Integer> progress) {

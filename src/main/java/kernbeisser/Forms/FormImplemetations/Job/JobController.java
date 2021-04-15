@@ -5,6 +5,7 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Security.Key;
 import org.jetbrains.annotations.NotNull;
 
 public class JobController extends FormController<JobView, JobModel, Job> {
@@ -23,19 +24,16 @@ public class JobController extends FormController<JobView, JobModel, Job> {
   public void fillView(JobView jobView) {}
 
   @Override
-  public PermissionKey[] addPermission() {
-    return new PermissionKey[] {PermissionKey.ADD_JOB};
-  }
+  @Key(PermissionKey.ADD_JOB)
+  public void addPermission() {}
 
   @Override
-  public PermissionKey[] editPermission() {
-    return new PermissionKey[] {PermissionKey.EDIT_JOB};
-  }
+  @Key(PermissionKey.EDIT_JOB)
+  public void editPermission() {}
 
   @Override
-  public PermissionKey[] removePermission() {
-    return new PermissionKey[] {PermissionKey.REMOVE_JOB};
-  }
+  @Key(PermissionKey.REMOVE_JOB)
+  public void removePermission() {}
 
   @Override
   public ObjectForm<Job> getObjectContainer() {

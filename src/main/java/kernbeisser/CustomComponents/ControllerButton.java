@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.lang.ref.SoftReference;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -15,9 +14,9 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Security.PermissionSet;
-import kernbeisser.Security.StaticMethodTransformer.RestrictedAccess;
+import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.StaticMethodTransformer.StaticMethodTransformer;
+import kernbeisser.Security.Utils.AccessSupplier;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
@@ -31,7 +30,7 @@ public class ControllerButton extends JButton {
           V extends IView<? extends Controller<? extends V, ? extends M>>,
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
-      ControllerButton(Supplier<C> controller, Class<C> clazz) {
+      ControllerButton(AccessSupplier<C> controller, Class<C> clazz) {
     this(controller, clazz, false);
   }
 
@@ -39,7 +38,7 @@ public class ControllerButton extends JButton {
           V extends IView<? extends Controller<? extends V, ? extends M>>,
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
-      ControllerButton(Supplier<C> controller, Class<C> clazz, boolean preInit) {
+      ControllerButton(AccessSupplier<C> controller, Class<C> clazz, boolean preInit) {
     this(controller, clazz, Controller::openTab, preInit);
   }
 
@@ -47,7 +46,7 @@ public class ControllerButton extends JButton {
           V extends IView<? extends Controller<? extends V, ? extends M>>,
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
-      ControllerButton(Supplier<C> controller, Class<C> clazz, Consumer<C> action) {
+      ControllerButton(AccessSupplier<C> controller, Class<C> clazz, Consumer<C> action) {
     this(controller, clazz, action, false);
   }
 
@@ -56,7 +55,10 @@ public class ControllerButton extends JButton {
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
       ControllerButton(
-          Supplier<C> controllerInitializer, Class<C> clazz, Consumer<C> action, boolean preInit) {
+          AccessSupplier<C> controllerInitializer,
+          Class<C> clazz,
+          Consumer<C> action,
+          boolean preInit) {
     this(controllerInitializer, clazz, action, preInit, new PermissionKey[0]);
   }
 
@@ -65,7 +67,7 @@ public class ControllerButton extends JButton {
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
       ControllerButton(
-          Supplier<C> controllerInitializer,
+          AccessSupplier<C> controllerInitializer,
           Class<C> clazz,
           Consumer<C> action,
           boolean preInit,
@@ -82,10 +84,7 @@ public class ControllerButton extends JButton {
     Tools.scaleFont(this, 1.1);
 
     // checking if the user has the required access to open up the window
-    RestrictedAccess accessModel =
-        StaticMethodTransformer.createStaticInterface(RestrictedAccess.class, clazz);
-    if (PermissionSet.MASTER.contains(
-        PermissionSet.asPermissionSet(injected).or(accessModel.getRequiredKeys()))) {
+    if (Access.expectHasPermission(controllerInitializer)) {
       AtomicReference<SoftReference<C>> controllerRef =
           new AtomicReference<>(new SoftReference<>(null));
       if (preInit) {
@@ -116,7 +115,7 @@ public class ControllerButton extends JButton {
                 JOptionPane.showMessageDialog(
                     this,
                     "Das Fenster kann nicht geöffnet werden,\nda du nicht die benötigte Berechtigung hast. \nFehlende Berechtigung/en: "
-                        + exception.getMissing().stream()
+                        + exception.calculateMissingKeys().stream()
                             .map(PermissionKey::name)
                             .map(PermissionKey::getPermissionHint)
                             .collect(Collectors.joining(", ")));

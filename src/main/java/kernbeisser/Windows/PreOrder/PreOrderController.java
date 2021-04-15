@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
@@ -39,10 +40,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   boolean searchKK() {
     PreOrderView view = getView();
     if (view.getKkNumber() != 0) {
-      try {
-        pasteDataInView(model.getItemByKkNumber(view.getKkNumber()));
+      Optional<Article> searchResult = model.getItemByKkNumber(view.getKkNumber());
+      if (searchResult.isPresent()) {
+        pasteDataInView(searchResult.get());
         return true;
-      } catch (NoResultException e) {
+      } else {
         noArticleFound();
         return false;
       }
@@ -125,7 +127,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   private Article findArticle() {
     if (getView().getKkNumber() == 0) throw new NoResultException();
-    return model.getItemByKkNumber(getView().getKkNumber());
+    return model.getItemByKkNumber(getView().getKkNumber()).orElseThrow(NoResultException::new);
   }
 
   void insert(Article article) {

@@ -15,7 +15,6 @@ import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
 import kernbeisser.Forms.ObjectForm.Properties.Predictable;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import lombok.Setter;
@@ -110,7 +109,7 @@ public class ObjectForm<P> {
     checkValidSource();
     try {
       P data = getData(Mode.ADD);
-      Tools.add(Proxy.removeProxy(data));
+      Tools.add(data);
       JOptionPane.showMessageDialog(null, objectDistinction + " wurde erfolgreich angelegt");
       return true;
     } catch (CannotParseException e) {
@@ -128,7 +127,7 @@ public class ObjectForm<P> {
     checkValidSource();
     try {
       P data = getData(Mode.EDIT);
-      Tools.edit(Tools.getId(original), (Proxy.removeProxy(data)));
+      Tools.edit(Tools.getId(original), data);
       return true;
     } catch (CannotParseException e) {
       notifyException(e);

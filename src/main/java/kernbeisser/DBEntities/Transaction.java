@@ -11,7 +11,6 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -170,8 +169,6 @@ public class Transaction implements UserRelated {
     em.persist(toUG);
     em.persist(transaction);
     em.flush();
-    Proxy.refresh(from);
-    Proxy.refresh(to);
     return transaction;
   }
 
@@ -198,6 +195,6 @@ public class Transaction implements UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return fromUserGroup.equals(user.getUserGroup()) || toUserGroup.equals(user.getUserGroup());
+    return user.isInRelation(fromUser) || user.isInRelation(toUser);
   }
 }

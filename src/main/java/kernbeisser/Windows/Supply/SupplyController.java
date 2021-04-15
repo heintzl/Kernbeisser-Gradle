@@ -7,12 +7,12 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.MVC.Controller;
 
-@Requires(PermissionKey.ACTION_OPEN_SUPPLY)
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
+  @Key(PermissionKey.ACTION_OPEN_SUPPLY)
   public SupplyController() {
     super(new SupplyModel());
   }
@@ -27,7 +27,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   void searchShoppingItem(Supplier supplier, int supNr) {
     if (supNr == 0 || last == supNr) return;
     try {
-      getView().getObjectForm().setSource(model.findBySuppliersItemNumber(supplier, supNr));
+      getView()
+          .getObjectForm()
+          .setSource(
+              model.findBySuppliersItemNumber(supplier, supNr).orElseThrow(NoResultException::new));
       last = supNr;
     } catch (NoResultException noResultException) {
       getView().noArticleFound();

@@ -5,7 +5,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.Predictable;
-import kernbeisser.Security.Proxy;
+import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 
 public class DataListener<P, V>
@@ -24,12 +24,12 @@ public class DataListener<P, V>
 
   @Override
   public boolean isPropertyReadable(P parent) {
-    return Proxy.hasPermission(getter, parent);
+    return Access.hasPermission(getter, parent);
   }
 
   @Override
   public boolean isPropertyWriteable(P parent) {
-    return Proxy.hasPermission(getter, parent);
+    return Access.hasPermission(getter, parent);
   }
 
   @Override

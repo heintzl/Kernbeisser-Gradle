@@ -9,7 +9,7 @@ import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
 import kernbeisser.Forms.ObjectForm.Properties.Predictable;
-import kernbeisser.Security.Proxy;
+import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
 import org.jetbrains.annotations.Nullable;
@@ -102,12 +102,12 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
 
   @Override
   public boolean isPropertyReadable(P parent) {
-    return Proxy.hasPermission(getter, parent);
+    return Access.hasPermission(getter, parent);
   }
 
   @Override
   public boolean isPropertyWriteable(P parent) {
-    return Proxy.hasPermission(setter, parent);
+    return Access.hasPermission(setter, parent);
   }
 
   @Override

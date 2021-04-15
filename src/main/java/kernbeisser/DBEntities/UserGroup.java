@@ -7,7 +7,6 @@ import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -103,13 +102,12 @@ public class UserGroup implements UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Proxy.getSecuredInstances(
-        em.createQuery(
-                "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
-                UserGroup.class)
-            .setParameter("s", s + "%")
-            .setMaxResults(i)
-            .getResultList());
+    return em.createQuery(
+            "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
+            UserGroup.class)
+        .setParameter("s", s + "%")
+        .setMaxResults(i)
+        .getResultList();
   }
 
   public String getMemberString() {
@@ -124,6 +122,6 @@ public class UserGroup implements UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return user.getUserGroup().equals(this);
+    return user.userGroupEquals(this);
   }
 }

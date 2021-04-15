@@ -8,14 +8,14 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-@Requires(PermissionKey.ACTION_OPEN_MANAGE_PRICE_LISTS)
 public class ManagePriceListsController
     extends Controller<ManagePriceListsView, ManagePriceListsModel> implements ActionListener {
 
+  @Key(PermissionKey.ACTION_OPEN_MANAGE_PRICE_LISTS)
   public ManagePriceListsController() {
     super(new ManagePriceListsModel());
   }

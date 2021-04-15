@@ -6,14 +6,13 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Main;
-import kernbeisser.Security.MethodHandlers.PermissionSetSecurityHandler;
-import kernbeisser.Security.PermissionSet;
-import kernbeisser.Security.Proxy;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
+import kernbeisser.Security.Access.UserRelatedAccessManager;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
@@ -26,15 +25,7 @@ public class LogInModel implements IModel {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    loggedIn =
-        Proxy.injectMethodHandler(
-            em.find(User.class, loggedIn.getId()),
-            new PermissionSetSecurityHandler(
-                PermissionConstants.IN_RELATION_TO_OWN_USER
-                    .getPermission()
-                    .getKeySet()
-                    .toArray(new PermissionKey[0])));
-    ;
+    loggedIn = em.find(loggedIn.getClass(), loggedIn.getId());
   }
 
   public LogInModel() {
@@ -47,6 +38,7 @@ public class LogInModel implements IModel {
 
   public static void logIn(String username, char[] password)
       throws CannotLogInException, PermissionRequired {
+    Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -60,15 +52,10 @@ public class LogInModel implements IModel {
         if (!user.hasPermission(PermissionKey.ACTION_LOGIN)) {
           throw new PermissionRequired();
         }
-        loggedIn =
-            Proxy.injectMethodHandler(
-                user,
-                new PermissionSetSecurityHandler(
-                    PermissionConstants.IN_RELATION_TO_OWN_USER
-                        .getPermission()
-                        .getKeySet()
-                        .toArray(new PermissionKey[0])));
-        PermissionSet.MASTER.loadPermission(user.getPermissions());
+        loggedIn = user;
+
+        Access.setDefaultManager(new UserRelatedAccessManager(loggedIn));
+
         Main.logger.info("User with user id [" + user.getId() + "] has logged in");
       } else {
         throw new CannotLogInException();

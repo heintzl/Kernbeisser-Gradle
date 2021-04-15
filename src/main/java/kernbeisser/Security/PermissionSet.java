@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.LongBinaryOperator;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,9 +12,6 @@ import org.jetbrains.annotations.NotNull;
  * permission with bit field comparision against it.
  */
 public class PermissionSet implements Set<PermissionKey> {
-  public static final PermissionSet MASTER = new PermissionSet();
-  public static final PermissionSet IN_RELATION_TO_USER =
-      PermissionSet.ofPermission(PermissionConstants.IN_RELATION_TO_OWN_USER.getPermission());
 
   /** the java option for a c bitfield */
   private final long[] bits = new long[((PermissionKey.values().length / Long.SIZE) + 1)];
@@ -51,10 +47,6 @@ public class PermissionSet implements Set<PermissionKey> {
 
   /** checks if a PermissionSet has all permissions of another one */
   public boolean contains(PermissionSet permissionSet) {
-    if (permissionSet.bits.length != bits.length) {
-      throw new RuntimeException(
-          "fatal error occurred, the PermissionSet doesn't haven the same length! should not happen in normal cases");
-    }
     for (int i = 0; i < bits.length; i++) {
       if ((permissionSet.bits[i] & bits[i]) != permissionSet.bits[i]) return false;
     }

@@ -20,7 +20,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
@@ -28,13 +28,13 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
-@Requires(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
 public class EditItemsController extends Controller<EditItemsView, EditItemsModel> {
 
   private final ObjectViewController<Article> objectViewController;
 
   private final BarcodeCapture capture;
 
+  @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
   public EditItemsController() {
     super(new EditItemsModel());
     objectViewController =

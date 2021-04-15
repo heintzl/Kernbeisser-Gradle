@@ -20,15 +20,15 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.hibernate.exception.ConstraintViolationException;
 
-@Requires(PermissionKey.ACTION_OPEN_EDIT_SURCHARGE_GROUPS)
 public class EditSurchargeGroupController
     extends Controller<EditSurchargeGroupView, EditSurchargeGroupModel> {
 
+  @Key(PermissionKey.ACTION_OPEN_EDIT_SURCHARGE_GROUPS)
   public EditSurchargeGroupController() {
     super(new EditSurchargeGroupModel());
   }

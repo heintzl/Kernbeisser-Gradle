@@ -4,17 +4,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
 import kernbeisser.Tasks.Catalog.Merge.MappedDifferences;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 
-@Requires(PermissionKey.ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW)
 public class SynchronizeArticleController
     extends Controller<SynchronizeArticleView, SynchronizeArticleModel> {
 
+  @Key(PermissionKey.ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW)
   public SynchronizeArticleController() {
     super(new SynchronizeArticleModel());
   }

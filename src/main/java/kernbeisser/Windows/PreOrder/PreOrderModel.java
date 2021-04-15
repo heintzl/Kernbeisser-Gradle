@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -27,7 +28,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.begin();
   }
 
-  Article getItemByKkNumber(int kkNumber) {
+  Optional<Article> getItemByKkNumber(int kkNumber) {
     return Article.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber);
   }
 
