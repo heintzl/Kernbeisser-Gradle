@@ -1,19 +1,19 @@
 package kernbeisser.Enums;
 
-import java.util.Arrays;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Security.PermissionSet;
 import lombok.Cleanup;
 
 // Permissions which become automatically generated when the application
 // requires them to prevent the functionality from the application
 public enum PermissionConstants {
   // the permission with all rights reserved
-  ADMIN(PermissionKey.values()),
+  ADMIN(allPermissions()),
   // the default permission for all new users
   FULL_MEMBER(PermissionKey.ACTION_LOGIN),
   // the permission which is given to all imported users from the old application
@@ -25,9 +25,14 @@ public enum PermissionConstants {
 
   private final Permission bounded;
 
-  final PermissionKey[] defaultPermissionKeys;
+  final PermissionSet defaultPermissionKeys;
 
   PermissionConstants(PermissionKey... keys) {
+    this.defaultPermissionKeys = PermissionSet.asPermissionSet(keys);
+    this.bounded = loadOrCreate(this);
+  }
+
+  PermissionConstants(PermissionSet keys) {
     this.defaultPermissionKeys = keys;
     this.bounded = loadOrCreate(this);
   }
@@ -49,12 +54,18 @@ public enum PermissionConstants {
       EntityTransaction et = em.getTransaction();
       et.begin();
       Permission permission = new Permission();
-      permission.getKeySet().addAll(Arrays.asList(constants.defaultPermissionKeys));
+      permission.getKeySet().addAll(constants.defaultPermissionKeys);
       permission.setName("@" + constants.name());
       em.persist(permission);
       em.flush();
       et.commit();
       return loadOrCreate(constants);
     }
+  }
+
+  public static PermissionSet allPermissions() {
+    PermissionSet p = new PermissionSet();
+    p.setAllBits(true);
+    return p;
   }
 }

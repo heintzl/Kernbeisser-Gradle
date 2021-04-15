@@ -11,6 +11,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Users;
 import lombok.var;
@@ -77,19 +78,16 @@ public class UserController extends FormController<UserView, UserModel, User> {
   }
 
   @Override
-  public PermissionKey[] addPermission() {
-    return new PermissionKey[] {PermissionKey.ADD_USER};
-  }
+  @Key(PermissionKey.ADD_USER)
+  public void addPermission() {}
 
   @Override
-  public PermissionKey[] editPermission() {
-    return new PermissionKey[] {PermissionKey.EDIT_USER};
-  }
+  @Key(PermissionKey.EDIT_USER)
+  public void editPermission() {}
 
   @Override
-  public PermissionKey[] removePermission() {
-    return new PermissionKey[] {PermissionKey.REMOVE_USER};
-  }
+  @Key(PermissionKey.REMOVE_USER)
+  public void removePermission() {}
 
   @Override
   public ObjectForm<User> getObjectContainer() {

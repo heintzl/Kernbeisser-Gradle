@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.LongBinaryOperator;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,9 +12,6 @@ import org.jetbrains.annotations.NotNull;
  * permission with bit field comparision against it.
  */
 public class PermissionSet implements Set<PermissionKey> {
-  public static final PermissionSet MASTER = new PermissionSet();
-  public static final PermissionSet IN_RELATION_TO_USER =
-      PermissionSet.ofPermission(PermissionConstants.IN_RELATION_TO_OWN_USER.getPermission());
 
   /** the java option for a c bitfield */
   private final long[] bits = new long[((PermissionKey.values().length / Long.SIZE) + 1)];

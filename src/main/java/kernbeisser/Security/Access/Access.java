@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class Access {
 
   // default do not allow any access to any field -> normal state if no one is logged in
-  @Setter private static AccessManager defaultManager = AccessManager.ACCESS_DENIED;
+  @Setter private static AccessManager defaultManager = AccessManager.NO_ACCESS_CHECKING;
 
   @Setter private static boolean useCustomProtection = true;
 
@@ -31,6 +31,7 @@ public class Access {
 
   static {
     loadUnprotectedInstanceExceptions();
+    defaultManager = AccessManager.ACCESS_DENIED;
   }
 
   // via java agent linked method
@@ -78,7 +79,10 @@ public class Access {
   }
 
   public static boolean expectHasPermission(Serializable serializable) {
-    return PermissionSet.MASTER.contains(PermissionKeyMethodVisitor.accessedKeys(serializable));
+    if (defaultManager instanceof PermissionKeyBasedAccessManager)
+      return ((PermissionKeyBasedAccessManager) defaultManager)
+          .hasPermission(peekPermissions(serializable));
+    throw new UnsupportedOperationException("Default access manager is not peek able");
   }
 
   public static <T, V> boolean hasPermission(

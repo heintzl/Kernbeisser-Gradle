@@ -2,8 +2,8 @@ package kernbeisser.Forms.ObjectView;
 
 import java.util.Collection;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
-import kernbeisser.Security.PermissionSet;
 import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.Searchable;
 import lombok.Data;
@@ -34,15 +34,30 @@ public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
   }
 
   public boolean isAddAvailable() {
-    return PermissionSet.MASTER.hasPermissions(form.addPermission());
+    try {
+      form.addPermission();
+      return true;
+    } catch (PermissionKeyRequiredException e) {
+      return false;
+    }
   }
 
   public boolean isEditAvailable() {
-    return PermissionSet.MASTER.hasPermissions(form.editPermission());
+    try {
+      form.editPermission();
+      return true;
+    } catch (PermissionKeyRequiredException e) {
+      return false;
+    }
   }
 
   public boolean isRemoveAvailable() {
-    return PermissionSet.MASTER.hasPermissions(form.removePermission());
+    try {
+      form.removePermission();
+      return true;
+    } catch (PermissionKeyRequiredException e) {
+      return false;
+    }
   }
 
   public void submit() {

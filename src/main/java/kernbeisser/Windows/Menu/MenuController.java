@@ -5,6 +5,8 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -64,6 +66,8 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   }
 
   public FormEditorController<User> generateAddBeginnerForm() {
+    User beginnerUser = new User();
+    Access.getExceptions().put(beginnerUser, AccessManager.NO_ACCESS_CHECKING);
     return FormEditorController.open(new User(), new UserController(), Mode.ADD);
   }
 }

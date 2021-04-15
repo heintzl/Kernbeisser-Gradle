@@ -1,6 +1,7 @@
 package kernbeisser.Security.Access;
 
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Security.Relations.UserRelated;
 import org.jetbrains.annotations.NotNull;
@@ -9,9 +10,19 @@ public class UserRelatedAccessManager extends PermissionSetAccessManager {
 
   private final User targetUser;
 
+  private final PermissionSet inRelation;
+
+  public static PermissionSet ofUser(User user) {
+    PermissionSet ps = new PermissionSet();
+    ps.loadPermission(user.getPermissions());
+    return ps;
+  }
+
   public UserRelatedAccessManager(@NotNull User targetUser) {
-    super(PermissionSet.MASTER);
+    super(ofUser(targetUser));
     this.targetUser = targetUser;
+    inRelation =
+        PermissionSet.ofPermission(PermissionConstants.IN_RELATION_TO_OWN_USER.getPermission());
   }
 
   @Override
@@ -20,6 +31,6 @@ public class UserRelatedAccessManager extends PermissionSetAccessManager {
         || (object instanceof UserRelated
             && targetUser != null
             && ((UserRelated) object).isInRelation(targetUser)
-            && PermissionSet.IN_RELATION_TO_USER.contains(keys));
+            && inRelation.contains(keys));
   }
 }

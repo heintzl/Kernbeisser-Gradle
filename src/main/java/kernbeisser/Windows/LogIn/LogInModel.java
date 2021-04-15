@@ -13,7 +13,6 @@ import kernbeisser.Main;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Access.UserRelatedAccessManager;
-import kernbeisser.Security.PermissionSet;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
@@ -54,7 +53,7 @@ public class LogInModel implements IModel {
           throw new PermissionRequired();
         }
         loggedIn = user;
-        PermissionSet.MASTER.loadPermission(loggedIn.getPermissions());
+
         Access.setDefaultManager(new UserRelatedAccessManager(loggedIn));
 
         Main.logger.info("User with user id [" + user.getId() + "] has logged in");

@@ -1,10 +1,10 @@
 package kernbeisser.Forms.FormImplemetations.Supplier;
 
-import javax.swing.*;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Security.Key;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplierController extends FormController<SupplierView, SupplierModel, Supplier> {
@@ -23,19 +23,15 @@ public class SupplierController extends FormController<SupplierView, SupplierMod
   public void fillView(SupplierView supplierView) {}
 
   @Override
-  public PermissionKey[] addPermission() {
-    return new PermissionKey[] {PermissionKey.ADD_SUPPLIER};
-  }
+  @Key(PermissionKey.ADD_SUPPLIER)
+  public void addPermission() {}
 
   @Override
-  public PermissionKey[] editPermission() {
-    return new PermissionKey[] {PermissionKey.EDIT_SUPPLIER};
-  }
+  @Key(PermissionKey.EDIT_SUPPLIER)
+  public void editPermission() {}
 
   @Override
-  public PermissionKey[] removePermission() {
-    return new PermissionKey[0];
-  }
+  public void removePermission() {}
 
   @Override
   public ObjectForm<Supplier> getObjectContainer() {

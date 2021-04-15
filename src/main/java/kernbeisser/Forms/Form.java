@@ -1,16 +1,15 @@
 package kernbeisser.Forms;
 
 import java.util.function.Supplier;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Useful.Tools;
 
 public interface Form<T> {
-  PermissionKey[] addPermission();
+  void addPermission();
 
-  PermissionKey[] editPermission();
+  void editPermission();
 
-  PermissionKey[] removePermission();
+  void removePermission();
 
   ObjectForm<T> getObjectContainer();
 
