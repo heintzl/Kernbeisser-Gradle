@@ -4,14 +4,14 @@ import java.util.Arrays;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
-@Requires(PermissionKey.ACTION_OPEN_APPLICATION_SETTINGS)
 public class SettingController extends Controller<SettingView, SettingModel> {
+  @Key(PermissionKey.ACTION_OPEN_APPLICATION_SETTINGS)
   public SettingController() {
     super(new SettingModel());
   }

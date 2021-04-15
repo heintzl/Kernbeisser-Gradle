@@ -15,7 +15,7 @@ import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.NotEnoughCreditException;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -25,12 +25,12 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
-@Requires(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK)
 public class CashierShoppingMaskController
     extends Controller<CashierShoppingMaskView, CashierShoppingMaskModel> {
 
   @Linked private final SearchBoxController<User> searchBoxController;
 
+  @Key(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK)
   public CashierShoppingMaskController() {
     super(new CashierShoppingMaskModel());
     this.searchBoxController =

@@ -5,10 +5,11 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.Supplier.SupplierController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 
-@Requires(PermissionKey.ACTION_OPEN_EDIT_SUPPLIERS)
 public class EditSuppliers extends ObjectViewController<Supplier> {
+
+  @Key(PermissionKey.ACTION_OPEN_EDIT_SUPPLIERS)
   public EditSuppliers() {
     super(
         "Lieferanten bearbeiten",

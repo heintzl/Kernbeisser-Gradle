@@ -6,10 +6,10 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 
-@Requires(PermissionKey.ACTION_OPEN_EDIT_USERS)
 public class EditUsers extends ObjectViewController<User> {
+  @Key(PermissionKey.ACTION_OPEN_EDIT_USERS)
   public EditUsers() {
     super(
         "Benutzer bearbeiten",

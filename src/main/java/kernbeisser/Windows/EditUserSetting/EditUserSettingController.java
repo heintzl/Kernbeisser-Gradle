@@ -8,16 +8,16 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
 
-@Requires(PermissionKey.ACTION_OPEN_EDIT_USER_SETTING)
 public class EditUserSettingController extends Controller<EditUserSettingView, EditUserSettingModel>
     implements ActionListener {
 
+  @Key(PermissionKey.ACTION_OPEN_EDIT_USER_SETTING)
   public EditUserSettingController(User user) {
     super(new EditUserSettingModel(user));
   }

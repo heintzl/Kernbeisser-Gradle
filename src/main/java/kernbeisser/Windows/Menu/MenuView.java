@@ -11,8 +11,6 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
-import kernbeisser.Security.PermissionSet;
-import kernbeisser.Security.Proxy;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.AdminTools.AdminToolController;
@@ -181,8 +179,7 @@ public class MenuView implements IView<MenuController> {
                     "Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
                         + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
                         + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.");
-                throw new PermissionKeyRequiredException(
-                    new PermissionSet(), new PermissionKey[0], "");
+                throw new PermissionKeyRequiredException();
               }
             },
             SoloShoppingMaskController.class,

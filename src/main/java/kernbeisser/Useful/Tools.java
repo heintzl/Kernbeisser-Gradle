@@ -36,8 +36,6 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
-import kernbeisser.Security.IterableProtection.ProtectedIterable;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Security.SecuredOptional;
 import kernbeisser.Security.Utils.AccessConsumer;
 import kernbeisser.Security.Utils.AccessSupplier;
@@ -924,8 +922,6 @@ public class Tools {
 
   public static <T> SecuredOptional<T> optional(AccessSupplier<T> supplier) {
     try {
-      T v = supplier.get();
-      if (v instanceof ProtectedIterable) ((ProtectedIterable) v).checkRead();
       return SecuredOptional.of(supplier.get());
     } catch (PermissionKeyRequiredException e) {
       return SecuredOptional.empty();

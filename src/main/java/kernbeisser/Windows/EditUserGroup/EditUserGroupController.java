@@ -13,14 +13,13 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-@Requires(PermissionKey.ACTION_OPEN_EDIT_USER_GROUP)
 public class EditUserGroupController extends Controller<EditUserGroupView, EditUserGroupModel> {
 
   @Linked private final SearchBoxController<UserGroup> userGroupSearchBoxController;
@@ -29,6 +28,7 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
     this(user, null);
   }
 
+  @Key(PermissionKey.ACTION_OPEN_EDIT_USER_GROUP)
   public EditUserGroupController(User user, User caller) {
     super(new EditUserGroupModel(user, caller));
     userGroupSearchBoxController =

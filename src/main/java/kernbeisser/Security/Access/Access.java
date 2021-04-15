@@ -2,12 +2,10 @@ package kernbeisser.Security.Access;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.WeakHashMap;
 import kernbeisser.Enums.PermissionConstants;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
@@ -29,7 +27,7 @@ public class Access {
   // caches methods which are already analysed
   // log stands for the methods id which is
   // created by the java agent
-  private static final HashMap<Long, PermissionKey[]> cache = new HashMap<>();
+  private static final HashMap<Long, PermissionSet> cache = new HashMap<>();
 
   static {
     loadUnprotectedInstanceExceptions();
@@ -37,7 +35,7 @@ public class Access {
 
   // via java agent linked method
   public static void hasAccess(Object object, String methodName, String signature, long methodId) {
-    PermissionKey[] keys =
+    PermissionSet keys =
         cache.computeIfAbsent(methodId, k -> runCallerAnalyse(object, methodName, methodId));
     if (!defaultManager.hasAccess(object, methodName, signature, keys)) {
       if (useCustomProtection) {
@@ -46,7 +44,7 @@ public class Access {
           return;
       }
       throw new PermissionKeyRequiredException(
-          "PermissionSet doesn't contain the following keys:" + Arrays.toString(keys));
+          "PermissionSet doesn't contain the following keys:" + keys);
     }
   }
 
@@ -64,7 +62,7 @@ public class Access {
     return Optional.ofNullable(exceptions.get(o));
   }
 
-  private static PermissionKey[] runCallerAnalyse(Object object, String methodName, long methodId) {
+  private static PermissionSet runCallerAnalyse(Object object, String methodName, long methodId) {
     for (Method declaredMethod : object.getClass().getDeclaredMethods()) {
       if (!declaredMethod.getName().equals(methodName)) {
         continue;
@@ -72,11 +70,15 @@ public class Access {
       Key key = declaredMethod.getAnnotation(Key.class);
       if (key == null) continue;
       if (key.id() == methodId) {
-        return key.value();
+        return PermissionSet.asPermissionSet(key.value());
       }
     }
     throw new UnsupportedOperationException(
         "cannot find method with name and id: " + methodName + ":" + methodId);
+  }
+
+  public static boolean expectHasPermission(Serializable serializable) {
+    return PermissionSet.MASTER.contains(PermissionKeyMethodVisitor.accessedKeys(serializable));
   }
 
   public static <T, V> boolean hasPermission(

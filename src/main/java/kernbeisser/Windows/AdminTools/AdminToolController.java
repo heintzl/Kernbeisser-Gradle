@@ -4,15 +4,15 @@ import java.awt.event.ActionEvent;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 
-@Requires(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)
 public class AdminToolController extends Controller<AdminToolView, AdminToolModel> {
 
+  @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)
   public AdminToolController() throws PermissionKeyRequiredException {
     super(new AdminToolModel());
   }

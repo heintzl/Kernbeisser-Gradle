@@ -27,20 +27,13 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
   private final Set<String> visited;
   private final PermissionSet collected;
 
-  private static Method getReflectedMethod(Serializable lambda) throws Exception {
+  private static AnalyserTarget getReflectedMethod(Serializable lambda) throws Exception {
     try {
       Method m = lambda.getClass().getDeclaredMethod("writeReplace");
       m.setAccessible(true);
       SerializedLambda sl = (SerializedLambda) m.invoke(lambda);
       Class<?> cl = Class.forName(sl.getImplClass().replace("/", "."));
-      Field gSig = Method.class.getDeclaredField("signature");
-      gSig.setAccessible(true);
-      for (Method declaredMethod : cl.getDeclaredMethods()) {
-        if (declaredMethod.getName().equals(sl.getImplMethodName())) {
-          return declaredMethod;
-        }
-      }
-      throw new UnsupportedOperationException("cannot find method");
+      return new AnalyserTarget(sl.getImplMethodName(), sl.getImplMethodSignature(), cl);
     } catch (NoSuchMethodException | ClassCastException e) {
       throw new UnsupportedOperationException("not a lambda instance");
     }
@@ -76,16 +69,14 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
     return getSignature(m, sig);
   }
 
-  public PermissionKeyMethodVisitor(int depth, Method method, PermissionSet collector) {
+  public PermissionKeyMethodVisitor(int depth, AnalyserTarget target, PermissionSet collector) {
     super(Opcodes.ASM7);
     this.depth = depth;
-    targetMethodName = method.getName();
-    targetDescriptor = getSignature(method);
+    targetMethodName = target.getTargetMethodName();
+    targetDescriptor = target.getTargetDescriptor();
     visited = new HashSet<>();
     visited.add(
-        method.getDeclaringClass().getName().replace(".", "/")
-            + targetMethodName
-            + targetDescriptor);
+        target.getTargetClass().getName().replace(".", "/") + targetMethodName + targetDescriptor);
     collected = collector;
   }
 
@@ -104,6 +95,7 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
             return;
           }
           if (visited.add(owner + name + descriptor)) {
+            if (!owner.startsWith("kernbeisser")) return;
             ClassReader cr = new ClassReader(owner);
             String targetNameBuffer = targetMethodName;
             String targetDescriptionBuffer = targetDescriptor;
@@ -153,17 +145,17 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
       return ofMethod(getReflectedMethod(serializable), collector, depth);
     } catch (UnsupportedOperationException e) {
       for (Method declaredMethod : serializable.getClass().getDeclaredMethods()) {
-        ofMethod(declaredMethod, collector, depth);
+        ofMethod(AnalyserTarget.ofMethod(declaredMethod), collector, depth);
       }
       return collector;
     }
   }
 
-  public static PermissionSet ofMethod(Method method, PermissionSet collector, int depth)
+  public static PermissionSet ofMethod(AnalyserTarget method, PermissionSet collector, int depth)
       throws IOException {
     PermissionKeyMethodVisitor subMethodVisitor =
         new PermissionKeyMethodVisitor(depth, method, collector);
-    ClassReader cr = new ClassReader(method.getDeclaringClass().getName());
+    ClassReader cr = new ClassReader(method.getTargetClass().getName());
     cr.accept(subMethodVisitor, 0);
     return subMethodVisitor.collected;
   }

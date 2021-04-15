@@ -9,18 +9,23 @@ import java.util.stream.Collectors;
 import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.KeyCollection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.ActionPermission;
-import kernbeisser.Security.Requires;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
-@Requires(
-    value = PermissionKey.ACTION_OPEN_PERMISSION_MANAGEMENT,
-    collections = {KeyCollection.ALL_PERMISSION_READ, KeyCollection.ALL_PERMISSION_WRITE})
 public class PermissionController extends Controller<PermissionView, PermissionModel> {
 
+  @Key({
+    PermissionKey.ACTION_OPEN_PERMISSION_MANAGEMENT,
+    PermissionKey.PERMISSION_ID_READ,
+    PermissionKey.PERMISSION_ID_WRITE,
+    PermissionKey.PERMISSION_KEY_SET_READ,
+    PermissionKey.PERMISSION_KEY_SET_WRITE,
+    PermissionKey.PERMISSION_NAME_READ,
+    PermissionKey.PERMISSION_NAME_WRITE,
+  })
   public PermissionController() {
     super(new PermissionModel());
   }

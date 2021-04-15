@@ -11,7 +11,6 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;

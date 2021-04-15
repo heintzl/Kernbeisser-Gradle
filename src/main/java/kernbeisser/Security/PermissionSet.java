@@ -51,10 +51,6 @@ public class PermissionSet implements Set<PermissionKey> {
 
   /** checks if a PermissionSet has all permissions of another one */
   public boolean contains(PermissionSet permissionSet) {
-    if (permissionSet.bits.length != bits.length) {
-      throw new RuntimeException(
-          "fatal error occurred, the PermissionSet doesn't haven the same length! should not happen in normal cases");
-    }
     for (int i = 0; i < bits.length; i++) {
       if ((permissionSet.bits[i] & bits[i]) != permissionSet.bits[i]) return false;
     }

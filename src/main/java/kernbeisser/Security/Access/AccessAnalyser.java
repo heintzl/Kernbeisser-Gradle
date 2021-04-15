@@ -18,8 +18,7 @@ public class AccessAnalyser implements AccessManager, PermissionKeyBasedAccessMa
   }
 
   @Override
-  public boolean hasAccess(
-      Object object, String methodName, String signature, PermissionKey[] keys) {
+  public boolean hasAccess(Object object, String methodName, String signature, PermissionSet keys) {
     for (PermissionKey key : keys) {
       keySet.addPermission(key);
     }
@@ -33,7 +32,7 @@ public class AccessAnalyser implements AccessManager, PermissionKeyBasedAccessMa
 
   public void dumpInDB() {
     Permission permission = new Permission();
-    permission.getKeySet().addAll(keySet.asPermissionSet());
+    permission.getKeySet().addAll(keySet);
     permission.setName(permissionName);
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")

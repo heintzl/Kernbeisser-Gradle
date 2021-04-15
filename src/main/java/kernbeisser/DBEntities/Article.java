@@ -17,7 +17,6 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;

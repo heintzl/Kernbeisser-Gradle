@@ -6,7 +6,6 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;

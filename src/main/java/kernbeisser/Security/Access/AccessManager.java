@@ -1,11 +1,10 @@
 package kernbeisser.Security.Access;
 
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.PermissionSet;
 
 public interface AccessManager {
 
-  boolean hasAccess(Object object, String methodName, String signature, PermissionKey[] keys);
+  boolean hasAccess(Object object, String methodName, String signature, PermissionSet keys);
 
   public static PermissionSet ALL_PERMISSIONS = createAllPermissions();
 

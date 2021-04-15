@@ -17,9 +17,6 @@ import javax.swing.JOptionPane;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Security.PermissionSet;
-import kernbeisser.Security.StaticMethodTransformer.RestrictedAccess;
-import kernbeisser.Security.StaticMethodTransformer.StaticMethodTransformer;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -27,9 +24,8 @@ import kernbeisser.Windows.ViewContainer;
 import lombok.Getter;
 
 public abstract class Controller<
-        V extends IView<? extends Controller<? extends V, ? extends M>>,
-        M extends IModel<? extends Controller<? extends V, ? extends M>>>
-    implements RestrictedAccess {
+    V extends IView<? extends Controller<? extends V, ? extends M>>,
+    M extends IModel<? extends Controller<? extends V, ? extends M>>> {
 
   @Getter(lazy = true)
   private final Collection<Controller<?, ?>> subControllers = findSubControllers();
@@ -42,12 +38,6 @@ public abstract class Controller<
 
   public Controller(M model) throws PermissionKeyRequiredException {
     this.model = model;
-    if (!PermissionSet.MASTER.contains(getRequiredKeys())) {
-      throw new PermissionKeyRequiredException(
-          PermissionSet.MASTER,
-          getRequiredKeys().toArray(),
-          "Controller init of " + getClass().getCanonicalName());
-    }
   }
 
   private final Collection<CloseEvent> closeEvents = new ArrayList<>();
@@ -90,10 +80,6 @@ public abstract class Controller<
   }
 
   public abstract void fillView(V v);
-
-  public static RestrictedAccess getRestrictedAccess(Class<? extends Controller<?, ?>> clazz) {
-    return StaticMethodTransformer.createStaticInterface(RestrictedAccess.class, clazz);
-  }
 
   public ViewContainer openIn(ViewContainer container) {
     this.container = container;
