@@ -1,0 +1,62 @@
+Sourcecode of src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar class
+
+import java.io.ByteArrayInputStream;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.reflect.Modifier;
+import java.security.ProtectionDomain;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.LongMemberValue;
+
+public class Proxyfier implements ClassFileTransformer {
+
+  private final String classNamePrefix;
+  private final String annotationMark;
+  private final String staticMethodCall;
+  private static transient long methodId = 0;
+
+  //passed arguments splited by '$'
+  public Proxyfier(String classNamePrefix, String annotationMark, String staticMethodCall) {
+    this.classNamePrefix = classNamePrefix;
+    this.annotationMark = annotationMark;
+    this.staticMethodCall = staticMethodCall;
+  }
+
+  @Override
+  public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+      ProtectionDomain protectionDomain, byte[] classfileBuffer) {
+    if (!className.replace("/",".").startsWith(classNamePrefix)) {
+      return classfileBuffer;
+    }
+    ClassPool classPool = new ClassPool();
+    classPool.appendClassPath(new LoaderClassPath(loader));
+    String contextMethod = null;
+    try {
+      Class<?> clazz = Class.forName(annotationMark);
+      CtClass ctClass = classPool.makeClass(new ByteArrayInputStream(classfileBuffer));
+      for (CtMethod declaredMethod : ctClass.getDeclaredMethods()) {
+        if (!Modifier.isNative(declaredMethod.getModifiers())) {
+          Object annotationObj = declaredMethod.getAnnotation(clazz);
+          if(annotationObj == null)continue;
+          contextMethod = declaredMethod.getName();
+          AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) declaredMethod.getMethodInfo().getAttribute(AnnotationsAttribute.visibleTag);
+          Annotation annotation = annotationsAttribute.getAnnotation(annotationMark);
+          annotation.addMemberValue("id",new LongMemberValue(methodId,declaredMethod.getMethodInfo()
+              .getConstPool()));
+          annotationsAttribute.setAnnotation(annotation);
+          String genericSignature = declaredMethod.getGenericSignature();
+          declaredMethod.insertBefore(String.format(staticMethodCall, declaredMethod.getName(), genericSignature == null ? declaredMethod.getSignature() : genericSignature, methodId++));
+        }
+      }
+      return ctClass.toBytecode();
+    } catch (Exception e) {
+      System.err.println("Failed while injecting access check in: "+className+":"+contextMethod);
+      e.printStackTrace();
+      throw new UnsupportedOperationException();
+    }
+  }
+}
