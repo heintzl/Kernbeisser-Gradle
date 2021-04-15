@@ -25,10 +25,8 @@ public enum PermissionKey {
   ACTION_OPEN_MANAGE_PRICELISTS(ActionPermission.class),
   ACTION_OPEN_SOLO_SHOPPING_MASK(ActionPermission.class),
   ACTION_OPEN_APPLICATION_SETTINGS(ActionPermission.class),
-  ACTION_OPEN_PREORDER(ActionPermission.class),
   ACTION_OPEN_PERMISSION_MANAGEMENT(ActionPermission.class),
   ACTION_OPEN_SPECIAL_PRICE_EDITOR(ActionPermission.class),
-  ACTION_OPEN_SYNCHRONIZE_ARTICLES(ActionPermission.class),
   ACTION_OPEN_TRANSACTION(ActionPermission.class),
   ACTION_OPEN_ACCOUNTING_REPORTS(ActionPermission.class),
   ACTION_OPEN_CASHIER_SHOPPING_MASK(ActionPermission.class),
@@ -42,7 +40,7 @@ public enum PermissionKey {
   ACTION_OPEN_EDIT_USERS(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICE_LISTS(ActionPermission.class),
   ACTION_OPEN_PRE_ORDER(ActionPermission.class),
-  ACTION_OPEN_SETTING(ActionPermission.class),
+  ACTION_OPEN_OWN_PRE_ORDER(ActionPermission.class),
   ACTION_OPEN_SUPPLY(ActionPermission.class),
   ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW(ActionPermission.class),
   ACTION_OPEN_DB_LOG_IN(ActionPermission.class),
@@ -51,14 +49,10 @@ public enum PermissionKey {
   ACTION_ADD_BEGINNER(ActionPermission.class),
   ACTION_EDIT_OWN_DATA(ActionPermission.class),
   ACTION_LOGIN(ActionPermission.class),
-  ACTION_TRANSACTION(ActionPermission.class),
   ACTION_TRANSACTION_FROM_OTHER(ActionPermission.class),
   ACTION_TRANSACTION_FROM_KB(ActionPermission.class),
-  ACTION_EDIT_USER(ActionPermission.class),
   ACTION_ORDER_CONTAINER(ActionPermission.class),
-  ACTION_EDIT_PRICELIST(ActionPermission.class),
-  ACTION_DELETE_PRICELIST(ActionPermission.class),
-  ACTION_ADD_PRICELIST(ActionPermission.class),
+  ACTION_ORDER_OWN_CONTAINER(ActionPermission.class),
 
   ADD_ARTICLE(Article.class),
   REMOVE_ARTICLE(Article.class),
@@ -319,12 +313,18 @@ public enum PermissionKey {
   TRANSACTION_TRANSACTION_TYPE_WRITE(Transaction.class),
   TRANSACTION_FROM_READ(Transaction.class),
   TRANSACTION_FROM_WRITE(Transaction.class),
+  TRANSACTION_FROMUG_READ(Transaction.class),
+  TRANSACTION_FROMUG_WRITE(Transaction.class),
   TRANSACTION_TO_READ(Transaction.class),
   TRANSACTION_TO_WRITE(Transaction.class),
+  TRANSACTION_TOUG_READ(Transaction.class),
+  TRANSACTION_TOUG_WRITE(Transaction.class),
   TRANSACTION_DATE_READ(Transaction.class),
   TRANSACTION_DATE_WRITE(Transaction.class),
   TRANSACTION_INFO_READ(Transaction.class),
   TRANSACTION_INFO_WRITE(Transaction.class),
+  TRANSACTION_CREATEDBY_READ(Transaction.class),
+  TRANSACTION_CREATEDBY_WRITE(Transaction.class),
   ADD_USER(User.class),
   EDIT_USER(User.class),
   REMOVE_USER(User.class),
@@ -472,7 +472,8 @@ public enum PermissionKey {
             .put("ACTION_OPEN_EDIT_USER_SETTING", "Persönliche Programmeinstellungen bearbeiten")
             .put("ACTION_OPEN_EDIT_USERS", "Benutzer bearbeiten")
             .put("ACTION_OPEN_MANAGE_PRICE_LISTS", "Preislisten bearbeiten")
-            .put("ACTION_OPEN_PRE_ORDER", "Vorbestellung")
+            .put("ACTION_OPEN_PRE_ORDER", "Vorbestellung für alle öffnen")
+            .put("ACTION_OPEN_OWN_PRE_ORDER", "Vorbestellung für mich öffnen")
             .put("ACTION_OPEN_SUPPLY", "Lieferung eingeben")
             .put("ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW", "Kornkraft-Katalog synchronisieren")
             .put("ACTION_OPEN_DB_LOG_IN", "Datenverbindung bearbeiten")
@@ -481,7 +482,8 @@ public enum PermissionKey {
             .put("ACTION_LOGIN", "Anmelden")
             .put("ACTION_TRANSACTION_FROM_OTHER", "Überweisungen für andere tätigen")
             .put("ACTION_TRANSACTION_FROM_KB", "Überweisungen für Kernbeißer tätigen")
-            .put("ACTION_ORDER_CONTAINER", "Artikel vorbestellen")
+            .put("ACTION_ORDER_CONTAINER", "Vorbestellungen für alle bearbeiten")
+            .put("ACTION_ORDER_OWN_CONTAINER", "Vorbestellungen für mich bearbeiten")
             .put("ACTION_OPEN_ADMIN_TOOLS", "Benutzer administrieren")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);

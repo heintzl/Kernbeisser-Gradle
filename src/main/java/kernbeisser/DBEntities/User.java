@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.temporal.ChronoField;
@@ -232,11 +233,11 @@ public class User implements Serializable, UserRelated {
   }
   // changed from direct reference to getter to keep security
   public String getFullName() {
-    return this.getFirstName() + " " + this.getSurname();
+    return Tools.accessString(this::getFirstName) + " " + Tools.accessString(this::getSurname);
   }
 
   public String toString() {
-    return Tools.decide(this::getUsername, "Benutzer[" + id + "]");
+    return Tools.optional(this::getUsername).orElse("Benutzer[" + id + "]");
   }
 
   public boolean hasPermission(PermissionKey... keys) {
@@ -280,10 +281,9 @@ public class User implements Serializable, UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select t from Transaction t where t.fromUser.id in(:ids) or t.toUser.id in (:ids) order by date",
+            "select t from Transaction t where t.fromUser.userGroup = :ug or t.toUser.userGroup = :ug order by date asc",
             Transaction.class)
-        .setParameter(
-            "ids", getAllGroupMembers().stream().map(User::getId).collect(Collectors.toList()))
+        .setParameter("ug", getUserGroup())
         .getResultList();
   }
 
@@ -453,5 +453,9 @@ public class User implements Serializable, UserRelated {
 
   public boolean userGroupEquals(UserGroup userGroup) {
     return this.userGroup.equals(userGroup);
+  }
+
+  public boolean verifyPassword(char[] password) {
+    return BCrypt.verifyer().verify(password, this.password.toCharArray()).verified;
   }
 }

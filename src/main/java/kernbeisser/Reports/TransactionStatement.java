@@ -12,11 +12,13 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.StatementType;
 import lombok.Cleanup;
 
 public class TransactionStatement extends Report {
 
+  private final UserGroup userGroup;
   private final User user;
   private final StatementType statementType;
   private final boolean current;
@@ -25,7 +27,15 @@ public class TransactionStatement extends Report {
   private final Collection<Transaction> userTransactions;
 
   public TransactionStatement(User user, StatementType statementType, boolean current) {
-    super("transactionStatement", "Kontoauszug_" + user.toString() + ".pdf");
+    this(user.getUserGroup(), user, statementType, current);
+  }
+
+  public TransactionStatement(
+      UserGroup userGroup, User user, StatementType statementType, boolean current) {
+    super(
+        "transactionStatement",
+        "Kontoauszug_" + (user == null ? String.valueOf(userGroup.getId()) : user.toString()));
+    this.userGroup = userGroup;
     this.user = user;
     this.statementType = statementType;
     this.current = current;
@@ -64,9 +74,9 @@ public class TransactionStatement extends Report {
     et.begin();
     userTransactions =
         em.createQuery(
-                "select t from Transaction t where (fromUser.id = :u or toUser.id = :u)",
+                "select t from Transaction t where :ug IN (fromUserGroup.id, toUserGroup.id)",
                 Transaction.class)
-            .setParameter("u", user.getId())
+            .setParameter("ug", userGroup.getId())
             .getResultList();
   }
 
@@ -76,16 +86,21 @@ public class TransactionStatement extends Report {
     double startValue =
         userTransactions.stream()
             .filter(t -> t.getDate().isBefore(startDate.toInstant()))
-            .mapToDouble(t -> (t.getFromUser().equals(user) ? -1.0 : 1.0) * t.getValue())
+            .mapToDouble(t -> (t.getFromUserGroup().equals(userGroup) ? -1.0 : 1.0) * t.getValue())
             .reduce(Double::sum)
             .orElse(0.0);
     double endValue =
         userTransactions.stream()
             .filter(t -> !t.getDate().isAfter(endDate.toInstant()))
-            .mapToDouble(t -> (t.getFromUser().equals(user) ? -1.0 : 1.0) * t.getValue())
+            .mapToDouble(t -> (t.getFromUserGroup().equals(userGroup) ? -1.0 : 1.0) * t.getValue())
             .reduce(Double::sum)
             .orElse(0.0);
-    params.put("user", user);
+    params.put(
+        "userName",
+        user == null
+            ? userGroup.getMembersAsString() + "(" + userGroup.getId() + ")"
+            : user.getFullName());
+    params.put("userGroup", userGroup);
     params.put("startValue", startValue);
     params.put("endValue", endValue);
     String stType = statementType.toString();

@@ -169,7 +169,8 @@ public class Supplier implements Serializable {
 
   @Override
   public String toString() {
-    return Tools.decide(() -> getName() + "[" + shortName + "]", "Lieferant[" + id + "]");
+    return Tools.optional(() -> getName() + "[" + getShortName() + "]")
+        .orElse("Lieferant[" + id + "]");
   }
 
   public static Collection<Supplier> defaultSearch(String s, int max) {

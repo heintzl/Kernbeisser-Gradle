@@ -6,6 +6,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;
@@ -14,9 +15,10 @@ import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Access.UserRelatedAccessManager;
 import kernbeisser.Security.PermissionSet;
+import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
-public class LogInModel {
+public class LogInModel implements IModel {
 
   public static User loggedIn;
 

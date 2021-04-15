@@ -11,6 +11,8 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
+import kernbeisser.Security.PermissionSet;
+import kernbeisser.Security.Proxy;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.AdminTools.AdminToolController;
@@ -53,7 +55,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton editArticles;
   private ControllerButton editSurchargeTables;
   private kernbeisser.CustomComponents.ControllerButton changePassword;
-  private kernbeisser.CustomComponents.ControllerButton transactionHistory;
+  private kernbeisser.CustomComponents.ControllerButton openSelfPreorder;
   private kernbeisser.CustomComponents.ControllerButton showUserInfo;
   private kernbeisser.CustomComponents.ControllerButton editUserSettings;
   private ControllerButton editUsers;
@@ -113,11 +115,6 @@ public class MenuView implements IView<MenuController> {
             () -> new ChangePasswordController(LogInModel.getLoggedIn(), true),
             ChangePasswordController.class,
             Controller::openTab);
-    transactionHistory =
-        new ControllerButton(
-            () -> new UserInfoController(LogInModel.getLoggedIn()),
-            UserInfoController.class,
-            Controller::openTab);
     showUserInfo =
         new ControllerButton(
             () -> new UserInfoController(LogInModel.getLoggedIn()),
@@ -157,7 +154,20 @@ public class MenuView implements IView<MenuController> {
     editJobs = new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab);
     editApplicationSettings =
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
-    order = new ControllerButton(PreOrderController::new, PreOrderController.class);
+    order =
+        new ControllerButton(
+            () -> new PreOrderController(false),
+            PreOrderController.class,
+            Controller::openTab,
+            false,
+            new PermissionKey[] {PermissionKey.ACTION_OPEN_PRE_ORDER});
+    openSelfPreorder =
+        new ControllerButton(
+            () -> new PreOrderController(true),
+            PreOrderController.class,
+            Controller::openTab,
+            false,
+            new PermissionKey[] {PermissionKey.ACTION_OPEN_OWN_PRE_ORDER});
     adminTools = new ControllerButton(AdminToolController::new, AdminToolController.class);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();
@@ -171,7 +181,8 @@ public class MenuView implements IView<MenuController> {
                     "Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
                         + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
                         + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.");
-                throw new PermissionKeyRequiredException();
+                throw new PermissionKeyRequiredException(
+                    new PermissionSet(), new PermissionKey[0], "");
               }
             },
             SoloShoppingMaskController.class,

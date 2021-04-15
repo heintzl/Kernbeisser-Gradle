@@ -3,6 +3,7 @@ package kernbeisser.Windows.PreOrder;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import javax.persistence.NoResultException;
@@ -11,21 +12,22 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.Requires;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
-@Requires(value = PermissionKey.ACTION_OPEN_PRE_ORDER)
 public class PreOrderController extends Controller<PreOrderView, PreOrderModel> {
 
   private final KeyCapture keyCapture;
   private final BarcodeCapture barcodeCapture;
+  boolean restrictToLoggedIn;
 
-  public PreOrderController() {
+  public PreOrderController(boolean restrictToLoggedIn) {
     super(new PreOrderModel());
+    this.restrictToLoggedIn = restrictToLoggedIn;
     keyCapture = new KeyCapture();
     barcodeCapture = new BarcodeCapture(this::processBarcode);
   }
@@ -165,13 +167,25 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
     keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
     keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
-    view.setInsertSectionEnabled(PermissionKey.ACTION_ORDER_CONTAINER.userHas());
-    view.setUser(User.getAllUserFullNames(true));
-    view.setPreOrders(model.getAllPreOrders());
+    view.setInsertSectionEnabled(userMayEdit());
     view.enableControls(false);
+    if (restrictToLoggedIn) {
+      view.setUsers(Arrays.asList(LogInModel.getLoggedIn()));
+      view.setUserEnabled(false);
+    } else {
+      view.setUsers(User.getAllUserFullNames(true));
+    }
+    view.setPreOrders(model.getAllPreOrders(restrictToLoggedIn));
     view.setAmount("1");
     view.searchArticle.addActionListener(e -> openSearchWindow());
+    view.bestellungExportierenButton.setEnabled(!restrictToLoggedIn);
+    view.abhakplanButton.setEnabled(!restrictToLoggedIn);
     noArticleFound();
+  }
+
+  boolean userMayEdit() {
+    return PermissionKey.ACTION_ORDER_CONTAINER.userHas()
+        || (restrictToLoggedIn && PermissionKey.ACTION_ORDER_OWN_CONTAINER.userHas());
   }
 
   @Override

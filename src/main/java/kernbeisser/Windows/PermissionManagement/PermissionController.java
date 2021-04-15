@@ -65,7 +65,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
             .map(
                 permission ->
                     Column.create(
-                        permission.getName(),
+                        permission.getNeatName(),
                         (PermissionKey permissionKey) -> {
                           if (permissionKey.getClazz() == null) {
                             boolean read = permission.getKeySet().containsAll(readPermission);
@@ -94,16 +94,19 @@ public class PermissionController extends Controller<PermissionView, PermissionM
                           change(permission, e);
                         }))
             .collect(Collectors.toCollection(ArrayList::new)));
-    Collection<PermissionKey> values = new ArrayList<>();
-    if (!getView().getCategory().equals(ActionPermission.class))
-      values.add(PermissionKey.CHANGE_ALL);
+    List<PermissionKey> values = new ArrayList<>();
     values.addAll(
         Arrays.asList(
-            PermissionKey.with(
-                e ->
-                    e.getClazz() != null
-                        && (e.getClazz().equals(getView().getCategory())
-                            & !e.name().endsWith("_WRITE")))));
+                PermissionKey.with(
+                    e ->
+                        e.getClazz() != null
+                            && (e.getClazz().equals(getView().getCategory())
+                                & !e.name().endsWith("_WRITE"))))
+            .stream()
+            .sorted(Comparator.comparing(p -> PermissionKey.getPermissionHint(p.toString())))
+            .collect(Collectors.toList()));
+    if (!getView().getCategory().equals(ActionPermission.class))
+      values.add(0, PermissionKey.CHANGE_ALL);
     getView().setValues(values);
     getView().setColumns(permissionColumns);
   }

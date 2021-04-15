@@ -44,10 +44,9 @@ public abstract class Controller<
     this.model = model;
     if (!PermissionSet.MASTER.contains(getRequiredKeys())) {
       throw new PermissionKeyRequiredException(
-          "the PermissionSet doesn't contain the required keys: "
-              + getRequiredKeys().asPermissionSet()
-              + " to open this controller: "
-              + getClass().getCanonicalName());
+          PermissionSet.MASTER,
+          getRequiredKeys().toArray(),
+          "Controller init of " + getClass().getCanonicalName());
     }
   }
 

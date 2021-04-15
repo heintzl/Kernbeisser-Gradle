@@ -17,6 +17,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -284,7 +285,6 @@ public class Article {
 
   public static Optional<Article> getBySuppliersItemNumber(
       Supplier supplier, int suppliersNumber, EntityManager em) {
-    @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     try {
@@ -331,7 +331,7 @@ public class Article {
 
   @Override
   public String toString() {
-    return Tools.decide(this::getName, "ArtikelBase[" + super.toString() + "]");
+    return Tools.optional(this::getName).orElse("ArtikelBase[" + super.toString() + "]");
   }
 
   public static Article nextArticleTo(int suppliersItemNumber, Supplier supplier) {

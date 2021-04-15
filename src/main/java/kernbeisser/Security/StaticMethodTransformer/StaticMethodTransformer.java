@@ -3,7 +3,7 @@ package kernbeisser.Security.StaticMethodTransformer;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import kernbeisser.Security.MethodListener;
+import kernbeisser.Security.MethodHandlers.MethodListener;
 import kernbeisser.Useful.Tools;
 
 public class StaticMethodTransformer<T> implements InvocationHandler {

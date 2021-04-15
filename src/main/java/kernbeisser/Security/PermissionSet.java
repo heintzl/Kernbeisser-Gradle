@@ -2,15 +2,17 @@ package kernbeisser.Security;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.LongBinaryOperator;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * loads given permission set into a bit field saved as long array so we can easily check a
  * permission with bit field comparision against it.
  */
-public class PermissionSet {
+public class PermissionSet implements Set<PermissionKey> {
   public static final PermissionSet MASTER = new PermissionSet();
   public static final PermissionSet IN_RELATION_TO_USER =
       PermissionSet.ofPermission(PermissionConstants.IN_RELATION_TO_OWN_USER.getPermission());
@@ -26,9 +28,7 @@ public class PermissionSet {
   public void loadPermission(Collection<Permission> permissions) {
     Arrays.fill(bits, 0L);
     for (Permission permission : permissions) {
-      for (PermissionKey key : permission.getKeySet()) {
-        addPermission(key);
-      }
+      loadKeys(permission.getKeySet());
     }
   }
 
@@ -105,6 +105,14 @@ public class PermissionSet {
     return out;
   }
 
+  public PermissionSet operator(PermissionSet ps, LongBinaryOperator operator) {
+    PermissionSet out = new PermissionSet();
+    for (int i = 0; i < bits.length; i++) {
+      out.bits[i] = operator.applyAsLong(bits[i], ps.bits[i]);
+    }
+    return out;
+  }
+
   /** returns the current set without the permissions delivered in the @Arg permissionSet */
   public PermissionSet minus(PermissionSet permissionSet) {
     PermissionSet out = new PermissionSet();
@@ -121,19 +129,6 @@ public class PermissionSet {
    */
   public void setAllBits(boolean b) {
     Arrays.fill(bits, b ? -1L : 0L);
-  }
-
-  /**
-   * returns the PermissionSet as a set
-   *
-   * @return a HashSet with all the permissions contained in the PermissionSet
-   */
-  public Set<PermissionKey> asPermissionSet() {
-    HashSet<PermissionKey> permissionKeys = new HashSet<>();
-    for (PermissionKey value : PermissionKey.values()) {
-      if (hasPermission(value)) permissionKeys.add(value);
-    }
-    return permissionKeys;
   }
 
   /** returns the PermissionSet as a binary String */
@@ -164,5 +159,180 @@ public class PermissionSet {
     PermissionSet out = new PermissionSet();
     out.loadPermission(permission);
     return out;
+  }
+
+  @Override
+  public int size() {
+    int size = 0;
+    for (long bit : bits) {
+      size += Long.bitCount(bit);
+    }
+    return size;
+  }
+
+  @Override
+  public boolean isEmpty() {
+    for (long bit : bits) {
+      if (bit != 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public boolean contains(Object o) {
+    return hasPermission((PermissionKey) o);
+  }
+
+  @NotNull
+  @Override
+  public Iterator<PermissionKey> iterator() {
+    return new Iterator<PermissionKey>() {
+
+      private final PermissionKey[] all = PermissionKey.values();
+
+      private final PermissionKey last = findLast();
+      private int index = 0;
+
+      private PermissionKey findLast() {
+        for (int i = all.length - 1; i != 0; i--) {
+          if (hasPermission(all[i])) {
+            return all[i];
+          }
+        }
+        return null;
+      }
+
+      @Override
+      public boolean hasNext() {
+        return last != null && last.ordinal() + 1 != index;
+      }
+
+      @Override
+      public PermissionKey next() {
+        if (hasPermission(all[index])) {
+          return all[index++];
+        }
+        index++;
+        return next();
+      }
+    };
+  }
+
+  @NotNull
+  @Override
+  public PermissionKey[] toArray() {
+    PermissionKey[] out = new PermissionKey[size()];
+    int index = 0;
+    for (PermissionKey permissionKey : this) {
+      out[index++] = permissionKey;
+    }
+    return out;
+  }
+
+  @NotNull
+  @Override
+  public <T> T[] toArray(@NotNull T[] a) {
+    PermissionKey[] out = new PermissionKey[size()];
+    int index = 0;
+    for (PermissionKey permissionKey : this) {
+      out[index++] = permissionKey;
+    }
+    return (T[]) out;
+  }
+
+  @Override
+  public boolean add(PermissionKey permissionKey) {
+    int bitIndex = permissionKey.ordinal() / Long.SIZE;
+    long bitBefore = bits[bitIndex];
+    bits[bitIndex] = (bits[bitIndex] | (1L << (permissionKey.ordinal() % Long.SIZE)));
+    return bitBefore != bits[bitIndex];
+  }
+
+  @Override
+  public boolean remove(Object o) {
+    PermissionKey permissionKey = (PermissionKey) o;
+    int bitIndex = permissionKey.ordinal() / Long.SIZE;
+    long bitBefore = bits[bitIndex];
+    bits[bitIndex] = (bits[bitIndex] & (~(1L << (permissionKey.ordinal() % Long.SIZE))));
+    return bitBefore != bits[bitIndex];
+  }
+
+  @Override
+  public boolean containsAll(@NotNull Collection<?> c) {
+    for (Object o : c) {
+      if (!(o instanceof PermissionKey) || !hasPermission((PermissionKey) o)) return false;
+    }
+    return true;
+  }
+
+  @Override
+  public boolean addAll(@NotNull Collection<? extends PermissionKey> c) {
+    boolean changed = false;
+    for (PermissionKey permissionKey : c) {
+      changed = changed | add(permissionKey);
+    }
+    return changed;
+  }
+
+  @Override
+  public boolean retainAll(@NotNull Collection<?> c) {
+    boolean changed = false;
+    for (Object o : c) {
+      if (add((PermissionKey) o)) {
+        changed = changed | remove(o);
+      }
+    }
+    return changed;
+  }
+
+  /**
+   * removes all Permission containing in the given set from the current set
+   *
+   * @param set
+   */
+  public void removeAll(PermissionSet set) {
+    for (int i = 0; i < bits.length; i++) {
+      bits[i] = bits[i] & ~set.bits[i];
+    }
+  }
+
+  @Override
+  @Deprecated
+  /** @Depreccated use removeAll(PermissionSet) instead much faster implementation */
+  public boolean removeAll(@NotNull Collection<?> c) {
+    boolean changed = false;
+    for (Object permissionKey : c) {
+      changed = changed | remove(permissionKey);
+    }
+    return changed;
+  }
+
+  @Override
+  // stolen from the default hashSet impl
+  public String toString() {
+    Iterator<PermissionKey> it = iterator();
+    if (!it.hasNext()) return "[]";
+    StringBuilder sb = new StringBuilder();
+    sb.append('[');
+    for (; ; ) {
+      sb.append(it.next().name());
+      if (!it.hasNext()) return sb.append(']').toString();
+      sb.append(',').append(' ');
+    }
+  }
+
+  @Override
+  public void clear() {
+    setAllBits(false);
+  }
+
+  public boolean addAll(PermissionKey[] keys) {
+    boolean changed = false;
+    for (PermissionKey permissionKey : keys) {
+      changed = changed | add(permissionKey);
+    }
+    return changed;
   }
 }

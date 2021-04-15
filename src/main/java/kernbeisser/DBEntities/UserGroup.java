@@ -7,6 +7,7 @@ import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.Proxy;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -14,9 +15,15 @@ import org.jetbrains.annotations.NotNull;
 
 @Table
 @Entity
-@NoArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
 public class UserGroup implements UserRelated {
+
+  protected UserGroup() {}
+
+  public UserGroup(double value) {
+    this.value = value;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_ID_READ)})
@@ -25,7 +32,9 @@ public class UserGroup implements UserRelated {
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_VALUE_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.USER_GROUP_VALUE_WRITE)})
+  @Setter(
+      value = AccessLevel.PRIVATE,
+      onMethod_ = {@Key(PermissionKey.USER_GROUP_VALUE_WRITE)})
   private double value;
 
   @Column
@@ -94,12 +103,13 @@ public class UserGroup implements UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-            "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
-            UserGroup.class)
-        .setParameter("s", s + "%")
-        .setMaxResults(i)
-        .getResultList();
+    return Proxy.getSecuredInstances(
+        em.createQuery(
+                "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
+                UserGroup.class)
+            .setParameter("s", s + "%")
+            .setMaxResults(i)
+            .getResultList());
   }
 
   public String getMemberString() {
