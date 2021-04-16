@@ -6,6 +6,7 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessAnalyser;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
@@ -26,7 +27,9 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   }
 
   @Override
-  public void fillView(MenuView menuView) {}
+  public void fillView(MenuView menuView) {
+    Access.setDefaultManager(new AccessAnalyser());
+  }
 
   private boolean alreadyAsked = false;
 

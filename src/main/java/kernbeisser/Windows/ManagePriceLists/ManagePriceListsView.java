@@ -73,7 +73,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     priceListObjectTree.addSelectionListener(
         e -> {
           consumer.accept(e);
-          IView.traceViewContainer(priceListObjectTree.getParent()).requestClose();
+          IView.traceViewContainer(priceListObjectTree).requestClose();
         });
     new ComponentController(priceListObjectTree, "Preisliste auswählen")
         .openIn(new SubWindow(traceViewContainer()));

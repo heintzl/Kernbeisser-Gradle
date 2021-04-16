@@ -103,7 +103,11 @@ public class ControllerButton extends JButton {
           e -> {
             int index = TabbedPaneModel.MAIN_PANEL.indexOf((Class<Controller<?, ?>>) clazz);
             if (index != -1) {
-              TabbedPaneModel.MAIN_PANEL.setSelectedIndex(index);
+              try {
+                TabbedPaneModel.MAIN_PANEL.setSelectedIndex(index);
+              } catch (ArrayIndexOutOfBoundsException ignored) {
+              }
+
               return;
             }
             C controller = controllerRef.get().get();
