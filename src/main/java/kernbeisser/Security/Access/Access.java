@@ -1,6 +1,7 @@
 package kernbeisser.Security.Access;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Optional;
@@ -69,6 +70,13 @@ public class Access {
         continue;
       }
       Key key = declaredMethod.getAnnotation(Key.class);
+      if (key == null) continue;
+      if (key.id() == methodId) {
+        return PermissionSet.asPermissionSet(key.value());
+      }
+    }
+    for (Constructor<?> declaredConstructor : object.getClass().getDeclaredConstructors()) {
+      Key key = declaredConstructor.getAnnotation(Key.class);
       if (key == null) continue;
       if (key.id() == methodId) {
         return PermissionSet.asPermissionSet(key.value());

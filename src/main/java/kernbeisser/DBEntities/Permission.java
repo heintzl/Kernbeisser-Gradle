@@ -22,7 +22,7 @@ public class Permission {
   @Setter(onMethod_ = {@Key(PermissionKey.PERMISSION_ID_WRITE)})
   private int id;
 
-  @Column(unique = true)
+  @Column(unique = true, nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.PERMISSION_NAME_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
   private String name;

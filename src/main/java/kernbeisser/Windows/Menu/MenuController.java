@@ -15,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class MenuController extends Controller<MenuView, MenuModel> {
 
-  // AccessAnalyser accessAnalyser = new AccessAnalyser("Ladendienst");
-
   public MenuController() {
     super(new MenuModel());
   }
@@ -28,10 +26,7 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   }
 
   @Override
-  public void fillView(MenuView menuView) {
-    // Access.setDefaultManager(accessAnalyser);
-
-  }
+  public void fillView(MenuView menuView) {}
 
   private boolean alreadyAsked = false;
 
@@ -54,7 +49,6 @@ public class MenuController extends Controller<MenuView, MenuModel> {
             TabbedPaneModel.resetMainPanel();
             new SimpleLogInController().openTab();
           });
-      // accessAnalyser.dumpInDB();
       return true;
     }
     return false;
