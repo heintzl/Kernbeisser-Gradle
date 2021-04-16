@@ -327,9 +327,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
               },
               new Dimension(
                   getView().getShoppingListSize().width, getView().getContent().getHeight()))
-          .withCloseEvent(() -> getView().setCheckoutEnable(true))
           .openIn(new SubWindow(getView().traceViewContainer()));
-      getView().setCheckoutEnable(false);
     } else {
       getView().messageCartIsEmpty();
     }
