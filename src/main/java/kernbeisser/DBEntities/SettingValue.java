@@ -60,7 +60,7 @@ public class SettingValue {
                   "select s from SettingValue s where s.setting = :setting", SettingValue.class)
               .setParameter("setting", setting)
               .getSingleResult();
-      settingValue.setValue(value);
+      settingValue.value = value;
       em.persist(settingValue);
     } catch (NoResultException noResultException) {
       SettingValue settingValue = new SettingValue();
