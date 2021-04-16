@@ -894,10 +894,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     return Setting.OPEN_MULTIPLE_SHOPPING_MASK.getBooleanValue();
   }
 
-  public void setCheckoutEnable(boolean b) {
-    getTopComponent().setEnabled(b);
-  }
-
   public void setFocusOnKBNumber() {
     kbNumber.requestFocusInWindow();
   }

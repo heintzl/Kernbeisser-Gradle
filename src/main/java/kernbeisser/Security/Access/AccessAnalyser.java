@@ -15,6 +15,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.PermissionSet;
 import lombok.Cleanup;
 
+/** Visualizes the access keys by the current user */
 public class AccessAnalyser implements AccessManager, PermissionKeyBasedAccessManager {
 
   private final PermissionSet keySet = new PermissionSet();

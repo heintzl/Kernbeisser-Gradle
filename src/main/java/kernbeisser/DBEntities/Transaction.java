@@ -10,6 +10,8 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
@@ -176,7 +178,9 @@ public class Transaction implements UserRelated {
     try {
       Method method = UserGroup.class.getDeclaredMethod("setValue", double.class);
       method.setAccessible(true);
+      Access.getExceptions().put(transaction, AccessManager.NO_ACCESS_CHECKING);
       method.invoke(transaction, Tools.roundCurrency(value));
+      Access.getExceptions().remove(transaction);
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
