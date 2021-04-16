@@ -61,21 +61,25 @@ public class Access {
   }
 
   private static PermissionSet runCallerAnalyse(Object object, String methodName, long methodId) {
-    for (Method declaredMethod : object.getClass().getDeclaredMethods()) {
-      if (!declaredMethod.getName().equals(methodName)) {
-        continue;
+    for (Class<?> target = object.getClass();
+        !target.equals(Object.class);
+        target = target.getSuperclass()) {
+      for (Method declaredMethod : target.getDeclaredMethods()) {
+        if (!declaredMethod.getName().equals(methodName)) {
+          continue;
+        }
+        Key key = declaredMethod.getAnnotation(Key.class);
+        if (key == null) continue;
+        if (key.id() == methodId) {
+          return PermissionSet.asPermissionSet(key.value());
+        }
       }
-      Key key = declaredMethod.getAnnotation(Key.class);
-      if (key == null) continue;
-      if (key.id() == methodId) {
-        return PermissionSet.asPermissionSet(key.value());
-      }
-    }
-    for (Constructor<?> declaredConstructor : object.getClass().getDeclaredConstructors()) {
-      Key key = declaredConstructor.getAnnotation(Key.class);
-      if (key == null) continue;
-      if (key.id() == methodId) {
-        return PermissionSet.asPermissionSet(key.value());
+      for (Constructor<?> declaredConstructor : target.getDeclaredConstructors()) {
+        Key key = declaredConstructor.getAnnotation(Key.class);
+        if (key == null) continue;
+        if (key.id() == methodId) {
+          return PermissionSet.asPermissionSet(key.value());
+        }
       }
     }
     throw new UnsupportedOperationException(

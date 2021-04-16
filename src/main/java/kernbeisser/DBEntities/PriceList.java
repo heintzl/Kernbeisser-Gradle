@@ -124,6 +124,7 @@ public class PriceList implements Serializable {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
+    et.begin();
     return em.createQuery(
             "select p from PriceList p where p.superPriceList = "
                 + getId()

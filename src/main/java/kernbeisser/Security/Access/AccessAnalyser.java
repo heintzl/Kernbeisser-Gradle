@@ -32,6 +32,7 @@ public class AccessAnalyser implements AccessManager, PermissionKeyBasedAccessMa
     button.addActionListener(e -> dumpInDB(JOptionPane.showInputDialog("Permission name:")));
     jFrame.add(button, BorderLayout.AFTER_LAST_LINE);
     jFrame.setVisible(true);
+    jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
   }
 
   @Override
