@@ -3,7 +3,7 @@ package kernbeisser.Security.Access;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.WeakHashMap;
 import kernbeisser.Enums.PermissionConstants;
@@ -25,10 +25,7 @@ public class Access {
 
   @Getter private static final WeakHashMap<Object, AccessManager> exceptions = new WeakHashMap<>();
 
-  // caches methods which are already analysed
-  // log stands for the methods id which is
-  // created by the java agent
-  private static final HashMap<Long, PermissionSet> cache = new HashMap<>();
+  private static PermissionSet[] arrayCache = new PermissionSet[400];
 
   static {
     loadUnprotectedInstanceExceptions();
@@ -37,8 +34,7 @@ public class Access {
 
   // via java agent linked method
   public static void hasAccess(Object object, String methodName, String signature, long methodId) {
-    PermissionSet keys =
-        cache.computeIfAbsent(methodId, k -> runCallerAnalyse(object, methodName, methodId));
+    PermissionSet keys = getOrAnalyse(object, methodName, methodId);
     if (!defaultManager.hasAccess(object, methodName, signature, keys)) {
       if (useCustomProtection) {
         AccessManager accessManager = exceptions.get(object);
@@ -141,6 +137,22 @@ public class Access {
         return false;
       default:
         return true;
+    }
+  }
+
+  public static PermissionSet getOrAnalyse(Object object, String methodName, long methodId) {
+    int arrayIndex = (int) methodId;
+    try {
+      PermissionSet set = arrayCache[arrayIndex];
+      if (set == null) {
+        arrayCache[(int) methodId] = runCallerAnalyse(object, methodName, methodId);
+        return arrayCache[arrayIndex];
+      } else {
+        return set;
+      }
+    } catch (ArrayIndexOutOfBoundsException e) {
+      arrayCache = Arrays.copyOf(arrayCache, arrayIndex + 1);
+      return getOrAnalyse(object, methodName, methodId);
     }
   }
 }
