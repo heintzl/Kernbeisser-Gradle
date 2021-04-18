@@ -20,7 +20,7 @@ public enum PermissionKey {
   GO_UNDER_MIN(ActionPermission.class),
 
   // Window Permissions
-  ACTION_OPEN_PERMISSION_ASSIGNMENT(null),
+  ACTION_OPEN_PERMISSION_ASSIGNMENT(ActionPermission.class),
   ACTION_OPEN_ADMIN_TOOLS(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICELISTS(ActionPermission.class),
   ACTION_OPEN_SOLO_SHOPPING_MASK(ActionPermission.class),
@@ -459,6 +459,7 @@ public enum PermissionKey {
             .put("ACTION_OPEN_SOLO_SHOPPING_MASK", "Selbsteinkauf")
             .put("ACTION_OPEN_APPLICATION_SETTINGS", "Programmeinstellungen bearbeiten")
             .put("ACTION_OPEN_PERMISSION_MANAGEMENT", "Berechtigungen bearbeiten")
+            .put("ACTION_OPEN_PERMISSION_ASSIGNMENT", "Berechtigungen zuweisen")
             .put("ACTION_OPEN_SPECIAL_PRICE_EDITOR", "Aktionsartikel bearbeiten")
             .put("ACTION_OPEN_TRANSACTION", "Guthaben überweisen")
             .put("ACTION_OPEN_ACCOUNTING_REPORTS", "Berichte")
