@@ -36,7 +36,7 @@ public class PermissionAssignmentView implements IView<PermissionAssignmentContr
   }
 
   private void createUIComponents() {
-    permissions = new AdvancedComboBox<>(Permission::getName);
+    permissions = new AdvancedComboBox<>(Permission::getNeatName);
     collectionView = user.getView();
   }
 
