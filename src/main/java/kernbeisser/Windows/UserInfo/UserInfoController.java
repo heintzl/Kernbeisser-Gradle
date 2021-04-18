@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -15,6 +17,7 @@ import kernbeisser.Enums.StatementType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Reports.TransactionStatement;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
@@ -49,31 +52,15 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
         return;
       case 2:
         Collection<Column<Transaction>> columns = new ArrayList<>();
-        columns.add(generateTypeColumn());
+        columns.add(Column.create("Art", Transaction::getTransactionType));
+        columns.add(Column.create("Von", t -> t.getFromUser().getFullName()));
+        columns.add(Column.create("An", t -> t.getToUser().getFullName()));
         columns.add(
             Column.create(
-                "Von",
-                e -> {
-                  if (e.getFromUser() == null) {
-                    return "Kenbeisser";
-                  } else {
-                    return e.getFromUser().getUsername();
-                  }
-                }));
-        columns.add(
-            Column.create(
-                "An",
-                e -> {
-                  if (e.getToUser() == null) {
-                    return "Kenbeisser";
-                  } else {
-                    return e.getToUser().getUsername();
-                  }
-                }));
-        columns.add(Column.create("Betrag", e -> String.format("%.2f€", e.getValue())));
+                "Betrag", e -> String.format("%.2f€", e.getValue()), SwingConstants.RIGHT));
         columns.add(generateAfterValueChangeColumn());
         columns.add(Column.create("Info", Transaction::getInfo));
-        columns.add(Column.create("Datum", Transaction::getDate));
+        columns.add(Column.create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate())));
         view.setValueHistoryColumns(columns);
         view.setValueHistory(model.getUser().getAllValueChanges());
     }
@@ -82,6 +69,14 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
   public Column<Transaction> generateAfterValueChangeColumn() {
     return new Column<Transaction>() {
       double value = 0;
+
+      @Override
+      public TableCellRenderer getRenderer() {
+        DefaultTableCellRenderer renderer =
+            (DefaultTableCellRenderer) Column.DEFAULT_STRIPED_RENDERER;
+        renderer.setHorizontalAlignment(SwingConstants.RIGHT);
+        return renderer;
+      }
 
       @Override
       public String getName() {
@@ -93,26 +88,6 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
       public Object getValue(Transaction valueChange) {
         value += model.getSignedTransactionValue(valueChange);
         return String.format("%.2f€", value);
-      }
-    };
-  }
-
-  private Column<Transaction> generateTypeColumn() {
-    return new Column<Transaction>() {
-      @Override
-      public String getName() {
-        return "Type";
-      }
-
-      @Override
-      public Object getValue(Transaction valueChange) {
-        if (valueChange.getFromUser() == null) {
-          return "Guthabenaufladung";
-        }
-        if (valueChange.getToUser() == null) {
-          return "Einkauf";
-        }
-        return "Überweisung";
       }
     };
   }
