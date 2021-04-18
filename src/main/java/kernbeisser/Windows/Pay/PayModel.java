@@ -46,8 +46,7 @@ public class PayModel implements IModel<PayController> {
       sumType = ShoppingItemSum.RETAILPRICE_VATLOW;
     }
     double value =
-        ShoppingItem.getSum(
-                sumType, shoppingCart, s -> s.getParentItem() == null && !s.isSolidaritySurcharge())
+        ShoppingItem.getSum(sumType, shoppingCart, ShoppingItem::isSolidaritySurcharged)
             * solidaritySurcharge;
     shoppingCart.add(ShoppingItem.createSolidaritySurcharge(value, vat, solidaritySurcharge));
   }
@@ -65,7 +64,7 @@ public class PayModel implements IModel<PayController> {
   }
 
   void removeSolidarityItems() {
-    shoppingCart.removeIf(ShoppingItem::isSolidaritySurcharge);
+    shoppingCart.removeIf(ShoppingItem::isSolidaritySurchargeItem);
   }
 
   Purchase pay() throws PersistenceException, InvalidTransactionException {

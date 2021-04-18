@@ -144,7 +144,9 @@ public class ShoppingItem implements Serializable {
 
   @Getter @Transient private Supplier supplier;
 
-  @Getter @Transient private boolean solidaritySurcharge = false;
+  @Getter @Transient private boolean solidaritySurchargeItem = false;
+
+  @Getter @Transient private boolean depositItem = false;
 
   @Getter @Transient private boolean specialOffer;
   // required for article labels and pricelists
@@ -281,7 +283,7 @@ public class ShoppingItem implements Serializable {
     ShoppingItem solidarity =
         createRawPriceProduct(
             RawPrice.SOLIDARITY.getName(), price, vat, -4, Supplier.getSolidaritySupplier(), false);
-    solidarity.solidaritySurcharge = true;
+    solidarity.solidaritySurchargeItem = true;
     solidarity.name =
         (int) (surcharge * 100)
             + " % "
@@ -293,11 +295,16 @@ public class ShoppingItem implements Serializable {
     return solidarity;
   }
 
+  public boolean isSolidaritySurcharged() {
+    return !depositItem && !solidaritySurchargeItem;
+  }
+
   public static ShoppingItem createDeposit(double price) {
     ShoppingItem deposit =
         createRawPriceProduct(
             RawPrice.DEPOSIT.getName(), price, VAT.HIGH, -3, Supplier.getDepositSupplier(), false);
     deposit.name += price < 0 ? " zurück" : "";
+    deposit.depositItem = true;
     return deposit;
   }
 
