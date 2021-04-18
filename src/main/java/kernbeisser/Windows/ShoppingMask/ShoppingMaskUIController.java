@@ -324,9 +324,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
                 shoppingCartController.getItems().clear();
                 getView().back();
                 LogInModel.refreshLogInData();
-              },
-              new Dimension(
-                  getView().getShoppingListSize().width, getView().getContent().getHeight()))
+              })
           .openIn(new SubWindow(getView().traceViewContainer()));
     } else {
       getView().messageCartIsEmpty();

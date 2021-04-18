@@ -17,22 +17,17 @@ import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class PayController extends Controller<PayView, PayModel> {
-  private final Dimension viewSize;
   @Getter private final double userValue;
 
   @Linked private final ShoppingCartController cartController;
 
   public PayController(
-      SaleSession saleSession,
-      List<ShoppingItem> shoppingCart,
-      Runnable transferCompleted,
-      Dimension windowSize) {
+      SaleSession saleSession, List<ShoppingItem> shoppingCart, Runnable transferCompleted) {
     super(new PayModel(saleSession, shoppingCart, transferCompleted));
     userValue = saleSession.getCustomer().getUserGroup().getValue();
     cartController =
         new ShoppingCartController(
             userValue, saleSession.getCustomer().getUserGroup().getSolidaritySurcharge(), false);
-    this.viewSize = windowSize;
   }
 
   void commitPayment(boolean printReceipt) {
@@ -73,7 +68,6 @@ public class PayController extends Controller<PayView, PayModel> {
   @Override
   public void fillView(PayView payView) {
     var view = getView();
-    view.setViewSize(viewSize);
     view.fillShoppingCart(model.getShoppingCart());
     view.setCustomerStandard.setVisible(false);
     User customer = model.getSaleSession().getCustomer();
