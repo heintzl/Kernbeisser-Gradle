@@ -112,7 +112,7 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             () -> new ChangePasswordController(LogInModel.getLoggedIn(), true),
             ChangePasswordController.class,
-            Controller::openTab);
+            c -> c.openIn(new SubWindow(traceViewContainer())).getLoaded());
     showUserInfo =
         new ControllerButton(
             () -> new UserInfoController(LogInModel.getLoggedIn()),
