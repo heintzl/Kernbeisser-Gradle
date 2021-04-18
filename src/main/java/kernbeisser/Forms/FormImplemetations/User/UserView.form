@@ -135,7 +135,7 @@
         </constraints>
         <properties>
           <font style="0"/>
-          <text value="Telefon (fest):"/>
+          <text value="Telefonnummer 1:"/>
         </properties>
       </component>
       <component id="5c96b" class="javax.swing.JLabel" binding="lblTelefon2">
@@ -145,7 +145,7 @@
         </constraints>
         <properties>
           <font style="0"/>
-          <text value="Telefon (mobil):"/>
+          <text value="Telefonnummer 2:"/>
         </properties>
       </component>
       <component id="96506" class="javax.swing.JLabel" binding="grpLogin">

@@ -122,7 +122,7 @@ public class UserInfoView implements IView<UserInfoController> {
     shares = new AccessCheckingLabel<>(e -> String.valueOf(e.getShares()));
     solidarySurcharge =
         new AccessCheckingLabel<>(
-            e -> String.format("%f%%", e.getUserGroup().getSolidaritySurcharge() * 2));
+            e -> String.format("%.1f%%", e.getUserGroup().getSolidaritySurcharge() * 100));
     createDate = new AccessCheckingLabel<>(e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()));
     updateDate = new AccessCheckingLabel<>(e -> Date.INSTANT_DATE_TIME.format(e.getUpdateDate()));
     key =

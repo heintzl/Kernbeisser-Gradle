@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Kerni_Rechnung" pageWidth="420" pageHeight="595" columnWidth="380" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -39,7 +39,7 @@
 	<group name="Summary VAT Hi">
 		<groupFooter>
 			<band height="13">
-				<printWhenExpression><![CDATA[$P{VatSumHigh} > 0.0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{VatSumHigh} != 0.0]]></printWhenExpression>
 				<textField pattern="#,##0.00€;-#,##0.00€">
 					<reportElement x="310" y="0" width="70" height="13" uuid="27ca8d35-9997-4c0d-9b45-cfc61b4ad173"/>
 					<textElement textAlignment="Right">
@@ -60,7 +60,7 @@
 	<group name="Summary VAT Lo">
 		<groupFooter>
 			<band height="13">
-				<printWhenExpression><![CDATA[$P{VatSumLow} > 0.0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{VatSumLow} != 0.0]]></printWhenExpression>
 				<textField pattern="#,##0.00€;-#,##0.00€">
 					<reportElement x="310" y="0" width="70" height="13" uuid="3dc03a00-a36a-48e8-b19b-2240f18cd599"/>
 					<textElement textAlignment="Right">
@@ -245,7 +245,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{vatValue}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00€;-#,##0.00 €">
+			<textField pattern="#,##0.00€;-#,##0.00€">
 				<reportElement x="310" y="0" width="70" height="14" uuid="a062389a-bb41-4962-b7cf-77cc1e391a2a"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="DejaVu Sans Condensed"/>
