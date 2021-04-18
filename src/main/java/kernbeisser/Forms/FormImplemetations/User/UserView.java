@@ -58,6 +58,7 @@ public class UserView implements IView<UserController> {
   private AccessCheckingCollectionEditor<User, Set<Permission>, Permission> editPermission;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, Integer> keyNumber;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, String> email;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, String> userGroup;
 
   @Linked private UserController controller;
 
@@ -111,6 +112,7 @@ public class UserView implements IView<UserController> {
             phone1,
             phone2,
             username,
+            userGroup,
             isEmployee,
             shares,
             extraJobs,
@@ -171,6 +173,9 @@ public class UserView implements IView<UserController> {
             User::getPhoneNumber2, User::setPhoneNumber2, AccessCheckingField.NONE);
     username =
         new AccessCheckingField<>(User::getUsername, User::setUsername, AccessCheckingField.NONE);
+    userGroup =
+        new AccessCheckingField<>(
+            u -> u.getUserGroup().getMemberString(), User::ignoreDialog, AccessCheckingField.NONE);
     isEmployee = new AccessCheckBox<>(User::isEmployee, User::setEmployee);
     shares =
         new AccessCheckingField<>(User::getShares, User::setShares, AccessCheckingField.INT_FORMER);

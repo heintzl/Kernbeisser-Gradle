@@ -402,7 +402,7 @@
       <component id="c1643" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="keyNumber" custom-create="true">
         <constraints>
           <grid row="16" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
@@ -430,6 +430,20 @@
         <properties>
           <font style="0"/>
           <text value="Benutzergruppe"/>
+        </properties>
+      </component>
+      <component id="800f1" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="userGroup" custom-create="true">
+        <constraints>
+          <grid row="19" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <background color="-4473925"/>
+          <editable value="false"/>
+          <enabled value="false"/>
+          <foreground color="-12828863"/>
         </properties>
       </component>
     </children>

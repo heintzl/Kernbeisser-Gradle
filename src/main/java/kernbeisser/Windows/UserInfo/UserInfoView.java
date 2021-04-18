@@ -110,7 +110,7 @@ public class UserInfoView implements IView<UserInfoController> {
             Column.create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate())),
             Column.create("Verkäufer", e -> e.getSession().getSeller()),
             Column.create("Käufer", e -> e.getSession().getCustomer()),
-            Column.create("Summe", e -> format("%.2f€", e.getSum())));
+            Column.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT));
     phoneNumber1 = new AccessCheckingLabel<>(User::getPhoneNumber1);
     username = new AccessCheckingLabel<>(User::getUsername);
     firstName = new AccessCheckingLabel<>(User::getFirstName);

@@ -14,6 +14,7 @@ import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.EqualsAndHashCode;
@@ -194,7 +195,7 @@ public class Transaction implements UserRelated {
         User.getKernbeisserUser(),
         value,
         TransactionType.PURCHASE,
-        "Einkauf vom " + LocalDate.now());
+        "Einkauf vom " + Date.INSTANT_DATE.format(LocalDate.now()));
   }
 
   @Override
