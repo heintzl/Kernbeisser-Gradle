@@ -37,12 +37,17 @@ public class Permission {
       })
   private Set<PermissionKey> keySet = new HashSet<>();
 
+  @Key(PermissionKey.PERMISSION_KEY_SET_READ)
+  public Set<PermissionKey> getKeySetAsAvailable() {
+    return Tools.or(this::getKeySet, Collections.unmodifiableSet(keySet));
+  }
+
   public static List<Permission> getAll(String condition) {
     return Tools.getAll(Permission.class, condition);
   }
 
   public boolean contains(PermissionKey key) {
-    return keySet.contains(key);
+    return getKeySetAsAvailable().contains(key);
   }
 
   public static Collection<Permission> defaultSearch(String s, int max) {

@@ -155,6 +155,16 @@ public class User implements Serializable, UserRelated {
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
   private boolean forcePasswordChange = false;
 
+  @Key(PermissionKey.USER_PERMISSIONS_READ)
+  public Set<Permission> getPermissionsAsAvailable() {
+    return Tools.or(this::getPermissions, Collections.unmodifiableSet(permissions));
+  }
+
+  @Key(PermissionKey.USER_JOBS_READ)
+  public Set<Job> getJobsAsAvailable() {
+    return Tools.or(this::getJobs, Collections.unmodifiableSet(jobs));
+  }
+
   public static List<User> getAll(String condition) {
     return Tools.getAll(User.class, condition);
   }
@@ -396,7 +406,10 @@ public class User implements Serializable, UserRelated {
 
   public boolean isBeginner() {
     return getAllGroupMembers().stream()
-        .noneMatch(u -> permissions.contains(PermissionConstants.FULL_MEMBER.getPermission()));
+        .noneMatch(
+            u ->
+                getPermissionsAsAvailable()
+                    .contains(PermissionConstants.FULL_MEMBER.getPermission()));
   }
 
   public boolean isKernbeisser() {

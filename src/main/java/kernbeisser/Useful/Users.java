@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import kernbeisser.Config.IgnoreThis;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
@@ -28,8 +29,7 @@ public class Users {
 
   public static String generateToken() {
     int generationLength = Setting.PASSWORD_TOKEN_GENERATION_LENGTH.getIntValue();
-    char[] charTable =
-        "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890".toCharArray();
+    char[] charTable = "AaBbCcDdEeFfGgHhJjKkLlMmNnPpQqRrSsTtUuVvWwXxYyZz23456789".toCharArray();
     Random random = new Random();
     StringBuilder sb = new StringBuilder(generationLength);
     for (int i = 0; i < generationLength; i++) {
@@ -40,12 +40,24 @@ public class Users {
 
   public static String generateUserRelatedToken(String username) {
     return new String(
-            BCrypt.withDefaults().hash(4, new byte[16], username.getBytes(StandardCharsets.UTF_8)),
+            BCrypt.withDefaults()
+                .hash(
+                    4,
+                    new byte[16],
+                    xor(username.getBytes(StandardCharsets.UTF_8), IgnoreThis.ignoreIt())),
             StandardCharsets.UTF_8)
         .substring(40);
   }
 
-  public static void main(String[] args) {
-    System.out.println(generateUserRelatedToken("hello3"));
+  public static byte pos(byte[] bytes, int index) {
+    return bytes[index % bytes.length];
+  }
+
+  public static byte[] xor(byte[] a, byte[] b) {
+    byte[] out = new byte[a.length];
+    for (int i = 0; i < a.length; i++) {
+      out[i] = (byte) (0xff & ((int) a[i]) ^ ((int) pos(b, i)));
+    }
+    return out;
   }
 }

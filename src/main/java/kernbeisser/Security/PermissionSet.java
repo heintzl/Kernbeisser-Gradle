@@ -143,7 +143,7 @@ public class PermissionSet implements Set<PermissionKey> {
 
   public static PermissionSet ofPermission(Permission permission) {
     PermissionSet out = new PermissionSet();
-    out.loadKeys(permission.getKeySet());
+    out.loadKeys(permission.getKeySetAsAvailable());
     return out;
   }
 

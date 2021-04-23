@@ -188,12 +188,12 @@ public class UserView implements IView<UserController> {
         new AccessCheckingField<>(User::getEmail, User::setEmail, AccessCheckingField.EMAIL_FORMER);
     editPermission =
         new AccessCheckingCollectionEditor<>(
-            User::getPermissions,
+            User::getPermissionsAsAvailable,
             Source.of(Permission.class),
             Column.create("Name", Permission::getNeatName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
-            User::getJobs,
+            User::getJobsAsAvailable,
             Source.of(Job.class),
             Column.create("Name", Job::getName),
             Column.create("Beschreibung", Job::getDescription));
