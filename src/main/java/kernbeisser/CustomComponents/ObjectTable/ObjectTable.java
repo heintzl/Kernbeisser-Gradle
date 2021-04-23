@@ -217,7 +217,8 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   public void clear() {
-    this.model.getDataVector().clear();
+    this.objects.clear();
+    refreshModel();
   }
 
   private Object[] collectColumns(T value) {

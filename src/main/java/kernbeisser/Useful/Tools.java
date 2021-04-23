@@ -934,4 +934,8 @@ public class Tools {
     System.arraycopy(v, 0, source, originalSize, v.length);
     return source;
   }
+
+  public static <T> T or(AccessSupplier<T> supplier, T v) {
+    return optional(supplier).orElse(v);
+  }
 }

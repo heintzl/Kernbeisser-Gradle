@@ -129,15 +129,15 @@ public class Access {
 
   public static boolean isIterableModifiable(@NotNull Iterable<?> iterable) {
     switch (iterable.getClass().getName()) {
-      case "java.util.Collections.UnmodifiableCollection":
-      case "java.util.Collections.UnmodifiableSet":
-      case "java.util.Collections.UnmodifiableSortedSet":
-      case "java.util.Collections.UnmodifiableNavigableSet":
-      case "java.util.Collections.UnmodifiableList":
-      case "java.util.Collections.UnmodifiableRandomAccessList":
-      case "java.util.Collections.UnmodifiableMap":
-      case "java.util.Collections.UnmodifiableSortedMap":
-      case "java.util.Collections.UnmodifiableNavigableMap":
+      case "java.util.Collections$UnmodifiableCollection":
+      case "java.util.Collections$UnmodifiableSet":
+      case "java.util.Collections$UnmodifiableSortedSet":
+      case "java.util.Collections$UnmodifiableNavigableSet":
+      case "java.util.Collections$UnmodifiableList":
+      case "java.util.Collections$UnmodifiableRandomAccessList":
+      case "java.util.Collections$UnmodifiableMap":
+      case "java.util.Collections$UnmodifiableSortedMap":
+      case "java.util.Collections$UnmodifiableNavigableMap":
         return false;
       default:
         return true;

@@ -38,8 +38,8 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
     var view = getView();
     switch (view.getSelectedTabIndex()) {
       case 0:
-        optional(model.getUser()::getJobs).ifPresent(view::setJobs);
-        optional(model.getUser()::getPermissions).ifPresent(view::setPermissions);
+        optional(model.getUser()::getJobsAsAvailable).ifPresent(view::setJobs);
+        optional(model.getUser()::getPermissionsAsAvailable).ifPresent(view::setPermissions);
         optional(model.getUser()::getUserGroup)
             .flatMap(e -> optional(e::getMembers))
             .ifPresent(view::setUserGroupMembers);
