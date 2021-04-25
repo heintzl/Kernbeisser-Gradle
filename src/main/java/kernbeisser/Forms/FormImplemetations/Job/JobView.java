@@ -33,7 +33,7 @@ public class JobView implements IView<JobController> {
     name = new AccessCheckingField<>(Job::getName, Job::setName, AccessCheckingField.NOT_NULL);
     description =
         new AccessCheckingField<>(
-            Job::getDescription, Job::setDescription, AccessCheckingField.NOT_NULL);
+            Job::getDescription, Job::setDescription, AccessCheckingField.NONE);
   }
 
   public ObjectForm<Job> getForm() {

@@ -59,7 +59,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
     var view = getView();
     String firstName = view.getFirstName();
     String surName = view.getSurname();
-    if (surName != null && firstName != null) {
+    if (getMode() == Mode.ADD && surName != null && firstName != null) {
       getView()
           .setUsername(
               model

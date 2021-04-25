@@ -55,8 +55,9 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   }
 
   public void openForm(T selection, Mode mode) {
-    if (model.getCurrentMode() == Mode.REMOVE) {
+    if (mode == Mode.REMOVE) {
       model.getForm().remove(searchBoxController.getSelectedObject());
+      searchBoxController.invokeSearch();
       return;
     }
     model.setCurrentMode(mode);

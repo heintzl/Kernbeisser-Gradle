@@ -909,9 +909,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   @Override
   public String getTitle() {
-    return "Einkauf für "
-        + controller.getModel().getSaleSession().getCustomer().getSurname()
-        + ", "
-        + controller.getModel().getSaleSession().getCustomer().getFirstName();
+    return "Einkauf für " + controller.getModel().getSaleSession().getCustomer().getFullName();
   }
 }

@@ -257,4 +257,9 @@ public class UserView implements IView<UserController> {
                 + "Soll der Mitglied-Status zu \"kein Mitglied\" geändert werden?")
         == 0;
   }
+
+  @Override
+  public String getTitle() {
+    return "Benutzerdaten bearbeiten";
+  }
 }

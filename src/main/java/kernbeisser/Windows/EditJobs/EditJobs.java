@@ -16,8 +16,6 @@ public class EditJobs extends ObjectViewController<Job> {
         Job::defaultSearch,
         true,
         Column.create("Name", Job::getName),
-        Column.create("Beschreibung", Job::getDescription),
-        Column.create("Erstellungsdatum", Job::getCreateDate),
-        Column.create("Änderungsdatum", Job::getUpdateDate));
+        Column.create("Beschreibung", Job::getDescription));
   }
 }
