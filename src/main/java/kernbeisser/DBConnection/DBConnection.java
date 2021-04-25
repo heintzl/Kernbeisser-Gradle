@@ -11,12 +11,21 @@ import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Main;
+import kernbeisser.Security.Access.Access;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ViewContainers.JFrameWindow;
 import org.hibernate.service.spi.ServiceException;
 
 public class DBConnection {
+
+  static {
+    if (!Access.isActive()) {
+      System.err.println("Access checking is not active:");
+      JOptionPane.showMessageDialog(null, "Security system disabled shutting down system...");
+      System.exit(-1);
+    }
+  }
 
   private static EntityManagerFactory entityManagerFactory = null;
 

@@ -1,7 +1,9 @@
 package kernbeisser;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
@@ -74,12 +76,26 @@ public class Main {
   public static void restart(String arg) {
     try {
       Main.logger.info("Restarting Jar...");
-      Runtime.getRuntime()
-          .exec("java " + (arg == null ? "" : arg) + " -jar " + getPath() + " restart");
-      System.exit(0);
+      Process proc =
+          Runtime.getRuntime()
+              .exec("java " + (arg == null ? "" : arg) + " -jar " + getPath() + " restart");
+
+      BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+      BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
+      String s;
+      while ((s = stdInput.readLine()) != null) {
+        System.out.println(s);
+      }
+
+      while ((s = stdError.readLine()) != null) {
+        System.out.println(s);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
+    System.exit(-1);
   }
 
   public static void checkVersion() {

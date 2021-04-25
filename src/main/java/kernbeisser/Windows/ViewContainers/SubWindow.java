@@ -32,7 +32,7 @@ public class SubWindow extends JDialog implements ViewContainer {
   }
 
   @Override
-  public void loadController(Controller<?, ?> controller) {
+  public void loadController(@NotNull Controller<?, ?> controller) {
     this.controller = controller;
     IView<?> view = controller.getView();
     add(view.getContent());

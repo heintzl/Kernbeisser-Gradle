@@ -7,13 +7,14 @@ import javax.swing.JFrame;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.ViewContainer;
+import org.jetbrains.annotations.NotNull;
 
 public class JFrameWindow extends JFrame implements ViewContainer {
 
   private Controller<?, ?> controller;
 
   @Override
-  public void loadController(Controller<?, ?> controller) {
+  public void loadController(@NotNull Controller<?, ?> controller) {
     this.controller = controller;
     IView<?> view = controller.getView();
     add(view.getContent());

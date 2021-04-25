@@ -7,6 +7,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.ViewContainer;
+import org.jetbrains.annotations.NotNull;
 
 public class TabViewContainer implements ViewContainer {
 
@@ -21,7 +22,7 @@ public class TabViewContainer implements ViewContainer {
   }
 
   @Override
-  public void loadController(Controller<?, ?> controller) {
+  public void loadController(@NotNull Controller<?, ?> controller) {
     this.loaded = controller;
     before = new WeakReference<>(parent.getSelectedTabViewContainer());
     TabbedPaneView tabbedPaneView = parent.getView();

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.WeakHashMap;
 import kernbeisser.Enums.PermissionConstants;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class Access {
 
   // default do not allow any access to any field -> normal state if no one is logged in
-  @Setter private static AccessManager defaultManager = AccessManager.NO_ACCESS_CHECKING;
+  @Getter @Setter private static AccessManager defaultManager = AccessManager.NO_ACCESS_CHECKING;
 
   @Setter private static boolean useCustomProtection = true;
 
@@ -157,6 +158,23 @@ public class Access {
     } catch (ArrayIndexOutOfBoundsException e) {
       arrayCache = Arrays.copyOf(arrayCache, arrayIndex + 1);
       return getOrAnalyse(object, methodName, methodId);
+    }
+  }
+
+  @Key(PermissionKey.USER_ID_READ)
+  private void hasAccess() {}
+
+  public static boolean isActive() {
+    AccessManager before = Access.getDefaultManager();
+    try {
+      setDefaultManager(AccessManager.ACCESS_DENIED);
+      new Access().hasAccess();
+      return false;
+    } catch (PermissionKeyRequiredException e) {
+      if (defaultManager.equals(AccessManager.ACCESS_DENIED)) {
+        setDefaultManager(before);
+        return true;
+      } else throw new RuntimeException("modification of access manager while checking state");
     }
   }
 }
