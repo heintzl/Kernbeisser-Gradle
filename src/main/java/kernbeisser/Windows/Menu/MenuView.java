@@ -5,7 +5,6 @@ import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ControllerButton;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
@@ -118,8 +117,7 @@ public class MenuView implements IView<MenuController> {
             () -> new UserInfoController(LogInModel.getLoggedIn()),
             UserInfoController.class,
             c -> c.openIn(new SubWindow(traceViewContainer())).getLoaded(),
-            false,
-            new PermissionKey[] {PermissionKey.ACTION_EDIT_OWN_DATA});
+            false);
     editUserSettings =
         new ControllerButton(
             () -> new EditUserSettingController(LogInModel.getLoggedIn()),
@@ -128,11 +126,10 @@ public class MenuView implements IView<MenuController> {
     editUsers = new ControllerButton(EditUsers::new, EditUsers.class, Controller::openTab);
     doTransactionPayIn =
         new ControllerButton(
-            () -> new TransactionController(LogInModel.getLoggedIn(), TransactionType.PAYIN),
+            controller::getPayInTransactionController,
             TransactionController.class,
             Controller::openTab,
-            false,
-            new PermissionKey[] {PermissionKey.ACTION_TRANSACTION_FROM_KB});
+            false);
     changePermissions =
         new ControllerButton(
             PermissionController::new, PermissionController.class, Controller::openTab);
@@ -144,28 +141,22 @@ public class MenuView implements IView<MenuController> {
             Controller::openTab);
     changeDBConnection =
         new ControllerButton(
-            DBLogInController::new,
-            DBLogInController.class,
-            Controller::openTab,
-            false,
-            new PermissionKey[] {PermissionKey.ACTION_OPEN_DB_LOG_IN});
+            controller::getDBLoginController, DBLogInController.class, Controller::openTab, false);
     editJobs = new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab);
     editApplicationSettings =
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
     order =
         new ControllerButton(
-            () -> new PreOrderController(false),
+            controller::getPreorderController,
             PreOrderController.class,
             Controller::openTab,
-            false,
-            new PermissionKey[] {PermissionKey.ACTION_OPEN_PRE_ORDER});
+            false);
     openSelfPreorder =
         new ControllerButton(
-            () -> new PreOrderController(true),
+            controller::getOwnPreorderController,
             PreOrderController.class,
             Controller::openTab,
-            false,
-            new PermissionKey[] {PermissionKey.ACTION_OPEN_OWN_PRE_ORDER});
+            false);
     adminTools = new ControllerButton(AdminToolController::new, AdminToolController.class);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();
@@ -191,8 +182,7 @@ public class MenuView implements IView<MenuController> {
             controller::generateAddBeginnerForm,
             FormEditorController.class,
             Controller::openTab,
-            false,
-            new PermissionKey[] {PermissionKey.ACTION_ADD_BEGINNER});
+            false);
     editSuppliers =
         new ControllerButton(EditSuppliers::new, EditSuppliers.class, Controller::openTab);
 
