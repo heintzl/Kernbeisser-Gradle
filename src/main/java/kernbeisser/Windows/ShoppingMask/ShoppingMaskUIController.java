@@ -338,9 +338,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
 
   void openSearchWindow() {
     new ArticleSelectorController(this::searchWindowResult)
-        .withCloseEvent(() -> getView().setSearchArticleAvailable(true))
         .openIn(new SubWindow(getView().traceViewContainer()));
-    getView().setSearchArticleAvailable(false);
   }
 
   void searchWindowResult(Article article) {

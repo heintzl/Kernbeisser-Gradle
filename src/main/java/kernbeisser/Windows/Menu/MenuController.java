@@ -3,13 +3,21 @@ package kernbeisser.Windows.Menu;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
+import kernbeisser.Security.Key;
+import kernbeisser.StartUp.LogIn.DBLogInController;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
+import kernbeisser.Windows.Trasaction.TransactionController;
+import kernbeisser.Windows.UserInfo.UserInfoController;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +36,31 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   @Override
   public void fillView(MenuView menuView) {
     // Access.setDefaultManager(new AccessAnalyser());
+  }
+
+  @Key(PermissionKey.ACTION_OPEN_OWN_PRE_ORDER)
+  public PreOrderController getOwnPreorderController() {
+    return new PreOrderController(true);
+  }
+
+  @Key(PermissionKey.ACTION_OPEN_PRE_ORDER)
+  public PreOrderController getPreorderController() {
+    return new PreOrderController(false);
+  }
+
+  @Key(PermissionKey.ACTION_EDIT_OWN_DATA)
+  public UserInfoController getOwnUserInfoController() {
+    return new UserInfoController(LogInModel.getLoggedIn());
+  }
+
+  @Key(PermissionKey.ACTION_TRANSACTION_FROM_KB)
+  public TransactionController getPayInTransactionController() {
+    return new TransactionController(LogInModel.getLoggedIn(), TransactionType.PAYIN);
+  }
+
+  @Key(PermissionKey.ACTION_OPEN_DB_LOG_IN)
+  public DBLogInController getDBLoginController() {
+    return new DBLogInController();
   }
 
   private boolean alreadyAsked = false;
@@ -61,6 +94,7 @@ public class MenuController extends Controller<MenuView, MenuModel> {
     SwingUtilities.getWindowAncestor(getView().getContent()).dispose();
   }
 
+  @Key(PermissionKey.ACTION_ADD_BEGINNER)
   public FormEditorController<User> generateAddBeginnerForm() {
     User beginnerUser = new User();
     Access.getExceptions().put(beginnerUser, AccessManager.NO_ACCESS_CHECKING);
