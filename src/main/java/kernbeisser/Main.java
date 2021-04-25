@@ -1,5 +1,6 @@
 package kernbeisser;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
+import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import lombok.Cleanup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -137,6 +139,7 @@ public class Main {
   }
 
   private static void openLogIn() {
+    ((Frame) TabbedPaneModel.MAIN_PANEL.getContainer()).setTitle("Kernbeißer (Login)");
     new SimpleLogInController().openTab();
   }
 

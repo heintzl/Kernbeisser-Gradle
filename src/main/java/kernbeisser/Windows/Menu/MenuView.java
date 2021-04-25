@@ -38,6 +38,7 @@ import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.SpecialPriceEditor.SpecialPriceEditorController;
 import kernbeisser.Windows.Supply.SupplyController;
 import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleController;
+import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.Trasaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -79,6 +80,8 @@ public class MenuView implements IView<MenuController> {
 
   @Override
   public void initialize(MenuController controller) {
+    ((Frame) TabbedPaneModel.MAIN_PANEL.getContainer())
+        .setTitle("Kernbeißer (" + LogInModel.getLoggedIn().getFullName() + ")");
     logout.setIcon(
         IconFontSwing.buildIcon(
             FontAwesome.POWER_OFF,
