@@ -20,6 +20,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 // May replace ConfigManager with this
 @Data
@@ -40,7 +41,7 @@ public final class Config {
     safeInFile(getConfig());
   }
 
-  public static void safeInFile(Config config) {
+  public static void safeInFile(@NotNull Config config) {
     try {
       Files.write(CONFIG_PATH, Collections.singleton(gson.toJson(config)));
     } catch (IOException e) {
