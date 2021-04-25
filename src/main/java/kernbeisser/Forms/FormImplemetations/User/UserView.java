@@ -175,7 +175,9 @@ public class UserView implements IView<UserController> {
         new AccessCheckingField<>(User::getUsername, User::setUsername, AccessCheckingField.NONE);
     userGroup =
         new AccessCheckingField<>(
-            u -> u.getUserGroup().getMemberString(), User::ignoreDialog, AccessCheckingField.NONE);
+            u -> u.getUserGroup() == null ? "" : u.getUserGroup().getMemberString(),
+            User::ignoreDialog,
+            AccessCheckingField.NONE);
     isEmployee = new AccessCheckBox<>(User::isEmployee, User::setEmployee);
     shares =
         new AccessCheckingField<>(User::getShares, User::setShares, AccessCheckingField.INT_FORMER);
