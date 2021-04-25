@@ -929,11 +929,11 @@ public class Tools {
     }
   }
 
-  public static boolean canInvoke(AccessRunnable runnable){
+  public static boolean canInvoke(AccessRunnable runnable) {
     try {
       runnable.run();
       return true;
-    }catch (PermissionKeyRequiredException e){
+    } catch (PermissionKeyRequiredException e) {
       return false;
     }
   }

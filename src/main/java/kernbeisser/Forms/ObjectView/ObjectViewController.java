@@ -67,8 +67,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
         new FormEditorController<T>(model.getForm(), model::submit);
     formEditorController.setMode(mode);
     formEditorController
-        .withCloseEvent(
-            searchBoxController::invokeSearch)
+        .withCloseEvent(searchBoxController::invokeSearch)
         .openIn(new SubWindow(getView().traceViewContainer()));
     refreshButtonStates();
   }

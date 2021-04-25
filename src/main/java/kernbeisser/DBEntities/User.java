@@ -391,8 +391,10 @@ public class User implements Serializable, UserRelated {
 
   public boolean mayGoUnderMin() {
     return getAllGroupMembers().stream()
-        .map(User::getPermissionsAsAvailable).flatMap(Collection::stream)
-        .map(Permission::getKeySet).flatMap(Collection::stream)
+        .map(User::getPermissionsAsAvailable)
+        .flatMap(Collection::stream)
+        .map(Permission::getKeySet)
+        .flatMap(Collection::stream)
         .anyMatch(PermissionKey.GO_UNDER_MIN::equals);
   }
 

@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.function.Predicate;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Security.ActionPermission;
-import kernbeisser.Windows.LogIn.LogInModel;
 
 public enum PermissionKey {
 

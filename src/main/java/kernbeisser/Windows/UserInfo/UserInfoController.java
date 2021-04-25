@@ -100,11 +100,10 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
   }
 
   @Key(PermissionKey.ACTION_OPEN_EDIT_USERS)
-  private void checkOpenEditUsersPermission(){}
-
+  private void checkOpenEditUsersPermission() {}
 
   @Key(PermissionKey.ACTION_EDIT_OWN_DATA)
-  private void checkEditOwnDataPermission(){}
+  private void checkEditOwnDataPermission() {}
 
   @Override
   public void fillView(UserInfoView userInfoView) {

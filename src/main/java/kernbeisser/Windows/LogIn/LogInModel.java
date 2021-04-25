@@ -68,5 +68,5 @@ public class LogInModel implements IModel {
   }
 
   @Key(PermissionKey.ACTION_LOGIN)
-  private void canLogIn(){}
+  private void canLogIn() {}
 }

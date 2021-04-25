@@ -2,25 +2,20 @@ package kernbeisser.Windows.Trasaction;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-import java.util.Collections;
 import java.util.function.Predicate;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
-import kernbeisser.Forms.ObjectForm.Components.Source;
-import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
-import org.checkerframework.checker.units.qual.C;
 
 public class TransactionController extends Controller<TransactionView, TransactionModel> {
 
@@ -135,13 +130,13 @@ public class TransactionController extends Controller<TransactionView, Transacti
   }
 
   @Key(PermissionKey.ACTION_TRANSACTION_FROM_OTHER)
-  private void checkTransactionFromOtherPermission(){ }
+  private void checkTransactionFromOtherPermission() {}
 
   @Key(PermissionKey.ACTION_TRANSACTION_FROM_KB)
-  private void checkTransactionFromKBPermission(){}
+  private void checkTransactionFromKBPermission() {}
 
   @Key(PermissionKey.USER_GROUP_VALUE_READ)
-  private void checkUserGroupValueReadPermission(){}
+  private void checkUserGroupValueReadPermission() {}
 
   @Override
   public void fillView(TransactionView transactionView) {

@@ -245,9 +245,7 @@ public class ArticleView implements IView<ArticleController> {
   }
 
   @Key(PermissionKey.ARTICLE_BARCODE_WRITE)
-  private void checkArticleBarcodeWritePermission(){
-
-  }
+  private void checkArticleBarcodeWritePermission() {}
 
   public boolean isSameArticle(Article nearest) {
     return JOptionPane.showConfirmDialog(

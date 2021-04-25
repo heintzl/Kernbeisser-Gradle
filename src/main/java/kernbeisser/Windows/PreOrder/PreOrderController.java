@@ -189,8 +189,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     try {
       checkUserOrderContainerPermission();
       return true;
-    }catch (PermissionKeyRequiredException e){
-      if(restrictToLoggedIn){
+    } catch (PermissionKeyRequiredException e) {
+      if (restrictToLoggedIn) {
         checkOrderOwnContainerPermission();
         return true;
       }
@@ -199,10 +199,10 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)
-  private void checkOrderOwnContainerPermission(){}
+  private void checkOrderOwnContainerPermission() {}
 
   @Key(PermissionKey.ACTION_ORDER_CONTAINER)
-  private void checkUserOrderContainerPermission(){}
+  private void checkUserOrderContainerPermission() {}
 
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {

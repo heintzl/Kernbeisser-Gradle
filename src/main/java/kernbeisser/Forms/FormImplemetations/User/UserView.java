@@ -141,9 +141,10 @@ public class UserView implements IView<UserController> {
   }
 
   @Key(PermissionKey.USER_KERNBEISSER_KEY_READ)
-  private void checkUserKernbeisserKeyReadPermission(){}
+  private void checkUserKernbeisserKeyReadPermission() {}
+
   @Key(PermissionKey.USER_KERNBEISSER_KEY_WRITE)
-  private void checkUserKernbeisserKeyWritePermission(){}
+  private void checkUserKernbeisserKeyWritePermission() {}
 
   @Override
   public @NotNull JComponent getContent() {
