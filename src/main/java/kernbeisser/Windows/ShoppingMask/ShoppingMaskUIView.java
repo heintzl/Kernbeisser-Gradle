@@ -907,10 +907,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     amount.requestFocusInWindow();
   }
 
-  public void setSearchArticleAvailable(boolean b) {
-    searchArticle.setEnabled(b);
-  }
-
   @Override
   public String getTitle() {
     return "Einkauf für "
