@@ -17,7 +17,7 @@ public class FormEditorView<V> implements IView<FormEditorController<V>> {
   private JPanel contentPage;
   private JPanel main;
   private JButton cancel;
-  private FormEditorController controller;
+  private FormEditorController<V> controller;
 
   public JPanel getContentPage() {
     return contentPage;
@@ -57,5 +57,10 @@ public class FormEditorView<V> implements IView<FormEditorController<V>> {
   @Override
   public @NotNull Dimension getSize() {
     return Tools.floatingSubwindowSize(controller);
+  }
+
+  @Override
+  public String getTitle() {
+    return controller.getModel().getForm().getView().getTitle();
   }
 }
