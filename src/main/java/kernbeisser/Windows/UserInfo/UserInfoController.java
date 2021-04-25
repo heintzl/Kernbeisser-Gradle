@@ -17,6 +17,7 @@ import kernbeisser.Enums.StatementType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Reports.TransactionStatement;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -98,6 +99,12 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
         .openIn(new SubWindow(view.traceViewContainer()));
   }
 
+  @Key(PermissionKey.ACTION_OPEN_EDIT_USERS)
+  private void checkOpenEditUsersPermission() {}
+
+  @Key(PermissionKey.ACTION_EDIT_OWN_DATA)
+  private void checkEditOwnDataPermission() {}
+
   @Override
   public void fillView(UserInfoView userInfoView) {
     userInfoView.getUserObjectForm().setSource(model.getUser());
@@ -105,9 +112,9 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
     userInfoView.setTransactionStatementTypeItems(Arrays.asList(StatementType.values()));
     User currentUser = LogInModel.getLoggedIn();
     boolean isPermitted =
-        currentUser.hasPermission(PermissionKey.ACTION_OPEN_EDIT_USERS)
+        Tools.canInvoke(this::checkOpenEditUsersPermission)
             || (currentUser.equals(model.getUser())
-                && currentUser.hasPermission(PermissionKey.ACTION_EDIT_OWN_DATA));
+                && Tools.canInvoke(this::checkEditOwnDataPermission));
     userInfoView.getEditUser().setEnabled(isPermitted);
     loadCurrentSite();
   }

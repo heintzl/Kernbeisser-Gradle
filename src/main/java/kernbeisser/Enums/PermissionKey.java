@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.function.Predicate;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Security.ActionPermission;
-import kernbeisser.Windows.LogIn.LogInModel;
 
 public enum PermissionKey {
 
@@ -403,10 +402,6 @@ public enum PermissionKey {
 
   public PermissionKey getReadKey() {
     return valueOf(name().replace("_WRITE", "_READ"));
-  }
-
-  public boolean userHas() {
-    return LogInModel.getLoggedIn().hasPermission(this);
   }
 
   public static Collection<PermissionKey> find(Class<?> category) {

@@ -20,8 +20,8 @@ import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -281,7 +281,7 @@ public class TransactionView implements IView<TransactionController> {
             }
           }
         });
-    info.setRequiredWriteKeys(PermissionKey.TRANSACTION_INFO_WRITE);
+    info.setEnabled(Tools.canInvoke(() -> new Transaction().setInfo("")));
     fromKBValue.addChangeListener(
         new ChangeListener() {
           private boolean lastState = false;

@@ -18,7 +18,6 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   @Linked private final SearchBoxController<T> searchBoxController;
 
   @Linked private String title;
-  private boolean openWindow = false;
 
   public ObjectViewController(
       String title,
@@ -37,8 +36,8 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
 
   void refreshButtonStates() {
     var view = getView();
-    view.setAddAvailable(!openWindow && model.isAddAvailable());
-    if (openWindow || searchBoxController.getSelectedObject() == null) {
+    view.setAddAvailable(model.isAddAvailable());
+    if (searchBoxController.getSelectedObject() == null) {
       view.setEditAvailable(false);
       view.setRemoveAvailable(false);
     } else {
@@ -56,7 +55,6 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   }
 
   public void openForm(T selection, Mode mode) {
-    if (openWindow) return;
     if (model.getCurrentMode() == Mode.REMOVE) {
       model.getForm().remove(searchBoxController.getSelectedObject());
       return;
@@ -69,13 +67,8 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
         new FormEditorController<T>(model.getForm(), model::submit);
     formEditorController.setMode(mode);
     formEditorController
-        .withCloseEvent(
-            () -> {
-              openWindow = false;
-              searchBoxController.invokeSearch();
-            })
+        .withCloseEvent(searchBoxController::invokeSearch)
         .openIn(new SubWindow(getView().traceViewContainer()));
-    openWindow = true;
     refreshButtonStates();
   }
 

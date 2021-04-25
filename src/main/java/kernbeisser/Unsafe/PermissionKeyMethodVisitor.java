@@ -6,6 +6,7 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -21,6 +22,8 @@ import org.objectweb.asm.Opcodes;
 
 /** faster imp of the SubMethodVisitor by buffering target methods */
 public class PermissionKeyMethodVisitor extends ClassVisitor {
+  private static final HashMap<AnalyserTarget, PermissionSet> cache = new HashMap<>();
+
   private int depth;
   private String targetMethodName;
   private String targetDescriptor;
@@ -153,10 +156,16 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
 
   public static PermissionSet ofMethod(AnalyserTarget method, PermissionSet collector, int depth)
       throws IOException {
+    PermissionSet cached = cache.get(method);
+    if (cached != null) {
+      return collector.or(cached);
+    }
+
     PermissionKeyMethodVisitor subMethodVisitor =
         new PermissionKeyMethodVisitor(depth, method, collector);
     ClassReader cr = new ClassReader(method.getTargetClass().getName());
     cr.accept(subMethodVisitor, 0);
+    cache.put(method, subMethodVisitor.collected);
     return subMethodVisitor.collected;
   }
 }

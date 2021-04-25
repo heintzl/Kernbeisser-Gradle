@@ -1,8 +1,6 @@
 package kernbeisser.CustomComponents;
 
 import javax.swing.*;
-import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Windows.LogIn.LogInModel;
 
 public class PermissionCheckBox extends JCheckBox implements RequiresPermission {
   private boolean read = true, write = true;
@@ -20,13 +18,6 @@ public class PermissionCheckBox extends JCheckBox implements RequiresPermission 
   public void setWriteable(boolean b) {
     write = b;
     setEnabled(b);
-  }
-
-  public void setRequiredReadKeys(PermissionKey... keys) {
-    read = LogInModel.getLoggedIn().hasPermission(keys);
-    if (!read) {
-      setEnabled(false);
-    }
   }
 
   @Override

@@ -13,6 +13,8 @@ import kernbeisser.Main;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Access.UserRelatedAccessManager;
+import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
@@ -49,13 +51,13 @@ public class LogInModel implements IModel {
               .setParameter("username", username)
               .getSingleResult();
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
-        if (!user.hasPermission(PermissionKey.ACTION_LOGIN)) {
+        loggedIn = user;
+        Access.setDefaultManager(new UserRelatedAccessManager(loggedIn));
+        if (Tools.canInvoke(() -> new LogInModel().canLogIn())) {
+          loggedIn = null;
+          Access.setDefaultManager(AccessManager.ACCESS_DENIED);
           throw new PermissionRequired();
         }
-        loggedIn = user;
-
-        Access.setDefaultManager(new UserRelatedAccessManager(loggedIn));
-
         Main.logger.info("User with user id [" + user.getId() + "] has logged in");
       } else {
         throw new CannotLogInException();
@@ -65,9 +67,6 @@ public class LogInModel implements IModel {
     }
   }
 
-  public static boolean isValidLogIn(String username, char[] password) {
-    return BCrypt.verifyer()
-        .verify(password, User.getByUsername(username).getPassword().toCharArray())
-        .verified;
-  }
+  @Key(PermissionKey.ACTION_LOGIN)
+  private void canLogIn() {}
 }

@@ -38,6 +38,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
 import kernbeisser.Security.SecuredOptional;
 import kernbeisser.Security.Utils.AccessConsumer;
+import kernbeisser.Security.Utils.AccessRunnable;
 import kernbeisser.Security.Utils.AccessSupplier;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
@@ -925,6 +926,15 @@ public class Tools {
       return SecuredOptional.of(supplier.get());
     } catch (PermissionKeyRequiredException e) {
       return SecuredOptional.empty();
+    }
+  }
+
+  public static boolean canInvoke(AccessRunnable runnable) {
+    try {
+      runnable.run();
+      return true;
+    } catch (PermissionKeyRequiredException e) {
+      return false;
     }
   }
 

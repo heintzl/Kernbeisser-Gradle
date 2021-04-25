@@ -12,6 +12,8 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
@@ -184,9 +186,23 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   boolean userMayEdit() {
-    return PermissionKey.ACTION_ORDER_CONTAINER.userHas()
-        || (restrictToLoggedIn && PermissionKey.ACTION_ORDER_OWN_CONTAINER.userHas());
+    try {
+      checkUserOrderContainerPermission();
+      return true;
+    } catch (PermissionKeyRequiredException e) {
+      if (restrictToLoggedIn) {
+        checkOrderOwnContainerPermission();
+        return true;
+      }
+      return false;
+    }
   }
+
+  @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)
+  private void checkOrderOwnContainerPermission() {}
+
+  @Key(PermissionKey.ACTION_ORDER_CONTAINER)
+  private void checkUserOrderContainerPermission() {}
 
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {

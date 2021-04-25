@@ -17,6 +17,7 @@ import kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -132,12 +133,18 @@ public class UserView implements IView<UserController> {
     hasKey.addActionListener(e -> keyNumber.setEnabled(keyNumber.isEnabled()));
     firstName.setInputVerifier(new NotNullVerifier());
     lastName.setInputVerifier(new NotNullVerifier());
-    hasKey.setReadWrite(PermissionKey.USER_KERNBEISSER_KEY_READ);
-    hasKey.setRequiredWriteKeys(PermissionKey.USER_KERNBEISSER_KEY_WRITE);
+    hasKey.setReadable(Tools.canInvoke(this::checkUserKernbeisserKeyReadPermission));
+    hasKey.setWriteable(Tools.canInvoke(this::checkUserKernbeisserKeyWritePermission));
     shares.setInputVerifier(IntegerVerifier.from(1, 1, 3, 10));
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
     objectForm.registerObjectValidators(controller::validateUser);
   }
+
+  @Key(PermissionKey.USER_KERNBEISSER_KEY_READ)
+  private void checkUserKernbeisserKeyReadPermission() {}
+
+  @Key(PermissionKey.USER_KERNBEISSER_KEY_WRITE)
+  private void checkUserKernbeisserKeyWritePermission() {}
 
   @Override
   public @NotNull JComponent getContent() {

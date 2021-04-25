@@ -249,37 +249,6 @@ public class User implements Serializable, UserRelated {
     return Tools.optional(this::getUsername).orElse("Benutzer[" + id + "]");
   }
 
-  public boolean hasPermission(PermissionKey... keys) {
-    for (PermissionKey key : keys) {
-      boolean hasPermission = false;
-      for (Permission permission : permissions) {
-        if (permission.contains(key)) {
-          hasPermission = true;
-          break;
-        }
-      }
-      if (!hasPermission) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  public boolean hasPermission(Collection<PermissionKey> keys) {
-    for (PermissionKey key : keys) {
-      boolean hasPermission = false;
-      for (Permission permission : permissions) {
-        if (permission.contains(key)) {
-          hasPermission = true;
-        }
-      }
-      if (!hasPermission) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   public Collection<User> getAllGroupMembers() {
     return getUserGroup().getMembers();
   }
@@ -421,10 +390,12 @@ public class User implements Serializable, UserRelated {
   }
 
   public boolean mayGoUnderMin() {
-    for (User u : getAllGroupMembers()) {
-      if (u.hasPermission(PermissionKey.GO_UNDER_MIN)) return true;
-    }
-    return false;
+    return getAllGroupMembers().stream()
+        .map(User::getPermissionsAsAvailable)
+        .flatMap(Collection::stream)
+        .map(Permission::getKeySet)
+        .flatMap(Collection::stream)
+        .anyMatch(PermissionKey.GO_UNDER_MIN::equals);
   }
 
   public void ignoreDialog(String name) {

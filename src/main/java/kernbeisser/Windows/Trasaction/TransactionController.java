@@ -12,6 +12,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
@@ -128,6 +129,15 @@ public class TransactionController extends Controller<TransactionView, Transacti
     box.addActionListener(e -> setToolTip(box, condition));
   }
 
+  @Key(PermissionKey.ACTION_TRANSACTION_FROM_OTHER)
+  private void checkTransactionFromOtherPermission() {}
+
+  @Key(PermissionKey.ACTION_TRANSACTION_FROM_KB)
+  private void checkTransactionFromKBPermission() {}
+
+  @Key(PermissionKey.USER_GROUP_VALUE_READ)
+  private void checkUserGroupValueReadPermission() {}
+
   @Override
   public void fillView(TransactionView transactionView) {
     var view = getView();
@@ -141,15 +151,11 @@ public class TransactionController extends Controller<TransactionView, Transacti
       User.populateUserComboBox(toControl, true, e -> true);
       User.populateUserComboBox(fromControl, true, e -> true);
     }
-
-    view.setFromEnabled(
-        model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_OTHER));
-    view.setFromKBEnable(model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_KB));
+    view.setFromEnabled(Tools.canInvoke(this::checkTransactionFromOtherPermission));
+    view.setFromKBEnable(Tools.canInvoke(this::checkTransactionFromKBPermission));
     refreshTable();
     loadPreSettings(model.getTransactionType());
-
-    boolean allowUserGroupValue =
-        model.getOwner().hasPermission(PermissionKey.USER_GROUP_VALUE_READ);
+    boolean allowUserGroupValue = Tools.canInvoke(this::checkUserGroupValueReadPermission);
     if (allowUserGroupValue) {
       addUserTooltip(toControl, u -> true);
     }
