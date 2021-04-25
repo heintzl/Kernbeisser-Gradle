@@ -2,6 +2,7 @@ package kernbeisser.CustomComponents;
 
 import java.awt.Color;
 import java.lang.ref.SoftReference;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -101,6 +102,7 @@ public class ControllerButton extends JButton {
             if (controller == null) {
               try {
                 controller = controllerInitializer.get();
+              } catch (CancellationException ignored) {
               } catch (PermissionKeyRequiredException exception) {
                 exception.printStackTrace();
                 JOptionPane.showMessageDialog(

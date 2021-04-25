@@ -1,6 +1,7 @@
 package kernbeisser.Windows.Menu;
 
 import java.awt.*;
+import java.util.concurrent.CancellationException;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -8,9 +9,9 @@ import kernbeisser.CustomComponents.ControllerButton;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NotEnoughCreditException;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.StartUp.LogIn.DBLogInController;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.AdminTools.AdminToolController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
@@ -166,11 +167,15 @@ public class MenuView implements IView<MenuController> {
               try {
                 return new SoloShoppingMaskController();
               } catch (NotEnoughCreditException e) {
-                openSelfShoppingMask.setToolTipText(
+                Tools.beep();
+                JOptionPane.showMessageDialog(
+                    getContent(),
                     "Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
                         + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
-                        + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.");
-                throw new PermissionKeyRequiredException();
+                        + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.",
+                    "Nicht genug Guthaben",
+                    JOptionPane.WARNING_MESSAGE);
+                throw new CancellationException();
               }
             },
             SoloShoppingMaskController.class,
