@@ -2,19 +2,25 @@ package kernbeisser.Windows.Trasaction;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import java.util.Collections;
 import java.util.function.Predicate;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Forms.ObjectForm.Components.Source;
+import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
+import org.checkerframework.checker.units.qual.C;
 
 public class TransactionController extends Controller<TransactionView, TransactionModel> {
 
@@ -128,6 +134,15 @@ public class TransactionController extends Controller<TransactionView, Transacti
     box.addActionListener(e -> setToolTip(box, condition));
   }
 
+  @Key(PermissionKey.ACTION_TRANSACTION_FROM_OTHER)
+  private void checkTransactionFromOtherPermission(){ }
+
+  @Key(PermissionKey.ACTION_TRANSACTION_FROM_KB)
+  private void checkTransactionFromKBPermission(){}
+
+  @Key(PermissionKey.USER_GROUP_VALUE_READ)
+  private void checkUserGroupValueReadPermission(){}
+
   @Override
   public void fillView(TransactionView transactionView) {
     var view = getView();
@@ -141,15 +156,11 @@ public class TransactionController extends Controller<TransactionView, Transacti
       User.populateUserComboBox(toControl, true, e -> true);
       User.populateUserComboBox(fromControl, true, e -> true);
     }
-
-    view.setFromEnabled(
-        model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_OTHER));
-    view.setFromKBEnable(model.getOwner().hasPermission(PermissionKey.ACTION_TRANSACTION_FROM_KB));
+    view.setFromEnabled(Tools.canInvoke(this::checkTransactionFromOtherPermission));
+    view.setFromKBEnable(Tools.canInvoke(this::checkTransactionFromKBPermission));
     refreshTable();
     loadPreSettings(model.getTransactionType());
-
-    boolean allowUserGroupValue =
-        model.getOwner().hasPermission(PermissionKey.USER_GROUP_VALUE_READ);
+    boolean allowUserGroupValue = Tools.canInvoke(this::checkUserGroupValueReadPermission);
     if (allowUserGroupValue) {
       addUserTooltip(toControl, u -> true);
     }

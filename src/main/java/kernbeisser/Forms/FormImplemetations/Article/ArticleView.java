@@ -19,6 +19,8 @@ import kernbeisser.Forms.ObjectForm.Components.AccessCheckBox;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -234,12 +236,17 @@ public class ArticleView implements IView<ArticleController> {
   }
 
   public void setBarcode(String s) {
-    if (PermissionKey.ARTICLE_BARCODE_WRITE.userHas()
+    if (Tools.canInvoke(this::checkArticleBarcodeWritePermission)
         && JOptionPane.showConfirmDialog(
                 getTopComponent(), "Soll der Barcode auf " + s + " gesetzt werden?")
             == 0) {
       barcode.setText(s);
     }
+  }
+
+  @Key(PermissionKey.ARTICLE_BARCODE_WRITE)
+  private void checkArticleBarcodeWritePermission(){
+
   }
 
   public boolean isSameArticle(Article nearest) {

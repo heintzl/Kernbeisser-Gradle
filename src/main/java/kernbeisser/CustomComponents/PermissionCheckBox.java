@@ -22,13 +22,6 @@ public class PermissionCheckBox extends JCheckBox implements RequiresPermission 
     setEnabled(b);
   }
 
-  public void setRequiredReadKeys(PermissionKey... keys) {
-    read = LogInModel.getLoggedIn().hasPermission(keys);
-    if (!read) {
-      setEnabled(false);
-    }
-  }
-
   @Override
   public void setSelected(boolean b) {
     original = b;

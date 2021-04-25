@@ -405,10 +405,6 @@ public enum PermissionKey {
     return valueOf(name().replace("_WRITE", "_READ"));
   }
 
-  public boolean userHas() {
-    return LogInModel.getLoggedIn().hasPermission(this);
-  }
-
   public static Collection<PermissionKey> find(Class<?> category) {
     Collection<PermissionKey> out = new ArrayList<>();
     for (PermissionKey value : values()) {

@@ -22,8 +22,14 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox;
+import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
+import kernbeisser.Forms.ObjectForm.Components.Source;
+import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class TransactionView implements IView<TransactionController> {
@@ -281,7 +287,7 @@ public class TransactionView implements IView<TransactionController> {
             }
           }
         });
-    info.setRequiredWriteKeys(PermissionKey.TRANSACTION_INFO_WRITE);
+    info.setEnabled(Tools.canInvoke(() -> new Transaction().setInfo("")));
     fromKBValue.addChangeListener(
         new ChangeListener() {
           private boolean lastState = false;
