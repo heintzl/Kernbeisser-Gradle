@@ -23,7 +23,7 @@
         </constraints>
         <properties>
           <font style="0"/>
-          <text value="Vorname:"/>
+          <text value="Vorname:*"/>
         </properties>
       </component>
       <component id="449ae" class="javax.swing.JLabel" binding="lblNachname">
@@ -33,7 +33,7 @@
         </constraints>
         <properties>
           <font style="0"/>
-          <text value="Nachname:"/>
+          <text value="Nachname:*"/>
         </properties>
       </component>
       <component id="b749d" class="javax.swing.JLabel" binding="lblStrasse">
@@ -135,7 +135,7 @@
         </constraints>
         <properties>
           <font style="0"/>
-          <text value="Telefonnummer 1:"/>
+          <text value="Telefonnummer 1:*"/>
         </properties>
       </component>
       <component id="5c96b" class="javax.swing.JLabel" binding="lblTelefon2">
@@ -166,7 +166,7 @@
         </constraints>
         <properties>
           <font style="0"/>
-          <text value="Nutzername:"/>
+          <text value="Nutzername:*"/>
         </properties>
       </component>
       <component id="73cb" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="postalCode" custom-create="true">

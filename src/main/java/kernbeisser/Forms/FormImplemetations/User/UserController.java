@@ -28,22 +28,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
   }
 
   public void validateUser(User user, Mode mode) throws CannotParseException {
-    if (mode == Mode.ADD) {
-      String passwordToken = Users.generateToken();
-      user.setPassword(
-          BCrypt.withDefaults()
-              .hashToString(Setting.HASH_COSTS.getIntValue(), passwordToken.toCharArray()));
-      user.setForcePasswordChange(true);
-      user.setUserGroup(new UserGroup(0));
-      Tools.persist(user.getUserGroup());
-      getView().showPasswordToken(passwordToken);
-    }
     if (mode != Mode.REMOVE) {
-      if ((user.getEmail() == null || user.getEmail().isEmpty())
-          && (user.getPhoneNumber1() == null || user.getPhoneNumber1().isEmpty())) {
-        getView().missingContact();
-        throw new CannotParseException();
-      }
       int shares = user.getShares();
       boolean fullMember =
           user.getPermissions().contains(PermissionConstants.FULL_MEMBER.getPermission());
@@ -54,6 +39,16 @@ public class UserController extends FormController<UserView, UserModel, User> {
           user.getPermissions().remove(PermissionConstants.FULL_MEMBER.getPermission());
         }
       }
+    }
+    if (mode == Mode.ADD) {
+      String passwordToken = Users.generateToken();
+      user.setPassword(
+          BCrypt.withDefaults()
+              .hashToString(Setting.HASH_COSTS.getIntValue(), passwordToken.toCharArray()));
+      user.setForcePasswordChange(true);
+      user.setUserGroup(new UserGroup(0));
+      Tools.persist(user.getUserGroup());
+      getView().showPasswordToken(passwordToken);
     }
   }
 

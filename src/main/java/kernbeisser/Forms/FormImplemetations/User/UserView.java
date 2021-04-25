@@ -167,7 +167,7 @@ public class UserView implements IView<UserController> {
     town = new AccessCheckingField<>(User::getTown, User::setTown, AccessCheckingField.NONE);
     phone1 =
         new AccessCheckingField<>(
-            User::getPhoneNumber1, User::setPhoneNumber1, AccessCheckingField.NONE);
+            User::getPhoneNumber1, User::setPhoneNumber1, AccessCheckingField.NOT_NULL);
     phone2 =
         new AccessCheckingField<>(
             User::getPhoneNumber2, User::setPhoneNumber2, AccessCheckingField.NONE);
