@@ -18,7 +18,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
-public class LogInModel implements IModel {
+public final class LogInModel implements IModel {
 
   public static User loggedIn;
 
@@ -28,10 +28,6 @@ public class LogInModel implements IModel {
     EntityTransaction et = em.getTransaction();
     et.begin();
     loggedIn = em.find(loggedIn.getClass(), loggedIn.getId());
-  }
-
-  public LogInModel() {
-    loggedIn = null;
   }
 
   public static User getLoggedIn() {
@@ -53,7 +49,7 @@ public class LogInModel implements IModel {
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
         loggedIn = user;
         Access.setDefaultManager(new UserRelatedAccessManager(loggedIn));
-        if (Tools.canInvoke(() -> new LogInModel().canLogIn())) {
+        if (!Tools.canInvoke(() -> new LogInModel().canLogIn())) {
           loggedIn = null;
           Access.setDefaultManager(AccessManager.ACCESS_DENIED);
           throw new PermissionRequired();

@@ -43,19 +43,27 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     var view = getView();
     try {
       model.logIn(view.getUsername(), view.getPassword());
-      loadUserSettings();
-      if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
-        new ChangePasswordController(LogInModel.getLoggedIn(), true)
-            .openIn(new SubWindow(view.traceViewContainer()));
-      } else {
-        new MenuController().openTab();
-        view.back();
-      }
     } catch (CannotLogInException e) {
       view.accessDenied();
+      return;
     } catch (PermissionRequired permissionRequired) {
       view.permissionRequired();
+      return;
     }
+
+    getView().indicateProgress();
+    new Thread(
+            () -> {
+              loadUserSettings();
+              if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
+                new ChangePasswordController(LogInModel.getLoggedIn(), true)
+                    .openIn(new SubWindow(view.traceViewContainer()));
+              } else {
+                new MenuController().openTab();
+                view.back();
+              }
+            })
+        .start();
   }
 
   private void loadUserSettings() {

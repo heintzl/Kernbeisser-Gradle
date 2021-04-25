@@ -22,6 +22,7 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
   private JTextField username;
   private JPanel main;
   private JButton quit;
+  private JProgressBar loadingMenuIndicator;
 
   @Linked private SimpleLogInController controller;
 
@@ -72,6 +73,10 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
             25 * Setting.LABEL_SCALE_FACTOR.getFloatValue(),
             new Color(182, 46, 4)));
     quit.addActionListener(e -> back());
+  }
+
+  void indicateProgress() {
+    loadingMenuIndicator.setVisible(true);
   }
 
   @Override
