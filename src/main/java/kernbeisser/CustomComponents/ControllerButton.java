@@ -59,19 +59,6 @@ public class ControllerButton extends JButton {
           Class<C> clazz,
           Consumer<C> action,
           boolean preInit) {
-    this(controllerInitializer, clazz, action, preInit, new PermissionKey[0]);
-  }
-
-  public <
-          V extends IView<? extends Controller<? extends V, ? extends M>>,
-          M extends IModel<? extends Controller<? extends V, ? extends M>>,
-          C extends Controller<V, M>>
-      ControllerButton(
-          AccessSupplier<C> controllerInitializer,
-          Class<C> clazz,
-          Consumer<C> action,
-          boolean preInit,
-          PermissionKey[] injected) {
     Class<V> vClass = Controller.getViewClass(clazz);
     IView<?> iView = StaticMethodTransformer.createStaticInterface(IView.class, vClass);
     setIcon(
