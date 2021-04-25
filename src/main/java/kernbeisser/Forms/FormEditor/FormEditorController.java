@@ -31,6 +31,7 @@ public class FormEditorController<V> extends Controller<FormEditorView<V>, FormE
   public static <T> FormEditorController<T> open(
       T source, FormController<?, ?, T> controller, Mode mode) {
     controller.getObjectContainer().setSource(source);
+    controller.setMode(mode);
     AtomicReference<FormEditorController<T>> controllerAtomicReference = new AtomicReference<>();
     controllerAtomicReference.set(
         new FormEditorController<>(
