@@ -181,13 +181,13 @@ public class ArticleView implements IView<ArticleController> {
             priceList,
             containerSize,
             metricUnits,
-            amount,
             barcode,
             showInShoppingMask,
             weighable,
             surchargeGroup,
             shopRange,
-            vat);
+            vat,
+            amount);
     articleObjectForm.setObjectDistinction("Der Artikel");
     articleObjectForm.registerUniqueCheck(
         barcode, controller::barcodeExists, this::barcodeAlreadyExists);
@@ -260,5 +260,9 @@ public class ArticleView implements IView<ArticleController> {
     JOptionPane.showMessageDialog(
         getTopComponent(),
         "Die gewählte Lieferantennummer ist bereits für diesen Lieferant vergeben!");
+  }
+
+  public void messageUnitRequired() {
+    JOptionPane.showMessageDialog(getContent(), "Bitte setzten sie die Einheit.");
   }
 }

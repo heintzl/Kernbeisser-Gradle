@@ -58,13 +58,15 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
     }
   }
 
-  public int parseAmount(String s) {
+  public int parseAmount(String s) throws SilentParseException {
     var view = getView();
     MetricUnits unit = view.getMetricUnits();
     if (unit != null) {
       return (int)
           (Double.parseDouble(s.replace(",", ".")) / view.getMetricUnits().getBaseFactor());
-    } else throw new NullPointerException();
+    } else {
+      throw new SilentParseException();
+    }
   }
 
   public String displayAmount(int amount) {

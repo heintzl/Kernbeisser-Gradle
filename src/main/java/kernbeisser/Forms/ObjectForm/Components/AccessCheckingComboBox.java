@@ -1,6 +1,7 @@
 package kernbeisser.Forms.ObjectForm.Components;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.util.Optional;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -21,6 +22,9 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
         Predictable<P> {
   private boolean inputChanged = false;
 
+  private final Color foregroundDefault = getForeground();
+  private final Color backgroundDefault = getBackground();
+
   @lombok.Setter private boolean allowNull;
 
   private static final Object NO_READ_PERMISSION = "<Keine Leseberechtigung>";
@@ -34,7 +38,17 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
     this.getter = getter;
     this.setter = setter;
     this.source = source;
-    addActionListener(e -> inputChanged = true);
+    addActionListener(this::inputChanged);
+  }
+
+  private void inputChanged(ActionEvent itemEvent) {
+    inputChanged = true;
+    removeInvalidInputMark();
+  }
+
+  private void removeInvalidInputMark() {
+    setForeground(foregroundDefault);
+    setBackground(backgroundDefault);
   }
 
   private void pullSource() {
@@ -92,7 +106,11 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
 
   @Override
   public void setInvalidInput() {
-    setForeground(Color.RED);
+    if (getSelected().isPresent()) {
+      setForeground(Color.RED);
+    } else {
+      setBackground(new Color(0xFF9999));
+    }
   }
 
   @Override
