@@ -57,14 +57,17 @@ public class UserController extends FormController<UserView, UserModel, User> {
 
   void refreshUsername() {
     var view = getView();
-    String firstName = view.getFirstName();
-    String surName = view.getSurname();
-    if (getMode() == Mode.ADD && surName != null && firstName != null) {
-      getView()
-          .setUsername(
-              model
-                  .generateUsername(firstName.toLowerCase().replace(" ", ""), surName.toLowerCase())
-                  .replace(" ", ""));
+    if (getMode() == Mode.ADD) {
+      String firstName = view.getFirstName();
+      String surName = view.getSurname();
+      if (surName != null && firstName != null) {
+        getView()
+            .setUsername(
+                model
+                    .generateUsername(
+                        firstName.toLowerCase().replace(" ", ""), surName.toLowerCase())
+                    .replace(" ", ""));
+      }
     }
   }
 

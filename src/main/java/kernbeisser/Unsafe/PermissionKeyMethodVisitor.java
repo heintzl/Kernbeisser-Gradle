@@ -2,10 +2,6 @@ package kernbeisser.Unsafe;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
@@ -29,48 +25,6 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
   private String targetDescriptor;
   private final Set<String> visited;
   private final PermissionSet collected;
-
-  private static AnalyserTarget getReflectedMethod(Serializable lambda) throws Exception {
-    try {
-      Method m = lambda.getClass().getDeclaredMethod("writeReplace");
-      m.setAccessible(true);
-      SerializedLambda sl = (SerializedLambda) m.invoke(lambda);
-      Class<?> cl = Class.forName(sl.getImplClass().replace("/", "."));
-      return new AnalyserTarget(sl.getImplMethodName(), sl.getImplMethodSignature(), cl);
-    } catch (NoSuchMethodException | ClassCastException e) {
-      throw new UnsupportedOperationException("not a lambda instance");
-    }
-  }
-
-  public static String getSignature(Method m, Field signature) {
-    String sig;
-    try {
-      signature.setAccessible(true);
-      sig = (String) signature.get(m);
-      if (sig != null) return sig;
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    }
-
-    StringBuilder sb = new StringBuilder("(");
-    for (Class<?> c : m.getParameterTypes())
-      sb.append((sig = Array.newInstance(c, 0).toString()), 1, sig.indexOf('@'));
-    return sb.append(')')
-        .append(
-            m.getReturnType() == void.class
-                ? "V"
-                : (sig = Array.newInstance(m.getReturnType(), 0).toString())
-                    .substring(1, sig.indexOf('@')))
-        .toString()
-        .replace(".", "/");
-  }
-
-  @SneakyThrows
-  public static String getSignature(Method m) {
-    Field sig = Method.class.getDeclaredField("signature");
-    sig.setAccessible(true);
-    return getSignature(m, sig);
-  }
 
   public PermissionKeyMethodVisitor(int depth, AnalyserTarget target, PermissionSet collector) {
     super(Opcodes.ASM7);
@@ -144,23 +98,24 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
   // searches the binary class for methods look-ups which requires permission
   public static PermissionSet accessedKeys(
       Serializable serializable, PermissionSet collector, int depth) {
-    try {
-      return ofMethod(getReflectedMethod(serializable), collector, depth);
-    } catch (UnsupportedOperationException e) {
-      for (Method declaredMethod : serializable.getClass().getDeclaredMethods()) {
-        ofMethod(AnalyserTarget.ofMethod(declaredMethod), collector, depth);
-      }
-      return collector;
-    }
+    return peekTargets(AnalyserTarget.ofLambda(serializable), collector, depth);
   }
 
-  public static PermissionSet ofMethod(AnalyserTarget method, PermissionSet collector, int depth)
+  @SneakyThrows
+  public static PermissionSet peekTargets(
+      AnalyserTarget[] analyserTargets, PermissionSet collector, int depth) {
+    for (AnalyserTarget analyserTarget : analyserTargets) {
+      peekTarget(analyserTarget, collector, depth);
+    }
+    return collector;
+  }
+
+  public static PermissionSet peekTarget(AnalyserTarget method, PermissionSet collector, int depth)
       throws IOException {
     PermissionSet cached = cache.get(method);
     if (cached != null) {
       return collector.or(cached);
     }
-
     PermissionKeyMethodVisitor subMethodVisitor =
         new PermissionKeyMethodVisitor(depth, method, collector);
     ClassReader cr = new ClassReader(method.getTargetClass().getName());

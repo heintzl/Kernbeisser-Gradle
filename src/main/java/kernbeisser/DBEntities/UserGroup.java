@@ -114,7 +114,7 @@ public class UserGroup implements UserRelated {
     Collection<User> members = getMembers();
     StringBuilder sb = new StringBuilder();
     for (User member : members) {
-      sb.append(member.getFirstName()).append(" ").append(member.getSurname()).append(", ");
+      sb.append(member.getFullName()).append(", ");
     }
     sb.delete(sb.length() - 2, sb.length());
     return sb.toString();

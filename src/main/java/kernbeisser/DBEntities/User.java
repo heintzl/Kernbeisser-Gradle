@@ -242,7 +242,13 @@ public class User implements Serializable, UserRelated {
   }
   // changed from direct reference to getter to keep security
   public String getFullName() {
-    return Tools.accessString(this::getFirstName) + " " + Tools.accessString(this::getSurname);
+    return getFullName(false);
+  }
+
+  public String getFullName(boolean firstSurname) {
+    return firstSurname
+        ? Tools.accessString(this::getSurname) + " " + Tools.accessString(this::getFirstName)
+        : Tools.accessString(this::getFirstName) + " " + Tools.accessString(this::getSurname);
   }
 
   public String toString() {
@@ -325,10 +331,6 @@ public class User implements Serializable, UserRelated {
     set.removePermission(PermissionKey.USER_PERMISSIONS_WRITE);
     Access.getExceptions().put(user, new PermissionSetAccessManager(set));
     return user;
-  }
-
-  public int getIdWithoutPermission() {
-    return id;
   }
 
   public double valueAt(Instant instant) {

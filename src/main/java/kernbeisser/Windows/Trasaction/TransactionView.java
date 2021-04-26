@@ -129,12 +129,8 @@ public class TransactionView implements IView<TransactionController> {
         new ObjectTable<>(
             Column.create(
                 "Von",
-                e ->
-                    e.getFromUser() == null
-                        ? "Kernbeißer"
-                        : (e.getFromUser().getSurname() + ", " + e.getFromUser().getFirstName())),
-            Column.create(
-                "An", e -> e.getToUser().getSurname() + ", " + e.getToUser().getFirstName()),
+                e -> e.getFromUser() == null ? "Kernbeißer" : (e.getFromUser().getFullName(true))),
+            Column.create("An", e -> e.getToUser().getFullName(true)),
             Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
             // Column.create("VeranlasserInn", e -> e.getCreatedBy().getFullName()),
             Column.create("Info", Transaction::getInfo));
