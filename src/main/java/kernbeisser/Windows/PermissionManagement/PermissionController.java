@@ -1,5 +1,6 @@
 package kernbeisser.Windows.PermissionManagement;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -99,17 +100,15 @@ public class PermissionController extends Controller<PermissionView, PermissionM
                           change(permission, e);
                         }))
             .collect(Collectors.toCollection(ArrayList::new)));
-    List<PermissionKey> values = new ArrayList<>();
-    values.addAll(
-        Arrays.asList(
+    List<PermissionKey> values =
+        Arrays.stream(
                 PermissionKey.with(
                     e ->
                         e.getClazz() != null
                             && (e.getClazz().equals(getView().getCategory())
                                 & !e.name().endsWith("_WRITE"))))
-            .stream()
             .sorted(Comparator.comparing(p -> PermissionKey.getPermissionHint(p.toString())))
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
     if (!getView().getCategory().equals(ActionPermission.class))
       values.add(0, PermissionKey.CHANGE_ALL);
     getView().setValues(values);
@@ -163,4 +162,6 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     PermissionRepresentation.write(
         selectedFile, new PermissionRepresentation(Permission.getAll(null)));
   }
+
+  public void mergePermission(ActionEvent actionEvent) {}
 }
