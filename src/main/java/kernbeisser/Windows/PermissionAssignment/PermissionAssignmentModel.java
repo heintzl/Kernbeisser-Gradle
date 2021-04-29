@@ -31,7 +31,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   }
 
   public Source<User> allUsers() {
-    return Source.of(User.class);
+    return () -> User.getAllUserFullNames(false);
   }
 
   public Collection<User> assignedUsers(Permission permission) {
@@ -39,9 +39,9 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select u from User u where :pid in elements(u.permissions)", User.class)
-        .setParameter("pid", permission)
-        .getResultList();
+    Collection<User> users = permission.getAllUsers();
+    users.removeAll(User.getGenericUsers());
+    return users;
   }
 
   public void setPermission(Permission permission, Collection<User> loaded) {

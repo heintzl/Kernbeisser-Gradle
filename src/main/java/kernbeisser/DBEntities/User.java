@@ -78,7 +78,7 @@ public class User implements Serializable, UserRelated {
   @Column(unique = true, nullable = false)
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_READ)})
-  private String username;
+  private String username = "Keiner";
 
   @Column(nullable = false)
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
@@ -416,11 +416,22 @@ public class User implements Serializable, UserRelated {
     et.begin();
     List<User> result =
         em.createQuery(
-                "select u from User u where upper(username) != 'KERNBEISSER' order by firstName,surname asc",
+                "select u from User u where not " + GENERIC_USERS_CONDITION + " order by firstName,surname asc",
                 User.class)
             .getResultList();
     if (withKbUser) result.add(0, User.getKernbeisserUser());
     return result;
+  }
+
+  public static Collection<User> getGenericUsers() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+                    "select u from User u where " + GENERIC_USERS_CONDITION,
+                    User.class)
+                    .getResultList();
   }
 
   public static void populateUserComboBox(
