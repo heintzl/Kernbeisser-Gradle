@@ -155,6 +155,9 @@ public class User implements Serializable, UserRelated {
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
   private boolean forcePasswordChange = false;
 
+  private static final String GENERIC_USERS_CONDITION =
+      "upper(username) IN ('KERNBEISSER', 'ADMIN')";
+
   @Key(PermissionKey.USER_PERMISSIONS_READ)
   public Set<Permission> getPermissionsAsAvailable() {
     return Tools.or(this::getPermissions, Collections.unmodifiableSet(permissions));
@@ -416,7 +419,9 @@ public class User implements Serializable, UserRelated {
     et.begin();
     List<User> result =
         em.createQuery(
-                "select u from User u where not " + GENERIC_USERS_CONDITION + " order by firstName,surname asc",
+                "select u from User u where not "
+                    + GENERIC_USERS_CONDITION
+                    + " order by firstName,surname asc",
                 User.class)
             .getResultList();
     if (withKbUser) result.add(0, User.getKernbeisserUser());
@@ -428,10 +433,8 @@ public class User implements Serializable, UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-                    "select u from User u where " + GENERIC_USERS_CONDITION,
-                    User.class)
-                    .getResultList();
+    return em.createQuery("select u from User u where " + GENERIC_USERS_CONDITION, User.class)
+        .getResultList();
   }
 
   public static void populateUserComboBox(
