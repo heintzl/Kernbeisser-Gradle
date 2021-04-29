@@ -96,7 +96,7 @@ public class Users {
         break;
       }
     }
-    if (user.getUsername() == null) {
+    if (user.getUsername().equals(new User().getUsername())) {
       user.setUsername(user.getFirstName() + "." + user.getSurname() + new Random().nextLong());
     }
   }

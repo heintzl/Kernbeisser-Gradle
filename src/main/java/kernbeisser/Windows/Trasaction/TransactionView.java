@@ -269,7 +269,7 @@ public class TransactionView implements IView<TransactionController> {
     addTransaction.addActionListener(e -> controller.addTransaction());
     addTransaction.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 20, Color.GREEN));
     back.addActionListener(e -> back());
-    back.setIcon(IconFontSwing.buildIcon(FontAwesome.ARROW_LEFT, 20, Color.ORANGE));
+    back.setIcon(IconFontSwing.buildIcon(FontAwesome.POWER_OFF, 20, Color.DARK_GRAY));
     delete.addActionListener(e -> controller.remove());
     delete.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED));
     transactions.addKeyListener(

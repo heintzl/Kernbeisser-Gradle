@@ -143,7 +143,7 @@ public class CashierShoppingMaskController
 
   @Override
   public void fillView(CashierShoppingMaskView cashierShoppingMaskView) {
-    cashierShoppingMaskView.setAllSecondarySellers(User.getAll(null));
+    cashierShoppingMaskView.setAllSecondarySellers(User.getAllUserFullNames(false));
     cashierShoppingMaskView.selectActiveCustomers();
   }
 }

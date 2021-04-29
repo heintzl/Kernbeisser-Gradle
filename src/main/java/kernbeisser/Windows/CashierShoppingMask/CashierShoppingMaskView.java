@@ -88,16 +88,14 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
 
   public void setAllSecondarySellers(Collection<User> users) {
     secondSellerUsername.removeAllItems();
-    User user = new User();
-    user.setUsername("Keiner");
-    secondSellerUsername.addItem(user);
+    secondSellerUsername.addItem(new User());
     users.forEach(e -> secondSellerUsername.addItem(e));
   }
 
   public void notEnoughCredit() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Der Ausgewählte Benutzer hat nicht genung Guthaben, um einen Einkauf zu beginnen!");
+        "Der Ausgewählte Benutzer hat nicht genug Guthaben, um einen Einkauf zu beginnen!");
   }
 
   @Override
