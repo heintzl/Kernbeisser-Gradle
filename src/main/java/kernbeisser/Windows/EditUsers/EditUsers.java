@@ -18,13 +18,15 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 
 public class EditUsers extends ObjectViewController<User> {
+
+  UsersFilter usersFilter =
+      new UsersFilter(() -> getSearchBoxController().invokeSearch(), UsersFilter.FILTER_ACTIVE);
+
   @Key(PermissionKey.ACTION_OPEN_EDIT_USERS)
   public EditUsers() {
-    super(
-        "Benutzer bearbeiten",
-        new UserController(),
-        User::defaultSearch,
-        false,
+    super("Benutzer bearbeiten", new UserController(), false);
+    setSearchBoxController(
+        usersFilter::searchable,
         Column.create("Vorname", User::getFirstName),
         Column.create("Nachname", User::getSurname),
         Column.create("Benutzername", User::getUsername),
@@ -33,6 +35,7 @@ public class EditUsers extends ObjectViewController<User> {
             u -> String.format("%.2f€", u.getUserGroup().getValue()),
             SwingConstants.RIGHT,
             Column.NUMBER_SORTER));
+    addRadioButtons(usersFilter.createFilterOptionButtons());
   }
 
   @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)
