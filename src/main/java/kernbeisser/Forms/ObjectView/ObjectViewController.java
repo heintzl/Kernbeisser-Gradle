@@ -110,6 +110,10 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     searchBoxController.addExtraRadioOptions(radios);
   }
 
+  public void addCheckBoxes(Collection<JCheckBox> checkBoxes) {
+    searchBoxController.addExtraCheckboxes(checkBoxes);
+  }
+
   void add() {
     openForm(Mode.ADD);
   }
