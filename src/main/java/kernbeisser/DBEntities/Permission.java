@@ -70,6 +70,8 @@ public class Permission {
             .put("@APPLICATION", "<Applikation>")
             .put("@ADMIN", "<Administration>")
             .put("@IN_RELATION_TO_OWN_USER", "<eigene Daten>")
+            .put("@CASHIER", "<Ladendienst>")
+            .put("@BASIC_ACCESS", "<Basis-Anwender>")
             .build();
     if (!name.startsWith("@")) {
       return name;

@@ -482,6 +482,7 @@ public enum PermissionKey {
             .put("ACTION_ORDER_CONTAINER", "Vorbestellungen für alle bearbeiten")
             .put("ACTION_ORDER_OWN_CONTAINER", "Vorbestellungen für mich bearbeiten")
             .put("ACTION_OPEN_ADMIN_TOOLS", "Benutzer administrieren")
+            .put("ACTION_GRANT_CASHIER_PERMISSION", "Ladendienstrolle vergeben")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }

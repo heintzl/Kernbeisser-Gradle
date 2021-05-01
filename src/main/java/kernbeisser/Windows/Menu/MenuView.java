@@ -75,6 +75,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton doUserDefiniedTransaction;
   private JButton logout;
   private ControllerButton permissionAssignment;
+  private JButton grantCashierRole;
 
   @Override
   public void initialize(MenuController controller) {
@@ -212,6 +213,10 @@ public class MenuView implements IView<MenuController> {
     permissionAssignment =
         new ControllerButton(
             PermissionAssignmentController::new, PermissionAssignmentController.class);
+    grantCashierRole =
+        new ControllerButton(
+            PermissionAssignmentController::cashierPermissionController,
+            PermissionAssignmentController.class);
   }
 
   @Override
