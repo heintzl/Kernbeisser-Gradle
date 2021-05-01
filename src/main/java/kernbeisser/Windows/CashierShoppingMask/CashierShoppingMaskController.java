@@ -1,10 +1,8 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Purchase;
@@ -29,13 +27,14 @@ public class CashierShoppingMaskController
     extends Controller<CashierShoppingMaskView, CashierShoppingMaskModel> {
 
   @Linked private final SearchBoxController<User> searchBoxController;
+  private UserFilter userFilter = new UserFilter(this::changeFilter, UserFilter.FILTER_ACTIVE);
 
   @Key(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK)
   public CashierShoppingMaskController() {
     super(new CashierShoppingMaskModel());
     this.searchBoxController =
         new SearchBoxController<>(
-            this::searchable,
+            userFilter::searchable,
             Column.create("Vorname", User::getFirstName),
             Column.create("Nachname", User::getSurname),
             Column.create("Benutzername", User::getUsername),
@@ -43,18 +42,7 @@ public class CashierShoppingMaskController
     searchBoxController.addLostSelectionListener(() -> selectUser(null));
     searchBoxController.addSelectionListener(this::selectUser);
     searchBoxController.addDoubleClickListener(e -> openMaskWindow());
-  }
-
-  private Collection<User> searchable(String s, int max) {
-    CashierShoppingMaskView view = getView();
-
-    Predicate<User> filter;
-    if (view.getActiveCustomers().isSelected()) filter = User::isActive;
-    else if (view.getInactiveCustomers().isSelected()) filter = (u -> !u.isActive());
-    else if (view.getBeginnerCustomers().isSelected()) filter = User::isBeginner;
-    else filter = (u -> true);
-
-    return User.defaultSearch(s, max).stream().filter(filter).collect(Collectors.toList());
+    searchBoxController.addExtraRadioOptions(userFilter.createFilterOptionButtons());
   }
 
   public void changeFilter() {
@@ -144,6 +132,5 @@ public class CashierShoppingMaskController
   @Override
   public void fillView(CashierShoppingMaskView cashierShoppingMaskView) {
     cashierShoppingMaskView.setAllSecondarySellers(User.getAllUserFullNames(false));
-    cashierShoppingMaskView.selectActiveCustomers();
   }
 }

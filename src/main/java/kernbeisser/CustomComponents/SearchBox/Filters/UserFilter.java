@@ -1,4 +1,4 @@
-package kernbeisser.Windows.EditUsers;
+package kernbeisser.CustomComponents.SearchBox.Filters;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,18 +8,18 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 
-public class UsersFilter {
+public class UserFilter {
 
-  static final int FILTER_ALL = 0;
-  static final int FILTER_ACTIVE = 1;
-  static final int FILTER_INACTIVE = 2;
-  static final int FILTER_BEGINNERS = 3;
+  public static final int FILTER_ALL = 0;
+  public static final int FILTER_ACTIVE = 1;
+  public static final int FILTER_INACTIVE = 2;
+  public static final int FILTER_BEGINNERS = 3;
 
   int userFilter;
 
   Runnable callback;
 
-  public UsersFilter(Runnable refreshMethod, int initFilterState) {
+  public UserFilter(Runnable refreshMethod, int initFilterState) {
     callback = refreshMethod;
     userFilter = initFilterState;
   }

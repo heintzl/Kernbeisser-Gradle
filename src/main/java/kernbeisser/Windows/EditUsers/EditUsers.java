@@ -5,6 +5,7 @@ import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -19,14 +20,14 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 
 public class EditUsers extends ObjectViewController<User> {
 
-  UsersFilter usersFilter =
-      new UsersFilter(() -> getSearchBoxController().invokeSearch(), UsersFilter.FILTER_ACTIVE);
+  UserFilter userFilter =
+      new UserFilter(() -> getSearchBoxController().invokeSearch(), UserFilter.FILTER_ACTIVE);
 
   @Key(PermissionKey.ACTION_OPEN_EDIT_USERS)
   public EditUsers() {
     super("Benutzer bearbeiten", new UserController(), false);
     setSearchBoxController(
-        usersFilter::searchable,
+        userFilter::searchable,
         Column.create("Vorname", User::getFirstName),
         Column.create("Nachname", User::getSurname),
         Column.create("Benutzername", User::getUsername),
@@ -35,7 +36,7 @@ public class EditUsers extends ObjectViewController<User> {
             u -> String.format("%.2f€", u.getUserGroup().getValue()),
             SwingConstants.RIGHT,
             Column.NUMBER_SORTER));
-    addRadioButtons(usersFilter.createFilterOptionButtons());
+    addRadioButtons(userFilter.createFilterOptionButtons());
   }
 
   @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)
