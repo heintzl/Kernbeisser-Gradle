@@ -20,6 +20,7 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   private JTextField searchInput;
   private ObjectTable<T> objects;
   private JPanel main;
+  private JPanel extraOptionsPanel;
 
   @Linked private SearchBoxController<T> controller;
 
@@ -37,6 +38,10 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
 
   public T getSelectedObject() {
     return objects.getSelectedObject();
+  }
+
+  JPanel getExtraOptionsPanel() {
+    return extraOptionsPanel;
   }
 
   private void createUIComponents() {

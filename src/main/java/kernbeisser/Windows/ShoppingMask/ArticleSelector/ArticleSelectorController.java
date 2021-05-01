@@ -1,9 +1,8 @@
 package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 
-import java.util.Collection;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Article;
@@ -15,12 +14,13 @@ public class ArticleSelectorController
     extends Controller<ArticleSelectorView, ArticleSelectorModel> {
 
   @Linked private final SearchBoxController<Article> searchBoxController;
+  private ArticleFilter articleFilter = new ArticleFilter(this::refreshSearch);
 
   public ArticleSelectorController(Consumer<Article> consumer) {
     super(new ArticleSelectorModel(consumer));
     searchBoxController =
         new SearchBoxController<>(
-            this::search,
+            articleFilter::searchable,
             Column.create("Name", Article::getName),
             Column.create("Barcode", Article::getBarcode),
             Column.create("KB-Nummer", Article::getKbNumber),
@@ -32,25 +32,7 @@ public class ArticleSelectorController
                             ? " (" + e.getSuppliersItemNumber() + ")"
                             : "")));
     searchBoxController.addDoubleClickListener(e -> this.choose());
-  }
-
-  private Collection<Article> search(String query, int max) {
-    ArticleSelectorView view = getView();
-    return Article.getDefaultAll(
-        query,
-        createFilter(
-            view.searchOnlyWithoutBarcode(),
-            view.searchOnlyShowInShop(),
-            view.searchOnlyShopRange()),
-        max);
-  }
-
-  private Predicate<Article> createFilter(
-      boolean filterBarcode, boolean filterShowInShoppingCart, boolean filterShopRange) {
-    return e ->
-        !(filterBarcode && e.getBarcode() != null)
-            && !(filterShowInShoppingCart && !e.isShowInShop())
-            && !(filterShopRange && !e.isShopRange());
+    searchBoxController.addExtraCheckboxes(articleFilter.createFilterCheckboxes());
   }
 
   void refreshSearch() {

@@ -13,26 +13,11 @@ import org.jetbrains.annotations.NotNull;
 public class ArticleSelectorView implements IView<ArticleSelectorController> {
   private JPanel main;
   private JButton chooseButton;
-  private JCheckBox onlyWithoutBarcode;
   private SearchBoxView<Article> searchBox;
-  private JCheckBox showInShopArticles;
-  private JCheckBox showShopRange;
 
   @Linked private ArticleSelectorController controller;
 
   @Linked private SearchBoxController<Article> searchBoxController;
-
-  boolean searchOnlyWithoutBarcode() {
-    return onlyWithoutBarcode != null && onlyWithoutBarcode.isSelected();
-  }
-
-  boolean searchOnlyShowInShop() {
-    return showInShopArticles != null && showInShopArticles.isSelected();
-  }
-
-  boolean searchOnlyShopRange() {
-    return showShopRange != null && showShopRange.isSelected();
-  }
 
   private void createUIComponents() {
     searchBox = searchBoxController.getView();
@@ -40,10 +25,6 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
 
   @Override
   public void initialize(ArticleSelectorController controller) {
-    onlyWithoutBarcode.addActionListener(e -> controller.refreshSearch());
-    showInShopArticles.addActionListener(e -> controller.refreshSearch());
-    showShopRange.setSelected(true);
-    showShopRange.addActionListener(e -> controller.refreshSearch());
     chooseButton.addActionListener(e -> controller.choose());
   }
 

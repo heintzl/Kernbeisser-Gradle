@@ -19,12 +19,21 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
   private JButton delete;
   private SearchBoxView<T> searchBoxView;
   private JPanel main;
+  private JPanel extraButtons;
 
   @Linked private ObjectViewController<T> controller;
 
   @Linked private SearchBoxController<T> searchBoxController;
 
   @Linked private String title;
+
+  JPanel getExtraButtonPanel() {
+    return extraButtons;
+  }
+
+  Font getButtonFont() {
+    return edit.getFont();
+  }
 
   void setEditAvailable(boolean s) {
     edit.setEnabled(s);
