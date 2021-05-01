@@ -52,6 +52,7 @@ public enum PermissionKey {
   ACTION_TRANSACTION_FROM_KB(ActionPermission.class),
   ACTION_ORDER_CONTAINER(ActionPermission.class),
   ACTION_ORDER_OWN_CONTAINER(ActionPermission.class),
+  ACTION_GRANT_CASHIER_PERMISSION(ActionPermission.class),
 
   ADD_ARTICLE(Article.class),
   REMOVE_ARTICLE(Article.class),
