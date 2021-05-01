@@ -1,6 +1,7 @@
 package kernbeisser.Forms.ObjectView;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.function.Consumer;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -13,12 +14,13 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.Getter;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectViewController<T> extends Controller<ObjectViewView<T>, ObjectViewModel<T>> {
 
-  @Linked private final SearchBoxController<T> searchBoxController;
+  @Linked @Getter private SearchBoxController<T> searchBoxController;
 
   @Linked private String title;
 
@@ -28,8 +30,18 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
       Searchable<T> items,
       boolean copyAdd,
       Column<T>... columns) {
-    super(new ObjectViewModel<>(controller, items, copyAdd));
+    this(title, controller, copyAdd);
+    model.setItemSupplier(items);
+    searchBoxController = new SearchBoxController<T>(items, columns);
+  }
+
+  public ObjectViewController(String title, FormController<?, ?, T> controller, boolean copyAdd) {
+    super(new ObjectViewModel<>(controller, copyAdd));
     this.title = title;
+  }
+
+  public void setSearchBoxController(Searchable<T> items, Column<T>... columns) {
+    model.setItemSupplier(items);
     searchBoxController = new SearchBoxController<T>(items, columns);
   }
 
@@ -92,6 +104,10 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     button.setFont(view.getButtonFont());
     button.setEnabled(false);
     view.getExtraButtonPanel().add(button);
+  }
+
+  public void addRadioButtons(Collection<JRadioButton> radios) {
+    searchBoxController.addExtraRadioOptions(radios);
   }
 
   void add() {
