@@ -72,6 +72,13 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     }
   }
 
+  public void addExtraCheckboxes(Collection<JCheckBox> checkBoxes) {
+    JPanel panel = getView().getExtraOptionsPanel();
+    for (JCheckBox b : checkBoxes) {
+      panel.add(b);
+    }
+  }
+
   @Override
   public void fillView(SearchBoxView<T> tSearchBoxView) {
     tSearchBoxView.setColumns(Arrays.asList(model.getColumns()));
