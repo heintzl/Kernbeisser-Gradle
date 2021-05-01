@@ -1,5 +1,8 @@
 package kernbeisser.Forms.ObjectView;
 
+import java.awt.*;
+import java.util.function.Consumer;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -40,9 +43,11 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     if (searchBoxController.getSelectedObject() == null) {
       view.setEditAvailable(false);
       view.setRemoveAvailable(false);
+      setExtraButtonsAvailable(false);
     } else {
       view.setEditAvailable(model.isEditAvailable());
       view.setRemoveAvailable(model.isRemoveAvailable());
+      setExtraButtonsAvailable(true);
     }
   }
 
@@ -71,6 +76,22 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
         .withCloseEvent(searchBoxController::invokeSearch)
         .openIn(new SubWindow(getView().traceViewContainer()));
     refreshButtonStates();
+  }
+
+  public void setExtraButtonsAvailable(boolean available) {
+    for (Component c : getView().getExtraButtonPanel().getComponents()) {
+      if (c instanceof JButton) {
+        c.setEnabled(available);
+      }
+    }
+  }
+
+  public void addButton(JButton button, Consumer<T> buttonAction) {
+    ObjectViewView view = getView();
+    button.addActionListener(e -> buttonAction.accept(searchBoxController.getSelectedObject()));
+    button.setFont(view.getButtonFont());
+    button.setEnabled(false);
+    view.getExtraButtonPanel().add(button);
   }
 
   void add() {
