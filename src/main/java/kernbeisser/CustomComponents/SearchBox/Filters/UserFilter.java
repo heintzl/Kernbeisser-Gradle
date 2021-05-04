@@ -48,9 +48,9 @@ public class UserFilter {
     callback.run();
   }
 
-  public List<JRadioButton> createFilterOptionButtons() {
+  public List<JComponent> createFilterOptionButtons() {
     ButtonGroup filterGroup = new ButtonGroup();
-    List<JRadioButton> filterButtons = new ArrayList<>();
+    List<JComponent> filterButtons = new ArrayList<>();
     JRadioButton filterButton = new JRadioButton("nur Aktive");
     filterButton.addActionListener(e -> setFilterState(FILTER_ACTIVE));
     filterButton.setSelected(true);

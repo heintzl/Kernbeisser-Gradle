@@ -65,17 +65,10 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     model.getLostSelectionListener().add(r);
   }
 
-  public void addExtraRadioOptions(Collection<JRadioButton> radios) {
+  public void addExtraComponents(Collection<JComponent> components) {
     JPanel panel = getView().getExtraOptionsPanel();
-    for (JRadioButton b : radios) {
-      panel.add(b);
-    }
-  }
-
-  public void addExtraCheckboxes(Collection<JCheckBox> checkBoxes) {
-    JPanel panel = getView().getExtraOptionsPanel();
-    for (JCheckBox b : checkBoxes) {
-      panel.add(b);
+    for (JComponent c : components) {
+      panel.add(c);
     }
   }
 

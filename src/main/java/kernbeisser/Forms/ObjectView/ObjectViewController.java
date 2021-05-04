@@ -106,12 +106,8 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     view.getExtraButtonPanel().add(button);
   }
 
-  public void addRadioButtons(Collection<JRadioButton> radios) {
-    searchBoxController.addExtraRadioOptions(radios);
-  }
-
-  public void addCheckBoxes(Collection<JCheckBox> checkBoxes) {
-    searchBoxController.addExtraCheckboxes(checkBoxes);
+  public void addComponents(Collection<JComponent> components) {
+    searchBoxController.addExtraComponents(components);
   }
 
   void add() {
