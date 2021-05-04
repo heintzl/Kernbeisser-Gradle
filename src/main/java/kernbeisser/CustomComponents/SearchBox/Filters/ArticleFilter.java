@@ -29,8 +29,8 @@ public class ArticleFilter {
         max);
   }
 
-  public List<JCheckBox> createFilterCheckboxes() {
-    List<JCheckBox> checkBoxes = new ArrayList<>();
+  public List<JComponent> createFilterCheckboxes() {
+    List<JComponent> checkBoxes = new ArrayList<>();
     final JCheckBox noBarcode = new JCheckBox("nur ohne Barcode");
     noBarcode.addActionListener(
         e -> {

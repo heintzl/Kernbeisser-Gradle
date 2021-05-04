@@ -36,7 +36,7 @@ public class EditUsers extends ObjectViewController<User> {
             u -> String.format("%.2f€", u.getUserGroup().getValue()),
             SwingConstants.RIGHT,
             Column.NUMBER_SORTER));
-    addRadioButtons(userFilter.createFilterOptionButtons());
+    addComponents(userFilter.createFilterOptionButtons());
   }
 
   @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)

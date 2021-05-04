@@ -3,19 +3,15 @@ package kernbeisser.Windows.PermissionAssignment;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.StaticPermissionChecks;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -24,6 +20,7 @@ public class PermissionAssignmentController
     extends Controller<PermissionAssignmentView, PermissionAssignmentModel> {
 
   @Linked private final CollectionController<User> user;
+  private boolean onlyCashier = false;
 
   @Key(PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT)
   public PermissionAssignmentController() throws PermissionKeyRequiredException {
@@ -33,9 +30,21 @@ public class PermissionAssignmentController
             new ArrayList<>(), Source.empty(), Column.create("Benutzername", User::getUsername));
   }
 
+  @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
+  private PermissionAssignmentController(boolean dummy) throws PermissionKeyRequiredException {
+    super(new PermissionAssignmentModel());
+    this.onlyCashier = true;
+    user =
+        new CollectionController<>(
+            new ArrayList<>(), Source.empty(), Column.create("Benutzername", User::getUsername));
+  }
+
   @Override
   public void fillView(PermissionAssignmentView permissionAssignmentView) {
-    permissionAssignmentView.setPermissions(model.getPermissions());
+    permissionAssignmentView.setPermissions(
+        model.getPermissions().stream()
+            .filter(p -> (p.getName().equals("@CASHIER") || !onlyCashier))
+            .collect(Collectors.toList()));
   }
 
   public void loadPermission(ActionEvent actionEvent) {
@@ -55,19 +64,6 @@ public class PermissionAssignmentController
   }
 
   public static PermissionAssignmentController cashierPermissionController() {
-    StaticPermissionChecks.getStaticInstance().checkActionGrantCashierPermission();
-    AccessManager before = Access.getDefaultManager();
-    Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
-    try {
-      return new PermissionAssignmentController() {
-        @Override
-        public void fillView(PermissionAssignmentView permissionAssignmentView) {
-          permissionAssignmentView.setPermissions(
-              Collections.singletonList(PermissionConstants.CASHIER.getPermission()));
-        }
-      };
-    } finally {
-      Access.setDefaultManager(before);
-    }
+    return new PermissionAssignmentController(true);
   }
 }

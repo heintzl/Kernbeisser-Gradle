@@ -83,7 +83,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
     this.capture =
         new BarcodeCapture(
             e -> objectViewController.openForm(Article.getByBarcode(Long.parseLong(e)), Mode.EDIT));
-    objectViewController.addCheckBoxes(articleFilter.createFilterCheckboxes());
+    objectViewController.addComponents(articleFilter.createFilterCheckboxes());
   }
 
   void refreshList() {
