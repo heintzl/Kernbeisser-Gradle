@@ -64,8 +64,13 @@ public class SupplyView implements IView<SupplyController> {
           @Override
           public void keyReleased(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-              controller.remove(shoppingItems.getSelectedObject());
-              shoppingItems.remove(shoppingItems.getSelectedObject());
+              shoppingItems
+                  .getSelectedObject()
+                  .ifPresent(
+                      selection -> {
+                        controller.remove(selection);
+                        shoppingItems.remove(selection);
+                      });
             }
           }
         });

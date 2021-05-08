@@ -55,7 +55,6 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
         new MouseAdapter() {
           @Override
           public void mouseReleased(MouseEvent e) {
-            T selection;
             int row, column;
             if (getSelectedRow() == -1 && e.getButton() == MouseEvent.BUTTON1) {
               return;
@@ -64,16 +63,19 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             JTable t = (JTable) e.getSource();
             row = t.rowAtPoint(mousePosition);
             column = convertColumnIndexToModel(t.columnAtPoint(mousePosition));
-            selection = getFromRow(row);
-            ObjectTable.this.columns.get(column).onAction(e, selection);
-            invokeSelectionListeners(selection, true);
+            getFromRow(row)
+                .ifPresent(
+                    selection -> {
+                      ObjectTable.this.columns.get(column).onAction(e, selection);
+                      invokeSelectionListeners(selection, true);
+                    });
           }
         });
     addKeyListener(
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            invokeSelectionListeners(getSelectedObject(), false);
+            getSelectedObject().ifPresent(selection -> invokeSelectionListeners(selection, false));
           }
         });
     setRowSorter(createRowSorter());
@@ -103,9 +105,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     return new ObjectTableModel(values, names);
   }
 
-  public T getFromRow(int index) {
-    if (index < 0) return null;
-    return objects.get(super.convertRowIndexToModel(index));
+  public Optional<T> getFromRow(int index) {
+    if (index < 0) return Optional.empty();
+    return Optional.of(objects.get(super.convertRowIndexToModel(index)));
   }
 
   private void invokeSelectionListeners(T t, boolean isMouseClk) {
@@ -149,7 +151,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     return false;
   }
 
-  public T getSelectedObject() {
+  public Optional<T> getSelectedObject() {
     return getFromRow(getSelectedRow());
   }
 
@@ -282,7 +284,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     int[] rows = getSelectedRows();
     ArrayList<T> out = new ArrayList<>(rows.length);
     for (int row : rows) {
-      out.add(getFromRow(row));
+      getFromRow(row).ifPresent(out::add);
     }
     return out;
   }
@@ -291,7 +293,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     int[] rows = getSelectedRows();
     T[] out = Arrays.copyOf(pattern, rows.length);
     for (int i = 0; i < rows.length; i++) {
-      out[i] = getFromRow(rows[i]);
+      out[i] = getFromRow(rows[i]).orElse(null);
     }
     return out;
   }
@@ -304,5 +306,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   public void removeAll(Collection<T> collection) {
     objects.removeAll(collection);
     refreshModel();
+  }
+
+  public List<T> getObjects() {
+    return Collections.unmodifiableList(objects);
   }
 }

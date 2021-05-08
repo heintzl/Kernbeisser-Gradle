@@ -128,6 +128,7 @@ public class ObjectForm<P> {
     try {
       P data = getData(Mode.EDIT);
       Tools.edit(Tools.getId(original), data);
+      JOptionPane.showMessageDialog(null, objectDistinction + " wurde erfolgreich bearbeitet");
       return true;
     } catch (CannotParseException e) {
       notifyException(e);

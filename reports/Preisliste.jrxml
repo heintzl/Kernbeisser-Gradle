@@ -18,7 +18,7 @@
 	<field name="suppliersShortName" class="java.lang.String"/>
 	<field name="shortBarcode" class="java.lang.String"/>
 	<field name="suppliersItemNumber" class="java.lang.Integer"/>
-	<field name="unitAmount" class="java.lang.String"/>
+	<field name="metricUnits" class="java.lang.String"/>
 	<field name="weighAble" class="java.lang.Boolean"/>
 	<sortField name="name"/>
 	<background>
@@ -174,7 +174,7 @@
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{weighAble}?"pro kg":$F{unitAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{weighAble}?"pro kg":$F{metricUnits}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

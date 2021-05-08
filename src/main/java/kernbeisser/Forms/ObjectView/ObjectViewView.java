@@ -83,4 +83,8 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
   public String getTitle() {
     return title;
   }
+
+  public void messageSelectObjectFirst() {
+    message("Bitte wähle zunächst ein Objekt aus.");
+  }
 }

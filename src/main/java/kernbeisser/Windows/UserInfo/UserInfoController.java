@@ -14,6 +14,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
+import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Reports.TransactionStatement;
@@ -95,8 +96,12 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
 
   public void openPurchase() {
     var view = getView();
-    new PurchaseController(view.getSelectedPurchase())
-        .openIn(new SubWindow(view.traceViewContainer()));
+    try {
+      new PurchaseController(view.getSelectedPurchase().orElseThrow(NoSelectionException::new))
+          .openIn(new SubWindow(view.traceViewContainer()));
+    } catch (NoSelectionException e) {
+      view.messageSelectPurchaseFirst();
+    }
   }
 
   @Key(PermissionKey.ACTION_OPEN_EDIT_USERS)

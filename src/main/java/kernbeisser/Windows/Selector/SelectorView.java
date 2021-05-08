@@ -3,6 +3,7 @@ package kernbeisser.Windows.Selector;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -33,7 +34,7 @@ public class SelectorView<T> implements IView<SelectorController<T>> {
     selected.setObjects(collection);
   }
 
-  T getSelectedValue() {
+  Optional<T> getSelectedValue() {
     return selected.getSelectedObject();
   }
 
@@ -62,5 +63,9 @@ public class SelectorView<T> implements IView<SelectorController<T>> {
   @Override
   public @NotNull JComponent getContent() {
     return mainPanel;
+  }
+
+  public void messageSelectObjectFirst() {
+    JOptionPane.showMessageDialog(getContent(), "Bitte wähle vorher etwas aus.");
   }
 }

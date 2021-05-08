@@ -3,6 +3,7 @@ package kernbeisser.Windows.CollectionView;
 import java.util.ArrayList;
 import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.MVC.Controller;
 
@@ -21,17 +22,22 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
   }
 
   public void selectAvailable() {
-    T object = getView().getSelectedAvailableObject();
-    if (object == null) {
-      return;
+    try {
+      T object = getView().getSelectedAvailableObject().orElseThrow(NoSelectionException::new);
+      model.getLoaded().add(object);
+      refresh();
+    } catch (NoSelectionException ignored) {
     }
-    model.getLoaded().add(object);
-    refresh();
   }
 
   public void selectChosen() {
-    model.getLoaded().remove(getView().getSelectedChosenObject());
-    refresh();
+    try {
+      model
+          .getLoaded()
+          .remove(getView().getSelectedChosenObject().orElseThrow(NoSelectionException::new));
+    } catch (NoSelectionException e) {
+      getView().messageSelectObjectFirst();
+    }
   }
 
   private void refresh() {

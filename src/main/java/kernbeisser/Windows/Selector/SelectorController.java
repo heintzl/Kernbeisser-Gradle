@@ -4,6 +4,7 @@ import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
+import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.ViewContainer;
@@ -32,9 +33,15 @@ public class SelectorController<T> extends Controller<SelectorView<T>, SelectorM
   }
 
   public void remove() {
-    var view = getView();
-    model.getCurrentValues().remove(view.getSelectedValue());
-    view.removeValue(view.getSelectedValue());
+
+    try {
+      var view = getView();
+      T value = view.getSelectedValue().orElseThrow(NoSelectionException::new);
+      model.getCurrentValues().remove(value);
+      view.removeValue(value);
+    } catch (NoSelectionException e) {
+      getView().messageSelectObjectFirst();
+    }
   }
 
   private ViewContainer selectionWindow;

@@ -9,6 +9,7 @@ import java.util.function.ToDoubleFunction;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.*;
+import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
@@ -200,7 +201,7 @@ public class ShoppingItem implements Serializable {
     this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
   }
 
-  public static ShoppingItem createReportItem(Article article) {
+  public static PriceListReportArticle createReportItem(Article article) {
     ShoppingItem item = new ShoppingItem(article, 0, false);
     try {
       String barcode = Long.toString(article.getBarcode());
@@ -211,7 +212,7 @@ public class ShoppingItem implements Serializable {
       item.lastDeliveryMonth = Date.INSTANT_MONTH_YEAR.format(article.getLastDelivery());
     } catch (NullPointerException ignored) {
     }
-    return item;
+    return PriceListReportArticle.ofShoppingItem(item);
   }
 
   public static ShoppingItem createRawPriceProduct(

@@ -1,4 +1,4 @@
-package kernbeisser.Windows.SpecialPriceEditor;
+package kernbeisser.Windows.ArticleOffersEditor;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -10,36 +10,17 @@ import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
-public class SpecialPriceEditorModel implements IModel<SpecialPriceEditorController> {
-
-  void edit(int offerId, Offer offer) {
-    Tools.edit(offerId, offer);
-  }
+public class ArticleOffersEditorModel implements IModel<ArticleOffersEditorController> {
 
   void remove(Offer offer) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    em.remove(offer);
-    em.flush();
-  }
-
-  public void addOffer(Article article, Offer offer) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Article i =
-        em.createQuery("select i from Article i where id = :id", Article.class)
-            .setParameter("id", article.getId())
-            .getSingleResult();
-    offer.setArticle(i);
-    em.persist(offer);
+    em.remove(em.find(Offer.class, offer.getId()));
     em.flush();
   }
 

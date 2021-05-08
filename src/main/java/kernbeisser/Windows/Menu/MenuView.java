@@ -13,6 +13,7 @@ import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
+import kernbeisser.Windows.ArticleOffersEditor.ArticleOffersEditorController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.EditArticles.EditItemsController;
@@ -34,7 +35,6 @@ import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.Setting.SettingController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
-import kernbeisser.Windows.SpecialPriceEditor.SpecialPriceEditorController;
 import kernbeisser.Windows.Supply.SupplyController;
 import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -203,7 +203,8 @@ public class MenuView implements IView<MenuController> {
             SynchronizeArticleController.class,
             Controller::openTab);
     offerManagement =
-        new ControllerButton(SpecialPriceEditorController::new, SpecialPriceEditorController.class);
+        new ControllerButton(
+            ArticleOffersEditorController::new, ArticleOffersEditorController.class);
     supply = new ControllerButton(SupplyController::new, SupplyController.class);
     doUserDefiniedTransaction =
         new ControllerButton(

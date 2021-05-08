@@ -11,6 +11,7 @@ import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Security.StaticMethodTransformer.StaticInterface;
 import kernbeisser.Windows.ViewContainer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface IView<
         C extends Controller<? extends IView<? extends C>, ? extends IModel<? extends C>>>
@@ -84,5 +85,17 @@ public interface IView<
 
   default void kill() {
     Optional.ofNullable(traceViewContainer()).ifPresent(ViewContainer::kill);
+  }
+
+  default void message(@NotNull String message) {
+    message(message, "");
+  }
+
+  default void message(@NotNull String message, @Nullable String title) {
+    message(message, title, JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  default void message(@NotNull String message, @Nullable String title, int type) {
+    JOptionPane.showMessageDialog(getContent(), message, title, type);
   }
 }

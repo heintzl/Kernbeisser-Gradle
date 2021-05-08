@@ -12,6 +12,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -97,8 +98,12 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   void remove() {
     var view = getView();
-    model.remove(view.getSelectedTransaction());
-    refreshTable();
+    try {
+      model.remove(view.getSelectedTransaction().orElseThrow(NoSelectionException::new));
+    } catch (NoSelectionException e) {
+      view.messageSelectTransactionFirst();
+      refreshTable();
+    }
   }
 
   private void refreshTable() {

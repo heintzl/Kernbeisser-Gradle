@@ -6,6 +6,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.Optional;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -185,7 +186,7 @@ public class TransactionView implements IView<TransactionController> {
     return value.getSafeValue();
   }
 
-  Transaction getSelectedTransaction() {
+  Optional<Transaction> getSelectedTransaction() {
     return transactions.getSelectedObject();
   }
 
@@ -514,8 +515,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   public void transactionRejected() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(),
+    message(
         "Die eingegeben Überweisungen könnnen nicht getätigt werden,\n"
             + "da einige der Benutzer nicht die Berechtigung haben, unter das minimale\n"
             + "Guthaben von "
@@ -534,5 +534,9 @@ public class TransactionView implements IView<TransactionController> {
   @Override
   public String getTitle() {
     return "Überweisungen (" + controller.getTransactionTypeName() + ")";
+  }
+
+  public void messageSelectTransactionFirst() {
+    message("Bitte wähle zuerst eine Überweissung aus.", "Keine Überweissung ausgewählt");
   }
 }
