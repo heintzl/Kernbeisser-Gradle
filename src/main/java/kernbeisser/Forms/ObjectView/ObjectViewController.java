@@ -105,7 +105,8 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
 
   public void addButton(JButton button, Consumer<T> buttonAction) {
     ObjectViewView view = getView();
-    button.addActionListener(e -> buttonAction.accept(searchBoxController.getSelectedObject().orElse(null)));
+    button.addActionListener(
+        e -> buttonAction.accept(searchBoxController.getSelectedObject().orElse(null)));
     button.setFont(view.getButtonFont());
     button.setEnabled(false);
     view.getExtraButtonPanel().add(button);
