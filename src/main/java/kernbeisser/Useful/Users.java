@@ -12,7 +12,7 @@ import kernbeisser.Enums.Setting;
 import lombok.Cleanup;
 
 public class Users {
-  public String resetPassword(User selectedUser) {
+  public static String resetPassword(User selectedUser) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();

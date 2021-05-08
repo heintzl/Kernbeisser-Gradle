@@ -22,7 +22,8 @@ public enum PermissionConstants {
   KEY_PERMISSION(PermissionKey.ACTION_LOGIN, PermissionKey.GO_UNDER_MIN),
   APPLICATION(PermissionKey.values()),
   IN_RELATION_TO_OWN_USER(PermissionKey.find(User.class).toArray(new PermissionKey[0])),
-  CASHIER(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK);
+  CASHIER(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK),
+  BASIC_ACCESS(PermissionKey.ACTION_LOGIN);
 
   private final Permission bounded;
 

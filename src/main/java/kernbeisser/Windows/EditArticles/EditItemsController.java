@@ -4,7 +4,6 @@ import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
-import java.util.Collection;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -12,6 +11,7 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.StripedRenderer;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
+import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.Mode;
@@ -34,6 +34,8 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
 
   private final BarcodeCapture capture;
 
+  private final ArticleFilter articleFilter = new ArticleFilter(this::refreshList);
+
   @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
   public EditItemsController() {
     super(new EditItemsModel());
@@ -41,7 +43,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
         new ObjectViewController<>(
             "Artikel bearbeiten",
             new ArticleController(),
-            this::search,
+            articleFilter::searchable,
             true,
             new Column<Article>() {
               @Override
@@ -81,11 +83,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
     this.capture =
         new BarcodeCapture(
             e -> objectViewController.openForm(Article.getByBarcode(Long.parseLong(e)), Mode.EDIT));
-  }
-
-  private Collection<Article> search(String query, int max) {
-    return Article.getDefaultAll(
-        query, e -> (!(getView().showOnlyShopRange() && !e.isShopRange())), max);
+    objectViewController.addComponents(articleFilter.createFilterCheckboxes());
   }
 
   void refreshList() {

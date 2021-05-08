@@ -12,7 +12,7 @@ import lombok.Setter;
 @Data
 public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
   private final FormController<?, ?, T> form;
-  private final Searchable<T> itemSupplier;
+  @Setter private Searchable<T> itemSupplier;
 
   private final boolean copyValuesToAdd;
 
@@ -20,8 +20,12 @@ public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
 
   ObjectViewModel(
       FormController<?, ?, T> maskLoader, Searchable<T> itemSupplier, boolean copyValuesToAdd) {
-    this.form = maskLoader;
+    this(maskLoader, copyValuesToAdd);
     this.itemSupplier = itemSupplier;
+  }
+
+  ObjectViewModel(FormController<?, ?, T> maskLoader, boolean copyValuesToAdd) {
+    this.form = maskLoader;
     this.copyValuesToAdd = copyValuesToAdd;
   }
 

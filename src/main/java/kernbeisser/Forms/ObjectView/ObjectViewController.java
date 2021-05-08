@@ -1,5 +1,9 @@
 package kernbeisser.Forms.ObjectView;
 
+import java.awt.*;
+import java.util.Collection;
+import java.util.function.Consumer;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -11,12 +15,13 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.Getter;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectViewController<T> extends Controller<ObjectViewView<T>, ObjectViewModel<T>> {
 
-  @Linked private final SearchBoxController<T> searchBoxController;
+  @Linked @Getter private SearchBoxController<T> searchBoxController;
 
   @Linked private String title;
 
@@ -26,8 +31,18 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
       Searchable<T> items,
       boolean copyAdd,
       Column<T>... columns) {
-    super(new ObjectViewModel<>(controller, items, copyAdd));
+    this(title, controller, copyAdd);
+    model.setItemSupplier(items);
+    searchBoxController = new SearchBoxController<T>(items, columns);
+  }
+
+  public ObjectViewController(String title, FormController<?, ?, T> controller, boolean copyAdd) {
+    super(new ObjectViewModel<>(controller, copyAdd));
     this.title = title;
+  }
+
+  public void setSearchBoxController(Searchable<T> items, Column<T>... columns) {
+    model.setItemSupplier(items);
     searchBoxController = new SearchBoxController<T>(items, columns);
   }
 
@@ -41,9 +56,11 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     if (searchBoxController.getSelectedObject() == null) {
       view.setEditAvailable(false);
       view.setRemoveAvailable(false);
+      setExtraButtonsAvailable(false);
     } else {
       view.setEditAvailable(model.isEditAvailable());
       view.setRemoveAvailable(model.isRemoveAvailable());
+      setExtraButtonsAvailable(true);
     }
   }
 
@@ -76,6 +93,26 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
         .withCloseEvent(searchBoxController::invokeSearch)
         .openIn(new SubWindow(getView().traceViewContainer()));
     refreshButtonStates();
+  }
+
+  public void setExtraButtonsAvailable(boolean available) {
+    for (Component c : getView().getExtraButtonPanel().getComponents()) {
+      if (c instanceof JButton) {
+        c.setEnabled(available);
+      }
+    }
+  }
+
+  public void addButton(JButton button, Consumer<T> buttonAction) {
+    ObjectViewView view = getView();
+    button.addActionListener(e -> buttonAction.accept(searchBoxController.getSelectedObject().orElse(null)));
+    button.setFont(view.getButtonFont());
+    button.setEnabled(false);
+    view.getExtraButtonPanel().add(button);
+  }
+
+  public void addComponents(Collection<JComponent> components) {
+    searchBoxController.addExtraComponents(components);
   }
 
   void add() {

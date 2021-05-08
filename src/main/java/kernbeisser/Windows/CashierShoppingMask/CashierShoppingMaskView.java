@@ -14,7 +14,6 @@ import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class CashierShoppingMaskView implements IView<CashierShoppingMaskController> {
@@ -22,10 +21,6 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   private SearchBoxView<User> searchBoxView;
   private PermissionButton openShoppingMask;
   private kernbeisser.CustomComponents.PermissionComboBox<User> secondSellerUsername;
-  @Getter private JRadioButton activeCustomers;
-  @Getter private JRadioButton inactiveCustomers;
-  @Getter private JRadioButton beginnerCustomers;
-  @Getter private JRadioButton allCustomers;
   private JButton userInfo;
   private JButton close;
 
@@ -55,17 +50,9 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
     userInfo.setEnabled(b);
   }
 
-  public void selectActiveCustomers() {
-    activeCustomers.setSelected(true);
-  }
-
   @Override
   public void initialize(CashierShoppingMaskController controller) {
     openShoppingMask.addActionListener(e -> controller.openMaskWindow());
-    activeCustomers.addActionListener(e -> controller.changeFilter());
-    allCustomers.addActionListener(e -> controller.changeFilter());
-    inactiveCustomers.addActionListener(e -> controller.changeFilter());
-    beginnerCustomers.addActionListener(e -> controller.changeFilter());
     userInfo.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
     userInfo.addActionListener(
         e -> {

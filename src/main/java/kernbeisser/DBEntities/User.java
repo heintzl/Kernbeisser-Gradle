@@ -441,8 +441,20 @@ public class User implements Serializable, UserRelated {
 
   public static void populateUserComboBox(
       AdvancedComboBox<User> box, boolean withKbUser, Predicate<User> filter) {
-    box.removeAllItems();
-    getAllUserFullNames(withKbUser).stream().filter(filter).forEach(box::addItem);
+    Optional<User> selected = box.getSelected();
+    List<User> boxItems = new ArrayList<>();
+    if (withKbUser) {
+      boxItems.add(User.getKernbeisserUser());
+    }
+    getAllUserFullNames(false).stream().filter(filter).forEach(boxItems::add);
+    box.setItems(boxItems);
+    if (box.isEnabled()) {
+      if (selected.isPresent() && filter.test(selected.get())) {
+        box.setSelectedItem(selected.get());
+      } else {
+        box.setSelectedItem(null);
+      }
+    }
   }
 
   @Override

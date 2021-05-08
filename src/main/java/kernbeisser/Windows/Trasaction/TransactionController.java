@@ -2,6 +2,7 @@ package kernbeisser.Windows.Trasaction;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import java.util.Collections;
 import java.util.function.Predicate;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -116,7 +117,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   private void setToolTip(AdvancedComboBox<User> box, Predicate<User> condition) {
     User u = (User) box.getSelectedItem();
     if (condition.test(u)) {
-      if (u == null || u == User.getKernbeisserUser()) {
+      if (u == null || u.isKernbeisser()) {
         box.setToolTipText("");
       } else {
         box.setToolTipText(String.format("Aktuelles Guthaben: %.2f€", u.getUserGroup().getValue()));
@@ -148,14 +149,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
     var view = getView();
     AdvancedComboBox<User> fromControl = view.getFromControl();
     AdvancedComboBox<User> toControl = view.getToControl();
-    if (model.getTransactionType() == TransactionType.PAYIN) {
-      User.populateUserComboBox(toControl, false, e -> true);
-      fromControl.removeAllItems();
-      fromControl.addItem(User.getKernbeisserUser());
-    } else {
-      User.populateUserComboBox(toControl, true, e -> true);
-      User.populateUserComboBox(fromControl, true, e -> true);
-    }
+    fillUsers(true);
     view.setFromEnabled(Tools.canInvoke(this::checkTransactionFromOtherPermission));
     view.setFromKBEnable(Tools.canInvoke(this::checkTransactionFromKBPermission));
     refreshTable();
@@ -169,6 +163,17 @@ public class TransactionController extends Controller<TransactionView, Transacti
     }
 
     fromControl.setSelectedItem(LogInModel.getLoggedIn());
+  }
+
+  void fillUsers(boolean hidden) {
+    TransactionView view = getView();
+    Predicate<User> filter = hidden ? User::isActive : e -> true;
+    User.populateUserComboBox(view.getToControl(), true, filter);
+    if (model.getTransactionType() == TransactionType.PAYIN) {
+      view.getFromControl().setItems(Collections.singleton(User.getKernbeisserUser()));
+    } else {
+      User.populateUserComboBox(view.getFromControl(), true, filter);
+    }
   }
 
   @Override

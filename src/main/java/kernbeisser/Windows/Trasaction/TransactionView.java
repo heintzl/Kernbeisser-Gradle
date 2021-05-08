@@ -80,6 +80,7 @@ public class TransactionView implements IView<TransactionController> {
   private JLabel count;
   private PermissionField info;
   private JCheckBox toKBValue;
+  private JCheckBox hideInactive;
 
   @Linked private SearchBoxController<User> userSearchBoxController;
   @Linked private TransactionController controller;
@@ -133,9 +134,7 @@ public class TransactionView implements IView<TransactionController> {
                 e -> e.getFromUser() == null ? "Kernbeißer" : (e.getFromUser().getFullName(true))),
             Column.create("An", e -> e.getToUser().getFullName(true)),
             Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
-            // Column.create("VeranlasserInn", e -> e.getCreatedBy().getFullName()),
             Column.create("Info", Transaction::getInfo));
-    //    searchBoxView = userSearchBoxController.getView();
     from = new AdvancedComboBox<>(User::getFullName);
     to = new AdvancedComboBox<>(User::getFullName);
   }
@@ -329,6 +328,7 @@ public class TransactionView implements IView<TransactionController> {
             lastFocusOnFrom = false;
           }
         });
+    hideInactive.addActionListener(e -> controller.fillUsers(hideInactive.isSelected()));
     // Sets the ActionListeners for the instant Transaction Buttons
     {
       a10.addActionListener(

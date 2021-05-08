@@ -1,9 +1,12 @@
 package kernbeisser.CustomComponents.SearchBox;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.DBConnection.DBConnection;
@@ -62,6 +65,13 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
 
   public void addLostSelectionListener(Runnable r) {
     model.getLostSelectionListener().add(r);
+  }
+
+  public void addExtraComponents(Collection<JComponent> components) {
+    JPanel panel = getView().getExtraOptionsPanel();
+    for (JComponent c : components) {
+      panel.add(c);
+    }
   }
 
   @Override

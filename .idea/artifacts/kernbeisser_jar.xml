@@ -11,7 +11,7 @@
         <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources/fonts" />
       </element>
         <element id="module-output" name="kernbeisser.main" />
-        <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/log4j2.properties" />
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/log4j2.xml" />
         <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/jasperreports_extension.properties" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar" />
