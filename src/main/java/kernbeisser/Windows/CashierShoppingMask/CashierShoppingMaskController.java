@@ -14,6 +14,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
+import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -82,7 +83,7 @@ public class CashierShoppingMaskController
         UserSetting.ALLOW_MULTIPLE_SHOPPING_MASK_INSTANCES.getBooleanValue(
             LogInModel.getLoggedIn());
     SaleSession saleSession = new SaleSession(SaleSessionType.ASSISTED);
-    saleSession.setCustomer(searchBoxController.getSelectedObject());
+    saleSession.setCustomer(searchBoxController.getSelectedObject().get());
     saleSession.setSeller(LogInModel.getLoggedIn());
     if (!getView().getSecondSeller().toString().equals("Keiner")) {
       try {
@@ -103,8 +104,9 @@ public class CashierShoppingMaskController
     }
   }
 
-  public void openUserInfo() {
-    new UserInfoController(searchBoxController.getSelectedObject())
+  public void openUserInfo() throws NoSelectionException {
+    new UserInfoController(
+            searchBoxController.getSelectedObject().orElseThrow(NoSelectionException::new))
         .openIn(new SubWindow(getView().traceViewContainer()));
   }
 

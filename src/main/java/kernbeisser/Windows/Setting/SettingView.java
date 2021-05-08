@@ -1,6 +1,7 @@
 package kernbeisser.Windows.Setting;
 
 import java.util.Collection;
+import java.util.Optional;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -53,7 +54,7 @@ public class SettingView implements IView<SettingController> {
     setting.setText(selectedSetting.toString());
   }
 
-  Setting getSelectedValue() {
+  Optional<Setting> getSelectedValue() {
     return settingValues.getSelectedObject();
   }
 

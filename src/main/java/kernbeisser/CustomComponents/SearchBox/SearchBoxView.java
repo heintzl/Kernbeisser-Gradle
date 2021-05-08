@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.Optional;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -35,7 +36,7 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
     return searchInput.getText();
   }
 
-  public T getSelectedObject() {
+  public Optional<T> getSelectedObject() {
     return objects.getSelectedObject();
   }
 

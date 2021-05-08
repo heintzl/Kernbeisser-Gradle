@@ -1,5 +1,7 @@
 package kernbeisser.Useful;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -18,4 +20,11 @@ public class Date {
       DateTimeFormatter.ofPattern("MMMuu")
           .withLocale(Locale.GERMANY)
           .withZone(ZoneId.systemDefault());
+
+  public static Instant atStartOrEndOfDay(LocalDate localDate, boolean atStart) {
+    return (atStart
+            ? localDate.atStartOfDay(ZoneId.systemDefault())
+            : localDate.plusDays(1).atStartOfDay(ZoneId.systemDefault()).minusNanos(1))
+        .toInstant();
+  }
 }

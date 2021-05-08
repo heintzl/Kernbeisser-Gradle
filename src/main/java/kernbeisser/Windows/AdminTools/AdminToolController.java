@@ -3,6 +3,7 @@ package kernbeisser.Windows.AdminTools;
 import java.awt.event.ActionEvent;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
@@ -23,15 +24,25 @@ public class AdminToolController extends Controller<AdminToolView, AdminToolMode
   }
 
   public void restedPassword(ActionEvent actionEvent) {
-    User user = getView().getSelectedUser();
-    if (getView().verifyPasswordChange(user.getUsername())) {
-      getView().showPasswordToken(model.resetPassword(user));
+    try {
+      User user = getView().getSelectedUser().orElseThrow(NoSelectionException::new);
+      if (getView().verifyPasswordChange(user.getUsername())) {
+        getView().showPasswordToken(model.resetPassword(user));
+      }
+    } catch (NoSelectionException e) {
+      getView().messageNoSelectedUser();
     }
   }
 
   public void openUserGroupEditor(ActionEvent actionEvent) {
-    new EditUserGroupController(getView().getSelectedUser(), LogInModel.getLoggedIn())
-        .withCloseEvent(() -> fillView(getView()))
-        .openIn(new SubWindow(getView().traceViewContainer()));
+    try {
+      new EditUserGroupController(
+              getView().getSelectedUser().orElseThrow(NoSelectionException::new),
+              LogInModel.getLoggedIn())
+          .withCloseEvent(() -> fillView(getView()))
+          .openIn(new SubWindow(getView().traceViewContainer()));
+    } catch (NoSelectionException e) {
+      getView().messageNoSelectedUser();
+    }
   }
 }

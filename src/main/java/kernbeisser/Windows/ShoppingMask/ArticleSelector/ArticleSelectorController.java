@@ -58,7 +58,7 @@ public class ArticleSelectorController
   }
 
   public void choose() {
-    model.getConsumer().accept(searchBoxController.getSelectedObject());
+    model.getConsumer().accept(searchBoxController.getSelectedObject().orElse(null));
     getView().back();
   }
 

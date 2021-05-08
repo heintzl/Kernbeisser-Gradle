@@ -1,6 +1,7 @@
 package kernbeisser.CustomComponents.SearchBox;
 
 import java.util.Arrays;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -31,8 +32,8 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     }
   }
 
-  public T getSelectedObject() {
-    return tryToRefresh(getView().getSelectedObject());
+  public Optional<T> getSelectedObject() {
+    return getView().getSelectedObject().map(this::tryToRefresh);
   }
 
   public void invokeSearch() {

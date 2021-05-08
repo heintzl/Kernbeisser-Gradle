@@ -356,7 +356,7 @@ public class Article {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select o from Offer o where article = :id", Offer.class)
+    return em.createQuery("select o from Offer o where article.id = :id", Offer.class)
         .setParameter("id", this.id)
         .getResultList();
   }

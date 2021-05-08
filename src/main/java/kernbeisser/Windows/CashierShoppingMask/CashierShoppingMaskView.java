@@ -10,6 +10,7 @@ import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -66,7 +67,14 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
     inactiveCustomers.addActionListener(e -> controller.changeFilter());
     beginnerCustomers.addActionListener(e -> controller.changeFilter());
     userInfo.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
-    userInfo.addActionListener(e -> controller.openUserInfo());
+    userInfo.addActionListener(
+        e -> {
+          try {
+            controller.openUserInfo();
+          } catch (NoSelectionException noSelectionException) {
+            messageSelectUserFirst();
+          }
+        });
     close.addActionListener(e -> back());
   }
 
@@ -111,6 +119,10 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
             "Ladendienst beenden",
             JOptionPane.YES_NO_OPTION)
         == 0;
+  }
+
+  public void messageSelectUserFirst() {
+    message("Bitte wähle zunächst ein Nutzer aus.");
   }
 
   public void messageDontPanic() {

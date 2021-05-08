@@ -1,6 +1,7 @@
 package kernbeisser.Windows.CollectionView;
 
 import java.util.Collection;
+import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
@@ -40,19 +41,7 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
             }
           }
         });
-    chosen.addSelectionListener(
-        new ObjectSelectionListener<T>() {
-          T last;
-
-          @Override
-          public void selected(T e) {
-            if (e.equals(last)) {
-              controller.selectChosen();
-            } else {
-              last = e;
-            }
-          }
-        });
+    chosen.addDoubleClickListener(e -> controller.selectChosen());
     add.addActionListener(e -> controller.selectAvailable());
     addAll.addActionListener(e -> controller.selectAllAvailable());
     remove.addActionListener(e -> controller.selectChosen());
@@ -71,11 +60,11 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     return main;
   }
 
-  T getSelectedChosenObject() {
+  Optional<T> getSelectedChosenObject() {
     return chosen.getSelectedObject();
   }
 
-  T getSelectedAvailableObject() {
+  Optional<T> getSelectedAvailableObject() {
     return available.getSelectedObject();
   }
 
@@ -100,5 +89,9 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   public CollectionView<T> asInjectedComponent() {
     actionBar.setVisible(false);
     return this;
+  }
+
+  public void messageSelectObjectFirst() {
+    message("Bitte wähle zunächst ein Object aus");
   }
 }

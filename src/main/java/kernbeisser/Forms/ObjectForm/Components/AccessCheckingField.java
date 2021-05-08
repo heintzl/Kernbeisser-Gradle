@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -18,6 +21,7 @@ import kernbeisser.Forms.ObjectForm.Properties.Predictable;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
+import kernbeisser.Useful.Date;
 
 public class AccessCheckingField<P, V> extends JTextField
     implements ObjectFormComponent<P>,
@@ -243,6 +247,46 @@ public class AccessCheckingField<P, V> extends JTextField
             throw new CannotParseException(this + " doesn't contain a value");
           }
           return s;
+        }
+      };
+
+  public static final StringTransformer<Instant> DAY_DATE_BEGIN_FORMER =
+      new StringTransformer<Instant>() {
+        @Override
+        public Instant fromString(String s) throws CannotParseException {
+          try {
+            return Date.atStartOrEndOfDay(LocalDate.from(Date.INSTANT_DATE.parse(s)), true);
+          } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(
+                null,
+                "Das angegebene Datum kann nicht eingelesen werden,\n bitte überprüfe, ob das folgende Format eingehalten wurde:\n dd:mm:yyyy");
+            throw new CannotParseException();
+          }
+        }
+
+        @Override
+        public String toString(Instant instant) {
+          return Date.INSTANT_DATE.format(instant);
+        }
+      };
+
+  public static final StringTransformer<Instant> DAY_DATE_END_FORMER =
+      new StringTransformer<Instant>() {
+        @Override
+        public Instant fromString(String s) throws CannotParseException {
+          try {
+            return Date.atStartOrEndOfDay(LocalDate.from(Date.INSTANT_DATE.parse(s)), false);
+          } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(
+                null,
+                "Das angegebene Datum kann nicht eingelesen werden,\n bitte überprüfe, ob das folgende Format eingehalten wurde:\n dd:mm:yyyy");
+            throw new CannotParseException();
+          }
+        }
+
+        @Override
+        public String toString(Instant instant) {
+          return Date.INSTANT_DATE.format(instant);
         }
       };
 

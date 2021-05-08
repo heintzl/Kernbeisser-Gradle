@@ -1,6 +1,7 @@
 package kernbeisser.Windows.AdminTools;
 
 import java.util.Collection;
+import java.util.Optional;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -25,7 +26,7 @@ public class AdminToolView implements IView<AdminToolController> {
     editUserGroup.addActionListener(controller::openUserGroupEditor);
   }
 
-  User getSelectedUser() {
+  Optional<User> getSelectedUser() {
     return users.getSelectedObject();
   }
 
@@ -68,5 +69,9 @@ public class AdminToolView implements IView<AdminToolController> {
                 + username
                 + " wirklich zurückgesetzt werden?\nDieser Vorgang kann nicht rückgängig gemacht werden.")
         == 0;
+  }
+
+  public void messageNoSelectedUser() {
+    JOptionPane.showMessageDialog(getContent(), "Bitte wähle zunächst einen Nutzer aus.");
   }
 }

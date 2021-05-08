@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -139,7 +140,7 @@ public class UserInfoView implements IView<UserInfoController> {
     return tabbedPane.getSelectedIndex();
   }
 
-  public Purchase getSelectedPurchase() {
+  public Optional<Purchase> getSelectedPurchase() {
     return shoppingHistory.getSelectedObject();
   }
 
@@ -214,5 +215,9 @@ public class UserInfoView implements IView<UserInfoController> {
 
   public void setTransactionStatementTypeItems(List<StatementType> asList) {
     statementType.setItems(asList);
+  }
+
+  public void messageSelectPurchaseFirst() {
+    JOptionPane.showMessageDialog(getContent(), "Bitte wähle zunächst einen Einkauf aus.");
   }
 }

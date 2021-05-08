@@ -77,6 +77,7 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
 
   void indicateProgress() {
     loadingMenuIndicator.setVisible(true);
+    logIn.setEnabled(false);
   }
 
   @Override

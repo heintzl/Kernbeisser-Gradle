@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -31,7 +32,7 @@ public class PermissionView implements IView<PermissionController> {
 
   @Linked private PermissionController controller;
 
-  PermissionKey getSelectedObject() {
+  Optional<PermissionKey> getSelectedObject() {
     return permission.getSelectedObject();
   }
 

@@ -4,6 +4,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Windows.MVC.Controller;
@@ -47,16 +48,20 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   }
 
   void edit() {
-    openForm(Mode.EDIT);
+    try {
+      openForm(Mode.EDIT);
+    } catch (NoSelectionException e) {
+      getView().messageSelectObjectFirst();
+    }
   }
 
-  void openForm(Mode mode) {
-    openForm(searchBoxController.getSelectedObject(), mode);
+  void openForm(Mode mode) throws NoSelectionException {
+    openForm(searchBoxController.getSelectedObject().orElseThrow(NoSelectionException::new), mode);
   }
 
   public void openForm(T selection, Mode mode) {
     if (mode == Mode.REMOVE) {
-      model.getForm().remove(searchBoxController.getSelectedObject());
+      model.getForm().remove(selection);
       searchBoxController.invokeSearch();
       return;
     }
@@ -74,11 +79,19 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   }
 
   void add() {
-    openForm(Mode.ADD);
+    try {
+      openForm(Mode.ADD);
+    } catch (NoSelectionException e) {
+      getView().messageSelectObjectFirst();
+    }
   }
 
   void remove() {
-    openForm(Mode.REMOVE);
+    try {
+      openForm(Mode.REMOVE);
+    } catch (NoSelectionException e) {
+      getView().messageSelectObjectFirst();
+    }
   }
 
   @Override
