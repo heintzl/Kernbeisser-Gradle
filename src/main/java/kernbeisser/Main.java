@@ -19,6 +19,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.Config;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
@@ -28,6 +29,7 @@ import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import lombok.Cleanup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 
 public class Main {
 
@@ -49,6 +51,11 @@ public class Main {
     if (!Setting.DB_INITIALIZED.getBooleanValue()) {
       SwingUtilities.invokeLater(() -> new DataImportController().openTab());
     } else {
+      try {
+        User.checkAdminConsistency();
+      } catch (InvalidValue e) {
+        Tools.showUnexpectedErrorWarning(e);
+      }
       openLogIn();
     }
   }

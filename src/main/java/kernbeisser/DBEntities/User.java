@@ -25,6 +25,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
+import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 
 @Entity
 @Table
@@ -295,6 +296,33 @@ public class User implements Serializable, UserRelated {
             "select p from Purchase p where p.session.customer.id = :id", Purchase.class)
         .setParameter("id", id)
         .getResultList();
+  }
+
+  public static void checkAdminConsistency() throws InvalidValue {
+
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    try {
+      @Cleanup(value = "commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      String checkValue =
+          em.createQuery(
+                  "select case when exists"
+                      + "(select t from Transaction t where u IN(fromUser, toUser) or u.userGroup IN (fromUserGroup, toUserGroup)) "
+                      + "then 'invalid Transaction' "
+                      + "when (select value from UserGroup ug where u.userGroup = ug) <> 0 then 'invalid value' "
+                      + "else 'OK' end as result "
+                      + "from User u "
+                      + "where u.username = 'Admin'",
+                  String.class)
+              .getSingleResult();
+      if (!checkValue.equals("OK")) {
+        throw new InvalidValue("Admin user state error: " + checkValue);
+      }
+    } catch (Exception e) {
+      Tools.showUnexpectedErrorWarning(e);
+      throw new RuntimeException(e);
+    }
   }
 
   public static User getKernbeisserUser() {
