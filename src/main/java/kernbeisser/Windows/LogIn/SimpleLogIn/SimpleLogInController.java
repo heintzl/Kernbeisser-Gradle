@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
@@ -55,6 +56,15 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     new Thread(
             () -> {
               loadUserSettings();
+              if (!UserGroup.checkUserGroupConsistency()) {
+                JOptionPane.showMessageDialog(
+                    getView().getTopComponent(),
+                    "Die Transaktionsdaten weichen von den Kontoständen ab.\n"
+                        + "Bitte den Vorstand oder die Buchhaltung informieren!",
+                    "Inkonsistenter Datenbestand",
+                    JOptionPane.WARNING_MESSAGE);
+              }
+              ;
               if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
                 new ChangePasswordController(LogInModel.getLoggedIn(), true)
                     .openIn(new SubWindow(view.traceViewContainer()));

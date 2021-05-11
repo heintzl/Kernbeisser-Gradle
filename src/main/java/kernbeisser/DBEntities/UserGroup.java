@@ -1,7 +1,6 @@
 package kernbeisser.DBEntities;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
@@ -43,9 +42,14 @@ public class UserGroup implements UserRelated {
 
   /* for output to Report */
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_VALUE_READ)})
+  @Getter(onMethod_ = {@Key(PermissionKey.USER_SURNAME_READ)})
   @Transient
   private String membersAsString;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_VALUE_READ)})
+  @Transient
+  private Double transactionSum;
 
   @Column
   @Setter(
@@ -118,6 +122,39 @@ public class UserGroup implements UserRelated {
     }
     sb.delete(sb.length() - 2, sb.length());
     return sb.toString();
+  }
+
+  private static Map<Integer, Double> getInvalidUserGroupTransactionSums() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "SELECT ug.id As ugid, SUM(CASE WHEN ug = t.fromUserGroup THEN -t.value ELSE t.value END) AS tSum, ug.value "
+                + "FROM UserGroup ug INNER JOIN Transaction t ON ug IN (t.fromUserGroup, t.toUserGroup) "
+                + "GROUP BY ug.id "
+                + "HAVING ABS(ug.value - SUM(CASE WHEN ug = t.fromUserGroup THEN -t.value ELSE t.value END)) > 0.004",
+            Tuple.class)
+        .getResultStream()
+        .collect(
+            Collectors.toMap(
+                tuple -> ((Integer) tuple.get("ugid")), tuple -> ((Double) tuple.get("tSum"))));
+  }
+
+  public static boolean checkUserGroupConsistency() {
+    return getInvalidUserGroupTransactionSums().isEmpty();
+  }
+
+  private static UserGroup getWithTransactionSum(int id, double sum) {
+    UserGroup userGroup = getAll("where id = " + id).get(0);
+    userGroup.transactionSum = sum;
+    return userGroup;
+  }
+
+  public static List<UserGroup> getInconsistentUserGroups() {
+    return getInvalidUserGroupTransactionSums().entrySet().stream()
+        .map(e -> getWithTransactionSum(e.getKey(), e.getValue()))
+        .collect(Collectors.toList());
   }
 
   @Override
