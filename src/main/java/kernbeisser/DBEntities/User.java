@@ -22,6 +22,7 @@ import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -31,9 +32,7 @@ import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 @Entity
 @Table
 @NoArgsConstructor
-@EqualsAndHashCode(
-    doNotUseGetters = true,
-    exclude = {"ignoredDialogs"})
+@EqualsAndHashCode(doNotUseGetters = true)
 public class User implements Serializable, UserRelated {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -130,6 +129,13 @@ public class User implements Serializable, UserRelated {
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_READ)})
   private Instant updateDate;
+
+  @ManyToOne
+  @EqualsAndHashCode.Exclude
+  @JoinColumn(nullable = false)
+  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_BY_WRITE)})
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_BY_READ)})
+  private User updateBy = this;
 
   @ManyToOne
   @JoinColumn(nullable = false)
@@ -322,6 +328,12 @@ public class User implements Serializable, UserRelated {
     }
   }
 
+  @PrePersist
+  @PreUpdate
+  private void setUpdateBy() {
+    updateBy = LogInModel.getLoggedIn();
+  }
+
   public static User getKernbeisserUser() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
@@ -391,6 +403,7 @@ public class User implements Serializable, UserRelated {
     return value;
   }
 
+  @EqualsAndHashCode.Exclude
   @Getter(lazy = true)
   @Transient
   private final Set<String> ignoredDialogs = loadDialogs();
