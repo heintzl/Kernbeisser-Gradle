@@ -49,6 +49,7 @@ public enum Setting {
   LABEL_SCALE_FACTOR("1.5"),
   WARN_OVER_TRANSACTION_VALUE("1000."),
   OPEN_MULTIPLE_SHOPPING_MASK("true"),
+  DAYS_BEFORE_INACTIVITY("180"),
   PRINTER("OS_default") {
     @Override
     public void changeValue(Object s) {

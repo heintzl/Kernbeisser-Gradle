@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
@@ -12,12 +13,10 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Forms.ObjectForm.Components.AccessCheckBox;
-import kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor;
-import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
-import kernbeisser.Forms.ObjectForm.Components.Source;
+import kernbeisser.Forms.ObjectForm.Components.*;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -48,18 +47,19 @@ public class UserView implements IView<UserController> {
   private JLabel lblIsEmployee;
   private kernbeisser.CustomComponents.PermissionCheckBox hasKey;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckBox<User> isEmployee;
-  private JLabel lblZusatzdienste;
   private JLabel lblAnteile;
   private JLabel grpGenossenschaft;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, Integer> shares;
   private AccessCheckingCollectionEditor<User, Set<Job>, Job> chgJobs;
   private JLabel lblDienste;
   private JPanel userDataPanel;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, String> extraJobs;
   private AccessCheckingCollectionEditor<User, Set<Permission>, Permission> editPermission;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, Integer> keyNumber;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, String> email;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<User, String> userGroup;
+  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel<User> userGroup;
+  private JPanel main;
+  private AccessCheckingLabel<User> jobs;
+  private AccessCheckingLabel<User> updateInfo;
 
   @Linked private UserController controller;
 
@@ -116,10 +116,11 @@ public class UserView implements IView<UserController> {
             userGroup,
             isEmployee,
             shares,
-            extraJobs,
             keyNumber,
             email,
-            chgJobs);
+            chgJobs,
+            jobs,
+            updateInfo);
     objectForm.setObjectDistinction("Der Benutzer");
     KeyAdapter refreshUsername =
         new KeyAdapter() {
@@ -181,15 +182,11 @@ public class UserView implements IView<UserController> {
     username =
         new AccessCheckingField<>(User::getUsername, User::setUsername, AccessCheckingField.NONE);
     userGroup =
-        new AccessCheckingField<>(
-            u -> u.getUserGroup() == null ? "" : u.getUserGroup().getMemberString(),
-            User::ignoreDialog,
-            AccessCheckingField.NONE);
+        new AccessCheckingLabel<>(
+            u -> u.getUserGroup() == null ? "" : u.getUserGroup().getMemberString());
     isEmployee = new AccessCheckBox<>(User::isEmployee, User::setEmployee);
     shares =
         new AccessCheckingField<>(User::getShares, User::setShares, AccessCheckingField.INT_FORMER);
-    extraJobs =
-        new AccessCheckingField<>(User::getExtraJobs, User::setExtraJobs, AccessCheckingField.NONE);
     keyNumber =
         new AccessCheckingField<>(
             User::getKernbeisserKey, User::setKernbeisserKey, AccessCheckingField.INT_FORMER);
@@ -206,6 +203,14 @@ public class UserView implements IView<UserController> {
             Source.of(Job.class),
             Column.create("Name", Job::getName),
             Column.create("Beschreibung", Job::getDescription));
+    jobs = new AccessCheckingLabel<>(u -> getJobsInfo(u.getJobsAsAvailable()));
+    updateInfo =
+        new AccessCheckingLabel<>(
+            u -> Date.INSTANT_DATE.format(u.getUpdateDate()) + " durch " + u.getFullName());
+  }
+
+  public String getJobsInfo(Set<Job> jobSet) {
+    return jobSet.stream().map(Job::getName).collect(Collectors.joining(", "));
   }
 
   public void invalidInput() {

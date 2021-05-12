@@ -15,6 +15,7 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.PermissionSetAccessManager;
 import kernbeisser.Security.Key;
@@ -54,11 +55,6 @@ public class User implements Serializable, UserRelated {
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_READ)})
   private int shares;
-
-  @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_READ)})
-  private String extraJobs;
 
   @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
@@ -196,7 +192,7 @@ public class User implements Serializable, UserRelated {
     User dbContent = em.find(User.class, user.getId());
     dbContent.unreadable = true;
     dbContent.firstName = "deleted";
-    dbContent.surname = "deleted";
+    dbContent.surname = "deleted" + dbContent.id;
     dbContent.username = "deleted" + dbContent.id;
     dbContent.phoneNumber1 = "deleted";
     dbContent.phoneNumber2 = "deleted";
@@ -224,7 +220,8 @@ public class User implements Serializable, UserRelated {
   }
 
   public boolean isActive() {
-    Instant expireDate = Instant.now().minus(180, ChronoUnit.DAYS);
+    Instant expireDate =
+        Instant.now().minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS);
     return getAllPurchases().stream()
         .map(Purchase::getCreateDate)
         .max(Comparator.comparingLong(d -> d.getLong(ChronoField.INSTANT_SECONDS)))

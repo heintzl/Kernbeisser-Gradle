@@ -33,7 +33,7 @@ public class Users {
     user.setShares(Integer.parseInt(stringRaw[3]));
     secondary.setFirstName(stringRaw[5]);
     secondary.setSurname(stringRaw[6]);
-    user.setExtraJobs(stringRaw[7]);
+    // ExtraJobs: Unused, column 7
     user.setJobs(Tools.extract(HashSet::new, stringRaw[8], "§", jobHashMap::get));
     user.setKernbeisserKey(Boolean.parseBoolean(stringRaw[10]) ? 0 : -1);
     user.setEmployee(Boolean.parseBoolean(stringRaw[11]));
