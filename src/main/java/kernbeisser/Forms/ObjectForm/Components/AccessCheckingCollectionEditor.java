@@ -11,6 +11,7 @@ import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.Predictable;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
+import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -26,6 +27,8 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
 
   private final Source<V> values;
 
+  private CloseEvent closeEvent;
+
   @SafeVarargs
   public AccessCheckingCollectionEditor(
       Getter<P, C> getter, Source<V> values, Column<V>... columns) {
@@ -36,8 +39,16 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
   }
 
   void trigger(ActionEvent event) {
-    new CollectionController<V>(data, values, columns)
-        .openIn(new SubWindow(IView.traceViewContainer(getParent())));
+    CollectionController<V> controller = new CollectionController<>(data, values, columns);
+    if (closeEvent != null) {
+      controller.addCloseEvent(closeEvent);
+    }
+    controller.openIn(new SubWindow(IView.traceViewContainer(getParent())));
+  }
+
+  public AccessCheckingCollectionEditor<P, C, V> withCloseEvent(CloseEvent closeEvent) {
+    this.closeEvent = closeEvent;
+    return this;
   }
 
   @Override
@@ -53,6 +64,10 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
   @Override
   public void setData(C vs) {
     data = vs;
+  }
+
+  public C getData() {
+    return data;
   }
 
   @Override

@@ -199,18 +199,27 @@ public class UserView implements IView<UserController> {
             Column.create("Name", Permission::getNeatName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
-            User::getJobsAsAvailable,
-            Source.of(Job.class),
-            Column.create("Name", Job::getName),
-            Column.create("Beschreibung", Job::getDescription));
+                User::getJobsAsAvailable,
+                Source.of(Job.class),
+                Column.create("Name", Job::getName),
+                Column.create("Beschreibung", Job::getDescription))
+            .withCloseEvent(() -> jobs.setText(getJobsInfo(chgJobs.getData())));
     jobs = new AccessCheckingLabel<>(u -> getJobsInfo(u.getJobsAsAvailable()));
-    updateInfo =
-        new AccessCheckingLabel<>(
-            u -> Date.INSTANT_DATE.format(u.getUpdateDate()) + " durch " + u.getFullName());
+    updateInfo = new AccessCheckingLabel<>(this::getUpdateInfo);
   }
 
-  public String getJobsInfo(Set<Job> jobSet) {
+  private String getJobsInfo(Set<Job> jobSet) {
     return jobSet.stream().map(Job::getName).collect(Collectors.joining(", "));
+  }
+
+  private String getUpdateInfo(User u) {
+    try {
+      return Date.INSTANT_DATE.format(u.getUpdateDate())
+          + " durch "
+          + u.getUpdateBy().getFullName();
+    } catch (NullPointerException e) {
+      return "(nicht gespeichert)";
+    }
   }
 
   public void invalidInput() {

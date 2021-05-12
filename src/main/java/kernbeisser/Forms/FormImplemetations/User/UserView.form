@@ -28,6 +28,7 @@
           <background color="-1"/>
           <doubleBuffered value="true"/>
           <minimumSize width="250" height="250"/>
+          <opaque value="false"/>
           <preferredSize width="400" height="565"/>
         </properties>
         <border type="none">
@@ -237,7 +238,7 @@
           </component>
           <component id="b658" class="javax.swing.JLabel" binding="lblRolle">
             <constraints>
-              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="25" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -247,7 +248,7 @@
           </component>
           <component id="fef57" class="javax.swing.JLabel" binding="lblHasKey">
             <constraints>
-              <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="25" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -257,7 +258,7 @@
           </component>
           <component id="6b5b7" class="kernbeisser.CustomComponents.PermissionCheckBox" binding="hasKey">
             <constraints>
-              <grid row="17" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="16" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="2" left="0" bottom="2" right="15" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -267,7 +268,7 @@
           </component>
           <component id="91e6e" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckBox" binding="isEmployee" custom-create="true">
             <constraints>
-              <grid row="19" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="18" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="2" left="0" bottom="2" right="15" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -276,7 +277,7 @@
           </component>
           <component id="216de" class="javax.swing.JLabel" binding="lblIsEmployee">
             <constraints>
-              <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="25" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -286,7 +287,7 @@
           </component>
           <component id="a2ac" class="javax.swing.JLabel" binding="grpGenossenschaft">
             <constraints>
-              <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="3" left="15" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -297,11 +298,11 @@
           </component>
           <component id="63441" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor" binding="chgJobs" custom-create="true">
             <constraints>
-              <grid row="20" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag top="2" left="0" bottom="2" right="15" weightx="0.0" weighty="1.0"/>
+              <grid row="19" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="2" left="0" bottom="2" right="15" weightx="0.2" weighty="1.0"/>
             </constraints>
             <properties>
-              <minimumSize width="-1" height="30"/>
+              <minimumSize width="126" height="30"/>
               <opaque value="false"/>
               <preferredSize width="126" height="30"/>
               <text value="Dienste..."/>
@@ -309,7 +310,7 @@
           </component>
           <component id="25b2f" class="javax.swing.JLabel" binding="lblDienste">
             <constraints>
-              <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="25" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -339,7 +340,7 @@
           </component>
           <component id="13b92" class="javax.swing.JSeparator">
             <constraints>
-              <grid row="15" column="1" row-span="1" col-span="4" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="14" column="1" row-span="1" col-span="4" vsize-policy="6" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="3" left="0" bottom="0" right="15" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -369,7 +370,7 @@
           </component>
           <component id="3de03" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor" binding="editPermission" custom-create="true">
             <constraints>
-              <grid row="14" column="1" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="13" column="1" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -378,7 +379,7 @@
           </component>
           <component id="ed24e" class="javax.swing.JLabel">
             <constraints>
-              <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="25" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -387,7 +388,7 @@
           </component>
           <component id="c1643" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="keyNumber" custom-create="true">
             <constraints>
-              <grid row="18" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="17" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="2" left="0" bottom="2" right="15" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties/>
@@ -410,7 +411,7 @@
           </component>
           <component id="380ab" class="javax.swing.JLabel" binding="lblAnteile">
             <constraints>
-              <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="25" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -420,14 +421,14 @@
           </component>
           <component id="e6006" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="shares" custom-create="true">
             <constraints>
-              <grid row="21" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="20" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="2" left="0" bottom="2" right="15" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties/>
           </component>
           <component id="2ffb1" class="javax.swing.JLabel">
             <constraints>
-              <grid row="22" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="25" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -437,7 +438,7 @@
           </component>
           <component id="b1662" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="updateInfo" custom-create="true">
             <constraints>
-              <grid row="22" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="21" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="2" left="0" bottom="5" right="15" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -447,7 +448,7 @@
           </component>
           <component id="b716b" class="javax.swing.JLabel">
             <constraints>
-              <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="25" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -457,7 +458,7 @@
           </component>
           <component id="800f1" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="userGroup" custom-create="true">
             <constraints>
-              <grid row="16" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="15" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
               <gridbag top="2" left="0" bottom="2" right="15" weightx="1.0" weighty="1.0"/>
@@ -472,7 +473,7 @@
           </component>
           <component id="96af3" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel" binding="jobs" custom-create="true">
             <constraints>
-              <grid row="20" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+              <grid row="19" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
               <gridbag top="2" left="0" bottom="2" right="15" weightx="0.5" weighty="1.0"/>
@@ -484,9 +485,9 @@
               <text value="Dienste"/>
             </properties>
           </component>
-          <hspacer id="d1fad">
+          <hspacer id="55e93">
             <constraints>
-              <grid row="20" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="19" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
           </hspacer>
