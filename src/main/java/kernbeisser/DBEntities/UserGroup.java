@@ -16,10 +16,8 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(doNotUseGetters = true)
 public class UserGroup implements UserRelated {
 
-  protected UserGroup() {}
-
-  public UserGroup(double value) {
-    this.value = value;
+  public UserGroup() {
+    this.value = 0.0;
   }
 
   @Id

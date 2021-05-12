@@ -57,7 +57,7 @@ public class DataImportModel implements IModel<DataImportController> {
         BCrypt.withDefaults()
             .hashToString(Setting.HASH_COSTS.getIntValue(), password.toCharArray()));
     user.getPermissions().add(PermissionConstants.ADMIN.getPermission());
-    user.setUserGroup(new UserGroup(0));
+    user.setUserGroup(new UserGroup());
     em.persist(user.getUserGroup());
     em.persist(user);
     em.flush();
