@@ -19,6 +19,7 @@ import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 
 public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
 
@@ -56,6 +57,11 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     new Thread(
             () -> {
               loadUserSettings();
+              try {
+                User.checkAdminConsistency();
+              } catch (InvalidValue e) {
+                Tools.showUnexpectedErrorWarning(e);
+              }
               if (!UserGroup.checkUserGroupConsistency()) {
                 JOptionPane.showMessageDialog(
                     getView().getTopComponent(),
