@@ -52,6 +52,15 @@ public class UserController extends FormController<UserView, UserModel, User> {
     }
   }
 
+  public void validateFullname(User user, Mode mode) throws CannotParseException {
+    if (mode != Mode.REMOVE) {
+      if (model.fullNameExists(user)) {
+        getView().wrongFullname(user.getFullName());
+        throw new CannotParseException();
+      }
+    }
+  }
+
   @Override
   public void fillView(UserView userView) {}
 

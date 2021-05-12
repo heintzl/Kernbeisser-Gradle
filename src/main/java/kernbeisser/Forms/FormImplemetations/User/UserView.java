@@ -138,7 +138,7 @@ public class UserView implements IView<UserController> {
     hasKey.setWriteable(Tools.canInvoke(this::checkUserKernbeisserKeyWritePermission));
     shares.setInputVerifier(IntegerVerifier.from(1, 1, 3, 10));
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
-    objectForm.registerObjectValidators(controller::validateUser);
+    objectForm.registerObjectValidators(controller::validateUser, controller::validateFullname);
   }
 
   @Key(PermissionKey.USER_KERNBEISSER_KEY_READ)
@@ -275,5 +275,18 @@ public class UserView implements IView<UserController> {
   @Override
   public String getTitle() {
     return "Benutzerdaten bearbeiten";
+  }
+
+  public void wrongFullname(String fullName) {
+    firstName.setInvalidInput();
+    lastName.setInvalidInput();
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Der Name \""
+            + fullName
+            + "\" ist bereits belegt. Bitte den Benutzer so benennen, "
+            + "dass Vor- und Nachname eindeutig sind!",
+        "Name nicht eindeutig",
+        JOptionPane.WARNING_MESSAGE);
   }
 }

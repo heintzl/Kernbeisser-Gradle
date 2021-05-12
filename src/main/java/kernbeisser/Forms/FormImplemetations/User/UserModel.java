@@ -4,6 +4,7 @@ import java.util.HashSet;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
@@ -42,6 +43,18 @@ public class UserModel implements IModel<UserController> {
     et.begin();
     return em.createQuery("select id from User where username like :username")
             .setParameter("username", username)
+            .getResultList()
+            .size()
+        > 0;
+  }
+
+  boolean fullNameExists(User user) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select id from User where concat(firstName, ' ', surname) = :fullName")
+            .setParameter("fullName", user.getFullName().trim())
             .getResultList()
             .size()
         > 0;
