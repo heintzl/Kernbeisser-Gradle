@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
@@ -57,6 +58,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     new Thread(
             () -> {
               loadUserSettings();
+              cleanAdminUser();
               try {
                 User.checkAdminConsistency();
               } catch (InvalidValue e) {
@@ -88,6 +90,13 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
           UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
     } catch (UnsupportedLookAndFeelException e) {
       Tools.showUnexpectedErrorWarning(e);
+    }
+  }
+
+  private static void cleanAdminUser() {
+    User currentUser = LogInModel.getLoggedIn();
+    if (currentUser.isSysAdmin()) {
+      PermissionConstants.cleanAdminPermission(currentUser);
     }
   }
 

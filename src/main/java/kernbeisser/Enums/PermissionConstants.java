@@ -1,11 +1,14 @@
 package kernbeisser.Enums;
 
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.PermissionSet;
 import lombok.Cleanup;
 
@@ -69,5 +72,22 @@ public enum PermissionConstants {
     PermissionSet p = new PermissionSet();
     p.setAllBits(true);
     return p;
+  }
+
+  public static void cleanAdminPermission(User currentUser) {
+    Access.getExceptions().put(currentUser, AccessManager.NO_ACCESS_CHECKING);
+    Permission adminPermission = ADMIN.getPermission();
+    adminPermission.setKeySet(allPermissions().minus(PermissionKey.getNonAdminPermissions()));
+    Set<Permission> adminPermissionSet = new java.util.HashSet<>();
+    adminPermissionSet.add(adminPermission);
+    currentUser.setPermissions(adminPermissionSet);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.merge(adminPermission);
+    em.merge(currentUser);
+    em.flush();
+    Access.getExceptions().remove(currentUser);
   }
 }
