@@ -15,23 +15,24 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.PermissionSetAccessManager;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
+import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 
 @Entity
 @Table
 @NoArgsConstructor
-@EqualsAndHashCode(
-    doNotUseGetters = true,
-    exclude = {"ignoredDialogs"})
+@EqualsAndHashCode(doNotUseGetters = true)
 public class User implements Serializable, UserRelated {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -54,11 +55,6 @@ public class User implements Serializable, UserRelated {
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_READ)})
   private int shares;
 
-  @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EXTRA_JOBS_READ)})
-  private String extraJobs;
-
   @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
   @Getter(onMethod_ = {@Key({PermissionKey.USER_JOBS_READ, PermissionKey.USER_JOBS_WRITE})})
@@ -78,7 +74,7 @@ public class User implements Serializable, UserRelated {
   @Column(unique = true, nullable = false)
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_READ)})
-  private String username = "Keiner";
+  private String username;
 
   @Column(nullable = false)
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
@@ -135,6 +131,13 @@ public class User implements Serializable, UserRelated {
   private Instant updateDate;
 
   @ManyToOne
+  @EqualsAndHashCode.Exclude
+  @JoinColumn(nullable = true)
+  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_BY_WRITE)})
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_BY_READ)})
+  private User updateBy;
+
+  @ManyToOne
   @JoinColumn(nullable = false)
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_READ)})
@@ -154,6 +157,16 @@ public class User implements Serializable, UserRelated {
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
   private boolean forcePasswordChange = false;
+
+  public User(String username) {
+    this.username = username;
+  }
+
+  @PrePersist
+  @PreUpdate
+  private void setUpdateBy() {
+    if (LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
+  }
 
   private static final String GENERIC_USERS_CONDITION =
       "upper(username) IN ('KERNBEISSER', 'ADMIN')";
@@ -195,7 +208,7 @@ public class User implements Serializable, UserRelated {
     User dbContent = em.find(User.class, user.getId());
     dbContent.unreadable = true;
     dbContent.firstName = "deleted";
-    dbContent.surname = "deleted";
+    dbContent.surname = "deleted" + dbContent.id;
     dbContent.username = "deleted" + dbContent.id;
     dbContent.phoneNumber1 = "deleted";
     dbContent.phoneNumber2 = "deleted";
@@ -223,7 +236,8 @@ public class User implements Serializable, UserRelated {
   }
 
   public boolean isActive() {
-    Instant expireDate = Instant.now().minus(180, ChronoUnit.DAYS);
+    Instant expireDate =
+        Instant.now().minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS);
     return getAllPurchases().stream()
         .map(Purchase::getCreateDate)
         .max(Comparator.comparingLong(d -> d.getLong(ChronoField.INSTANT_SECONDS)))
@@ -297,6 +311,33 @@ public class User implements Serializable, UserRelated {
         .getResultList();
   }
 
+  public static void checkAdminConsistency() throws InvalidValue {
+
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    try {
+      @Cleanup(value = "commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      String checkValue =
+          em.createQuery(
+                  "select case when exists"
+                      + "(select t from Transaction t where u IN(fromUser, toUser) or u.userGroup IN (fromUserGroup, toUserGroup)) "
+                      + "then 'invalid Transaction' "
+                      + "when (select value from UserGroup ug where u.userGroup = ug) <> 0 then 'invalid value' "
+                      + "else 'OK' end as result "
+                      + "from User u "
+                      + "where u.username = 'Admin'",
+                  String.class)
+              .getSingleResult();
+      if (!checkValue.equals("OK")) {
+        throw new InvalidValue("Admin user state error: " + checkValue);
+      }
+    } catch (Exception e) {
+      Tools.showUnexpectedErrorWarning(e);
+      throw new RuntimeException(e);
+    }
+  }
+
   public static User getKernbeisserUser() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
@@ -366,6 +407,7 @@ public class User implements Serializable, UserRelated {
     return value;
   }
 
+  @EqualsAndHashCode.Exclude
   @Getter(lazy = true)
   @Transient
   private final Set<String> ignoredDialogs = loadDialogs();

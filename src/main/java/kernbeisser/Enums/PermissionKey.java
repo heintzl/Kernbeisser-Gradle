@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Security.ActionPermission;
+import kernbeisser.Security.PermissionSet;
 
 public enum PermissionKey {
 
@@ -334,8 +335,6 @@ public enum PermissionKey {
   USER_PERMISSIONS_WRITE(User.class),
   USER_SHARES_READ(User.class),
   USER_SHARES_WRITE(User.class),
-  USER_EXTRA_JOBS_READ(User.class),
-  USER_EXTRA_JOBS_WRITE(User.class),
   USER_JOBS_READ(User.class),
   USER_JOBS_WRITE(User.class),
   USER_KERNBEISSER_KEY_READ(User.class),
@@ -366,6 +365,8 @@ public enum PermissionKey {
   USER_CREATE_DATE_WRITE(User.class),
   USER_UPDATE_DATE_READ(User.class),
   USER_UPDATE_DATE_WRITE(User.class),
+  USER_UPDATE_BY_READ(User.class),
+  USER_UPDATE_BY_WRITE(User.class),
   USER_USER_GROUP_READ(User.class),
   USER_USER_GROUP_WRITE(User.class),
   USER_UNREADABLE_READ(User.class),
@@ -376,6 +377,10 @@ public enum PermissionKey {
   USER_FORCE_PASSWORD_CHANGE_WRITE(User.class),
   USER_GROUP_ID_READ(UserGroup.class),
   USER_GROUP_ID_WRITE(UserGroup.class),
+  USER_GROUP_UPDATE_DATE_READ(UserGroup.class),
+  USER_GROUP_UPDATE_DATE_WRITE(UserGroup.class),
+  USER_GROUP_UPDATE_BY_READ(UserGroup.class),
+  USER_GROUP_UPDATE_BY_WRITE(UserGroup.class),
   USER_GROUP_VALUE_READ(UserGroup.class),
   USER_GROUP_VALUE_WRITE(UserGroup.class),
   USER_GROUP_INTEREST_THIS_YEAR_READ(UserGroup.class),
@@ -433,6 +438,17 @@ public enum PermissionKey {
 
   public static PermissionKey[] combine(PermissionKey[]... permissionKeys) {
     return Arrays.stream(permissionKeys).flatMap(Arrays::stream).toArray(PermissionKey[]::new);
+  }
+
+  public static PermissionSet getNonAdminPermissions() {
+    return PermissionSet.asPermissionSet(
+        new PermissionKey[] {
+          ACTION_EDIT_OWN_DATA,
+          ACTION_OPEN_OWN_PRE_ORDER,
+          ACTION_OPEN_SOLO_SHOPPING_MASK,
+          GO_UNDER_MIN,
+          ACTION_ORDER_OWN_CONTAINER
+        });
   }
 
   public static PermissionKey[] allReadPermissions(Class<?> c) {

@@ -46,9 +46,18 @@ public class UserController extends FormController<UserView, UserModel, User> {
           BCrypt.withDefaults()
               .hashToString(Setting.HASH_COSTS.getIntValue(), passwordToken.toCharArray()));
       user.setForcePasswordChange(true);
-      user.setUserGroup(new UserGroup(0));
+      user.setUserGroup(new UserGroup());
       Tools.persist(user.getUserGroup());
       getView().showPasswordToken(passwordToken);
+    }
+  }
+
+  public void validateFullname(User user, Mode mode) throws CannotParseException {
+    if (mode != Mode.REMOVE) {
+      if (model.fullNameExists(user)) {
+        getView().wrongFullname(user.getFullName());
+        throw new CannotParseException();
+      }
     }
   }
 
@@ -57,7 +66,8 @@ public class UserController extends FormController<UserView, UserModel, User> {
 
   void refreshUsername() {
     var view = getView();
-    if (getMode() == Mode.ADD) {
+    String originalUserName = getObjectContainer().getOriginal().getUsername();
+    if (originalUserName == null || originalUserName.isEmpty()) {
       String firstName = view.getFirstName();
       String surName = view.getSurname();
       if (surName != null && firstName != null) {

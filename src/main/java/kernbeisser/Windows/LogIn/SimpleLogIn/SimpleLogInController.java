@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
@@ -18,6 +20,7 @@ import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 
 public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
 
@@ -55,6 +58,21 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     new Thread(
             () -> {
               loadUserSettings();
+              cleanAdminUser();
+              try {
+                User.checkAdminConsistency();
+              } catch (InvalidValue e) {
+                Tools.showUnexpectedErrorWarning(e);
+              }
+              if (!UserGroup.checkUserGroupConsistency()) {
+                JOptionPane.showMessageDialog(
+                    getView().getTopComponent(),
+                    "Die Transaktionsdaten weichen von den Kontoständen ab.\n"
+                        + "Bitte den Vorstand oder die Buchhaltung informieren!",
+                    "Inkonsistenter Datenbestand",
+                    JOptionPane.WARNING_MESSAGE);
+              }
+              ;
               if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
                 new ChangePasswordController(LogInModel.getLoggedIn(), true)
                     .openIn(new SubWindow(view.traceViewContainer()));
@@ -72,6 +90,13 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
           UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
     } catch (UnsupportedLookAndFeelException e) {
       Tools.showUnexpectedErrorWarning(e);
+    }
+  }
+
+  private static void cleanAdminUser() {
+    User currentUser = LogInModel.getLoggedIn();
+    if (currentUser.isSysAdmin()) {
+      PermissionConstants.cleanAdminPermission(currentUser);
     }
   }
 

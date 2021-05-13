@@ -33,7 +33,7 @@ public class Users {
     user.setShares(Integer.parseInt(stringRaw[3]));
     secondary.setFirstName(stringRaw[5]);
     secondary.setSurname(stringRaw[6]);
-    user.setExtraJobs(stringRaw[7]);
+    // ExtraJobs: Unused, column 7
     user.setJobs(Tools.extract(HashSet::new, stringRaw[8], "§", jobHashMap::get));
     user.setKernbeisserKey(Boolean.parseBoolean(stringRaw[10]) ? 0 : -1);
     user.setEmployee(Boolean.parseBoolean(stringRaw[11]));
@@ -67,6 +67,7 @@ public class Users {
     secondary.setPassword(defaultPassword);
     generateUsername(usernames, user);
     generateUsername(usernames, secondary);
+    user.setUpdateBy(User.getKernbeisserUser());
     return new User[] {user, secondary};
   }
 
@@ -74,10 +75,11 @@ public class Users {
   public static final int SOLIDARITY_SURCHARGE_COLUMN = 3;
 
   public static UserGroup getUserGroup(String[] rawData) {
-    UserGroup userGroup = new UserGroup(getValue(rawData));
+    UserGroup userGroup = new UserGroup();
     userGroup.setInterestThisYear(
         (int) (Float.parseFloat(rawData[INTEREST_THIS_YEAR_COLUMN].replace(",", "."))));
     userGroup.setSolidaritySurcharge(Integer.parseInt(rawData[SOLIDARITY_SURCHARGE_COLUMN]) / 100.);
+    userGroup.setUpdateBy(User.getKernbeisserUser());
     return userGroup;
   }
 
@@ -96,7 +98,7 @@ public class Users {
         break;
       }
     }
-    if (user.getUsername().equals(new User().getUsername())) {
+    if (user.getUsername() == null) {
       user.setUsername(user.getFirstName() + "." + user.getSurname() + new Random().nextLong());
     }
   }
@@ -157,7 +159,7 @@ public class Users {
   }
 
   public static void leaveUserGroup(User user) {
-    UserGroup newUserGroup = new UserGroup(0);
+    UserGroup newUserGroup = new UserGroup();
     Tools.persist(newUserGroup);
     switchUserGroup(user.getId(), newUserGroup.getId());
   }
