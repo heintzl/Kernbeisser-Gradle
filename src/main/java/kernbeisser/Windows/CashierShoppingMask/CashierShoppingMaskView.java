@@ -75,7 +75,9 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
 
   public void setAllSecondarySellers(Collection<User> users) {
     secondSellerUsername.removeAllItems();
-    secondSellerUsername.addItem(new User());
+    User noUser = new User();
+    noUser.setUsername("Keiner");
+    secondSellerUsername.addItem(noUser);
     users.forEach(e -> secondSellerUsername.addItem(e));
   }
 

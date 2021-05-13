@@ -74,7 +74,7 @@ public class User implements Serializable, UserRelated {
   @Column(unique = true, nullable = false)
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_READ)})
-  private String username = "Keiner";
+  private String username;
 
   @Column(nullable = false)
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})

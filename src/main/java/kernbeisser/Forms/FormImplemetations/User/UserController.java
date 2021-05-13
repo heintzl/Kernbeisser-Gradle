@@ -66,7 +66,8 @@ public class UserController extends FormController<UserView, UserModel, User> {
 
   void refreshUsername() {
     var view = getView();
-    if (getMode() == Mode.ADD) {
+    String originalUserName = getObjectContainer().getOriginal().getUsername();
+    if (originalUserName == null || originalUserName.isEmpty()) {
       String firstName = view.getFirstName();
       String surName = view.getSurname();
       if (surName != null && firstName != null) {
