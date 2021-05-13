@@ -53,8 +53,10 @@ public class UserModel implements IModel<UserController> {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select id from User where concat(firstName, ' ', surname) = :fullName")
+    return em.createQuery(
+                "select id from User where id <> :currentId and concat(firstName, ' ', surname) = :fullName")
             .setParameter("fullName", user.getFullName().trim())
+            .setParameter("currentId", user.getId())
             .getResultList()
             .size()
         > 0;
