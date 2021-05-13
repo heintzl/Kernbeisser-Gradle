@@ -132,10 +132,10 @@ public class User implements Serializable, UserRelated {
 
   @ManyToOne
   @EqualsAndHashCode.Exclude
-  @JoinColumn(nullable = false)
+  @JoinColumn(nullable = true)
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_BY_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_BY_READ)})
-  private User updateBy = this;
+  private User updateBy;
 
   @ManyToOne
   @JoinColumn(nullable = false)
@@ -157,6 +157,16 @@ public class User implements Serializable, UserRelated {
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
   private boolean forcePasswordChange = false;
+
+  public User(String username) {
+    this.username = username;
+  }
+
+  @PrePersist
+  @PreUpdate
+  private void setUpdateBy() {
+    if (LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
+  }
 
   private static final String GENERIC_USERS_CONDITION =
       "upper(username) IN ('KERNBEISSER', 'ADMIN')";
@@ -326,12 +336,6 @@ public class User implements Serializable, UserRelated {
       Tools.showUnexpectedErrorWarning(e);
       throw new RuntimeException(e);
     }
-  }
-
-  @PrePersist
-  @PreUpdate
-  private void setUpdateBy() {
-    updateBy = LogInModel.getLoggedIn();
   }
 
   public static User getKernbeisserUser() {
