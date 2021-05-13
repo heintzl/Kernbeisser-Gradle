@@ -12,6 +12,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Exeptions.CannotLogInException;
+import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,7 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   private JLabel value;
   private JLabel interestThisYear;
   private JButton editSoli;
+  private JLabel updateInfo;
 
   @Linked private EditUserGroupController controller;
 
@@ -62,6 +64,7 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
         optional(userGroup::getSolidaritySurcharge)
             .map(e -> String.format("%.2f%%", e * 100))
             .orElse("[Keine Leseberechtigung]"));
+    updateInfo.setText(getUpdateInfo(userGroup));
   }
 
   private void leaveUserGroup(ActionEvent event) {
@@ -121,6 +124,16 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
         e -> {
           controller.editSoli(requestSoli());
         });
+  }
+
+  private String getUpdateInfo(UserGroup u) {
+    try {
+      return Date.INSTANT_DATE.format(u.getUpdateDate())
+          + " durch "
+          + u.getUpdateBy().getFullName();
+    } catch (NullPointerException e) {
+      return "(nicht gespeichert)";
+    }
   }
 
   private double requestSoli() {

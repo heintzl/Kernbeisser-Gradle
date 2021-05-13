@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.*;
@@ -8,7 +9,9 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
 
 @Table
@@ -36,7 +39,19 @@ public class UserGroup implements UserRelated {
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.USER_GROUP_INTEREST_THIS_YEAR_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.USER_GROUP_INTEREST_THIS_YEAR_WRITE)})
-  private int interestThisYear;
+  private double interestThisYear;
+
+  @UpdateTimestamp
+  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_UPDATE_DATE_WRITE)})
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_UPDATE_DATE_READ)})
+  private Instant updateDate;
+
+  @ManyToOne
+  @EqualsAndHashCode.Exclude
+  @JoinColumn(nullable = true)
+  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_UPDATE_BY_WRITE)})
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_UPDATE_BY_READ)})
+  private User updateBy;
 
   /* for output to Report */
   @Column
@@ -55,6 +70,21 @@ public class UserGroup implements UserRelated {
   @Getter(
       onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)})
   private double solidaritySurcharge;
+
+  @Transient private Optional<Double> oldSolidarity;
+
+  @PostLoad
+  private void rememberValues() {
+    oldSolidarity = Optional.of(solidaritySurcharge);
+  }
+
+  @PreUpdate
+  @PrePersist
+  private void setUpdateBy() {
+    if (!Optional.of(solidaritySurcharge).equals(oldSolidarity)) {
+      if (LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
+    }
+  }
 
   public UserGroup withMembersAsString(boolean withNames) {
     UserGroup result = new UserGroup();
