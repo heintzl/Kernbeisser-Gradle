@@ -67,6 +67,7 @@ public class Users {
     secondary.setPassword(defaultPassword);
     generateUsername(usernames, user);
     generateUsername(usernames, secondary);
+    user.setUpdateBy(User.getKernbeisserUser());
     return new User[] {user, secondary};
   }
 
@@ -78,6 +79,7 @@ public class Users {
     userGroup.setInterestThisYear(
         (int) (Float.parseFloat(rawData[INTEREST_THIS_YEAR_COLUMN].replace(",", "."))));
     userGroup.setSolidaritySurcharge(Integer.parseInt(rawData[SOLIDARITY_SURCHARGE_COLUMN]) / 100.);
+    userGroup.setUpdateBy(User.getKernbeisserUser());
     return userGroup;
   }
 
@@ -96,7 +98,7 @@ public class Users {
         break;
       }
     }
-    if (user.getUsername().equals(new User().getUsername())) {
+    if (user.getUsername() == null) {
       user.setUsername(user.getFirstName() + "." + user.getSurname() + new Random().nextLong());
     }
   }
