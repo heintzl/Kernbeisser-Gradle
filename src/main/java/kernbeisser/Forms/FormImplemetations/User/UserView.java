@@ -14,11 +14,13 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Components.*;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Reports.LoginInfo;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class UserView implements IView<UserController> {
@@ -233,19 +235,39 @@ public class UserView implements IView<UserController> {
     return lastName.getText();
   }
 
-  public void showPasswordToken(String resetPassword) {
+  public void showPasswordToken(String resetPassword, User user) {
+    showPasswordToken(resetPassword, user, getTopComponent());
+  }
+
+  public static void showPasswordToken(String resetPassword, User user, Component parentComponent) {
+    var printButton = new JButton("Benutzer-Info drucken");
+    printButton.addActionListener(
+        e ->
+            new LoginInfo(user, resetPassword)
+                .sendToPrinter(
+                    "Benutzerinfo wird erstellt", er -> Tools.showUnexpectedErrorWarning(er)));
     Object message =
         new Object[] {
+          "Der Anmeldename ist:\n",
+          new JTextField(user.getUsername()) {
+            {
+              setEditable(false);
+            }
+          },
           "Das generierte Passwort ist Folgendes:\n",
           new JTextField(resetPassword) {
             {
               setEditable(false);
             }
           },
-          "Bitte logge dich möglichst zeitnah ein,\num das Passwort zu ändern."
+          "Bitte logge dich möglichst zeitnah ein,\num das Passwort zu ändern.\n",
+          printButton
         };
     JOptionPane.showMessageDialog(
-        getTopComponent(), message, "Generiertes Password", JOptionPane.INFORMATION_MESSAGE);
+        parentComponent,
+        message,
+        "Generiertes Password für " + user.getFullName(),
+        JOptionPane.INFORMATION_MESSAGE);
   }
 
   public boolean askForAddPermissionFullMember(int no) {

@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AnmeldeInformation" pageWidth="420" pageHeight="595" columnWidth="380" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Bold" markup="none" isBold="true"/>
+	<parameter name="password" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="fullName" class="java.lang.String"/>
+	<field name="shares" class="java.lang.Integer"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="firstName" class="java.lang.String"/>
+	<field name="surname" class="java.lang.String"/>
+	<field name="jobsAsString" class="java.lang.String"/>
+	<field name="kernbeisserKey" class="java.lang.Integer"/>
+	<field name="phoneNumber1" class="java.lang.String"/>
+	<field name="phoneNumber2" class="java.lang.String"/>
+	<field name="street" class="java.lang.String"/>
+	<field name="town" class="java.lang.String"/>
+	<field name="townCode" class="java.lang.String"/>
+	<field name="username" class="java.lang.String"/>
+	<background>
+		<band height="400" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="44" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="290" height="20" uuid="1ec3f97b-61d8-4806-b656-4b70f7596971"/>
+				<textElement markup="html">
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kernbeißer-Programm Anmeldeinformation]]></text>
+			</staticText>
+			<textField pattern="dd.MM.yyyy">
+				<reportElement style="Bold" x="250" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="20" width="290" height="20" uuid="eb9e57df-46cb-4022-9fa6-ca9ab1c4a786"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["für " + $F{fullName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="329" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="44" width="170" height="14" uuid="2c8f2c9a-463c-4314-a631-694086a4dcc9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="31" width="76" height="13" uuid="a688d378-6452-4879-9ddb-44561382a9b6"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Benutzername:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="3" width="380" height="28" uuid="6ae5971d-ac71-4b97-9665-f9ec02295f92"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Mit diesen Informationen kannst Du Dich im Ladenprogramm anmelden, sobald dein Beutzerkonto freigeschaltet ist:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="31" width="76" height="13" uuid="3f0c83f7-9f45-4132-9682-a437e2ebf442"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Passwort:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="44" width="170" height="14" uuid="b5f03d97-15b9-4c09-bc19-444889a52b02">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{password}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="65" width="380" height="25" uuid="2ec372f7-9735-4da0-869c-ca905fc49b91"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Hinweis: Die Ziffern 0 und 1 sind im Passwort nicht enthalten.
+Bei der ersten Anmeldung wirst Du dazu aufgefordert, dein Passwort zu ändern!]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="110" width="380" height="65" uuid="ac013a2a-bcec-45e1-8320-3e7b0a8557cd"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Im Programm sind im Moment die folgenden weiteren Informationen erfasst. Sie sind für andere Benutzer sichtbar. Wenn Du das nicht möchstest, kannst Du die Angaben entfernen. Lediglich dein Name und eine Telefonnummer müssen angegeben sein, damit Du ggf. erreichbar bist. Die Anzahl deiner Anteile wird ggf. benötigt, um zu sehen, wieviel Kredit Du bei der Genossenschaft hast.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="190" width="170" height="14" uuid="6b8f1d4c-dd16-4e65-8a1d-d5cb1e6d43f2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{firstName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="177" width="90" height="13" uuid="708b6818-a9da-4a0b-9525-221d2fe7db7d"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Vorname:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="190" width="170" height="14" uuid="92b0bbc9-0c3a-4dc0-8922-5c613ef82b64">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{surname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="177" width="90" height="13" uuid="e9d3b0a2-6d8b-45ee-b7ad-dbc155a61291"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Nachname:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="220" width="170" height="14" uuid="30be075b-42ba-4654-a805-c1620389eb3e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{phoneNumber1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="207" width="90" height="13" uuid="684df33d-799c-474e-8fa4-40525d474a07"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Telefonnummer 1:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="220" width="170" height="14" uuid="93554fa7-7079-4983-8b5b-fcb611e70b0b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{phoneNumber2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="207" width="90" height="13" uuid="4d844ff9-dce3-4241-897d-4aa8d82c7f02"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Telefonnummer 2:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="250" width="170" height="14" uuid="ddaae640-2a0d-44b4-b8a0-85e9ad763454">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{street}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="237" width="90" height="13" uuid="72ac0e1f-0547-4ed1-a6d3-3b638f1d5df1"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Straße]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="250" width="170" height="14" uuid="8d317c02-1789-4f82-917a-bfdf61adc708">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{townCode} + " " + $F{town}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="237" width="90" height="13" uuid="90d4c88a-b786-4d3b-88c7-f61e42187f5b"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[PLZ Ort:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="310" width="76" height="14" uuid="8d234086-8d32-4020-b438-a788fee73c37">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{shares}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="297" width="76" height="13" uuid="7e074bf5-78b4-4e64-bffd-7e0451d8a9cb"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Anteile:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="310" width="170" height="14" uuid="36d7f5b3-e971-4929-be69-d141d546202a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jobsAsString}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="297" width="90" height="13" uuid="cd5a4168-22b9-4b38-9968-c0cbbfab5518"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Dienste:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="310" width="76" height="14" uuid="907531e6-fda5-4dad-a97e-e0c69c8117a0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kernbeisserKey}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="297" width="90" height="13" uuid="4f577e3b-ba0e-4d40-b047-ac996e952fc3"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Schlüsselnummer:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="267" width="90" height="13" uuid="a70c794b-58f8-4235-9688-85e531617298"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Email:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="280" width="350" height="14" uuid="24cfc77e-25dd-49d5-b6b3-465d551873fb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="2">
+					<pen lineWidth="0.05"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed" size="7"/>
+					<paragraph lineSpacingSize="1.0"/>
+				</textElement>
+				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="76" splitType="Stretch"/>
+	</summary>
+</jasperReport>

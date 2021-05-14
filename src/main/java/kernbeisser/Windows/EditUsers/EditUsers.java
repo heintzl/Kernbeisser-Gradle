@@ -10,6 +10,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
+import kernbeisser.Forms.FormImplemetations.User.UserView;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Security.Key;
@@ -55,7 +56,7 @@ public class EditUsers extends ObjectViewController<User> {
 
   public void resetPassword(User user) {
     if (verifyPasswordChange(user.getUsername())) {
-      showPasswordToken(Users.resetPassword(user), user);
+      UserView.showPasswordToken(Users.resetPassword(user), user, getView().getTopComponent());
     }
   }
 
@@ -63,24 +64,6 @@ public class EditUsers extends ObjectViewController<User> {
     new EditUserGroupController(user, LogInModel.getLoggedIn())
         .withCloseEvent(() -> fillView(getView()))
         .openIn(new SubWindow(getView().traceViewContainer()));
-  }
-
-  public void showPasswordToken(String resetPassword, User user) {
-    Object message =
-        new Object[] {
-          "Das generierte Passwort ist Folgendes:\n",
-          new JTextField(resetPassword) {
-            {
-              setEditable(false);
-            }
-          },
-          "Bitte logge dich möglichst zeitnah ein,\num das Passwort zu ändern."
-        };
-    JOptionPane.showMessageDialog(
-        getView().getTopComponent(),
-        message,
-        "Generiertes Password für " + user.getFullName(),
-        JOptionPane.INFORMATION_MESSAGE);
   }
 
   public boolean verifyPasswordChange(String username) {
