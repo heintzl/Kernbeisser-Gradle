@@ -8,14 +8,15 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.RowFilter;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectTable<T> extends JTable implements Iterable<T> {
@@ -37,6 +38,10 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     this(Collections.emptyList(), columns);
   }
 
+  private final Map<Column<T>, JTextField> standardColumnFilters = new HashMap<>();
+
+  private final Map<Column<T>, JPopupMenu> standardFilterPopups = new HashMap<>();
+
   @SafeVarargs
   public ObjectTable(Collection<T> fill, Column<T>... columns) {
     this(fill, Arrays.asList(columns));
@@ -55,22 +60,38 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
         new MouseAdapter() {
           @Override
           public void mouseReleased(MouseEvent e) {
-            int row, column;
+            int row;
+            Column<T> column;
             if (getSelectedRow() == -1 && e.getButton() == MouseEvent.BUTTON1) {
               return;
             }
             Point mousePosition = e.getPoint();
             JTable t = (JTable) e.getSource();
             row = t.rowAtPoint(mousePosition);
-            column = convertColumnIndexToModel(t.columnAtPoint(mousePosition));
+            column =
+                ObjectTable.this.columns.get(
+                    convertColumnIndexToModel(t.columnAtPoint(mousePosition)));
             getFromRow(row)
                 .ifPresent(
                     selection -> {
-                      ObjectTable.this.columns.get(column).onAction(e, selection);
+                      column.onAction(e, selection);
                       invokeSelectionListeners(selection, true);
                     });
+            addStandardFilterListener(e, column);
           }
         });
+    getTableHeader()
+        .addMouseListener(
+            new MouseAdapter() {
+              @Override
+              public void mouseReleased(MouseEvent e) {
+                Column<T> column =
+                    ObjectTable.this.columns.get(
+                        convertColumnIndexToModel(
+                            ((JTableHeader) e.getSource()).columnAtPoint(e.getPoint())));
+                addStandardFilterListener(e, column);
+              }
+            });
     addKeyListener(
         new KeyAdapter() {
           @Override
@@ -81,10 +102,62 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     setRowSorter(createRowSorter());
   }
 
+  private void addStandardFilterListener(MouseEvent e, Column<T> column) {
+    if (column.usesStandardFilter()) {
+      if (SwingUtilities.isRightMouseButton(e)) {
+        JPopupMenu popup = standardFilterPopups.get(column);
+        if (standardColumnFilters.containsKey(column)) {
+          String initialText = standardColumnFilters.get(column).getText();
+          ((JTextField) ((JPanel) popup.getComponent(0)).getComponent(1)).setText(initialText);
+        }
+        popup.show(e.getComponent(), e.getX(), e.getY());
+      }
+    }
+  }
+
+  private JPopupMenu createPopupMenu(Column<T> column) {
+    var popup = new JPopupMenu("Spaltenfilter");
+    JPanel textFilterPanel = new JPanel(new FlowLayout());
+    textFilterPanel.add(new JLabel(IconFontSwing.buildIcon(FontAwesome.FILTER, 15, Color.BLUE)));
+    JTextField filterText = new JTextField();
+    filterText.setPreferredSize(new Dimension(150, 25));
+    filterText.addActionListener(e -> applyStandardFilter(popup, column, filterText));
+    textFilterPanel.add(filterText);
+    JPanel removeFilterPanel = new JPanel(new FlowLayout());
+    removeFilterPanel.add(new JLabel(IconFontSwing.buildIcon(FontAwesome.TIMES, 15, Color.RED)));
+    JLabel removeFilter = new JLabel("Filter Entfernen");
+    removeFilter.setPreferredSize(new Dimension(150, 25));
+    removeFilterPanel.add(removeFilter);
+    removeFilterPanel.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            applyStandardFilter(popup, column, null);
+          }
+        });
+    popup.add(textFilterPanel);
+    popup.add(removeFilterPanel);
+    return popup;
+  }
+
+  private void applyStandardFilter(JPopupMenu p, Column<T> c, JTextField text) {
+    if (text == null) {
+      standardColumnFilters.remove(c);
+    } else {
+      standardColumnFilters.put(c, text);
+    }
+    refreshModel();
+    p.setVisible(false);
+  }
+
   private void refreshModel() {
     model = (DefaultTableModel) createModel(columns, objects);
     setRowSorter(null);
     setModel(model);
+    columns.forEach(
+        c -> {
+          if (c.usesStandardFilter()) standardFilterPopups.put(c, createPopupMenu(c));
+        });
     for (int i = 0; i < columns.size(); i++) {
       Column<T> column = columns.get(i);
       TableColumn tableColumn = getColumnModel().getColumn(convertColumnIndexToModel(i));
@@ -267,7 +340,8 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
           @Override
           public synchronized boolean include(Entry<?, ? extends Integer> entry) {
             try {
-              return rowFilter.isDisplayed(objects.get(entry.getIdentifier()));
+              T object = objects.get(entry.getIdentifier());
+              return rowFilter.isDisplayed(object) && isInStandardFilter(object);
             } catch (IndexOutOfBoundsException e) {
               System.out.println(entry.getIdentifier());
               return false;
@@ -278,6 +352,19 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
       out.setComparator(i, columns.get(i).sorter());
     }
     return out;
+  }
+
+  private boolean isInStandardFilter(T t) {
+    boolean result = true;
+    for (Map.Entry<Column<T>, JTextField> filter : standardColumnFilters.entrySet()) {
+      String text = (String) filter.getKey().getValue(t);
+      result =
+          Pattern.compile(filter.getValue().getText(), Pattern.CASE_INSENSITIVE)
+              .matcher(text)
+              .find();
+      if (!result) break;
+    }
+    return result;
   }
 
   public Collection<T> getSelectedObjects() {
