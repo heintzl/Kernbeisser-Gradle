@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -28,26 +27,14 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
 
   @Override
   public void initialize(CollectionController<T> controller) {
-    available.addSelectionListener(
-        new ObjectSelectionListener<T>() {
-          T last;
-
-          @Override
-          public void selected(T e) {
-            if (e.equals(last)) {
-              controller.selectAvailable();
-            } else {
-              last = e;
-            }
-          }
-        });
+    available.addDoubleClickListener(e -> controller.selectAvailable());
     chosen.addDoubleClickListener(e -> controller.selectChosen());
     add.addActionListener(e -> controller.selectAvailable());
     addAll.addActionListener(e -> controller.selectAllAvailable());
     remove.addActionListener(e -> controller.selectChosen());
     removeAll.addActionListener(e -> controller.selectAllChosen());
     cancel.addActionListener(e -> back());
-    commit.addActionListener(e -> back());
+    commit.addActionListener(e -> controller.exitWithSave());
   }
 
   void setEditable(boolean editable) {
