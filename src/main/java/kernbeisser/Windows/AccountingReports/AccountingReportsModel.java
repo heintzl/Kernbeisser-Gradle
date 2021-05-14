@@ -127,8 +127,9 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
     List<Permission> permissions =
         DBConnection.getEntityManager()
             .createQuery(
-                "Select p from Permission p where not p.name like '@%'"
-                    + (withKeys ? " or p.name = '@Key_Permission'" : ""),
+                "Select p from Permission p where not p.name in ('@IMPORT', '@APPLICATION', '@IN_RELATION_TO_OWN_USER'"
+                    + (withKeys ? "" : ", '@Key_Permission', '@FULL_MEMBER' ,'@BASIC_ACCESS'")
+                    + ")",
                 Permission.class)
             .getResultList();
     exportReport(
