@@ -2,8 +2,7 @@ package kernbeisser.Windows.PermissionAssignment;
 
 import java.util.List;
 import java.util.Optional;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
@@ -42,6 +41,16 @@ public class PermissionAssignmentView implements IView<PermissionAssignmentContr
 
   Optional<Permission> getSelectedPermission() {
     return permissions.getSelected();
+  }
+
+  public boolean confirmChanges() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Sollen die vorgenommenen Änderungen gespeichert werden?",
+            "Wechsel der bearbeiteten Rolle",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
+        == JOptionPane.YES_OPTION;
   }
 
   @Override

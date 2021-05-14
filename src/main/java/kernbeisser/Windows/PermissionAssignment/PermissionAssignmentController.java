@@ -25,18 +25,23 @@ public class PermissionAssignmentController
   @Key(PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT)
   public PermissionAssignmentController() throws PermissionKeyRequiredException {
     super(new PermissionAssignmentModel());
-    user =
-        new CollectionController<>(
-            new ArrayList<>(), Source.empty(), Column.create("Benutzername", User::getUsername));
+    user = getUserSource();
   }
 
   @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
   private PermissionAssignmentController(boolean dummy) throws PermissionKeyRequiredException {
     super(new PermissionAssignmentModel());
     this.onlyCashier = true;
-    user =
-        new CollectionController<>(
-            new ArrayList<>(), Source.empty(), Column.create("Benutzername", User::getUsername));
+    user = getUserSource();
+  }
+
+  private CollectionController<User> getUserSource() {
+    return new CollectionController<>(
+        new ArrayList<>(),
+        Source.empty(),
+        Column.create("Vorname", User::getFirstName).withStandardFilter(),
+        Column.create("Nachname", User::getSurname).withStandardFilter(),
+        Column.create("Dienste", User::getJobsAsString).withStandardFilter());
   }
 
   @Override
@@ -53,17 +58,23 @@ public class PermissionAssignmentController
       return;
     }
     applyChanges();
-    user.setLoadedAndSource(model.assignedUsers(permission.get()), getModel().allUsers());
+    user.setLoadedAndSource(model.assignedUsers(permission.get()), model::allUsers);
     model.setRecent(permission.get());
   }
 
   private void applyChanges() {
     Optional<Collection<User>> before = model.getRecent().map(model::assignedUsers);
     if (!before.isPresent() || before.get().equals(user.getModel().getLoaded())) return;
-    model.setPermission(model.getRecent().get(), user.getModel().getLoaded());
+    model.setPermission(
+        model.getRecent().get(), user.getModel().getLoaded(), () -> getView().confirmChanges());
   }
 
   public static PermissionAssignmentController cashierPermissionController() {
     return new PermissionAssignmentController(true);
+  }
+
+  @Override
+  protected void closed() {
+    model.setPermission(model.getRecent().get(), user.getModel().getLoaded(), () -> true);
   }
 }
