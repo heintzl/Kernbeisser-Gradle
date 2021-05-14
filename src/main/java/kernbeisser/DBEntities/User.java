@@ -268,6 +268,10 @@ public class User implements Serializable, UserRelated {
         : Tools.accessString(this::getFirstName) + " " + Tools.accessString(this::getSurname);
   }
 
+  public String getJobsAsString() {
+    return Job.concatenateJobs(getJobsAsAvailable());
+  }
+
   public String toString() {
     return Tools.optional(this::getUsername).orElse("Benutzer[" + id + "]");
   }
