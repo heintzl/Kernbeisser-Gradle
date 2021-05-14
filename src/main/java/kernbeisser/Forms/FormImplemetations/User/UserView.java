@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
@@ -203,13 +202,9 @@ public class UserView implements IView<UserController> {
                 Source.of(Job.class),
                 Column.create("Name", Job::getName),
                 Column.create("Beschreibung", Job::getDescription))
-            .withCloseEvent(() -> jobs.setText(getJobsInfo(chgJobs.getData())));
-    jobs = new AccessCheckingLabel<>(u -> getJobsInfo(u.getJobsAsAvailable()));
+            .withCloseEvent(() -> jobs.setText(Job.concatenateJobs(chgJobs.getData())));
+    jobs = new AccessCheckingLabel<>(User::getJobsAsString);
     updateInfo = new AccessCheckingLabel<>(this::getUpdateInfo);
-  }
-
-  private String getJobsInfo(Set<Job> jobSet) {
-    return jobSet.stream().map(Job::getName).collect(Collectors.joining(", "));
   }
 
   private String getUpdateInfo(User u) {

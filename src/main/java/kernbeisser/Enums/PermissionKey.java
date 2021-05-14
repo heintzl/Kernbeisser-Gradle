@@ -444,6 +444,7 @@ public enum PermissionKey {
     return PermissionSet.asPermissionSet(
         new PermissionKey[] {
           ACTION_EDIT_OWN_DATA,
+          ACTION_OPEN_EDIT_USER_GROUP,
           ACTION_OPEN_OWN_PRE_ORDER,
           ACTION_OPEN_SOLO_SHOPPING_MASK,
           GO_UNDER_MIN,

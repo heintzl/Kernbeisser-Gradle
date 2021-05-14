@@ -3,6 +3,8 @@ package kernbeisser.DBEntities;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
@@ -60,6 +62,10 @@ public class Job {
         .setParameter("sn", "%" + s + "%")
         .setMaxResults(max)
         .getResultList();
+  }
+
+  public static String concatenateJobs(Set<Job> jobSet) {
+    return jobSet.stream().map(Job::getName).collect(Collectors.joining(", "));
   }
 
   @Override

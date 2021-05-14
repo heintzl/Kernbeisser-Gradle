@@ -14,6 +14,21 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
     super(new CollectionModel<>(edit, source, columns));
   }
 
+  public void exitWithSave() {
+    model.saveChanges = true;
+    getView().back();
+  }
+
+  @Override
+  protected boolean commitClose() {
+    if (model.saveChanges || model.isUnChanged()) return true;
+    if (getView().confirmCancel()) {
+      model.revert();
+      return true;
+    }
+    return false;
+  }
+
   @Override
   public void fillView(CollectionView<T> tCollectionView) {
     tCollectionView.setColumns(model.getColumns());
@@ -35,6 +50,7 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
       model
           .getLoaded()
           .remove(getView().getSelectedChosenObject().orElseThrow(NoSelectionException::new));
+      refresh();
     } catch (NoSelectionException e) {
       getView().messageSelectObjectFirst();
     }

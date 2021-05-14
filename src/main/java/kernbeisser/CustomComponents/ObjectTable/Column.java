@@ -227,11 +227,59 @@ public interface Column<T> {
     };
   }
 
+  default Column<T> withStandardFilter() {
+    return new Column<T>() {
+      @Override
+      public Column<T> withStandardFilter() {
+        return this;
+      }
+
+      @Override
+      public String getName() {
+        return Column.this.getName();
+      }
+
+      @Override
+      public Object getValue(T t) throws PermissionKeyRequiredException {
+        return Column.this.getValue(t);
+      }
+
+      @Override
+      public void onAction(MouseEvent e, T t) {
+        Column.this.onAction(e, t);
+      }
+
+      @Override
+      public TableCellRenderer getRenderer() {
+        return Column.this.getRenderer();
+      }
+
+      @Override
+      public void adjust(TableColumn column) {
+        Column.this.adjust(column);
+      }
+
+      @Override
+      public Comparator<Object> sorter() {
+        return Column.this.sorter();
+      }
+
+      @Override
+      public boolean usesStandardFilter() {
+        return true;
+      }
+    };
+  }
+
   String getName();
 
   Object getValue(T t) throws PermissionKeyRequiredException;
 
   default void onAction(MouseEvent e, T t) {}
+
+  default boolean usesStandardFilter() {
+    return false;
+  }
 
   default TableCellRenderer getRenderer() {
     return DEFAULT_RENDERER;

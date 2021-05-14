@@ -168,7 +168,7 @@ public class User implements Serializable, UserRelated {
     if (LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
   }
 
-  private static final String GENERIC_USERS_CONDITION =
+  public static final String GENERIC_USERS_CONDITION =
       "upper(username) IN ('KERNBEISSER', 'ADMIN')";
 
   @Key(PermissionKey.USER_PERMISSIONS_READ)
@@ -266,6 +266,10 @@ public class User implements Serializable, UserRelated {
     return firstSurname
         ? Tools.accessString(this::getSurname) + " " + Tools.accessString(this::getFirstName)
         : Tools.accessString(this::getFirstName) + " " + Tools.accessString(this::getSurname);
+  }
+
+  public String getJobsAsString() {
+    return Job.concatenateJobs(getJobsAsAvailable());
   }
 
   public String toString() {
