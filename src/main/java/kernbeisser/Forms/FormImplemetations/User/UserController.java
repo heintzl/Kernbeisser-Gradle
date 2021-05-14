@@ -48,7 +48,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
       user.setForcePasswordChange(true);
       user.setUserGroup(new UserGroup());
       Tools.persist(user.getUserGroup());
-      getView().showPasswordToken(passwordToken);
+      getView().showPasswordToken(passwordToken, user);
     }
   }
 
