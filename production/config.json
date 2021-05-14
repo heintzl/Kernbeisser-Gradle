@@ -24,7 +24,8 @@
       "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
       "keyUserListFileName": "BenutzerSchluessel.jrxml",
       "invoiceFileName": "Kerni_Rechnung.jrxml",
-      "priceList": "Preisliste.jrxml"
+      "priceList": "Preisliste.jrxml",
+      "loginInfo": "LoginInformation.jrxml"
     }
   }
 }
