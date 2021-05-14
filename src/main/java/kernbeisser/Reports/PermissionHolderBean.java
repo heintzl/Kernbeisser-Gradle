@@ -18,31 +18,9 @@ public class PermissionHolderBean {
 
   public static List<PermissionHolderBean> createBeans(Permission permission) {
     List<PermissionHolderBean> permissionHolders = new ArrayList<>();
-    String name = permission.getName();
-    switch (name) {
-      case "@KEY_PERMISSION":
-        name = "SchlüsselinhaberIn (Selbsteinkauf)";
-        break;
-      case "@BEGINNER":
-        name = "Probemitglied";
-        break;
-      case "@ADMIN":
-        name = "SystemadministratorIn";
-        break;
-      case "@IMPORT":
-        name = "Übernommen aus Version 1";
-        break;
-      case "@APPLICATION":
-        name = "Anwendungs-Dienst";
-        break;
-      case "@ON_OWN_USER":
-        name = "Zugriffsrolle für eigene Daten";
-        break;
-      default:
-    }
     for (User u : permission.getAllUsers()) {
-      if (!u.toString().equals("Admin") && !u.toString().equals("kernbeisser"))
-        permissionHolders.add(new PermissionHolderBean(name, u));
+      if (!u.isSysAdmin() && !u.isKernbeisser())
+        permissionHolders.add(new PermissionHolderBean(permission.getNeatName(), u));
     }
     return permissionHolders;
   }
