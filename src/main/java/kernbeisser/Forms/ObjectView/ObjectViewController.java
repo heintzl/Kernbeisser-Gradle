@@ -73,7 +73,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   }
 
   void openForm(Mode mode) throws NoSelectionException {
-    openForm(searchBoxController.getSelectedObject().orElseThrow(NoSelectionException::new), mode);
+    openForm(searchBoxController.getSelectedObject().orElse(null), mode);
   }
 
   public void openForm(T selection, Mode mode) {
@@ -104,7 +104,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   }
 
   public void addButton(JButton button, Consumer<T> buttonAction) {
-    ObjectViewView view = getView();
+    ObjectViewView<?> view = getView();
     button.addActionListener(
         e -> buttonAction.accept(searchBoxController.getSelectedObject().orElse(null)));
     button.setFont(view.getButtonFont());

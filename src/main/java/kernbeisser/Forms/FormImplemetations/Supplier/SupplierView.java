@@ -33,6 +33,7 @@ public class SupplierView implements IView<SupplierController> {
     objectForm.registerUniqueCheck(
         shortName, controller::isShortNameUnique, this::shortNameAlreadyExists);
     objectForm.registerUniqueCheck(name, controller::isNameUnique, this::nameAlreadyExists);
+    objectForm.registerObjectValidator(controller::confirmSurcharge);
   }
 
   @Override
@@ -55,10 +56,11 @@ public class SupplierView implements IView<SupplierController> {
             Supplier::getPhoneNumber, Supplier::setPhoneNumber, AccessCheckingField.NONE);
     fax = new AccessCheckingField<>(Supplier::getFax, Supplier::setFax, AccessCheckingField.NONE);
     name =
-        new AccessCheckingField<>(Supplier::getName, Supplier::setName, AccessCheckingField.NONE);
+        new AccessCheckingField<>(
+            Supplier::getName, Supplier::setName, AccessCheckingField.NOT_NULL);
     shortName =
         new AccessCheckingField<>(
-            Supplier::getShortName, Supplier::setShortName, AccessCheckingField.NONE);
+            Supplier::getShortName, Supplier::setShortName, AccessCheckingField.NOT_NULL);
     surcharge =
         new AccessCheckingField<>(
             (e) -> e.getDefaultSurcharge() * 100,
@@ -72,5 +74,13 @@ public class SupplierView implements IView<SupplierController> {
 
   public void shortNameAlreadyExists() {
     JOptionPane.showMessageDialog(getTopComponent(), "Die Abkürzung ist schon vergeben.");
+  }
+
+  public boolean messageConfirmSurcharge(double defaultSurcharge) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            String.format(
+                "Ist der eingegebene Standartzuschlag von %.2f%% korrekt?", defaultSurcharge * 100))
+        == 0;
   }
 }

@@ -1,7 +1,6 @@
 package kernbeisser.Windows.ArticleOffersEditor;
 
 import java.awt.*;
-import java.time.Instant;
 import java.time.YearMonth;
 import java.util.Collection;
 import java.util.Optional;
@@ -18,6 +17,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Offer;
 import kernbeisser.Enums.Repeat;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox;
+import kernbeisser.Forms.ObjectForm.Components.AccessCheckingDatePicker;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Components.DataListener;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
@@ -25,13 +25,12 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
+import org.jdatepicker.JDateComponentFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class ArticleOffersEditorView implements IView<ArticleOffersEditorController> {
   private ObjectTable<Offer> offers;
 
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Offer, Instant> from;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Offer, Instant> to;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Offer, Repeat> repeat;
   private SearchBoxView<Article> searchBox;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Offer, Double>
@@ -49,6 +48,8 @@ public class ArticleOffersEditorView implements IView<ArticleOffersEditorControl
   private ObjectTable<Offer> offersMonth;
   private JComboBox<YearMonth> month;
   private JButton printMonth;
+  private AccessCheckingDatePicker<Offer> fromDate;
+  private AccessCheckingDatePicker<Offer> toDate;
 
   @Linked private SearchBoxController<Article> searchBoxController;
   @Linked private ArticleOffersEditorController controller;
@@ -70,25 +71,9 @@ public class ArticleOffersEditorView implements IView<ArticleOffersEditorControl
     if (index != -1) this.offers.getSelectionModel().setSelectionInterval(index, index);
   }
 
-  void setFrom(Instant s) {
-    from.setData(s);
-  }
-
-  void setTo(Instant s) {
-    to.setData(s);
-  }
-
   void setSpecialNetPrice(double p) {
     specialNetPrice.setText(String.format("%.2f", p));
     if (p == 0) specialNetPrice.setText("");
-  }
-
-  void setEditEnable(boolean b) {
-    edit.setEnabled(b);
-  }
-
-  void setRemoveEnable(boolean b) {
-    remove.setEnabled(b);
   }
 
   void setSelectedArticleIdentifier(String name) {
@@ -114,12 +99,8 @@ public class ArticleOffersEditorView implements IView<ArticleOffersEditorControl
             Column.create("Bis", e -> Date.INSTANT_DATE.format(e.getToDate())),
             Column.create("Aktionsnettopreis", Offer::getSpecialNetPrice),
             Column.create("Wiederholung", Offer::getRepeatMode));
-    from =
-        new AccessCheckingField<>(
-            Offer::getFromDate, Offer::setFromDate, AccessCheckingField.DAY_DATE_BEGIN_FORMER);
-    to =
-        new AccessCheckingField<>(
-            Offer::getToDate, Offer::setToDate, AccessCheckingField.DAY_DATE_END_FORMER);
+    fromDate = new AccessCheckingDatePicker<>(Offer::getFromDate, Offer::setFromDate, true);
+    toDate = new AccessCheckingDatePicker<>(Offer::getToDate, Offer::setToDate, false);
     specialNetPrice =
         new AccessCheckingField<>(
             Offer::getSpecialNetPrice,
@@ -128,6 +109,8 @@ public class ArticleOffersEditorView implements IView<ArticleOffersEditorControl
     repeat =
         new AccessCheckingComboBox<>(
             Offer::getRepeatMode, Offer::setRepeatMode, controller.getRepeatModes());
+    JDateComponentFactory factory = new JDateComponentFactory();
+    factory.createJDatePicker();
   }
 
   public void setOffersMonth(Collection<Offer> offersMonth) {
@@ -152,10 +135,6 @@ public class ArticleOffersEditorView implements IView<ArticleOffersEditorControl
     edit.addActionListener(e -> controller.edit());
     remove.addActionListener(e -> controller.remove());
     finishButton.addActionListener(e -> back());
-    searchFrom.addActionListener(e -> controller.searchFrom());
-    searchTo.addActionListener(e -> controller.searchTo());
-    searchTo.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR, ICON_SIZE, Color.GRAY));
-    searchFrom.setIcon(IconFontSwing.buildIcon(FontAwesome.CALENDAR, ICON_SIZE, Color.GRAY));
     filterActionArticle.addActionListener(
         e -> {
           filterOnlyActionArticle.set(filterActionArticle.isSelected());
@@ -165,8 +144,8 @@ public class ArticleOffersEditorView implements IView<ArticleOffersEditorControl
     printMonth.addActionListener(e -> controller.printMonth());
     objectForm =
         new ObjectForm<>(
-            from,
-            to,
+            fromDate,
+            toDate,
             specialNetPrice,
             repeat,
             new DataListener<>(

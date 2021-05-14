@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import kernbeisser.CustomComponents.DatePicker.DatePickerController;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.DBEntities.Article;
@@ -203,14 +202,6 @@ public class ArticleOffersEditorController
     } catch (NoSelectionException e) {
       e.printStackTrace();
     }
-  }
-
-  void searchFrom() {
-    DatePickerController.requestDate(getView().traceViewContainer(), getView()::setFrom);
-  }
-
-  void searchTo() {
-    DatePickerController.requestDate(getView().traceViewContainer(), getView()::setTo);
   }
 
   void invokeSearch() {

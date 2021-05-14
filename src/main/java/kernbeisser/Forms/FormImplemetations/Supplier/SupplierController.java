@@ -1,8 +1,10 @@
 package kernbeisser.Forms.FormImplemetations.Supplier;
 
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormController;
+import kernbeisser.Forms.ObjectForm.Exceptions.SilentParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.Key;
 import org.jetbrains.annotations.NotNull;
@@ -49,5 +51,13 @@ public class SupplierController extends FormController<SupplierView, SupplierMod
   @Override
   public java.util.function.Supplier<Supplier> defaultFactory() {
     return Supplier::new;
+  }
+
+  public void confirmSurcharge(Supplier supplier, Mode mode) throws SilentParseException {
+    if (supplier.getDefaultSurcharge() == 0.0) {
+      if (!getView().messageConfirmSurcharge(supplier.getDefaultSurcharge())) {
+        throw new SilentParseException();
+      }
+    }
   }
 }
