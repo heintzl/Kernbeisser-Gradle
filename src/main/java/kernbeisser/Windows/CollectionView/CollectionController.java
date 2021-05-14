@@ -20,8 +20,13 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
   }
 
   @Override
-  protected void closed() {
-    if (!model.saveChanges) model.revert();
+  protected boolean commitClose() {
+    if (model.saveChanges || model.isUnChanged()) return true;
+    if (getView().confirmCancel()) {
+      model.revert();
+      return true;
+    }
+    return false;
   }
 
   @Override

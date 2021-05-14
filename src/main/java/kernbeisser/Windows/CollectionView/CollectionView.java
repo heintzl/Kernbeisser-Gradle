@@ -78,6 +78,15 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     return this;
   }
 
+  boolean confirmCancel() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Soll die Eingabe beendet werden? Alle Änderungen werden verworfen.",
+            "Eingabe abbrechen",
+            JOptionPane.OK_CANCEL_OPTION)
+        == JOptionPane.OK_OPTION;
+  }
+
   public void messageSelectObjectFirst() {
     message("Bitte wähle zunächst ein Object aus");
   }

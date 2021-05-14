@@ -15,12 +15,20 @@ public class CollectionModel<T> implements IModel<CollectionController<T>> {
   @Setter private Source<T> source;
   @Getter private final Column<T>[] columns;
   private Collection<T> originalContent;
-  boolean saveChanges = false;
+  boolean saveChanges;
 
   public CollectionModel(Collection<T> loaded, Source<T> source, Column<T>[] columns) {
     this.columns = columns;
     this.source = source;
+    this.saveChanges = false;
     setLoaded(loaded);
+  }
+
+  public boolean isUnChanged() {
+    if (loaded.size() != originalContent.size()) return false;
+    Collection<T> test = new ArrayList<>(loaded);
+    test.removeAll(originalContent);
+    return test.isEmpty();
   }
 
   public boolean isModifiable() {
