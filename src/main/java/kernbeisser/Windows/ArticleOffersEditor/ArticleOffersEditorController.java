@@ -93,17 +93,11 @@ public class ArticleOffersEditorController
   }
 
   public Instant defaultFromDate() {
-    return LocalDate.now().getDayOfMonth() >= 15
-        ? Instant.from(
-                LocalDate.now()
-                    .plusMonths(2)
-                    .with(TemporalAdjusters.lastDayOfMonth())
-                    .atStartOfDay(ZoneId.systemDefault()))
-            .minusNanos(1)
-        : Instant.from(
-            LocalDate.now()
-                .with(TemporalAdjusters.firstDayOfMonth())
-                .atStartOfDay(ZoneId.systemDefault()));
+    return Instant.from(
+        LocalDate.now()
+            .plusMonths(LocalDate.now().getDayOfMonth() >= 15 ? 1 : 0)
+            .with(TemporalAdjusters.firstDayOfMonth())
+            .atStartOfDay(ZoneId.systemDefault()));
   }
 
   private Instant defaultToDate() {

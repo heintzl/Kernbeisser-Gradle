@@ -117,7 +117,8 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
   public Instant getData() throws CannotParseException {
     DateModel<?> dateModel = getModel();
     return Date.atStartOrEndOfDay(
-        LocalDate.of(dateModel.getYear(), dateModel.getMonth(), dateModel.getDay()), atStartOfDay);
+        LocalDate.of(dateModel.getYear(), dateModel.getMonth() + 1, dateModel.getDay()),
+        atStartOfDay);
   }
 
   @Override

@@ -110,17 +110,16 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
     return collector;
   }
 
-  public static PermissionSet peekTarget(AnalyserTarget method, PermissionSet collector, int depth)
+  public static void peekTarget(AnalyserTarget method, PermissionSet collector, int depth)
       throws IOException {
     PermissionSet cached = cache.get(method);
     if (cached != null) {
-      return collector.or(cached);
+      collector.addAll(cached);
     }
     PermissionKeyMethodVisitor subMethodVisitor =
         new PermissionKeyMethodVisitor(depth, method, collector);
     ClassReader cr = new ClassReader(method.getTargetClass().getName());
     cr.accept(subMethodVisitor, 0);
     cache.put(method, subMethodVisitor.collected);
-    return subMethodVisitor.collected;
   }
 }

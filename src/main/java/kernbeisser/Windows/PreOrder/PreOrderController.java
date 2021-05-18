@@ -14,6 +14,7 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
@@ -191,8 +192,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       return true;
     } catch (PermissionKeyRequiredException e) {
       if (restrictToLoggedIn) {
-        checkOrderOwnContainerPermission();
-        return true;
+        return Tools.canInvoke(this::checkOrderOwnContainerPermission);
       }
       return false;
     }
