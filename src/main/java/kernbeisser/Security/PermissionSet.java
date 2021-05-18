@@ -97,6 +97,12 @@ public class PermissionSet implements Set<PermissionKey> {
     return out;
   }
 
+  public void addAll(PermissionSet permissionSet) {
+    for (int i = 0; i < bits.length; i++) {
+      bits[i] = bits[i] | permissionSet.bits[i];
+    }
+  }
+
   public PermissionSet operator(PermissionSet ps, LongBinaryOperator operator) {
     PermissionSet out = new PermissionSet();
     for (int i = 0; i < bits.length; i++) {
