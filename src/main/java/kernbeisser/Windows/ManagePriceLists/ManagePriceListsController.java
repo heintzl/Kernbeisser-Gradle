@@ -53,6 +53,7 @@ public class ManagePriceListsController
       getView().requestRepaint();
     } catch (PersistenceException e) {
       getView().nameAlreadyExists(name);
+      rename();
     }
   }
 

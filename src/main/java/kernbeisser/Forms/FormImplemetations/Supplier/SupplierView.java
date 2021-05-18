@@ -22,13 +22,15 @@ public class SupplierView implements IView<SupplierController> {
   private AccessCheckingField<Supplier, String> shortName;
   private AccessCheckingField<Supplier, Double> surcharge;
   private AccessCheckingField<Supplier, String> street;
+  private AccessCheckingField<Supplier, String> email;
 
   @Getter private ObjectForm<Supplier> objectForm;
 
   @Override
   public void initialize(SupplierController controller) {
     objectForm =
-        new ObjectForm<>(street, location, keeper, phoneNumber, fax, name, shortName, surcharge);
+        new ObjectForm<>(
+            name, street, location, keeper, phoneNumber, fax, email, shortName, surcharge);
     objectForm.setObjectDistinction("Der Lieferant");
     objectForm.registerUniqueCheck(
         shortName, controller::isShortNameUnique, this::shortNameAlreadyExists);
@@ -66,6 +68,9 @@ public class SupplierView implements IView<SupplierController> {
             (e) -> e.getDefaultSurcharge() * 100,
             (e, v) -> e.setDefaultSurcharge(v / 100),
             AccessCheckingField.DOUBLE_FORMER);
+    email =
+        new AccessCheckingField<>(
+            Supplier::getEmail, Supplier::setEmail, AccessCheckingField.EMAIL_FORMER);
   }
 
   public void nameAlreadyExists() {
@@ -80,7 +85,25 @@ public class SupplierView implements IView<SupplierController> {
     return JOptionPane.showConfirmDialog(
             getContent(),
             String.format(
-                "Ist der eingegebene Standartzuschlag von %.2f%% korrekt?", defaultSurcharge * 100))
+                "Ist der eingegebene Standartzuschlag von %.2f%% korrekt?", defaultSurcharge * 100),
+            "Komischer Zuschlag!",
+            JOptionPane.DEFAULT_OPTION)
         == 0;
+  }
+
+  public void messageSurchargeNotValid() {
+    message("Der Zuschlag ist nicht zwischen 0 - 100%", "Zuschlag ist nicht korrekt!");
+  }
+
+  public void messageSelectSupplierFirst() {
+    message(
+        "Bitte wähle zuerst einen Lieferanten aus, der gelöscht werden soll!",
+        "Kein Lieferanten ausgewählt");
+  }
+
+  public void messageConstraintViolation() {
+    message(
+        "Der Lieferant ist noch Artikeln zugewiesen und kann daher nicht gelöscht werden!",
+        "Lieferant wird noch verwendet.");
   }
 }

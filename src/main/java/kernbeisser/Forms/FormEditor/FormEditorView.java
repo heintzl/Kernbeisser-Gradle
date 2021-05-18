@@ -40,7 +40,7 @@ public class FormEditorView<V> implements IView<FormEditorController<V>> {
         saveButton.setForeground(new Color(0x04A0E8));
         break;
       case ADD:
-        saveButton.setText("Speichern");
+        saveButton.setText("Neu Aufnehmen");
         saveButton.setIcon(
             IconFontSwing.buildIcon(
                 FontAwesome.CHECK, Tools.scaleWithLabelScalingFactor(15), new Color(0x04E858)));

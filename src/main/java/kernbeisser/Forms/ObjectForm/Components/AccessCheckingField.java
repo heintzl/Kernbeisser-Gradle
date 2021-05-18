@@ -137,6 +137,12 @@ public class AccessCheckingField<P, V> extends JTextField
     removeInvalidInputMark();
   }
 
+  @Override
+  public void setText(String t) {
+    inputChanged = true;
+    super.setText(t);
+  }
+
   public interface StringTransformer<V> {
     default String toString(V v) {
       return String.valueOf(v);
@@ -144,6 +150,36 @@ public class AccessCheckingField<P, V> extends JTextField
 
     V fromString(String s) throws CannotParseException;
   }
+
+  public static final StringTransformer<Integer> UNSIGNED_INT_FORMER =
+      new StringTransformer<Integer>() {
+        @Override
+        public Integer fromString(String s) throws CannotParseException {
+          Integer result = INT_FORMER.fromString(s);
+          if (result < 0) throw new CannotParseException("Number should be positive");
+          return result;
+        }
+
+        @Override
+        public String toString(Integer integer) {
+          return INT_FORMER.toString(integer);
+        }
+      };
+
+  public static final StringTransformer<Double> UNSIGNED_DOUBLE_FORMER =
+      new StringTransformer<Double>() {
+        @Override
+        public Double fromString(String s) throws CannotParseException {
+          Double result = DOUBLE_FORMER.fromString(s);
+          if (result < 0) throw new CannotParseException("Number should be positive");
+          return result;
+        }
+
+        @Override
+        public String toString(Double integer) {
+          return DOUBLE_FORMER.toString(integer);
+        }
+      };
 
   public static final StringTransformer<Integer> INT_FORMER =
       new StringTransformer<Integer>() {
@@ -161,12 +197,6 @@ public class AccessCheckingField<P, V> extends JTextField
           }
         }
       };
-
-  @Override
-  public void setText(String t) {
-    inputChanged = true;
-    super.setText(t);
-  }
 
   public static final StringTransformer<Double> DOUBLE_FORMER =
       new StringTransformer<Double>() {

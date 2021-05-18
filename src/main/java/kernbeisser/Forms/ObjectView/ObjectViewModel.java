@@ -33,10 +33,6 @@ public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
     return itemSupplier.search(search, max);
   }
 
-  void remove(T t) {
-    form.remove(t);
-  }
-
   public boolean isAddAvailable() {
     try {
       form.addPermission();

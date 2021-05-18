@@ -7,6 +7,8 @@ import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Exceptions.SilentParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
+import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplierController extends FormController<SupplierView, SupplierModel, Supplier> {
@@ -54,9 +56,34 @@ public class SupplierController extends FormController<SupplierView, SupplierMod
   }
 
   public void confirmSurcharge(Supplier supplier, Mode mode) throws SilentParseException {
+    if (supplier.getDefaultSurcharge() < 0.00 || supplier.getDefaultSurcharge() > 1.) {
+      getView().messageSurchargeNotValid();
+      throw new SilentParseException();
+    }
+
     if (supplier.getDefaultSurcharge() == 0.0) {
       if (!getView().messageConfirmSurcharge(supplier.getDefaultSurcharge())) {
         throw new SilentParseException();
+      }
+    }
+  }
+
+  @Override
+  public void remove(Supplier supplier) {
+    if (supplier == null) {
+      getView().messageSelectSupplierFirst();
+      return;
+    }
+
+    try {
+      Tools.delete(supplier);
+    } catch (RuntimeException e) {
+      try {
+        throw e.getCause();
+      } catch (ConstraintViolationException cve) {
+        getView().messageConstraintViolation();
+      } catch (Throwable throwable) {
+        Tools.showUnexpectedErrorWarning(e);
       }
     }
   }
