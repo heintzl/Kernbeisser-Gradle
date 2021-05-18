@@ -118,8 +118,9 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
         e -> {
           objectViewController.setSearch(e.toString());
           objectViewController.search();
-          IView.traceViewContainer(priceListObjectTree.getParent());
+          IView.traceViewContainer(priceListObjectTree.getParent()).requestClose();
         });
-    new ComponentController(priceListObjectTree).openIn(new SubWindow(view.traceViewContainer()));
+    new ComponentController(priceListObjectTree, "Preisliste auswählen:")
+        .openIn(new SubWindow(view.traceViewContainer()));
   }
 }

@@ -151,8 +151,8 @@ public abstract class Controller<
     view = Tools.createWithoutConstructor(viewClass);
     linkViewControllerFields(view, this);
     callSetupUiMethod(view);
-    ControllerReference.putOn(view.getContent(), this);
     callInitializeMethod(view, this);
+    ControllerReference.putOn(view.getContent(), this);
   }
 
   private static void linkViewControllerFields(IView<?> view, Controller<?, ?> controller) {

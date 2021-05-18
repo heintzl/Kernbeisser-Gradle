@@ -47,6 +47,8 @@ public class Access {
     }
   }
 
+  // TODO: IMPLEMENT USER RELATED PEEK ACCESS CHECKING
+  // TODO: FIX CLOSING OF CASHIER SHOPPING MASK
   public static void loadUnprotectedInstanceExceptions() {
     for (PermissionConstants value : PermissionConstants.values()) {
       exceptions.put(value.getPermission(), AccessManager.NO_ACCESS_CHECKING);

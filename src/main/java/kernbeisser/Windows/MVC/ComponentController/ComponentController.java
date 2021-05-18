@@ -4,12 +4,13 @@ import javax.swing.JComponent;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 
 public class ComponentController extends Controller<ComponentView, ComponentModel> {
-  @Getter private final JComponent data;
-  @Getter private final String title;
-  @Getter private final IconCode icon;
+  @Getter @Linked private final JComponent data;
+  @Getter @Linked private final String title;
+  @Getter @Linked private final IconCode icon;
 
   public ComponentController(JComponent component) {
     this(component, "");

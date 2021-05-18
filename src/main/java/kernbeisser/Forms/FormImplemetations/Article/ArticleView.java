@@ -3,6 +3,7 @@ package kernbeisser.Forms.FormImplemetations.Article;
 import java.awt.*;
 import java.util.Collection;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBoxRenderer;
 import kernbeisser.CustomComponents.Verifier.DoubleVerifier;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
 import kernbeisser.CustomComponents.Verifier.KBNumberVerifier;
@@ -67,30 +68,30 @@ public class ArticleView implements IView<ArticleController> {
             AccessCheckingField.combine(controller::displayAmount, controller::parseAmount));
     netPrice =
         new AccessCheckingField<>(
-            Article::getNetPrice, Article::setNetPrice, AccessCheckingField.DOUBLE_FORMER);
+            Article::getNetPrice, Article::setNetPrice, AccessCheckingField.UNSIGNED_DOUBLE_FORMER);
     deposit =
         new AccessCheckingField<>(
             Article::getSingleDeposit,
             Article::setSingleDeposit,
-            AccessCheckingField.DOUBLE_FORMER);
+            AccessCheckingField.UNSIGNED_DOUBLE_FORMER);
     kbItemNumber =
         new AccessCheckingField<>(
-            Article::getKbNumber, Article::setKbNumber, AccessCheckingField.INT_FORMER);
+            Article::getKbNumber, Article::setKbNumber, AccessCheckingField.UNSIGNED_INT_FORMER);
     supplierItemNumber =
         new AccessCheckingField<>(
             Article::getSuppliersItemNumber,
             Article::setSuppliersItemNumber,
-            AccessCheckingField.INT_FORMER);
+            AccessCheckingField.UNSIGNED_INT_FORMER);
     crateDeposit =
         new AccessCheckingField<>(
             Article::getContainerDeposit,
             Article::setContainerDeposit,
-            AccessCheckingField.DOUBLE_FORMER);
+            AccessCheckingField.UNSIGNED_DOUBLE_FORMER);
     containerSize =
         new AccessCheckingField<>(
             Article::getContainerSize,
             Article::setContainerSize,
-            AccessCheckingField.DOUBLE_FORMER);
+            AccessCheckingField.UNSIGNED_DOUBLE_FORMER);
     supplier =
         new AccessCheckingComboBox<>(
             Article::getSupplier, Article::setSupplier, controller::getSuppliers);
@@ -205,6 +206,9 @@ public class ArticleView implements IView<ArticleController> {
             controller.loadSurchargeGroupsFor(Supplier.getKKSupplier());
           }
         });
+    surchargeGroup.setRenderer(
+        new AdvancedComboBoxRenderer<SurchargeGroup>(
+            e -> String.format("%s[%.2f%%]", e.getName(), e.getSurcharge())));
   }
 
   @Override
@@ -257,6 +261,7 @@ public class ArticleView implements IView<ArticleController> {
   }
 
   public void messageSuppliersItemNumberAlreadyTaken() {
+    supplierItemNumber.setInvalidInput();
     JOptionPane.showMessageDialog(
         getTopComponent(),
         "Die gewählte Lieferantennummer ist bereits für diesen Lieferant vergeben!");
