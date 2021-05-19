@@ -23,7 +23,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.jetbrains.annotations.NotNull;
 
-@Table
+@Table(indexes = {@Index(name = "IX_transaction_date", columnList = "date")})
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Transaction implements UserRelated {
@@ -171,6 +171,10 @@ public class Transaction implements UserRelated {
     em.persist(fromUG);
     em.persist(toUG);
     em.persist(transaction);
+    if (transactionType == TransactionType.PURCHASE && !from.isActive()) {
+      from.setActive(true);
+      em.merge(from);
+    }
     em.flush();
     return transaction;
   }

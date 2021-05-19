@@ -49,7 +49,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   }
 
   void loadSolutions() {
-    List<Permission> permissions = Permission.getAll(null);
+    List<Permission> permissions = Permission.getAll("where NOT name = '@ADMIN'");
     Collections.reverse(permissions);
     Column<PermissionKey> nameColumn =
         Column.create(

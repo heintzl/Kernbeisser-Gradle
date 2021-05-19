@@ -17,7 +17,12 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table
+@Table(
+    indexes = {
+      @Index(name = "IX_item_name", columnList = "name"),
+      @Index(name = "IX_item_kbNumber", columnList = "kbNumber"),
+      @Index(name = "IX_item_suppliersItemNumber", columnList = "suppliersItemNumber")
+    })
 @NoArgsConstructor
 // @EqualsAndHashCode(doNotUseGetters = true)
 public class ShoppingItem implements Serializable {

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum Setting {
   // removed some duplicated enum constrains Permission
-  DB_VERSION("0.9.1"),
+  DB_VERSION("0.99.1"),
   DB_INITIALIZED("false"),
   VAT_LOW("0.07") {
     @Override

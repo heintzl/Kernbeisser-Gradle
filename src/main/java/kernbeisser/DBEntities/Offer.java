@@ -11,7 +11,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table
+@Table(
+    indexes = {
+      @Index(name = "IX_offer_fromDate", columnList = "fromDate"),
+      @Index(name = "IX_offer_toDate", columnList = "toDate")
+    })
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Offer implements Serializable {
   @Id

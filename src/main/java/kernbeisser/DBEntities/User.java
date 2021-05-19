@@ -3,7 +3,6 @@ package kernbeisser.DBEntities;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Predicate;
@@ -16,6 +15,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.PermissionSetAccessManager;
 import kernbeisser.Security.Key;
@@ -30,7 +30,11 @@ import org.jetbrains.annotations.NotNull;
 import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 
 @Entity
-@Table
+@Table(
+    indexes = {
+      @Index(name = "IX_user_username", columnList = "username"),
+      @Index(name = "IX_user_fullname", columnList = "firstName, surname", unique = true)
+    })
 @NoArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
 public class User implements Serializable, UserRelated {
@@ -158,6 +162,13 @@ public class User implements Serializable, UserRelated {
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
   private boolean forcePasswordChange = false;
 
+  @Column
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
+  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
+  private boolean active = true;
+
+  @Column @Transient private boolean setUpdatedBy = true;
+
   public User(String username) {
     this.username = username;
   }
@@ -165,7 +176,7 @@ public class User implements Serializable, UserRelated {
   @PrePersist
   @PreUpdate
   private void setUpdateBy() {
-    if (LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
+    if (setUpdatedBy && LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
   }
 
   public static final String GENERIC_USERS_CONDITION =
@@ -222,6 +233,29 @@ public class User implements Serializable, UserRelated {
     em.flush();
   }
 
+  public static void refreshActivity() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Collection<User> activeUsers =
+        em.createQuery(
+                "SELECT u FROM User u INNER JOIN Transaction t ON (u = t.fromUser and t.transactionType = :t_type) "
+                    + "WHERE active = true GROUP BY u HAVING MAX(t.date) < :deadline",
+                User.class)
+            .setParameter("t_type", TransactionType.PURCHASE)
+            .setParameter(
+                "deadline",
+                Instant.now().minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS))
+            .getResultList();
+    for (User u : activeUsers) {
+      u.setUpdatedBy = false;
+      u.active = false;
+      em.persist(u);
+    }
+    em.flush();
+  }
+
   public static Collection<User> defaultSearch(String s, int max) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -235,16 +269,16 @@ public class User implements Serializable, UserRelated {
         .getResultList();
   }
 
-  public boolean isActive() {
-    Instant expireDate =
-        Instant.now().minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS);
-    return getAllPurchases().stream()
-        .map(Purchase::getCreateDate)
-        .max(Comparator.comparingLong(d -> d.getLong(ChronoField.INSTANT_SECONDS)))
-        .orElse(Instant.MIN)
-        .isAfter(expireDate);
-  }
-
+  /*  public boolean isActive() {
+      Instant expireDate =
+          Instant.now().minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS);
+      return getAllPurchases().stream()
+          .map(Purchase::getCreateDate)
+          .max(Comparator.comparingLong(d -> d.getLong(ChronoField.INSTANT_SECONDS)))
+          .orElse(Instant.MIN)
+          .isAfter(expireDate);
+    }
+  */
   public static User getById(int parseInt) {
     return DBConnection.getEntityManager().find(User.class, parseInt);
   }
