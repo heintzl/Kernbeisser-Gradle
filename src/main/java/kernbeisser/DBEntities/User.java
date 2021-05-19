@@ -30,7 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 
 @Entity
-@Table
+@Table(indexes = {@Index(name = "IX_user_username", columnList = "username"),
+        @Index(name = "IX_user_fullname", columnList = "firstName, surname", unique = true)
+})
 @NoArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
 public class User implements Serializable, UserRelated {

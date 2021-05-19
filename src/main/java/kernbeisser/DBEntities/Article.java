@@ -28,7 +28,13 @@ import org.hibernate.annotations.UpdateTimestamp;
  and only used for Articles which are constantly in use of Kernbeisser
 */
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"supplier_id", "suppliersItemNumber"}))
+@Table(
+    uniqueConstraints = @UniqueConstraint(columnNames = {"supplier_id", "suppliersItemNumber"}),
+    indexes = {
+      @Index(name = "IX_article_name", columnList = "name"),
+      @Index(name = "IX_article_kbNumber", columnList = "kbNumber"),
+      @Index(name = "IX_article_barcode", columnList = "barcode")
+    })
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
