@@ -59,6 +59,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
             () -> {
               loadUserSettings();
               cleanAdminUser();
+              User.refreshActivity();
               try {
                 User.checkAdminConsistency();
               } catch (InvalidValue e) {
