@@ -1,11 +1,9 @@
 package kernbeisser.Forms.ObjectView;
 
-import java.util.Collection;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Windows.MVC.IModel;
-import kernbeisser.Windows.Searchable;
 import lombok.Data;
 import lombok.Setter;
 

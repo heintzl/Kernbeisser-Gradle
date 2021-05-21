@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PermissionSet implements Set<PermissionKey> {
 
-  private final static int ARRAY_SIZE = ((PermissionKey.values().length / Long.SIZE) + 1);
+  private static final int ARRAY_SIZE = ((PermissionKey.values().length / Long.SIZE) + 1);
 
   /** the java option for a c bitfield */
   private final long[] bits = new long[ARRAY_SIZE];

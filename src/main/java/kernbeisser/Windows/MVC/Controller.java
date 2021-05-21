@@ -129,7 +129,7 @@ public abstract class Controller<
     closed();
   }
 
-  protected void closeModel(){
+  protected void closeModel() {
     model.viewClosed();
   }
 
