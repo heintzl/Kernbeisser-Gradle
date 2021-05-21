@@ -123,10 +123,14 @@ public abstract class Controller<
 
   public final void notifyClosed() {
     getSubControllers().stream()
-        .filter(e -> e != null && e.equals(this))
-        .forEach(e -> notifyClosed());
+        .filter(e -> e != null && !e.equals(this))
+        .forEach(Controller::notifyClosed);
     closeEvents.forEach(CloseEvent::closed);
     closed();
+  }
+
+  protected void closeModel() {
+    model.viewClosed();
   }
 
   protected Collection<Controller<?, ?>> findSubControllers() {

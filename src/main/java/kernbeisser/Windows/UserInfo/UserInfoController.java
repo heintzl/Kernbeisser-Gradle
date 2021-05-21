@@ -132,8 +132,7 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
   public void editUser() {
     FormEditorController.open(model.getUser(), new UserController(), Mode.EDIT)
         .withCloseEvent(this::loadCurrentSite)
-        .openIn(new SubWindow(getView().traceViewContainer()))
-        .getLoaded();
+        .openIn(new SubWindow(getView().traceViewContainer()));
     getView().getUserObjectForm().setSource(model.getUser());
   }
 }

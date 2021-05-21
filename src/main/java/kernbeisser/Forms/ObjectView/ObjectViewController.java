@@ -32,7 +32,6 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
       boolean copyAdd,
       Column<T>... columns) {
     this(title, controller, copyAdd);
-    model.setItemSupplier(items);
     searchBoxController = new SearchBoxController<T>(items, columns);
   }
 
@@ -42,7 +41,6 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   }
 
   public void setSearchBoxController(Searchable<T> items, Column<T>... columns) {
-    model.setItemSupplier(items);
     searchBoxController = new SearchBoxController<T>(items, columns);
   }
 

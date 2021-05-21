@@ -1,36 +1,23 @@
 package kernbeisser.Forms.ObjectView;
 
-import java.util.Collection;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Windows.MVC.IModel;
-import kernbeisser.Windows.Searchable;
 import lombok.Data;
 import lombok.Setter;
 
 @Data
 public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
   private final FormController<?, ?, T> form;
-  @Setter private Searchable<T> itemSupplier;
 
   private final boolean copyValuesToAdd;
 
   @Setter private Mode currentMode = null;
 
-  ObjectViewModel(
-      FormController<?, ?, T> maskLoader, Searchable<T> itemSupplier, boolean copyValuesToAdd) {
-    this(maskLoader, copyValuesToAdd);
-    this.itemSupplier = itemSupplier;
-  }
-
   ObjectViewModel(FormController<?, ?, T> maskLoader, boolean copyValuesToAdd) {
     this.form = maskLoader;
     this.copyValuesToAdd = copyValuesToAdd;
-  }
-
-  Collection<T> getItems(String search, int max) {
-    return itemSupplier.search(search, max);
   }
 
   public boolean isAddAvailable() {

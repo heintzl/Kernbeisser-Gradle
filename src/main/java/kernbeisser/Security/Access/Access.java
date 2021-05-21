@@ -123,7 +123,7 @@ public class Access {
   /**
    * peeks the into the byte code of the specified method and all sub methods. It searches for
    * PermissionKey annotations and collect them in a permissionSet, the result is permissionSet with
-   * all possible required permissions. //TODO: maybe soft cache the results of the scans
+   * all possible required permissions.
    */
   @SneakyThrows
   public static PermissionSet peekPermissions(Serializable interfaceLambdaImp) {
