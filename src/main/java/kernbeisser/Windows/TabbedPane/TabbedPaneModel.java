@@ -9,7 +9,16 @@ import lombok.Getter;
 import lombok.experimental.Delegate;
 
 public class TabbedPaneModel implements IModel<TabbedPaneController> {
-  public static TabbedPaneController MAIN_PANEL = createWithWindow();
+
+  private static TabbedPaneController mainPanel;
+
+  public static TabbedPaneController getMainPanel() {
+    if (mainPanel != null) {
+      return mainPanel;
+    }
+    mainPanel = createWithWindow();
+    return mainPanel;
+  }
 
   @Delegate @Getter private final List<TabViewContainer> tabs = new ArrayList<>();
 
@@ -20,9 +29,9 @@ public class TabbedPaneModel implements IModel<TabbedPaneController> {
   }
 
   public static boolean resetMainPanel() {
-    if (MAIN_PANEL.requestClose()) {
-      MAIN_PANEL.notifyClosed();
-      MAIN_PANEL = createWithWindow();
+    if (mainPanel.requestClose()) {
+      mainPanel.notifyClosed();
+      mainPanel = createWithWindow();
       return true;
     }
     return false;

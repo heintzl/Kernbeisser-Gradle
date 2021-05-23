@@ -106,7 +106,7 @@ public abstract class Controller<
   }
 
   public void openTab() {
-    openIn(TabbedPaneModel.MAIN_PANEL.createTabViewContainer());
+    openIn(TabbedPaneModel.getMainPanel().createTabViewContainer());
   }
 
   protected void closed() {};

@@ -60,7 +60,7 @@ public class EditUserSettingController extends Controller<EditUserSettingView, E
     } catch (UnsupportedLookAndFeelException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
-    SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getContent());
+    SwingUtilities.updateComponentTreeUI(TabbedPaneModel.getMainPanel().getView().getContent());
   }
 
   @Override

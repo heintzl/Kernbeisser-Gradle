@@ -79,7 +79,7 @@ public class MenuView implements IView<MenuController> {
 
   @Override
   public void initialize(MenuController controller) {
-    ((Frame) TabbedPaneModel.MAIN_PANEL.getContainer())
+    ((Frame) TabbedPaneModel.getMainPanel().getContainer())
         .setTitle("Kernbeißer (" + LogInModel.getLoggedIn().getFullName() + ")");
     logout.setIcon(
         IconFontSwing.buildIcon(
