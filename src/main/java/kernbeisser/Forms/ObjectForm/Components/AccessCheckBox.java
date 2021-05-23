@@ -6,7 +6,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
-import kernbeisser.Forms.ObjectForm.Properties.Predictable;
+import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
@@ -15,7 +15,7 @@ public class AccessCheckBox<P> extends JCheckBox
     implements ObjectFormComponent<P>,
         BoundedReadProperty<P, Boolean>,
         BoundedWriteProperty<P, Boolean>,
-        Predictable<P> {
+        PredictableModifiable<P> {
 
   private boolean inputChanged = false;
 
@@ -38,7 +38,7 @@ public class AccessCheckBox<P> extends JCheckBox
   }
 
   @Override
-  public void setPropertyEditable(boolean v) {
+  public void setPropertyModifiable(boolean v) {
     setEnabled(v);
   }
 
@@ -53,12 +53,7 @@ public class AccessCheckBox<P> extends JCheckBox
   }
 
   @Override
-  public boolean isPropertyReadable(P parent) {
-    return Access.hasPermission(getter, parent);
-  }
-
-  @Override
-  public boolean isPropertyWriteable(P parent) {
+  public boolean isPropertyModifiable(P parent) {
     return Access.hasPermission(setter, parent);
   }
 

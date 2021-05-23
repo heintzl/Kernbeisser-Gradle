@@ -19,8 +19,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class Access {
 
+  public static final Object ACCESS_LOCK = new Object();
+
+  public static void setDefaultManager(AccessManager defaultManager) {
+    synchronized (ACCESS_LOCK) {
+      Access.defaultManager = defaultManager;
+    }
+  }
+
   // default do not allow any access to any field -> normal state if no one is logged in
-  @Getter @Setter private static AccessManager defaultManager = AccessManager.NO_ACCESS_CHECKING;
+  @Getter private static AccessManager defaultManager = AccessManager.NO_ACCESS_CHECKING;
 
   @Setter private static boolean useCustomProtection = true;
 
@@ -35,15 +43,17 @@ public class Access {
 
   // via java agent linked method
   public static void hasAccess(Object object, String methodName, String signature, long methodId) {
-    PermissionSet keys = getOrAnalyse(object, methodName, methodId);
-    if (!defaultManager.hasAccess(object, methodName, signature, keys)) {
-      if (useCustomProtection) {
-        AccessManager accessManager = exceptions.get(object);
-        if (accessManager != null && accessManager.hasAccess(object, methodName, signature, keys))
-          return;
+    synchronized (ACCESS_LOCK) {
+      PermissionSet keys = getOrAnalyse(object, methodName, methodId);
+      if (!defaultManager.hasAccess(object, methodName, signature, keys)) {
+        if (useCustomProtection) {
+          AccessManager accessManager = exceptions.get(object);
+          if (accessManager != null && accessManager.hasAccess(object, methodName, signature, keys))
+            return;
+        }
+        throw new PermissionKeyRequiredException(
+            "PermissionSet doesn't contain the following keys:" + keys);
       }
-      throw new PermissionKeyRequiredException(
-          "PermissionSet doesn't contain the following keys:" + keys);
     }
   }
 

@@ -8,18 +8,27 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table
 @EqualsAndHashCode(doNotUseGetters = true)
-public class UserSettingValue {
+public class UserSettingValue implements UserRelated {
   private static User loaded;
   private static HashMap<UserSetting, String> values;
+
+  protected UserSettingValue() {}
+
+  // for the is relation to own user check
+  public UserSettingValue(User user) {
+    this.user = user;
+  }
 
   @Id
   @GeneratedValue
@@ -29,19 +38,19 @@ public class UserSettingValue {
 
   @JoinColumn
   @ManyToOne
-  @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_USER_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_USER_WRITE)})
   private User user;
 
   @Column
   @Enumerated(EnumType.STRING)
-  @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_USER_SETTING_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_USER_SETTING_WRITE)})
   private UserSetting userSetting;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_ID_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_VALUE_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_VALUE_WRITE)})
   private String value;
 
   public static List<UserSettingValue> getAll(String condition) {
@@ -64,7 +73,7 @@ public class UserSettingValue {
     } catch (NoResultException e) {
       EntityTransaction et = em.getTransaction();
       et.begin();
-      UserSettingValue value = new UserSettingValue();
+      UserSettingValue value = new UserSettingValue(user);
       value.value = setting.getDefaultValue();
       value.setUser(user);
       value.setUserSetting(setting);
@@ -134,5 +143,10 @@ public class UserSettingValue {
         .executeUpdate();
     em.flush();
     loadUser(user);
+  }
+
+  @Override
+  public boolean isInRelation(@NotNull User user) {
+    return user.equals(this.user);
   }
 }

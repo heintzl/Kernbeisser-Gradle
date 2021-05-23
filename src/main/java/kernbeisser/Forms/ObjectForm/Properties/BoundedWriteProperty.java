@@ -8,7 +8,7 @@ public interface BoundedWriteProperty<P, V> extends Writeable<V>, Setter<P, V> {
     set(p, getData());
   }
 
-  void setPropertyEditable(boolean v);
+  void setPropertyModifiable(boolean v);
 
   void setInvalidInput();
 }

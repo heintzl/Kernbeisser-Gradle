@@ -18,7 +18,7 @@ public class DataAnchor<P, V> implements ObjectFormComponent<P>, BoundedWritePro
   }
 
   @Override
-  public void setPropertyEditable(boolean v) {}
+  public void setPropertyModifiable(boolean v) {}
 
   @Override
   public void setInvalidInput() {}
