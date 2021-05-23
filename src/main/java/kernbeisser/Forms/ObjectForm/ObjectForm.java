@@ -56,8 +56,6 @@ public class ObjectForm<P> {
     for (ObjectFormComponent<P> component : components) {
       if (component instanceof BoundedWriteProperty) {
         try {
-          if (component instanceof PredictableModifiable
-              && !((PredictableModifiable) component).isPropertyModifiable(originalCopy)) continue;
           ((BoundedWriteProperty<P, ?>) component).set(originalCopy);
         } catch (PermissionKeyRequiredException e) {
           ((BoundedWriteProperty<?, ?>) component).setPropertyModifiable(false);
