@@ -204,6 +204,8 @@ public class Transaction implements UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return user.isInRelation(fromUser) || user.isInRelation(toUser);
+    return (fromUser == null && toUser == null)
+        || user.isInRelation(fromUser)
+        || user.isInRelation(toUser);
   }
 }
