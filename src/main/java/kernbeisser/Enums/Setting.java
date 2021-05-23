@@ -50,15 +50,9 @@ public enum Setting {
   WARN_OVER_TRANSACTION_VALUE("1000."),
   OPEN_MULTIPLE_SHOPPING_MASK("true"),
   DAYS_BEFORE_INACTIVITY("180"),
-  PRINTER("OS_default") {
-    @Override
-    public void changeValue(Object s) {
-      super.changeValue(s);
-      JOptionPane.showMessageDialog(
-          null, "Programm bitte neu starten, um Druckereinstellung zu aktualisieren");
-    }
-  },
+  PRINTER("OS_default"),
   LAST_PRINTED_BON_NR("-1"),
+  LAST_PRINTED_ACOUNTING_REPORT_NR("0"),
   OFFER_PREFIX("*AK* "),
   PREORDERRETARD_THRESHOLD("10"),
   WARN_ARTICLE_DIFFERENCE("10"),
