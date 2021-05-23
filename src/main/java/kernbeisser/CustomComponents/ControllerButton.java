@@ -89,10 +89,10 @@ public class ControllerButton extends JButton {
       }
       addActionListener(
           e -> {
-            int index = TabbedPaneModel.MAIN_PANEL.indexOf((Class<Controller<?, ?>>) clazz);
+            int index = TabbedPaneModel.getMainPanel().indexOf((Class<Controller<?, ?>>) clazz);
             if (index != -1) {
               try {
-                TabbedPaneModel.MAIN_PANEL.setSelectedIndex(index);
+                TabbedPaneModel.getMainPanel().setSelectedIndex(index);
               } catch (ArrayIndexOutOfBoundsException ignored) {
               }
 

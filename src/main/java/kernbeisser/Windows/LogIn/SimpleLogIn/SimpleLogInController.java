@@ -105,7 +105,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
   protected void closed() {
     // shutdowns application if tab gets closed without any other other tab is opened
     // 1 because the model removes the tab from the model after it notified the tab itself
-    if (TabbedPaneModel.MAIN_PANEL.getModel().size() == 1) {
+    if (TabbedPaneModel.getMainPanel().getModel().size() == 1) {
       System.exit(0);
     }
   }

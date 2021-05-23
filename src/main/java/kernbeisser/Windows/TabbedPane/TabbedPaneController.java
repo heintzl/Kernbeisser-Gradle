@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.ControllerReference;
 import kernbeisser.Windows.ViewContainer;

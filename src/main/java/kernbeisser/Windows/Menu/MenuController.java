@@ -76,15 +76,13 @@ public class MenuController extends Controller<MenuView, MenuModel> {
             "Abmelden",
             JOptionPane.YES_NO_OPTION)
         == 0) {
-      SwingUtilities.updateComponentTreeUI(TabbedPaneModel.MAIN_PANEL.getView().getTopComponent());
-      view.traceViewContainer().getLoaded().withCloseEvent(SimpleLogInController::new);
       alreadyAsked = true;
-      SwingUtilities.invokeLater(
-          () -> {
-            TabbedPaneModel.resetMainPanel();
-            new SimpleLogInController().openTab();
-          });
-      return true;
+      if (TabbedPaneModel.resetMainPanel()) {
+        new SimpleLogInController().openTab();
+        return true;
+      }
+      alreadyAsked = false;
+      return false;
     }
     return false;
   }

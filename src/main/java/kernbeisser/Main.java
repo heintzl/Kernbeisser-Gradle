@@ -139,7 +139,7 @@ public class Main {
   }
 
   private static void openLogIn() {
-    ((Frame) TabbedPaneModel.MAIN_PANEL.getContainer()).setTitle("Kernbeißer (Login)");
+    ((Frame) TabbedPaneModel.getMainPanel().getContainer()).setTitle("Kernbeißer (Login)");
     new SimpleLogInController().openTab();
   }
 
