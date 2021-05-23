@@ -12,7 +12,6 @@ public class TabbedPaneModel implements IModel<TabbedPaneController> {
 
   private static TabbedPaneController mainPanel;
 
-
   public static TabbedPaneController getMainPanel() {
     if (mainPanel != null) {
       return mainPanel;
