@@ -9,25 +9,27 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
+import kernbeisser.Exeptions.NoPurchasesFoundException;
 import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
 
 public class AccountingReport extends Report {
 
+  private final long reportNo;
   private final long startBon;
   private final long endBon;
   private final boolean withNames;
 
-  public AccountingReport(long startBon, long endBon, boolean withNames) {
+  public AccountingReport(long reportNo, long startBon, long endBon, boolean withNames) {
     super(
         "accountingReportFileName",
         String.format("KernbeisserBuchhaltungBonUebersicht_%d_%d", startBon, endBon));
+    this.reportNo = reportNo;
     this.startBon = startBon;
     this.endBon = endBon;
     this.withNames = withNames;
@@ -44,17 +46,9 @@ public class AccountingReport extends Report {
             .setParameter("to", endBon)
             .getResultList();
     if (purchases.isEmpty()) {
-      throw new NoResultException();
+      throw new NoPurchasesFoundException();
     }
     return purchases;
-  }
-
-  private static Map<String, Object> reportParams(long startBon, long endBon)
-      throws InvalidVATValueException {
-    List<Purchase> purchases = getPurchases(startBon, endBon);
-    Map<String, Object> reportParams = getAccountingPurchaseParams(purchases);
-    reportParams.putAll(getAccountingTransactionParams(purchases));
-    return reportParams;
   }
 
   static long countVatValues(Collection<Purchase> purchases, VAT vat) {
@@ -219,6 +213,8 @@ public class AccountingReport extends Report {
     try {
       Map<String, Object> reportParams = getAccountingPurchaseParams(purchases);
       reportParams.putAll(getAccountingTransactionParams(purchases));
+      reportParams.put(
+          "reportTitle", reportNo == 0 ? "Umsatzbericht" : "LD-Endabrechnung Nr. " + reportNo);
       return reportParams;
     } catch (InvalidVATValueException e) {
       throw new RuntimeException(e);

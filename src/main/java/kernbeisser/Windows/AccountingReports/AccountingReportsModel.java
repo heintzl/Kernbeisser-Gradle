@@ -86,7 +86,7 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
       Consumer<Throwable> consumePdfException) {
     exportReport(
         exportType,
-        new AccountingReport(startBon, endBon, withNames),
+        new AccountingReport(0, startBon, endBon, withNames),
         "Ladendienst Endabrechnung wird erstellt",
         consumePdfException);
   }

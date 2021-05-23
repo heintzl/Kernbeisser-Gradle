@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BuchhaltungBonUebersicht" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<style name="Bold" markup="none" isBold="true"/>
@@ -17,6 +17,7 @@
 	<parameter name="sumVatHiSolidarity" class="java.lang.Double"/>
 	<parameter name="sumVatLoSolidarity" class="java.lang.Double"/>
 	<parameter name="sumDeposit" class="java.lang.Double"/>
+	<parameter name="reportTitle" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -116,14 +117,14 @@
 				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="199" y="1" width="70" height="15" uuid="2a88ce23-b355-44d5-8577-9561d81ba058"/>
+				<reportElement x="214" y="1" width="70" height="15" uuid="2a88ce23-b355-44d5-8577-9561d81ba058"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Zeitraum von "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd.MM.yyyy">
-				<reportElement x="338" y="1" width="60" height="15" uuid="ad2d5a31-078e-4b26-b441-a373d9903e0b"/>
+				<reportElement x="354" y="1" width="60" height="15" uuid="ad2d5a31-078e-4b26-b441-a373d9903e0b"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
@@ -137,21 +138,21 @@
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd.MM.yyyy">
-				<reportElement x="269" y="1" width="60" height="15" uuid="7a75b882-0b4d-49b0-aa8c-1a305b4e73a9"/>
+				<reportElement x="284" y="1" width="60" height="15" uuid="7a75b882-0b4d-49b0-aa8c-1a305b4e73a9"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{start}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="0" y="-2" width="141" height="20" uuid="3b05d48e-cc96-401e-8300-bc136cd0eb66"/>
+			<textField>
+				<reportElement x="0" y="-2" width="190" height="20" uuid="0a66738d-03f9-4959-b612-b03903b9f47c"/>
 				<textElement markup="html">
 					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[LD-Endabrechnung]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
+			</textField>
 			<textField>
-				<reportElement x="321" y="1" width="20" height="15" uuid="8a113340-aac1-4c55-a116-a893f447752f"/>
+				<reportElement x="338" y="1" width="20" height="15" uuid="8a113340-aac1-4c55-a116-a893f447752f"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>

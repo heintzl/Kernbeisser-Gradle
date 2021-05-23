@@ -20,7 +20,8 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
   void printTillRoll(Consumer<Boolean> resultConsumer) {
     long from = Setting.LAST_PRINTED_BON_NR.getLongValue();
     long id = Purchase.getLastBonNo();
-    AccountingReport accountingReportManager = new AccountingReport(from + 1, id, false);
+    long no = Setting.LAST_PRINTED_ACOUNTING_REPORT_NR.getLongValue() + 1;
+    AccountingReport accountingReportManager = new AccountingReport(no, from + 1, id, false);
     accountingReportManager.sendToPrinter(
         "Ladendienst wird gedruckt",
         (e) -> {
@@ -28,5 +29,6 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
         });
     resultConsumer.accept(true);
     Setting.LAST_PRINTED_BON_NR.changeValue(id);
+    Setting.LAST_PRINTED_ACOUNTING_REPORT_NR.changeValue(no);
   };
 }
