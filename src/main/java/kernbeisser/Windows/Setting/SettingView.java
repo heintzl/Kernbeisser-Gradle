@@ -91,6 +91,16 @@ public class SettingView implements IView<SettingController> {
         == 0;
   }
 
+  public static boolean confirmAccounting() {
+    return JOptionPane.showConfirmDialog(
+            null,
+            "Dieser Wert darf nur in Absprache mit der Buchhaltung geändert werden!\n"
+                + "Bist Du 100% sicher, dass Du den Wert anpassen musst?",
+            "Riskante Anpassung",
+            JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
+  }
+
   @Override
   @StaticAccessPoint
   public IconCode getTabIcon() {

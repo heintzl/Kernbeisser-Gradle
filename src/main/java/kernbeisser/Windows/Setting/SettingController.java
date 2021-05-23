@@ -31,6 +31,10 @@ public class SettingController extends Controller<SettingView, SettingModel> {
 
   public void apply() {
     var view = getView();
+    Setting setting = model.getSelectedSettingValue();
+    if ((setting.equals(Setting.LAST_PRINTED_ACOUNTING_REPORT_NR)
+            || setting.equals(Setting.LAST_PRINTED_BON_NR))
+        && !SettingView.confirmAccounting()) return;
     switch (Setting.getExpectedType(model.getSelectedSettingValue()).getSimpleName()) {
       case "Integer":
         try {
