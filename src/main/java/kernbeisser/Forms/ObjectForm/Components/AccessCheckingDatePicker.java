@@ -19,7 +19,7 @@ import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
-import kernbeisser.Forms.ObjectForm.Properties.Predictable;
+import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
@@ -34,7 +34,7 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
     implements ObjectFormComponent<P>,
         BoundedReadProperty<P, Instant>,
         BoundedWriteProperty<P, Instant>,
-        Predictable<P>,
+        PredictableModifiable<P>,
         DocumentListener {
 
   private final FocusListener noReadPermissionMaker =
@@ -88,7 +88,7 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
   }
 
   @Override
-  public void setPropertyEditable(boolean v) {
+  public void setPropertyModifiable(boolean v) {
     getJFormattedTextField().getParent().setEnabled(v);
   }
 
@@ -104,12 +104,7 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
   }
 
   @Override
-  public boolean isPropertyReadable(P parent) {
-    return Access.hasPermission(getter, parent);
-  }
-
-  @Override
-  public boolean isPropertyWriteable(P parent) {
+  public boolean isPropertyModifiable(P parent) {
     return Access.hasPermission(setter, parent);
   }
 

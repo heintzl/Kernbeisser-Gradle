@@ -8,13 +8,17 @@ import java.util.function.Predicate;
 import javax.swing.*;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Forms.ObjectForm.Exceptions.AccessNotPredictableException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.Exceptions.FieldNotUniqueException;
 import kernbeisser.Forms.ObjectForm.Exceptions.SilentParseException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
-import kernbeisser.Forms.ObjectForm.Properties.Predictable;
+import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessListenerManager;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +30,6 @@ public class ObjectForm<P> {
   private final ObjectFormComponent<P>[] components;
 
   @Getter @Setter private String objectDistinction = "Das Objekt";
-
-  private boolean checkInputVerifier = true;
 
   private P original;
 
@@ -44,7 +46,6 @@ public class ObjectForm<P> {
   public void setSource(P data) {
     if (data == null) throw new NullPointerException("cannot set null as source for ObjectView");
     this.original = data;
-    refreshAccess();
     setData(data);
   }
 
@@ -55,11 +56,9 @@ public class ObjectForm<P> {
     for (ObjectFormComponent<P> component : components) {
       if (component instanceof BoundedWriteProperty) {
         try {
-          if (component instanceof Predictable
-              && !((Predictable) component).isPropertyWriteable(originalCopy)) continue;
           ((BoundedWriteProperty<P, ?>) component).set(originalCopy);
         } catch (PermissionKeyRequiredException e) {
-          ((BoundedWriteProperty<?, ?>) component).setPropertyEditable(false);
+          ((BoundedWriteProperty<?, ?>) component).setPropertyModifiable(false);
         } catch (CannotParseException e) {
           if (!(e instanceof SilentParseException)) {
             ((BoundedWriteProperty<?, ?>) component).setInvalidInput();
@@ -73,35 +72,58 @@ public class ObjectForm<P> {
     return originalCopy;
   }
 
-  private void setData(@NotNull P data) {
-    for (ObjectFormComponent<P> boundedField : components) {
-      if (boundedField instanceof BoundedReadProperty) {
-        try {
-          if (boundedField instanceof Predictable
-              && !((Predictable) boundedField).isPropertyReadable(original)) continue;
-          ((BoundedReadProperty<P, ?>) boundedField).setValue(data);
-        } catch (PermissionKeyRequiredException e) {
-          ((BoundedReadProperty<?, ?>) boundedField).setReadable(false);
-        }
+  private <V> V readProperty(BoundedReadProperty<P, V> component, P parent) {
+    return component.get(parent);
+  }
+
+  private <V> void setDataAndAccess(ObjectFormComponent<P> formComponent, P parent) {
+    if (formComponent instanceof BoundedReadProperty) {
+      V value;
+      BoundedReadProperty<P, V> boundedReadProperty = (BoundedReadProperty<P, V>) formComponent;
+      synchronized (Access.ACCESS_LOCK) {
+        AccessManager accessManager = Access.getDefaultManager();
+        AccessListenerManager listener = new AccessListenerManager(accessManager);
+        Access.setDefaultManager(listener);
+
+        value = readProperty(boundedReadProperty, parent);
+
+        boundedReadProperty.setReadable(listener.isSuccess());
+        Access.setDefaultManager(accessManager);
       }
+      boundedReadProperty.setData(value);
+      if (formComponent instanceof BoundedWriteProperty) {
+        setAccessWithData(
+            (BoundedWriteProperty<? super P, ? super V>) formComponent, parent, value);
+      }
+      return;
+    }
+    if (formComponent instanceof BoundedWriteProperty
+        && formComponent instanceof PredictableModifiable) {
+      predictModifiable(
+          (BoundedWriteProperty<P, V> & PredictableModifiable<P>) formComponent, parent);
+      return;
+    }
+    throw new AccessNotPredictableException("There is no way to try the setter function!");
+  }
+
+  private <VP, V, T extends BoundedWriteProperty<VP, V> & PredictableModifiable<VP>>
+      void predictModifiable(T component, VP parent) {
+    component.setPropertyModifiable(component.isPropertyModifiable(parent));
+  }
+
+  private <VP, V, T extends BoundedWriteProperty<VP, V>> void setAccessWithData(
+      T component, VP valueParent, V getterData) {
+    try {
+      component.set(valueParent, getterData);
+      component.setPropertyModifiable(true);
+    } catch (PermissionKeyRequiredException e) {
+      component.setPropertyModifiable(false);
     }
   }
 
-  public void refreshAccess() {
-    checkValidSource();
-    for (ObjectFormComponent<P> boundedField : components) {
-      setAccess(boundedField);
-    }
-  }
-
-  private void setAccess(ObjectFormComponent<P> component) {
-    if (component instanceof Predictable) {
-      if (component instanceof BoundedReadProperty)
-        ((BoundedReadProperty<?, ?>) component)
-            .setReadable(((Predictable<P>) component).isPropertyReadable(original));
-      if (component instanceof BoundedWriteProperty)
-        ((BoundedWriteProperty<?, ?>) component)
-            .setPropertyEditable(((Predictable<P>) component).isPropertyWriteable(original));
+  private void setData(@NotNull P data) {
+    for (ObjectFormComponent<P> field : components) {
+      setDataAndAccess(field, data);
     }
   }
 

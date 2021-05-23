@@ -17,7 +17,7 @@ import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
-import kernbeisser.Forms.ObjectForm.Properties.Predictable;
+import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
@@ -27,7 +27,7 @@ public class AccessCheckingField<P, V> extends JTextField
     implements ObjectFormComponent<P>,
         BoundedReadProperty<P, V>,
         BoundedWriteProperty<P, V>,
-        Predictable<P>,
+        PredictableModifiable<P>,
         DocumentListener {
 
   private final FocusListener noReadPermissionMaker =
@@ -58,7 +58,7 @@ public class AccessCheckingField<P, V> extends JTextField
   }
 
   @Override
-  public void setPropertyEditable(boolean v) {
+  public void setPropertyModifiable(boolean v) {
     setEnabled(v);
   }
 
@@ -74,12 +74,7 @@ public class AccessCheckingField<P, V> extends JTextField
   }
 
   @Override
-  public boolean isPropertyReadable(P parent) {
-    return Access.hasPermission(getter, parent);
-  }
-
-  @Override
-  public boolean isPropertyWriteable(P parent) {
+  public boolean isPropertyModifiable(P parent) {
     return Access.hasPermission(setter, parent);
   }
 

@@ -4,12 +4,12 @@ import java.util.function.Consumer;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
-import kernbeisser.Forms.ObjectForm.Properties.Predictable;
+import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 
 public class DataListener<P, V>
-    implements ObjectFormComponent<P>, BoundedReadProperty<P, V>, Predictable<P> {
+    implements ObjectFormComponent<P>, BoundedReadProperty<P, V>, PredictableModifiable<P> {
 
   private final Getter<P, V> getter;
   private final Consumer<V> consumer;
@@ -23,12 +23,7 @@ public class DataListener<P, V>
   public void setReadable(boolean v) {}
 
   @Override
-  public boolean isPropertyReadable(P parent) {
-    return Access.hasPermission(getter, parent);
-  }
-
-  @Override
-  public boolean isPropertyWriteable(P parent) {
+  public boolean isPropertyModifiable(P parent) {
     return Access.hasPermission(getter, parent);
   }
 

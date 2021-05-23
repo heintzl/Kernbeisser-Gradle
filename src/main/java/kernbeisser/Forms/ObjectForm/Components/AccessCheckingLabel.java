@@ -4,12 +4,11 @@ import javax.swing.JLabel;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
-import kernbeisser.Forms.ObjectForm.Properties.Predictable;
-import kernbeisser.Security.Access.Access;
+import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
 import kernbeisser.Security.Utils.Getter;
 
 public class AccessCheckingLabel<T> extends JLabel
-    implements BoundedReadProperty<T, String>, Predictable<T>, ObjectFormComponent<T> {
+    implements BoundedReadProperty<T, String>, PredictableModifiable<T>, ObjectFormComponent<T> {
 
   private final Getter<T, String> getter;
 
@@ -36,12 +35,7 @@ public class AccessCheckingLabel<T> extends JLabel
   }
 
   @Override
-  public boolean isPropertyReadable(T parent) {
-    return Access.hasPermission(getter, parent);
-  }
-
-  @Override
-  public boolean isPropertyWriteable(T parent) {
+  public boolean isPropertyModifiable(T parent) {
     return false;
   }
 
