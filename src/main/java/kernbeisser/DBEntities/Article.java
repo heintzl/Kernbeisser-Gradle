@@ -243,6 +243,13 @@ public class Article {
             }));
   }
 
+  public static Article getEmptyArticle() {
+    Article empty = new Article();
+    empty.name = "Kein Artikel gefunden";
+    empty.surchargeGroup = new SurchargeGroup();
+    return empty;
+  }
+
   public static Collection<Article> defaultSearch(String search, int maxResults) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
