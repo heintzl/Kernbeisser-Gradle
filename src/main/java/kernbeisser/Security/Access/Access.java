@@ -189,4 +189,13 @@ public class Access {
       } else throw new RuntimeException("modification of access manager while checking state");
     }
   }
+
+  public static void runWithAccessManager(AccessManager accessManager, Runnable runnable) {
+    synchronized (ACCESS_LOCK) {
+      AccessManager before = defaultManager;
+      defaultManager = accessManager;
+      runnable.run();
+      defaultManager = before;
+    }
+  }
 }
