@@ -23,19 +23,22 @@ public class AccountingReport extends Report {
   private final long reportNo;
   private final long startBon;
   private final long endBon;
+  private final List<Purchase> purchases;
   private final boolean withNames;
 
-  public AccountingReport(long reportNo, long startBon, long endBon, boolean withNames) {
+  public AccountingReport(long reportNo, long startBon, long endBon, boolean withNames)
+      throws NoPurchasesFoundException {
     super(
         "accountingReportFileName",
         String.format("KernbeisserBuchhaltungBonUebersicht_%d_%d", startBon, endBon));
     this.reportNo = reportNo;
     this.startBon = startBon;
     this.endBon = endBon;
+    this.purchases = getPurchases();
     this.withNames = withNames;
   }
 
-  private static List<Purchase> getPurchases(long startBon, long endBon) {
+  private List<Purchase> getPurchases() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -209,7 +212,6 @@ public class AccountingReport extends Report {
 
   @Override
   Map<String, Object> getReportParams() {
-    List<Purchase> purchases = getPurchases(startBon, endBon);
     try {
       Map<String, Object> reportParams = getAccountingPurchaseParams(purchases);
       reportParams.putAll(getAccountingTransactionParams(purchases));
@@ -223,7 +225,7 @@ public class AccountingReport extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    return getPurchases(startBon, endBon).stream()
+    return purchases.stream()
         .map(p -> p.withUserIdentification(withNames))
         .collect(Collectors.toList());
   }
