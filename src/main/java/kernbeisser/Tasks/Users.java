@@ -1,10 +1,7 @@
 package kernbeisser.Tasks;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
@@ -34,17 +31,18 @@ public class Users {
     secondary.setFirstName(stringRaw[5]);
     secondary.setSurname(stringRaw[6]);
     // ExtraJobs: Unused, column 7
-    user.setJobs(Tools.extract(HashSet::new, stringRaw[8], "§", jobHashMap::get));
-    user.setKernbeisserKey(Boolean.parseBoolean(stringRaw[10]) ? 0 : -1);
-    user.setEmployee(Boolean.parseBoolean(stringRaw[11]));
+    user.setJobs(parseJobs(Arrays.copyOfRange(stringRaw, 7, 16), jobHashMap));
+
+    user.setKernbeisserKey(Boolean.parseBoolean(stringRaw[18]) ? 0 : -1);
+    user.setEmployee(Boolean.parseBoolean(stringRaw[19]));
     // IdentityCode: Unused, column 12
     // Username: Unknown, column 13
     // Password: Start, column 14
-    user.setFirstName(stringRaw[15]);
-    user.setSurname(stringRaw[16]);
-    user.setPhoneNumber1(stringRaw[17]);
-    user.setPhoneNumber2(stringRaw[18]);
-    for (String s : stringRaw[19].split(" ")) {
+    user.setFirstName(stringRaw[23]);
+    user.setSurname(stringRaw[24]);
+    user.setPhoneNumber1(stringRaw[25]);
+    user.setPhoneNumber2(stringRaw[26]);
+    for (String s : stringRaw[27].split(" ")) {
       if (s.equals("")) {
         continue;
       }
@@ -55,20 +53,42 @@ public class Users {
       }
     }
     // Permission?
-    switch (Integer.parseInt(stringRaw[20])) {
+    switch (Integer.parseInt(stringRaw[28])) {
         // TODO
     }
-    user.setEmail(stringRaw[21]);
+    user.setEmail(stringRaw[29]);
     // CreateDate: isn't used(create new CreateDate), column 22
     // TransactionDates: not used, column 24
     // TransactionValues: not used, column 25
-    user.setStreet(stringRaw[26]);
+    user.setStreet(stringRaw[34]);
     user.setPassword(defaultPassword);
     secondary.setPassword(defaultPassword);
     generateUsername(usernames, user);
     generateUsername(usernames, secondary);
     user.setUpdateBy(User.getKernbeisserUser());
     return new User[] {user, secondary};
+  }
+
+  private static Set<Job> parseJobs(String[] stringJobs, HashMap<String, Job> jobHashMap) {
+    Set<Job> userJobs = new HashSet<>();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (String job : stringJobs) {
+      if (job.equals("no")) {
+        continue;
+      }
+      if (!jobHashMap.containsKey(job)) {
+        Job newJob = new Job();
+        newJob.setName(job);
+        em.persist(newJob);
+        jobHashMap.put(job, newJob);
+      }
+      userJobs.add(jobHashMap.get(job));
+    }
+    em.flush();
+    return userJobs;
   }
 
   public static final int INTEREST_THIS_YEAR_COLUMN = 2;
@@ -84,7 +104,7 @@ public class Users {
   }
 
   public static double getValue(String[] rawData) {
-    return Tools.roundCurrency(Double.parseDouble(rawData[23].replace(",", ".")));
+    return Tools.roundCurrency(Double.parseDouble(rawData[31].replace(",", ".")));
   }
 
   private static void generateUsername(HashSet<String> usernames, User user) {
