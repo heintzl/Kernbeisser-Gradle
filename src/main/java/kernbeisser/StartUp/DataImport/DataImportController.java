@@ -166,7 +166,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       if (view.createStandardAdmin()) {
         String password;
         do {
-          password = view.requestPassword();
+          password = new String(view.getAdminPassword().getPassword());
         } while (password.equals(""));
         model.createAdmin(password);
       }
