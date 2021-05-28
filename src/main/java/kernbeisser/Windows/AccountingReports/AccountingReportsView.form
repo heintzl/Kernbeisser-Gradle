@@ -78,7 +78,7 @@
                   <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
-                  <text value="Anzahl Tage bis heute:"/>
+                  <text value="von:"/>
                 </properties>
               </component>
               <component id="c2b8e" class="javax.swing.JRadioButton" binding="optTillRoll">
@@ -172,9 +172,9 @@
                   <model/>
                 </properties>
               </component>
-              <component id="1af7c" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="days">
+              <component id="1af7c" class="org.jdatepicker.impl.JDatePickerImpl" binding="tillRollStartDate" custom-create="true">
                 <constraints>
-                  <grid row="4" column="2" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties/>
@@ -212,7 +212,7 @@
                   <text value="von Bonnummer:"/>
                 </properties>
               </component>
-              <component id="3947b" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="startBon">
+              <component id="3947b" class="kernbeisser.CustomComponents.ComboBox.AdvancedComboBox" binding="startBon" custom-create="true">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="0" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
@@ -228,7 +228,7 @@
                   <text value="bis Bonnummer:"/>
                 </properties>
               </component>
-              <component id="a4a39" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="endBon">
+              <component id="a4a39" class="kernbeisser.CustomComponents.ComboBox.AdvancedComboBox" binding="endBon" custom-create="true">
                 <constraints>
                   <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="0" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
@@ -281,6 +281,22 @@
                   <verticalAlignment value="3"/>
                   <verticalTextPosition value="0"/>
                 </properties>
+              </component>
+              <component id="86a9d" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="bis:"/>
+                </properties>
+              </component>
+              <component id="90fc1" class="org.jdatepicker.impl.JDatePickerImpl" binding="tillRollEndDate" custom-create="true">
+                <constraints>
+                  <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
+                </constraints>
+                <properties/>
               </component>
             </children>
           </grid>

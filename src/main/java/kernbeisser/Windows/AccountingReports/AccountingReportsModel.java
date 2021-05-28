@@ -2,10 +2,7 @@ package kernbeisser.Windows.AccountingReports;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -29,20 +26,20 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
 
   public AccountingReportsModel() {}
 
-  private List<ShoppingItem> getTillrollitems(Instant start, Instant end) {
+  private List<ShoppingItem> getTillrollitems(Instant start, Instant endExclusive) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select si from ShoppingItem si where si.purchase.createDate between :stdate and :endate",
+            "select si from ShoppingItem si where si.purchase.createDate >= :start and purchase.createDate < :end",
             ShoppingItem.class)
-        .setParameter("stdate", start)
-        .setParameter("endate", end)
+        .setParameter("start", start)
+        .setParameter("end", endExclusive)
         .getResultList();
   }
 
-  private void exportReport(
+  private static void exportReport(
       ExportTypes exportType,
       Report report,
       String message,
@@ -62,26 +59,32 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
   }
 
   public void exportTillroll(
-      ExportTypes exportType, int days, Consumer<Throwable> consumePdfException) {
-    Instant end = Instant.now();
-    Instant start =
-        DateUtils.truncate(Date.from(end.minus(days, ChronoUnit.DAYS)), Calendar.DATE).toInstant();
-    List<ShoppingItem> items = getTillrollitems(start, end);
+      ExportTypes exportType,
+      Calendar startDate,
+      Calendar endDate,
+      Consumer<Throwable> consumePdfException) {
+    Instant start = DateUtils.truncate(startDate, Calendar.DATE).toInstant();
+    Instant endExclusive =
+        DateUtils.truncate(endDate, Calendar.DATE).toInstant().plus(1, ChronoUnit.DAYS);
+    // Instant start =
+    //    DateUtils.truncate(Date.from(end.minus(days, ChronoUnit.DAYS)),
+    // Calendar.DATE).toInstant();
+    List<ShoppingItem> items = getTillrollitems(start, endExclusive);
     if (items.size() == 0) {
       consumePdfException.accept(new IncorrectInput("Leere Bonrolle"));
       return;
     }
     exportReport(
         exportType,
-        new TillrollReport(items, start, end),
+        new TillrollReport(items, start, endExclusive),
         "Bonrolle wird erstellt",
         consumePdfException);
   }
 
-  public void exportAccountingReport(
+  public static void exportAccountingReport(
       ExportTypes exportType,
-      int startBon,
-      int endBon,
+      long startBon,
+      long endBon,
       boolean withNames,
       Consumer<Throwable> consumePdfException) {
     exportReport(
