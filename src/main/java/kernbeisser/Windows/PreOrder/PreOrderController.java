@@ -94,10 +94,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void noArticleFound() {
-    Article empty = new Article();
-    empty.setName("Kein Artikel gefunden");
-    empty.setSurchargeGroup(new SurchargeGroup());
-    pasteDataInView(empty);
+    pasteDataInView(Article.getEmptyArticle());
   }
 
   @Override

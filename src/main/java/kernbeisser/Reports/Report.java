@@ -20,6 +20,7 @@ import javax.print.attribute.standard.PrinterName;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.NoPurchasesFoundException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
@@ -202,7 +203,7 @@ public abstract class Report {
 
   public static void pdfExportException(Throwable e) {
     try {
-      throw e.getCause();
+      throw e;
     } catch (FileNotFoundException f) {
       Main.logger.error(e.getMessage(), e);
       JOptionPane.showMessageDialog(
@@ -212,6 +213,12 @@ public abstract class Report {
           "Fehler beim Dateizugriff",
           JOptionPane.ERROR_MESSAGE);
       throw new RuntimeException(f);
+    } catch (NoPurchasesFoundException n) {
+      JOptionPane.showMessageDialog(
+          null,
+          "Keine Bons gefunden, die den Kriterien entsprechen!",
+          "Keine Bons",
+          JOptionPane.ERROR_MESSAGE);
     } catch (Throwable t) {
       Tools.showUnexpectedErrorWarning(t);
     }

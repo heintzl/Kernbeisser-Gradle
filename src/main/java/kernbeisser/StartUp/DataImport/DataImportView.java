@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class DataImportView implements IView<DataImportController> {
@@ -19,6 +20,7 @@ public class DataImportView implements IView<DataImportController> {
   private JLabel currentActionItems;
   private JLabel currentActionUser;
   private JCheckBox importStandardAdmin;
+  @Getter private JPasswordField adminPassword;
 
   @Linked private DataImportController controller;
 
@@ -126,11 +128,6 @@ public class DataImportView implements IView<DataImportController> {
         JOptionPane.ERROR_MESSAGE);
   }
 
-  String requestPassword() {
-    return JOptionPane.showInputDialog(
-        getTopComponent(), "Bitte geben sie ein Passwort für den automatisch erzeugten Admin ein");
-  }
-
   @Override
   public void initialize(DataImportController controller) {
     importData.addActionListener(e -> controller.importData());
@@ -142,6 +139,9 @@ public class DataImportView implements IView<DataImportController> {
     });*/
     search.addActionListener(e -> controller.openFileExplorer());
     cancel.addActionListener(e -> controller.cancel());
+    importStandardAdmin.setSelected(true);
+    importStandardAdmin.addActionListener(
+        e -> adminPassword.setEnabled(importStandardAdmin.isSelected()));
   }
 
   @Override

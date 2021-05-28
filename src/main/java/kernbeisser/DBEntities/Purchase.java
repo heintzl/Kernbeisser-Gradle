@@ -56,8 +56,7 @@ public class Purchase {
 
   public Purchase withUserIdentification(boolean withNames) {
 
-    Purchase out = new Purchase();
-    out = this;
+    Purchase out = this;
     User seller = session.getSeller();
     User customer = session.getCustomer();
     out.sellerIdentification = withNames ? seller.getFullName() : Integer.toString(seller.getId());
@@ -100,5 +99,16 @@ public class Purchase {
     return Optional.ofNullable(
             em.createQuery("select max(id) from Purchase p", Long.class).getSingleResult())
         .orElse(-1L);
+  }
+
+  public static Optional<Purchase> getLastBon() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return Optional.ofNullable(
+        em.createQuery("select p from Purchase p order by p.id desc", Purchase.class)
+            .setMaxResults(1)
+            .getSingleResult());
   }
 }

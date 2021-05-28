@@ -91,6 +91,8 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
           UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
     } catch (UnsupportedLookAndFeelException e) {
       Tools.showUnexpectedErrorWarning(e);
+    } catch (Exception u) {
+      Tools.showUnexpectedErrorWarning(u);
     }
   }
 

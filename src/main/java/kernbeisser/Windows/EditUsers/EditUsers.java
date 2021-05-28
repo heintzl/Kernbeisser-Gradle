@@ -32,6 +32,7 @@ public class EditUsers extends ObjectViewController<User> {
         Column.create("Vorname", User::getFirstName),
         Column.create("Nachname", User::getSurname),
         Column.create("Benutzername", User::getUsername),
+        Column.create("Dienste", User::getJobsAsString).withStandardFilter(),
         Column.create(
             "Guthaben",
             u -> String.format("%.2f€", u.getUserGroup().getValue()),

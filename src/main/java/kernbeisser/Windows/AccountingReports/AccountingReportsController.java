@@ -1,6 +1,9 @@
 package kernbeisser.Windows.AccountingReports;
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Optional;
+import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
@@ -27,9 +30,9 @@ public class AccountingReportsController
     return model.getUserKeySortOrders();
   }
 
-  public void exportTillroll(ExportTypes exportType, int days) {
+  public void exportTillroll(ExportTypes exportType, Calendar startDate, Calendar endDate) {
     var view = getView();
-    model.exportTillroll(exportType, days, (e) -> consumePdfException(e, exportType));
+    model.exportTillroll(exportType, startDate, endDate, (e) -> consumePdfException(e, exportType));
     view.back();
   }
 
@@ -50,11 +53,20 @@ public class AccountingReportsController
   }
 
   public void exportAccountingReport(
-      ExportTypes exportType, int startBon, int endBon, boolean withNames) {
+      ExportTypes exportType,
+      Optional<Purchase> startBon,
+      Optional<Purchase> endBon,
+      boolean withNames) {
     var view = getView();
+    long startBonNo = startBon.map(Purchase::getId).orElse(0L);
+    long endBonNo = endBon.map(Purchase::getId).orElse(Purchase.getLastBonNo());
+    if (startBonNo > endBonNo) {
+      view.messageBonValues();
+      return;
+    }
     try {
       model.exportAccountingReport(
-          exportType, startBon, endBon, withNames, (e) -> consumePdfException(e, exportType));
+          exportType, startBonNo, endBonNo, withNames, (e) -> consumePdfException(e, exportType));
       view.back();
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);
@@ -108,6 +120,7 @@ public class AccountingReportsController
   @Override
   public void fillView(AccountingReportsView accountingReportsView) {
     accountingReportsView.setUser(User.getAllUserFullNames(true));
+    accountingReportsView.setBons(Purchase.getAll(null));
     accountingReportsView.getOptAccountingReport().doClick();
   }
 }
