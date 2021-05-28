@@ -78,7 +78,7 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
     return properties;
   }
 
-  private static Properties getI18nStrings(Locale locale) {
+  public static Properties getI18nStrings(Locale locale) {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("org.jdatepicker.i18n.Text", locale);
     return convertToProperties(resourceBundle);
   }
