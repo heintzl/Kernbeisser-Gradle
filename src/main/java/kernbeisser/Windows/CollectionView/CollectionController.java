@@ -3,7 +3,6 @@ package kernbeisser.Windows.CollectionView;
 import java.util.ArrayList;
 import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.MVC.Controller;
 
@@ -37,23 +36,13 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
   }
 
   public void selectAvailable() {
-    try {
-      T object = getView().getSelectedAvailableObject().orElseThrow(NoSelectionException::new);
-      model.getLoaded().add(object);
-      refresh();
-    } catch (NoSelectionException ignored) {
-    }
+    model.getLoaded().addAll(getView().getSelectedAvailableObjects());
+    refresh();
   }
 
   public void selectChosen() {
-    try {
-      model
-          .getLoaded()
-          .remove(getView().getSelectedChosenObject().orElseThrow(NoSelectionException::new));
-      refresh();
-    } catch (NoSelectionException e) {
-      getView().messageSelectObjectFirst();
-    }
+    model.getLoaded().removeAll(getView().getSelectedChosenObjects());
+    refresh();
   }
 
   private void refresh() {
@@ -64,12 +53,12 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
   }
 
   public void selectAllAvailable() {
-    model.getLoaded().addAll(model.getSource());
+    model.getLoaded().addAll(getView().getAllAvailableObjects());
     refresh();
   }
 
   public void selectAllChosen() {
-    model.getLoaded().clear();
+    model.getLoaded().removeAll(getView().getAllChosenObjects());
     refresh();
   }
 
