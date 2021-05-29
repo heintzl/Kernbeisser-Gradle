@@ -166,7 +166,9 @@ public class DataImportModel implements IModel<DataImportController> {
                         ? generateUserRelatedToken(users[0].getUsername()).toCharArray()
                         : "start".toCharArray()));
             users[0].getPermissions().add(importPermission);
-            users[0].getPermissions().add(fullMemberPermission);
+            if (users[0].getShares() > 0) {
+              users[0].getPermissions().add(fullMemberPermission);
+            }
             if (users[0].getKernbeisserKey() != -1) {
               users[0].getPermissions().add(keyPermission);
             }
