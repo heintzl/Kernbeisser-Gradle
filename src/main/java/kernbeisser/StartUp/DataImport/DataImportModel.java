@@ -112,12 +112,14 @@ public class DataImportModel implements IModel<DataImportController> {
   }
 
   void parseUsers(Stream<String> f, Consumer<Integer> progress) {
-    HashSet<String> usernames = new HashSet<>();
+    HashMap<String, User> importedUsers = new HashMap<>();
+    HashSet<String> userNames = new HashSet<>();
     HashMap<String, Job> jobs = new HashMap<>();
     Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
     final boolean relatedPassword = Setting.GENERATE_PASSWORD_RELATED_TO_USERNAME.getBooleanValue();
     Permission importPermission = PermissionConstants.IMPORT.getPermission();
     Permission keyPermission = PermissionConstants.KEY_PERMISSION.getPermission();
+    Permission fullMemberPermission = PermissionConstants.FULL_MEMBER.getPermission();
     User kernbeisser = User.getKernbeisserUser();
     BCrypt.Hasher hasher = BCrypt.withDefaults();
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -128,50 +130,91 @@ public class DataImportModel implements IModel<DataImportController> {
         l -> {
           String[] rawUserData = l.split(";");
 
-          User[] users = Users.parse(rawUserData, usernames, jobs);
-
+          User[] users = Users.parse(rawUserData, userNames, jobs);
+          String userFullname = users[0].getFullName();
           UserGroup userGroup = Users.getUserGroup(rawUserData);
+          User transactionUser = users[0];
 
-          users[0].setUserGroup(userGroup);
-          users[1].setUserGroup(userGroup);
+          if (importedUsers.containsKey(userFullname)) {
+            User existingUser = importedUsers.get(userFullname);
+            transactionUser = existingUser;
+            if (existingUser.isPrimary()) {
+              Main.logger.warn("Ignored duplicate primary user " + userFullname);
+            } else {
+              userGroup = existingUser.getUserGroup();
+              existingUser.setPrimary(true);
+              existingUser.setPhoneNumber1(users[0].getPhoneNumber1());
+              existingUser.setPhoneNumber2(users[0].getPhoneNumber2());
+              existingUser.setEmail(users[0].getEmail());
+              existingUser.setJobs(users[0].getJobs());
+              existingUser.setEmployee(users[0].isEmployee());
+              existingUser.getPermissions().add(fullMemberPermission);
+              if (users[0].getKernbeisserKey() != -1) {
+                existingUser.setKernbeisserKey(users[0].getKernbeisserKey());
+                existingUser.getPermissions().add(keyPermission);
+              }
+              em.persist(existingUser);
+            }
 
-          users[0].setPassword(
-              hasher.hashToString(
-                  4,
-                  relatedPassword
-                      ? generateUserRelatedToken(users[0].getUsername()).toCharArray()
-                      : "start".toCharArray()));
-          users[1].setPassword(
-              hasher.hashToString(
-                  4,
-                  relatedPassword
-                      ? generateUserRelatedToken(users[1].getUsername()).toCharArray()
-                      : "start".toCharArray()));
-
-          em.persist(userGroup);
-
-          users[0].getPermissions().add(importPermission);
-          users[1].getPermissions().add(importPermission);
-
-          if (users[0].getKernbeisserKey() != -1) {
-            users[0].getPermissions().add(keyPermission);
+          } else {
+            users[0].setUserGroup(userGroup);
+            em.persist(userGroup);
+            users[0].setPassword(
+                hasher.hashToString(
+                    4,
+                    relatedPassword
+                        ? generateUserRelatedToken(users[0].getUsername()).toCharArray()
+                        : "start".toCharArray()));
+            users[0].getPermissions().add(importPermission);
+            users[0].getPermissions().add(fullMemberPermission);
+            if (users[0].getKernbeisserKey() != -1) {
+              users[0].getPermissions().add(keyPermission);
+            }
+            em.persist(users[0]);
+            importedUsers.put(userFullname, users[0]);
           }
 
-          em.persist(users[0]);
-
-          if (!users[1].getFirstName().equals("")) {
-            em.persist(users[1]);
+          double userValue = Users.getValue(rawUserData);
+          if (userValue != 0.0) {
+            try {
+              Transaction.doTransaction(
+                  em,
+                  kernbeisser,
+                  transactionUser,
+                  userValue,
+                  TransactionType.INITIALIZE,
+                  "Übertrag des Guthabens des alten Kernbeisser Programms");
+            } catch (InvalidTransactionException e) {
+              throw new RuntimeException(e);
+            }
           }
-          try {
-            Transaction.doTransaction(
-                em,
-                kernbeisser,
-                users[0],
-                Users.getValue(rawUserData),
-                TransactionType.INITIALIZE,
-                "Übertrag des Guthabens des alten Kernbeisser Programms");
-          } catch (InvalidTransactionException e) {
-            throw new RuntimeException(e);
+
+          userFullname = users[1].getFullName();
+          if (importedUsers.containsKey(userFullname)) {
+            User existingUser = importedUsers.get(userFullname);
+            if (existingUser.isPrimary()) {
+              Users.switchUserGroup(existingUser.getId(), users[0].getUserGroup().getId());
+            } else {
+              Main.logger.warn(
+                  "Ignored duplicate secondary user "
+                      + userFullname
+                      + "who already is in usergroup: "
+                      + existingUser.getUserGroup().getMembersAsString());
+            }
+
+          } else {
+            if (!users[1].getFirstName().equals("")) {
+              users[1].setUserGroup(userGroup);
+              users[1].setPassword(
+                  hasher.hashToString(
+                      4,
+                      relatedPassword
+                          ? generateUserRelatedToken(users[1].getUsername()).toCharArray()
+                          : "start".toCharArray()));
+              users[1].getPermissions().add(importPermission);
+              em.persist(users[1]);
+              importedUsers.put(userFullname, users[1]);
+            }
           }
         });
     em.flush();

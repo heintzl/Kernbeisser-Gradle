@@ -41,6 +41,7 @@ public class Users {
     user.setFirstName(stringRaw[23]);
     user.setSurname(stringRaw[24]);
     user.setPhoneNumber1(stringRaw[25]);
+    /* omit sensitive user data
     user.setPhoneNumber2(stringRaw[26]);
     for (String s : stringRaw[27].split(" ")) {
       if (s.equals("")) {
@@ -56,11 +57,12 @@ public class Users {
     switch (Integer.parseInt(stringRaw[28])) {
         // TODO
     }
+    */
     user.setEmail(stringRaw[29]);
     // CreateDate: isn't used(create new CreateDate), column 22
     // TransactionDates: not used, column 24
     // TransactionValues: not used, column 25
-    user.setStreet(stringRaw[34]);
+    // ommitted: user.setStreet(stringRaw[34]);
     user.setPassword(defaultPassword);
     secondary.setPassword(defaultPassword);
     generateUsername(usernames, user);

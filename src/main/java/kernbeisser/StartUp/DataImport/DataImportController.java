@@ -105,6 +105,11 @@ public class DataImportController extends Controller<DataImportView, DataImportM
   Thread articleThread = null;
 
   void importData() {
+    var view = getView();
+    if (view.createStandardAdmin() && view.getAdminPassword().isEmpty()) {
+      view.messageMissingPassword();
+      return;
+    }
     Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
     try {
       PackageDefinition packageDefinition = extractPackageDefinition();
@@ -128,7 +133,6 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       Stream<String> priceLists =
           Files.lines(getPackagePath().resolve(packageDefinition.getPriceLists()));
       Stream<String> user = Files.lines(getPackagePath().resolve(packageDefinition.getUser()));
-      var view = getView();
       Main.logger.info("Starting importing data");
       Setting.DB_INITIALIZED.changeValue(true);
       if (view.importItems()) {
@@ -166,7 +170,7 @@ public class DataImportController extends Controller<DataImportView, DataImportM
       if (view.createStandardAdmin()) {
         String password;
         do {
-          password = new String(view.getAdminPassword().getPassword());
+          password = view.getAdminPassword();
         } while (password.equals(""));
         model.createAdmin(password);
       }
