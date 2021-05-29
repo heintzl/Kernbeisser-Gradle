@@ -32,6 +32,10 @@ public class DataImportView implements IView<DataImportController> {
     return dataPath.getText();
   }
 
+  String getAdminPassword() {
+    return new String(adminPassword.getPassword());
+  }
+
   void setFilePath(String s) {
     dataPath.setText(s);
   }
@@ -126,6 +130,14 @@ public class DataImportView implements IView<DataImportController> {
         "Der Nutzerdatensatz beinhaltet Pfade von Dateien die nicht existieren!",
         "Nutzerdatensatz unvollst\u00e4ndig",
         JOptionPane.ERROR_MESSAGE);
+  }
+
+  void messageMissingPassword() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Das Passwort darf nicht leer sein!",
+        "Passwort fehlt",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   @Override
