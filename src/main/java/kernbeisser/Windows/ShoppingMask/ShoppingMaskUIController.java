@@ -1,6 +1,5 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
 import javax.persistence.NoResultException;
@@ -11,6 +10,7 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -116,9 +116,8 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
       }
 
       if (item.getItemMultiplier() != 0
-          && (getView().getArticleType() == ArticleType.RETURN_DEPOSIT
-              || checkStorno(item, piece))) {
-
+          && (getView().getArticleType() == ArticleType.RETURN_DEPOSIT || checkStorno(item, piece))
+          && checkWarningThresholds(item)) {
         shoppingCartController.addShoppingItem(item);
         getView().setDiscount();
         return true;
@@ -128,6 +127,19 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
       getView().messageNoArticleFound();
       return false;
     }
+  }
+
+  private boolean checkWarningThresholds(ShoppingItem item) {
+    var view = getView();
+    return (shoppingCartController.getRemainingValue() - item.getRetailPrice() >= 0
+            || model.getSaleSession().getCustomer().mayGoUnderMin()
+            || view.messageUnderMin())
+        && (item.getRetailPrice() < Setting.SHOPPING_PRICE_WARNING_THRESHOLD.getDoubleValue()
+            || view.confirmPriceWarning())
+        && (item.isWeighAble()
+            || item.getItemMultiplier() / (item.isContainerDiscount() ? item.getContainerSize() : 1)
+                < Setting.SHOPPING_AMOUNT_WARNING_THRESHOLD.getIntValue()
+            || view.confirmAmountWarning());
   }
 
   void searchByKbNumber() {
