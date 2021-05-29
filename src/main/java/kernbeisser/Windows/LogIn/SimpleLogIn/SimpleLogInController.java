@@ -44,6 +44,9 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
 
   public void logIn() {
     var view = getView();
+    if (view.getUsername().equals("Admin")) {
+      PermissionConstants.cleanAdminPermission(User.getByUsername("Admin"));
+    }
     try {
       model.logIn(view.getUsername(), view.getPassword());
     } catch (CannotLogInException e) {
@@ -58,7 +61,6 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     new Thread(
             () -> {
               loadUserSettings();
-              cleanAdminUser();
               User.refreshActivity();
               try {
                 User.checkAdminConsistency();
@@ -93,13 +95,6 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
       Tools.showUnexpectedErrorWarning(e);
     } catch (Exception u) {
       Tools.showUnexpectedErrorWarning(u);
-    }
-  }
-
-  private static void cleanAdminUser() {
-    User currentUser = LogInModel.getLoggedIn();
-    if (currentUser.isSysAdmin()) {
-      PermissionConstants.cleanAdminPermission(currentUser);
     }
   }
 
