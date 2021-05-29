@@ -94,14 +94,23 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
     mergeShoppingItem(item, true);
   }
 
+  private double getSum() {
+    return model.getItems().stream().mapToDouble(ShoppingItem::getRetailPrice).sum();
+  }
+
+  public double getRemainingValue() {
+    return model.getUserValue() - getSum();
+  }
+
   public void refresh() {
-    double sum = 0;
+    double sum = getSum();
     getView().setObjects(model.getItems());
-    for (ShoppingItem item : model.getItems()) {
-      sum += item.getRetailPrice();
-    }
     getView().setSum(sum);
     getView().setValue(model.getUserValue() - sum);
+  }
+
+  public void showUnderMinWarning() {
+    getView().setUnderMinWarningVisible(true);
   }
 
   void delete(ShoppingItem i) {

@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.RowFilter;
 import javax.swing.table.*;
@@ -30,7 +31,8 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private DefaultTableModel model = (DefaultTableModel) super.dataModel;
 
-  private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> DEFAULT_ROW_FILTER = e -> true;
+  private final kernbeisser.CustomComponents.ObjectTable.RowFilter<T> DEFAULT_ROW_FILTER =
+      e -> true;
 
   private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter = DEFAULT_ROW_FILTER;
 
@@ -397,5 +399,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   public List<T> getObjects() {
     return Collections.unmodifiableList(objects);
+  }
+
+  public List<T> getFilteredObjects() {
+    return objects.stream()
+        .filter(t -> rowFilter.isDisplayed(t) && isInStandardFilter(t))
+        .collect(Collectors.toList());
   }
 }

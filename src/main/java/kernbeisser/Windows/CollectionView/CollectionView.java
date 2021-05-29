@@ -1,7 +1,6 @@
 package kernbeisser.Windows.CollectionView;
 
 import java.util.Collection;
-import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -47,12 +46,20 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     return main;
   }
 
-  Optional<T> getSelectedChosenObject() {
-    return chosen.getSelectedObject();
+  Collection<T> getSelectedChosenObjects() {
+    return chosen.getSelectedObjects();
   }
 
-  Optional<T> getSelectedAvailableObject() {
-    return available.getSelectedObject();
+  Collection<T> getSelectedAvailableObjects() {
+    return available.getSelectedObjects();
+  }
+
+  Collection<T> getAllChosenObjects() {
+    return chosen.getFilteredObjects();
+  }
+
+  Collection<T> getAllAvailableObjects() {
+    return available.getFilteredObjects();
   }
 
   void setColumns(Column<T>[] columns) {
@@ -65,8 +72,8 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   }
 
   private void createUIComponents() {
-    available = new ObjectTable<T>();
-    chosen = new ObjectTable<T>();
+    available = new ObjectTable<>();
+    chosen = new ObjectTable<>();
   }
 
   public void setChosen(Collection<T> loaded) {
@@ -85,9 +92,5 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
             "Eingabe abbrechen",
             JOptionPane.OK_CANCEL_OPTION)
         == JOptionPane.OK_OPTION;
-  }
-
-  public void messageSelectObjectFirst() {
-    message("Bitte wähle zunächst ein Object aus");
   }
 }

@@ -86,9 +86,9 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private JLabel containerSizeLabel;
   private JPanel productTypePanel;
   private JPanel reductionPanel;
-  private JComboBox supplier;
+  private JComboBox<Supplier> supplier;
   private JButton emptyShoppingCart;
-  private JComboBox vat;
+  private JComboBox<VAT> vat;
   private JLabel solidarity;
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
@@ -98,7 +98,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   private ArticleType currentArticleType;
   private boolean isWeighable;
-  static Vector<Component> traversalOrder = new Vector<Component>(1);
+  static Vector<Component> traversalOrder = new Vector<>(1);
   static FocusTraversal traversalPolicy;
   @Getter private boolean isPreordered = false;
   private ShoppingItem currentItem;
@@ -426,7 +426,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   private void recalculatePrice() {
-    double initPrice = 0d;
     if (currentItem.getKbNumber() > 0 || isPreordered) {
       price.setText(String.format("%.2f", controller.recalculatePrice(netPrice.getSafeValue())));
     }
@@ -498,14 +497,16 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   public String inputStornoRetailPrice(double itemRetailPrice, boolean retry) {
     String initValue = MessageFormat.format("{0, number, 0.00}", itemRetailPrice).trim();
-    String message = "";
-    String response = "";
+    String message;
+    String response;
     if (retry) { // item is piece, first try
       message =
-          "Die Eingabe ist ungültig. Bitte hier einen gültigen Einzelpreis angeben, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
+          "Die Eingabe ist ungültig. Bitte hier einen gültigen Einzelpreis angeben, für den Fall, dass er sich seit "
+              + "dem ursprünglichen Einkauf geändert hat:";
     } else { // item is piece later try
       message =
-          "Negative Menge: Soll der Artikel wirklich storniert werden? Dann kann hier der Einzelpreis angepasst werden, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
+          "Negative Menge: Soll der Artikel wirklich storniert werden? Dann kann hier der Einzelpreis angepasst"
+              + " werden, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
     }
     Tools.beep();
     response =
@@ -553,6 +554,26 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         == 0;
   }
 
+  public boolean confirmPriceWarning() {
+    Tools.beep();
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Der Preis ist ganz schön hoch. Bist Du sicher, dass alle Eingaben stimmen?",
+            "Teurer Einkauf",
+            JOptionPane.YES_NO_OPTION)
+        == 0;
+  }
+
+  public boolean confirmAmountWarning() {
+    Tools.beep();
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Die Menge ist ganz schön hoch. Bist Du sicher, dass alle Eingaben stimmen?",
+            "Hohe Menge",
+            JOptionPane.YES_NO_OPTION)
+        == 0;
+  }
+
   public void messageRoundedMultiplier(String roundedMultiplier) {
     Tools.beep();
     JOptionPane.showMessageDialog(
@@ -562,6 +583,17 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
             + " gerundet.",
         "Ungültige Mengenangabe",
         JOptionPane.WARNING_MESSAGE);
+  }
+
+  public boolean messageUnderMin() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Mit diesem Artikel würde das Mindestguthaben unterschritten. Bitte Guthaben auffüllen, um "
+            + "weiter einzukaufen!",
+        "Zuviel eingekauft",
+        JOptionPane.ERROR_MESSAGE);
+    return false;
   }
 
   // Getters and Setters BEGIN
@@ -682,10 +714,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
   }
   // Getters and Setters END
-
-  Dimension getShoppingListSize() {
-    return shoppingListPanel.getSize();
-  }
 
   public static void resizeFonts(JPanel p, float fontSize) {
     for (Component c : p.getComponents()) {

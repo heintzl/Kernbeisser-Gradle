@@ -8,6 +8,7 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
@@ -28,6 +29,11 @@ public class PayController extends Controller<PayView, PayModel> {
     cartController =
         new ShoppingCartController(
             userValue, saleSession.getCustomer().getUserGroup().getSolidaritySurcharge(), false);
+    if (userValue - shoppingCart.stream().mapToDouble(ShoppingItem::getRetailPrice).sum()
+        < Setting.DEFAULT_MIN_VALUE.getDoubleValue()) {
+      cartController.showUnderMinWarning();
+      getView().setCommitPaymentWarning();
+    }
   }
 
   void commitPayment(boolean printReceipt) {
@@ -71,8 +77,7 @@ public class PayController extends Controller<PayView, PayModel> {
     view.fillShoppingCart(model.getShoppingCart());
     view.setCustomerStandard.setVisible(false);
     User customer = model.getSaleSession().getCustomer();
-    String customerDisplayText =
-        customer.getFirstName().substring(0, 1) + ". " + customer.getSurname();
+    String customerDisplayText = customer.getFirstName().charAt(0) + ". " + customer.getSurname();
     view.setCustomerStandard.setText("für " + customerDisplayText + " merken");
     view.setCustomerStandard.addActionListener(
         e -> {
