@@ -8,6 +8,9 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.function.Predicate;
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -30,6 +33,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   private ObjectTable<ShoppingItem> shoppingItems;
   private JScrollPane tablePanel;
   private JLabel valueAfterLabel;
+  private JLabel underMinWarning;
   private boolean autoScrollDown;
 
   @Linked private boolean editable;
@@ -62,6 +66,10 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
       response = response.trim();
     }
     return response;
+  }
+
+  public void setUnderMinWarningVisible(boolean visible) {
+    underMinWarning.setVisible(visible);
   }
 
   private void createUIComponents() {
@@ -147,6 +155,14 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
               if (autoScrollDown) e.getAdjustable().setValue(e.getAdjustable().getMaximum());
               autoScrollDown = false;
             });
+    CompoundBorder border =
+        BorderFactory.createCompoundBorder(
+            new LineBorder(Color.GRAY, 2, true), new EmptyBorder(2, 5, 2, 5));
+    underMinWarning.setVisible(false);
+    underMinWarning.setText("Bitte vor dem nächsten Einkauf Guthaben auffüllen!");
+    underMinWarning.setFont(underMinWarning.getFont().deriveFont(Font.BOLD, 18f));
+    underMinWarning.setForeground(Color.RED.darker());
+    underMinWarning.setBorder(border);
   }
 
   @Override

@@ -109,6 +109,10 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
     getView().setValue(model.getUserValue() - sum);
   }
 
+  public void showUnderMinWarning() {
+    getView().setUnderMinWarningVisible(true);
+  }
+
   void delete(ShoppingItem i) {
     // TODO should throw exception if !editable
     if (!editable) return;

@@ -59,8 +59,9 @@ public class PayView implements IView<PayController> {
     }
   }
 
-  void setViewSize(Dimension size) {
-    main.setSize(size);
+  void setCommitPaymentWarning() {
+    commitPayment.setForeground(Color.RED.darker());
+    commitPayment.setFont(commitPayment.getFont().deriveFont(Font.BOLD));
   }
 
   @Override
