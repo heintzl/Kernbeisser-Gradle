@@ -1,9 +1,6 @@
 package kernbeisser.Windows.PermissionAssignment;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -32,8 +29,9 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   }
 
   public Collection<User> allUsers() {
-    Collection<User> c = User.getAll(null);
+    List<User> c = User.getAll(null);
     c.removeAll(User.getGenericUsers());
+    c.sort(Comparator.comparing(User::getFullName));
     return c;
   }
 
@@ -44,7 +42,8 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     et.begin();
     return em.createQuery(
             "select u from User u where :pid in elements(u.permissions) and not "
-                + User.GENERIC_USERS_CONDITION,
+                + User.GENERIC_USERS_CONDITION
+                + " order by u.firstName, u.surname",
             User.class)
         .setParameter("pid", permission)
         .getResultList();
