@@ -16,10 +16,7 @@ import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.PermissionSetAccessManager;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.PermissionSet;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -209,11 +206,6 @@ public class User implements Serializable, UserRelated {
         .getSingleResult();
   }
 
-  @kernbeisser.Security.Key(PermissionKey.USER_GROUP_VALUE_READ)
-  public double getRoundedValue() {
-    return Tools.roundCurrency(userGroup.getValue());
-  }
-
   public static void makeUserUnreadable(User user) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -329,18 +321,6 @@ public class User implements Serializable, UserRelated {
         .getResultList();
   }
 
-  public Collection<Transaction> getAllTransactions() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select t from Transaction t where t.fromUser.id = :id or t.toUser.id = :id",
-            Transaction.class)
-        .setParameter("id", id)
-        .getResultList();
-  }
-
   public Collection<Purchase> getAllPurchases() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -407,17 +387,6 @@ public class User implements Serializable, UserRelated {
     }
   }
 
-  public static User generateBeginnerUser() {
-    User user = new User();
-    user.permissions.add(PermissionConstants.FULL_MEMBER.getPermission());
-    PermissionSet set = new PermissionSet();
-    set.loadKeys(PermissionKey.find(User.class));
-    set.removePermission(PermissionKey.USER_PERMISSIONS_READ);
-    set.removePermission(PermissionKey.USER_PERMISSIONS_WRITE);
-    Access.getExceptions().put(user, new PermissionSetAccessManager(set));
-    return user;
-  }
-
   public double valueAt(Instant instant) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -462,11 +431,7 @@ public class User implements Serializable, UserRelated {
   }
 
   public boolean isBeginner() {
-    return getAllGroupMembers().stream()
-        .noneMatch(
-            u ->
-                getPermissionsAsAvailable()
-                    .contains(PermissionConstants.FULL_MEMBER.getPermission()));
+    return getPermissionsAsAvailable().contains(PermissionConstants.FULL_MEMBER.getPermission());
   }
 
   public boolean isKernbeisser() {
