@@ -1,5 +1,7 @@
 package kernbeisser.Windows.AccountingReports;
 
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.google.common.collect.Lists;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -11,15 +13,11 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.StatementType;
-import kernbeisser.Forms.ObjectForm.Components.AccessCheckingDatePicker;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import lombok.var;
-import org.jdatepicker.impl.DateComponentFormatter;
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class AccountingReportsView extends JDialog implements IView<AccountingReportsController> {
@@ -27,8 +25,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JButton cancel;
   private JComboBox<ExportTypes> exportType;
   private JButton submit;
-  private JDatePickerImpl tillRollStartDate;
-  private JDatePickerImpl tillRollEndDate;
+  private DatePicker tillRollStartDate;
+  private DatePicker tillRollEndDate;
   private JPanel main;
   private JRadioButton optTillRoll;
   @Getter private JRadioButton optAccountingReport;
@@ -50,8 +48,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
 
   @Linked private AccountingReportsController controller;
 
-  Calendar getDateValue(JDatePickerImpl comp) {
-    return (Calendar) comp.getModel().getValue();
+  Calendar getDateValue(DatePicker comp) {
+    return GregorianCalendar.from(comp.getDate().atStartOfDay(ZoneId.systemDefault()));
   }
 
   ExportTypes getExportType() {
@@ -97,16 +95,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   }
 
   private void enableComponents() {
-    optionalComponents.forEach(
-        (c, opt) -> {
-          boolean enabled = opt.isSelected();
-          if (c instanceof JDatePickerImpl) {
-            var datePicker = (JDatePickerImpl) c;
-            datePicker.setTextEditable(enabled);
-            datePicker.getComponent(1).setEnabled(enabled);
-          }
-          c.setEnabled(enabled);
-        });
+    optionalComponents.forEach((c, opt) -> c.setEnabled(opt.isSelected()));
   }
 
   @Override
@@ -136,20 +125,16 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     }
     optCurrent.setSelected(true);
     var now = LocalDate.now(ZoneId.systemDefault());
-    tillRollStartDate
-        .getModel()
-        .setDate(
+    tillRollStartDate.setDate(
+        LocalDate.of(
             now.get(ChronoField.YEAR),
             now.get(ChronoField.MONTH_OF_YEAR) - 1,
-            now.get(ChronoField.DAY_OF_MONTH) - 1);
-    tillRollStartDate.getModel().setSelected(true);
-    tillRollEndDate
-        .getModel()
-        .setDate(
+            now.get(ChronoField.DAY_OF_MONTH) - 1));
+    tillRollEndDate.setDate(
+        LocalDate.of(
             now.get(ChronoField.YEAR),
             now.get(ChronoField.MONTH_OF_YEAR) - 1,
-            now.get(ChronoField.DAY_OF_MONTH));
-    tillRollEndDate.getModel().setSelected(true);
+            now.get(ChronoField.DAY_OF_MONTH)));
     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));
     optionalComponents.values().stream()
         .distinct()
@@ -191,18 +176,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     startBon = new AdvancedComboBox<>(this::BonNoAndDate);
     endBon = new AdvancedComboBox<>(this::BonNoAndDate);
     user = new AdvancedComboBox<>(User::getFullName);
-    tillRollStartDate =
-        new JDatePickerImpl(
-            new JDatePanelImpl(
-                AccessCheckingDatePicker.createDateModel(),
-                AccessCheckingDatePicker.getI18nStrings(Locale.getDefault())),
-            new DateComponentFormatter());
-    tillRollEndDate =
-        new JDatePickerImpl(
-            new JDatePanelImpl(
-                AccessCheckingDatePicker.createDateModel(),
-                AccessCheckingDatePicker.getI18nStrings(Locale.getDefault())),
-            new DateComponentFormatter());
+    tillRollStartDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
+    tillRollEndDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
   }
 
   public void messageBonValues() {

@@ -25,7 +25,6 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
-import org.jdatepicker.JDateComponentFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class ArticleOffersEditorView implements IView<ArticleOffersEditorController> {
@@ -109,8 +108,6 @@ public class ArticleOffersEditorView implements IView<ArticleOffersEditorControl
     repeat =
         new AccessCheckingComboBox<>(
             Offer::getRepeatMode, Offer::setRepeatMode, controller.getRepeatModes());
-    JDateComponentFactory factory = new JDateComponentFactory();
-    factory.createJDatePicker();
   }
 
   public void setOffersMonth(Collection<Offer> offersMonth) {
