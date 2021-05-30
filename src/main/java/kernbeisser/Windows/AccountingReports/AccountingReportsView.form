@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="5" left="10" bottom="5" right="10"/>
     <constraints>
-      <xy x="20" y="20" width="855" height="400"/>
+      <xy x="20" y="20" width="939" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -172,7 +172,7 @@
                   <model/>
                 </properties>
               </component>
-              <component id="1af7c" class="org.jdatepicker.impl.JDatePickerImpl" binding="tillRollStartDate" custom-create="true">
+              <component id="25f1" class="com.github.lgooddatepicker.components.DatePicker" binding="tillRollStartDate" custom-create="true">
                 <constraints>
                   <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
@@ -291,7 +291,7 @@
                   <text value="bis:"/>
                 </properties>
               </component>
-              <component id="90fc1" class="org.jdatepicker.impl.JDatePickerImpl" binding="tillRollEndDate" custom-create="true">
+              <component id="b8fa2" class="com.github.lgooddatepicker.components.DatePicker" binding="tillRollEndDate" custom-create="true">
                 <constraints>
                   <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>

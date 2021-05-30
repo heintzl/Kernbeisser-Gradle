@@ -1,11 +1,12 @@
 package kernbeisser.Forms.ObjectForm.Components;
 
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
 import java.awt.Color;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
@@ -24,13 +25,8 @@ import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
 import kernbeisser.Useful.Date;
-import org.jdatepicker.DateModel;
-import org.jdatepicker.impl.DateComponentFormatter;
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilCalendarModel;
 
-public class AccessCheckingDatePicker<P> extends JDatePickerImpl
+public class AccessCheckingDatePicker<P> extends DatePicker
     implements ObjectFormComponent<P>,
         BoundedReadProperty<P, Instant>,
         BoundedWriteProperty<P, Instant>,
@@ -42,7 +38,7 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
         @Override
         public void focusGained(FocusEvent e) {
           e.getComponent().setForeground(UIManager.getColor("Label.foreground"));
-          getJFormattedTextField().setText("");
+          getComponentDateTextField().setText("");
           e.getComponent().removeFocusListener(this);
         }
       };
@@ -56,13 +52,11 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
 
   private final boolean atStartOfDay;
 
-  private static final Properties properties = getI18nStrings(Locale.getDefault());
-
   public AccessCheckingDatePicker(
       Getter<P, Instant> getter, Setter<P, Instant> setter, boolean atStartOfDay) {
-    super(new JDatePanelImpl(createDateModel(), properties), new DateComponentFormatter());
-    getJFormattedTextField().getDocument().addDocumentListener(this);
-    getJFormattedTextField().setEditable(true);
+    super(new DatePickerSettings(Locale.GERMANY));
+    getComponentDateTextField().getDocument().addDocumentListener(this);
+    getComponentDateTextField().setEditable(true);
     this.getter = getter;
     this.setter = setter;
     this.atStartOfDay = atStartOfDay;
@@ -78,24 +72,15 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
     return properties;
   }
 
-  public static Properties getI18nStrings(Locale locale) {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("org.jdatepicker.i18n.Text", locale);
-    return convertToProperties(resourceBundle);
-  }
-
-  public static DateModel<?> createDateModel() {
-    return new UtilCalendarModel();
-  }
-
   @Override
   public void setPropertyModifiable(boolean v) {
-    getJFormattedTextField().getParent().setEnabled(v);
+    getComponentDateTextField().getParent().setEnabled(v);
   }
 
   @Override
   public void setInvalidInput() {
-    if (getJFormattedTextField().getText().equals("")) setBackground(new Color(0xFF9999));
-    else getJFormattedTextField().setForeground(Color.RED);
+    if (getComponentDateTextField().getText().equals("")) setBackground(new Color(0xFF9999));
+    else getComponentDateTextField().setForeground(Color.RED);
   }
 
   @Override
@@ -110,10 +95,7 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
 
   @Override
   public Instant getData() throws CannotParseException {
-    DateModel<?> dateModel = getModel();
-    return Date.atStartOrEndOfDay(
-        LocalDate.of(dateModel.getYear(), dateModel.getMonth() + 1, dateModel.getDay()),
-        atStartOfDay);
+    return Date.atStartOrEndOfDay(getDate(), atStartOfDay);
   }
 
   @Override
@@ -123,28 +105,28 @@ public class AccessCheckingDatePicker<P> extends JDatePickerImpl
 
   @Override
   public void setData(Instant v) {
-    getJFormattedTextField().setText(Date.INSTANT_DATE.format(v));
+    getComponentDateTextField().setText(Date.INSTANT_DATE.format(v));
     inputChanged = false;
   }
 
   @Override
   public void setReadable(boolean v) {
     if (!v) {
-      getJFormattedTextField().setText("Keine Leseberechtigung");
-      getJFormattedTextField().setForeground(Color.RED);
-      getJFormattedTextField().addFocusListener(noReadPermissionMaker);
+      getComponentDateTextField().setText("Keine Leseberechtigung");
+      getComponentDateTextField().setForeground(Color.RED);
+      getComponentDateTextField().addFocusListener(noReadPermissionMaker);
     } else {
-      if (getJFormattedTextField().getText().equals("Keine Leseberechtigung")) {
-        getJFormattedTextField().setText("");
+      if (getComponentDateTextField().getText().equals("Keine Leseberechtigung")) {
+        getComponentDateTextField().setText("");
       }
-      getJFormattedTextField().setForeground(Colors.LABEL_FOREGROUND.getColor());
-      getJFormattedTextField().removeFocusListener(noReadPermissionMaker);
+      getComponentDateTextField().setForeground(Colors.LABEL_FOREGROUND.getColor());
+      getComponentDateTextField().removeFocusListener(noReadPermissionMaker);
     }
   }
 
   void removeInvalidInputMark() {
-    getJFormattedTextField().setForeground(foregroundDefault);
-    getJFormattedTextField().setBackground(backgroundDefault);
+    getComponentDateTextField().setForeground(foregroundDefault);
+    getComponentDateTextField().setBackground(backgroundDefault);
   }
 
   @Override
