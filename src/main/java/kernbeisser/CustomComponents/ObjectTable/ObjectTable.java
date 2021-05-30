@@ -119,16 +119,20 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private JPopupMenu createPopupMenu(Column<T> column) {
     var popup = new JPopupMenu("Spaltenfilter");
-    JPanel textFilterPanel = new JPanel(new FlowLayout());
+    var textSize = new Dimension(200, 25);
+
+    var textFilterPanel = new JPanel(new FlowLayout());
     textFilterPanel.add(new JLabel(IconFontSwing.buildIcon(FontAwesome.FILTER, 15, Color.BLUE)));
-    JTextField filterText = new JTextField();
-    filterText.setPreferredSize(new Dimension(150, 25));
+    var filterText = new JTextField();
+    filterText.setPreferredSize(textSize);
     filterText.addActionListener(e -> applyStandardFilter(popup, column, filterText));
     textFilterPanel.add(filterText);
-    JPanel removeFilterPanel = new JPanel(new FlowLayout());
-    removeFilterPanel.add(new JLabel(IconFontSwing.buildIcon(FontAwesome.TIMES, 15, Color.RED)));
-    JLabel removeFilter = new JLabel("Filter Entfernen");
-    removeFilter.setPreferredSize(new Dimension(150, 25));
+
+    var removeFilterPanel = new JPanel(new FlowLayout());
+    removeFilterPanel.add(
+        new JLabel(IconFontSwing.buildIcon(FontAwesome.TRASH, 15, Color.DARK_GRAY)));
+    var removeFilter = new JLabel("Spaltenfilter Entfernen");
+    removeFilter.setPreferredSize(textSize);
     removeFilterPanel.add(removeFilter);
     removeFilterPanel.addMouseListener(
         new MouseAdapter() {
@@ -137,9 +141,31 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             applyStandardFilter(popup, column, null);
           }
         });
+
+    var removeAllFiltersPanel = new JPanel(new FlowLayout());
+    removeAllFiltersPanel.add(
+        new JLabel(IconFontSwing.buildIcon(FontAwesome.TIMES, 15, Color.RED.darker())));
+    var removeAllFilters = new JLabel("Alle Filter Entfernen");
+    removeAllFilters.setPreferredSize(textSize);
+    removeAllFiltersPanel.add(removeAllFilters);
+    removeAllFiltersPanel.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            removeStandardFilter(popup);
+          }
+        });
+
     popup.add(textFilterPanel);
     popup.add(removeFilterPanel);
+    popup.add(removeAllFiltersPanel);
     return popup;
+  }
+
+  private void removeStandardFilter(JPopupMenu p) {
+    standardColumnFilters.clear();
+    refreshModel();
+    p.setVisible(false);
   }
 
   private void applyStandardFilter(JPopupMenu p, Column<T> c, JTextField text) {

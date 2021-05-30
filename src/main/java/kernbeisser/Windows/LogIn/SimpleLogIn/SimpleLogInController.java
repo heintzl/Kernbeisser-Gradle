@@ -2,6 +2,7 @@ package kernbeisser.Windows.LogIn.SimpleLogIn;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -44,6 +45,9 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
 
   public void logIn() {
     var view = getView();
+    if (view.getUsername().toLowerCase(Locale.ROOT).equals("admin")) {
+      PermissionConstants.cleanAdminPermission(User.getByUsername("Admin"));
+    }
     try {
       model.logIn(view.getUsername(), view.getPassword());
     } catch (CannotLogInException e) {
@@ -58,7 +62,6 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     new Thread(
             () -> {
               loadUserSettings();
-              cleanAdminUser();
               User.refreshActivity();
               try {
                 User.checkAdminConsistency();
@@ -93,13 +96,6 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
       Tools.showUnexpectedErrorWarning(e);
     } catch (Exception u) {
       Tools.showUnexpectedErrorWarning(u);
-    }
-  }
-
-  private static void cleanAdminUser() {
-    User currentUser = LogInModel.getLoggedIn();
-    if (currentUser.isSysAdmin()) {
-      PermissionConstants.cleanAdminPermission(currentUser);
     }
   }
 

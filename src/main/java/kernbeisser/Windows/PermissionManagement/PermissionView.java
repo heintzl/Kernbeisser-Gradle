@@ -116,9 +116,10 @@ public class PermissionView implements IView<PermissionController> {
         e -> {
           if (jFileChooser.getSelectedFile() != null) {
             try {
-              controller.importFrom(jFileChooser.getSelectedFile());
-              JOptionPane.showMessageDialog(
-                  getTopComponent(), "Alle Berechtigungen erfolgreich importiert");
+              if (controller.importFrom(jFileChooser.getSelectedFile())) {
+                JOptionPane.showMessageDialog(
+                    getTopComponent(), "Alle Berechtigungen erfolgreich importiert");
+              }
             } catch (FileNotFoundException fileNotFoundException) {
               JOptionPane.showMessageDialog(
                   getTopComponent(),
