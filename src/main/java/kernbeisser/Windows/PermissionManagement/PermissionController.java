@@ -153,9 +153,13 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     loadSolutions();
   }
 
-  public void importFrom(File selectedFile) throws FileNotFoundException {
-    PermissionRepresentation.putInDB(selectedFile);
+  public boolean importFrom(File selectedFile) throws FileNotFoundException {
+    if (!PermissionRepresentation.putInDB(selectedFile)) {
+      return false;
+    }
+    ;
     loadSolutions();
+    return true;
   }
 
   public void exportTo(File selectedFile) throws IOException {
