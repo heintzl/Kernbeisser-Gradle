@@ -3,9 +3,9 @@ package kernbeisser.Windows.AccountingReports;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.google.common.collect.Lists;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.ChronoField;
 import java.util.*;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public class AccountingReportsView extends JDialog implements IView<AccountingReportsController> {
 
   private JButton cancel;
-  private JComboBox<ExportTypes> exportType;
+  @Getter private JComboBox<ExportTypes> exportType;
   private JButton submit;
   private DatePicker tillRollStartDate;
   private DatePicker tillRollEndDate;
@@ -48,8 +48,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
 
   @Linked private AccountingReportsController controller;
 
-  Calendar getDateValue(DatePicker comp) {
-    return GregorianCalendar.from(comp.getDate().atStartOfDay(ZoneId.systemDefault()));
+  Instant getDateValue(DatePicker comp) {
+    return Instant.from(comp.getDate().atStartOfDay(ZoneId.systemDefault()));
   }
 
   ExportTypes getExportType() {
@@ -58,26 +58,21 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
 
   void submit(AccountingReportsController controller) {
     if (optTillRoll.isSelected()) {
-      controller.exportTillroll(
-          getExportType(), getDateValue(tillRollStartDate), getDateValue(tillRollEndDate));
+      controller.exportTillroll(getDateValue(tillRollStartDate), getDateValue(tillRollEndDate));
     } else if (optAccountingReport.isSelected()) {
       controller.exportAccountingReport(
-          getExportType(),
-          startBon.getSelected(),
-          endBon.getSelected(),
-          accountingReportWithNames.isSelected());
+          startBon.getSelected(), endBon.getSelected(), accountingReportWithNames.isSelected());
     } else if (optUserBalance.isSelected()) {
-      controller.exportUserBalance(getExportType(), userBalanceWithNames.isSelected());
+      controller.exportUserBalance(userBalanceWithNames.isSelected());
     } else if (optKeyUserList.isSelected()) {
-      controller.exportKeyUserList(getExportType(), userKeySortOrder.getSelectedItem().toString());
+      controller.exportKeyUserList(userKeySortOrder.getSelectedItem().toString());
     } else if (optTransactionStatement.isSelected()) {
       controller.exportTransactionStatement(
-          getExportType(),
           user.getSelected().orElse(null),
           (StatementType) transactionStatementType.getSelectedItem(),
           optCurrent.isSelected());
     } else if (optPermissionHolders.isSelected()) {
-      controller.exportPermissionHolders(getExportType(), permissionHoldersWithKeys.isSelected());
+      controller.exportPermissionHolders(permissionHoldersWithKeys.isSelected());
     }
   }
 
@@ -125,16 +120,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     }
     optCurrent.setSelected(true);
     var now = LocalDate.now(ZoneId.systemDefault());
-    tillRollStartDate.setDate(
-        LocalDate.of(
-            now.get(ChronoField.YEAR),
-            now.get(ChronoField.MONTH_OF_YEAR) - 1,
-            now.get(ChronoField.DAY_OF_MONTH) - 1));
-    tillRollEndDate.setDate(
-        LocalDate.of(
-            now.get(ChronoField.YEAR),
-            now.get(ChronoField.MONTH_OF_YEAR) - 1,
-            now.get(ChronoField.DAY_OF_MONTH)));
+    tillRollStartDate.setDate(now);
+    tillRollEndDate.setDate(now);
     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));
     optionalComponents.values().stream()
         .distinct()
