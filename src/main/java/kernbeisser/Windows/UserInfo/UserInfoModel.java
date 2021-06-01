@@ -20,9 +20,13 @@ public class UserInfoModel implements IModel<UserInfoController> {
     return em.find(User.class, userId);
   }
 
+  public boolean incoming(Transaction transaction) {
+    return (transaction.getToUser() != null
+        && getUser().getAllGroupMembers().contains(transaction.getToUser()));
+  }
+
   public double getSignedTransactionValue(Transaction transaction) {
-    if (transaction.getToUser() != null
-        && getUser().getAllGroupMembers().contains(transaction.getToUser())) {
+    if (incoming(transaction)) {
       return transaction.getValue();
     } else {
       return -transaction.getValue();
