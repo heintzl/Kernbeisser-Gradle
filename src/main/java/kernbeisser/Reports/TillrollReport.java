@@ -6,21 +6,23 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ShoppingItem;
+import lombok.Cleanup;
 
 public class TillrollReport extends Report {
 
-  private final Collection<ShoppingItem> tillroll;
   private final Instant start;
   private final Instant endExclusive;
 
-  public TillrollReport(Collection<ShoppingItem> tillroll, Instant start, Instant endExclusive) {
+  public TillrollReport(Instant start, Instant endExclusive) {
     super(
         "tillrollFileName",
         String.format(
             "KernbeisserBonrolle_%s_%s",
             Timestamp.from(start).toString(), Timestamp.from(endExclusive).toString()));
-    this.tillroll = tillroll;
     this.start = start;
     this.endExclusive = endExclusive;
   }
@@ -36,7 +38,16 @@ public class TillrollReport extends Report {
   }
 
   @Override
-  Collection<?> getDetailCollection() {
-    return tillroll;
+  public Collection<?> getDetailCollection() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select si from ShoppingItem si where not si.purchase.createDate < :start and purchase.createDate < :end",
+            ShoppingItem.class)
+        .setParameter("start", start)
+        .setParameter("end", endExclusive)
+        .getResultList();
   }
 }

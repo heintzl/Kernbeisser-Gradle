@@ -137,6 +137,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         && (item.getRetailPrice() < Setting.SHOPPING_PRICE_WARNING_THRESHOLD.getDoubleValue()
             || view.confirmPriceWarning())
         && (item.isWeighAble()
+            || item.getKbNumber() < 0
             || item.getItemMultiplier() / (item.isContainerDiscount() ? item.getContainerSize() : 1)
                 < Setting.SHOPPING_AMOUNT_WARNING_THRESHOLD.getIntValue()
             || view.confirmAmountWarning());

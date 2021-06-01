@@ -59,7 +59,14 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
         columns.add(Column.create("An", t -> t.getToUser().getFullName()));
         columns.add(
             Column.create(
-                "Betrag", e -> String.format("%.2f€", e.getValue()), SwingConstants.RIGHT));
+                "Eingang",
+                e -> model.incoming(e) ? String.format("%.2f€", e.getValue()) : "",
+                SwingConstants.RIGHT));
+        columns.add(
+            Column.create(
+                "Ausgang",
+                e -> model.incoming(e) ? "" : String.format("%.2f€", e.getValue()),
+                SwingConstants.RIGHT));
         columns.add(generateAfterValueChangeColumn());
         columns.add(Column.create("Info", Transaction::getInfo));
         columns.add(Column.create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate())));

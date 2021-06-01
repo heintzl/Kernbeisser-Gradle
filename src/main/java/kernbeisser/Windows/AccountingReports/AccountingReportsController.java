@@ -1,6 +1,7 @@
 package kernbeisser.Windows.AccountingReports;
 
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Optional;
 import kernbeisser.DBEntities.Purchase;
@@ -9,6 +10,7 @@ import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Reports.*;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
@@ -30,12 +32,6 @@ public class AccountingReportsController
     return model.getUserKeySortOrders();
   }
 
-  public void exportTillroll(ExportTypes exportType, Calendar startDate, Calendar endDate) {
-    var view = getView();
-    model.exportTillroll(exportType, startDate, endDate, (e) -> consumePdfException(e, exportType));
-    view.back();
-  }
-
   private void consumePdfException(Throwable e, ExportTypes exportType) {
     try {
       try {
@@ -52,11 +48,24 @@ public class AccountingReportsController
     }
   }
 
+  private void exportReport(Report report, String message) {
+    var view = getView();
+    var exportType = view.getExportType();
+    try {
+      AccountingReportsModel.exportReport(
+          exportType, report, message, e -> consumePdfException(e, exportType));
+    } catch (UnsupportedOperationException e) {
+      view.messageNotImplemented(exportType);
+    }
+  }
+
+  public void exportTillroll(Instant startDate, Instant endDate) {
+    exportReport(
+        new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Bonrolle wird erstellt");
+  }
+
   public void exportAccountingReport(
-      ExportTypes exportType,
-      Optional<Purchase> startBon,
-      Optional<Purchase> endBon,
-      boolean withNames) {
+      Optional<Purchase> startBon, Optional<Purchase> endBon, boolean withNames) {
     var view = getView();
     long startBonNo = startBon.map(Purchase::getId).orElse(0L);
     long endBonNo = endBon.map(Purchase::getId).orElse(Purchase.getLastBonNo());
@@ -64,57 +73,27 @@ public class AccountingReportsController
       view.messageBonValues();
       return;
     }
-    try {
-      model.exportAccountingReport(
-          exportType, startBonNo, endBonNo, withNames, (e) -> consumePdfException(e, exportType));
-      view.back();
-    } catch (UnsupportedOperationException e) {
-      view.messageNotImplemented(exportType);
-    }
+    exportReport(
+        new AccountingReport(0, startBonNo, endBonNo, withNames),
+        "Ladendienst Endabrechnung wird erstellt");
   }
 
-  public void exportUserBalance(ExportTypes exportType, boolean userBalanceWithNames) {
-    var view = getView();
-    try {
-      model.exportUserBalance(
-          exportType, userBalanceWithNames, (e) -> consumePdfException(e, exportType));
-      view.back();
-    } catch (UnsupportedOperationException e) {
-      view.messageNotImplemented(exportType);
-    }
+  public void exportUserBalance(boolean userBalanceWithNames) {
+    exportReport(new UserBalanceReport(userBalanceWithNames), "Guthabenstände werden erstellt");
   }
 
-  public void exportKeyUserList(ExportTypes exportType, String sortOrder) {
-    var view = getView();
-    try {
-      model.exportKeyUserList(exportType, sortOrder, (e) -> consumePdfException(e, exportType));
-      view.back();
-    } catch (UnsupportedOperationException e) {
-      view.messageNotImplemented(exportType);
-    }
+  public void exportKeyUserList(String sortOrder) {
+    exportReport(new KeyUserList(sortOrder), "Benutzer-Schlüssel-Liste wird erstellt");
   }
 
-  public void exportTransactionStatement(
-      ExportTypes exportType, User user, StatementType statementType, boolean current) {
-    var view = getView();
-    try {
-      model.exportTransactionStatement(
-          exportType, user, statementType, current, (e) -> consumePdfException(e, exportType));
-      view.back();
-    } catch (UnsupportedOperationException e) {
-      view.messageNotImplemented(exportType);
-    }
+  public void exportTransactionStatement(User user, StatementType statementType, boolean current) {
+    exportReport(
+        new TransactionStatement(user, statementType, current), "Kontoauszug wird erstellt");
   }
 
-  public void exportPermissionHolders(ExportTypes exportType, boolean permissionHoldersWithKeys) {
-    var view = getView();
-    try {
-      model.exportPermissionHolders(
-          exportType, permissionHoldersWithKeys, (e) -> consumePdfException(e, exportType));
-      view.back();
-    } catch (UnsupportedOperationException e) {
-      view.messageNotImplemented(exportType);
-    }
+  public void exportPermissionHolders(boolean permissionHoldersWithKeys) {
+    exportReport(
+        new PermissionHolders(permissionHoldersWithKeys), "Rolleninhaber-Bericht wird erstellt");
   }
 
   @Override
