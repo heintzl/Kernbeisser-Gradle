@@ -481,12 +481,6 @@ public class ShoppingItem implements Serializable {
     return items.stream().filter(filter).filter(typeFilter).mapToDouble(argument).sum();
   }
 
-  public ShoppingItem unproxy() {
-    ShoppingItem newInstance = new ShoppingItem();
-    Tools.copyInto(this, newInstance);
-    return newInstance;
-  }
-
   @Key(PermissionKey.SHOPPING_ITEM_METRIC_UNITS_READ)
   public MetricUnits getMetricUnits() {
     return metricUnits != null ? metricUnits : MetricUnits.NONE;

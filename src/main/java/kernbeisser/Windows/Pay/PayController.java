@@ -4,7 +4,6 @@ import java.awt.*;
 import java.util.List;
 import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
-import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.User;
@@ -37,24 +36,20 @@ public class PayController extends Controller<PayView, PayModel> {
   }
 
   void commitPayment(boolean printReceipt) {
-    Purchase purchase;
     var view = getView();
+    // FIXME why pass shoppingCart to model if it was initialized with it?
     try {
-      // FIXME why pass shoppingCart to model if it was initialized with it?
-      try {
-        purchase = model.pay();
-        if (printReceipt) {
-          PayModel.print(purchase);
-        }
-        view.confirmLogging(
-            model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());
-        view.back();
-
-        model.runTransferCompleted();
-      } catch (InvalidTransactionException e) {
-        view.notEnoughValue();
+      long purchaseId = model.pay();
+      if (printReceipt) {
+        PayModel.print(purchaseId);
       }
+      view.confirmLogging(
+          model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());
+      view.back();
 
+      model.runTransferCompleted();
+    } catch (InvalidTransactionException e) {
+      view.notEnoughValue();
     } catch (PersistenceException e) {
       Tools.showUnexpectedErrorWarning(e);
     }

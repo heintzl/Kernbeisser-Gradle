@@ -4,8 +4,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
@@ -21,7 +19,6 @@ import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
 public class PayModel implements IModel<PayController> {
-  private boolean successful = false;
   private final SaleSession saleSession;
   private final List<ShoppingItem> shoppingCart;
   private final Runnable transferCompleted;
@@ -67,60 +64,41 @@ public class PayModel implements IModel<PayController> {
     shoppingCart.removeIf(ShoppingItem::isSolidaritySurchargeItem);
   }
 
-  Purchase pay() throws PersistenceException, InvalidTransactionException {
-    // Build connection by default
+  private void exchangeMoney(EntityManager em) throws InvalidTransactionException {
+    Transaction transaction =
+        Transaction.doPurchaseTransaction(em, saleSession.getCustomer(), shoppingCartSum());
+    saleSession.setTransaction(transaction);
+  }
+
+  private void persistShoppingCartAndRetifyIndexes(EntityManager em, Purchase purchase) {
+    int i = 0;
+    for (ShoppingItem item : shoppingCart) {
+      item.setShoppingCartIndex(i++);
+      item.setPurchase(purchase);
+      em.persist(item);
+    }
+  }
+
+  long pay() throws PersistenceException, InvalidTransactionException {
+    // Build connection to DB and start payment transaction
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-
-    // Start transaction
     EntityTransaction et = em.getTransaction();
-    et.begin();
-
     try {
-      // Do money exchange
-      try {
-        Transaction transaction =
-            Transaction.doPurchaseTransaction(em, saleSession.getCustomer(), shoppingCartSum());
-        saleSession.setTransaction(transaction);
-      } catch (InvalidTransactionException e) {
-        et.rollback();
-        em.close();
-        throw new InvalidTransactionException();
-      }
-
-      // Create saleSession if not exists
-      SaleSession db = em.find(SaleSession.class, saleSession.getId());
-      if (db == null) {
-        em.persist(saleSession);
-        db = saleSession;
-      }
-
-      // Save ShoppingItems in Purchase and rectify cart indices
+      et.begin();
+      exchangeMoney(em);
       Purchase purchase = new Purchase();
-      purchase.setSession(db);
+      purchase.setSession(saleSession);
+      em.persist(saleSession);
+      persistShoppingCartAndRetifyIndexes(em, purchase);
       em.persist(purchase);
-      int i = 0;
-      for (ShoppingItem item : shoppingCart) {
-        ShoppingItem shoppingItem = item.unproxy();
-        shoppingItem.setShoppingCartIndex(i);
-        shoppingItem.setPurchase(purchase);
-        em.persist(shoppingItem);
-        i++;
-      }
-
-      // Persist changes
       et.commit();
-
-      // Success
-      successful = true;
-      return purchase;
+      return purchase.getId();
     } finally {
-      // Undo transaction
+      // roles back any made changes when the payment was interrupted
+      // only happens if the code doesn't reach the commit statement
       if (et.isActive()) {
         et.rollback();
       }
-
-      // Close EntityManager
-      em.close();
     }
   }
 
@@ -129,13 +107,13 @@ public class PayModel implements IModel<PayController> {
     transferCompleted.run();
   }
 
-  PrintService[] getAllPrinters() {
-    return PrintServiceLookup.lookupPrintServices(null, null);
-  }
-
-  public static void print(Purchase purchase) {
-    InvoiceReport invoice = new InvoiceReport(purchase);
-    invoice.sendToPrinter("Bon wird erstellt", (e) -> Tools.showUnexpectedErrorWarning(e));
+  public static void print(long purchaseId) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    new InvoiceReport(em.find(Purchase.class, purchaseId))
+        .sendToPrinter("Bon wird erstellt", Tools::showUnexpectedErrorWarning);
   }
 
   public void safeStandardPrint(boolean printReceipt) {
