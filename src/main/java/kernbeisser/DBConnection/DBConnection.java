@@ -34,7 +34,7 @@ public class DBConnection {
     properties.put("javax.persistence.jdbc.user", dbAccessData.getUsername());
     properties.put(
         "javax.persistence.jdbc.url",
-        dbAccessData.getUrl() + "?characterEncoding=" + dbAccessData.getEncoding());
+        dbAccessData.getUrl() + (dbAccessData.getUrl().contains("?") ? "&" : "") + "?characterEncoding=" + dbAccessData.getEncoding());
     properties.put("javax.persistence.jdbc.password", dbAccessData.getPassword());
     return Persistence.createEntityManagerFactory(name, properties);
   }
