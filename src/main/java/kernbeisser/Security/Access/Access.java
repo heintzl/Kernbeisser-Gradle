@@ -193,9 +193,12 @@ public class Access {
   public static void runWithAccessManager(AccessManager accessManager, Runnable runnable) {
     synchronized (ACCESS_LOCK) {
       AccessManager before = defaultManager;
-      defaultManager = accessManager;
-      runnable.run();
-      defaultManager = before;
+      try {
+        defaultManager = accessManager;
+        runnable.run();
+      } finally {
+        defaultManager = before;
+      }
     }
   }
 }
