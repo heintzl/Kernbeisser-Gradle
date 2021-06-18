@@ -48,7 +48,12 @@ public class PermissionAssignmentController
   public void fillView(PermissionAssignmentView permissionAssignmentView) {
     permissionAssignmentView.setPermissions(
         model.getPermissions().stream()
-            .filter(p -> (p.getName().equals("@CASHIER") || !onlyCashier))
+            .filter(
+                p ->
+                    (!p.getName()
+                            .matches(
+                                "@KEY_PERMISSION|@IN_RELATION_TO_OWN_USER|@IMPORT|@APPLICATION")
+                        && (p.getName().equals("@CASHIER") || !onlyCashier)))
             .collect(Collectors.toList()));
   }
 
