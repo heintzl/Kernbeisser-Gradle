@@ -13,6 +13,8 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -207,72 +209,80 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
-    switch (getView().getArticleType()) {
-      case ARTICLE_NUMBER:
-        int discount = getView().getDiscount();
-        boolean preordered = getView().isPreordered();
-        int kbArticleNumber = getView().getKBArticleNumber();
-        if (kbArticleNumber != 0) {
-          ShoppingItem item = model.getByKbNumber(kbArticleNumber, discount, preordered);
-          if (item != null) {
-            return item;
-          }
+    synchronized (Access.ACCESS_LOCK) {
+      AccessManager before = Access.getDefaultManager();
+      try {
+        Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
+        switch (getView().getArticleType()) {
+          case ARTICLE_NUMBER:
+            int discount = getView().getDiscount();
+            boolean preordered = getView().isPreordered();
+            int kbArticleNumber = getView().getKBArticleNumber();
+            if (kbArticleNumber != 0) {
+              ShoppingItem item = model.getByKbNumber(kbArticleNumber, discount, preordered);
+              if (item != null) {
+                return item;
+              }
+            }
+            int suppliersNumber = getView().getSuppliersNumber();
+            if (suppliersNumber != 0 && getView().getSupplier() != null) {
+              return model.getBySupplierItemNumber(
+                  getView().getSupplier(), suppliersNumber, discount, preordered);
+            }
+            throw new UndefinedInputException();
+
+          case BAKED_GOODS:
+            return ShoppingItem.createBakeryProduct(getRelevantPrice(), getView().isPreordered());
+
+          case PRODUCE:
+            return ShoppingItem.createProduce(getRelevantPrice(), getView().isPreordered());
+
+          case CUSTOM_PRODUCT:
+            Article customArticle = new Article();
+
+            customArticle.setName(getView().getItemName());
+            customArticle.setSupplier(getView().getSupplier());
+            customArticle.setVat(getView().getVat());
+            if (getView().isPreordered()) {
+              customArticle.setSurchargeGroup(
+                  getView().getSupplier().getOrPersistDefaultSurchargeGroup());
+            } else {
+              customArticle.setSurchargeGroup(
+                  Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup());
+            }
+
+            customArticle.setNetPrice(
+                getView().isPreordered()
+                    ? getView().getNetPrice()
+                    : getView().getPrice()
+                        / (1. + getView().getVat().getValue())
+                        / (1. + customArticle.getSurchargeGroup().getSurcharge()));
+            customArticle.setMetricUnits(MetricUnits.PIECE);
+            customArticle.setContainerSize(1.);
+
+            return new ShoppingItem(customArticle, 0, getView().isPreordered());
+
+          case DEPOSIT:
+            if (getView().getDeposit() < 0) {
+              getView().messageDepositStorno();
+              return null;
+            } else {
+              return ShoppingItem.createDeposit(getView().getDeposit());
+            }
+
+          case RETURN_DEPOSIT:
+            if (getView().getDeposit() < 0) {
+              getView().messageDepositStorno();
+              return null;
+            } else {
+              return ShoppingItem.createDeposit(getView().getDeposit() * (-1));
+            }
+          default:
+            return null;
         }
-        int suppliersNumber = getView().getSuppliersNumber();
-        if (suppliersNumber != 0 && getView().getSupplier() != null) {
-          return model.getBySupplierItemNumber(
-              getView().getSupplier(), suppliersNumber, discount, preordered);
-        }
-        throw new UndefinedInputException();
-
-      case BAKED_GOODS:
-        return ShoppingItem.createBakeryProduct(getRelevantPrice(), getView().isPreordered());
-
-      case PRODUCE:
-        return ShoppingItem.createProduce(getRelevantPrice(), getView().isPreordered());
-
-      case CUSTOM_PRODUCT:
-        Article customArticle = new Article();
-
-        customArticle.setName(getView().getItemName());
-        customArticle.setSupplier(getView().getSupplier());
-        customArticle.setVat(getView().getVat());
-        if (getView().isPreordered()) {
-          customArticle.setSurchargeGroup(
-              getView().getSupplier().getOrPersistDefaultSurchargeGroup());
-        } else {
-          customArticle.setSurchargeGroup(
-              Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup());
-        }
-
-        customArticle.setNetPrice(
-            getView().isPreordered()
-                ? getView().getNetPrice()
-                : getView().getPrice()
-                    / (1. + getView().getVat().getValue())
-                    / (1. + customArticle.getSurchargeGroup().getSurcharge()));
-        customArticle.setMetricUnits(MetricUnits.PIECE);
-        customArticle.setContainerSize(1.);
-
-        return new ShoppingItem(customArticle, 0, getView().isPreordered());
-
-      case DEPOSIT:
-        if (getView().getDeposit() < 0) {
-          getView().messageDepositStorno();
-          return null;
-        } else {
-          return ShoppingItem.createDeposit(getView().getDeposit());
-        }
-
-      case RETURN_DEPOSIT:
-        if (getView().getDeposit() < 0) {
-          getView().messageDepositStorno();
-          return null;
-        } else {
-          return ShoppingItem.createDeposit(getView().getDeposit() * (-1));
-        }
-      default:
-        return null;
+      } finally {
+        Access.setDefaultManager(before);
+      }
     }
   }
 
