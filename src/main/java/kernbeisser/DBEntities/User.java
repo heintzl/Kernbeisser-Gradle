@@ -431,7 +431,7 @@ public class User implements Serializable, UserRelated {
   }
 
   public boolean isBeginner() {
-    return getPermissionsAsAvailable().contains(PermissionConstants.FULL_MEMBER.getPermission());
+    return !getPermissionsAsAvailable().contains(PermissionConstants.FULL_MEMBER.getPermission());
   }
 
   public boolean isKernbeisser() {
