@@ -289,13 +289,14 @@ public class Article {
 
   public static Optional<Article> getBySuppliersItemNumber(Supplier supplier, int suppliersNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return getBySuppliersItemNumber(supplier, suppliersNumber, em);
   }
 
   public static Optional<Article> getBySuppliersItemNumber(
       Supplier supplier, int suppliersNumber, EntityManager em) {
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     try {
       return Optional.of(
           em.createQuery(
@@ -388,5 +389,13 @@ public class Article {
         .findAny()
         .map(Offer::getSpecialNetPrice)
         .orElse(-999.0);
+  }
+
+  public static int nextFreeKBNumber(EntityManager em) {
+    return em.createQuery(
+            "select a.kbNumber+1 from Article a where not exists (select b from Article b where b.kbNumber = a.kbNumber+1)",
+            Integer.class)
+        .setMaxResults(1)
+        .getSingleResult();
   }
 }

@@ -133,7 +133,6 @@ public class Supplier implements Serializable {
       s.setName(defaultName);
       s.setShortName(shortName);
       s.setDefaultSurcharge(defaultSurcharge);
-      et.begin();
       em.persist(s);
       em.flush();
       return getSupplierByShortName(shortName);

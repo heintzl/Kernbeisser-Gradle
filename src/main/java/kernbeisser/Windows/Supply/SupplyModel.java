@@ -83,6 +83,9 @@ public class SupplyModel implements IModel<SupplyController> {
 
   public Optional<Article> findBySuppliersItemNumber(Supplier supplier, int suppliersItemNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     return Article.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
   }
 

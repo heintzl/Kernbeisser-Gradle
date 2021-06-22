@@ -41,6 +41,7 @@ public class SupplyView implements IView<SupplyController> {
   private DoubleParseField amount;
   private JButton commit;
   private JButton cancel;
+  private JButton importSupplyFile;
 
   @Linked private SupplyController controller;
 
@@ -77,6 +78,7 @@ public class SupplyView implements IView<SupplyController> {
     objectForm = new ObjectForm<>(name, netPrice, containerSize);
     cancel.addActionListener(e -> back());
     commit.addActionListener(e -> controller.commit());
+    importSupplyFile.addActionListener(e -> controller.openImportSupplyFile());
   }
 
   public ObjectForm<Article> getObjectForm() {
@@ -121,10 +123,11 @@ public class SupplyView implements IView<SupplyController> {
     containerSize.setText("0.0");
     name.setText("Keinen Artikel gefunden");
     netPrice.setText("0.00");
+    add.setEnabled(false);
   }
 
-  public void setShoppingItems(ObjectTable<ShoppingItem> shoppingItems) {
-    this.shoppingItems = shoppingItems;
+  public void setShoppingItems(Collection<ShoppingItem> shoppingItems) {
+    this.shoppingItems.setObjects(shoppingItems);
   }
 
   void setSuppliers(Collection<Supplier> suppliers) {

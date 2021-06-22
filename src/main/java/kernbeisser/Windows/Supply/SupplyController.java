@@ -9,6 +9,8 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.Supply.SupplySelector.SupplySelectorController;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
@@ -78,5 +80,17 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   public boolean becomePrinted(ShoppingItem e) {
     return model.becomePrinted(e.extractArticleBySupplierNumber());
+  }
+
+  public void openImportSupplyFile() {
+    new SupplySelectorController(
+            e -> {
+              for (ShoppingItem item : e) {
+                model.getShoppingItems().add(item);
+                model.togglePrint(item.extractArticleBySupplierNumber());
+              }
+              getView().setShoppingItems(model.getShoppingItems());
+            })
+        .openIn(new SubWindow(getView().traceViewContainer()));
   }
 }
