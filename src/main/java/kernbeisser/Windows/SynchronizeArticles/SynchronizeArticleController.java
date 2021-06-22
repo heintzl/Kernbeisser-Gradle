@@ -1,8 +1,14 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CancellationException;
+import java.util.stream.Collectors;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Catalog.Catalog;
@@ -68,14 +74,17 @@ public class SynchronizeArticleController
     }
   }
 
-  public void importCatalog() {
+  private void importCatalogSource(Collection<String> lines) {
+    model.load(lines);
+    getView().setDifferences(model.getAllDiffs());
+  }
+
+  public void importCatalogFile() {
     try {
-      model.load(
+      importCatalogSource(
           Files.readAllLines(
               getView().requestInputFile("csv", "BNN", "bnn", "txt", "TXT").toPath(),
               Catalog.DEFAULT_ENCODING));
-
-      getView().setDifferences(model.getAllDiffs());
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -102,5 +111,18 @@ public class SynchronizeArticleController
       return false;
     }
     return true;
+  }
+
+  public void importCatalogFromInternet() {
+    try {
+      String urlAddress = getView().messageRequestInputURL();
+      URL url = new URL(urlAddress);
+      BufferedReader bufferedReader =
+          new BufferedReader(new InputStreamReader(url.openStream(), Catalog.DEFAULT_ENCODING));
+      importCatalogSource(bufferedReader.lines().collect(Collectors.toCollection(ArrayList::new)));
+    } catch (CancellationException ignored) {
+    } catch (IOException e) {
+      getView().messageInvalidURL();
+    }
   }
 }

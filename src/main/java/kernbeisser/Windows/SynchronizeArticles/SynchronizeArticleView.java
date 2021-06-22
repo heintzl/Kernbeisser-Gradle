@@ -3,6 +3,8 @@ package kernbeisser.Windows.SynchronizeArticles;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.concurrent.CancellationException;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -16,6 +18,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
 import kernbeisser.Tasks.Catalog.Merge.Difference;
 import kernbeisser.Tasks.Catalog.Merge.MappedDifferences;
@@ -41,6 +44,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private JProgressBar progressBar;
   private JLabel progressName;
   private JPanel progress;
+  private JButton importCatalogFromInternet;
 
   @Linked private SynchronizeArticleController controller;
 
@@ -67,9 +71,11 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     useKernbeisserAndIgnore.addActionListener(e -> controller.useKernbeisserAndIgnore());
     importCatalog.addActionListener(
         e -> {
-          controller.importCatalog();
+          controller.importCatalogFile();
         });
+    importCatalogFromInternet.addActionListener(e -> controller.importCatalogFromInternet());
     autoLinkCatalogSurchargeGroups.addActionListener(e -> controller.setProductGroups());
+    importCatalogFromInternet.setVisible(Setting.UPDATE_CATALOG_FROM_INTERNET.getBooleanValue());
   }
 
   @Override
@@ -175,5 +181,15 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
   public void removeAll(Collection<ArticleDifference<?>> collection) {
     differences.removeAll(collection);
+  }
+
+  public String messageRequestInputURL() {
+    return Optional.ofNullable(
+            JOptionPane.showInputDialog("Bitte geben sie die Kornkraft BNN-Datei URL ein:"))
+        .orElseThrow(CancellationException::new);
+  }
+
+  public void messageInvalidURL() {
+    message("Die eingegebene URL ist nicht korrekt!", "URL nicht korrekt!");
   }
 }
