@@ -71,7 +71,7 @@ public class Catalog {
     return base;
   }
 
-  private static MetricUnits extractUnit(String source) {
+  public static MetricUnits extractUnit(String source) {
     source = source.replace("x", " x ");
     int lastSep = source.lastIndexOf(" ");
     source = (lastSep == -1 ? source : source.substring(lastSep)).toUpperCase().replace(" ", "");
@@ -86,6 +86,11 @@ public class Catalog {
         return MetricUnits.GRAM;
       case "":
         return MetricUnits.NONE;
+      case "CAG":
+      case "ERSET":
+      case "BGEN":
+      case "SCHACHTELN":
+      case "TPFE":
       case "SACHETS":
       case "ERPACK":
       case "FLASCHEN":
@@ -134,6 +139,9 @@ public class Catalog {
       case "STCK":
       case "CM":
       case "SATZ":
+      case "BUND":
+      case "KISTEDECK":
+      case "SCHALEN":
         return MetricUnits.PIECE;
       default:
         String filtered = source.replaceAll("[^A-Z]", "");

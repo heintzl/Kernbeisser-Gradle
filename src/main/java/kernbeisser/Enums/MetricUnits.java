@@ -43,7 +43,8 @@ public enum MetricUnits implements Named {
     public double getBaseFactor() {
       return GRAM.getBaseFactor() / 1000.;
     }
-  },;
+  },
+  ;
 
   private final String shortName;
 
