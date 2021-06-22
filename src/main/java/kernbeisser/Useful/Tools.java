@@ -14,7 +14,6 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.Date;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -60,23 +59,6 @@ public class Tools {
       }
     }
     return out;
-  }
-
-  public static <R, T> R build(List<T> in, R r, BiFunction<R, T, R> builder) {
-    for (T t : in) {
-      r = builder.apply(r, t);
-    }
-    return r;
-  }
-
-  public static int add(Integer[] x) {
-    int o = 0;
-    for (Integer i : x) {
-      if (i != null) {
-        o += i;
-      }
-    }
-    return o;
   }
 
   public static <T, O extends Collection<T>> O extract(
@@ -155,19 +137,6 @@ public class Tools {
         .getResultList();
   }
 
-  public static <T> List<T> getAllUnProxy(Class<T> c) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    CriteriaBuilder cb = em.getCriteriaBuilder();
-    CriteriaQuery<T> cq = cb.createQuery(c);
-    Root<T> rootEntry = cq.from(c);
-    CriteriaQuery<T> all = cq.select(rootEntry);
-    TypedQuery<T> allQuery = em.createQuery(all);
-    return allQuery.getResultList();
-  }
-
   public static <T> T setId(T t, Object id) {
     Class<?> clazz = t.getClass();
     while (!clazz.equals(Object.class)) {
@@ -224,11 +193,10 @@ public class Tools {
     Tools.setId(o, Tools.getId(Tools.createWithoutConstructor(o.getClass())));
   }
 
-  public static <T, V> Map<V, Collection<T>> group(Collection<T> collection, Getter<T, V> getter) {
+  public static <T, V> Map<V, Collection<T>> group(Iterator<T> collection, Getter<T, V> getter) {
     HashMap<V, Collection<T>> collectionHashMap = new HashMap<>();
-    for (T t : collection) {
-      collectionHashMap.computeIfAbsent(getter.get(t), k -> new ArrayList<>()).add(t);
-    }
+    collection.forEachRemaining(
+        e -> collectionHashMap.computeIfAbsent(getter.get(e), k -> new ArrayList<>()).add(e));
     return collectionHashMap;
   }
 
@@ -766,12 +734,22 @@ public class Tools {
     return out;
   }
 
-  public static <K, V> Map<K, V> createMap(Iterable<K> v, Function<K, V> valueGenerator) {
+  public static <K, V> Map<K, V> createMap(Iterator<K> v, Function<K, V> valueGenerator) {
     HashMap<K, V> map = new HashMap<>();
-    v.forEach(
+    v.forEachRemaining(
         e -> {
           V value = valueGenerator.apply(e);
           if (value != null) map.put(e, value);
+        });
+    return map;
+  }
+
+  public static <K, V> Map<K, V> createMapByValue(Iterator<V> v, Function<V, K> valueGenerator) {
+    HashMap<K, V> map = new HashMap<>();
+    v.forEachRemaining(
+        e -> {
+          K key = valueGenerator.apply(e);
+          if (key != null) map.put(key, e);
         });
     return map;
   }
@@ -947,5 +925,54 @@ public class Tools {
 
   public static <T> T or(AccessSupplier<T> supplier, T v) {
     return optional(supplier).orElse(v);
+  }
+
+  public static int indexOfFirstNumber(String s) {
+    char[] chars = s.toCharArray();
+    for (int i = 0; i < chars.length; i++) {
+      if (Character.isDigit(chars[i])) return i;
+    }
+    return -1;
+  }
+
+  public static boolean isPartOfNumb(char c) {
+    return Character.isDigit(c) || c == ',' || c == '.';
+  }
+
+  public static int countNumbers(char[] chars) {
+    int counter = 0;
+    boolean wasPartOfNumber = false;
+    for (char c : chars) {
+      boolean partOfNumber = isPartOfNumb(c);
+      if (partOfNumber && !wasPartOfNumber) {
+        counter++;
+      }
+      wasPartOfNumber = partOfNumber;
+    }
+    return counter;
+  }
+
+  public static double[] allNumbers(String s) {
+    char[] chars = s.toCharArray();
+    double[] out = new double[countNumbers(chars)];
+    int numberBeginIndex = -1;
+    int storeIndex = 0;
+    for (int i = 0; i < chars.length; i++) {
+      if (isPartOfNumb(chars[i])) {
+        if (numberBeginIndex == -1) numberBeginIndex = i;
+      } else {
+        if (numberBeginIndex == -1) continue;
+        out[storeIndex++] = Double.parseDouble(s.substring(numberBeginIndex, i).replace(",", "."));
+        numberBeginIndex = -1;
+      }
+    }
+    return out;
+  }
+
+  public static int lastIndexOfPartOfNumber(char[] chars) {
+    for (int i = chars.length - 1; i >= 0; i--) {
+      if (isPartOfNumb(chars[i])) return i;
+    }
+    return -1;
   }
 }
