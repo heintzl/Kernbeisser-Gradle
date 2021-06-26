@@ -1,10 +1,10 @@
-package kernbeisser.Windows.Supply;
+package kernbeisser.Windows.Supply.SupplySelector;
 
 public enum ResolveStatus {
-  PRODUCE("Obst & Gemüse(Wird auch ignoriert!)"),
+  PRODUCE("Obst & Gemüse"),
   IGNORE("Konnten nicht geliefert werden"),
   ADDED("Artikel die neu aufgenommen werden"),
-  OK("Atikel die bereits in Ladenbestand sind");
+  OK("Artikel die bereits in Ladenbestand sind");
   final String name;
 
   ResolveStatus(String name) {

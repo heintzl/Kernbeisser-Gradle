@@ -1,4 +1,4 @@
-package kernbeisser.Windows.Supply;
+package kernbeisser.Windows.Supply.SupplySelector;
 
 import lombok.AccessLevel;
 import lombok.Data;

@@ -20,9 +20,6 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
-import kernbeisser.Windows.Supply.LineContent;
-import kernbeisser.Windows.Supply.ResolveStatus;
-import kernbeisser.Windows.Supply.Supply;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplySelectorView implements IView<SupplySelectorController> {
@@ -83,15 +80,17 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 SwingConstants.LEFT,
                 Comparator.comparing(
                     ((Object s) -> Instant.from(Date.INSTANT_DATE_TIME.parse((String) s))))),
-            Column.create("Anzahl Artikel", Supply::getArticleCount));
+            Column.create("Anzahl Artikel", Supply::getArticleCount),
+            Column.create("Summe", e -> String.format("%.2f€", e.getContentSum())));
     lineContents =
         new ObjectTable<LineContent>(
             Column.create("Artikelnr.", LineContent::getKkNumber),
             Column.create("Artikelname", LineContent::getName),
-            Column.create("Gebindepreis", LineContent::getPrice),
-            Column.create("Gebindegröße", LineContent::getContainerSize),
-            Column.create("Packungsmenge", LineContent::getAmount),
-            Column.create("Einheit", LineContent::getUnit),
+            Column.create("Geb.preis", LineContent::getPrice),
+            Column.create("Geb.größe", LineContent::getContainerSize),
+            Column.create(
+                "Packung",
+                e -> e.getAmount() + (e.getUnit() == null ? "" : e.getUnit().getShortName())),
             Column.create("Kommentar", LineContent::getMessage),
             Column.create(
                 "Preis",

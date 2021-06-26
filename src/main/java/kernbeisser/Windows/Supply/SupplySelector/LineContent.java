@@ -1,4 +1,4 @@
-package kernbeisser.Windows.Supply;
+package kernbeisser.Windows.Supply.SupplySelector;
 
 import com.sun.istack.NotNull;
 import java.util.ArrayList;
@@ -62,20 +62,23 @@ public class LineContent {
               contents.stream().filter(e -> e.getKkNumber() == target).findAny();
           if (searchResult.isPresent()) {
             LineContent targetContent = searchResult.get();
-            targetContent.message = "-> " + content.getKkNumber();
+            targetContent.message = "Ersetzt durch " + content.getKkNumber();
             targetContent.resolveStatus = ResolveStatus.IGNORE;
           } else {
             content.message = "Ersetzt " + target + " (Artikel nicht auf dem Lieferschein)";
+            content.resolveStatus = ResolveStatus.IGNORE;
           }
 
         } else {
-          content.resolveStatus = ResolveStatus.IGNORE;
-          content.message = "Wurde ersetzt";
+          LineContent target;
           try {
-            contents.get(i + 1).message = "-> " + content.getKkNumber();
+            target = contents.get(i + 1);
           } catch (IndexOutOfBoundsException e) {
-            contents.get(i - 1).message = "-> " + content.getKkNumber();
+            target = contents.get(i - 1);
           }
+          target.message = "Ersetzt " + content.getKkNumber();
+          content.message = "Ersetzt durch " + target.getKkNumber();
+          content.resolveStatus = ResolveStatus.IGNORE;
         }
       }
     }
@@ -122,7 +125,7 @@ public class LineContent {
     }
     if (isExactEnough(newAmount)) {
       setAmount((int) Math.round(newAmount));
-      setUnit(unit);
+      setUnit(newUnit);
     } else {
       trySplit(newUnit, newAmount);
     }
@@ -173,7 +176,7 @@ public class LineContent {
   }
 
   public double getTotalPrice() {
-    if (containerSize == 0) return containerMultiplier * unit.getBaseFactor() * price;
+    if (containerSize == 1) return containerMultiplier * unit.getBaseFactor() * amount * price;
     else return containerSize * containerMultiplier * price;
   }
 

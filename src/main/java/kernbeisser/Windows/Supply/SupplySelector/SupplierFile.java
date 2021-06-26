@@ -1,4 +1,4 @@
-package kernbeisser.Windows.Supply;
+package kernbeisser.Windows.Supply.SupplySelector;
 
 import java.io.File;
 import java.nio.file.Files;

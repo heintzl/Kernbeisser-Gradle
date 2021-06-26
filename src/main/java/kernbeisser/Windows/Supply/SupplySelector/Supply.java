@@ -1,4 +1,4 @@
-package kernbeisser.Windows.Supply;
+package kernbeisser.Windows.Supply.SupplySelector;
 
 import java.io.File;
 import java.time.DayOfWeek;
@@ -78,6 +78,9 @@ public class Supply {
   }
 
   public double getContentSum() {
-    return 0.0;
+    return getAllLineContents().stream()
+        .filter(e -> e.getStatus() != ResolveStatus.IGNORE)
+        .mapToDouble(LineContent::getTotalPrice)
+        .sum();
   }
 }

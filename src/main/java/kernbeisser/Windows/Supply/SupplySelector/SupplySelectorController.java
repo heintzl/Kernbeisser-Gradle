@@ -18,9 +18,6 @@ import kernbeisser.Main;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Windows.MVC.Controller;
-import kernbeisser.Windows.Supply.ResolveStatus;
-import kernbeisser.Windows.Supply.SupplierFile;
-import kernbeisser.Windows.Supply.Supply;
 import lombok.SneakyThrows;
 
 public class SupplySelectorController extends Controller<SupplySelectorView, SupplySelectorModel> {
