@@ -6,10 +6,10 @@ import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
 import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
-import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Setter;
 
-public class DataAnchor<P, V> implements ObjectFormComponent<P>, BoundedWriteProperty<P, V>, PredictableModifiable<P> {
+public class DataAnchor<P, V>
+    implements ObjectFormComponent<P>, BoundedWriteProperty<P, V>, PredictableModifiable<P> {
 
   private final Setter<P, V> setter;
   private final Supplier<V> valueSupplier;
