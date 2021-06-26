@@ -6,6 +6,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.Searchable;
 import org.jetbrains.annotations.NotNull;
 
 public class CollectionView<T> implements IView<CollectionController<T>> {
@@ -22,6 +23,8 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   private JPanel moveSec;
   private JScrollPane availableSec;
   private JPanel actionBar;
+  private JPanel searchPanelChosen;
+  private JPanel searchPanelAvailable;
   @Linked private CollectionController<T> controller;
 
   @Override
@@ -39,6 +42,11 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   void setEditable(boolean editable) {
     availableSec.setVisible(editable);
     moveSec.setVisible(editable);
+  }
+
+  void addSearchbox(Searchable<T> searchable) {
+    available.addSearchbox(searchable, searchPanelAvailable);
+    chosen.addSearchbox(searchable, searchPanelChosen);
   }
 
   @Override
@@ -92,5 +100,10 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
             "Eingabe abbrechen",
             JOptionPane.OK_CANCEL_OPTION)
         == JOptionPane.OK_OPTION;
+  }
+
+  public void clearSeachBox() {
+    available.clearSearchBox();
+    chosen.clearSearchBox();
   }
 }
