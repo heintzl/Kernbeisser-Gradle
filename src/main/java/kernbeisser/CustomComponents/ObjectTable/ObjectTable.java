@@ -15,8 +15,10 @@ import javax.swing.RowFilter;
 import javax.swing.table.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.Searchable;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,6 +45,12 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private final Map<Column<T>, JTextField> standardColumnFilters = new HashMap<>();
 
   private final Map<Column<T>, JPopupMenu> standardFilterPopups = new HashMap<>();
+
+  private Searchable<T> searchBoxSearch;
+
+  private Collection<T> searchBoxResultList = new ArrayList<>();
+
+  private JTextField searchText;
 
   @SafeVarargs
   public ObjectTable(Collection<T> fill, Column<T>... columns) {
@@ -102,6 +110,39 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
           }
         });
     setRowSorter(createRowSorter());
+  }
+
+  public void addSearchbox(Searchable<T> searchable, JPanel boxTarget) {
+    searchBoxSearch = searchable;
+    searchText = new JTextField();
+    JButton search = new JButton();
+    searchText.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            invokeSearch(searchText.getText());
+          }
+        });
+    searchText.setPreferredSize(new Dimension(250, (int) (searchText.getFont().getSize() * 1.8)));
+    search.addActionListener(e -> invokeSearch(searchText.getText()));
+    search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 14, new Color(0x757EFF)));
+    boxTarget.add(searchText);
+    boxTarget.add(search);
+    boxTarget.setVisible(true);
+    searchBoxResultList = searchable.search("", Setting.DEFAULT_MAX_SEARCH.getIntValue());
+  }
+
+  private void invokeSearch(String searchText) {
+    searchBoxResultList =
+        searchBoxSearch.search(searchText, Setting.DEFAULT_MAX_SEARCH.getIntValue());
+    refreshModel();
+  }
+
+  public void clearSearchBox() {
+    if (searchText != null) {
+      searchText.setText("");
+      invokeSearch("");
+    }
   }
 
   private void addStandardFilterListener(MouseEvent e, Column<T> column) {
@@ -383,14 +424,14 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   private boolean isInStandardFilter(T t) {
-    boolean result = true;
+    boolean result = (searchText == null) || searchBoxResultList.contains(t);
     for (Map.Entry<Column<T>, JTextField> filter : standardColumnFilters.entrySet()) {
+      if (!result) break;
       String text = (String) filter.getKey().getValue(t);
       result =
           Pattern.compile(filter.getValue().getText(), Pattern.CASE_INSENSITIVE)
               .matcher(text)
               .find();
-      if (!result) break;
     }
     return result;
   }
