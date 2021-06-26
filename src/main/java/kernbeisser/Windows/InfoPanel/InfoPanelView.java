@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import kernbeisser.Config.Config;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -48,6 +49,8 @@ public class InfoPanelView implements IView<InfoPanelController> {
             + "<tr><td><div><i>Erstellt am:</i></td><td>"
             + getBuildDate()
             + "</td></tr>"
+            + "<tr><td><i>Datenbank:</i></td>"
+            + Config.getConfig().getDBAccessData().getUrl()
             + "<tr><td colspan=\"2\"><h1>Du bist angemeldet als "
             + LogInModel.getLoggedIn().getFullName()
             + "</h1></td></tr>"

@@ -5,6 +5,7 @@ import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.Searchable;
 
 public class CollectionController<T> extends Controller<CollectionView<T>, CollectionModel<T>> {
 
@@ -54,11 +55,13 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
 
   public void selectAllAvailable() {
     model.getLoaded().addAll(getView().getAllAvailableObjects());
+    getView().clearSeachBox();
     refresh();
   }
 
   public void selectAllChosen() {
     model.getLoaded().removeAll(getView().getAllChosenObjects());
+    getView().clearSeachBox();
     refresh();
   }
 
@@ -77,5 +80,9 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
     getModel().setLoaded(loaded);
     getView().setEditable(model.isModifiable());
     refresh();
+  }
+
+  public void addSearchbox(Searchable<T> search) {
+    getView().addSearchbox(search);
   }
 }
