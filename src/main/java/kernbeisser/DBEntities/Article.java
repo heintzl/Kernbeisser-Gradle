@@ -173,6 +173,11 @@ public class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_WRITE)})
   private ShopRange shopRange;
 
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
+  private boolean printPool;
+
   @Getter @Setter private Double obsoleteSurcharge;
 
   public static List<Article> getAll(String condition) {
@@ -388,5 +393,14 @@ public class Article {
         .findAny()
         .map(Offer::getSpecialNetPrice)
         .orElse(-999.0);
+  }
+
+  public static List<Article> getPrintPool() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select a from Article a where a.printPool <> 0", Article.class)
+        .getResultList();
   }
 }
