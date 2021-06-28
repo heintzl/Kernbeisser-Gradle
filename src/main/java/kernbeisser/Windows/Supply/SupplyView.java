@@ -20,6 +20,7 @@ import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
@@ -160,7 +161,9 @@ public class SupplyView implements IView<SupplyController> {
             Column.createIcon(
                 "Ausdrucken",
                 e -> controller.becomePrinted(e) ? selected : unselected,
-                controller::togglePrint));
+                controller::togglePrint,
+                null,
+                (int) (100 * Setting.LABEL_SCALE_FACTOR.getDoubleValue())));
   }
 
   Article select(Collection<Article> collection) {
