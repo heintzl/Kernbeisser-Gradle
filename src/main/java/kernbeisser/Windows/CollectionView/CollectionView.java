@@ -25,6 +25,7 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   private JPanel actionBar;
   private JPanel searchPanelChosen;
   private JPanel searchPanelAvailable;
+  private JPanel additionalControls;
   @Linked private CollectionController<T> controller;
 
   @Override
@@ -105,5 +106,10 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   public void clearSeachBox() {
     available.clearSearchBox();
     chosen.clearSearchBox();
+  }
+
+  public void addAdditionalControl(JComponent component) {
+    additionalControls.setVisible(true);
+    additionalControls.add(component);
   }
 }

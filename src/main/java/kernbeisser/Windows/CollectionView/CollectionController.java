@@ -2,6 +2,7 @@ package kernbeisser.Windows.CollectionView;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.MVC.Controller;
@@ -84,5 +85,11 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
 
   public void addSearchbox(Searchable<T> search) {
     getView().addSearchbox(search);
+  }
+
+  public void addControls(JComponent... components) {
+    for (JComponent c : components) {
+      getView().addAdditionalControl(c);
+    }
   }
 }
