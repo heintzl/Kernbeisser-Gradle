@@ -22,7 +22,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   @Linked private final CollectionController<Article> articles;
   private boolean onlyCashier = false;
 
-  private final JButton printButton = new JButton("Ausdruck starten");
+  private final JButton printButton = new JButton();
   private final JLabel printSheetInfo = new JLabel();
 
   @Key(PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT)
@@ -54,23 +54,28 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   public void refreshPrintButton() {
     int labelsPerPage = Setting.LABELS_PER_PAGE.getIntValue();
     int labelCount = articles.getModel().getLoaded().size();
-    int pages = labelCount / labelsPerPage;
-    int emptyLabels = labelCount & labelsPerPage;
+    int pages = (labelCount - 1) / labelsPerPage + 1;
+    int emptyLabels = pages * labelsPerPage - labelCount;
     String infoText =
         labelCount == 0
             ? "Keine Etiketten zu drucken"
             : pages
-                + " Seiten werden benötigt, es ist noch Platz für "
+                + " Seite"
+                + (pages == 1 ? " wird" : "n werden")
+                + " benötigt, es ist noch Platz für "
                 + emptyLabels
                 + " Etikett"
                 + (emptyLabels == 1 ? "" : "en");
-    // printButton.setEnabled(labelCount > 0);
+    printButton.setEnabled(labelCount > 0);
+    printButton.setText("Ausdruck starten (" + labelCount + ")");
+    printSheetInfo.setFont(
+        printSheetInfo.getFont().deriveFont(labelCount > 0 ? Font.BOLD : Font.PLAIN));
     printSheetInfo.setText(infoText);
   }
 
   @Override
   public void fillView(PrintLabelsView printLabelsView) {
+    articles.addSelectionListener(this::refreshPrintButton);
     articles.setLoadedAndSource(Article.getPrintPool(), model::getAllArticles);
-    refreshPrintButton();
   }
 }

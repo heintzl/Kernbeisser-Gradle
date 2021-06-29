@@ -10,6 +10,8 @@ import kernbeisser.Windows.Searchable;
 
 public class CollectionController<T> extends Controller<CollectionView<T>, CollectionModel<T>> {
 
+  Collection<Runnable> selectionListeners = new ArrayList<>();
+
   @SafeVarargs
   public CollectionController(Collection<T> edit, Source<T> source, Column<T>... columns) {
     super(new CollectionModel<>(edit, source, columns));
@@ -52,6 +54,7 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
     source.removeAll(model.getLoaded());
     getView().setChosen(model.getLoaded());
     getView().setAvailable(source);
+    selectionListeners.forEach(Runnable::run);
   }
 
   public void selectAllAvailable() {
@@ -91,5 +94,9 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
     for (JComponent c : components) {
       getView().addAdditionalControl(c);
     }
+  }
+
+  public void addSelectionListener(Runnable listener) {
+    selectionListeners.add(listener);
   }
 }
