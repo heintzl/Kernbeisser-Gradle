@@ -4,7 +4,6 @@ import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
-import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.BarcodeCapture;
@@ -24,6 +23,7 @@ import kernbeisser.Security.Key;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.PrintLabels.PrintLabelsController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
@@ -104,6 +104,8 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
   @Override
   public void fillView(EditItemsView editItemsView) {
     objectViewController.setSearch("");
+    objectViewController.addButton(
+        PrintLabelsController.getLaunchButton(getView().traceViewContainer()));
     refreshList();
   }
 

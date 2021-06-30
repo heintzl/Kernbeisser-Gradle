@@ -13,18 +13,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplyView implements IView<SupplyController> {
@@ -41,6 +42,7 @@ public class SupplyView implements IView<SupplyController> {
   private DoubleParseField amount;
   private JButton commit;
   private JButton cancel;
+  @Getter private JPanel printButtonPanel;
 
   @Linked private SupplyController controller;
 
@@ -123,10 +125,6 @@ public class SupplyView implements IView<SupplyController> {
     netPrice.setText("0.00");
   }
 
-  public void setShoppingItems(ObjectTable<ShoppingItem> shoppingItems) {
-    this.shoppingItems = shoppingItems;
-  }
-
   void setSuppliers(Collection<Supplier> suppliers) {
     supplier.removeAllItems();
     for (Supplier s : suppliers) {
@@ -147,7 +145,7 @@ public class SupplyView implements IView<SupplyController> {
     Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
     Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
     shoppingItems =
-        new ObjectTable<ShoppingItem>(
+        new ObjectTable<>(
             Column.create("Lieferant", ShoppingItem::getSupplier),
             Column.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber),
             Column.create("Gebinde-Anzahl", p -> p.getItemMultiplier() / p.getContainerSize()),
@@ -160,12 +158,9 @@ public class SupplyView implements IView<SupplyController> {
             Column.createIcon(
                 "Ausdrucken",
                 e -> controller.becomePrinted(e) ? selected : unselected,
-                controller::togglePrint));
-  }
-
-  Article select(Collection<Article> collection) {
-    return SelectionDialog.select(
-        getTopComponent(), "Bitte wähle den gemeinten Artikel aus.", collection);
+                controller::togglePrint,
+                null,
+                (int) (100 * Setting.LABEL_SCALE_FACTOR.getDoubleValue())));
   }
 
   public void invalidInput() {
@@ -180,10 +175,6 @@ public class SupplyView implements IView<SupplyController> {
         == 0;
   }
 
-  public void success() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Die Lieferung wurde erfolgreich eingegeben!");
-  }
-
   @Override
   public String getTitle() {
     return "Lieferung eingeben";
@@ -196,7 +187,10 @@ public class SupplyView implements IView<SupplyController> {
 
   public boolean shouldPrintLabels() {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Sollen die ausgewählten Ladenschilder ausgedruckt werden?")
+            getTopComponent(),
+            "Soll ich mir die ausgewählten Etiketten für den Ausdruck merken?",
+            "Später drucken",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 }

@@ -1,10 +1,7 @@
 package kernbeisser.DBEntities;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.persistence.*;
@@ -172,6 +169,11 @@ public class Article {
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_WRITE)})
   private ShopRange shopRange;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
+  private boolean printPool;
 
   @Getter @Setter private Double obsoleteSurcharge;
 
@@ -388,5 +390,43 @@ public class Article {
         .findAny()
         .map(Offer::getSpecialNetPrice)
         .orElse(-999.0);
+  }
+
+  public static List<Article> getPrintPool() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select a from Article a where a.printPool <> 0 order by name", Article.class)
+        .getResultList();
+  }
+
+  public static void modifyPrintPool(Collection<Article> pool, boolean replaceExisting) {
+    var printPoolBefore = getPrintPool();
+    Set<Article> affectedArticles = new HashSet<>(pool);
+    if (replaceExisting) {
+      affectedArticles.addAll(printPoolBefore);
+    }
+    pool.retainAll(printPoolBefore);
+    affectedArticles.removeAll(pool);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+
+    for (Article a : affectedArticles) {
+      a.setPrintPool(!printPoolBefore.contains(a));
+      em.merge(a);
+    }
+    em.flush();
+  }
+
+  public static void replacePrintPool(Collection<Article> pool) {
+    modifyPrintPool(pool, true);
+  }
+
+  public static void addToPrintPool(Collection<Article> pool) {
+    modifyPrintPool(pool, false);
   }
 }
