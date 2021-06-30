@@ -4,7 +4,6 @@ import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
-import java.util.Collections;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.BarcodeCapture;
@@ -106,8 +105,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
   public void fillView(EditItemsView editItemsView) {
     objectViewController.setSearch("");
     objectViewController.addButton(
-        PrintLabelsController.getLaunchButton(
-            getView().traceViewContainer(), Collections.EMPTY_LIST));
+        PrintLabelsController.getLaunchButton(getView().traceViewContainer()));
     refreshList();
   }
 

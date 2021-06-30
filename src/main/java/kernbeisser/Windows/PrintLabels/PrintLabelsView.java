@@ -31,8 +31,8 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
   public boolean confirmChanges() {
     return JOptionPane.showConfirmDialog(
             getContent(),
-            "Sollen die ausgewählten Etiketten gedruckt werden?",
-            "Wechsel der bearbeiteten Rolle",
+            "Soll ich mir die ausgewählten Etiketten für den Ausdruck merken?",
+            "Später drucken",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE)
         == JOptionPane.YES_OPTION;

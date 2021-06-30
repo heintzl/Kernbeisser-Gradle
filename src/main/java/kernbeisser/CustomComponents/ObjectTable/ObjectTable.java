@@ -129,7 +129,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     boxTarget.add(searchText);
     boxTarget.add(search);
     boxTarget.setVisible(true);
-    searchBoxResultList = searchable.search("", Setting.DEFAULT_MAX_SEARCH.getIntValue());
+    invokeSearch("");
   }
 
   private void invokeSearch(String searchText) {

@@ -1,7 +1,6 @@
 package kernbeisser.Windows.PrintLabels;
 
 import java.awt.*;
-import java.util.Collection;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -20,7 +19,6 @@ import lombok.var;
 public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabelsModel> {
 
   @Linked private final CollectionController<Article> articles;
-  private boolean onlyCashier = false;
 
   private final JButton printButton = new JButton();
   private final JLabel printSheetInfo = new JLabel();
@@ -29,25 +27,25 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   public PrintLabelsController() throws PermissionKeyRequiredException {
     super(new PrintLabelsModel());
     articles = PrintLabelsModel.getArticleSource();
-    articles.addSearchbox(Article::defaultSearch);
+    articles.getView().addAvailableSearchbox(Article::defaultSearch);
+    // articles.getView().setMaxResults(model.getAllArticles().size());
+    articles.addSelectionListener(this::refreshPrintButton);
     printButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
-    printButton.addActionListener(e -> getModel().print(articles.getModel().getLoaded()));
+    printButton.addActionListener(e -> getModel().print(articles));
     articles.addControls(printButton, printSheetInfo);
+    model.setPrintPoolBefore(Article.getPrintPool());
   }
 
-  private static void openMe(ViewContainer targetComponent, Collection<Article> preselection) {
+  private static void openMe(ViewContainer targetComponent) {
     var controller = new PrintLabelsController().openIn(new SubWindow(targetComponent));
-    if (!preselection.isEmpty()) {}
   }
 
-  public static JButton getLaunchButton(
-      ViewContainer targetComponent, Collection<Article> preselection) {
+  public static JButton getLaunchButton(ViewContainer targetComponent) {
     int printPoolSize = Article.getPrintPool().size();
-    JButton launchButton =
-        new JButton("Etiketten drucken" + (printPoolSize > 0 ? "(" + printPoolSize + ")" : ""));
+    JButton launchButton = new JButton("Etiketten drucken" + (printPoolSize > 0 ? " *" : ""));
     launchButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
     launchButton.setToolTipText("Öffnet das Fenster für den Etikettendruck");
-    launchButton.addActionListener(e -> openMe(targetComponent, preselection));
+    launchButton.addActionListener(e -> openMe(targetComponent));
     return launchButton;
   }
 
@@ -75,7 +73,15 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   @Override
   public void fillView(PrintLabelsView printLabelsView) {
-    articles.addSelectionListener(this::refreshPrintButton);
     articles.setLoadedAndSource(Article.getPrintPool(), model::getAllArticles);
+  }
+
+  @Override
+  protected void closed() {
+    var newPrintPool = articles.getModel().getLoaded();
+    if (!newPrintPool.equals(model.getPrintPoolBefore()) && getView().confirmChanges()) {
+      Article.replacePrintPool(newPrintPool);
+    }
+    ;
   }
 }
