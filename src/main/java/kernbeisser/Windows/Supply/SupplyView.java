@@ -26,6 +26,7 @@ import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplyView implements IView<SupplyController> {
@@ -42,6 +43,7 @@ public class SupplyView implements IView<SupplyController> {
   private DoubleParseField amount;
   private JButton commit;
   private JButton cancel;
+  @Getter private JPanel printButtonPanel;
 
   @Linked private SupplyController controller;
 

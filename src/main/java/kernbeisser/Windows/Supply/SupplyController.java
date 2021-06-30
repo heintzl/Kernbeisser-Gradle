@@ -9,6 +9,8 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.PrintLabels.PrintLabelsController;
+import lombok.var;
 
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
@@ -19,7 +21,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   @Override
   public void fillView(SupplyView supplyView) {
-    getView().setSuppliers(model.getAllSuppliers());
+    var view = getView();
+    view.setSuppliers(model.getAllSuppliers());
+    view.getPrintButtonPanel()
+        .add(PrintLabelsController.getLaunchButton(view.traceViewContainer()));
   }
 
   private int last;
