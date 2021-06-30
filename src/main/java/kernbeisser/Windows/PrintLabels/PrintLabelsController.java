@@ -10,6 +10,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.CollectionView.CollectionController;
+import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ViewContainer;
@@ -27,9 +28,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   public PrintLabelsController() throws PermissionKeyRequiredException {
     super(new PrintLabelsModel());
     articles = PrintLabelsModel.getArticleSource();
-    articles.getView().addAvailableSearchbox(Article::defaultSearch);
-    // articles.getView().setMaxResults(model.getAllArticles().size());
-    articles.addSelectionListener(this::refreshPrintButton);
+    articles.addCollectionModifiedListener(this::refreshPrintButton);
     printButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
     printButton.addActionListener(e -> getModel().print(articles));
     articles.addControls(printButton, printSheetInfo);
@@ -74,6 +73,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   @Override
   public void fillView(PrintLabelsView printLabelsView) {
     articles.setLoadedAndSource(Article.getPrintPool(), model::getAllArticles);
+    articles.getView().addSearchbox(CollectionView.BOTH);
   }
 
   @Override

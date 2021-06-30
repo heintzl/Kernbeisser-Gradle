@@ -1,7 +1,10 @@
 package kernbeisser.Windows.CollectionView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Forms.ObjectForm.Components.Source;
@@ -9,7 +12,7 @@ import kernbeisser.Windows.MVC.Controller;
 
 public class CollectionController<T> extends Controller<CollectionView<T>, CollectionModel<T>> {
 
-  Collection<Runnable> selectionListeners = new ArrayList<>();
+  Collection<Runnable> collectionModifiedListeners = new ArrayList<>();
 
   @SafeVarargs
   public CollectionController(Collection<T> edit, Source<T> source, Column<T>... columns) {
@@ -53,18 +56,18 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
     source.removeAll(model.getLoaded());
     getView().setChosen(model.getLoaded());
     getView().setAvailable(source);
-    selectionListeners.forEach(Runnable::run);
+    collectionModifiedListeners.forEach(Runnable::run);
   }
 
   public void selectAllAvailable() {
     model.getLoaded().addAll(getView().getAllAvailableObjects());
-    getView().clearSeachBox();
+    getView().clearSearchBox();
     refresh();
   }
 
   public void selectAllChosen() {
     model.getLoaded().removeAll(getView().getAllChosenObjects());
-    getView().clearSeachBox();
+    getView().clearSearchBox();
     refresh();
   }
 
@@ -91,7 +94,25 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
     }
   }
 
-  public void addSelectionListener(Runnable listener) {
-    selectionListeners.add(listener);
+  public void addCollectionModifiedListener(Runnable listener) {
+    collectionModifiedListeners.add(listener);
+  }
+
+  private boolean stringFilter(T t, String s) {
+    return Arrays.stream(model.getColumns())
+        .anyMatch(
+            c ->
+                c.getValue(t)
+                    .toString()
+                    .toLowerCase(Locale.ROOT)
+                    .contains(s.toLowerCase(Locale.ROOT)));
+  }
+
+  public Collection<T> getAvailableSearchable(String s, int max) {
+    return model.getSource().stream().filter(t -> stringFilter(t, s)).collect(Collectors.toList());
+  }
+
+  public Collection<T> getChosenSearchable(String s, int max) {
+    return model.getLoaded().stream().filter(t -> stringFilter(t, s)).collect(Collectors.toList());
   }
 }

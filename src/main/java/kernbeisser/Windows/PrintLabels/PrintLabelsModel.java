@@ -7,6 +7,7 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Reports.ArticleLabel;
 import kernbeisser.Useful.Tools;
@@ -37,7 +38,12 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select a from Article a order by name", Article.class).getResultList();
+    return em.createQuery(
+            "select a from Article a where shopRange <> "
+                + ShopRange.NOT_IN_RANGE.ordinal()
+                + " order by name",
+            Article.class)
+        .getResultList();
   }
 
   private static String getArticleSupplierName(Article article) {
