@@ -1,6 +1,9 @@
 package kernbeisser.Windows.Supply;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.persistence.NoResultException;
+import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -23,8 +26,16 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   public void fillView(SupplyView supplyView) {
     var view = getView();
     view.setSuppliers(model.getAllSuppliers());
-    view.getPrintButtonPanel()
-        .add(PrintLabelsController.getLaunchButton(view.traceViewContainer()));
+    JButton printButton = PrintLabelsController.getLaunchButton(view.traceViewContainer());
+    printButton.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mousePressed(MouseEvent e) {
+            model.print();
+            getView().repaintTable();
+          }
+        });
+    view.getPrintButtonPanel().add(printButton);
   }
 
   private int last;
@@ -62,13 +73,12 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   void commit() {
     model.commit();
     model.getShoppingItems().clear();
-    getView().success();
     getView().back();
   }
 
   @Override
   protected boolean commitClose() {
-    if (getView().shouldPrintLabels()) model.print();
+    if (model.isPrintSelected() && getView().shouldPrintLabels()) model.print();
     return model.getShoppingItems().size() == 0 || getView().commitClose();
   }
 

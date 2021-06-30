@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
@@ -126,10 +125,6 @@ public class SupplyView implements IView<SupplyController> {
     netPrice.setText("0.00");
   }
 
-  public void setShoppingItems(ObjectTable<ShoppingItem> shoppingItems) {
-    this.shoppingItems = shoppingItems;
-  }
-
   void setSuppliers(Collection<Supplier> suppliers) {
     supplier.removeAllItems();
     for (Supplier s : suppliers) {
@@ -150,7 +145,7 @@ public class SupplyView implements IView<SupplyController> {
     Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
     Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
     shoppingItems =
-        new ObjectTable<ShoppingItem>(
+        new ObjectTable<>(
             Column.create("Lieferant", ShoppingItem::getSupplier),
             Column.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber),
             Column.create("Gebinde-Anzahl", p -> p.getItemMultiplier() / p.getContainerSize()),
@@ -168,11 +163,6 @@ public class SupplyView implements IView<SupplyController> {
                 (int) (100 * Setting.LABEL_SCALE_FACTOR.getDoubleValue())));
   }
 
-  Article select(Collection<Article> collection) {
-    return SelectionDialog.select(
-        getTopComponent(), "Bitte wähle den gemeinten Artikel aus.", collection);
-  }
-
   public void invalidInput() {
     JOptionPane.showMessageDialog(
         getTopComponent(), "Bitte überpüfe die rot markierten Felder nach Fehlern!");
@@ -183,10 +173,6 @@ public class SupplyView implements IView<SupplyController> {
             getTopComponent(),
             "Bist du sicher, dass du das Fenster schließen\nund die jetzige Eingabe beenden willst?")
         == 0;
-  }
-
-  public void success() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Die Lieferung wurde erfolgreich eingegeben!");
   }
 
   @Override
@@ -201,7 +187,10 @@ public class SupplyView implements IView<SupplyController> {
 
   public boolean shouldPrintLabels() {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Sollen die ausgewählten Ladenschilder ausgedruckt werden?")
+            getTopComponent(),
+            "Soll ich mir die ausgewählten Etiketten für den Ausdruck merken?",
+            "Später drucken",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 }

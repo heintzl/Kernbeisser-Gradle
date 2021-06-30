@@ -93,6 +93,7 @@ public class SupplyModel implements IModel<SupplyController> {
 
   void print() {
     Article.addToPrintPool(print);
+    print.clear();
   }
 
   public void togglePrint(Article bases) {
@@ -101,6 +102,10 @@ public class SupplyModel implements IModel<SupplyController> {
 
   public boolean becomePrinted(Article article) {
     return print.contains(article);
+  }
+
+  public boolean isPrintSelected() {
+    return !print.isEmpty();
   }
 
   public boolean articleExists(int suppliersItemNumber) {
