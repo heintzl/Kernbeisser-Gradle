@@ -6,7 +6,6 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.MVC.Controller;
-import kernbeisser.Windows.Searchable;
 
 public class CollectionController<T> extends Controller<CollectionView<T>, CollectionModel<T>> {
 
@@ -84,10 +83,6 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
     getModel().setLoaded(loaded);
     getView().setEditable(model.isModifiable());
     refresh();
-  }
-
-  public void addSearchbox(Searchable<T> search) {
-    getView().addSearchbox(search);
   }
 
   public void addControls(JComponent... components) {

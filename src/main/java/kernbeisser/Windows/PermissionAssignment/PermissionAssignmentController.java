@@ -26,7 +26,7 @@ public class PermissionAssignmentController
   public PermissionAssignmentController() throws PermissionKeyRequiredException {
     super(new PermissionAssignmentModel());
     user = getUserSource();
-    user.addSearchbox(User::defaultSearch);
+    user.getView().addSearchboxes(User::defaultSearch);
   }
 
   @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
@@ -34,7 +34,7 @@ public class PermissionAssignmentController
     super(new PermissionAssignmentModel());
     this.onlyCashier = true;
     user = getUserSource();
-    user.addSearchbox(User::defaultSearch);
+    user.getView().addSearchboxes(User::defaultSearch);
   }
 
   private CollectionController<User> getUserSource() {

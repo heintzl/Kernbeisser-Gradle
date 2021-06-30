@@ -45,9 +45,13 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     moveSec.setVisible(editable);
   }
 
-  void addSearchbox(Searchable<T> searchable) {
+  public void addSearchboxes(Searchable<T> searchable) {
     available.addSearchbox(searchable, searchPanelAvailable);
     chosen.addSearchbox(searchable, searchPanelChosen);
+  }
+
+  public void addAvailableSearchbox(Searchable<T> searchable) {
+    available.addSearchbox(searchable, searchPanelAvailable);
   }
 
   @Override
