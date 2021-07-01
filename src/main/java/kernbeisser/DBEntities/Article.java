@@ -1,13 +1,5 @@
 package kernbeisser.DBEntities;
 
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
@@ -18,6 +10,15 @@ import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /*
  extends from the main article structure ArticleBase which extends Article and ArticleKornkraft
@@ -170,10 +171,10 @@ public class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_WRITE)})
   private ShopRange shopRange;
 
-  @Column
+  @Column(nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
-  private boolean printPool;
+  private boolean printPool = false;
 
   @Getter @Setter private Double obsoleteSurcharge;
 
