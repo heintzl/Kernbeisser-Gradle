@@ -16,10 +16,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.envers.Audited;
 
 @Entity
 @Table
 @EqualsAndHashCode(doNotUseGetters = true)
+@Audited
 public class Supplier implements Serializable {
 
   @Id
@@ -125,8 +127,7 @@ public class Supplier implements Serializable {
     try {
       return getSupplierByShortName(shortName);
     } catch (NoResultException e) {
-      @Cleanup EntityManager em = DBConnection.getEntityManager();
-      @Cleanup(value = "commit")
+      EntityManager em = DBConnection.getEntityManager();
       EntityTransaction et = em.getTransaction();
       et.begin();
       Supplier s = new Supplier();
@@ -135,6 +136,8 @@ public class Supplier implements Serializable {
       s.setDefaultSurcharge(defaultSurcharge);
       em.persist(s);
       em.flush();
+      et.commit();
+      em.close();
       return getSupplierByShortName(shortName);
     }
   }

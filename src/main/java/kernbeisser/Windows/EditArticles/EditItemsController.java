@@ -4,6 +4,7 @@ import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
+import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -13,6 +14,7 @@ import kernbeisser.CustomComponents.ObjectTable.StripedRenderer;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
@@ -82,7 +84,10 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             Column.create("Barcode", Article::getBarcode, RIGHT));
     this.capture =
         new BarcodeCapture(
-            e -> objectViewController.openForm(Article.getByBarcode(Long.parseLong(e)), Mode.EDIT));
+            e ->
+                objectViewController.openForm(
+                    Articles.getByBarcode(Long.parseLong(e)).orElseThrow(NoResultException::new),
+                    Mode.EDIT));
     objectViewController.addComponents(articleFilter.createFilterCheckboxes());
   }
 

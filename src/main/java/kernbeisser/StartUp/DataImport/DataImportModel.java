@@ -43,7 +43,7 @@ import lombok.Cleanup;
 
 public class DataImportModel implements IModel<DataImportController> {
 
-  void createAdmin(String password) {
+  public void createAdmin(String password) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();

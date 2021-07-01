@@ -15,6 +15,7 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.envers.AuditReaderFactory;
 
 @Entity
 @Table(
@@ -138,6 +139,10 @@ public class ShoppingItem implements Serializable {
   @Setter(onMethod_ = {@Key(PermissionKey.SHOPPING_ITEM_SHOPPING_CART_INDEX_WRITE)})
   private int shoppingCartIndex;
 
+  @Column private long articleId;
+
+  @Column private int articleRev;
+
   @Column @Getter @Setter @CreationTimestamp private Instant createDate;
 
   @Getter @Transient private double singleDeposit;
@@ -167,17 +172,29 @@ public class ShoppingItem implements Serializable {
    * @param hasContainerDiscount if true reduced surcharge is applied
    */
   public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
+    this(article, Articles.getRevNumber(article), discount, hasContainerDiscount);
+  }
+
+  public static String getOfferPrefix() {
+    return Setting.OFFER_PREFIX.getStringValue();
+  }
+
+  public static double getContainerSurchargeReduction() {
+    return Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue();
+  }
+
+  /**
+   * @param article most ShoppingItem properties are copied from given article. surcharge gets
+   *     calculated
+   * @param discount percentage of netprice reduction
+   * @param hasContainerDiscount if true reduced surcharge is applied
+   */
+  public ShoppingItem(Article article, int articleRev, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
     this.amount = article.getAmount();
-    double offerNetPrice = article.getOfferNetPrice();
-    if (offerNetPrice == -999.0) {
-      this.itemNetPrice = article.getNetPrice();
-      this.specialOffer = false;
-    } else {
-      this.itemNetPrice = offerNetPrice;
-      this.specialOffer = true;
-    }
-    this.name = (specialOffer ? Setting.OFFER_PREFIX.getStringValue() : "") + article.getName();
+    this.itemNetPrice = article.getNetPrice();
+    this.specialOffer = article.isOffer();
+    this.name = (specialOffer ? getOfferPrefix() : "") + article.getName();
     this.metricUnits = article.getMetricUnits();
     this.vat = article.getVat();
     if (this.vat != null) {
@@ -190,7 +207,7 @@ public class ShoppingItem implements Serializable {
                 // is unsafe call
                 ? Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup().getSurcharge()
                 : article.getSurchargeGroup().getSurcharge())
-            * (hasContainerDiscount ? Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue() : 1);
+            * (hasContainerDiscount ? getContainerSurchargeReduction() : 1);
     if (supplier != null) {
       this.suppliersShortName = article.getSupplier().getShortName();
     }
@@ -204,6 +221,8 @@ public class ShoppingItem implements Serializable {
       this.itemNetPrice *= this.amount * this.metricUnits.getBaseFactor();
     }
     this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
+    this.articleId = article.getId();
+    this.articleRev = articleRev;
   }
 
   public static PriceListReportArticle createReportItem(Article article) {
@@ -214,7 +233,7 @@ public class ShoppingItem implements Serializable {
     } catch (NullPointerException ignored) {
     }
     try {
-      item.lastDeliveryMonth = Date.INSTANT_MONTH_YEAR.format(article.getLastDelivery());
+      item.lastDeliveryMonth = Date.INSTANT_MONTH_YEAR.format(Articles.getLastDelivery(article));
     } catch (NullPointerException ignored) {
     }
     return PriceListReportArticle.ofShoppingItem(item);
@@ -258,6 +277,7 @@ public class ShoppingItem implements Serializable {
       article.setVat(vat);
       article.setSupplier(supplier);
       article.setSurchargeGroup(supplier.getOrPersistDefaultSurchargeGroup(em));
+      article.setShopRange(ShopRange.NOT_IN_RANGE);
       em.persist(article);
       em.flush();
       et.commit();
@@ -412,30 +432,12 @@ public class ShoppingItem implements Serializable {
     return createItemDeposit(number, true);
   }
 
-  public Article extractArticleBySupplierNumber() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select a from Article a where suppliersItemNumber = :sn and supplier = :s",
-            Article.class)
-        .setParameter("sn", suppliersItemNumber)
-        .setParameter("s", supplier)
-        .getResultStream()
-        .findFirst()
-        .orElse(null);
-  }
-
   public Article extractArticle() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("SELECT i from Article i where kbNumber = " + kbNumber, Article.class)
-        .getResultStream()
-        .findAny()
-        .orElse(null);
+    return AuditReaderFactory.get(em).find(Article.class, articleId, articleRev);
   }
 
   public static double getSum(ShoppingItemSum sumType, Collection<ShoppingItem> items) {

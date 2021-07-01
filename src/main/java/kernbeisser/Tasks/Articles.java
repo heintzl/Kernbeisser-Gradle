@@ -1,9 +1,5 @@
 package kernbeisser.Tasks;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,31 +82,31 @@ public class Articles {
   private static List<Offer> extractOffers(Boolean[] months, double price) {
     int from = -1;
     ArrayList<Offer> out = new ArrayList<>();
-    LocalDate today = LocalDate.now();
-    for (int i = 1; i < months.length + 1; i++) {
-      if (months[i - 1]) {
-        if (from == -1) {
-          from = i;
-        }
-        continue;
-      }
-      if (from == -1) {
-        continue;
-      }
-      Offer offer = new Offer();
-      offer.setSpecialNetPrice(price);
-      offer.setFromDate(
-          Instant.from(
-              LocalDate.of(today.getYear(), from, 1).atStartOfDay(ZoneId.systemDefault())));
-      offer.setToDate(
-          Instant.from(
-              LocalDate.of(today.getYear(), from + (i - 1 - from), 1)
-                  .atStartOfDay(ZoneId.systemDefault())
-                  .with(TemporalAdjusters.lastDayOfMonth())));
-      offer.setRepeatMode(Repeat.EVERY_YEAR);
-      out.add(offer);
-      from = -1;
-    }
+    // LocalDate today = LocalDate.now();
+    // for (int i = 1; i < months.length + 1; i++) {
+    //  if (months[i - 1]) {
+    //    if (from == -1) {
+    //      from = i;
+    //    }
+    //    continue;
+    //  }
+    //  if (from == -1) {
+    //    continue;
+    //  }
+    //  Offer offer = new Offer();
+    //  offer.setSpecialNetPrice(price);
+    //  offer.setFromDate(
+    //      Instant.from(
+    //          LocalDate.of(today.getYear(), from, 1).atStartOfDay(ZoneId.systemDefault())));
+    //  offer.setToDate(
+    //      Instant.from(
+    //          LocalDate.of(today.getYear(), from + (i - 1 - from), 1)
+    //              .atStartOfDay(ZoneId.systemDefault())
+    //              .with(TemporalAdjusters.lastDayOfMonth())));
+    //  offer.setRepeatMode(Repeat.EVERY_YEAR);
+    //  out.add(offer);
+    //  from = -1;
+    // }
     return out;
   }
 }

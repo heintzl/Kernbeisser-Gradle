@@ -16,6 +16,7 @@ import kernbeisser.DBEntities.IgnoredDifference;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Main;
 import lombok.Getter;
@@ -88,6 +89,7 @@ public class CatalogMergeSession {
               }
             });
     HashSet<Integer> suppliersItemNumbers = new HashSet<>();
+    HashSet<Long> barcodes = new HashSet<>();
     Object[] prevValues = new Object[differences.length];
     source.stream()
         .skip(1)
@@ -104,6 +106,15 @@ public class CatalogMergeSession {
                   // on the article
                   int suppliersItemNumber = Integer.parseInt(columns[0]);
                   if (!suppliersItemNumbers.add(suppliersItemNumber)) return;
+
+                  try {
+                    long barcode = Long.parseLong(columns[4]);
+                    if (!barcodes.add(barcode)) {
+                      return;
+                    }
+                  } catch (NumberFormatException ignored) {
+                  }
+
                   // loads the current state of the article from the cache
                   current = currentState.get(suppliersItemNumber);
                 } catch (NumberFormatException ignored) {
@@ -155,6 +166,7 @@ public class CatalogMergeSession {
         new HashSet<>(
             em.createQuery("select a.kbNumber" + " from Article a", Integer.class).getResultList());
     HashSet<Integer> inUse = new HashSet<>();
+
     // filters 0 as a valid kbNumber
     inUse.add(0);
     for (Article article : collected) {
@@ -204,6 +216,7 @@ public class CatalogMergeSession {
     out.setWeighable(false);
     out.setSurchargeGroup(sg);
     out.setPriceList(priceList);
+    out.setShopRange(ShopRange.NOT_IN_RANGE);
     return out;
   }
 }
