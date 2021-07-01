@@ -2,7 +2,6 @@ package kernbeisser.DBEntities;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
@@ -53,39 +52,6 @@ public class UserSettingValue implements UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.USER_SETTING_VALUE_VALUE_WRITE)})
   private String value;
 
-  public static List<UserSettingValue> getAll(String condition) {
-    return Tools.getAll(UserSettingValue.class, condition);
-  }
-
-  private static String loadOrCreateSettingValue(UserSetting setting, User user) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      @Cleanup(value = "commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      return em.createQuery(
-              "select s from UserSettingValue s where userSetting = :sn and user.id = :id",
-              UserSettingValue.class)
-          .setParameter("sn", setting)
-          .setParameter("id", user.getId())
-          .getSingleResult()
-          .value;
-    } catch (NoResultException e) {
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      UserSettingValue value = new UserSettingValue(user);
-      value.value = setting.getDefaultValue();
-      value.setUser(user);
-      value.setUserSetting(setting);
-      em.persist(value);
-      em.flush();
-      et.commit();
-      return loadOrCreateSettingValue(setting, user);
-    } finally {
-      em.close();
-    }
-  }
-
   private static Collection<UserSettingValue> getAllForUser(User user) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -102,11 +68,7 @@ public class UserSettingValue implements UserRelated {
       loadUser(user);
     }
     String out = values.get(setting);
-    if (out == null) {
-      out = loadOrCreateSettingValue(setting, user);
-      values.put(setting, out);
-    }
-    return out;
+    return out != null ? out : setting.getDefaultValue();
   }
 
   private static void loadUser(User user) {
@@ -135,14 +97,23 @@ public class UserSettingValue implements UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    em.createQuery(
-            "update UserSettingValue setting set setting.value = :v where user.id = :id and setting.userSetting = :us")
-        .setParameter("v", value)
-        .setParameter("id", user.getId())
-        .setParameter("us", setting)
-        .executeUpdate();
-    em.flush();
-    loadUser(user);
+    UserSettingValue usv =
+        Tools.optional(
+                em.createQuery(
+                        "select u from UserSettingValue u where u.user = :u and u.userSetting =:us",
+                        UserSettingValue.class)
+                    .setParameter("u", user)
+                    .setParameter("us", setting))
+            .orElseGet(
+                () -> {
+                  UserSettingValue newUsv = new UserSettingValue();
+                  newUsv.user = user;
+                  newUsv.userSetting = setting;
+                  return newUsv;
+                });
+    usv.setValue(value);
+    em.persist(usv);
+    if (loaded != null && loaded.getId() == user.getId()) values.put(setting, value);
   }
 
   @Override

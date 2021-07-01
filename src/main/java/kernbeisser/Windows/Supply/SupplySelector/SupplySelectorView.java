@@ -31,6 +31,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private JButton export;
   private ObjectTable<LineContent> lineContents;
   private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<ResolveStatus> filter;
+  private JButton printProduce;
 
   @Override
   public void initialize(SupplySelectorController controller) {
@@ -55,6 +56,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     deleteSupply.addActionListener(controller::deleteCurrentSupply);
     openOtherFolder.addActionListener(e -> controller.requestDirectoryChange());
     export.addActionListener(e -> controller.exportShoppingItems());
+    printProduce.addActionListener(e -> controller.printProduce());
   }
 
   public void setFilterOptions(Collection<ResolveStatus> filters) {

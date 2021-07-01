@@ -13,6 +13,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -26,33 +27,6 @@ public class SupplyModel implements IModel<SupplyController> {
 
   private final Set<Article> print = new HashSet<>();
   @Getter private final Collection<ShoppingItem> shoppingItems = new ArrayList<>();
-
-  public Article findNextTo(Article articleKornkraft) {
-    return Article.nextArticleTo(
-        articleKornkraft.getSuppliersItemNumber(), Supplier.getKKSupplier());
-  }
-
-  public int getNextUnusedKBNumber(int kbNumber) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-                "select a.kbNumber from Article a where a.kbNumber >= :kb and not exists (select u from Article u where u.kbNumber = a.kbNumber+1)",
-                Integer.class)
-            .setParameter("kb", kbNumber)
-            .setMaxResults(1)
-            .getSingleResult()
-        + 1;
-  }
-
-  public Article getBySuppliersItemNumber(Supplier supplier, int suppliersItemNumber) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return getArticleViaSuppliersItemNumber(supplier, suppliersItemNumber, em).getSingleResult();
-  }
 
   void commit() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -86,7 +60,7 @@ public class SupplyModel implements IModel<SupplyController> {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Article.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
+    return Articles.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
   }
 
   public Collection<PriceList> getAllPriceLists() {

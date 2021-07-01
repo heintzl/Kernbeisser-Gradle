@@ -78,9 +78,6 @@ public class Supply {
   }
 
   public double getContentSum() {
-    return getAllLineContents().stream()
-        .filter(e -> e.getStatus() != ResolveStatus.IGNORE)
-        .mapToDouble(LineContent::getTotalPrice)
-        .sum();
+    return getAllLineContents().stream().mapToDouble(LineContent::getTotalPrice).sum();
   }
 }

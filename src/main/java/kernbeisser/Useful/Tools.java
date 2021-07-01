@@ -901,9 +901,17 @@ public class Tools {
 
   public static <T> SecuredOptional<T> optional(AccessSupplier<T> supplier) {
     try {
-      return SecuredOptional.of(supplier.get());
+      return SecuredOptional.ofNullable(supplier.get());
     } catch (PermissionKeyRequiredException e) {
       return SecuredOptional.empty();
+    }
+  }
+
+  public static <T> Optional<T> optional(TypedQuery<T> supplier) {
+    try {
+      return Optional.of(supplier.getSingleResult());
+    } catch (NoResultException e) {
+      return Optional.empty();
     }
   }
 

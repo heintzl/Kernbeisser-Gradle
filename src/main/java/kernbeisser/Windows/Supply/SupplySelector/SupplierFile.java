@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
@@ -52,7 +53,7 @@ public class SupplierFile {
     et.begin();
     Supplier kkSupplier = Supplier.getKKSupplier();
     return contents.stream()
-        .filter(e -> Article.getBySuppliersItemNumber(kkSupplier, e.getKkNumber()).isPresent())
+        .filter(e -> Articles.getBySuppliersItemNumber(kkSupplier, e.getKkNumber()).isPresent())
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -77,7 +78,7 @@ public class SupplierFile {
       if (content.getStatus() == ResolveStatus.IGNORE
           || content.getStatus() == ResolveStatus.PRODUCE) continue;
       Article article =
-          Article.getBySuppliersItemNumber(kkSupplier, content.getKkNumber())
+          Articles.getBySuppliersItemNumber(kkSupplier, content.getKkNumber())
               .orElseGet(() -> createArticle(content));
       // create shopping item
       ShoppingItem shoppingItem = new ShoppingItem(article, 0, false);
@@ -110,9 +111,8 @@ public class SupplierFile {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-
     Supplier kkSupplier = Supplier.getKKSupplier();
-    Article pattern = Article.nextArticleTo(em, content.getKkNumber(), kkSupplier);
+    Article pattern = Articles.nextArticleTo(em, content.getKkNumber(), kkSupplier);
     Article article = new Article();
     article.setSupplier(Supplier.getKKSupplier());
     article.setName(content.getName());
@@ -125,7 +125,7 @@ public class SupplierFile {
     article.setSurchargeGroup(pattern.getSurchargeGroup());
     article.setPriceList(pattern.getPriceList());
     article.setVerified(false);
-    article.setKbNumber(Article.nextFreeKBNumber(em));
+    article.setKbNumber(Articles.nextFreeKBNumber(em));
     article.setSuppliersItemNumber(content.getKkNumber());
     em.persist(article);
     em.flush();

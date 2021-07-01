@@ -13,10 +13,12 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.*;
+import org.hibernate.envers.Audited;
 
 @Table
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
+@Audited
 public class SurchargeGroup implements Serializable, Cloneable {
 
   @Id

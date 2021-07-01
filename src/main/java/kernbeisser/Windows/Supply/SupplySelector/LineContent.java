@@ -3,11 +3,10 @@ package kernbeisser.Windows.Supply.SupplySelector;
 import com.sun.istack.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
@@ -33,6 +32,7 @@ public class LineContent {
   private MetricUnits unit; // 12
   private String producer; // 3
   private String origin; // 2
+  private boolean weighable;
   // 2 white space
   private String qualitySign; // 2
   // 1 white space
@@ -49,38 +49,11 @@ public class LineContent {
         before.setMessage(extractMessage(currentLine));
         continue;
       }
-
       LineContent content = singleLine(currentLine);
       contents.add(content);
     }
-    for (int i = 0, contentsSize = contents.size(); i < contentsSize; i++) {
-      LineContent content = contents.get(i);
-      if (content.message != null && content.message.startsWith("Ersatz")) {
-        if (content.message.startsWith("für", 7)) {
-          int target = Integer.parseInt(content.message.replaceAll("\\D", ""));
-          Optional<LineContent> searchResult =
-              contents.stream().filter(e -> e.getKkNumber() == target).findAny();
-          if (searchResult.isPresent()) {
-            LineContent targetContent = searchResult.get();
-            targetContent.message = "Ersetzt durch " + content.getKkNumber();
-            targetContent.resolveStatus = ResolveStatus.IGNORE;
-          } else {
-            content.message = "Ersetzt " + target + " (Artikel nicht auf dem Lieferschein)";
-            content.resolveStatus = ResolveStatus.IGNORE;
-          }
-
-        } else {
-          LineContent target;
-          try {
-            target = contents.get(i + 1);
-          } catch (IndexOutOfBoundsException e) {
-            target = contents.get(i - 1);
-          }
-          target.message = "Ersetzt " + content.getKkNumber();
-          content.message = "Ersetzt durch " + target.getKkNumber();
-          content.resolveStatus = ResolveStatus.IGNORE;
-        }
-      }
+    for (LineContent content : contents) {
+      if (content.containerMultiplier == 0) content.resolveStatus = ResolveStatus.IGNORE;
     }
     return contents;
   }
@@ -137,6 +110,7 @@ public class LineContent {
 
   private void setWeighableAmount(double amount, String unitString) {
     setContainerSize(1);
+    weighable = true;
     MetricUnits unit = Catalog.extractUnit(unitString);
     if (isExactEnough(amount)) {
       setUnit(unit);
@@ -176,7 +150,7 @@ public class LineContent {
   }
 
   public double getTotalPrice() {
-    if (containerSize == 1) return containerMultiplier * unit.getBaseFactor() * amount * price;
+    if (weighable) return containerMultiplier * unit.getBaseFactor() * amount * price;
     else return containerSize * containerMultiplier * price;
   }
 
@@ -197,7 +171,7 @@ public class LineContent {
       return ResolveStatus.PRODUCE;
     }
     resolveStatus =
-        Article.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber, em)
+        Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber, em)
             .map(e -> ResolveStatus.OK)
             .orElse(ResolveStatus.ADDED);
     return resolveStatus;
