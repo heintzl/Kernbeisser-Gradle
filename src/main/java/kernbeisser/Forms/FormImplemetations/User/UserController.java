@@ -8,6 +8,7 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
@@ -95,6 +96,12 @@ public class UserController extends FormController<UserView, UserModel, User> {
     return model.usernameExists(username);
   }
 
+  @Key(PermissionKey.REMOVE_USER)
+  private void generalRemovePermission() {}
+
+  @Key(PermissionKey.ACTION_ADD_BEGINNER)
+  private void beginnerRemovePermission() {}
+
   @Override
   @Key(PermissionKey.ADD_USER)
   public void addPermission() {}
@@ -104,8 +111,13 @@ public class UserController extends FormController<UserView, UserModel, User> {
   public void editPermission() {}
 
   @Override
-  @Key(PermissionKey.REMOVE_USER)
-  public void removePermission() {}
+  public void removePermission() {
+    try {
+      generalRemovePermission();
+    } catch (PermissionKeyRequiredException e) {
+      beginnerRemovePermission();
+    }
+  }
 
   @Override
   public ObjectForm<User> getObjectContainer() {
@@ -115,5 +127,28 @@ public class UserController extends FormController<UserView, UserModel, User> {
   @Override
   public Supplier<User> defaultFactory() {
     return User::new;
+  }
+
+  @Override
+  public void remove(User user) {
+    if (!getView().confirmDelete()) {
+      return;
+    }
+    if (!user.canDelete()) {
+      getView().messageDeleteSuccess(false);
+      return;
+    }
+    var userGroup = user.getUserGroup();
+    double userValue = userGroup.getValue();
+    if (userGroup.getMembers().size() > 1) {
+      getView().messageUserIsInGroup();
+      return;
+    }
+    if (userValue != 0.0) {
+      getView().messageUserBalanceExists(userValue);
+      return;
+    }
+    ;
+    getView().messageDeleteSuccess(user.delete());
   }
 }

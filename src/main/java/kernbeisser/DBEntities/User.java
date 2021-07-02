@@ -206,12 +206,12 @@ public class User implements Serializable, UserRelated {
         .getSingleResult();
   }
 
-  public static void makeUserUnreadable(User user) {
+  private void makeUserUnreadable() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    User dbContent = em.find(User.class, user.getId());
+    User dbContent = em.find(User.class, getId());
     dbContent.unreadable = true;
     dbContent.firstName = "deleted";
     dbContent.surname = "deleted" + dbContent.id;
@@ -226,6 +226,30 @@ public class User implements Serializable, UserRelated {
     dbContent.permissions.clear();
     em.persist(dbContent);
     em.flush();
+  }
+
+  @Key(PermissionKey.REMOVE_USER)
+  private void deleteUser() {}
+
+  @Key(PermissionKey.ACTION_ADD_BEGINNER)
+  private void deleteBeginner() {}
+
+  public boolean canDelete() {
+    return Tools.canInvoke(this::deleteUser)
+        || (isBeginner() && (Tools.canInvoke(this::deleteBeginner)));
+  }
+
+  public boolean delete() {
+    if (!canDelete()) {
+      return false;
+    } else {
+      try {
+        Tools.delete(this);
+      } catch (PersistenceException e) {
+        makeUserUnreadable();
+      }
+      return true;
+    }
   }
 
   public static void refreshActivity() {
