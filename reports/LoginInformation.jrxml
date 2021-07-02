@@ -88,7 +88,7 @@
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Mit diesen Informationen kannst Du Dich im Ladenprogramm anmelden, sobald dein Beutzerkonto freigeschaltet ist:]]></text>
+				<text><![CDATA[Mit diesen Informationen kannst Du Dich im Ladenprogramm anmelden, sobald dein Benutzerkonto freigeschaltet ist:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="180" y="31" width="76" height="13" uuid="3f0c83f7-9f45-4132-9682-a437e2ebf442"/>
@@ -128,7 +128,7 @@ Bei der ersten Anmeldung wirst Du dazu aufgefordert, dein Passwort zu ändern!]]
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Im Programm sind im Moment die folgenden weiteren Informationen erfasst. Sie sind für andere Benutzer sichtbar. Wenn Du das nicht möchstest, kannst Du die Angaben entfernen. Lediglich dein Name und eine Telefonnummer müssen angegeben sein, damit Du ggf. erreichbar bist. Die Anzahl deiner Anteile wird ggf. benötigt, um zu sehen, wieviel Kredit Du bei der Genossenschaft hast.]]></text>
+				<text><![CDATA[Im Programm sind im Moment die folgenden weiteren Informationen erfasst. Sie sind für andere Benutzer sichtbar. Wenn Du das nicht möchtest, kannst Du die Angaben entfernen. Lediglich dein Name und eine Telefonnummer müssen angegeben sein, damit Du ggf. erreichbar bist. Die Anzahl deiner Anteile wird ggf. benötigt, um zu sehen, wie viel Kredit Du bei der Genossenschaft hast.]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="0" y="190" width="170" height="14" uuid="6b8f1d4c-dd16-4e65-8a1d-d5cb1e6d43f2">
