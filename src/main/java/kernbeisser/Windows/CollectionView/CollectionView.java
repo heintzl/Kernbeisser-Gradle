@@ -1,9 +1,15 @@
 package kernbeisser.Windows.CollectionView;
 
+import java.awt.*;
 import java.util.Collection;
+import java.util.regex.Pattern;
 import javax.swing.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.CustomComponents.ObjectTable.RegexFilter;
+import kernbeisser.Useful.DocumentChangeListener;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +28,18 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   private JPanel moveSec;
   private JScrollPane availableSec;
   private JPanel actionBar;
+  private JPanel searchPanelChosen;
+  private JPanel searchPanelAvailable;
+  private JPanel additionalControls;
+  private JTextField searchAvailable;
+  private JTextField searchChosen;
+  private JLabel iconAvailable;
+  private JLabel iconChosen;
   @Linked private CollectionController<T> controller;
+  public static final int NONE = 0;
+  public static final int AVAILABLE = 1;
+  public static final int CHOSEN = 2;
+  public static final int BOTH = 3;
 
   @Override
   public void initialize(CollectionController<T> controller) {
@@ -34,11 +51,37 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     removeAll.addActionListener(e -> controller.selectAllChosen());
     cancel.addActionListener(e -> back());
     commit.addActionListener(e -> controller.exitWithSave());
+    searchPanelAvailable.setVisible(false);
+    searchPanelChosen.setVisible(false);
   }
 
   void setEditable(boolean editable) {
     availableSec.setVisible(editable);
     moveSec.setVisible(editable);
+  }
+
+  public void addSearchbox(int scope) {
+    Icon searchIcon = IconFontSwing.buildIcon(FontAwesome.SEARCH, 15, new Color(0x757EFF));
+    iconAvailable.setIcon(searchIcon);
+    iconChosen.setIcon(searchIcon);
+    if ((scope & 1) == 1) {
+      addSearchbox(searchAvailable, available);
+    }
+    if ((scope & 2) == 2) {
+      addSearchbox(searchChosen, chosen);
+    }
+  }
+
+  private void addSearchbox(JTextField textField, ObjectTable<T> objectTable) {
+    textField.getParent().setVisible(true);
+    textField
+        .getDocument()
+        .addDocumentListener(
+            (DocumentChangeListener)
+                e ->
+                    objectTable.setSwingRowFilter(
+                        new RegexFilter(
+                            Pattern.compile(textField.getText(), Pattern.CASE_INSENSITIVE))));
   }
 
   @Override
@@ -92,5 +135,14 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
             "Eingabe abbrechen",
             JOptionPane.OK_CANCEL_OPTION)
         == JOptionPane.OK_OPTION;
+  }
+
+  public void clearSearchBox() {
+    searchAvailable.setText("");
+  }
+
+  public void addAdditionalControl(JComponent component) {
+    additionalControls.setVisible(true);
+    additionalControls.add(component);
   }
 }

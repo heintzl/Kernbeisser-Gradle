@@ -5,9 +5,11 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
+import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
 import kernbeisser.Security.Utils.Setter;
 
-public class DataAnchor<P, V> implements ObjectFormComponent<P>, BoundedWriteProperty<P, V> {
+public class DataAnchor<P, V>
+    implements ObjectFormComponent<P>, BoundedWriteProperty<P, V>, PredictableModifiable<P> {
 
   private final Setter<P, V> setter;
   private final Supplier<V> valueSupplier;
@@ -31,5 +33,10 @@ public class DataAnchor<P, V> implements ObjectFormComponent<P>, BoundedWritePro
   @Override
   public void set(P p, V t) throws PermissionKeyRequiredException {
     setter.set(p, t);
+  }
+
+  @Override
+  public boolean isPropertyModifiable(P parent) {
+    return true;
   }
 }

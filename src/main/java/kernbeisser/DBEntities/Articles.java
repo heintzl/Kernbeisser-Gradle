@@ -277,4 +277,48 @@ public class Articles {
     List<Number> revisions = auditReaderFactory.getRevisions(Article.class, a.getId());
     return revisions.get(revisions.size() - 1).intValue();
   }
+
+  public static void addToPrintPool(Collection<Article> print) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (Article article : print) {
+      Article persistence = em.find(Article.class, article.getId());
+      persistence.setPrintPool(true);
+      em.persist(persistence);
+    }
+  }
+
+  public static Collection<Article> getPrintPool() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select a from Article a where a.printPool = true", Article.class)
+        .getResultList();
+  }
+
+  public static long getArticlePrintPoolSize() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select sum (case when printPool = true then 1 else 0 end) from Article a", Long.class)
+        .getSingleResult();
+  }
+
+  public static void replacePrintPool(Collection<Article> newPrintPool) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.createQuery("update Article set printPool = false").executeUpdate();
+    for (Article article : newPrintPool) {
+      Article persistence = em.find(Article.class, article.getId());
+      persistence.setPrintPool(true);
+      em.persist(persistence);
+    }
+  }
 }

@@ -9,13 +9,13 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.RowFilter;
 import javax.swing.table.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Useful.DocumentChangeListener;
 import kernbeisser.Useful.Tools;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,17 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private final kernbeisser.CustomComponents.ObjectTable.RowFilter<T> DEFAULT_ROW_FILTER =
       e -> true;
 
+  private static final RowFilter<Object, Integer> DEFAULT_SWING_ROW_FILTER =
+      new RowFilter<Object, Integer>() {
+        @Override
+        public boolean include(Entry<?, ? extends Integer> entry) {
+          return true;
+        }
+      };
+
   private kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter = DEFAULT_ROW_FILTER;
+
+  private RowFilter<Object, Integer> swingRowFilter = DEFAULT_SWING_ROW_FILTER;
 
   public ObjectTable(Collection<Column<T>> columns) {
     this(Collections.emptyList(), columns);
@@ -125,7 +135,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     textFilterPanel.add(new JLabel(IconFontSwing.buildIcon(FontAwesome.FILTER, 15, Color.BLUE)));
     var filterText = new JTextField();
     filterText.setPreferredSize(textSize);
-    filterText.addActionListener(e -> applyStandardFilter(popup, column, filterText));
+    filterText
+        .getDocument()
+        .addDocumentListener(
+            (DocumentChangeListener) e -> applyStandardFilter(popup, column, filterText));
+    filterText.addActionListener(e -> popup.setVisible(false));
     textFilterPanel.add(filterText);
 
     var removeFilterPanel = new JPanel(new FlowLayout());
@@ -171,11 +185,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private void applyStandardFilter(JPopupMenu p, Column<T> c, JTextField text) {
     if (text == null) {
       standardColumnFilters.remove(c);
+      p.setVisible(false);
     } else {
       standardColumnFilters.put(c, text);
     }
     refreshModel();
-    p.setVisible(false);
   }
 
   private void refreshModel() {
@@ -198,8 +212,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private TableModel createModel(Collection<Column<T>> columns, Collection<T> objects) {
     objects.forEach(
         e -> {
-          if (e == null)
-            throw new NullPointerException("cannot create model with null paramenters");
+          if (e == null) throw new NullPointerException("cannot create model with null parameters");
         });
     Object[][] values = Tools.transformToArray(objects, Object[].class, this::collectColumns);
     String[] names = Tools.transformToArray(columns, String.class, Column::getName);
@@ -361,6 +374,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
+  public void setSwingRowFilter(RowFilter<Object, Integer> rowFilter) {
+    this.swingRowFilter = rowFilter == null ? DEFAULT_SWING_ROW_FILTER : rowFilter;
+    ((TableRowSorter<?>) getRowSorter()).sort();
+  }
+
   private TableRowSorter<?> createRowSorter() {
     TableRowSorter<?> out = new TableRowSorter<>(model);
     out.setRowFilter(
@@ -369,7 +387,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
           public synchronized boolean include(Entry<?, ? extends Integer> entry) {
             try {
               T object = objects.get(entry.getIdentifier());
-              return rowFilter.isDisplayed(object) && isInStandardFilter(object);
+              return rowFilter.isDisplayed(object)
+                  && isInStandardFilter(object)
+                  && swingRowFilter.include(entry);
             } catch (IndexOutOfBoundsException e) {
               System.out.println(entry.getIdentifier());
               return false;
@@ -427,9 +447,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     return Collections.unmodifiableList(objects);
   }
 
-  public List<T> getFilteredObjects() {
-    return objects.stream()
-        .filter(t -> rowFilter.isDisplayed(t) && isInStandardFilter(t))
-        .collect(Collectors.toList());
+  public Collection<T> getFilteredObjects() {
+    Collection<T> out = new ArrayList<>();
+    for (int i = 0; i < this.getRowCount(); i++) {
+      this.getFromRow(i).ifPresent(out::add);
+    }
+    return out;
   }
 }

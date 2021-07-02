@@ -28,7 +28,6 @@ public class PermissionView implements IView<PermissionController> {
   private JButton delete;
   private JButton exportPermissions;
   private JButton importPermissions;
-  private JButton mergeIntoPermission;
 
   @Linked private PermissionController controller;
 
@@ -106,7 +105,6 @@ public class PermissionView implements IView<PermissionController> {
     back.addActionListener(e -> back());
     exportPermissions.addActionListener(this::exportPermissions);
     importPermissions.addActionListener(this::importPermissions);
-    mergeIntoPermission.addActionListener(controller::mergePermission);
   }
 
   private void importPermissions(ActionEvent event) {

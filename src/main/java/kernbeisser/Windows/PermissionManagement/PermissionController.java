@@ -1,6 +1,5 @@
 package kernbeisser.Windows.PermissionManagement;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -166,6 +165,4 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     PermissionRepresentation.write(
         selectedFile, new PermissionRepresentation(Permission.getAll(null)));
   }
-
-  public void mergePermission(ActionEvent actionEvent) {}
 }

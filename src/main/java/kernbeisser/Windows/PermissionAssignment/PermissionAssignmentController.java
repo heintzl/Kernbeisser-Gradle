@@ -13,6 +13,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.CollectionView.CollectionController;
+import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 
@@ -48,8 +49,14 @@ public class PermissionAssignmentController
   public void fillView(PermissionAssignmentView permissionAssignmentView) {
     permissionAssignmentView.setPermissions(
         model.getPermissions().stream()
-            .filter(p -> (p.getName().equals("@CASHIER") || !onlyCashier))
+            .filter(
+                p ->
+                    (!p.getName()
+                            .matches(
+                                "@KEY_PERMISSION|@IN_RELATION_TO_OWN_USER|@IMPORT|@APPLICATION")
+                        && (p.getName().equals("@CASHIER") || !onlyCashier)))
             .collect(Collectors.toList()));
+    user.getView().addSearchbox(CollectionView.BOTH);
   }
 
   public void loadPermission(ActionEvent actionEvent) {

@@ -2,11 +2,9 @@ package kernbeisser.Windows.Supply;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
@@ -17,7 +15,6 @@ import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.Reports.ArticleLabel;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -72,19 +69,8 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   void print() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    HashMap<Integer, Article> articleHashMap = new HashMap<>();
-    em.createQuery("select a from Article a", Article.class)
-        .getResultStream()
-        .forEach(e -> articleHashMap.put(e.getSuppliersItemNumber(), e));
-    new ArticleLabel(
-            print.stream()
-                .map(e -> articleHashMap.get(e.getSuppliersItemNumber()))
-                .collect(Collectors.toCollection(ArrayList::new)))
-        .exportPdf("Drucke Ladenschilder", Tools::showUnexpectedErrorWarning);
+    Articles.addToPrintPool(print);
+    print.clear();
   }
 
   public void togglePrint(Article bases) {
@@ -93,6 +79,10 @@ public class SupplyModel implements IModel<SupplyController> {
 
   public boolean becomePrinted(Article article) {
     return print.contains(article);
+  }
+
+  public boolean isPrintSelected() {
+    return !print.isEmpty();
   }
 
   public boolean articleExists(int suppliersItemNumber) {

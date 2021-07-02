@@ -12,6 +12,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 /*
  extends from the main article structure ArticleBase which extends Article and ArticleKornkraft
@@ -173,6 +174,12 @@ public final class Article {
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_OFFER_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_OFFER_WRITE)})
   private boolean offer;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
+  @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+  private boolean printPool;
 
   @Getter @Setter private Double obsoleteSurcharge;
 

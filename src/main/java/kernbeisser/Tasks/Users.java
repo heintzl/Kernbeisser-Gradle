@@ -94,7 +94,7 @@ public class Users {
   }
 
   public static final int INTEREST_THIS_YEAR_COLUMN = 2;
-  public static final int SOLIDARITY_SURCHARGE_COLUMN = 3;
+  public static final int SOLIDARITY_SURCHARGE_COLUMN = 4;
 
   public static UserGroup getUserGroup(String[] rawData) {
     UserGroup userGroup = new UserGroup();

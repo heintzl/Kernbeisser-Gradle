@@ -52,6 +52,7 @@ class ShoppingItemTest {
         surchargeGroup,
         shopRange,
         false,
+        false,
         surcharge);
   }
 
