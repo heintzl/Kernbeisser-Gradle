@@ -61,7 +61,7 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
                 .map(Collection::iterator)
                 .map(Iterator::next)
                 .map(User::getUsername)
-                .orElse("[Keine Leseberehtigung]"));
+                .orElse("[Keine Leseberechtigung]"));
   }
 
   @Override
