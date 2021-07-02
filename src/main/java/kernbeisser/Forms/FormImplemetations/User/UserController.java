@@ -14,12 +14,22 @@ import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Users;
+import lombok.Getter;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class UserController extends FormController<UserView, UserModel, User> {
+
+  @Getter private boolean beginner = false;
+
   public UserController() {
     super(new UserModel());
+  }
+
+  public static UserController getBeginnerUserController() {
+    var controller = new UserController();
+    controller.beginner = true;
+    return controller;
   }
 
   @Override

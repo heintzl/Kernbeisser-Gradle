@@ -137,7 +137,8 @@ public class UserView implements IView<UserController> {
     lastName.setInputVerifier(new NotNullVerifier());
     hasKey.setReadable(Tools.canInvoke(this::checkUserKernbeisserKeyReadPermission));
     hasKey.setWriteable(Tools.canInvoke(this::checkUserKernbeisserKeyWritePermission));
-    shares.setInputVerifier(IntegerVerifier.from(1, 1, 3, 10));
+    shares.setInputVerifier(IntegerVerifier.from(0, 1, 3, 10));
+    shares.setEnabled(!controller.isBeginner());
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
     objectForm.registerObjectValidators(controller::validateUser, controller::validateFullname);
   }
