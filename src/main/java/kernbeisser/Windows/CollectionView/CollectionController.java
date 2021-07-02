@@ -1,12 +1,11 @@
 package kernbeisser.Windows.CollectionView;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.MVC.Controller;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class CollectionController<T> extends Controller<CollectionView<T>, CollectionModel<T>> {
 

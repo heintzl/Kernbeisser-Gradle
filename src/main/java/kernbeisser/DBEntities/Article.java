@@ -1,5 +1,13 @@
 package kernbeisser.DBEntities;
 
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.PermissionKey;
@@ -10,15 +18,6 @@ import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /*
  extends from the main article structure ArticleBase which extends Article and ArticleKornkraft

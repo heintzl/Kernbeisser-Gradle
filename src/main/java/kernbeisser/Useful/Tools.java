@@ -1,5 +1,26 @@
 package kernbeisser.Useful;
 
+import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.io.File;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.function.*;
+import java.util.stream.Collectors;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SurchargeGroup;
@@ -17,28 +38,6 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import sun.misc.Unsafe;
-
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
-import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.Collectors;
 
 public class Tools {
   public static <A extends Annotation> Collection<Field> getWithAnnotation(

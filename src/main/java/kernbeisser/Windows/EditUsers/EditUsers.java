@@ -1,5 +1,7 @@
 package kernbeisser.Windows.EditUsers;
 
+import java.awt.*;
+import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -16,9 +18,6 @@ import kernbeisser.Useful.Users;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ViewContainers.SubWindow;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class EditUsers extends ObjectViewController<User> {
 

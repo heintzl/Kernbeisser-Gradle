@@ -1,5 +1,9 @@
 package kernbeisser.Enums;
 
+import java.util.Set;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
@@ -7,11 +11,6 @@ import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.PermissionSet;
 import lombok.Cleanup;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import java.util.Set;
 
 // Permissions which become automatically generated when the application
 // requires them to prevent the functionality from the application

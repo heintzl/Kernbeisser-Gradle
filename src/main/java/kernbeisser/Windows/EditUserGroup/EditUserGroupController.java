@@ -1,5 +1,11 @@
 package kernbeisser.Windows.EditUserGroup;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.swing.*;
 import kernbeisser.CustomComponents.Dialogs.LogInDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
@@ -13,13 +19,6 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class EditUserGroupController extends Controller<EditUserGroupView, EditUserGroupModel> {
 

@@ -1,5 +1,9 @@
 package kernbeisser.Windows.EditUserGroup;
 
+import java.util.Collection;
+import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -9,11 +13,6 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Data;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import java.util.Collection;
-import java.util.Optional;
 
 @Data
 public class EditUserGroupModel implements IModel<EditUserGroupController> {

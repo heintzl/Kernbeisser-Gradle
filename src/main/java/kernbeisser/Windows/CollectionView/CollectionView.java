@@ -1,5 +1,9 @@
 package kernbeisser.Windows.CollectionView;
 
+import java.awt.*;
+import java.util.Collection;
+import java.util.regex.Pattern;
+import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -9,11 +13,6 @@ import kernbeisser.Useful.DocumentChangeListener;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Collection;
-import java.util.regex.Pattern;
 
 public class CollectionView<T> implements IView<CollectionController<T>> {
 

@@ -1,5 +1,9 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Locale;
+import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionConstants;
@@ -18,11 +22,6 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
-
-import javax.swing.*;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Locale;
 
 public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
 
