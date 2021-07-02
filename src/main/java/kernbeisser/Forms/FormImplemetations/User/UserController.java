@@ -57,6 +57,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
           BCrypt.withDefaults()
               .hashToString(Setting.HASH_COSTS.getIntValue(), passwordToken.toCharArray()));
       user.setForcePasswordChange(true);
+      user.getPermissions().add(PermissionConstants.BASIC_ACCESS.getPermission());
       user.setUserGroup(new UserGroup());
       Tools.persist(user.getUserGroup());
       getView().showPasswordToken(passwordToken, user);
