@@ -1,9 +1,5 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Locale;
-import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionConstants;
@@ -22,6 +18,11 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
+
+import javax.swing.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
 
@@ -58,7 +59,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
       return;
     }
 
-    getView().indicateProgress();
+    view.indicateProgress(true);
     new Thread(
             () -> {
               loadUserSettings();
@@ -80,6 +81,9 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
               if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
                 new ChangePasswordController(LogInModel.getLoggedIn(), true)
                     .openIn(new SubWindow(view.traceViewContainer()));
+                view.indicateProgress(false);
+                view.messageLoginAgain();
+                view.clearPassword();
               } else {
                 new MenuController().openTab();
                 view.back();
@@ -88,7 +92,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
         .start();
   }
 
-  private void loadUserSettings() {
+  private static void loadUserSettings() {
     try {
       UIManager.setLookAndFeel(
           UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());

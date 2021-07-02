@@ -1,11 +1,5 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -15,6 +9,13 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
 
 public class SimpleLogInView implements IView<SimpleLogInController> {
   private JButton logIn;
@@ -75,9 +76,21 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
     quit.addActionListener(e -> back());
   }
 
-  void indicateProgress() {
-    loadingMenuIndicator.setVisible(true);
-    logIn.setEnabled(false);
+  void indicateProgress(boolean inProgress) {
+    loadingMenuIndicator.setVisible(inProgress);
+    logIn.setEnabled(!inProgress);
+  }
+
+  public void messageLoginAgain() {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Bitte melde Dich noch einmal an!",
+        "Passwort geändert",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void clearPassword() {
+    password.setText("");
   }
 
   @Override
