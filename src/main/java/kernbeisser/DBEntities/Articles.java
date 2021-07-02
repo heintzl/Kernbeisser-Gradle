@@ -304,9 +304,12 @@ public class Articles {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-            "select sum (case when printPool = true then 1 else 0 end) from Article a", Long.class)
-        .getSingleResult();
+    Long result =
+        em.createQuery(
+                "select sum (case when printPool = true then 1 else 0 end) from Article a",
+                Long.class)
+            .getSingleResult();
+    return result == null ? 0 : result;
   }
 
   public static void replacePrintPool(Collection<Article> newPrintPool) {
