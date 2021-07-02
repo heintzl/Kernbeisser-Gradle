@@ -1,32 +1,5 @@
 package kernbeisser.Useful;
 
-import static java.lang.Math.min;
-
-import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.util.*;
-import java.util.Date;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
-import javax.swing.*;
-import javax.swing.text.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SurchargeGroup;
@@ -37,17 +10,35 @@ import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
 import kernbeisser.Security.SecuredOptional;
-import kernbeisser.Security.Utils.AccessConsumer;
-import kernbeisser.Security.Utils.AccessRunnable;
-import kernbeisser.Security.Utils.AccessSupplier;
-import kernbeisser.Security.Utils.Getter;
-import kernbeisser.Security.Utils.Setter;
+import kernbeisser.Security.Utils.*;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import sun.misc.Unsafe;
+
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.io.File;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.Collectors;
 
 public class Tools {
   public static <A extends Annotation> Collection<Field> getWithAnnotation(
@@ -926,6 +917,14 @@ public class Tools {
       return SecuredOptional.of(supplier.get());
     } catch (PermissionKeyRequiredException e) {
       return SecuredOptional.empty();
+    }
+  }
+
+  public static <T> Optional<T> optional(TypedQuery<T> supplier) {
+    try {
+      return Optional.of(supplier.getSingleResult());
+    } catch (NoResultException e) {
+      return Optional.empty();
     }
   }
 
