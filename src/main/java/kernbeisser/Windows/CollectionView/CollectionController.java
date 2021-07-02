@@ -1,14 +1,12 @@
 package kernbeisser.Windows.CollectionView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.MVC.Controller;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class CollectionController<T> extends Controller<CollectionView<T>, CollectionModel<T>> {
 
@@ -96,23 +94,5 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
 
   public void addCollectionModifiedListener(Runnable listener) {
     collectionModifiedListeners.add(listener);
-  }
-
-  private boolean stringFilter(T t, String s) {
-    return Arrays.stream(model.getColumns())
-        .anyMatch(
-            c ->
-                c.getValue(t)
-                    .toString()
-                    .toLowerCase(Locale.ROOT)
-                    .contains(s.toLowerCase(Locale.ROOT)));
-  }
-
-  public Collection<T> getAvailableSearchable(String s, int max) {
-    return model.getSource().stream().filter(t -> stringFilter(t, s)).collect(Collectors.toList());
-  }
-
-  public Collection<T> getChosenSearchable(String s, int max) {
-    return model.getLoaded().stream().filter(t -> stringFilter(t, s)).collect(Collectors.toList());
   }
 }
