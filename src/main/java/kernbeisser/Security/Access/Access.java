@@ -45,12 +45,17 @@ public class Access {
   public static void hasAccess(Object object, String methodName, String signature, long methodId) {
     synchronized (ACCESS_LOCK) {
       PermissionSet keys = getOrAnalyse(object, methodName, methodId);
-      if (!defaultManager.hasAccess(object, methodName, signature, keys)) {
-        if (useCustomProtection) {
-          AccessManager accessManager = exceptions.get(object);
-          if (accessManager != null && accessManager.hasAccess(object, methodName, signature, keys))
+      if (useCustomProtection) {
+        AccessManager accessManager = exceptions.get(object);
+        if (accessManager != null)
+          if (accessManager.hasAccess(object, methodName, signature, keys)) {
             return;
-        }
+          } else {
+            throw new PermissionKeyRequiredException(
+                "PermissionSet doesn't contain the following keys:" + keys);
+          }
+      }
+      if (!defaultManager.hasAccess(object, methodName, signature, keys)) {
         throw new PermissionKeyRequiredException(
             "PermissionSet doesn't contain the following keys:" + keys);
       }

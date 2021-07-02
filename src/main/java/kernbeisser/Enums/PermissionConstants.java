@@ -77,6 +77,7 @@ public enum PermissionConstants {
   public static void cleanAdminPermission(User currentUser) {
     Access.getExceptions().put(currentUser, AccessManager.NO_ACCESS_CHECKING);
     Permission adminPermission = ADMIN.getPermission();
+    Access.getExceptions().put(adminPermission, AccessManager.NO_ACCESS_CHECKING);
     adminPermission.setKeySet(allPermissions().minus(PermissionKey.getNonAdminPermissions()));
     Set<Permission> adminPermissionSet = new java.util.HashSet<>();
     adminPermissionSet.add(adminPermission);

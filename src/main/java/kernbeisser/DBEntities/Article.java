@@ -170,10 +170,10 @@ public class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SHOP_RANGE_WRITE)})
   private ShopRange shopRange;
 
-  @Column
+  @Column(nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
-  private boolean printPool;
+  private boolean printPool = false;
 
   @Getter @Setter private Double obsoleteSurcharge;
 

@@ -58,7 +58,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
       return;
     }
 
-    getView().indicateProgress();
+    view.indicateProgress(true);
     new Thread(
             () -> {
               loadUserSettings();
@@ -80,6 +80,9 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
               if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
                 new ChangePasswordController(LogInModel.getLoggedIn(), true)
                     .openIn(new SubWindow(view.traceViewContainer()));
+                view.indicateProgress(false);
+                view.messageLoginAgain();
+                view.clearPassword();
               } else {
                 new MenuController().openTab();
                 view.back();
@@ -88,7 +91,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
         .start();
   }
 
-  private void loadUserSettings() {
+  private static void loadUserSettings() {
     try {
       UIManager.setLookAndFeel(
           UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());

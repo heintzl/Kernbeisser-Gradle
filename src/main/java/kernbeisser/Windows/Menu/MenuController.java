@@ -96,6 +96,7 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   public FormEditorController<User> generateAddBeginnerForm() {
     User beginnerUser = new User();
     Access.getExceptions().put(beginnerUser, AccessManager.NO_ACCESS_CHECKING);
-    return FormEditorController.open(new User(), new UserController(), Mode.ADD);
+    return FormEditorController.open(
+        new User(), UserController.getBeginnerUserController(), Mode.ADD);
   }
 }

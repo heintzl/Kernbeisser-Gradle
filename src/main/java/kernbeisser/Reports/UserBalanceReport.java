@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import lombok.Cleanup;
 
@@ -39,6 +40,7 @@ public class UserBalanceReport extends Report {
     et.begin();
     return em.createQuery("select u from UserGroup u", UserGroup.class)
         .getResultStream()
+        .filter(ug -> !ug.getMembers().stream().allMatch(User::isUnreadable))
         .map(ug -> ug.withMembersAsString(this.withNames))
         .sorted((u1, u2) -> u1.getMembersAsString().compareToIgnoreCase(u2.getMembersAsString()))
         .collect(Collectors.toList());

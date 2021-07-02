@@ -53,7 +53,7 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
 
   boolean commitDelete() {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(), "Soll dieses Object wirklich gelöscht werden?")
+            getTopComponent(), "Soll dieses Objekt wirklich gelöscht werden?")
         == 0;
   }
 

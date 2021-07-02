@@ -44,6 +44,8 @@ public class AccessCheckingField<P, V> extends JTextField
   private final Color backgroundDefault = getBackground();
   private boolean inputChanged = false;
 
+  private boolean enabled = true;
+
   private final Setter<P, V> setter;
   private final Getter<P, V> getter;
 
@@ -59,7 +61,7 @@ public class AccessCheckingField<P, V> extends JTextField
 
   @Override
   public void setPropertyModifiable(boolean v) {
-    setEnabled(v);
+    super.setEnabled(enabled && v);
   }
 
   @Override
@@ -332,5 +334,10 @@ public class AccessCheckingField<P, V> extends JTextField
         return fromString.fromString(s);
       }
     };
+  }
+
+  @Override
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 }

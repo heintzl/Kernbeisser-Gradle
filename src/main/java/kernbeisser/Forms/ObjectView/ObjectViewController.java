@@ -23,7 +23,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
 
   @Linked @Getter private SearchBoxController<T> searchBoxController;
 
-  @Linked private String title;
+  @Linked private final String title;
 
   public ObjectViewController(
       String title,
@@ -51,14 +51,14 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   void refreshButtonStates() {
     var view = getView();
     view.setAddAvailable(model.isAddAvailable());
-    if (searchBoxController.getSelectedObject() == null) {
-      view.setEditAvailable(false);
-      view.setRemoveAvailable(false);
-      setExtraButtonsAvailable(false);
-    } else {
+    if (searchBoxController.getSelectedObject().isPresent()) {
       view.setEditAvailable(model.isEditAvailable());
       view.setRemoveAvailable(model.isRemoveAvailable());
       setExtraButtonsAvailable(true);
+    } else {
+      view.setEditAvailable(false);
+      view.setRemoveAvailable(false);
+      setExtraButtonsAvailable(false);
     }
   }
 
