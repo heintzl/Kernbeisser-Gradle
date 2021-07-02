@@ -1,18 +1,19 @@
 package kernbeisser.Windows.EditUserGroup;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Tasks.Users;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Data;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import java.util.Collection;
+import java.util.Optional;
 
 @Data
 public class EditUserGroupModel implements IModel<EditUserGroupController> {
@@ -26,11 +27,12 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
   }
 
   public Optional<User> getCaller() {
-    return Optional.of(caller);
+    return Optional.ofNullable(caller);
   }
 
   public void refreshData() {
     user = Proxy.removeProxy(User.getById(user.getId()));
+    LogInModel.refreshLogInData();
   }
 
   void changeUserGroup(int user, int destination) {
@@ -51,9 +53,8 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     em.persist(userGroup);
   }
 
-  public Collection<User> getLogIns() {
-    Collection<User> collection = new ArrayList<>(user.getAllGroupMembers());
-    getCaller().ifPresent(collection::add);
-    return collection;
+  public Collection<User> getLogIns(Collection<User> confirmingUsers) {
+    getCaller().ifPresent(confirmingUsers::add);
+    return confirmingUsers;
   }
 }
