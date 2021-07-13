@@ -1,15 +1,13 @@
 package kernbeisser.Tasks.Catalog;
 
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogDataSource;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 
 public class Catalog {
 
@@ -20,13 +18,10 @@ public class Catalog {
   public static Pattern DIM3AMOUNT = Pattern.compile("\\d*[,.]?\\d* x \\d*[,.]?\\d*");
 
   public static Article parseArticle(
-      Article base, HashMap<Integer, Double> deposit, Supplier kkSupplier, String[] source)
-      throws CannotParseException {
-    if (source.length < 42) {
-      throw new CannotParseException(
-          "Article doesn't have the minimum of 42 columns:\n" + Arrays.toString(source));
-    }
-    CatalogDataSource catalogDataSource = CatalogDataSource.parseRow(source);
+      Article base,
+      Map<Integer, Double> deposit,
+      Supplier kkSupplier,
+      CatalogDataSource catalogDataSource) {
     base.setSuppliersItemNumber(catalogDataSource.getArtikelNr());
     base.setName(catalogDataSource.getBezeichnung());
     base.setWeighable(catalogDataSource.getGewichtsartikel().equals("J"));

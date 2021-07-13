@@ -3,7 +3,6 @@ package kernbeisser.DBEntities;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -15,10 +14,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
-import lombok.var;
 import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.query.AuditEntity;
 
 public class Articles {
@@ -51,27 +51,36 @@ public class Articles {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public static Optional<Article> getByKbNumber(int kbNumber, boolean filterShopRange) {
+  public static Optional<ObjectState<Article>> getByKbNumber(
+      int kbNumber, boolean filterShopRange) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-
     return Optional.ofNullable(
         em.createQuery("select i from Article i where kbNumber = :n", Article.class)
             .setParameter("n", kbNumber)
             .getResultStream()
             .filter(a -> !(filterShopRange && !a.getShopRange().isVisible()))
             .findAny()
+            .map(ObjectState::currentState)
             .orElseGet(() -> searchInArticleHistoryForKbNumber(em, kbNumber).orElse(null)));
   }
 
-  public static Optional<Article> searchInArticleHistoryForKbNumber(
+  public static Optional<ObjectState<Article>> searchInArticleHistoryForKbNumber(
       EntityManager em, int kbNumber) {
-    return AuditReaderFactory.get(em).createQuery().forRevisionsOfEntity(Article.class, true, true)
-        .add(AuditEntity.property("kbNumber").eq(kbNumber))
-        .addOrder(AuditEntity.property("updateDate").desc()).getResultList().stream()
-        .findFirst();
+    return ((Optional<Object[]>)
+            AuditReaderFactory.get(em).createQuery()
+                .forRevisionsOfEntity(Article.class, false, true)
+                .add(AuditEntity.property("kbNumber").eq(kbNumber))
+                .addOrder(AuditEntity.property("updateDate").desc()).getResultList().stream()
+                .findFirst())
+        .map(e -> ObjectState.wrap(((Article) e[0]), ((DefaultRevisionEntity) e[1]).getId()))
+        .map(
+            e -> {
+              e.getValue().getSurchargeGroup().getSurcharge();
+              return e;
+            });
   }
 
   public static Optional<Article> getBySuppliersItemNumber(Supplier supplier, int suppliersNumber) {
@@ -266,16 +275,6 @@ public class Articles {
   public static Article withValidKBNumber(Article article, EntityManager em) {
     article.setKbNumber(Articles.nextFreeKBNumber(em));
     return article;
-  }
-
-  public static int getRevNumber(Article a) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    var auditReaderFactory = AuditReaderFactory.get(em);
-    List<Number> revisions = auditReaderFactory.getRevisions(Article.class, a.getId());
-    return revisions.get(revisions.size() - 1).intValue();
   }
 
   public static void addToPrintPool(Collection<Article> print) {

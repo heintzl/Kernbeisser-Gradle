@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.DBEntities.Article;
@@ -152,20 +152,20 @@ public class SupplyView implements IView<SupplyController> {
     Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
     shoppingItems =
         new ObjectTable<>(
-            Column.create("Lieferant", ShoppingItem::getSupplier),
-            Column.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber),
-            Column.create("Gebinde-Anzahl", p -> p.getItemMultiplier() / p.getContainerSize()),
-            Column.create("Name", ShoppingItem::getName),
-            Column.create("Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice())),
-            Column.create("Gebindegröße", ShoppingItem::getContainerSize),
-            Column.create(
+            Columns.create("Lieferant", ShoppingItem::getSupplier),
+            Columns.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber),
+            Columns.create("Gebinde-Anzahl", p -> p.getItemMultiplier() / p.getContainerSize()),
+            Columns.create("Name", ShoppingItem::getName),
+            Columns.create("Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice())),
+            Columns.create("Gebindegröße", ShoppingItem::getContainerSize),
+            Columns.create(
                 "Gebinde-Preis",
                 e -> String.format("%.2f", e.getItemNetPrice() * e.getContainerSize())),
-            Column.createIcon(
+            Columns.createIconColumn(
                 "Ausdrucken",
                 e -> controller.becomePrinted(e) ? selected : unselected,
                 controller::togglePrint,
-                null,
+                (e) -> {},
                 (int) (100 * Setting.LABEL_SCALE_FACTOR.getDoubleValue())));
   }
 

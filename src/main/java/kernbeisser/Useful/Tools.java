@@ -46,6 +46,9 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
+import lombok.var;
+import org.hibernate.envers.AuditReaderFactory;
+import org.jetbrains.annotations.NotNull;
 import sun.misc.Unsafe;
 
 public class Tools {
@@ -308,12 +311,6 @@ public class Tools {
         null, "Der Ausdruck wurde abgebrochen!", "Drucken", JOptionPane.WARNING_MESSAGE);
   }
 
-  public static <T> T removeLambda(T from, Supplier<T> original) {
-    T out = original.get();
-    copyInto(from, out);
-    return out;
-  }
-
   public static <T> void persist(T value) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -349,29 +346,37 @@ public class Tools {
     }
   }
 
-  public static void copyInto(Object source, Object destination) {
+  private static final Field modField;
+
+  static {
+    try {
+      modField = Field.class.getDeclaredField("modifiers");
+      modField.setAccessible(true);
+    } catch (NoSuchFieldException e) {
+      Tools.showUnexpectedErrorWarning(e);
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static Field makeFinalFieldAccessible(Field field) {
+    try {
+      modField.set(field, modField.getModifiers() & ~Modifier.FINAL);
+    } catch (IllegalAccessException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
+    field.setAccessible(true);
+    return field;
+  }
+
+  public static void copyInto(@NotNull Object source, @NotNull Object destination) {
     Class<?> clazz = source.getClass();
     while (!clazz.equals(Object.class)) {
       for (Field field : clazz.getDeclaredFields()) {
         if (Modifier.isStatic(field.getModifiers())) {
           continue;
         }
-        field.setAccessible(true);
-        try {
-          field.set(destination, field.get(source));
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
-        }
-      }
-      clazz = clazz.getSuperclass();
-    }
-  }
-
-  public static <T, V extends T> void copyInto(Class<T> base, V source, V destination) {
-    Class<?> clazz = base;
-    while (!clazz.equals(Object.class)) {
-      for (Field field : clazz.getDeclaredFields()) {
-        if (Modifier.isStatic(field.getModifiers())) {
+        if (Modifier.isFinal(field.getModifiers())) {
+          makeFinalFieldAccessible(field);
           continue;
         }
         field.setAccessible(true);
@@ -408,23 +413,8 @@ public class Tools {
     } catch (InstantiationException e) {
       e.printStackTrace();
     }
-    while (!clazz.equals(Object.class)) {
-      for (Field field : clazz.getDeclaredFields()) {
-        if (Modifier.isStatic(field.getModifiers())) {
-          continue;
-        }
-        if (Modifier.isFinal(field.getModifiers())) {
-          continue;
-        }
-        field.setAccessible(true);
-        try {
-          field.set(instance, field.get(object));
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
-        }
-      }
-      clazz = clazz.getSuperclass();
-    }
+    assert instance != null;
+    copyInto(object, instance);
     return instance;
   }
 
@@ -977,10 +967,29 @@ public class Tools {
     return out;
   }
 
+  public static void assertPersisted(Object value) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    if (em.find(value.getClass(), Tools.getId(value)) == null)
+      throw new IllegalArgumentException("the state of the Object is not persisted");
+  }
+
   public static int lastIndexOfPartOfNumber(char[] chars) {
     for (int i = chars.length - 1; i >= 0; i--) {
       if (isPartOfNumb(chars[i])) return i;
     }
     return -1;
+  }
+
+  public static int getNewestRevisionNumber(Object o) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    var auditReaderFactory = AuditReaderFactory.get(em);
+    List<Number> revisions = auditReaderFactory.getRevisions(o.getClass(), Tools.getId(o));
+    return revisions.get(revisions.size() - 1).intValue();
   }
 }

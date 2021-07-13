@@ -16,6 +16,7 @@ import javax.swing.SwingUtilities;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
@@ -76,30 +77,30 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private void createUIComponents() {
     supplySelector =
         new ObjectTable<Supply>(
-            Column.create(
+            Columns.create(
                 "Datum",
                 e -> Date.INSTANT_DATE_TIME.format(e.getDeliveryDate()),
                 SwingConstants.LEFT,
                 Comparator.comparing(
                     ((Object s) -> Instant.from(Date.INSTANT_DATE_TIME.parse((String) s))))),
-            Column.create("Anzahl Artikel", Supply::getArticleCount),
-            Column.create("Summe", e -> String.format("%.2f€", e.getContentSum())));
+            Columns.create("Anzahl Artikel", Supply::getArticleCount),
+            Columns.create("Summe", e -> String.format("%.2f€", e.getContentSum())));
     lineContents =
         new ObjectTable<LineContent>(
-            Column.create("Artikelnr.", LineContent::getKkNumber),
-            Column.create("Artikelname", LineContent::getName),
-            Column.create("Geb.preis", LineContent::getPrice),
-            Column.create("Geb.größe", LineContent::getContainerSize),
-            Column.create(
+            Columns.create("Artikelnr.", LineContent::getKkNumber),
+            Columns.create("Artikelname", LineContent::getName),
+            Columns.create("Geb.preis", LineContent::getPrice),
+            Columns.create("Geb.größe", LineContent::getContainerSize),
+            Columns.create(
                 "Packung",
                 e -> e.getAmount() + (e.getUnit() == null ? "" : e.getUnit().getShortName())),
-            Column.create("Kommentar", LineContent::getMessage),
-            Column.create(
+            Columns.create("Kommentar", LineContent::getMessage),
+            Columns.create(
                 "Preis",
                 e -> String.format("%.2f€", e.getTotalPrice()),
                 SwingUtilities.RIGHT,
                 Column.NUMBER_SORTER),
-            Column.createIcon("S", e -> getIcon(e.getStatus()), (e) -> {}));
+            Columns.createIconColumn("S", e -> getIcon(e.getStatus())));
   }
 
   private static final Icon okIcon = createIcon(FontAwesome.CHECK_CIRCLE, new Color(0x238678));

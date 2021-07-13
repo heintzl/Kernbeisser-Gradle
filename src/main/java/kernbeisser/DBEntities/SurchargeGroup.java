@@ -44,7 +44,7 @@ public class SurchargeGroup implements Serializable, Cloneable {
   private Supplier supplier;
 
   @JoinColumn
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.EAGER)
   @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
   private SurchargeGroup parent;

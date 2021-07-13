@@ -16,6 +16,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Colors;
@@ -96,22 +97,22 @@ public class UserInfoView implements IView<UserInfoController> {
 
   public void createUIComponents() {
     valueHistory = new ObjectTable<Transaction>();
-    permissions = new ObjectTable<>(Column.create("Name", Permission::getNeatName));
+    permissions = new ObjectTable<>(Columns.create("Name", Permission::getNeatName));
     userGroup =
         new ObjectTable<User>(
-            Column.create("Benutzername", User::getUsername),
-            Column.create("Vorname", User::getFirstName),
-            Column.create("Nachname", User::getSurname));
+            Columns.create("Benutzername", User::getUsername),
+            Columns.create("Vorname", User::getFirstName),
+            Columns.create("Nachname", User::getSurname));
     jobs =
         new ObjectTable<Job>(
-            Column.create("Name", Job::getName),
-            Column.create("Beschreibung", Job::getDescription));
+            Columns.create("Name", Job::getName),
+            Columns.create("Beschreibung", Job::getDescription));
     shoppingHistory =
         new ObjectTable<Purchase>(
-            Column.create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate())),
-            Column.create("Verkäufer", e -> e.getSession().getSeller()),
-            Column.create("Käufer", e -> e.getSession().getCustomer()),
-            Column.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT));
+            Columns.create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate())),
+            Columns.create("Verkäufer", e -> e.getSession().getSeller()),
+            Columns.create("Käufer", e -> e.getSession().getCustomer()),
+            Columns.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT));
     phoneNumber1 = new AccessCheckingLabel<>(User::getPhoneNumber1);
     username = new AccessCheckingLabel<>(User::getUsername);
     firstName = new AccessCheckingLabel<>(User::getFirstName);

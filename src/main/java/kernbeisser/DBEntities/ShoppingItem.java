@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Security.Access.Access;
@@ -168,13 +170,21 @@ public class ShoppingItem implements Serializable {
   @Getter @Transient private String lastDeliveryMonth = "";
 
   /**
+   * @param discount percentage of netprice reduction
+   * @param hasContainerDiscount if true reduced surcharge is applied
+   */
+  public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
+    this(ObjectState.currentState(article), discount, hasContainerDiscount);
+  }
+
+  /**
    * @param article most ShoppingItem properties are copied from given article. surcharge gets
    *     calculated
    * @param discount percentage of netprice reduction
    * @param hasContainerDiscount if true reduced surcharge is applied
    */
-  public ShoppingItem(Article article, int discount, boolean hasContainerDiscount) {
-    this(article, Articles.getRevNumber(article), discount, hasContainerDiscount);
+  public ShoppingItem(ObjectState<Article> article, int discount, boolean hasContainerDiscount) {
+    this(article.getValue(), article.getRevNumber(), discount, hasContainerDiscount);
   }
 
   public static String getOfferPrefix() {
@@ -228,7 +238,7 @@ public class ShoppingItem implements Serializable {
   }
 
   public static PriceListReportArticle createReportItem(Article article) {
-    ShoppingItem item = new ShoppingItem(article, 0, false);
+    ShoppingItem item = new ShoppingItem(article, /*not used in this case*/ 0, 0, false);
     try {
       String barcode = Long.toString(article.getBarcode());
       item.shortBarcode = barcode.substring(barcode.length() - 4);
@@ -255,9 +265,10 @@ public class ShoppingItem implements Serializable {
       et.begin();
       ShoppingItem out =
           new ShoppingItem(
-              em.createQuery("select  i from Article i where name = :n", Article.class)
-                  .setParameter("n", name)
-                  .getSingleResult(),
+              ObjectState.currentState(
+                  em.createQuery("select  i from Article i where name = :n", Article.class)
+                      .setParameter("n", name)
+                      .getSingleResult()),
               0,
               hasContainerDiscount);
       if (hasContainerDiscount) {
@@ -436,12 +447,22 @@ public class ShoppingItem implements Serializable {
     return createItemDeposit(number, true);
   }
 
-  public Article extractArticle() {
+  public Optional<Article> getArticleNow() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return AuditReaderFactory.get(em).find(Article.class, articleId, articleRev);
+    return Optional.ofNullable(em.find(Article.class, (int) articleId));
+  }
+
+  public Article getArticleAtBuyState() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Article article = AuditReaderFactory.get(em).find(Article.class, (int) articleId, articleRev);
+    article.getSurchargeGroup().getSurcharge();
+    return article;
   }
 
   public static double getSum(ShoppingItemSum sumType, Collection<ShoppingItem> items) {

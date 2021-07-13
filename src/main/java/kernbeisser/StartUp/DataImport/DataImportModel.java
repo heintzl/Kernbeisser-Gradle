@@ -257,8 +257,7 @@ public class DataImportModel implements IModel<DataImportController> {
 
   private void readCatalog(Collection<String> kornkraftCatalog) {
     CatalogMergeSession mergeSession = new CatalogMergeSession(kornkraftCatalog);
-    mergeSession.resolveAllFor(true);
-    mergeSession.pushToDB();
+    mergeSession.pushAllNotImportantChanges();
   }
 
   private void readArticles(Stream<String> f) {

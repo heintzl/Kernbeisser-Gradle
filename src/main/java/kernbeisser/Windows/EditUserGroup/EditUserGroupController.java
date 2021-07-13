@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.CustomComponents.Dialogs.LogInDialog;
-import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -46,8 +46,8 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
                           }
                         })
                     .collect(Collectors.toCollection(ArrayList::new)),
-            Column.create("Mitglieder", UserGroup::getMemberString, SwingConstants.LEFT),
-            Column.create(
+            Columns.create("Mitglieder", UserGroup::getMemberString, SwingConstants.LEFT),
+            Columns.create(
                 "Solidarzuschlag",
                 e -> String.format("%.2f%%", e.getSolidaritySurcharge() * 100),
                 SwingConstants.RIGHT));

@@ -89,12 +89,12 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public void togglePrint(ShoppingItem t) {
-    model.togglePrint(t.extractArticle());
+    model.togglePrint(t.getArticleNow().get());
     getView().repaintTable();
   }
 
   public boolean becomePrinted(ShoppingItem e) {
-    return model.becomePrinted(e.extractArticle());
+    return model.becomePrinted(e.getArticleNow().get());
   }
 
   public void openImportSupplyFile() {
@@ -102,7 +102,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             e -> {
               for (ShoppingItem item : e) {
                 model.getShoppingItems().add(item);
-                model.togglePrint(item.extractArticle());
+                model.togglePrint(item.getArticleNow().get());
               }
               getView().setShoppingItems(model.getShoppingItems());
             })

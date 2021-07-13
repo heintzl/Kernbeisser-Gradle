@@ -14,9 +14,7 @@ import javax.swing.RowFilter;
 import javax.swing.table.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.DocumentChangeListener;
-import kernbeisser.Useful.Tools;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,12 +22,6 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private static final Object NO_ACCESS_VALUE = "**********";
 
   private final Map<ObjectSelectionListener<T>, Boolean> selectionListeners = new HashMap<>();
-
-  private final List<T> objects = new ArrayList<>();
-
-  private List<Column<T>> columns = new ArrayList<>();
-
-  private DefaultTableModel model = (DefaultTableModel) super.dataModel;
 
   private final kernbeisser.CustomComponents.ObjectTable.RowFilter<T> DEFAULT_ROW_FILTER =
       e -> true;
@@ -64,10 +56,45 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     this(Arrays.asList(columns));
   }
 
+  @Override
+  public ObjectTableModel<T> getModel() {
+    return (ObjectTableModel<T>) super.getModel();
+  }
+
+  public List<Column<T>> getColumns() {
+    return Collections.unmodifiableList(getModel().getColumns());
+  }
+
+  public List<T> getObjects() {
+    return Collections.unmodifiableList(getModel().getObjects());
+  }
+
+  @Override
+  public void setModel(@NotNull TableModel dataModel) {
+    if (!(dataModel instanceof ObjectTableModel))
+      throw new IllegalArgumentException(
+          "cannot set " + dataModel + " as a TableModel for an ObjectTable");
+    super.setModel(dataModel);
+  }
+
+  @Override
+  public void addColumn(@NotNull TableColumn aColumn) {
+    if (aColumn.getHeaderValue() == null) {
+      int modelColumn = aColumn.getModelIndex();
+      String columnName = getModel().getColumnName(modelColumn);
+      aColumn.setHeaderValue(columnName);
+      Column<T> column = getModel().getColumns().get(modelColumn);
+      column.adjust(aColumn);
+      aColumn.setCellRenderer(column.getRenderer());
+      if (column.usesStandardFilter()) standardFilterPopups.put(column, createPopupMenu(column));
+    }
+    getColumnModel().addColumn(aColumn);
+  }
+
   ObjectTable(Collection<T> fill, Collection<Column<T>> columns) {
-    this.columns.addAll(columns);
-    this.objects.addAll(fill);
-    refreshModel();
+    super(new ObjectTableModel<T>(new ArrayList<>(columns), new ArrayList<>(fill)));
+    setAutoCreateRowSorter(false);
+    setRowSorter(createRowSorter());
     addMouseListener(
         new MouseAdapter() {
           @Override
@@ -80,9 +107,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             Point mousePosition = e.getPoint();
             JTable t = (JTable) e.getSource();
             row = t.rowAtPoint(mousePosition);
-            column =
-                ObjectTable.this.columns.get(
-                    convertColumnIndexToModel(t.columnAtPoint(mousePosition)));
+            column = getColumns().get(convertColumnIndexToModel(t.columnAtPoint(mousePosition)));
             getFromRow(row)
                 .ifPresent(
                     selection -> {
@@ -98,9 +123,10 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
               @Override
               public void mouseReleased(MouseEvent e) {
                 Column<T> column =
-                    ObjectTable.this.columns.get(
-                        convertColumnIndexToModel(
-                            ((JTableHeader) e.getSource()).columnAtPoint(e.getPoint())));
+                    getColumns()
+                        .get(
+                            convertColumnIndexToModel(
+                                ((JTableHeader) e.getSource()).columnAtPoint(e.getPoint())));
                 addStandardFilterListener(e, column);
               }
             });
@@ -193,35 +219,19 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   private void refreshModel() {
-    model = (DefaultTableModel) createModel(columns, objects);
-    setRowSorter(null);
-    setModel(model);
-    columns.forEach(
-        c -> {
-          if (c.usesStandardFilter()) standardFilterPopups.put(c, createPopupMenu(c));
-        });
+    getColumns().forEach(c -> {});
+    List<Column<T>> columns = getColumns();
     for (int i = 0; i < columns.size(); i++) {
       Column<T> column = columns.get(i);
       TableColumn tableColumn = getColumnModel().getColumn(convertColumnIndexToModel(i));
       tableColumn.setCellRenderer(column.getRenderer());
       column.adjust(tableColumn);
     }
-    setRowSorter(createRowSorter());
-  }
-
-  private TableModel createModel(Collection<Column<T>> columns, Collection<T> objects) {
-    objects.forEach(
-        e -> {
-          if (e == null) throw new NullPointerException("cannot create model with null parameters");
-        });
-    Object[][] values = Tools.transformToArray(objects, Object[].class, this::collectColumns);
-    String[] names = Tools.transformToArray(columns, String.class, Column::getName);
-    return new ObjectTableModel(values, names);
   }
 
   public Optional<T> getFromRow(int index) {
     if (index < 0) return Optional.empty();
-    return Optional.of(objects.get(super.convertRowIndexToModel(index)));
+    return Optional.of(getObjects().get(super.convertRowIndexToModel(index)));
   }
 
   private void invokeSelectionListeners(T t, boolean isMouseClk) {
@@ -232,13 +242,13 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   private void insertColumn(Column<T> column, int index) {
-    columns.add(index, column);
-    refreshModel();
+    var beforeCopy = new ArrayList<>(getModel().getColumns());
+    beforeCopy.add(index, column);
+    getModel().setColumns(beforeCopy);
   }
 
   public void setColumns(List<Column<T>> columns) {
-    this.columns = columns;
-    refreshModel();
+    getModel().setColumns(columns);
   }
 
   public void setColumns(Collection<Column<T>> columns) {
@@ -247,11 +257,11 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   @SafeVarargs
   public final void setColumns(Column<T>... columns) {
-    setColumns(Arrays.asList(columns));
+    setColumns(new ArrayList<>(Arrays.asList(columns)));
   }
 
   public void addColumn(Column<T> column) {
-    insertColumn(column, columns.size());
+    getModel().addColumn(column);
   }
 
   public void addColumnAtIndex(int index, Column<T> column) {
@@ -307,15 +317,15 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     if (in == null) {
       throw new NullPointerException("Cannot add null object to ObjectTable");
     }
-    objects.add(in);
-    model.addRow(collectColumns(in));
+    ObjectTableModel<T> model = getModel();
+    model.addObject(in);
   }
 
   public void remove(T t) {
     int index = indexOf(t);
     if (index != -1) {
-      model.removeRow(index);
-      objects.remove(index);
+      ObjectTableModel<T> model = getModel();
+      model.removeObject(index);
     }
   }
 
@@ -333,40 +343,24 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   public void clear() {
-    this.objects.clear();
-    refreshModel();
-  }
-
-  private Object[] collectColumns(T value) {
-    Object[] out = new Object[columns.size()];
-    for (int i = 0; i < columns.size(); i++) {
-      try {
-        out[i] = columns.get(i).getValue(value);
-      } catch (PermissionKeyRequiredException e) {
-        out[i] = NO_ACCESS_VALUE;
-      }
-    }
-    return out;
+    getModel().setObjects(new ArrayList<>());
   }
 
   public void setObjects(Collection<T> collection) {
-    this.objects.clear();
-    this.objects.addAll(collection);
-    refreshModel();
+    getModel().setObjects(new ArrayList<>(collection));
   }
 
   public void replace(T value, T newValue) {
-    int index = objects.indexOf(value);
-    objects.set(index, newValue);
-    model.removeRow(index);
-    model.insertRow(index, collectColumns(newValue));
+    int index = getObjects().indexOf(value);
+    if (index == -1) throw new IllegalArgumentException("Object isn't contained in the table");
+    getModel().replaceObject(index, newValue);
     repaint();
   }
 
   @NotNull
   @Override
   public Iterator<T> iterator() {
-    return objects.iterator();
+    return getObjects().iterator();
   }
 
   public void setRowFilter(kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter) {
@@ -380,13 +374,19 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   private TableRowSorter<?> createRowSorter() {
-    TableRowSorter<?> out = new TableRowSorter<>(model);
+    TableRowSorter<?> out =
+        new TableRowSorter<ObjectTableModel<T>>(getModel()) {
+          @Override
+          public Comparator<?> getComparator(int column) {
+            return getColumns().get(column).sorter();
+          }
+        };
     out.setRowFilter(
         new RowFilter<Object, Integer>() {
           @Override
           public synchronized boolean include(Entry<?, ? extends Integer> entry) {
             try {
-              T object = objects.get(entry.getIdentifier());
+              T object = getObjects().get(entry.getIdentifier());
               return rowFilter.isDisplayed(object)
                   && isInStandardFilter(object)
                   && swingRowFilter.include(entry);
@@ -396,9 +396,6 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             }
           }
         });
-    for (int i = 0; i < columns.size(); i++) {
-      out.setComparator(i, columns.get(i).sorter());
-    }
     return out;
   }
 
@@ -424,27 +421,12 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     return out;
   }
 
-  public T[] getSelectedObjects(T[] pattern) {
-    int[] rows = getSelectedRows();
-    T[] out = Arrays.copyOf(pattern, rows.length);
-    for (int i = 0; i < rows.length; i++) {
-      out[i] = getFromRow(rows[i]).orElse(null);
-    }
-    return out;
-  }
-
   public void removeIf(Predicate<T> predicate) {
-    objects.removeIf(predicate);
-    refreshModel();
+    getModel().removeAllObjectsIf(predicate);
   }
 
   public void removeAll(Collection<T> collection) {
-    objects.removeAll(collection);
-    refreshModel();
-  }
-
-  public List<T> getObjects() {
-    return Collections.unmodifiableList(objects);
+    getModel().removeAllObjects(collection);
   }
 
   public Collection<T> getFilteredObjects() {

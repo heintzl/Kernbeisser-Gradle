@@ -12,8 +12,9 @@ import java.util.stream.Collectors;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Catalog.Catalog;
-import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
-import kernbeisser.Tasks.Catalog.Merge.MappedDifferences;
+import kernbeisser.Tasks.Catalog.Merge.ArticleMerge;
+import kernbeisser.Tasks.Catalog.Merge.MappedDifference;
+import kernbeisser.Tasks.Catalog.Merge.Solution;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 
@@ -27,41 +28,34 @@ public class SynchronizeArticleController
 
   @Override
   public void fillView(SynchronizeArticleView synchronizeArticleView) {
-    getView().setAllDiffs(MappedDifferences.values());
+    getView().setAllDiffs(MappedDifference.values());
   }
 
   public void useKernbeisser() {
-    apply(true);
+    applySolution(Solution.KEEP);
   }
 
   public void useKernbeisserAndIgnore() {
-    new Thread(
-            () -> {
-              getView().showProgress("Änderungen werden verarbeitet...");
-              Collection<ArticleDifference<?>> selection = getView().getSelectedObjects();
-              for (ArticleDifference<?> selectedObject : selection) {
-                model.resolveAndIgnoreDifference(selectedObject);
-              }
-              getView().removeAll(selection);
-              getView().progressFinished();
-            })
-        .start();
+    applySolution(Solution.KEEP_AND_IGNORE);
   }
 
   public void useKornkraft() {
-    apply(false);
+    applySolution(Solution.UPDATE);
   }
 
-  private void apply(boolean useCurrent) {
+  private void applySolution(Solution solution) {
     new Thread(
             () -> {
               getView().showProgress("Änderungen werden verarbeitet...");
-              Collection<ArticleDifference<?>> selection = getView().getSelectedObjects();
-              for (ArticleDifference<?> selectedObject : selection) {
-                model.resolveDifference(selectedObject, useCurrent);
+              Collection<ArticleMerge> selection = getView().getSelectedObjects();
+              MappedDifference[] differences = getView().getSelectedFilter();
+              for (ArticleMerge selectedObject : selection) {
+                for (MappedDifference difference : differences) {
+                  selectedObject.mergeProperty(difference, solution);
+                }
               }
-              getView().removeAll(selection);
               getView().progressFinished();
+              getView().filterTable();
             })
         .start();
   }

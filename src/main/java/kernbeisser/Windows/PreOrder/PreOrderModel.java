@@ -67,7 +67,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   static double containerNetPrice(Article article) {
-    return new ShoppingItem(article, 0, true).getItemNetPrice() * article.getContainerSize();
+    return new ShoppingItem(article, 0, 0, true).getItemNetPrice() * article.getContainerSize();
   }
 
   public void close() {
