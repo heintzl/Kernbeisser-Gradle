@@ -75,9 +75,21 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
     quit.addActionListener(e -> back());
   }
 
-  void indicateProgress() {
-    loadingMenuIndicator.setVisible(true);
-    logIn.setEnabled(false);
+  void indicateProgress(boolean inProgress) {
+    loadingMenuIndicator.setVisible(inProgress);
+    logIn.setEnabled(!inProgress);
+  }
+
+  public void messageLoginAgain() {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Bitte melde Dich noch einmal an!",
+        "Passwort geändert",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void clearPassword() {
+    password.setText("");
   }
 
   @Override

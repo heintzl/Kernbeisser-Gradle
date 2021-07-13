@@ -139,6 +139,7 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
 
   public void clearSearchBox() {
     searchAvailable.setText("");
+    searchChosen.setText("");
   }
 
   public void addAdditionalControl(JComponent component) {

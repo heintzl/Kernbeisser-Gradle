@@ -25,6 +25,7 @@ public class EditUsers extends ObjectViewController<User> {
 
   UserFilter userFilter =
       new UserFilter(() -> getSearchBoxController().invokeSearch(), UserFilter.FILTER_ACTIVE);
+  boolean hasAdminTools = false;
 
   @Key(PermissionKey.ACTION_OPEN_EDIT_USERS)
   public EditUsers() {
@@ -47,6 +48,7 @@ public class EditUsers extends ObjectViewController<User> {
 
   @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)
   private void addAdministrationTools() {
+    if (hasAdminTools) return;
     JButton resetPassword = new JButton("Passwort zurücksetzen");
     resetPassword.setIcon(IconFontSwing.buildIcon(FontAwesome.USER_SECRET, 20, Color.DARK_GRAY));
     resetPassword.setToolTipText(
@@ -57,6 +59,7 @@ public class EditUsers extends ObjectViewController<User> {
     editUserGroup.setToolTipText(
         "Ermöglicht es, die Benutzergruppe für einen Benutzer zu wechseln, ohne dass der Wechsel mit Passwort bestätigt werden muss");
     addButton(editUserGroup, this::openUserGroupEditor);
+    hasAdminTools = true;
   }
 
   public void resetPassword(User user) {

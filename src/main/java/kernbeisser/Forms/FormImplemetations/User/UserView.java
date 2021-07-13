@@ -3,6 +3,7 @@ package kernbeisser.Forms.FormImplemetations.User;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.MessageFormat;
 import java.util.Set;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -137,7 +138,8 @@ public class UserView implements IView<UserController> {
     lastName.setInputVerifier(new NotNullVerifier());
     hasKey.setReadable(Tools.canInvoke(this::checkUserKernbeisserKeyReadPermission));
     hasKey.setWriteable(Tools.canInvoke(this::checkUserKernbeisserKeyWritePermission));
-    shares.setInputVerifier(IntegerVerifier.from(1, 1, 3, 10));
+    shares.setInputVerifier(IntegerVerifier.from(0, 1, 3, 10));
+    shares.setEnabled(!controller.isBeginner());
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
     objectForm.registerObjectValidators(controller::validateUser, controller::validateFullname);
   }
@@ -240,12 +242,11 @@ public class UserView implements IView<UserController> {
   }
 
   public static void showPasswordToken(String resetPassword, User user, Component parentComponent) {
-    var printButton = new JButton("Benutzer-Info drucken");
+    var printButton = new JButton("Benutzerinfo drucken");
     printButton.addActionListener(
         e ->
             new LoginInfo(user, resetPassword)
-                .sendToPrinter(
-                    "Benutzerinfo wird erstellt", er -> Tools.showUnexpectedErrorWarning(er)));
+                .sendToPrinter("Benutzerinfo wird erstellt", Tools::showUnexpectedErrorWarning));
     Object message =
         new Object[] {
           "Der Anmeldename ist:\n",
@@ -305,5 +306,46 @@ public class UserView implements IView<UserController> {
             + "dass Vor- und Nachname eindeutig sind!",
         "Name nicht eindeutig",
         JOptionPane.WARNING_MESSAGE);
+  }
+
+  public void messageUserBalanceExists(double userValue) {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Das Benutzer-Konto ist nicht ausgeglichen. Der "
+            + (userValue < 0 ? "Fehlbetrag" : "Restbetrag")
+            + " von "
+            + MessageFormat.format("{0,number,0.00}€", userValue)
+            + " muss "
+            + (userValue < 0 ? "ein" : "aus")
+            + "gezahlt werden, bevor das Konto gelöscht werden kann!",
+        "Löschen fehlgeschlagen",
+        JOptionPane.ERROR_MESSAGE);
+  }
+
+  public void messageUserIsInGroup() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Der Benutzer befindet sich in einer Gruppe mit anderen Benutzern. Er kann erst gelöscht werden, wenn er die Gruppe verlassen hat!",
+        "Löschen fehlgeschlagen",
+        JOptionPane.ERROR_MESSAGE);
+  }
+
+  public void messageDeleteSuccess(boolean success) {
+    String message =
+        success
+            ? "Das Benutzerkonto wurde erfolgreich entfernt!"
+            : "Das Benutzerkonto kann nicht gelöscht werden, weil dir die Berechtigung dafür fehlt!";
+    JOptionPane.showMessageDialog(
+        getTopComponent(), message, "Konto Löschen", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public boolean confirmDelete() {
+    return JOptionPane.showConfirmDialog(
+            null,
+            "Soll das Benutzerkonto wirklich gelöscht werden?",
+            "Löschbestätigung",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
+        == JOptionPane.OK_OPTION;
   }
 }

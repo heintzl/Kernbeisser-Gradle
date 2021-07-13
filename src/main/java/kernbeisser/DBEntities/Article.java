@@ -175,11 +175,13 @@ public final class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_OFFER_WRITE)})
   private boolean offer;
 
-  @Column
+  @Column(nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
+
   @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-  private boolean printPool;
+  private boolean printPool = false;
+
 
   @Getter @Setter private Double obsoleteSurcharge;
 

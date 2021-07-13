@@ -61,7 +61,7 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
                 .map(Collection::iterator)
                 .map(Iterator::next)
                 .map(User::getUsername)
-                .orElse("[Keine Leseberehtigung]"));
+                .orElse("[Keine Leseberechtigung]"));
   }
 
   @Override
@@ -80,7 +80,9 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   }
 
   public void changeUserGroup() throws CannotLogInException {
-    if (LogInDialog.showLogInRequest(getView().getTopComponent(), model.getLogIns())) {
+    if (LogInDialog.showLogInRequest(
+        getView().getTopComponent(),
+        model.getLogIns(User.getByUsername(getView().getUsername()).getUserGroup().getMembers()))) {
       model.changeUserGroup(
           model.getUser().getId(),
           User.getByUsername(getView().getUsername()).getUserGroup().getId());
