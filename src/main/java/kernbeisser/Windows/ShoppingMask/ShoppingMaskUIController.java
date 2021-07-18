@@ -292,7 +292,8 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   void loadShoppingItem(ShoppingItem item) {
-    if (item.getKbNumber() > 0) searchWindowResult(item.extractArticle());
+    if (item.getKbNumber() > 0)
+      searchWindowResult(item.getArticleNow().orElseThrow(RuntimeException::new));
   }
 
   @Override

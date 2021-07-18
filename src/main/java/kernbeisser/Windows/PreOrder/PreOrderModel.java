@@ -29,7 +29,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   Optional<Article> getItemByKkNumber(int kkNumber) {
-    return Article.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber);
+    return Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber);
   }
 
   public void add(PreOrder preOrder) {
@@ -53,7 +53,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public Article getByBarcode(String s) throws NoResultException {
-    return Article.getByBarcode(Long.parseLong(s));
+    return Articles.getByBarcode(Long.parseLong(s)).orElseThrow(NoResultException::new);
   }
 
   Collection<PreOrder> getAllPreOrders(boolean restricted) {
@@ -67,14 +67,15 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   static double containerNetPrice(Article article) {
-    return new ShoppingItem(article, 0, true).getItemNetPrice() * article.getContainerSize();
+    return new ShoppingItem(article, 0, 0, true).getItemNetPrice() * article.getContainerSize();
   }
 
   public void close() {
     delivery.forEach(
         p -> {
           Article article = p.getArticle();
-          if (p.getUser().equals(User.getKernbeisserUser()) && !article.isShopRange()) {
+          if (p.getUser().equals(User.getKernbeisserUser())
+              && !article.getShopRange().isVisible()) {
             article.setShopRange(ShopRange.IN_RANGE);
             em.merge(article);
           }

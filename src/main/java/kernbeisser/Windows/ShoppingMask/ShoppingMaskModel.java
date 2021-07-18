@@ -2,6 +2,7 @@ package kernbeisser.Windows.ShoppingMask;
 
 import javax.persistence.NoResultException;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -26,20 +27,21 @@ public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
   }
 
   ShoppingItem getByKbNumber(int kbNumber, int discount, boolean preordered) {
-    return Article.getByKbNumber(kbNumber, true)
+    return Articles.getByKbNumber(kbNumber, true)
         .map(e -> new ShoppingItem(e, discount, preordered))
         .orElse(null);
   }
 
   ShoppingItem getBySupplierItemNumber(
       Supplier supplier, int suppliersNumber, int discount, boolean preordered) {
-    return Article.getBySuppliersItemNumber(supplier, suppliersNumber)
+    return Articles.getBySuppliersItemNumber(supplier, suppliersNumber)
         .map(e -> new ShoppingItem(e, discount, preordered))
         .orElse(null);
   }
 
   ShoppingItem getByBarcode(long barcode, int discount, boolean preordered)
       throws NoResultException {
-    return new ShoppingItem(Article.getByBarcode(barcode), discount, preordered);
+    return new ShoppingItem(
+        Articles.getByBarcode(barcode).orElseThrow(NoResultException::new), discount, preordered);
   }
 }

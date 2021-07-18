@@ -1,14 +1,19 @@
 package kernbeisser.Enums;
 
+import lombok.Getter;
+
 public enum ShopRange {
-  NOT_IN_RANGE("Nicht im Sortiment"),
-  IN_RANGE("Im Sortiment"),
-  PERMANENT_RANGE("Dauersortiment");
+  NOT_IN_RANGE("Nicht im Sortiment", false),
+  IN_RANGE("Im Sortiment", true),
+  PERMANENT_RANGE("Dauersortiment", true);
 
   private final String name;
 
-  ShopRange(String name) {
+  @Getter private final boolean visible;
+
+  ShopRange(String name, boolean visible) {
     this.name = name;
+    this.visible = visible;
   }
 
   @Override

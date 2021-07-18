@@ -14,7 +14,7 @@ import lombok.Setter;
 
 @Entity
 @Table
-@EqualsAndHashCode(doNotUseGetters = true)
+@EqualsAndHashCode(doNotUseGetters = true, exclude = "keySet")
 public class Permission {
   @Id
   @GeneratedValue

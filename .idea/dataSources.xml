@@ -11,7 +11,7 @@
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mariadb://192.168.2.122:3306</jdbc-url>
+      <jdbc-url>jdbc:mariadb://192.168.2.107:3306</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
