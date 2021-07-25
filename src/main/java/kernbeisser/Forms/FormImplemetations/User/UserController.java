@@ -40,15 +40,18 @@ public class UserController extends FormController<UserView, UserModel, User> {
 
   public void validateUser(User user, Mode mode) throws CannotParseException {
     if (mode != Mode.REMOVE) {
-      int shares = user.getShares();
-      boolean fullMember =
-          user.getPermissions().contains(PermissionConstants.FULL_MEMBER.getPermission());
-      if (shares > 0 && !fullMember && getView().askForAddPermissionFullMember(shares)) {
-        user.getPermissions().add(PermissionConstants.FULL_MEMBER.getPermission());
-      } else {
-        if (shares == 0 && fullMember && getView().askForRemovePermissionFullMember()) {
-          user.getPermissions().remove(PermissionConstants.FULL_MEMBER.getPermission());
+      try {
+        int shares = user.getShares();
+        boolean fullMember =
+            user.getPermissions().contains(PermissionConstants.FULL_MEMBER.getPermission());
+        if (shares > 0 && !fullMember && getView().askForAddPermissionFullMember(shares)) {
+          user.getPermissions().add(PermissionConstants.FULL_MEMBER.getPermission());
+        } else {
+          if (shares == 0 && fullMember && getView().askForRemovePermissionFullMember()) {
+            user.getPermissions().remove(PermissionConstants.FULL_MEMBER.getPermission());
+          }
         }
+      } catch (PermissionKeyRequiredException ignored) {
       }
     }
     if (mode == Mode.ADD) {
