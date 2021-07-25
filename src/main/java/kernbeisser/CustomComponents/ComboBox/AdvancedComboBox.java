@@ -42,9 +42,6 @@ public class AdvancedComboBox<T> extends JComboBox<T> {
   }
 
   public Optional<T> getSelected() {
-    if (getSelectedIndex() == -1) {
-      return Optional.empty();
-    }
-    return Optional.of(getItemAt(getSelectedIndex()));
+    return Optional.ofNullable((T) getModel().getSelectedItem());
   }
 }
