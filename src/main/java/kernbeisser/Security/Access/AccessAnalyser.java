@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
@@ -25,7 +25,7 @@ public class AccessAnalyser implements AccessManager, PermissionKeyBasedAccessMa
   private final HashMap<PermissionKey, String> originMap = new HashMap<>();
   private final ObjectTable<PermissionKey> keyObjectForm =
       new ObjectTable<>(
-          Columns.create("Name", PermissionKey::name), Columns.create("Origin", originMap::get));
+          Column.create("Name", PermissionKey::name), Column.create("Origin", originMap::get));
 
   public AccessAnalyser() {
     JFrame jFrame = new JFrame();

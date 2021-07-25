@@ -6,11 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import kernbeisser.CustomComponents.ObjectTable.Adjustors.StripedCellAdjustor;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
-import kernbeisser.CustomComponents.ObjectTable.Renderer.AdjustableTableCellRenderer;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
@@ -56,22 +54,22 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
         return;
       case 2:
         Collection<Column<Transaction>> columns = new ArrayList<>();
-        columns.add(Columns.create("Art", Transaction::getTransactionType));
-        columns.add(Columns.create("Von", t -> t.getFromUser().getFullName()));
-        columns.add(Columns.create("An", t -> t.getToUser().getFullName()));
+        columns.add(Column.create("Art", Transaction::getTransactionType));
+        columns.add(Column.create("Von", t -> t.getFromUser().getFullName()));
+        columns.add(Column.create("An", t -> t.getToUser().getFullName()));
         columns.add(
-            Columns.create(
+            Column.create(
                 "Eingang",
                 e -> model.incoming(e) ? String.format("%.2f€", e.getValue()) : "",
                 SwingConstants.RIGHT));
         columns.add(
-            Columns.create(
+            Column.create(
                 "Ausgang",
                 e -> model.incoming(e) ? "" : String.format("%.2f€", e.getValue()),
                 SwingConstants.RIGHT));
         columns.add(generateAfterValueChangeColumn());
-        columns.add(Columns.create("Info", Transaction::getInfo));
-        columns.add(Columns.create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate())));
+        columns.add(Column.create("Info", Transaction::getInfo));
+        columns.add(Column.create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate())));
         view.setValueHistoryColumns(columns);
         view.setValueHistory(model.getUser().getAllValueChanges());
     }
@@ -83,8 +81,8 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
 
       @Override
       public TableCellRenderer getRenderer() {
-        AdjustableTableCellRenderer<Transaction> renderer = new AdjustableTableCellRenderer<>();
-        renderer.addTableCellAdjustor(new StripedCellAdjustor<>());
+        DefaultTableCellRenderer renderer =
+            (DefaultTableCellRenderer) Column.DEFAULT_STRIPED_RENDERER;
         renderer.setHorizontalAlignment(SwingConstants.RIGHT);
         return renderer;
       }

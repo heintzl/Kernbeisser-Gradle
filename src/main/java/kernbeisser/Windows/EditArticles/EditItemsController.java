@@ -4,17 +4,18 @@ import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
-import javax.persistence.NoResultException;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.BarcodeCapture;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
-import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.StripedRenderer;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
@@ -44,27 +45,44 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             new ArticleController(),
             articleFilter::searchable,
             true,
-            new CustomizableColumn<>("Name", Article::getName)
-                .withColumnAdjustor(column -> column.setMinWidth(600))
-                .withAlignmentX(LEFT),
-            Columns.create(
+            new Column<Article>() {
+              @Override
+              public String getName() {
+                return "Name";
+              }
+
+              @Override
+              public Object getValue(Article article) throws PermissionKeyRequiredException {
+                return article.getName();
+              }
+
+              @Override
+              public void adjust(TableColumn column) {
+                column.setMinWidth(600);
+              }
+
+              @Override
+              public TableCellRenderer getRenderer() {
+                StripedRenderer renderer = new StripedRenderer();
+                renderer.setAlignmentX(LEFT);
+                return renderer;
+              }
+            },
+            Column.create(
                 "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName(), RIGHT),
-            Columns.create("Ladennummer", Article::getKbNumber, RIGHT),
-            Columns.create("Lieferant", Article::getSupplier, LEFT),
-            Columns.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT),
-            Columns.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein", LEFT),
-            Columns.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice()), RIGHT),
-            Columns.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit()), RIGHT),
-            Columns.create("MwSt.", e -> e.getVat().getName(), RIGHT),
-            Columns.create("Gebindegröße", Article::getContainerSize, RIGHT),
-            Columns.create("Preisliste", Article::getPriceList, LEFT),
-            Columns.create("Barcode", Article::getBarcode, RIGHT));
+            Column.create("Ladennummer", Article::getKbNumber, RIGHT),
+            Column.create("Lieferant", Article::getSupplier, LEFT),
+            Column.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT),
+            Column.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein", LEFT),
+            Column.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice()), RIGHT),
+            Column.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit()), RIGHT),
+            Column.create("MwSt.", e -> e.getVat().getName(), RIGHT),
+            Column.create("Gebindegröße", Article::getContainerSize, RIGHT),
+            Column.create("Preisliste", Article::getPriceList, LEFT),
+            Column.create("Barcode", Article::getBarcode, RIGHT));
     this.capture =
         new BarcodeCapture(
-            e ->
-                objectViewController.openForm(
-                    Articles.getByBarcode(Long.parseLong(e)).orElseThrow(NoResultException::new),
-                    Mode.EDIT));
+            e -> objectViewController.openForm(Article.getByBarcode(Long.parseLong(e)), Mode.EDIT));
     objectViewController.addComponents(articleFilter.createFilterCheckboxes());
   }
 

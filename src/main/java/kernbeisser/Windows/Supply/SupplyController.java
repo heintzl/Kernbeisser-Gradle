@@ -13,8 +13,6 @@ import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.PrintLabels.PrintLabelsController;
-import kernbeisser.Windows.Supply.SupplySelector.SupplySelectorController;
-import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
@@ -89,23 +87,11 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public void togglePrint(ShoppingItem t) {
-    model.togglePrint(t.getArticleNow().get());
+    model.togglePrint(t.extractArticleBySupplierNumber());
     getView().repaintTable();
   }
 
   public boolean becomePrinted(ShoppingItem e) {
-    return model.becomePrinted(e.getArticleNow().get());
-  }
-
-  public void openImportSupplyFile() {
-    new SupplySelectorController(
-            e -> {
-              for (ShoppingItem item : e) {
-                model.getShoppingItems().add(item);
-                model.togglePrint(item.getArticleNow().get());
-              }
-              getView().setShoppingItems(model.getShoppingItems());
-            })
-        .openIn(new SubWindow(getView().traceViewContainer()));
+    return model.becomePrinted(e.extractArticleBySupplierNumber());
   }
 }

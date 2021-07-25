@@ -11,14 +11,16 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.RawPrice;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Security.Utils.Getter;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -78,25 +80,41 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
     int depositKbNumber = ShoppingItem.createDeposit(0.0).getKbNumber();
     shoppingItems =
         new ObjectTable<>(
-            Columns.create(
-                    "Name",
-                    (Getter<ShoppingItem, Object>)
-                        shoppingItem ->
-                            shoppingItem.getName()
-                                + (shoppingItem.getSuppliersShortName() != null
-                                    ? " [" + shoppingItem.getSuppliersShortName() + "]"
-                                    : ""))
-                .withColumnAdjustor(e -> e.setMinWidth(500)),
-            Columns.create("Inhalt", ShoppingItem::getContentAmount, SwingConstants.RIGHT),
-            Columns.create("Menge", ShoppingItem::getDisplayAmount, SwingConstants.RIGHT),
-            Columns.create(
+            new Column<ShoppingItem>() {
+              @Override
+              public String getName() {
+                return "Name";
+              }
+
+              @Override
+              public Object getValue(ShoppingItem shoppingItem)
+                  throws PermissionKeyRequiredException {
+                return shoppingItem.getName()
+                    + (shoppingItem.getSuppliersShortName() != null
+                        ? " [" + shoppingItem.getSuppliersShortName() + "]"
+                        : "");
+              }
+
+              @Override
+              public TableCellRenderer getRenderer() {
+                return DEFAULT_STRIPED_RENDERER;
+              }
+
+              @Override
+              public void adjust(TableColumn column) {
+                column.setMinWidth(500);
+              }
+            },
+            Column.create("Inhalt", ShoppingItem::getContentAmount, SwingConstants.RIGHT),
+            Column.create("Menge", ShoppingItem::getDisplayAmount, SwingConstants.RIGHT),
+            Column.create(
                 "Rabatt",
                 e ->
                     e.isContainerDiscount()
                         ? "VB "
                         : (e.getDiscount() != 0 ? e.getDiscount() + "% " : " "),
                 SwingConstants.RIGHT),
-            Columns.create(
+            Column.create(
                 "Preis", e -> String.format("%.2f € ", e.getRetailPrice()), SwingConstants.RIGHT));
     if (editable) {
       Predicate<ShoppingItem> predicate =
@@ -106,17 +124,17 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
                   || item.getKbNumber() == depositKbNumber
                   || item.getItemMultiplier() < 0);
       shoppingItems.addColumn(
-          Columns.createIconColumn(
+          Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.PLUS, tableIconSize, new Color(0x0B315A)),
               controller::plus,
               predicate));
       shoppingItems.addColumn(
-          Columns.createIconColumn(
+          Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.MINUS, tableIconSize, new Color(0x920101)),
               controller::minus,
               predicate));
       shoppingItems.addColumn(
-          Columns.createIconColumn(
+          Column.createIcon(
               IconFontSwing.buildIcon(FontAwesome.TRASH, tableIconSize, Color.RED),
               controller::delete,
               i -> i.getKbNumber() != depositKbNumber || i.getParentItem() == null));

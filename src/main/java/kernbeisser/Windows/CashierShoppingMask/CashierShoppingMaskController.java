@@ -1,7 +1,7 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
 import javax.persistence.NoResultException;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -36,10 +36,10 @@ public class CashierShoppingMaskController
     this.searchBoxController =
         new SearchBoxController<>(
             userFilter::searchable,
-            Columns.create("Vorname", User::getFirstName),
-            Columns.create("Nachname", User::getSurname),
-            Columns.create("Benutzername", User::getUsername),
-            Columns.create("Probemitglied", e -> e.isBeginner() ? "Ja" : "Nein"));
+            Column.create("Vorname", User::getFirstName),
+            Column.create("Nachname", User::getSurname),
+            Column.create("Benutzername", User::getUsername),
+            Column.create("Probemitglied", e -> e.isBeginner() ? "Ja" : "Nein"));
     searchBoxController.addLostSelectionListener(() -> selectUser(null));
     searchBoxController.addSelectionListener(this::selectUser);
     searchBoxController.addDoubleClickListener(e -> openMaskWindow());
