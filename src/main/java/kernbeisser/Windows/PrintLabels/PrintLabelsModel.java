@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Enums.ShopRange;
@@ -25,12 +25,12 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
     return new CollectionController<>(
         new ArrayList<>(),
         Source.empty(),
-        Columns.create("Lieferant", PrintLabelsModel::getArticleSupplierName),
-        Columns.create("Name", Article::getName),
-        Columns.create("Ladennummer", Article::getKbNumber),
-        Columns.create("Lieferantennummer", Article::getSuppliersItemNumber),
-        Columns.create("Barcode", Article::getBarcode),
-        Columns.create("Preisliste", Article::getPriceList));
+        Column.create("Lieferant", PrintLabelsModel::getArticleSupplierName),
+        Column.create("Name", Article::getName),
+        Column.create("Ladennummer", Article::getKbNumber),
+        Column.create("Lieferantennummer", Article::getSuppliersItemNumber),
+        Column.create("Barcode", Article::getBarcode),
+        Column.create("Preisliste", Article::getPriceList));
   }
 
   public Collection<Article> getAllArticles() {

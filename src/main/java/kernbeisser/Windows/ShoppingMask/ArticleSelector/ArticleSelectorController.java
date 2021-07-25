@@ -1,7 +1,7 @@
 package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 
 import java.util.function.Consumer;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -21,10 +21,10 @@ public class ArticleSelectorController
     searchBoxController =
         new SearchBoxController<>(
             articleFilter::searchable,
-            Columns.create("Name", Article::getName),
-            Columns.create("Barcode", Article::getBarcode),
-            Columns.create("KB-Nummer", Article::getKbNumber),
-            Columns.create(
+            Column.create("Name", Article::getName),
+            Column.create("Barcode", Article::getBarcode),
+            Column.create("KB-Nummer", Article::getKbNumber),
+            Column.create(
                 "Lieferant",
                 e ->
                     e.getSupplier().getShortName()

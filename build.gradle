@@ -27,10 +27,7 @@ test {
 }
 
 dependencies {
-    def hibernateVersion = '5.3.12.Final'
-    implementation 'org.hibernate:hibernate-agroal:'+hibernateVersion
-    implementation "org.hibernate:hibernate-envers:"+hibernateVersion
-
+    implementation 'org.hibernate:hibernate-agroal:5.3.12.Final'
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
     implementation 'at.favre.lib:bcrypt:0.9.0'
     implementation "com.github.jiconfont:jiconfont-font_awesome:4.7.0.1"
@@ -42,6 +39,7 @@ dependencies {
 
     implementation 'org.jfree:jfreechart:1.5.0'
     implementation 'com.formdev:flatlaf:0.30'
+    implementation "org.hibernate.validator:hibernate-validator:6.1.5.Final"
     implementation 'org.json:json:20190722'
     implementation 'org.jetbrains:annotations:15.0'
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -58,7 +56,6 @@ dependencies {
 
     testImplementation 'org.mockito:mockito-inline:3.7.7'
     testImplementation 'org.mockito:mockito-junit-jupiter:3.7.7'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.0'
 }
 task fatJar(type: Jar) {
     manifest {

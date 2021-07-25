@@ -1,6 +1,6 @@
 package kernbeisser.Windows.EditSuppliers;
 
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.Supplier.SupplierController;
@@ -16,14 +16,14 @@ public class EditSuppliers extends ObjectViewController<Supplier> {
         new SupplierController(),
         Supplier::defaultSearch,
         true,
-        Columns.create("Name", Supplier::getName),
-        Columns.create("Kurzname", Supplier::getShortName),
-        Columns.create("Zuschlag", Supplier::getDefaultSurcharge),
-        Columns.create("Betreuer", Supplier::getKeeper),
-        Columns.create("Straße", Supplier::getStreet),
-        Columns.create("Ort", Supplier::getLocation),
-        Columns.create("Email", Supplier::getEmail),
-        Columns.create("Telefonnummer", Supplier::getPhoneNumber),
-        Columns.create("Fax", Supplier::getFax));
+        Column.create("Name", Supplier::getName),
+        Column.create("Kurzname", Supplier::getShortName),
+        Column.create("Zuschlag", Supplier::getDefaultSurcharge),
+        Column.create("Betreuer", Supplier::getKeeper),
+        Column.create("Straße", Supplier::getStreet),
+        Column.create("Ort", Supplier::getLocation),
+        Column.create("Email", Supplier::getEmail),
+        Column.create("Telefonnummer", Supplier::getPhoneNumber),
+        Column.create("Fax", Supplier::getFax));
   }
 }

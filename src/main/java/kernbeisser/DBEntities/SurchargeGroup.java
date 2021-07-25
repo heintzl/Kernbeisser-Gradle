@@ -13,12 +13,10 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.*;
-import org.hibernate.envers.Audited;
 
 @Table
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
-@Audited
 public class SurchargeGroup implements Serializable, Cloneable {
 
   @Id
@@ -44,7 +42,7 @@ public class SurchargeGroup implements Serializable, Cloneable {
   private Supplier supplier;
 
   @JoinColumn
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
   @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
   private SurchargeGroup parent;

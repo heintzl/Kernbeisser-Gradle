@@ -5,7 +5,7 @@ import static kernbeisser.Useful.Tools.optional;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 import javax.swing.*;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -39,9 +39,9 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
     userGroupSearchBoxView = searchBoxController.getView();
     currentUserGroup =
         new ObjectTable<>(
-            Columns.create("Vorname", User::getFirstName),
-            Columns.create("Nachname", User::getSurname),
-            Columns.create("Benutzername", User::getUsername));
+            Column.create("Vorname", User::getFirstName),
+            Column.create("Nachname", User::getSurname),
+            Column.create("Benutzername", User::getUsername));
   }
 
   String getUsername() {

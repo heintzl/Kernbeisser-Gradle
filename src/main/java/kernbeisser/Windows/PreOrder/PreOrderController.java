@@ -94,7 +94,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void noArticleFound() {
-    pasteDataInView(Articles.getEmptyArticle());
+    pasteDataInView(Article.getEmptyArticle());
   }
 
   @Override
