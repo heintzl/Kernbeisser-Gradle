@@ -53,7 +53,10 @@ public class TransactionController extends Controller<TransactionView, Transacti
       view.transactionRejected();
       return;
     }
-    view.success(model.getCount());
+    int count = model.getCount();
+    if (count > 0) {
+      view.success(count);
+    }
     model.getTransactions().clear();
     view.setTransactions(model.getTransactions());
     refreshTable();
@@ -161,8 +164,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
     if (model.getTransactionType() != TransactionType.PAYIN) {
       addUserTooltip(fromControl, u -> (allowUserGroupValue || u.equals(getLoggedInUser())));
     }
-
-    fromControl.setSelectedItem(LogInModel.getLoggedIn());
+    view.setFrom(LogInModel.getLoggedIn());
   }
 
   void fillUsers(boolean hidden) {

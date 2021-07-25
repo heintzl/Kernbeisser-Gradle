@@ -99,7 +99,7 @@ public class TransactionView implements IView<TransactionController> {
 
   void setTo(User u) {
     toKBValue.setSelected(false);
-    to.setSelectedItem(u);
+    to.getModel().setSelectedItem(u);
   }
 
   User getFrom() {
@@ -111,7 +111,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   void setFrom(User u) {
-    from.setSelectedItem(u);
+    from.getModel().setSelectedItem(u);
   }
 
   void setFromKBEnable(boolean b) {
@@ -288,10 +288,10 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (fromKBValue.isSelected()) {
               toKBValue.setSelected(false);
-              from.setSelectedItem(controller.getKernbeisserUser());
+              setFrom(controller.getKernbeisserUser());
               from.setEnabled(false);
             } else {
-              from.setSelectedItem(controller.getLoggedInUser());
+              setFrom(controller.getLoggedInUser());
               from.setEnabled(true);
             }
           }
@@ -306,10 +306,10 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (toKBValue.isSelected()) {
               fromKBValue.setSelected(false);
-              to.setSelectedItem(controller.getKernbeisserUser());
+              setTo(controller.getKernbeisserUser());
               to.setEnabled(false);
             } else {
-              to.setSelectedItem(null);
+              setTo(null);
               to.setEnabled(true);
             }
           }
@@ -516,7 +516,7 @@ public class TransactionView implements IView<TransactionController> {
 
   public void transactionRejected() {
     message(
-        "Die eingegeben Überweisungen könnnen nicht getätigt werden,\n"
+        "Die eingegeben Überweisungen können nicht getätigt werden,\n"
             + "da einige der Benutzer nicht die Berechtigung haben, unter das minimale\n"
             + "Guthaben von "
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
@@ -526,7 +526,7 @@ public class TransactionView implements IView<TransactionController> {
 
   public void transactionAdded() {
     if (!toKBValue.isSelected()) {
-      to.setSelectedItem(null);
+      setTo(null);
       to.repaint();
     }
   }
@@ -537,6 +537,6 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   public void messageSelectTransactionFirst() {
-    message("Bitte wähle zuerst eine Überweissung aus.", "Keine Überweissung ausgewählt");
+    message("Bitte wähle zuerst eine Überweisung aus.", "Keine Überweisung ausgewählt");
   }
 }
