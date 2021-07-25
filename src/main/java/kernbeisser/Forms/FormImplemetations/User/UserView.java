@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.Set;
 import javax.swing.*;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
 import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
 import kernbeisser.DBEntities.Job;
@@ -199,13 +199,13 @@ public class UserView implements IView<UserController> {
         new AccessCheckingCollectionEditor<>(
             User::getPermissionsAsAvailable,
             Source.of(Permission.class),
-            Columns.create("Name", Permission::getNeatName));
+            Column.create("Name", Permission::getNeatName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
                 User::getJobsAsAvailable,
                 Source.of(Job.class),
-                Columns.create("Name", Job::getName),
-                Columns.create("Beschreibung", Job::getDescription))
+                Column.create("Name", Job::getName),
+                Column.create("Beschreibung", Job::getDescription))
             .withCloseEvent(() -> jobs.setText(Job.concatenateJobs(chgJobs.getData())));
     jobs = new AccessCheckingLabel<>(User::getJobsAsString);
     updateInfo = new AccessCheckingLabel<>(this::getUpdateInfo);

@@ -11,7 +11,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
-import kernbeisser.Tasks.Catalog.Merge.ArticleMerge;
+import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
 import kernbeisser.Tasks.Catalog.Merge.CatalogMergeSession;
 import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Tasks.DTO.KornkraftGroup;
@@ -40,6 +40,10 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
     return mergeSession != null;
   }
 
+  public void resolveDifference(ArticleDifference<?> articleDifference, boolean useCurrent) {
+    mergeSession.resolveDifference(articleDifference, useCurrent);
+  }
+
   void setProductGroups(Stream<String> source) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -63,8 +67,12 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
     em.flush();
   }
 
-  public Collection<ArticleMerge> getAllDiffs() {
-    return mergeSession.getArticleMerges();
+  public Collection<ArticleDifference<?>> getAllDiffs() {
+    return mergeSession.getDiffs();
+  }
+
+  public void resolveAndIgnoreDifference(ArticleDifference<?> selectedObject) {
+    mergeSession.resolveAndIgnoreDifference(selectedObject);
   }
 
   public void pushToDB() {
@@ -72,6 +80,10 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
   }
 
   public void checkDiffs() {
-    mergeSession.checkMergeStatus();
+    mergeSession.checkDiffs();
+  }
+
+  public boolean hasAvailableDiffs() {
+    return mergeSession.diffsAvailable();
   }
 }

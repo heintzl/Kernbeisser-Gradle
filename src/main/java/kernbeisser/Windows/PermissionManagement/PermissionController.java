@@ -8,7 +8,6 @@ import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.ActionPermission;
@@ -52,7 +51,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     List<Permission> permissions = Permission.getAll("where NOT name = '@ADMIN'");
     Collections.reverse(permissions);
     Column<PermissionKey> nameColumn =
-        Columns.create(
+        Column.create(
             "Schlüssel-Name",
             e ->
                 PermissionKey.getPermissionHint(
@@ -70,7 +69,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
         permissions.stream()
             .map(
                 permission ->
-                    Columns.create(
+                    Column.create(
                         permission.getNeatName(),
                         (PermissionKey permissionKey) -> {
                           if (permissionKey.getClazz() == null) {

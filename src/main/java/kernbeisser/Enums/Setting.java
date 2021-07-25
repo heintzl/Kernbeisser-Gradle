@@ -1,12 +1,10 @@
 package kernbeisser.Enums;
 
 import java.awt.event.KeyEvent;
-import java.time.DayOfWeek;
 import javax.swing.*;
 import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
-import org.apache.commons.lang3.Range;
 import org.jetbrains.annotations.NotNull;
 
 public enum Setting {
@@ -54,7 +52,7 @@ public enum Setting {
   SHOPPING_AMOUNT_WARNING_THRESHOLD("30"),
   OPEN_MULTIPLE_SHOPPING_MASK("true"),
   DAYS_BEFORE_INACTIVITY("180"),
-  PRINTER("PDF-Export"),
+  PRINTER("OS_default"),
   LAST_PRINTED_BON_NR("-1"),
   LAST_PRINTED_ACOUNTING_REPORT_NR("0"),
   LABELS_PER_PAGE("40"),
@@ -64,14 +62,7 @@ public enum Setting {
   VALIDATE_EMAIL_SYNTAX("false"),
   IS_DEFAULT_SURCHARGES("true"),
   PASSWORD_TOKEN_GENERATION_LENGTH("8"),
-  GENERATE_PASSWORD_RELATED_TO_USERNAME("false"),
-  KK_SUPPLIER_FILE_REGEX_MATCH("BR[0-9]+\\.[0-9]{3}"),
-  KK_SUPPLY_MAX_FILE_TRANSFER_DURATION("600L"),
-  KK_SUPPLY_FROM_TIME("14"),
-  KK_SUPPLY_TO_TIME("24"),
-  KK_SUPPLY_DAY_OF_WEEK(DayOfWeek.TUESDAY),
-  KK_SUPPLY_PRODUCE_SUPPLIER_ITEM_NUMBER_RANGE("700000/799999"),
-  KK_SUPPLY_DIR(".");
+  GENERATE_PASSWORD_RELATED_TO_USERNAME("false");
 
   // defines the type like in java style
   // Value: Type:
@@ -118,7 +109,6 @@ public enum Setting {
     try {
       return Integer.parseInt(getValue());
     } catch (NumberFormatException e) {
-      if (getValue().endsWith("L")) return (int) getLongValue();
       Tools.showUnexpectedErrorWarning(e);
       StackTraceElement element = Tools.getCallerStackTraceElement(1);
       Main.logger.error(
@@ -215,6 +205,10 @@ public enum Setting {
     value = String.valueOf(s);
   }
 
+  public void setValue(Object s) {
+    value = String.valueOf(s);
+  }
+
   public static Class<?> getExpectedType(@NotNull Setting setting) {
     if (setting.getDefaultValue().matches("\\d*")) {
       return Integer.class;
@@ -236,21 +230,5 @@ public enum Setting {
 
   public String getValue() {
     return (this.value = this.value == null ? SettingValue.getValue(this) : value);
-  }
-
-  public Range<Integer> getIntRange() {
-    try {
-      String[] parts = getValue().split("/");
-      return Range.between(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
-    } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-      Tools.showUnexpectedErrorWarning(
-          new RuntimeException(
-              "Setting: "
-                  + this
-                  + " has a value "
-                  + getValue()
-                  + " the requested type was a range example -100/100"));
-      throw e;
-    }
   }
 }

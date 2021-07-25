@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
-import kernbeisser.Tasks.Catalog.Merge.MappedDifference;
+import kernbeisser.Tasks.Catalog.Merge.MappedDifferences;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,17 +35,17 @@ public class IgnoredDifference {
   @Column
   @Enumerated(EnumType.STRING)
   @Getter
-  private MappedDifference difference;
+  private MappedDifferences difference;
 
   @Column @Getter private String original;
 
   @Column @Getter private String ignoredChange;
 
-  public static IgnoredDifference from(Article article, ArticleDifference<?> difference) {
+  public static IgnoredDifference from(ArticleDifference<?> difference) {
     IgnoredDifference out = new IgnoredDifference();
-    out.article = article;
+    out.article = difference.getArticle();
     out.original = String.valueOf(difference.getPreviousVersion());
-    out.difference = (MappedDifference) difference.getArticleDifference();
+    out.difference = (MappedDifferences) difference.getArticleDifference();
     out.ignoredChange = String.valueOf(difference.getNewVersion());
     return out;
   }

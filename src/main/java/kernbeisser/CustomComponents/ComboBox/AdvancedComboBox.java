@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import lombok.Getter;
 
@@ -23,13 +22,15 @@ public class AdvancedComboBox<T> extends JComboBox<T> {
     setRenderer(renderer);
   }
 
-  @Override
-  public AdvancedComboBoxModel<T> getModel() {
-    return (AdvancedComboBoxModel<T>) super.getModel();
+  private void checkModel() {
+    if (!(getModel() instanceof AdvancedComboBoxModel)) {
+      throw new UnsupportedOperationException("AdvancedComboBoxModelRequired");
+    }
   }
 
   public void setItems(List<T> items) {
-    getModel().setValues(items);
+    checkModel();
+    ((AdvancedComboBoxModel<T>) getModel()).setValues(items);
     if (getSelectedIndex() == -1 && items.size() > 0) {
       setSelectedIndex(0);
     }
@@ -45,13 +46,5 @@ public class AdvancedComboBox<T> extends JComboBox<T> {
       return Optional.empty();
     }
     return Optional.of(getItemAt(getSelectedIndex()));
-  }
-
-  @Override
-  public void setModel(ComboBoxModel<T> aModel) {
-    if (!(aModel instanceof AdvancedComboBoxModel)) {
-      throw new UnsupportedOperationException("AdvancedComboBoxModelRequired");
-    }
-    super.setModel(aModel);
   }
 }
