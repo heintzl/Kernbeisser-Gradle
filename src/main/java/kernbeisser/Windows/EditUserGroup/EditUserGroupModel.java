@@ -34,12 +34,12 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     LogInModel.refreshLogInData();
   }
 
-  void changeUserGroup(int user, int destination) {
+  boolean changeUserGroup(int user, int destination) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
+    return Users.switchUserGroup(user, em.find(UserGroup.class, destination).getId());
   }
 
   public void changeSoli(double newValue) {
