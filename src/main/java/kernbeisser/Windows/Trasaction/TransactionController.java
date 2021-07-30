@@ -74,6 +74,10 @@ public class TransactionController extends Controller<TransactionView, Transacti
       view.invalidValue();
       return;
     }
+    if (view.getFrom().getUserGroup().equals(view.getTo().getUserGroup())) {
+      view.fromEqualsTo();
+      return;
+    }
     try {
       transaction.setFromUser(view.getFrom());
     } catch (NoResultException | NullPointerException e) {
@@ -97,6 +101,8 @@ public class TransactionController extends Controller<TransactionView, Transacti
     model.addTransaction(transaction);
     refreshTable();
     view.setValue("");
+    view.setTo(null);
+    view.setInfo("");
   }
 
   void remove() {
@@ -105,6 +111,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
       model.remove(view.getSelectedTransaction().orElseThrow(NoSelectionException::new));
     } catch (NoSelectionException e) {
       view.messageSelectTransactionFirst();
+    } finally {
       refreshTable();
     }
   }
@@ -115,6 +122,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
     view.setCount(model.getCount());
     view.setSum(model.getSum());
     view.transactionAdded();
+    view.setTransferTransactionsEnabled(model.getCount() > 0);
   }
 
   private void setToolTip(AdvancedComboBox<User> box, Predicate<User> condition) {
@@ -163,8 +171,8 @@ public class TransactionController extends Controller<TransactionView, Transacti
     }
     if (model.getTransactionType() != TransactionType.PAYIN) {
       addUserTooltip(fromControl, u -> (allowUserGroupValue || u.equals(getLoggedInUser())));
+      view.setFrom(LogInModel.getLoggedIn());
     }
-    view.setFrom(LogInModel.getLoggedIn());
   }
 
   void fillUsers(boolean hidden) {

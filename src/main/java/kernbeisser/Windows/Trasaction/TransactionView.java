@@ -98,8 +98,8 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   void setTo(User u) {
-    toKBValue.setSelected(false);
     to.getModel().setSelectedItem(u);
+    to.setSelectedItem(u);
   }
 
   User getFrom() {
@@ -112,6 +112,11 @@ public class TransactionView implements IView<TransactionController> {
 
   void setFrom(User u) {
     from.getModel().setSelectedItem(u);
+    from.setSelectedItem(u);
+  }
+
+  void setInfo(String text) {
+    info.setText(text);
   }
 
   void setFromKBEnable(boolean b) {
@@ -124,6 +129,10 @@ public class TransactionView implements IView<TransactionController> {
 
   void setFromEnabled(boolean b) {
     from.setEnabled(b);
+  }
+
+  void setTransferTransactionsEnabled(boolean b) {
+    transferTransactions.setEnabled(b);
   }
 
   private void createUIComponents() {
@@ -205,6 +214,12 @@ public class TransactionView implements IView<TransactionController> {
   public void invalidValue() {
     JOptionPane.showMessageDialog(
         getTopComponent(), "Der eingegebene Betrag muss größer als 0€ sein");
+  }
+
+  public void fromEqualsTo() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Überweisungen innerhalb einer Benutzergruppe können nicht durchgeführt werden");
   }
 
   public void invalidPayin() {
