@@ -81,10 +81,6 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
         String message =
             "Du hast deine Nutzergruppe erfolgreich verlassen\n"
                 + "und bist nun alleine in einer Nutzergruppe.";
-        if (ownUserGroupChange) {
-          message +=
-              "\nDamit alle Änderungen wirksam werden, musst Du Dich nun bitte einmal neu anmelden!";
-        }
         JOptionPane.showMessageDialog(getTopComponent(), message);
         if (ownUserGroupChange) {
           back();
@@ -121,10 +117,6 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
       if (controller.changeUserGroup()) {
         message =
             "Du bist erfolgreich der Nutzergruppe von " + username.getText() + " beigetreten.";
-        if (ownUserGroupChange) {
-          message +=
-              "\nDamit alle Änderungen wirksam werden, musst Du Dich nun bitte einmal neu anmelden!";
-        }
         JOptionPane.showMessageDialog(
             getTopComponent(),
             message,
