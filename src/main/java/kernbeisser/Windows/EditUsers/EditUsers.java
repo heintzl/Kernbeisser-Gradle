@@ -65,7 +65,7 @@ public class EditUsers extends ObjectViewController<User> {
   }
 
   public void openUserGroupEditor(User user) {
-    new EditUserGroupController(user, LogInModel.getLoggedIn())
+    new EditUserGroupController(user, LogInModel.getLoggedInFromDB())
         .withCloseEvent(() -> fillView(getView()))
         .openIn(new SubWindow(getView().traceViewContainer()));
   }

@@ -9,7 +9,6 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Tasks.Users;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Data;
@@ -31,7 +30,6 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
 
   public void refreshData() {
     user = Proxy.removeProxy(User.getById(user.getId()));
-    LogInModel.refreshLogInData();
   }
 
   boolean changeUserGroup(int user, int destination) {
