@@ -15,6 +15,8 @@ import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Reports.TransactionStatement;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 
@@ -139,18 +141,28 @@ public class Users {
         if (!confirmGroupVoid(currentUser)) return false;
         Transaction.switchGroupTransaction(
             em, currentUser, current, destination, current.getValue());
-        destination.setInterestThisYear(
-            destination.getInterestThisYear() + current.getInterestThisYear());
+        Access.runWithAccessManager(
+            AccessManager.NO_ACCESS_CHECKING,
+            () ->
+                destination.setInterestThisYear(
+                    destination.getInterestThisYear() + current.getInterestThisYear()));
       }
       em.persist(destination);
       currentUser.setUserGroup(destination);
       em.persist(currentUser);
       em.close();
       return true;
-    } catch (InvalidTransactionException | PermissionKeyRequiredException e) {
+    } catch (InvalidTransactionException e) {
       JOptionPane.showMessageDialog(
           null,
           "Die Kontoübertragung ist fehlgeschlagen!",
+          "Gruppenwechsel",
+          JOptionPane.ERROR_MESSAGE);
+      return false;
+    } catch (PermissionKeyRequiredException p) {
+      JOptionPane.showMessageDialog(
+          null,
+          "Fehlende Berechtigung: " + p.getMessage(),
           "Gruppenwechsel",
           JOptionPane.ERROR_MESSAGE);
       return false;
