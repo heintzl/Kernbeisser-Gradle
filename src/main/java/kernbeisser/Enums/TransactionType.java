@@ -5,7 +5,8 @@ public enum TransactionType {
   USER_GENERATED("interne Überweisung"),
   INITIALIZE("Übertrag aus Vorversion"),
   PAYIN("Einzahlung"),
-  GROUP_MERGE("Kontoübertrag bei Gruppenwechsel");
+  GROUP_MERGE("Kontoübertrag bei Gruppenwechsel"),
+  INFO("Information");
   private final String name;
 
   TransactionType(String name) {
