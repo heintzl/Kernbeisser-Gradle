@@ -177,6 +177,6 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
 
   @Override
   public String getTitle() {
-    return "Nutzergruppe wechseln";
+    return "Nutzergruppe wechseln (" + controller.getModel().getUser().getFullName() + ")";
   }
 }
