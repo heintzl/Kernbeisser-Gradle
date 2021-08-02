@@ -22,6 +22,8 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
 
   private C data;
 
+  private boolean enabled = true;
+
   private final Column<V>[] columns;
 
   private final Source<V> values;
@@ -52,7 +54,7 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
 
   @Override
   public void setReadable(boolean b) {
-    setEnabled(b);
+    super.setEnabled(b && this.enabled);
   }
 
   @Override
@@ -63,6 +65,12 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
   @Override
   public void setData(C vs) {
     data = vs;
+  }
+
+  @Override
+  public void setEnabled(boolean enabled) {
+    super.setEnabled(enabled);
+    this.enabled = enabled;
   }
 
   public C getData() {
