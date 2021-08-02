@@ -40,6 +40,7 @@ public enum PermissionKey {
   ACTION_OPEN_EDIT_USERS(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICE_LISTS(ActionPermission.class),
   ACTION_OPEN_PRE_ORDER(ActionPermission.class),
+  ACTION_OPEN_PRINT_LABELS(ActionPermission.class),
   ACTION_OPEN_OWN_PRE_ORDER(ActionPermission.class),
   ACTION_OPEN_SUPPLY(ActionPermission.class),
   ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW(ActionPermission.class),
@@ -504,6 +505,7 @@ public enum PermissionKey {
             .put("ACTION_ORDER_OWN_CONTAINER", "Vorbestellungen für mich bearbeiten")
             .put("ACTION_OPEN_ADMIN_TOOLS", "Benutzer administrieren")
             .put("ACTION_GRANT_CASHIER_PERMISSION", "Ladendienstrolle vergeben")
+            .put("ACTION_OPEN_PRINT_LABELS", "Etiketten drucken")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }
