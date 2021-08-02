@@ -11,7 +11,9 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.CannotLogInException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Exeptions.PermissionRequired;
+import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -97,6 +99,14 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
           UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
     } catch (UnsupportedLookAndFeelException e) {
       Tools.showUnexpectedErrorWarning(e);
+    } catch (PermissionKeyRequiredException p) {
+      Main.logger.error(p.getMessage(), p);
+      JOptionPane.showMessageDialog(
+          null,
+          "Keine ausreichenden Zugriffsrechte!",
+          "Anmeldung Fehlgeschlagen",
+          JOptionPane.ERROR_MESSAGE);
+
     } catch (Exception u) {
       Tools.showUnexpectedErrorWarning(u);
     }
