@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class ObjectTable<T> extends JTable implements Iterable<T> {
 
-
   private final Map<ObjectSelectionListener<T>, Boolean> selectionListeners = new HashMap<>();
 
   private final kernbeisser.CustomComponents.ObjectTable.RowFilter<T> DEFAULT_ROW_FILTER =

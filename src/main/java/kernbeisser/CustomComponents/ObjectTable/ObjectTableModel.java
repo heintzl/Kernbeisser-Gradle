@@ -37,7 +37,7 @@ public class ObjectTableModel<T> extends AbstractTableModel {
     T parent = objects.get(rowIndex);
     try {
       return new Property<>(parent, columns.get(columnIndex).getValue(parent));
-    }catch (PermissionKeyRequiredException e){
+    } catch (PermissionKeyRequiredException e) {
       return new Property<>(parent, NO_ACCESS_VALUE);
     }
   }
