@@ -4,11 +4,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.swing.table.AbstractTableModel;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import lombok.Getter;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectTableModel<T> extends AbstractTableModel {
+
+  private static final Object NO_ACCESS_VALUE = "**********";
 
   @NonNull @Getter private List<Column<T>> columns;
 
@@ -32,7 +35,11 @@ public class ObjectTableModel<T> extends AbstractTableModel {
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
     T parent = objects.get(rowIndex);
-    return new Property<>(parent, columns.get(columnIndex).getValue(parent));
+    try {
+      return new Property<>(parent, columns.get(columnIndex).getValue(parent));
+    }catch (PermissionKeyRequiredException e){
+      return new Property<>(parent, NO_ACCESS_VALUE);
+    }
   }
 
   public void setColumns(List<Column<T>> columns) {
