@@ -1,6 +1,6 @@
 package kernbeisser.Windows.EditJobs;
 
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.Job.JobController;
@@ -15,7 +15,7 @@ public class EditJobs extends ObjectViewController<Job> {
         new JobController(),
         Job::defaultSearch,
         true,
-        Columns.create("Name", Job::getName),
-        Columns.create("Beschreibung", Job::getDescription));
+        Column.create("Name", Job::getName),
+        Column.create("Beschreibung", Job::getDescription));
   }
 }

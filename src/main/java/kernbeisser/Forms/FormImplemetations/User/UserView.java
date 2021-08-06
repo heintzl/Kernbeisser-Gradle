@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.Set;
 import javax.swing.*;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
 import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
 import kernbeisser.DBEntities.Job;
@@ -142,7 +142,11 @@ public class UserView implements IView<UserController> {
     shares.setEnabled(!controller.isBeginner());
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
     objectForm.registerObjectValidators(controller::validateUser, controller::validateFullname);
+    editPermission.setEnabled(Tools.canInvoke(this::checkUserPermissionWritePermission));
   }
+
+  @Key(PermissionKey.USER_PERMISSIONS_WRITE)
+  private void checkUserPermissionWritePermission() {}
 
   @Key(PermissionKey.USER_KERNBEISSER_KEY_READ)
   private void checkUserKernbeisserKeyReadPermission() {}
@@ -195,17 +199,21 @@ public class UserView implements IView<UserController> {
             User::getKernbeisserKey, User::setKernbeisserKey, AccessCheckingField.INT_FORMER);
     email =
         new AccessCheckingField<>(User::getEmail, User::setEmail, AccessCheckingField.EMAIL_FORMER);
+    Source<Permission> permissionSource =
+        () ->
+            Permission.getAll(
+                "where not name in ('@APPLICATION', '@IMPORT', '@IN_RELATION_TO_OWN_USER')");
     editPermission =
         new AccessCheckingCollectionEditor<>(
             User::getPermissionsAsAvailable,
-            Source.of(Permission.class),
-            Columns.create("Name", Permission::getNeatName));
+            permissionSource,
+            Column.create("Name", Permission::getNeatName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
                 User::getJobsAsAvailable,
                 Source.of(Job.class),
-                Columns.create("Name", Job::getName),
-                Columns.create("Beschreibung", Job::getDescription))
+                Column.create("Name", Job::getName),
+                Column.create("Beschreibung", Job::getDescription))
             .withCloseEvent(() -> jobs.setText(Job.concatenateJobs(chgJobs.getData())));
     jobs = new AccessCheckingLabel<>(User::getJobsAsString);
     updateInfo = new AccessCheckingLabel<>(this::getUpdateInfo);

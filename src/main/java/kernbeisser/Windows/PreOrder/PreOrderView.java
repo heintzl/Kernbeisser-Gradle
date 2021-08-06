@@ -9,8 +9,7 @@ import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
-import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.PreOrder;
@@ -36,6 +35,7 @@ public class PreOrderView implements IView<PreOrderController> {
   JButton abhakplanButton;
   JButton bestellungExportierenButton;
   JButton searchArticle;
+  private JLabel caption;
 
   private JPopupMenu popupSelectionColumn;
   @Linked private PreOrderController controller;
@@ -78,23 +78,27 @@ public class PreOrderView implements IView<PreOrderController> {
     }
     preOrders =
         new ObjectTable<PreOrder>(
-            Columns.create("Benutzer", e -> e.getUser().getFullName()),
-            Columns.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
-            Columns.create(
+            Column.create("Benutzer", e -> e.getUser().getFullName()),
+            Column.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
+            Column.create(
                 "Kornkraftnummer",
                 e -> e.getArticle().getSuppliersItemNumber(),
                 SwingConstants.RIGHT),
-            Columns.create("Produktname", e -> e.getArticle().getName()),
-            Columns.create(
+            Column.create("Produktname", e -> e.getArticle().getName()),
+            Column.create(
                 "Netto-Preis",
                 e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())),
                 SwingConstants.RIGHT),
-            new CustomizableColumn<>("Anzahl", PreOrder::getAmount)
-                .withAlignmentX(SwingConstants.CENTER));
+            Column.create(
+                "Anzahl",
+                PreOrder::getAmount,
+                SwingConstants.CENTER,
+                true,
+                controller::editAmount));
     if (!controller.restrictToLoggedIn)
       preOrders.addColumnAtIndex(
           0,
-          Columns.createIconColumn(
+          Column.createIcon(
               "ausgeliefert",
               e -> controller.isDelivered(e) ? selected : unselected,
               controller::toggleDelivery,
@@ -102,10 +106,8 @@ public class PreOrderView implements IView<PreOrderController> {
               100));
     if (controller.userMayEdit()) {
       preOrders.addColumn(
-          Columns.createIconColumn(
-              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
-              controller::delete,
-              e -> true));
+          Column.createIcon(
+              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
     }
     user = new AdvancedComboBox<>(User::getFullName);
   }
@@ -237,6 +239,15 @@ public class PreOrderView implements IView<PreOrderController> {
       user.setSelectedItem(null);
     }
     enableControls(controller.restrictToLoggedIn);
+  }
+
+  public void setCaption(String forWho, boolean editable) {
+    this.caption.setText(
+        "<html><body><h2>Hier werden die Vorbestellungen für <em>"
+            + forWho
+            + "</em> angezeigt."
+            + (editable ? " Die Bestellungen können hier auch bearbeitet und ergänzt werden." : "")
+            + "</h2></body></html>");
   }
 
   public void noArticleFoundForBarcode(String barcode) {

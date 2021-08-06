@@ -14,7 +14,7 @@ import javax.swing.event.ChangeListener;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
@@ -98,7 +98,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   void setTo(User u) {
-    toKBValue.setSelected(false);
+    to.getModel().setSelectedItem(u);
     to.setSelectedItem(u);
   }
 
@@ -111,7 +111,12 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   void setFrom(User u) {
+    from.getModel().setSelectedItem(u);
     from.setSelectedItem(u);
+  }
+
+  void setInfo(String text) {
+    info.setText(text);
   }
 
   void setFromKBEnable(boolean b) {
@@ -126,15 +131,19 @@ public class TransactionView implements IView<TransactionController> {
     from.setEnabled(b);
   }
 
+  void setTransferTransactionsEnabled(boolean b) {
+    transferTransactions.setEnabled(b);
+  }
+
   private void createUIComponents() {
     transactions =
         new ObjectTable<>(
-            Columns.create(
+            Column.create(
                 "Von",
                 e -> e.getFromUser() == null ? "Kernbeißer" : (e.getFromUser().getFullName(true))),
-            Columns.create("An", e -> e.getToUser().getFullName(true)),
-            Columns.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
-            Columns.create("Info", Transaction::getInfo));
+            Column.create("An", e -> e.getToUser().getFullName(true)),
+            Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
+            Column.create("Info", Transaction::getInfo));
     from = new AdvancedComboBox<>(User::getFullName);
     to = new AdvancedComboBox<>(User::getFullName);
   }
@@ -205,6 +214,12 @@ public class TransactionView implements IView<TransactionController> {
   public void invalidValue() {
     JOptionPane.showMessageDialog(
         getTopComponent(), "Der eingegebene Betrag muss größer als 0€ sein");
+  }
+
+  public void fromEqualsTo() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Überweisungen innerhalb einer Benutzergruppe können nicht durchgeführt werden");
   }
 
   public void invalidPayin() {
@@ -288,10 +303,10 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (fromKBValue.isSelected()) {
               toKBValue.setSelected(false);
-              from.setSelectedItem(controller.getKernbeisserUser());
+              setFrom(controller.getKernbeisserUser());
               from.setEnabled(false);
             } else {
-              from.setSelectedItem(controller.getLoggedInUser());
+              setFrom(controller.getLoggedInUser());
               from.setEnabled(true);
             }
           }
@@ -306,10 +321,10 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (toKBValue.isSelected()) {
               fromKBValue.setSelected(false);
-              to.setSelectedItem(controller.getKernbeisserUser());
+              setTo(controller.getKernbeisserUser());
               to.setEnabled(false);
             } else {
-              to.setSelectedItem(null);
+              setTo(null);
               to.setEnabled(true);
             }
           }
@@ -516,7 +531,7 @@ public class TransactionView implements IView<TransactionController> {
 
   public void transactionRejected() {
     message(
-        "Die eingegeben Überweisungen könnnen nicht getätigt werden,\n"
+        "Die eingegeben Überweisungen können nicht getätigt werden,\n"
             + "da einige der Benutzer nicht die Berechtigung haben, unter das minimale\n"
             + "Guthaben von "
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
@@ -526,7 +541,7 @@ public class TransactionView implements IView<TransactionController> {
 
   public void transactionAdded() {
     if (!toKBValue.isSelected()) {
-      to.setSelectedItem(null);
+      setTo(null);
       to.repaint();
     }
   }
@@ -537,6 +552,6 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   public void messageSelectTransactionFirst() {
-    message("Bitte wähle zuerst eine Überweissung aus.", "Keine Überweissung ausgewählt");
+    message("Bitte wähle zuerst eine Überweisung aus.", "Keine Überweisung ausgewählt");
   }
 }

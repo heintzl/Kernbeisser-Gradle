@@ -2,19 +2,24 @@ package kernbeisser.Tasks.Catalog.Merge;
 
 import kernbeisser.DBEntities.Article;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-@RequiredArgsConstructor
 public class ArticleDifference<T> {
+  public ArticleDifference(Difference<Article, T> articleDifference, T old, Article article) {
+    this.articleDifference = articleDifference;
+    this.previousVersion = old;
+    this.article = article;
+  }
+
   @Getter private final Difference<Article, T> articleDifference;
   private final T previousVersion;
-  private final T newVersion;
-  @Setter @Getter @NonNull private Solution solution = Solution.NO_SOLUTION;
+  @Getter private final Article article;
+
+  public void pushCurrentIntoNew() {
+    articleDifference.set(article, previousVersion);
+  }
 
   public double distance() {
-    return articleDifference.distance(newVersion, previousVersion);
+    return articleDifference.distance(articleDifference.get(article), previousVersion);
   }
 
   public T getPreviousVersion() {
@@ -22,6 +27,6 @@ public class ArticleDifference<T> {
   }
 
   public T getNewVersion() {
-    return newVersion;
+    return articleDifference.get(article);
   }
 }

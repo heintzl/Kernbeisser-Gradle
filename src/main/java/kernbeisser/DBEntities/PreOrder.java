@@ -96,6 +96,9 @@ public class PreOrder implements Serializable, UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
+    if (this.createDate == null) { // must be a new preorder that cannot have a user relation
+      return true;
+    }
     return this.user.equals(user);
   }
 }

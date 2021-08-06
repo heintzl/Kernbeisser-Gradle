@@ -13,6 +13,7 @@ import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
+import kernbeisser.Windows.ArticleOffersEditor.ArticleOffersEditorController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.EditArticles.EditItemsController;
@@ -193,7 +194,7 @@ public class MenuView implements IView<MenuController> {
 
     editUserGroup =
         new ControllerButton(
-            () -> new EditUserGroupController(LogInModel.getLoggedIn()),
+            () -> new EditUserGroupController(LogInModel.getLoggedInFromDB()),
             EditUserGroupController.class,
             Controller::openTab);
     synchoniseCatalog =
@@ -201,12 +202,15 @@ public class MenuView implements IView<MenuController> {
             SynchronizeArticleController::new,
             SynchronizeArticleController.class,
             Controller::openTab);
-    offerManagement = ControllerButton.empty();
+    offerManagement =
+        new ControllerButton(
+            ArticleOffersEditorController::new, ArticleOffersEditorController.class);
     supply = new ControllerButton(SupplyController::new, SupplyController.class);
     doUserDefiniedTransaction =
         new ControllerButton(
             () ->
-                new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
+                new TransactionController(
+                    LogInModel.getLoggedInFromDB(), TransactionType.USER_GENERATED),
             TransactionController.class);
     permissionAssignment =
         new ControllerButton(

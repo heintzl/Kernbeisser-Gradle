@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -16,16 +17,18 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.StatementType;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -80,6 +83,18 @@ public class UserInfoView implements IView<UserInfoController> {
   }
 
   void setValueHistory(Collection<Transaction> valueChanges) {
+    if (valueChanges.size() == 0) {
+      Transaction noHistory = new Transaction();
+      Access.getExceptions().put(noHistory, AccessManager.NO_ACCESS_CHECKING);
+      noHistory.setInfo("keine Umsätze");
+      noHistory.setValue(0.0);
+      noHistory.setFromUser(controller.getModel().getUser());
+      noHistory.setToUser(controller.getModel().getUser());
+      noHistory.setTransactionType(TransactionType.INFO);
+      noHistory.setDate(Instant.now());
+      Access.getExceptions().remove(noHistory);
+      valueChanges.add(noHistory);
+    }
     this.valueHistory.setObjects(valueChanges);
   }
 
@@ -97,22 +112,22 @@ public class UserInfoView implements IView<UserInfoController> {
 
   public void createUIComponents() {
     valueHistory = new ObjectTable<Transaction>();
-    permissions = new ObjectTable<>(Columns.create("Name", Permission::getNeatName));
+    permissions = new ObjectTable<>(Column.create("Name", Permission::getNeatName));
     userGroup =
         new ObjectTable<User>(
-            Columns.create("Benutzername", User::getUsername),
-            Columns.create("Vorname", User::getFirstName),
-            Columns.create("Nachname", User::getSurname));
+            Column.create("Benutzername", User::getUsername),
+            Column.create("Vorname", User::getFirstName),
+            Column.create("Nachname", User::getSurname));
     jobs =
         new ObjectTable<Job>(
-            Columns.create("Name", Job::getName),
-            Columns.create("Beschreibung", Job::getDescription));
+            Column.create("Name", Job::getName),
+            Column.create("Beschreibung", Job::getDescription));
     shoppingHistory =
         new ObjectTable<Purchase>(
-            Columns.create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate())),
-            Columns.create("Verkäufer", e -> e.getSession().getSeller()),
-            Columns.create("Käufer", e -> e.getSession().getCustomer()),
-            Columns.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT));
+            Column.create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate())),
+            Column.create("Verkäufer", e -> e.getSession().getSeller()),
+            Column.create("Käufer", e -> e.getSession().getCustomer()),
+            Column.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT));
     phoneNumber1 = new AccessCheckingLabel<>(User::getPhoneNumber1);
     username = new AccessCheckingLabel<>(User::getUsername);
     firstName = new AccessCheckingLabel<>(User::getFirstName);

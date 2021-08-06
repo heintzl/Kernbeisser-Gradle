@@ -94,7 +94,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void noArticleFound() {
-    pasteDataInView(Articles.getEmptyArticle());
+    pasteDataInView(Article.getEmptyArticle());
   }
 
   @Override
@@ -167,7 +167,13 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
     keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
     keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
-    view.setInsertSectionEnabled(userMayEdit());
+    boolean editable = userMayEdit();
+    view.setInsertSectionEnabled(editable);
+    String preOrdersFor =
+        restrictToLoggedIn
+            ? LogInModel.getLoggedIn().getFullName()
+            : "den Laden und alle Mitglieder";
+    view.setCaption(preOrdersFor, editable);
     view.enableControls(false);
     if (restrictToLoggedIn) {
       view.setUsers(Arrays.asList(LogInModel.getLoggedIn()));

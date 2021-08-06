@@ -138,10 +138,7 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
 
   public void manipulateShoppingItemAmount(ShoppingItem i, int number) {
     ShoppingItem newItem =
-        new ShoppingItem(
-            i.getArticleNow().orElseThrow(RuntimeException::new),
-            i.getDiscount(),
-            i.isContainerDiscount());
+        new ShoppingItem(i.extractArticle(), i.getDiscount(), i.isContainerDiscount());
     newItem.setItemMultiplier(
         i.isContainerDiscount() ? (int) (number * i.getContainerSize()) : number);
     mergeShoppingItem(newItem, false);

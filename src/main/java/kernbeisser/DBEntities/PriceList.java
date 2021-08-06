@@ -27,12 +27,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.envers.Audited;
 
 @Entity
 @Table(name = "PriceLists")
 @EqualsAndHashCode(doNotUseGetters = true)
-@Audited
 public class PriceList implements Serializable {
 
   @Id

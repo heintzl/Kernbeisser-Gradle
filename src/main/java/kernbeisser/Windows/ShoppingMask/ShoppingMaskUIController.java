@@ -15,7 +15,6 @@ import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
@@ -292,8 +291,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   void loadShoppingItem(ShoppingItem item) {
-    if (item.getKbNumber() > 0)
-      searchWindowResult(item.getArticleNow().orElseThrow(RuntimeException::new));
+    if (item.getKbNumber() > 0) searchWindowResult(item.extractArticle());
   }
 
   @Override
@@ -347,7 +345,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
               () -> {
                 shoppingCartController.getItems().clear();
                 getView().back();
-                LogInModel.refreshLogInData();
               })
           .openIn(new SubWindow(getView().traceViewContainer()));
     } else {

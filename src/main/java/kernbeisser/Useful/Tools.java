@@ -37,9 +37,6 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
-import lombok.var;
-import org.hibernate.envers.AuditReaderFactory;
-import org.jetbrains.annotations.NotNull;
 import sun.misc.Unsafe;
 
 public class Tools {
@@ -53,6 +50,23 @@ public class Tools {
       }
     }
     return out;
+  }
+
+  public static <R, T> R build(List<T> in, R r, BiFunction<R, T, R> builder) {
+    for (T t : in) {
+      r = builder.apply(r, t);
+    }
+    return r;
+  }
+
+  public static int add(Integer[] x) {
+    int o = 0;
+    for (Integer i : x) {
+      if (i != null) {
+        o += i;
+      }
+    }
+    return o;
   }
 
   public static <T, O extends Collection<T>> O extract(
@@ -131,6 +145,19 @@ public class Tools {
         .getResultList();
   }
 
+  public static <T> List<T> getAllUnProxy(Class<T> c) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<T> cq = cb.createQuery(c);
+    Root<T> rootEntry = cq.from(c);
+    CriteriaQuery<T> all = cq.select(rootEntry);
+    TypedQuery<T> allQuery = em.createQuery(all);
+    return allQuery.getResultList();
+  }
+
   public static <T> T setId(T t, Object id) {
     Class<?> clazz = t.getClass();
     while (!clazz.equals(Object.class)) {
@@ -187,10 +214,11 @@ public class Tools {
     Tools.setId(o, Tools.getId(Tools.createWithoutConstructor(o.getClass())));
   }
 
-  public static <T, V> Map<V, Collection<T>> group(Iterator<T> collection, Getter<T, V> getter) {
+  public static <T, V> Map<V, Collection<T>> group(Collection<T> collection, Getter<T, V> getter) {
     HashMap<V, Collection<T>> collectionHashMap = new HashMap<>();
-    collection.forEachRemaining(
-        e -> collectionHashMap.computeIfAbsent(getter.get(e), k -> new ArrayList<>()).add(e));
+    for (T t : collection) {
+      collectionHashMap.computeIfAbsent(getter.get(t), k -> new ArrayList<>()).add(t);
+    }
     return collectionHashMap;
   }
 
@@ -302,6 +330,12 @@ public class Tools {
         null, "Der Ausdruck wurde abgebrochen!", "Drucken", JOptionPane.WARNING_MESSAGE);
   }
 
+  public static <T> T removeLambda(T from, Supplier<T> original) {
+    T out = original.get();
+    copyInto(from, out);
+    return out;
+  }
+
   public static <T> void persist(T value) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -337,37 +371,29 @@ public class Tools {
     }
   }
 
-  private static final Field modField;
-
-  static {
-    try {
-      modField = Field.class.getDeclaredField("modifiers");
-      modField.setAccessible(true);
-    } catch (NoSuchFieldException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      throw new RuntimeException(e);
-    }
-  }
-
-  public static Field makeFinalFieldAccessible(Field field) {
-    try {
-      modField.set(field, modField.getModifiers() & ~Modifier.FINAL);
-    } catch (IllegalAccessException e) {
-      Tools.showUnexpectedErrorWarning(e);
-    }
-    field.setAccessible(true);
-    return field;
-  }
-
-  public static void copyInto(@NotNull Object source, @NotNull Object destination) {
+  public static void copyInto(Object source, Object destination) {
     Class<?> clazz = source.getClass();
     while (!clazz.equals(Object.class)) {
       for (Field field : clazz.getDeclaredFields()) {
         if (Modifier.isStatic(field.getModifiers())) {
           continue;
         }
-        if (Modifier.isFinal(field.getModifiers())) {
-          makeFinalFieldAccessible(field);
+        field.setAccessible(true);
+        try {
+          field.set(destination, field.get(source));
+        } catch (IllegalAccessException e) {
+          e.printStackTrace();
+        }
+      }
+      clazz = clazz.getSuperclass();
+    }
+  }
+
+  public static <T, V extends T> void copyInto(Class<T> base, V source, V destination) {
+    Class<?> clazz = base;
+    while (!clazz.equals(Object.class)) {
+      for (Field field : clazz.getDeclaredFields()) {
+        if (Modifier.isStatic(field.getModifiers())) {
           continue;
         }
         field.setAccessible(true);
@@ -404,8 +430,23 @@ public class Tools {
     } catch (InstantiationException e) {
       e.printStackTrace();
     }
-    assert instance != null;
-    copyInto(object, instance);
+    while (!clazz.equals(Object.class)) {
+      for (Field field : clazz.getDeclaredFields()) {
+        if (Modifier.isStatic(field.getModifiers())) {
+          continue;
+        }
+        if (Modifier.isFinal(field.getModifiers())) {
+          continue;
+        }
+        field.setAccessible(true);
+        try {
+          field.set(instance, field.get(object));
+        } catch (IllegalAccessException e) {
+          e.printStackTrace();
+        }
+      }
+      clazz = clazz.getSuperclass();
+    }
     return instance;
   }
 
@@ -715,22 +756,12 @@ public class Tools {
     return out;
   }
 
-  public static <K, V> Map<K, V> createMap(Iterator<K> v, Function<K, V> valueGenerator) {
+  public static <K, V> Map<K, V> createMap(Iterable<K> v, Function<K, V> valueGenerator) {
     HashMap<K, V> map = new HashMap<>();
-    v.forEachRemaining(
+    v.forEach(
         e -> {
           V value = valueGenerator.apply(e);
           if (value != null) map.put(e, value);
-        });
-    return map;
-  }
-
-  public static <K, V> Map<K, V> createMapByValue(Iterator<V> v, Function<V, K> valueGenerator) {
-    HashMap<K, V> map = new HashMap<>();
-    v.forEachRemaining(
-        e -> {
-          K key = valueGenerator.apply(e);
-          if (key != null) map.put(key, e);
         });
     return map;
   }
@@ -914,73 +945,5 @@ public class Tools {
 
   public static <T> T or(AccessSupplier<T> supplier, T v) {
     return optional(supplier).orElse(v);
-  }
-
-  public static int indexOfFirstNumber(String s) {
-    char[] chars = s.toCharArray();
-    for (int i = 0; i < chars.length; i++) {
-      if (Character.isDigit(chars[i])) return i;
-    }
-    return -1;
-  }
-
-  public static boolean isPartOfNumb(char c) {
-    return Character.isDigit(c) || c == ',' || c == '.';
-  }
-
-  public static int countNumbers(char[] chars) {
-    int counter = 0;
-    boolean wasPartOfNumber = false;
-    for (char c : chars) {
-      boolean partOfNumber = isPartOfNumb(c);
-      if (partOfNumber && !wasPartOfNumber) {
-        counter++;
-      }
-      wasPartOfNumber = partOfNumber;
-    }
-    return counter;
-  }
-
-  public static double[] allNumbers(String s) {
-    char[] chars = s.toCharArray();
-    double[] out = new double[countNumbers(chars)];
-    int numberBeginIndex = -1;
-    int storeIndex = 0;
-    for (int i = 0; i < chars.length; i++) {
-      if (isPartOfNumb(chars[i])) {
-        if (numberBeginIndex == -1) numberBeginIndex = i;
-      } else {
-        if (numberBeginIndex == -1) continue;
-        out[storeIndex++] = Double.parseDouble(s.substring(numberBeginIndex, i).replace(",", "."));
-        numberBeginIndex = -1;
-      }
-    }
-    return out;
-  }
-
-  public static void assertPersisted(Object value) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    if (em.find(value.getClass(), Tools.getId(value)) == null)
-      throw new IllegalArgumentException("the state of the Object is not persisted");
-  }
-
-  public static int lastIndexOfPartOfNumber(char[] chars) {
-    for (int i = chars.length - 1; i >= 0; i--) {
-      if (isPartOfNumb(chars[i])) return i;
-    }
-    return -1;
-  }
-
-  public static int getNewestRevisionNumber(Object o) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    var auditReaderFactory = AuditReaderFactory.get(em);
-    List<Number> revisions = auditReaderFactory.getRevisions(o.getClass(), Tools.getId(o));
-    return revisions.get(revisions.size() - 1).intValue();
   }
 }
