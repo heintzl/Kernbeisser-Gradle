@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -173,8 +174,21 @@ public class AccessCheckingField<P, V> extends JTextField
         }
 
         @Override
-        public String toString(Double integer) {
-          return DOUBLE_FORMER.toString(integer);
+        public String toString(Double doubleValue) {
+          return DOUBLE_FORMER.toString(doubleValue);
+        }
+      };
+
+  public static final StringTransformer<Double> UNSIGNED_CURRENCY_FORMER =
+      new StringTransformer<Double>() {
+        @Override
+        public Double fromString(String s) throws CannotParseException {
+          return UNSIGNED_DOUBLE_FORMER.fromString(s);
+        }
+
+        @Override
+        public String toString(Double doubleValue) {
+          return String.format("%.2f", doubleValue);
         }
       };
 
@@ -198,14 +212,16 @@ public class AccessCheckingField<P, V> extends JTextField
   public static final StringTransformer<Double> DOUBLE_FORMER =
       new StringTransformer<Double>() {
         @Override
-        public String toString(Double integer) {
-          return integer.toString();
+        public String toString(Double doubleValue) {
+          DecimalFormat df = new DecimalFormat("0");
+          df.setMaximumFractionDigits(340);
+          return df.format(doubleValue);
         }
 
         @Override
         public Double fromString(String s) throws CannotParseException {
           try {
-            return Double.parseDouble(s);
+            return Double.parseDouble(s.replace(",", "."));
           } catch (NumberFormatException e) {
             throw new CannotParseException();
           }

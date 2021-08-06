@@ -50,12 +50,12 @@ public class MenuController extends Controller<MenuView, MenuModel> {
 
   @Key(PermissionKey.ACTION_EDIT_OWN_DATA)
   public UserInfoController getOwnUserInfoController() {
-    return new UserInfoController(LogInModel.getLoggedIn());
+    return new UserInfoController(LogInModel.getLoggedInFromDB());
   }
 
   @Key(PermissionKey.ACTION_TRANSACTION_FROM_KB)
   public TransactionController getPayInTransactionController() {
-    return new TransactionController(LogInModel.getLoggedIn(), TransactionType.PAYIN);
+    return new TransactionController(LogInModel.getLoggedInFromDB(), TransactionType.PAYIN);
   }
 
   @Key(PermissionKey.ACTION_OPEN_DB_LOG_IN)
