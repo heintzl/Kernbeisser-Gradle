@@ -21,7 +21,6 @@ import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectTable<T> extends JTable implements Iterable<T> {
-  private static final Object NO_ACCESS_VALUE = "**********";
 
   private final Map<ObjectSelectionListener<T>, Boolean> selectionListeners = new HashMap<>();
 
@@ -65,9 +64,8 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   ObjectTable(Collection<T> fill, Collection<Column<T>> columns) {
-    this.columns.addAll(columns);
-    this.objects.addAll(fill);
-    refreshModel();
+    super(new ObjectTableModel<T>(new ArrayList<>(columns), new ArrayList<>(fill)));
+    setAutoCreateRowSorter(false);
     addMouseListener(
         new MouseAdapter() {
           @Override
@@ -178,8 +176,12 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private void removeStandardFilter(JPopupMenu p) {
     standardColumnFilters.clear();
-    refreshModel();
+    sort();
     p.setVisible(false);
+  }
+
+  public void sort() {
+    ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
   private void applyStandardFilter(JPopupMenu p, Column<T> c, JTextField text) {
@@ -189,34 +191,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     } else {
       standardColumnFilters.put(c, text);
     }
-    refreshModel();
-  }
-
-  private void refreshModel() {
-    model = (DefaultTableModel) createModel(columns, objects);
-    setRowSorter(null);
-    setModel(model);
-    columns.forEach(
-        c -> {
-          if (c.usesStandardFilter()) standardFilterPopups.put(c, createPopupMenu(c));
-        });
-    for (int i = 0; i < columns.size(); i++) {
-      Column<T> column = columns.get(i);
-      TableColumn tableColumn = getColumnModel().getColumn(convertColumnIndexToModel(i));
-      tableColumn.setCellRenderer(column.getRenderer());
-      column.adjust(tableColumn);
-    }
-    setRowSorter(createRowSorter());
-  }
-
-  private TableModel createModel(Collection<Column<T>> columns, Collection<T> objects) {
-    objects.forEach(
-        e -> {
-          if (e == null) throw new NullPointerException("cannot create model with null parameters");
-        });
-    Object[][] values = Tools.transformToArray(objects, Object[].class, this::collectColumns);
-    String[] names = Tools.transformToArray(columns, String.class, Column::getName);
-    return new ObjectTableModel(values, names);
+    ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
   public Optional<T> getFromRow(int index) {
@@ -371,12 +346,12 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   public void setRowFilter(kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter) {
     this.rowFilter = rowFilter == null ? DEFAULT_ROW_FILTER : rowFilter;
-    ((TableRowSorter<?>) getRowSorter()).sort();
+    sort();
   }
 
   public void setSwingRowFilter(RowFilter<Object, Integer> rowFilter) {
     this.swingRowFilter = rowFilter == null ? DEFAULT_SWING_ROW_FILTER : rowFilter;
-    ((TableRowSorter<?>) getRowSorter()).sort();
+    sort();
   }
 
   private TableRowSorter<?> createRowSorter() {
