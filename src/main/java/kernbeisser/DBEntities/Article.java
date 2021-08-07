@@ -173,8 +173,10 @@ public class Article {
   @Column(nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRINT_AGAIN_WRITE)})
+
   @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
   private boolean printPool = false;
+
 
   @Getter @Setter private Double obsoleteSurcharge;
 

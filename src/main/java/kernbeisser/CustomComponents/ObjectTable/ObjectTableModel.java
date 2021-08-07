@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.swing.table.AbstractTableModel;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import lombok.Getter;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;

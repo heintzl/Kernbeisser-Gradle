@@ -346,12 +346,12 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   public void setRowFilter(kernbeisser.CustomComponents.ObjectTable.RowFilter<T> rowFilter) {
     this.rowFilter = rowFilter == null ? DEFAULT_ROW_FILTER : rowFilter;
-    sort();
+    ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
   public void setSwingRowFilter(RowFilter<Object, Integer> rowFilter) {
     this.swingRowFilter = rowFilter == null ? DEFAULT_SWING_ROW_FILTER : rowFilter;
-    sort();
+    ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
   private TableRowSorter<?> createRowSorter() {
