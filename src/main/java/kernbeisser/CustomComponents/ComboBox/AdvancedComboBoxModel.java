@@ -6,12 +6,14 @@ import java.util.List;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import lombok.Setter;
 
 public class AdvancedComboBoxModel<T> implements MutableComboBoxModel<T> {
 
   private final Collection<ListDataListener> listeners = new ArrayList<>();
   private List<T> values = new ArrayList<>();
   private T selected;
+  @Setter private boolean allowNullSelection;
 
   @Override
   public void setSelectedItem(Object anItem) {
@@ -29,7 +31,7 @@ public class AdvancedComboBoxModel<T> implements MutableComboBoxModel<T> {
 
   @Override
   public int getSize() {
-    return values.size();
+    return values.size() + (allowNullSelection ? 1 : 0);
   }
 
   public void setValues(List<T> values) {
@@ -60,7 +62,7 @@ public class AdvancedComboBoxModel<T> implements MutableComboBoxModel<T> {
 
   @Override
   public T getElementAt(int index) {
-    return values.get(index);
+    return index == values.size() ? null : values.get(index);
   }
 
   @Override

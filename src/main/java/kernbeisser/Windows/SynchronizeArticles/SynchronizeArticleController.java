@@ -1,13 +1,20 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CancellationException;
+import java.util.stream.Collectors;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Catalog.Catalog;
-import kernbeisser.Tasks.Catalog.Merge.ArticleDifference;
-import kernbeisser.Tasks.Catalog.Merge.MappedDifferences;
+import kernbeisser.Tasks.Catalog.Merge.ArticleMerge;
+import kernbeisser.Tasks.Catalog.Merge.MappedDifference;
+import kernbeisser.Tasks.Catalog.Merge.Solution;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 
@@ -21,41 +28,34 @@ public class SynchronizeArticleController
 
   @Override
   public void fillView(SynchronizeArticleView synchronizeArticleView) {
-    getView().setAllDiffs(MappedDifferences.values());
+    getView().setAllDiffs(MappedDifference.values());
   }
 
   public void useKernbeisser() {
-    apply(true);
+    applySolution(Solution.KEEP);
   }
 
   public void useKernbeisserAndIgnore() {
-    new Thread(
-            () -> {
-              getView().showProgress("Änderungen werden verarbeitet...");
-              Collection<ArticleDifference<?>> selection = getView().getSelectedObjects();
-              for (ArticleDifference<?> selectedObject : selection) {
-                model.resolveAndIgnoreDifference(selectedObject);
-              }
-              getView().removeAll(selection);
-              getView().progressFinished();
-            })
-        .start();
+    applySolution(Solution.KEEP_AND_IGNORE);
   }
 
   public void useKornkraft() {
-    apply(false);
+    applySolution(Solution.UPDATE);
   }
 
-  private void apply(boolean useCurrent) {
+  private void applySolution(Solution solution) {
     new Thread(
             () -> {
               getView().showProgress("Änderungen werden verarbeitet...");
-              Collection<ArticleDifference<?>> selection = getView().getSelectedObjects();
-              for (ArticleDifference<?> selectedObject : selection) {
-                model.resolveDifference(selectedObject, useCurrent);
+              Collection<ArticleMerge> selection = getView().getSelectedObjects();
+              MappedDifference[] differences = getView().getSelectedFilter();
+              for (ArticleMerge selectedObject : selection) {
+                for (MappedDifference difference : differences) {
+                  selectedObject.mergeProperty(difference, solution);
+                }
               }
-              getView().removeAll(selection);
               getView().progressFinished();
+              getView().filterTable();
             })
         .start();
   }
@@ -68,14 +68,17 @@ public class SynchronizeArticleController
     }
   }
 
-  public void importCatalog() {
+  private void importCatalogSource(Collection<String> lines) {
+    model.load(lines);
+    getView().setDifferences(model.getAllDiffs());
+  }
+
+  public void importCatalogFile() {
     try {
-      model.load(
+      importCatalogSource(
           Files.readAllLines(
               getView().requestInputFile("csv", "BNN", "bnn", "txt", "TXT").toPath(),
               Catalog.DEFAULT_ENCODING));
-
-      getView().setDifferences(model.getAllDiffs());
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -102,5 +105,18 @@ public class SynchronizeArticleController
       return false;
     }
     return true;
+  }
+
+  public void importCatalogFromInternet() {
+    try {
+      String urlAddress = getView().messageRequestInputURL();
+      URL url = new URL(urlAddress);
+      BufferedReader bufferedReader =
+          new BufferedReader(new InputStreamReader(url.openStream(), Catalog.DEFAULT_ENCODING));
+      importCatalogSource(bufferedReader.lines().collect(Collectors.toCollection(ArrayList::new)));
+    } catch (CancellationException ignored) {
+    } catch (IOException e) {
+      getView().messageInvalidURL();
+    }
   }
 }

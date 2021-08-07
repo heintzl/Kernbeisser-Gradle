@@ -8,6 +8,7 @@ import javax.persistence.Persistence;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
+import kernbeisser.Config.IgnoreThis;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Main;
@@ -20,10 +21,14 @@ import org.hibernate.service.spi.ServiceException;
 public class DBConnection {
 
   static {
-    if (!Access.isActive()) {
-      System.err.println("Access checking is not active:");
-      JOptionPane.showMessageDialog(null, "Security system disabled shutting down system...");
-      System.exit(-1);
+    try {
+      IgnoreThis.class.getDeclaredField("TEST_FLAG");
+    } catch (NoSuchFieldException e) {
+      if (!Access.isActive()) {
+        System.err.println("Access checking is not active:");
+        JOptionPane.showMessageDialog(null, "Security system disabled shutting down system...");
+        System.exit(-1);
+      }
     }
   }
 

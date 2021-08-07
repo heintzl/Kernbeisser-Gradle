@@ -2,7 +2,7 @@ package kernbeisser.Windows.ManagePriceLists;
 
 import java.util.function.Consumer;
 import javax.swing.*;
-import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
@@ -47,8 +47,8 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     priceLists.addSelectionListener(this::priceListNodeSelection);
     articles =
         new ObjectTable<>(
-            Column.create("Name", Article::getName, SwingConstants.LEFT),
-            Column.create("Lieferant", Article::getSupplier, SwingConstants.LEFT));
+            Columns.create("Name", Article::getName, SwingConstants.LEFT),
+            Columns.create("Lieferant", Article::getSupplier, SwingConstants.LEFT));
   }
 
   @NotNull

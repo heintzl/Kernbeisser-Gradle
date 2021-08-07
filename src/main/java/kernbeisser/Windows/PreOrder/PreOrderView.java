@@ -9,7 +9,8 @@ import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
-import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.PreOrder;
@@ -78,27 +79,23 @@ public class PreOrderView implements IView<PreOrderController> {
     }
     preOrders =
         new ObjectTable<PreOrder>(
-            Column.create("Benutzer", e -> e.getUser().getFullName()),
-            Column.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
-            Column.create(
+            Columns.create("Benutzer", e -> e.getUser().getFullName()),
+            Columns.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
+            Columns.create(
                 "Kornkraftnummer",
                 e -> e.getArticle().getSuppliersItemNumber(),
                 SwingConstants.RIGHT),
-            Column.create("Produktname", e -> e.getArticle().getName()),
-            Column.create(
+            Columns.create("Produktname", e -> e.getArticle().getName()),
+            Columns.create(
                 "Netto-Preis",
                 e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())),
                 SwingConstants.RIGHT),
-            Column.create(
-                "Anzahl",
-                PreOrder::getAmount,
-                SwingConstants.CENTER,
-                true,
-                controller::editAmount));
+            new CustomizableColumn<>("Anzahl", PreOrder::getAmount)
+                .withAlignmentX(SwingConstants.CENTER));
     if (!controller.restrictToLoggedIn)
       preOrders.addColumnAtIndex(
           0,
-          Column.createIcon(
+          Columns.createIconColumn(
               "ausgeliefert",
               e -> controller.isDelivered(e) ? selected : unselected,
               controller::toggleDelivery,
@@ -106,8 +103,10 @@ public class PreOrderView implements IView<PreOrderController> {
               100));
     if (controller.userMayEdit()) {
       preOrders.addColumn(
-          Column.createIcon(
-              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED), controller::delete));
+          Columns.createIconColumn(
+              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
+              controller::delete,
+              e -> true));
     }
     user = new AdvancedComboBox<>(User::getFullName);
   }

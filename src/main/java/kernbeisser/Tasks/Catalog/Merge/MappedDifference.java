@@ -4,7 +4,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 
-public enum MappedDifferences implements Difference<Article, Object> {
+public enum MappedDifference implements Difference<Article, Object> {
   PRICE("Preis") {
     @Override
     public void set(Article article, Object t) throws PermissionKeyRequiredException {
@@ -30,43 +30,6 @@ public enum MappedDifferences implements Difference<Article, Object> {
     @Override
     public Double get(Article article) throws PermissionKeyRequiredException {
       return article.getContainerSize();
-    }
-
-    @Override
-    public double distance(Object a, Object b) {
-      return Math.abs((Double) b / (Double) a) - 1;
-    }
-  },
-  DEPOSIT("Pfand") {
-    @Override
-    public void set(Article article, Object t) throws PermissionKeyRequiredException {
-      article.setSingleDeposit((Double) t);
-    }
-
-    @Override
-    public Double get(Article article) throws PermissionKeyRequiredException {
-      return article.getSingleDeposit();
-    }
-
-    @Override
-    public double distance(Object a, Object b) {
-      return Math.abs((Double) b / (Double) a) - 1;
-    }
-  },
-  CONTAINER_DOPSIT("Kisten-Pfand") {
-    @Override
-    public void set(Article article, Object t) throws PermissionKeyRequiredException {
-      article.setContainerDeposit((Double) t);
-    }
-
-    @Override
-    public Double get(Article article) throws PermissionKeyRequiredException {
-      return article.getContainerDeposit();
-    }
-
-    @Override
-    public String getName() {
-      return "Kistenpfand";
     }
 
     @Override
@@ -111,7 +74,7 @@ public enum MappedDifferences implements Difference<Article, Object> {
 
   private final String name;
 
-  MappedDifferences(String name) {
+  MappedDifference(String name) {
     this.name = name;
   }
 

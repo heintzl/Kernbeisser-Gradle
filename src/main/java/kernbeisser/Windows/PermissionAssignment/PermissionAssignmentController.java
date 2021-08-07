@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
@@ -40,9 +40,9 @@ public class PermissionAssignmentController
     return new CollectionController<>(
         new ArrayList<>(),
         Source.empty(),
-        Column.create("Vorname", User::getFirstName).withStandardFilter(),
-        Column.create("Nachname", User::getSurname).withStandardFilter(),
-        Column.create("Dienste", User::getJobsAsString).withStandardFilter());
+        Columns.create("Vorname", User::getFirstName).withDefaultFilter(),
+        Columns.create("Nachname", User::getSurname).withDefaultFilter(),
+        Columns.create("Dienste", User::getJobsAsString).withDefaultFilter());
   }
 
   @Override

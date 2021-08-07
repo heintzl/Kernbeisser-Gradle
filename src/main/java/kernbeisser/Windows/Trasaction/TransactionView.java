@@ -14,7 +14,7 @@ import javax.swing.event.ChangeListener;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
-import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
@@ -138,12 +138,12 @@ public class TransactionView implements IView<TransactionController> {
   private void createUIComponents() {
     transactions =
         new ObjectTable<>(
-            Column.create(
+            Columns.create(
                 "Von",
                 e -> e.getFromUser() == null ? "Kernbeißer" : (e.getFromUser().getFullName(true))),
-            Column.create("An", e -> e.getToUser().getFullName(true)),
-            Column.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
-            Column.create("Info", Transaction::getInfo));
+            Columns.create("An", e -> e.getToUser().getFullName(true)),
+            Columns.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
+            Columns.create("Info", Transaction::getInfo));
     from = new AdvancedComboBox<>(User::getFullName);
     to = new AdvancedComboBox<>(User::getFullName);
   }
