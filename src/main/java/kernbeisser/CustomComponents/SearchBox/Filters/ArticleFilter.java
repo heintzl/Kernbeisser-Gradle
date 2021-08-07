@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import lombok.Setter;
 
 public class ArticleFilter {
@@ -20,12 +21,12 @@ public class ArticleFilter {
   }
 
   public Collection<Article> searchable(String query, int max) {
-    return Article.getDefaultAll(
+    return Articles.getDefaultAll(
         query,
         e ->
             !(filterNoBarcode && e.getBarcode() != null)
                 && !(filterShowInShop && !e.isShowInShop())
-                && !(filterShopRange && !e.isShopRange()),
+                && !(filterShopRange && !e.getShopRange().isVisible()),
         max);
   }
 

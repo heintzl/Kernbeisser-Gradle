@@ -5,6 +5,7 @@ import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -32,7 +33,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     printButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
     printButton.addActionListener(e -> getModel().print(articles));
     articles.addControls(printButton, printSheetInfo);
-    model.setPrintPoolBefore(Article.getPrintPool());
+    model.setPrintPoolBefore(Articles.getPrintPool());
   }
 
   private static void openMe(ViewContainer targetComponent) {
@@ -40,11 +41,12 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   }
 
   public static JButton getLaunchButton(ViewContainer targetComponent) {
-    int printPoolSize = Article.getPrintPool().size();
+    long printPoolSize = Articles.getArticlePrintPoolSize();
     JButton launchButton = new JButton("Etiketten drucken" + (printPoolSize > 0 ? " *" : ""));
     launchButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
     launchButton.setToolTipText("Öffnet das Fenster für den Etikettendruck");
-    launchButton.addActionListener(e -> openMe(targetComponent));
+    launchButton.addActionListener(
+        e -> new PrintLabelsController().openIn(new SubWindow(targetComponent)));
     return launchButton;
   }
 
@@ -72,7 +74,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   @Override
   public void fillView(PrintLabelsView printLabelsView) {
-    articles.setLoadedAndSource(Article.getPrintPool(), model::getAllArticles);
+    articles.setLoadedAndSource(Articles.getPrintPool(), model::getAllArticles);
     articles.getView().addSearchbox(CollectionView.BOTH);
   }
 
@@ -80,7 +82,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   protected void closed() {
     var newPrintPool = articles.getModel().getLoaded();
     if (!newPrintPool.equals(model.getPrintPoolBefore()) && getView().confirmChanges()) {
-      Article.replacePrintPool(newPrintPool);
+      Articles.replacePrintPool(newPrintPool);
     }
     ;
   }

@@ -43,7 +43,7 @@ import lombok.Cleanup;
 
 public class DataImportModel implements IModel<DataImportController> {
 
-  void createAdmin(String password) {
+  public void createAdmin(String password) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
@@ -257,8 +257,7 @@ public class DataImportModel implements IModel<DataImportController> {
 
   private void readCatalog(Collection<String> kornkraftCatalog) {
     CatalogMergeSession mergeSession = new CatalogMergeSession(kornkraftCatalog);
-    mergeSession.resolveAllFor(true);
-    mergeSession.pushToDB();
+    mergeSession.pushAllNotImportantChanges();
   }
 
   private void readArticles(Stream<String> f) {
@@ -272,8 +271,8 @@ public class DataImportModel implements IModel<DataImportController> {
     HashMap<String, Supplier> suppliers = new HashMap<>();
     HashMap<Supplier, SurchargeGroup> defaultGroup = new HashMap<>();
     HashMap<Article, Collection<Offer>> articleCollectionHashMap = new HashMap<>(5000);
-    Tools.getAllUnProxy(Supplier.class).forEach(e -> suppliers.put(e.getShortName(), e));
-    Tools.getAllUnProxy(PriceList.class).forEach(e -> priceListHashMap.put(e.getName(), e));
+    Tools.getAll(Supplier.class, null).forEach(e -> suppliers.put(e.getShortName(), e));
+    Tools.getAll(PriceList.class, null).forEach(e -> priceListHashMap.put(e.getName(), e));
     suppliers.values().forEach(e -> defaultGroup.put(e, e.getOrPersistDefaultSurchargeGroup(em)));
     ErrorCollector errorCollector = new ErrorCollector();
     f.forEach(
@@ -290,7 +289,7 @@ public class DataImportModel implements IModel<DataImportController> {
     Main.logger.warn("Ignored " + errorCollector.count() + " articles errors:");
     errorCollector.log();
     ArrayList<Article> articles = new ArrayList<>(articleCollectionHashMap.keySet());
-    Tools.group(articles, Article::getSupplier)
+    Tools.group(articles.iterator(), Article::getSupplier)
         .forEach(
             (v, k) ->
                 Tools.fillUniqueFieldWithNextAvailable(
