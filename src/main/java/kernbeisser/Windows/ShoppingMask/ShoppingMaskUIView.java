@@ -175,17 +175,13 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
   }
 
-  private void priceEntered(int keyCode) {
+  private void priceEntered() {
     updateAmountControl(currentArticleType, isPreordered);
     if (amount.isEnabled()) {
       amount.selectAll();
-      if (keyCode == KeyEvent.VK_ENTER) {
-        amount.requestFocusInWindow();
-      }
+      amount.requestFocusInWindow();
     } else {
-      if (keyCode == KeyEvent.VK_ENTER) {
-        addToCart();
-      }
+      addToCart();
     }
   }
 
@@ -307,11 +303,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     setPriceOptions(type);
     isWeighable = false;
 
-    addAmount.setVisible(type == ArticleType.ARTICLE_NUMBER || type == ArticleType.CUSTOM_PRODUCT);
-    addPrice.setVisible(
-        !isPreordered
-            && type != ArticleType.CUSTOM_PRODUCT
-            && articleTypesWithSettablePrice.contains(type));
+    addAmount.setVisible(type == ArticleType.ARTICLE_NUMBER);
+    addPrice.setVisible(!isPreordered && articleTypesWithSettablePrice.contains(type));
     addNetPrice.setVisible(isPreordered && articleTypesWithSettablePrice.contains(type));
     addDeposit.setVisible(depositArticleTypes.contains(type));
 
@@ -814,16 +807,11 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           @Override
           public void keyReleased(KeyEvent e) {
             if (netPrice.isEnabled()) recalculatePrice();
-            priceEntered(e.getKeyCode());
           }
         });
-    price.addKeyListener(
-        new KeyAdapter() {
-          @Override
-          public void keyReleased(KeyEvent e) {
-            priceEntered(e.getKeyCode());
-          }
-        });
+    netPrice.addActionListener(e -> priceEntered());
+
+    price.addActionListener(e -> priceEntered());
     deposit.addActionListener(e -> addToCart());
     amount.addActionListener(e -> addToCart());
     for (VAT val : VAT.values()) {

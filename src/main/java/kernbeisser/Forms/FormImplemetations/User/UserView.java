@@ -142,11 +142,7 @@ public class UserView implements IView<UserController> {
     shares.setEnabled(!controller.isBeginner());
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
     objectForm.registerObjectValidators(controller::validateUser, controller::validateFullname);
-    editPermission.setEnabled(Tools.canInvoke(this::checkUserPermissionWritePermission));
   }
-
-  @Key(PermissionKey.USER_PERMISSIONS_WRITE)
-  private void checkUserPermissionWritePermission() {}
 
   @Key(PermissionKey.USER_KERNBEISSER_KEY_READ)
   private void checkUserKernbeisserKeyReadPermission() {}
@@ -199,14 +195,10 @@ public class UserView implements IView<UserController> {
             User::getKernbeisserKey, User::setKernbeisserKey, AccessCheckingField.INT_FORMER);
     email =
         new AccessCheckingField<>(User::getEmail, User::setEmail, AccessCheckingField.EMAIL_FORMER);
-    Source<Permission> permissionSource =
-        () ->
-            Permission.getAll(
-                "where not name in ('@APPLICATION', '@IMPORT', '@IN_RELATION_TO_OWN_USER')");
     editPermission =
         new AccessCheckingCollectionEditor<>(
             User::getPermissionsAsAvailable,
-            permissionSource,
+            Source.of(Permission.class),
             Column.create("Name", Permission::getNeatName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(

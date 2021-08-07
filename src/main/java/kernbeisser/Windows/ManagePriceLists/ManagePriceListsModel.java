@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
-import javax.persistence.Query;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
@@ -35,18 +34,10 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Query query;
-    if (destination.getId() == 0) {
-      query =
-          em.createQuery("update PriceList set superPriceList = null where id = :t")
-              .setParameter("t", target.getId());
-    } else {
-      query =
-          em.createQuery("update PriceList set superPriceList = :d where id = :t")
-              .setParameter("d", destination)
-              .setParameter("t", target.getId());
-    }
-    query.executeUpdate();
+    em.createQuery("update PriceList set superPriceList = :d where id = :t")
+        .setParameter("d", destination)
+        .setParameter("t", target.getId())
+        .executeUpdate();
     em.flush();
   }
 

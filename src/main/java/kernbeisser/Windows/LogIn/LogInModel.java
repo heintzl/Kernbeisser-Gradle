@@ -20,18 +20,18 @@ import lombok.Cleanup;
 
 public final class LogInModel implements IModel {
 
-  private static User loggedIn;
+  public static User loggedIn;
 
-  public static User getLoggedIn() {
-    return loggedIn;
-  }
-
-  public static User getLoggedInFromDB() {
+  public static void refreshLogInData() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.find(User.class, loggedIn.getId());
+    loggedIn = em.find(loggedIn.getClass(), loggedIn.getId());
+  }
+
+  public static User getLoggedIn() {
+    return loggedIn;
   }
 
   public static void logIn(String username, char[] password)

@@ -24,7 +24,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   private final JButton printButton = new JButton();
   private final JLabel printSheetInfo = new JLabel();
 
-  @Key(PermissionKey.ACTION_OPEN_PRINT_LABELS)
+  @Key(PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT)
   public PrintLabelsController() throws PermissionKeyRequiredException {
     super(new PrintLabelsModel());
     articles = PrintLabelsModel.getArticleSource();
@@ -36,7 +36,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   }
 
   private static void openMe(ViewContainer targetComponent) {
-    new PrintLabelsController().openIn(new SubWindow(targetComponent));
+    var controller = new PrintLabelsController().openIn(new SubWindow(targetComponent));
   }
 
   public static JButton getLaunchButton(ViewContainer targetComponent) {
@@ -82,5 +82,6 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     if (!newPrintPool.equals(model.getPrintPoolBefore()) && getView().confirmChanges()) {
       Article.replacePrintPool(newPrintPool);
     }
+    ;
   }
 }

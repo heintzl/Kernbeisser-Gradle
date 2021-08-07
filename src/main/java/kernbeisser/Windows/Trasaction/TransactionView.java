@@ -98,7 +98,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   void setTo(User u) {
-    to.getModel().setSelectedItem(u);
+    toKBValue.setSelected(false);
     to.setSelectedItem(u);
   }
 
@@ -111,12 +111,7 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   void setFrom(User u) {
-    from.getModel().setSelectedItem(u);
     from.setSelectedItem(u);
-  }
-
-  void setInfo(String text) {
-    info.setText(text);
   }
 
   void setFromKBEnable(boolean b) {
@@ -129,10 +124,6 @@ public class TransactionView implements IView<TransactionController> {
 
   void setFromEnabled(boolean b) {
     from.setEnabled(b);
-  }
-
-  void setTransferTransactionsEnabled(boolean b) {
-    transferTransactions.setEnabled(b);
   }
 
   private void createUIComponents() {
@@ -216,12 +207,6 @@ public class TransactionView implements IView<TransactionController> {
         getTopComponent(), "Der eingegebene Betrag muss größer als 0€ sein");
   }
 
-  public void fromEqualsTo() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(),
-        "Überweisungen innerhalb einer Benutzergruppe können nicht durchgeführt werden");
-  }
-
   public void invalidPayin() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
@@ -303,10 +288,10 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (fromKBValue.isSelected()) {
               toKBValue.setSelected(false);
-              setFrom(controller.getKernbeisserUser());
+              from.setSelectedItem(controller.getKernbeisserUser());
               from.setEnabled(false);
             } else {
-              setFrom(controller.getLoggedInUser());
+              from.setSelectedItem(controller.getLoggedInUser());
               from.setEnabled(true);
             }
           }
@@ -321,10 +306,10 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (toKBValue.isSelected()) {
               fromKBValue.setSelected(false);
-              setTo(controller.getKernbeisserUser());
+              to.setSelectedItem(controller.getKernbeisserUser());
               to.setEnabled(false);
             } else {
-              setTo(null);
+              to.setSelectedItem(null);
               to.setEnabled(true);
             }
           }
@@ -531,7 +516,7 @@ public class TransactionView implements IView<TransactionController> {
 
   public void transactionRejected() {
     message(
-        "Die eingegeben Überweisungen können nicht getätigt werden,\n"
+        "Die eingegeben Überweisungen könnnen nicht getätigt werden,\n"
             + "da einige der Benutzer nicht die Berechtigung haben, unter das minimale\n"
             + "Guthaben von "
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
@@ -541,7 +526,7 @@ public class TransactionView implements IView<TransactionController> {
 
   public void transactionAdded() {
     if (!toKBValue.isSelected()) {
-      setTo(null);
+      to.setSelectedItem(null);
       to.repaint();
     }
   }
@@ -552,6 +537,6 @@ public class TransactionView implements IView<TransactionController> {
   }
 
   public void messageSelectTransactionFirst() {
-    message("Bitte wähle zuerst eine Überweisung aus.", "Keine Überweisung ausgewählt");
+    message("Bitte wähle zuerst eine Überweissung aus.", "Keine Überweissung ausgewählt");
   }
 }

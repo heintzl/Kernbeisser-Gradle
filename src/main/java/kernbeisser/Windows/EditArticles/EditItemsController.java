@@ -20,7 +20,6 @@ import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Security.Key;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
@@ -105,10 +104,8 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
   @Override
   public void fillView(EditItemsView editItemsView) {
     objectViewController.setSearch("");
-    if (Tools.canInvoke(PrintLabelsController::new)) {
-      objectViewController.addButton(
-          PrintLabelsController.getLaunchButton(getView().traceViewContainer()));
-    }
+    objectViewController.addButton(
+        PrintLabelsController.getLaunchButton(getView().traceViewContainer()));
     refreshList();
   }
 

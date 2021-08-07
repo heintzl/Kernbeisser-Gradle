@@ -20,7 +20,7 @@ public class SoloShoppingMaskController
   public SoloShoppingMaskController() throws NotEnoughCreditException {
     super(new SoloShoppingMaskModel());
     SaleSession saleSession = new SaleSession(SaleSessionType.SOLO);
-    saleSession.setCustomer(LogInModel.getLoggedInFromDB());
+    saleSession.setCustomer(LogInModel.getLoggedIn());
     saleSession.setSeller(LogInModel.getLoggedIn());
     this.shoppingMaskUIController = new ShoppingMaskUIController(saleSession);
   }

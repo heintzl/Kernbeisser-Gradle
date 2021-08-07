@@ -4,7 +4,6 @@ import java.awt.*;
 import java.util.Collection;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBoxRenderer;
-import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.Verifier.DoubleVerifier;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
 import kernbeisser.CustomComponents.Verifier.KBNumberVerifier;
@@ -38,7 +37,7 @@ public class ArticleView implements IView<ArticleController> {
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Integer>
       supplierItemNumber;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double> crateDeposit;
-  private kernbeisser.CustomComponents.PermissionButton searchPriceList;
+  private kernbeisser.CustomComponents.PermissionButton search;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, PriceList>
       priceList;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Integer> amount;
@@ -49,12 +48,11 @@ public class ArticleView implements IView<ArticleController> {
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Long> barcode;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckBox<Article> showInShoppingMask;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckBox<Article> weighable;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, String> extraInfo;
+  private JTextArea extraInfo;
   private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, VAT> vat;
   private JPanel main;
   private AccessCheckingComboBox<Article, SurchargeGroup> surchargeGroup;
   private AccessCheckingComboBox<Article, ShopRange> shopRange;
-  private PermissionButton searchSurchargeGroup;
 
   private ObjectForm<Article> articleObjectForm;
 
@@ -65,17 +63,17 @@ public class ArticleView implements IView<ArticleController> {
         new AccessCheckingField<>(Article::getName, Article::setName, AccessCheckingField.NONE);
     amount =
         new AccessCheckingField<>(
-            Article::getAmount, Article::setAmount, AccessCheckingField.UNSIGNED_INT_FORMER);
+            Article::getAmount,
+            Article::setAmount,
+            AccessCheckingField.combine(controller::displayAmount, controller::parseAmount));
     netPrice =
         new AccessCheckingField<>(
-            Article::getNetPrice,
-            Article::setNetPrice,
-            AccessCheckingField.UNSIGNED_CURRENCY_FORMER);
+            Article::getNetPrice, Article::setNetPrice, AccessCheckingField.UNSIGNED_DOUBLE_FORMER);
     deposit =
         new AccessCheckingField<>(
             Article::getSingleDeposit,
             Article::setSingleDeposit,
-            AccessCheckingField.UNSIGNED_CURRENCY_FORMER);
+            AccessCheckingField.UNSIGNED_DOUBLE_FORMER);
     kbItemNumber =
         new AccessCheckingField<>(
             Article::getKbNumber, Article::setKbNumber, AccessCheckingField.UNSIGNED_INT_FORMER);
@@ -88,7 +86,7 @@ public class ArticleView implements IView<ArticleController> {
         new AccessCheckingField<>(
             Article::getContainerDeposit,
             Article::setContainerDeposit,
-            AccessCheckingField.UNSIGNED_CURRENCY_FORMER);
+            AccessCheckingField.UNSIGNED_DOUBLE_FORMER);
     containerSize =
         new AccessCheckingField<>(
             Article::getContainerSize,
@@ -118,8 +116,6 @@ public class ArticleView implements IView<ArticleController> {
     shopRange =
         new AccessCheckingComboBox<Article, ShopRange>(
             Article::getShopRange, Article::setShopRange, controller::getAllShopRages);
-    extraInfo =
-        new AccessCheckingField<>(Article::getInfo, Article::setInfo, AccessCheckingField.NONE);
   }
 
   void setUnits(MetricUnits[] metricUnits) {
@@ -192,8 +188,7 @@ public class ArticleView implements IView<ArticleController> {
             surchargeGroup,
             shopRange,
             vat,
-            amount,
-            extraInfo);
+            amount);
     articleObjectForm.setObjectDistinction("Der Artikel");
     articleObjectForm.registerUniqueCheck(
         barcode, controller::barcodeExists, this::barcodeAlreadyExists);
