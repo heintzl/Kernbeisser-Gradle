@@ -44,6 +44,10 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
             Column.create("Benutzername", User::getUsername));
   }
 
+  String getUsername() {
+    return username.getText();
+  }
+
   private String toEuro(double value) {
     return String.format("%.2f€", value);
   }

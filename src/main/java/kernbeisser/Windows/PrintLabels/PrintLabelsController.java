@@ -82,5 +82,6 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     if (!newPrintPool.equals(model.getPrintPoolBefore()) && getView().confirmChanges()) {
       Article.replacePrintPool(newPrintPool);
     }
+    ;
   }
 }
