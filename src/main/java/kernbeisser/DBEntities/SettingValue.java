@@ -44,8 +44,12 @@ public class SettingValue {
   @Setter(onMethod_ = {@Key(PermissionKey.SETTING_VALUE_VALUE_WRITE)})
   private String value;
 
-  public static String getValue(Setting s) {
+  public static String getValue(Setting s, boolean requiresPersistedDefaultValue) {
     String out = getSettingValueHashMap().get(s);
+    if (requiresPersistedDefaultValue && out == null) {
+      setValue(s, s.getDefaultValue());
+      out = s.getDefaultValue();
+    }
     return out == null ? s.getDefaultValue() : out;
   }
 
