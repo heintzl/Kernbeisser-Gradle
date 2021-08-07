@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class ObjectTableModel<T> extends AbstractTableModel {
 
+  private static final Object NO_ACCESS_VALUE = "**********";
+
   @NonNull @Getter private List<Column<T>> columns;
 
   @NonNull @Getter private List<T> objects;
@@ -32,7 +34,11 @@ public class ObjectTableModel<T> extends AbstractTableModel {
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
     T parent = objects.get(rowIndex);
-    return new Property<>(parent, columns.get(columnIndex).getValue(parent));
+    try {
+      return new Property<>(parent, columns.get(columnIndex).getValue(parent));
+    } catch (PermissionKeyRequiredException e) {
+      return new Property<>(parent, NO_ACCESS_VALUE);
+    }
   }
 
   public void setColumns(List<Column<T>> columns) {

@@ -882,7 +882,7 @@ public class Tools {
 
   public static <T> SecuredOptional<T> optional(AccessSupplier<T> supplier) {
     try {
-      return SecuredOptional.ofNullable(supplier.get());
+      return SecuredOptional.of(supplier.get());
     } catch (PermissionKeyRequiredException e) {
       return SecuredOptional.empty();
     }

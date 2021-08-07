@@ -19,7 +19,6 @@ import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectTable<T> extends JTable implements Iterable<T> {
-  private static final Object NO_ACCESS_VALUE = "**********";
 
   private final Map<ObjectSelectionListener<T>, Boolean> selectionListeners = new HashMap<>();
 
@@ -94,7 +93,6 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   ObjectTable(Collection<T> fill, Collection<Column<T>> columns) {
     super(new ObjectTableModel<T>(new ArrayList<>(columns), new ArrayList<>(fill)));
     setAutoCreateRowSorter(false);
-    setRowSorter(createRowSorter());
     addMouseListener(
         new MouseAdapter() {
           @Override
@@ -204,8 +202,12 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private void removeStandardFilter(JPopupMenu p) {
     standardColumnFilters.clear();
-    refreshModel();
+    sort();
     p.setVisible(false);
+  }
+
+  public void sort() {
+    ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
   private void applyStandardFilter(JPopupMenu p, Column<T> c, JTextField text) {
@@ -215,18 +217,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     } else {
       standardColumnFilters.put(c, text);
     }
-    refreshModel();
-  }
-
-  private void refreshModel() {
-    getColumns().forEach(c -> {});
-    List<Column<T>> columns = getColumns();
-    for (int i = 0; i < columns.size(); i++) {
-      Column<T> column = columns.get(i);
-      TableColumn tableColumn = getColumnModel().getColumn(convertColumnIndexToModel(i));
-      tableColumn.setCellRenderer(column.getRenderer());
-      column.adjust(tableColumn);
-    }
+    ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
   public Optional<T> getFromRow(int index) {
