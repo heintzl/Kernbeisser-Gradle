@@ -23,6 +23,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.Useful.Tools;
+import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import lombok.Cleanup;
@@ -101,26 +102,7 @@ public class Main {
   }
 
   public static void checkVersion() {
-    logger.info(
-        "Aktuelle DB Version: "
-            + Setting.DB_VERSION.getStringValue()
-            + " | Branch Version: "
-            + Setting.DB_VERSION.getDefaultValue());
-    if (!Setting.DB_VERSION.getStringValue().equals(Setting.DB_VERSION.getDefaultValue())
-        && JOptionPane.showConfirmDialog(
-                null,
-                "Ihre Datenbankversion entspricht nicht der aktuellsten Version. per\nAktuelle Version: "
-                    + Setting.DB_VERSION.getStringValue()
-                    + "\nNeueste Version: "
-                    + Setting.DB_VERSION.getDefaultValue()
-                    + "\nWillst du die Datenbank leeren und eine neue Datenbankinstanz\nerstellen?")
-            == 0) {
-      updateDBVersion();
-    }
-  }
-
-  public static void updateDBVersion() {
-    DBConnection.updateDatabase();
+    Version.checkAndUpdateVersion();
   }
 
   public static void buildEnvironment() throws UnsupportedLookAndFeelException {

@@ -6,12 +6,13 @@ import javax.swing.*;
 import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import kernbeisser.VersionIntegrationTools.Version;
 import org.apache.commons.lang3.Range;
 import org.jetbrains.annotations.NotNull;
 
 public enum Setting {
   // removed some duplicated enum constrains Permission
-  DB_VERSION("0.99.1"),
+  DB_VERSION(Version.newestVersion().name(), true),
   DB_INITIALIZED("false"),
   VAT_LOW("0.07") {
     @Override
@@ -82,17 +83,23 @@ public enum Setting {
   // any    String
   private String value;
   private final String defaultValue;
+  private final boolean requiresPersistedDefaultValue;
 
   Setting(String defaultValue) {
-    this.defaultValue = defaultValue;
+    this(defaultValue, false);
   }
 
   Setting(@NotNull Enum<?> e) {
     this(e.name());
   }
 
+  Setting(String defaultValue, boolean requiresPersistedDefaultValue) {
+    this.requiresPersistedDefaultValue = requiresPersistedDefaultValue;
+    this.defaultValue = defaultValue;
+  }
+
   public String getStringValue() {
-    return SettingValue.getValue(this);
+    return getValue();
   }
 
   public double getDoubleValue() {
@@ -193,7 +200,7 @@ public enum Setting {
 
   public boolean getBooleanValue() {
     try {
-      return Boolean.parseBoolean(SettingValue.getValue(this));
+      return Boolean.parseBoolean(getValue());
     } catch (NumberFormatException e) {
       Tools.showUnexpectedErrorWarning(e);
       StackTraceElement element = Tools.getCallerStackTraceElement(1);
@@ -235,7 +242,8 @@ public enum Setting {
   }
 
   public String getValue() {
-    return (this.value = this.value == null ? SettingValue.getValue(this) : value);
+    return (this.value =
+        this.value == null ? SettingValue.getValue(this, requiresPersistedDefaultValue) : value);
   }
 
   public Range<Integer> getIntRange() {
