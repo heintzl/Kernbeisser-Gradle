@@ -78,6 +78,7 @@ public class SupplyView implements IView<SupplyController> {
           }
         });
     objectForm = new ObjectForm<>(name, netPrice, containerSize);
+    importSupplyFile.addActionListener(e -> controller.openImportSupplyFile());
     cancel.addActionListener(e -> back());
     commit.addActionListener(e -> controller.commit());
   }

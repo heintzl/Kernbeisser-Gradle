@@ -114,7 +114,7 @@ public class SupplierFile {
     Supplier kkSupplier = Supplier.getKKSupplier();
     Article pattern = Articles.nextArticleTo(em, content.getKkNumber(), kkSupplier);
     Article article = new Article();
-    article.setSupplier(Supplier.getKKSupplier());
+    article.setSupplier(kkSupplier);
     article.setName(content.getName());
     article.setNetPrice(content.getPrice() / content.getContainerSize());
     article.setMetricUnits(content.getUnit());
