@@ -40,7 +40,6 @@ public enum PermissionKey {
   ACTION_OPEN_EDIT_USERS(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICE_LISTS(ActionPermission.class),
   ACTION_OPEN_PRE_ORDER(ActionPermission.class),
-  ACTION_OPEN_PRINT_LABELS(ActionPermission.class),
   ACTION_OPEN_OWN_PRE_ORDER(ActionPermission.class),
   ACTION_OPEN_SUPPLY(ActionPermission.class),
   ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW(ActionPermission.class),
@@ -87,6 +86,8 @@ public enum PermissionKey {
   ARTICLE_SHOP_RANGE_WRITE(Article.class),
   ARTICLE_SOLD_READ(Article.class),
   ARTICLE_SOLD_WRITE(Article.class),
+  ARTICLE_OFFERS_READ(Article.class),
+  ARTICLE_OFFERS_WRITE(Article.class),
   ARTICLE_DELIVERED_READ(Article.class),
   ARTICLE_DELIVERED_WRITE(Article.class),
   ARTICLE_INTAKE_READ(Article.class),
@@ -125,8 +126,6 @@ public enum PermissionKey {
   ARTICLE_SINGLE_DEPOSIT_WRITE(Article.class),
   ARTICLE_CONTAINER_DEPOSIT_READ(Article.class),
   ARTICLE_CONTAINER_DEPOSIT_WRITE(Article.class),
-  ARTICLE_OFFER_READ(Article.class),
-  ARTICLE_OFFER_WRITE(Article.class),
   CONTAINER_ID_READ(PreOrder.class),
   CONTAINER_ID_WRITE(PreOrder.class),
   CONTAINER_ITEM_READ(PreOrder.class),
@@ -180,10 +179,6 @@ public enum PermissionKey {
   OFFER_TO_DATE_WRITE(Offer.class),
   OFFER_REPEAT_MODE_READ(Offer.class),
   OFFER_REPEAT_MODE_WRITE(Offer.class),
-  OFFER_OFFER_ARTICLE_READ(Offer.class),
-  OFFER_OFFER_ARTICLE_WRITE(Offer.class),
-  OFFER_PARENT_ARTICLE_READ(Offer.class),
-  OFFER_PARENT_ARTICLE_WRITE(Offer.class),
   PERMISSION_ID_READ(Permission.class),
   PERMISSION_ID_WRITE(Permission.class),
   PERMISSION_NAME_READ(Permission.class),
@@ -505,7 +500,6 @@ public enum PermissionKey {
             .put("ACTION_ORDER_OWN_CONTAINER", "Vorbestellungen für mich bearbeiten")
             .put("ACTION_OPEN_ADMIN_TOOLS", "Benutzer administrieren")
             .put("ACTION_GRANT_CASHIER_PERMISSION", "Ladendienstrolle vergeben")
-            .put("ACTION_OPEN_PRINT_LABELS", "Etiketten drucken")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }

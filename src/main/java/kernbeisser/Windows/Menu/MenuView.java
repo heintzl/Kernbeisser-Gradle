@@ -194,7 +194,7 @@ public class MenuView implements IView<MenuController> {
 
     editUserGroup =
         new ControllerButton(
-            () -> new EditUserGroupController(LogInModel.getLoggedInFromDB()),
+            () -> new EditUserGroupController(LogInModel.getLoggedIn()),
             EditUserGroupController.class,
             Controller::openTab);
     synchoniseCatalog =
@@ -209,8 +209,7 @@ public class MenuView implements IView<MenuController> {
     doUserDefiniedTransaction =
         new ControllerButton(
             () ->
-                new TransactionController(
-                    LogInModel.getLoggedInFromDB(), TransactionType.USER_GENERATED),
+                new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
             TransactionController.class);
     permissionAssignment =
         new ControllerButton(

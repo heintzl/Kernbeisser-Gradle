@@ -44,7 +44,6 @@ public class KeyUserList extends Report {
     et.begin();
     return em.createQuery("select u from User u", User.class)
         .getResultStream()
-        .filter(u -> !u.isUnreadable())
         .sorted(sorter)
         .collect(Collectors.toList());
   }

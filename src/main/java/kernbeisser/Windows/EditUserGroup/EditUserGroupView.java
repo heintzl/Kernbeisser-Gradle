@@ -44,6 +44,10 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
             Column.create("Benutzername", User::getUsername));
   }
 
+  String getUsername() {
+    return username.getText();
+  }
+
   private String toEuro(double value) {
     return String.format("%.2f€", value);
   }
@@ -70,61 +74,49 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
     } else {
       if (JOptionPane.showConfirmDialog(
               getTopComponent(),
-              controller.getModel().getUser().getFullName()
-                  + ", möchtest du wirklich deine Nutzergruppe verlassen?\n"
-                  + "Guthaben und Solidaraufschlag werden nicht übernommen...",
-              "Gruppe verlassen",
-              JOptionPane.OK_CANCEL_OPTION)
+              "Möchtest du wirklich deine Nutzergruppe verlassen?\n"
+                  + "Guthaben und Solidaraufschlag werden nicht übernommen...")
           == 0) {
         controller.leaveUserGroup();
-        boolean ownUserGroupChange = !controller.getModel().getCaller().isPresent();
-        String message =
+        JOptionPane.showMessageDialog(
+            getTopComponent(),
             "Du hast deine Nutzergruppe erfolgreich verlassen\n"
-                + "und bist nun alleine in einer Nutzergruppe.";
-        JOptionPane.showMessageDialog(getTopComponent(), message);
-        if (ownUserGroupChange) {
-          back();
-        }
+                + "und bist nun alleine in einer Nutzergruppe.");
       }
     }
   }
 
   private void changeUserGroup(ActionEvent event) {
 
-    String message;
     if (controller.getMemberCount() < 2) {
-      message =
-          "Du bist derzeit alleine in einer Nutzergruppe.\n"
-              + "Willst du wirklich deine aktuelle Nutzergruppe auflösen "
-              + "und ihr aktuelles Guthaben auf die neue Nutzergruppe übertragen?";
+      if (JOptionPane.showConfirmDialog(
+              getTopComponent(),
+              "Du bist derzeit alleine in einer Nutzergruppe.\n"
+                  + "Willst du wirklich deine aktuelle Nutzergruppe auflösen\n"
+                  + "und ihr aktuelles Guthaben auf die neue Nutzergruppe übertragen?")
+          != 0) {
+        return;
+      }
     } else {
-      message =
-          controller.getModel().getUser().getFullName()
-              + ", willst du wirklich deine aktuelle Nutzergruppe "
-              + "verlassen und in eine Gruppe mit "
-              + username.getText()
-              + " wechseln?\n"
-              + "Das Guthaben wird nicht übertragen, da noch weitere Nutzer "
-              + "in deiner Nutzergruppe sind.";
-    }
-    if (JOptionPane.showConfirmDialog(
-            getTopComponent(), message, "Gruppe wechseln", JOptionPane.OK_CANCEL_OPTION)
-        != 0) {
-      return;
+      JOptionPane.showMessageDialog(
+          getTopComponent(),
+          "Willst du wirklich deine aktuelle Nutzergruppe verlassen?\n"
+              + "Das Guthaben wird nicht übertragen, da noch weitere Nutzer\n"
+              + "in deiner Nutzergruppe sind.");
     }
     try {
+      controller.changeUserGroup();
       boolean ownUserGroupChange = !controller.getModel().getCaller().isPresent();
-      if (controller.changeUserGroup()) {
-        message =
-            "Du bist erfolgreich der Nutzergruppe von " + username.getText() + " beigetreten.";
-        JOptionPane.showMessageDialog(
-            getTopComponent(),
-            message,
-            "Änderung der Nutzergruppe",
-            JOptionPane.INFORMATION_MESSAGE);
-        if (ownUserGroupChange) {
-          back();
-        }
+      String message =
+          "Du bist erfolgreich der Nutzergruppe von " + getUsername() + " beigetreten.";
+      if (ownUserGroupChange) {
+        message +=
+            "\nDamit alle Änderungen wirksam werden, musst Du Dich nun bitte einmal neu anmelden!";
+      }
+      JOptionPane.showMessageDialog(
+          getTopComponent(), message, "Änderung der Nutzergruppe", JOptionPane.INFORMATION_MESSAGE);
+      if (ownUserGroupChange) {
+        back();
       }
     } catch (CannotLogInException e) {
       JOptionPane.showMessageDialog(
@@ -177,6 +169,6 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
 
   @Override
   public String getTitle() {
-    return "Nutzergruppe wechseln (" + controller.getModel().getUser().getFullName() + ")";
+    return "Nutzergruppe wechseln";
   }
 }

@@ -33,7 +33,7 @@ public class FormEditorView<V> implements IView<FormEditorController<V>> {
   void setMode(Mode mode) {
     switch (mode) {
       case EDIT:
-        saveButton.setText("Änderungen speichern");
+        saveButton.setText("Bearbeitung abschließen");
         saveButton.setIcon(
             IconFontSwing.buildIcon(
                 FontAwesome.PENCIL, Tools.scaleWithLabelScalingFactor(15), new Color(0x04A0E8)));

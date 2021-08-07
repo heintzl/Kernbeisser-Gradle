@@ -339,7 +339,7 @@ public class User implements Serializable, UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select t from Transaction t where t.fromUserGroup = :ug or t.toUserGroup = :ug order by date asc",
+            "select t from Transaction t where t.fromUser.userGroup = :ug or t.toUser.userGroup = :ug order by date asc",
             Transaction.class)
         .setParameter("ug", getUserGroup())
         .getResultList();
