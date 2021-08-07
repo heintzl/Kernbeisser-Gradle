@@ -44,12 +44,17 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   private void createUIComponents() {
     priceLists = new ObjectTree<>(controller.getNode());
-    priceLists.addSelectionListener(
-        e -> articles.setObjects(controller.getAllArticles(e.getValue())));
+    priceLists.addSelectionListener(this::priceListNodeSelection);
     articles =
         new ObjectTable<>(
             Columns.create("Name", Article::getName, SwingConstants.LEFT),
             Columns.create("Lieferant", Article::getSupplier, SwingConstants.LEFT));
+  }
+
+  @NotNull
+  private void priceListNodeSelection(Node<PriceList> e) {
+    deletePriceList.setEnabled(e.isLeaf());
+    articles.setObjects(controller.getAllArticles(e.getValue()));
   }
 
   Node<PriceList> getSelectedNode() {
@@ -103,8 +108,10 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
                 + from.getName()
                 + "',\n"
                 + "in die Preisliste '"
-                + to.getName()
-                + "' verschoben werden sollen?")
+                + (to.getId() == 0 ? "Preislisten" : to.getName())
+                + "' verschoben werden sollen?",
+            "Preisliste verschieben",
+            JOptionPane.OK_CANCEL_OPTION)
         == 0;
   }
 

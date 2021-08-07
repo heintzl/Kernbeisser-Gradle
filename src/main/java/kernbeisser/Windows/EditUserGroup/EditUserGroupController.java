@@ -1,9 +1,9 @@
 package kernbeisser.Windows.EditUserGroup;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.CustomComponents.Dialogs.LogInDialog;
@@ -54,14 +54,16 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
     userGroupSearchBoxController.addSelectionListener(this::select);
   }
 
+  private String getUserGroupText(UserGroup userGroup) {
+    String userGroupText =
+        userGroup.getMembers().stream().map(User::getFullName).collect(Collectors.joining(", "));
+    return Pattern.compile("^(.+), ([^,]+)$").matcher(userGroupText).replaceAll("$1 und $2");
+  }
+
   private void select(UserGroup userGroup) {
     getView()
         .setUsername(
-            Tools.optional(userGroup::getMembers)
-                .map(Collection::iterator)
-                .map(Iterator::next)
-                .map(User::getUsername)
-                .orElse("[Keine Leseberechtigung]"));
+            Tools.optional(() -> getUserGroupText(userGroup)).orElse("[Keine Leseberechtigung]"));
   }
 
   @Override
@@ -79,15 +81,16 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
     pushViewRefresh();
   }
 
-  public void changeUserGroup() throws CannotLogInException {
-    if (LogInDialog.showLogInRequest(
-        getView().getTopComponent(),
-        model.getLogIns(User.getByUsername(getView().getUsername()).getUserGroup().getMembers()))) {
-      model.changeUserGroup(
-          model.getUser().getId(),
-          User.getByUsername(getView().getUsername()).getUserGroup().getId());
+  public boolean changeUserGroup() throws CannotLogInException {
+    boolean success;
+    Optional<UserGroup> targetGroup = userGroupSearchBoxController.getSelectedObject();
+    if (targetGroup.isPresent()
+        && LogInDialog.showLogInRequest(
+            getView().getTopComponent(), model.getLogIns(targetGroup.get().getMembers()))) {
+      success = model.changeUserGroup(model.getUser().getId(), targetGroup.get().getId());
     } else throw new CannotLogInException();
     pushViewRefresh();
+    return success;
   }
 
   private void pushViewRefresh() {

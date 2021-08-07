@@ -13,7 +13,10 @@ import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Reports.TransactionStatement;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 
@@ -125,7 +128,7 @@ public class Users {
     }
   }
 
-  public static void switchUserGroup(int userId, int userGroupId) {
+  public static boolean switchUserGroup(int userId, int userGroupId) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       @Cleanup(value = "commit")
@@ -135,22 +138,34 @@ public class Users {
       UserGroup current = currentUser.getUserGroup();
       UserGroup destination = em.find(UserGroup.class, userGroupId);
       if (current.getMembers().size() < 2) {
-        if (!confirmGroupVoid(currentUser)) return;
+        if (!confirmGroupVoid(currentUser)) return false;
         Transaction.switchGroupTransaction(
             em, currentUser, current, destination, current.getValue());
-        destination.setInterestThisYear(
-            destination.getInterestThisYear() + current.getInterestThisYear());
+        Access.runWithAccessManager(
+            AccessManager.NO_ACCESS_CHECKING,
+            () ->
+                destination.setInterestThisYear(
+                    destination.getInterestThisYear() + current.getInterestThisYear()));
       }
       em.persist(destination);
       currentUser.setUserGroup(destination);
       em.persist(currentUser);
       em.close();
+      return true;
     } catch (InvalidTransactionException e) {
       JOptionPane.showMessageDialog(
           null,
           "Die Kontoübertragung ist fehlgeschlagen!",
           "Gruppenwechsel",
           JOptionPane.ERROR_MESSAGE);
+      return false;
+    } catch (PermissionKeyRequiredException p) {
+      JOptionPane.showMessageDialog(
+          null,
+          "Fehlende Berechtigung: " + p.getMessage(),
+          "Gruppenwechsel",
+          JOptionPane.ERROR_MESSAGE);
+      return false;
     }
   }
 

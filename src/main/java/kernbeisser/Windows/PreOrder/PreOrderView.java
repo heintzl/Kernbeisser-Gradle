@@ -36,6 +36,7 @@ public class PreOrderView implements IView<PreOrderController> {
   JButton abhakplanButton;
   JButton bestellungExportierenButton;
   JButton searchArticle;
+  private JLabel caption;
 
   private JPopupMenu popupSelectionColumn;
   @Linked private PreOrderController controller;
@@ -237,6 +238,15 @@ public class PreOrderView implements IView<PreOrderController> {
       user.setSelectedItem(null);
     }
     enableControls(controller.restrictToLoggedIn);
+  }
+
+  public void setCaption(String forWho, boolean editable) {
+    this.caption.setText(
+        "<html><body><h2>Hier werden die Vorbestellungen für <em>"
+            + forWho
+            + "</em> angezeigt."
+            + (editable ? " Die Bestellungen können hier auch bearbeitet und ergänzt werden." : "")
+            + "</h2></body></html>");
   }
 
   public void noArticleFoundForBarcode(String barcode) {

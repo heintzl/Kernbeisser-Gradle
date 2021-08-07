@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +23,13 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Colors;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.StatementType;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingLabel;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -80,6 +84,18 @@ public class UserInfoView implements IView<UserInfoController> {
   }
 
   void setValueHistory(Collection<Transaction> valueChanges) {
+    if (valueChanges.size() == 0) {
+      Transaction noHistory = new Transaction();
+      Access.getExceptions().put(noHistory, AccessManager.NO_ACCESS_CHECKING);
+      noHistory.setInfo("keine Umsätze");
+      noHistory.setValue(0.0);
+      noHistory.setFromUser(controller.getModel().getUser());
+      noHistory.setToUser(controller.getModel().getUser());
+      noHistory.setTransactionType(TransactionType.INFO);
+      noHistory.setDate(Instant.now());
+      Access.getExceptions().remove(noHistory);
+      valueChanges.add(noHistory);
+    }
     this.valueHistory.setObjects(valueChanges);
   }
 

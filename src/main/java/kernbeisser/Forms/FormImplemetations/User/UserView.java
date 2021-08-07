@@ -195,10 +195,14 @@ public class UserView implements IView<UserController> {
             User::getKernbeisserKey, User::setKernbeisserKey, AccessCheckingField.INT_FORMER);
     email =
         new AccessCheckingField<>(User::getEmail, User::setEmail, AccessCheckingField.EMAIL_FORMER);
+    Source<Permission> permissionSource =
+        () ->
+            Permission.getAll(
+                "where not name in ('@APPLICATION', '@IMPORT', '@IN_RELATION_TO_OWN_USER')");
     editPermission =
         new AccessCheckingCollectionEditor<>(
             User::getPermissionsAsAvailable,
-            Source.of(Permission.class),
+            permissionSource,
             Columns.create("Name", Permission::getNeatName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
