@@ -77,6 +77,10 @@ public class SupplyModel implements IModel<SupplyController> {
     if (!print.remove(bases)) print.add(bases);
   }
 
+  public void setBecomePrinted(Article becomePrinted, boolean value) {
+    if (becomePrinted(becomePrinted) != value) togglePrint(becomePrinted);
+  }
+
   public boolean becomePrinted(Article article) {
     return print.contains(article);
   }
