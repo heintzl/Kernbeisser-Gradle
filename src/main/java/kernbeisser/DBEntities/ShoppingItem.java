@@ -543,4 +543,12 @@ public class ShoppingItem implements Serializable {
   public String toString() {
     return Tools.optional(this::getName).orElse("Einkaufsartikel[" + id + "]");
   }
+
+  public static ShoppingItem displayOnlyShoppingItem(
+      Article article, int discount, boolean hasContainerDiscount) {
+    return new ShoppingItem(article, 0, discount, hasContainerDiscount) {
+      // prevents hibernate from persisting the Object because it's an instance of the lambda
+      // factory
+    };
+  }
 }

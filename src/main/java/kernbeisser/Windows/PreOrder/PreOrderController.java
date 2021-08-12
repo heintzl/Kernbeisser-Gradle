@@ -110,7 +110,9 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     view.setNetPrice(PreOrderModel.containerNetPrice(articleKornkraft));
     view.setSellingPrice(
         String.format(
-            "%.2f€", new ShoppingItem(articleKornkraft, 0, true).getRetailPrice() * containerSize));
+            "%.2f€",
+            ShoppingItem.displayOnlyShoppingItem(articleKornkraft, 0, true).getRetailPrice()
+                * containerSize));
     view.setItemName(articleKornkraft.getName());
   }
 
