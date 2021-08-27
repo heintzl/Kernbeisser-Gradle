@@ -15,6 +15,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import org.hibernate.envers.AuditReaderFactory;
@@ -25,8 +27,12 @@ public class Articles {
 
   public static Article getEmptyArticle() {
     Article empty = new Article();
-    empty.setName("Kein Artikel gefunden");
-    empty.setSurchargeGroup(new SurchargeGroup());
+    Access.runWithAccessManager(
+        AccessManager.NO_ACCESS_CHECKING,
+        () -> {
+          empty.setName("Kein Artikel gefunden");
+          empty.setSurchargeGroup(new SurchargeGroup());
+        });
     return empty;
   }
 
