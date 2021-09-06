@@ -1,5 +1,8 @@
 package kernbeisser.Forms.FormImplemetations.Article;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.util.Collection;
 import javax.swing.*;
@@ -28,29 +31,30 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ArticleView implements IView<ArticleController> {
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, String> itemName;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, Supplier>
+
+  private AccessCheckingField<Article, String> itemName;
+  private AccessCheckingComboBox<Article, Supplier>
       supplier;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double> netPrice;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double> deposit;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Integer>
+  private AccessCheckingField<Article, Double> netPrice;
+  private AccessCheckingField<Article, Double> deposit;
+  private AccessCheckingField<Article, Integer>
       kbItemNumber;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Integer>
+  private AccessCheckingField<Article, Integer>
       supplierItemNumber;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double> crateDeposit;
-  private kernbeisser.CustomComponents.PermissionButton searchPriceList;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, PriceList>
+  private AccessCheckingField<Article, Double> crateDeposit;
+  private PermissionButton searchPriceList;
+  private AccessCheckingComboBox<Article, PriceList>
       priceList;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Integer> amount;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double>
+  private AccessCheckingField<Article, Integer> amount;
+  private AccessCheckingField<Article, Double>
       containerSize;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, MetricUnits>
+  private AccessCheckingComboBox<Article, MetricUnits>
       metricUnits;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Long> barcode;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckBox<Article> showInShoppingMask;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckBox<Article> weighable;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, String> extraInfo;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, VAT> vat;
+  private AccessCheckingField<Article, Long> barcode;
+  private AccessCheckBox<Article> showInShoppingMask;
+  private AccessCheckBox<Article> weighable;
+  private AccessCheckingField<Article, String> extraInfo;
+  private AccessCheckingComboBox<Article, VAT> vat;
   private JPanel main;
   private AccessCheckingComboBox<Article, SurchargeGroup> surchargeGroup;
   private AccessCheckingComboBox<Article, ShopRange> shopRange;
@@ -58,7 +62,8 @@ public class ArticleView implements IView<ArticleController> {
 
   private ObjectForm<Article> articleObjectForm;
 
-  @Linked private ArticleController controller;
+  @Linked
+  private ArticleController controller;
 
   private void createUIComponents() {
     itemName =
@@ -156,8 +161,8 @@ public class ArticleView implements IView<ArticleController> {
   boolean kbNumberAlreadyExists() {
     return 0
         == JOptionPane.showConfirmDialog(
-            getTopComponent(),
-            "Die Artikelnummer ist bereits vergeben. Soll die nächste freie gewählt werden?");
+        getTopComponent(),
+        "Die Artikelnummer ist bereits vergeben. Soll die nächste freie gewählt werden?");
   }
 
   void barcodeAlreadyExists() {
@@ -247,21 +252,22 @@ public class ArticleView implements IView<ArticleController> {
   public void setBarcode(String s) {
     if (Tools.canInvoke(this::checkArticleBarcodeWritePermission)
         && JOptionPane.showConfirmDialog(
-                getTopComponent(), "Soll der Barcode auf " + s + " gesetzt werden?")
-            == 0) {
+        getTopComponent(), "Soll der Barcode auf " + s + " gesetzt werden?")
+        == 0) {
       barcode.setText(s);
     }
   }
 
   @Key(PermissionKey.ARTICLE_BARCODE_WRITE)
-  private void checkArticleBarcodeWritePermission() {}
+  private void checkArticleBarcodeWritePermission() {
+  }
 
   public boolean isSameArticle(Article nearest) {
     return JOptionPane.showConfirmDialog(
-            getTopComponent(),
-            "Es wurde ein Artikel gefunden der einen sehr identischen Namen hat:\n"
-                + nearest.toString()
-                + "\nWollen sie trozedem einen neuen Artikel erstellen?")
+        getTopComponent(),
+        "Es wurde ein Artikel gefunden der einen sehr identischen Namen hat:\n"
+            + nearest.toString()
+            + "\nWollen sie trozedem einen neuen Artikel erstellen?")
         == 0;
   }
 
@@ -274,5 +280,256 @@ public class ArticleView implements IView<ArticleController> {
 
   public void messageUnitRequired() {
     JOptionPane.showMessageDialog(getContent(), "Bitte setzten sie die Einheit.");
+  }
+
+  {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+    $$$setupUI$$$();
+  }
+
+  /**
+   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
+   * call it in your code!
+   *
+   * @noinspection ALL
+   */
+  private void $$$setupUI$$$() {
+    createUIComponents();
+    main = new JPanel();
+    main.setLayout(new GridLayoutManager(2, 3, new Insets(10, 10, 10, 10), -1, -1));
+    final JLabel label1 = new JLabel();
+    label1.setText("Artikeldaten");
+    main.add(label1,
+        new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    final JPanel panel1 = new JPanel();
+    panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+    main.add(panel1,
+        new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null,
+            null, null, 0, false));
+    final JPanel panel2 = new JPanel();
+    panel2.setLayout(new GridLayoutManager(22, 2, new Insets(0, 0, 0, 0), -1, -1));
+    panel2.setPreferredSize(new Dimension(250, 550));
+    panel1.add(panel2,
+        new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+            null, 0, false));
+    final JLabel label2 = new JLabel();
+    label2.setText("Name");
+    panel2.add(label2,
+        new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    final Spacer spacer1 = new Spacer();
+    panel2.add(spacer1, new GridConstraints(21, 0, 1, 2, GridConstraints.ANCHOR_CENTER,
+        GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0,
+        false));
+    panel2.add(itemName, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_WEST,
+        GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW,
+        GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    final JLabel label3 = new JLabel();
+    label3.setText("Lieferant");
+    panel2.add(label3,
+        new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(supplier, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_WEST,
+        GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    final JLabel label4 = new JLabel();
+    label4.setText("Netto-Preis[€]");
+    panel2.add(label4,
+        new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(netPrice, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+        null, 0, false));
+    final JLabel label5 = new JLabel();
+    label5.setText("Einzelpfand[€]");
+    panel2.add(label5,
+        new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(deposit, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+        null, 0, false));
+    final JLabel label6 = new JLabel();
+    label6.setText("Barcode");
+    panel2.add(label6,
+        new GridConstraints(10, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(barcode, new GridConstraints(11, 0, 1, 2, GridConstraints.ANCHOR_CENTER,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+        null, 0, false));
+    final JPanel panel3 = new JPanel();
+    panel3.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+    panel2.add(panel3,
+        new GridConstraints(8, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+            null, 0, false));
+    panel3.add(amount, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+        null, 0, false));
+    final JLabel label7 = new JLabel();
+    label7.setText("Packungs-Menge");
+    panel3.add(label7,
+        new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel3.add(metricUnits, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    final JLabel label8 = new JLabel();
+    label8.setText("Einheit");
+    panel3.add(label8,
+        new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(shopRange,
+        new GridConstraints(20, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW,
+            GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    final JLabel label9 = new JLabel();
+    label9.setText("Mehrwertsteuer");
+    panel2.add(label9,
+        new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(vat, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    final JLabel label10 = new JLabel();
+    label10.setText("Kistenpfand[€]");
+    panel2.add(label10,
+        new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(crateDeposit, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_CENTER,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+        null, 0, false));
+    final JLabel label11 = new JLabel();
+    label11.setText("Laden-Artikelnummer");
+    panel2.add(label11,
+        new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(kbItemNumber, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_CENTER,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+        null, 0, false));
+    final JLabel label12 = new JLabel();
+    label12.setText("Lieferanten-Artikelnummer");
+    panel2.add(label12,
+        new GridConstraints(12, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(supplierItemNumber, new GridConstraints(13, 1, 1, 1, GridConstraints.ANCHOR_CENTER,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+        null, 0, false));
+    final JLabel label13 = new JLabel();
+    label13.setText("Preisliste");
+    panel2.add(label13,
+        new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    final JPanel panel4 = new JPanel();
+    panel4.setLayout(new BorderLayout(0, 0));
+    panel2.add(panel4,
+        new GridConstraints(16, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+            null, 0, false));
+    searchPriceList = new PermissionButton();
+    searchPriceList.setEnabled(false);
+    searchPriceList.setHorizontalAlignment(0);
+    searchPriceList.setText("Suchen");
+    panel4.add(searchPriceList, BorderLayout.EAST);
+    panel4.add(priceList, BorderLayout.CENTER);
+    final JLabel label14 = new JLabel();
+    label14.setText("Zuschlagsgruppe");
+    panel2.add(label14,
+        new GridConstraints(15, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    final JLabel label15 = new JLabel();
+    label15.setText("Zusatz Informationen");
+    panel2.add(label15,
+        new GridConstraints(17, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(extraInfo, new GridConstraints(18, 0, 1, 2, GridConstraints.ANCHOR_WEST,
+        GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW,
+        GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    final JLabel label16 = new JLabel();
+    label16.setText("Gebindegröße");
+    panel2.add(label16,
+        new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    panel2.add(containerSize, new GridConstraints(9, 1, 1, 1, GridConstraints.ANCHOR_CENTER,
+        GridConstraints.FILL_HORIZONTAL,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+        null, 0, false));
+    final JLabel label17 = new JLabel();
+    label17.setText("Sortimentstatus");
+    panel2.add(label17,
+        new GridConstraints(19, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+            false));
+    weighable.setText("Auswiegware");
+    panel2.add(weighable,
+        new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    showInShoppingMask.setText("Einblenden in der Einkaufsmaske");
+    panel2.add(showInShoppingMask,
+        new GridConstraints(14, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    final JPanel panel5 = new JPanel();
+    panel5.setLayout(new BorderLayout(0, 0));
+    panel2.add(panel5,
+        new GridConstraints(16, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+            null, 0, false));
+    panel5.add(surchargeGroup, BorderLayout.CENTER);
+    searchSurchargeGroup = new PermissionButton();
+    searchSurchargeGroup.setEnabled(false);
+    searchSurchargeGroup.setHorizontalAlignment(0);
+    searchSurchargeGroup.setText("Suchen");
+    panel5.add(searchSurchargeGroup, BorderLayout.EAST);
+  }
+
+  /**
+   * @noinspection ALL
+   */
+  public JComponent $$$getRootComponent$$$() {
+    return main;
   }
 }
