@@ -1,9 +1,5 @@
 package kernbeisser.Forms.FormImplemetations.Job;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import java.awt.Insets;
 import javax.swing.*;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
@@ -20,8 +16,7 @@ public class JobView implements IView<JobController> {
 
   private ObjectForm<Job> form;
 
-  @Linked
-  private JobController jobController;
+  @Linked private JobController jobController;
 
   @Override
   public void initialize(JobController jobController) {
@@ -44,5 +39,4 @@ public class JobView implements IView<JobController> {
   public ObjectForm<Job> getForm() {
     return form;
   }
-
 }

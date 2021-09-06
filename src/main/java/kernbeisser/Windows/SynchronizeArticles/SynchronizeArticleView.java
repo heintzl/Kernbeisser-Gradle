@@ -1,10 +1,6 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.Color;
-import java.awt.Insets;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -63,8 +58,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private JPanel progress;
   private JButton importCatalogFromInternet;
 
-  @Linked
-  private SynchronizeArticleController controller;
+  @Linked private SynchronizeArticleController controller;
 
   @Override
   public void initialize(SynchronizeArticleController controller) {
@@ -120,28 +114,28 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
           (comp, articleMerge) ->
               comp.setForeground(
                   Objects.equals(
-                      mappedDifference.get(articleMerge.getRevision()),
-                      mappedDifference.get(articleMerge.getNewState()))
+                          mappedDifference.get(articleMerge.getRevision()),
+                          mappedDifference.get(articleMerge.getNewState()))
                       ? Colors.LABEL_FOREGROUND.getColor()
                       : new Color(0xF15959));
       differences.addColumn(
           new CustomizableColumn<ArticleMerge>(
-              mappedDifference.getName() + " alt", e -> mappedDifference.get(e.getRevision()))
+                  mappedDifference.getName() + " alt", e -> mappedDifference.get(e.getRevision()))
               .withCellAdjustor(diffColorMarker));
       differences.addColumn(
           new CustomizableColumn<ArticleMerge>(
-              mappedDifference.getName() + " neu", e -> mappedDifference.get(e.getNewState()))
+                  mappedDifference.getName() + " neu", e -> mappedDifference.get(e.getNewState()))
               .withCellAdjustor(diffColorMarker));
       differences.addColumn(
           new CustomizableColumn<ArticleMerge>(
-              "Unterschied",
-              e ->
-                  String.format(
-                      "%.2f%%",
-                      mappedDifference.distance(
-                          mappedDifference.get(e.getRevision()),
-                          mappedDifference.get(e.getNewState()))
-                          * 100))
+                  "Unterschied",
+                  e ->
+                      String.format(
+                          "%.2f%%",
+                          mappedDifference.distance(
+                                  mappedDifference.get(e.getRevision()),
+                                  mappedDifference.get(e.getNewState()))
+                              * 100))
               .withCellAdjustor(new IconCustomizer<>(e -> getIcon(e, mappedDifference))));
     }
     filterTable();
@@ -175,7 +169,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   MappedDifference[] getSelectedFilter() {
     return differenceFilter
         .getSelected()
-        .map(v -> new MappedDifference[]{v})
+        .map(v -> new MappedDifference[] {v})
         .orElse(MappedDifference.values());
   }
 
@@ -183,8 +177,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     return maxAllowedDiff.getSafeValue() / 100;
   }
 
-  public void setObjectFilter() {
-  }
+  public void setObjectFilter() {}
 
   Collection<ArticleMerge> getSelectedObjects() {
     return differences.getSelectedObjects();
@@ -193,8 +186,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   public boolean commitClose() {
     differences.setRowFilter(null);
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Es sind noch unsynchronisierte Artikel vorhanden,\nwillst du das Fenster wirklich schließen?")
+            getTopComponent(),
+            "Es sind noch unsynchronisierte Artikel vorhanden,\nwillst du das Fenster wirklich schließen?")
         == 0;
   }
 
@@ -258,5 +251,4 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   public void messageInvalidURL() {
     message("Die eingegebene URL ist nicht korrekt!", "URL nicht korrekt!");
   }
-
 }

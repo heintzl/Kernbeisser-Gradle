@@ -1,9 +1,5 @@
 package kernbeisser.Windows.ManagePriceLists;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import java.awt.Insets;
 import java.util.function.Consumer;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -30,8 +26,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   private JButton moveItems;
   private JButton print;
 
-  @Linked
-  private ManagePriceListsController controller;
+  @Linked private ManagePriceListsController controller;
 
   @Override
   public void initialize(ManagePriceListsController controller) {
@@ -69,13 +64,13 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   public boolean commitMovement(PriceList from, PriceList to) {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Bist du sicher, dass die Preisliste '"
-            + from.getName()
-            + "',\n"
-            + "in die Preisliste '"
-            + to.getName()
-            + "' verschoben werden soll?")
+            getTopComponent(),
+            "Bist du sicher, dass die Preisliste '"
+                + from.getName()
+                + "',\n"
+                + "in die Preisliste '"
+                + to.getName()
+                + "' verschoben werden soll?")
         == 0;
   }
 
@@ -109,15 +104,15 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   public boolean commitItemMovement(PriceList from, PriceList to) {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Bist du sicher, dass die Artikel der Preisliste '"
-            + from.getName()
-            + "',\n"
-            + "in die Preisliste '"
-            + (to.getId() == 0 ? "Preislisten" : to.getName())
-            + "' verschoben werden sollen?",
-        "Preisliste verschieben",
-        JOptionPane.OK_CANCEL_OPTION)
+            getTopComponent(),
+            "Bist du sicher, dass die Artikel der Preisliste '"
+                + from.getName()
+                + "',\n"
+                + "in die Preisliste '"
+                + (to.getId() == 0 ? "Preislisten" : to.getName())
+                + "' verschoben werden sollen?",
+            "Preisliste verschieben",
+            JOptionPane.OK_CANCEL_OPTION)
         == 0;
   }
 
@@ -135,5 +130,4 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   public String getTitle() {
     return "Preislisten bearbeiten";
   }
-
 }

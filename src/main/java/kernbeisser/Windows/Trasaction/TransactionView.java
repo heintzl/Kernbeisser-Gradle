@@ -1,8 +1,5 @@
 package kernbeisser.Windows.Trasaction;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -86,10 +83,8 @@ public class TransactionView implements IView<TransactionController> {
   private JCheckBox toKBValue;
   private JCheckBox hideInactive;
 
-  @Linked
-  private SearchBoxController<User> userSearchBoxController;
-  @Linked
-  private TransactionController controller;
+  @Linked private SearchBoxController<User> userSearchBoxController;
+  @Linked private TransactionController controller;
 
   void setTransactions(Collection<Transaction> transactions) {
     this.transactions.setObjects(transactions);
@@ -166,8 +161,8 @@ public class TransactionView implements IView<TransactionController> {
 
   boolean confirmExtraHeightTransaction() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        String.format("Ist der eingegebene Wert von %.2f€ korrekt?", getValue()))
+            getTopComponent(),
+            String.format("Ist der eingegebene Wert von %.2f€ korrekt?", getValue()))
         == 0;
   }
 
@@ -178,14 +173,14 @@ public class TransactionView implements IView<TransactionController> {
       suffix1 = "n";
     }
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Soll"
-            + suffix
-            + " die aufgelistete"
-            + suffix1
-            + " Überweisung"
-            + suffix
-            + " getätigt werden?")
+            getTopComponent(),
+            "Soll"
+                + suffix
+                + " die aufgelistete"
+                + suffix1
+                + " Überweisung"
+                + suffix
+                + " getätigt werden?")
         == 0;
   }
 
@@ -564,5 +559,4 @@ public class TransactionView implements IView<TransactionController> {
   public void messageSelectTransactionFirst() {
     message("Bitte wähle zuerst eine Überweisung aus.", "Keine Überweisung ausgewählt");
   }
-
 }

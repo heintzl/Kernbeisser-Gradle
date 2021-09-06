@@ -1,8 +1,5 @@
 package kernbeisser.Windows.PreOrder;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -44,8 +41,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private JLabel caption;
 
   private JPopupMenu popupSelectionColumn;
-  @Linked
-  private PreOrderController controller;
+  @Linked private PreOrderController controller;
 
   void setInsertSectionEnabled(boolean b) {
     insertSection.setVisible(b);
@@ -349,5 +345,4 @@ public class PreOrderView implements IView<PreOrderController> {
   public String getTitle() {
     return (controller.restrictToLoggedIn ? "Meine " : "") + "Vorbestellung";
   }
-
 }

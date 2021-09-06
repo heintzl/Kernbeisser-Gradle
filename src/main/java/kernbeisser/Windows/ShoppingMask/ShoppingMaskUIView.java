@@ -2,21 +2,15 @@ package kernbeisser.Windows.ShoppingMask;
 
 import static java.text.MessageFormat.format;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.EnumSet;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Vector;
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -101,17 +95,14 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
-  @Linked
-  private ShoppingMaskUIController controller;
-  @Linked
-  private ShoppingCartController cartController;
+  @Linked private ShoppingMaskUIController controller;
+  @Linked private ShoppingCartController cartController;
 
   private ArticleType currentArticleType;
   private boolean isWeighable;
   static Vector<Component> traversalOrder = new Vector<>(1);
   static FocusTraversal traversalPolicy;
-  @Getter
-  private boolean isPreordered = false;
+  @Getter private boolean isPreordered = false;
   private ShoppingItem currentItem;
 
   EnumSet<ArticleType> articleTypesWithSettablePrice;
@@ -149,8 +140,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     salesPersonInfo.setText(
         saleSession.getSeller().getFullName()
             + (saleSession.getSecondSeller() != null
-            ? " / " + saleSession.getSecondSeller().getFullName()
-            : ""));
+                ? " / " + saleSession.getSecondSeller().getFullName()
+                : ""));
   }
 
   private void supplierChange() {
@@ -419,8 +410,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       articleName.setText(
           shoppingItem.getName().length() > 40
               ? new StringBuilder(shoppingItem.getName())
-              .replace(36, shoppingItem.getName().length(), "...")
-              .toString()
+                  .replace(36, shoppingItem.getName().length(), "...")
+                  .toString()
               : shoppingItem.getName());
       articleName.setCaretPosition(0);
     }
@@ -547,50 +538,50 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   public boolean confirmClose() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Soll der Einkauf wirklich abgebrochen werden?",
-        "Einkauf abbrechen",
-        JOptionPane.YES_NO_OPTION)
+            getTopComponent(),
+            "Soll der Einkauf wirklich abgebrochen werden?",
+            "Einkauf abbrechen",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
   public boolean confirmStorno() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Soll die Ware wirklich storniert werden?",
-        stornoMessageTitle,
-        JOptionPane.YES_NO_OPTION)
+            getContent(),
+            "Soll die Ware wirklich storniert werden?",
+            stornoMessageTitle,
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
   public boolean confirmEmptyCart() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Sollen wirklich alle Artikel gelöscht werden?",
-        "Alle Artikel löschen",
-        JOptionPane.YES_NO_OPTION)
+            getContent(),
+            "Sollen wirklich alle Artikel gelöscht werden?",
+            "Alle Artikel löschen",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
   public boolean confirmPriceWarning() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Der Preis ist ganz schön hoch. Bist Du sicher, dass alle Eingaben stimmen?",
-        "Teurer Einkauf",
-        JOptionPane.YES_NO_OPTION)
+            getContent(),
+            "Der Preis ist ganz schön hoch. Bist Du sicher, dass alle Eingaben stimmen?",
+            "Teurer Einkauf",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
   public boolean confirmAmountWarning() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Die Menge ist ganz schön hoch. Bist Du sicher, dass alle Eingaben stimmen?",
-        "Hohe Menge",
-        JOptionPane.YES_NO_OPTION)
+            getContent(),
+            "Die Menge ist ganz schön hoch. Bist Du sicher, dass alle Eingaben stimmen?",
+            "Hohe Menge",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
@@ -972,5 +963,4 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   public String getTitle() {
     return "Einkauf für " + controller.getModel().getSaleSession().getCustomer().getFullName();
   }
-
 }

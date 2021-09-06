@@ -1,8 +1,5 @@
 package kernbeisser.CustomComponents.SearchBox;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -27,8 +24,7 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   private JPanel main;
   private JPanel extraOptionsPanel;
 
-  @Linked
-  private SearchBoxController<T> controller;
+  @Linked private SearchBoxController<T> controller;
 
   void setObjects(Collection<T> objects) {
     this.objects.setObjects(objects);
@@ -97,5 +93,4 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   public void setRowFilter(RowFilter<T> rowFilter) {
     objects.setRowFilter(rowFilter);
   }
-
 }

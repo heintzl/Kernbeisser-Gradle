@@ -1,10 +1,5 @@
 package kernbeisser.Windows.EditArticles;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import java.awt.Dimension;
-import java.awt.Insets;
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
@@ -19,8 +14,7 @@ public class EditItemsView implements IView<EditItemsController> {
   private JButton choosePriceList;
   private ObjectViewView<Article> objectView;
 
-  @Linked
-  private EditItemsController controller;
+  @Linked private EditItemsController controller;
 
   public void messageBarcodeNotFound(String s) {
     Tools.beep();
@@ -49,5 +43,4 @@ public class EditItemsView implements IView<EditItemsController> {
   private void createUIComponents() {
     objectView = controller.getObjectView();
   }
-
 }

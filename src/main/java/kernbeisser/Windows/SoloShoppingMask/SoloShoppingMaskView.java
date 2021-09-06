@@ -1,7 +1,5 @@
 package kernbeisser.Windows.SoloShoppingMask;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.*;
 import javax.swing.*;
 import jiconfont.IconCode;
@@ -22,11 +20,9 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
 
   private ShoppingMaskUIView shoppingMaskUIView;
 
-  @Linked
-  private SoloShoppingMaskController controller;
+  @Linked private SoloShoppingMaskController controller;
 
-  @Linked
-  private ShoppingMaskUIController shoppingMaskUIController;
+  @Linked private ShoppingMaskUIController shoppingMaskUIController;
 
   private void createUIComponents() {
     shoppingMaskUIView = shoppingMaskUIController.getView();
@@ -63,5 +59,4 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
   public String getTitle() {
     return "Selbsteinkauf";
   }
-
 }

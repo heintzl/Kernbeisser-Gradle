@@ -1,9 +1,5 @@
 package kernbeisser.Windows.PrintLabels;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import java.awt.Dimension;
-import java.awt.Insets;
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Windows.CollectionView.CollectionController;
@@ -18,12 +14,10 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
   private CollectionView collectionView;
   private JButton printSheetInfo;
 
-  @Linked
-  private CollectionController<Article> articles;
+  @Linked private CollectionController<Article> articles;
 
   @Override
-  public void initialize(PrintLabelsController controller) {
-  }
+  public void initialize(PrintLabelsController controller) {}
 
   @Override
   public @NotNull JComponent getContent() {
@@ -36,11 +30,11 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
 
   public boolean confirmChanges() {
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Soll ich mir die ausgewählten Etiketten für den Ausdruck merken?",
-        "Später drucken",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE)
+            getContent(),
+            "Soll ich mir die ausgewählten Etiketten für den Ausdruck merken?",
+            "Später drucken",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
         == JOptionPane.YES_OPTION;
   }
 
@@ -49,7 +43,5 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
     return "Etiketten Zusammenstellen";
   }
 
-  public void refreshView() {
-  }
-
+  public void refreshView() {}
 }

@@ -1,8 +1,5 @@
 package kernbeisser.Windows.ChangePassword;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -24,8 +21,7 @@ public class ChangePasswordView implements IView<ChangePasswordController> {
   private JLabel message;
   private JLabel passwordHint;
   private JLabel currentPasswordLable;
-  @Linked
-  private ChangePasswordController controller;
+  @Linked private ChangePasswordController controller;
 
   @Override
   public void initialize(ChangePasswordController controller) {
@@ -104,5 +100,4 @@ public class ChangePasswordView implements IView<ChangePasswordController> {
   public String getTitle() {
     return "Passwort ändern";
   }
-
 }

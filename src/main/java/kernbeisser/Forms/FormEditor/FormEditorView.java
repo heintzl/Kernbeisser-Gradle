@@ -1,13 +1,9 @@
 package kernbeisser.Forms.FormEditor;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.Mode;
@@ -67,5 +63,4 @@ public class FormEditorView<V> implements IView<FormEditorController<V>> {
   public String getTitle() {
     return controller.getModel().getForm().getView().getTitle();
   }
-
 }

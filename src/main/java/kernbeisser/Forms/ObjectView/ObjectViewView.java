@@ -1,13 +1,7 @@
 package kernbeisser.Forms.ObjectView;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
-import java.util.Locale;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -28,14 +22,11 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
   private JPanel main;
   private JPanel extraButtons;
 
-  @Linked
-  private ObjectViewController<T> controller;
+  @Linked private ObjectViewController<T> controller;
 
-  @Linked
-  private SearchBoxController<T> searchBoxController;
+  @Linked private SearchBoxController<T> searchBoxController;
 
-  @Linked
-  private String title;
+  @Linked private String title;
 
   JPanel getExtraButtonPanel() {
     return extraButtons;
@@ -63,7 +54,7 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
 
   boolean commitDelete() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(), "Soll dieses Objekt wirklich gelöscht werden?")
+            getTopComponent(), "Soll dieses Objekt wirklich gelöscht werden?")
         == 0;
   }
 
@@ -97,5 +88,4 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
   public void messageSelectObjectFirst() {
     message("Bitte wähle zunächst ein Objekt aus.");
   }
-
 }

@@ -1,7 +1,5 @@
 package kernbeisser.Windows.InventoryMenu;
 
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import java.awt.Insets;
 import javax.swing.*;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -9,17 +7,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class InventoryMenuView implements IView<InventoryMenuController> {
 
-  @Linked
-  private InventoryMenuController controller;
+  @Linked private InventoryMenuController controller;
   private JPanel main;
 
   @Override
-  public void initialize(InventoryMenuController controller) {
-  }
+  public void initialize(InventoryMenuController controller) {}
 
   @Override
   public @NotNull JComponent getContent() {
     return main;
   }
-
 }

@@ -1,8 +1,5 @@
 package kernbeisser.Windows.PermissionManagement;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
@@ -33,8 +30,7 @@ public class PermissionView implements IView<PermissionController> {
   private JButton exportPermissions;
   private JButton importPermissions;
 
-  @Linked
-  private PermissionController controller;
+  @Linked private PermissionController controller;
 
   Optional<PermissionKey> getSelectedObject() {
     return permission.getSelectedObject();
@@ -63,9 +59,9 @@ public class PermissionView implements IView<PermissionController> {
       int s =
           (int)
               (permission
-                  .getFontMetrics(permission.getFont())
-                  .getStringBounds(permissionColumn.getName(), null)
-                  .getWidth()
+                      .getFontMetrics(permission.getFont())
+                      .getStringBounds(permissionColumn.getName(), null)
+                      .getWidth()
                   + 10);
       permission.getColumnModel().getColumn(i).setMinWidth(s);
       permission.getColumnModel().getColumn(i).setPreferredWidth(s + (i == 0 ? 100 : 0));
@@ -168,10 +164,10 @@ public class PermissionView implements IView<PermissionController> {
 
   public boolean permissionIsInUse() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Die Berechtigung ist noch an Nutzer vergeben,\n"
-            + "soll allen Nutzern die Berechtigung entzogen werden\n"
-            + "und die Berechtigung anschließend gelöscht werden?")
+            getTopComponent(),
+            "Die Berechtigung ist noch an Nutzer vergeben,\n"
+                + "soll allen Nutzern die Berechtigung entzogen werden\n"
+                + "und die Berechtigung anschließend gelöscht werden?")
         == 0;
   }
 
@@ -195,12 +191,11 @@ public class PermissionView implements IView<PermissionController> {
         .forEach(permissionAdvancedComboBox::addItem);
     jPanel.add(permissionAdvancedComboBox);
     if (JOptionPane.showConfirmDialog(
-        getTopComponent(), jPanel, "Berechtigung auswählen", JOptionPane.OK_CANCEL_OPTION)
+            getTopComponent(), jPanel, "Berechtigung auswählen", JOptionPane.OK_CANCEL_OPTION)
         == 0) {
       return permissionAdvancedComboBox.getSelected().orElseThrow(CancellationException::new);
     } else {
       throw new CancellationException();
     }
   }
-
 }

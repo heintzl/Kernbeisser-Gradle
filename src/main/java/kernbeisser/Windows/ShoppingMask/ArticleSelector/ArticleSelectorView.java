@@ -1,13 +1,7 @@
 package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
-import java.util.Locale;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
@@ -22,11 +16,9 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
   private JButton chooseButton;
   private SearchBoxView<Article> searchBox;
 
-  @Linked
-  private ArticleSelectorController controller;
+  @Linked private ArticleSelectorController controller;
 
-  @Linked
-  private SearchBoxController<Article> searchBoxController;
+  @Linked private SearchBoxController<Article> searchBoxController;
 
   private void createUIComponents() {
     searchBox = searchBoxController.getView();
@@ -55,5 +47,4 @@ public class ArticleSelectorView implements IView<ArticleSelectorController> {
   public void setRowFilter(RowFilter<Article> articleRowFilter) {
     searchBox.setRowFilter(articleRowFilter);
   }
-
 }

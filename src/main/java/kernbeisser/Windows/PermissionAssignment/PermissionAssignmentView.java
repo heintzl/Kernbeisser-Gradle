@@ -1,9 +1,5 @@
 package kernbeisser.Windows.PermissionAssignment;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import java.awt.Insets;
 import java.util.List;
 import java.util.Optional;
 import javax.swing.*;
@@ -22,8 +18,7 @@ public class PermissionAssignmentView implements IView<PermissionAssignmentContr
   private AdvancedComboBox<Permission> permissions;
   private CollectionView<User> collectionView;
 
-  @Linked
-  private CollectionController<User> user;
+  @Linked private CollectionController<User> user;
 
   @Override
   public void initialize(PermissionAssignmentController controller) {
@@ -50,11 +45,11 @@ public class PermissionAssignmentView implements IView<PermissionAssignmentContr
 
   public boolean confirmChanges() {
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Sollen die vorgenommenen Änderungen gespeichert werden?",
-        "Wechsel der bearbeiteten Rolle",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE)
+            getContent(),
+            "Sollen die vorgenommenen Änderungen gespeichert werden?",
+            "Wechsel der bearbeiteten Rolle",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
         == JOptionPane.YES_OPTION;
   }
 
@@ -62,5 +57,4 @@ public class PermissionAssignmentView implements IView<PermissionAssignmentContr
   public String getTitle() {
     return "Berechtigung erteilen";
   }
-
 }

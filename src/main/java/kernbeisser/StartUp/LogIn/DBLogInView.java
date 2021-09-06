@@ -1,13 +1,7 @@
 package kernbeisser.StartUp.LogIn;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
-import java.util.Locale;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Windows.MVC.IView;
@@ -24,8 +18,7 @@ public class DBLogInView implements IView<DBLogInController> {
   private JPanel main;
   private JTextField encoding;
 
-  @Linked
-  private DBLogInController controller;
+  @Linked private DBLogInController controller;
 
   @Override
   public void initialize(DBLogInController controller) {
@@ -85,5 +78,4 @@ public class DBLogInView implements IView<DBLogInController> {
     url.setForeground(Color.BLACK);
     encoding.setForeground(Color.BLACK);
   }
-
 }

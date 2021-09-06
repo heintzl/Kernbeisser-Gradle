@@ -1,9 +1,5 @@
 package kernbeisser.Windows.EditSurchargeGroups;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import java.awt.Insets;
 import java.util.Collection;
 import javax.swing.*;
 import jiconfont.IconCode;
@@ -43,11 +39,9 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
   private JButton calculateSurcharge;
   private ObjectTable<Article> surchargeGroupArticles;
 
-  @Getter
-  private ObjectForm<SurchargeGroup> objectForm;
+  @Getter private ObjectForm<SurchargeGroup> objectForm;
 
-  @Linked
-  private EditSurchargeGroupController controller;
+  @Linked private EditSurchargeGroupController controller;
 
   @Override
   public void initialize(EditSurchargeGroupController controller) {
@@ -141,15 +135,14 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
 
   public boolean shouldBecomeAutoLinked() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Sollen die Artikel automatisch einer anderen Zuschlagsgruppe zugeteilt werden um anschließend den Vorgang zu wiederholen?")
+            getTopComponent(),
+            "Sollen die Artikel automatisch einer anderen Zuschlagsgruppe zugeteilt werden um anschließend den Vorgang zu wiederholen?")
         == 0;
   }
 
   boolean shouldDelete() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(), "Soll die Zuschlagsgruppe wirklich gelöscht werden?")
+            getTopComponent(), "Soll die Zuschlagsgruppe wirklich gelöscht werden?")
         == 0;
   }
-
 }

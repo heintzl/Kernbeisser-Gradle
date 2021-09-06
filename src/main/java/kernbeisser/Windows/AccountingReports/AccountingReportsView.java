@@ -3,21 +3,11 @@ package kernbeisser.Windows.AccountingReports;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.google.common.collect.Lists;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.User;
@@ -33,15 +23,13 @@ import org.jetbrains.annotations.NotNull;
 public class AccountingReportsView extends JDialog implements IView<AccountingReportsController> {
 
   private JButton cancel;
-  @Getter
-  private JComboBox<ExportTypes> exportType;
+  @Getter private JComboBox<ExportTypes> exportType;
   private JButton submit;
   private DatePicker tillRollStartDate;
   private DatePicker tillRollEndDate;
   private JPanel main;
   private JRadioButton optTillRoll;
-  @Getter
-  private JRadioButton optAccountingReport;
+  @Getter private JRadioButton optAccountingReport;
   private AdvancedComboBox<Purchase> startBon;
   private AdvancedComboBox<Purchase> endBon;
   private JRadioButton optUserBalance;
@@ -58,8 +46,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JCheckBox permissionHoldersWithKeys;
   private Map<JComponent, JRadioButton> optionalComponents;
 
-  @Linked
-  private AccountingReportsController controller;
+  @Linked private AccountingReportsController controller;
 
   Instant getDateValue(DatePicker comp) {
     return Instant.from(comp.getDate().atStartOfDay(ZoneId.systemDefault()));
@@ -187,5 +174,4 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
         "Ungütlige Eingabe",
         JOptionPane.WARNING_MESSAGE);
   }
-
 }

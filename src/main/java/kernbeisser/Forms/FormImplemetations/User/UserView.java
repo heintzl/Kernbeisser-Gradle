@@ -1,16 +1,11 @@
 package kernbeisser.Forms.FormImplemetations.User;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
-import java.util.Locale;
 import java.util.Set;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.PermissionCheckBox;
 import kernbeisser.CustomComponents.Verifier.IntegerVerifier;
@@ -70,8 +65,7 @@ public class UserView implements IView<UserController> {
   private AccessCheckingLabel<User> jobs;
   private AccessCheckingLabel<User> updateInfo;
 
-  @Linked
-  private UserController controller;
+  @Linked private UserController controller;
 
   private ObjectForm<User> objectForm;
 
@@ -153,12 +147,10 @@ public class UserView implements IView<UserController> {
   }
 
   @Key(PermissionKey.USER_KERNBEISSER_KEY_READ)
-  private void checkUserKernbeisserKeyReadPermission() {
-  }
+  private void checkUserKernbeisserKeyReadPermission() {}
 
   @Key(PermissionKey.USER_KERNBEISSER_KEY_WRITE)
-  private void checkUserKernbeisserKeyWritePermission() {
-  }
+  private void checkUserKernbeisserKeyWritePermission() {}
 
   @Override
   public @NotNull JComponent getContent() {
@@ -175,8 +167,7 @@ public class UserView implements IView<UserController> {
     userDataPanel =
         new JPanel() {
           @Override
-          protected void paintComponent(Graphics g) {
-          }
+          protected void paintComponent(Graphics g) {}
         };
     firstName =
         new AccessCheckingField<>(
@@ -217,10 +208,10 @@ public class UserView implements IView<UserController> {
             Columns.create("Name", Permission::getNeatName));
     chgJobs =
         new AccessCheckingCollectionEditor<>(
-            User::getJobsAsAvailable,
-            Source.of(Job.class),
-            Columns.create("Name", Job::getName),
-            Columns.create("Beschreibung", Job::getDescription))
+                User::getJobsAsAvailable,
+                Source.of(Job.class),
+                Columns.create("Name", Job::getName),
+                Columns.create("Beschreibung", Job::getDescription))
             .withCloseEvent(() -> jobs.setText(Job.concatenateJobs(chgJobs.getData())));
     jobs = new AccessCheckingLabel<>(User::getJobsAsString);
     updateInfo = new AccessCheckingLabel<>(this::getUpdateInfo);
@@ -263,21 +254,21 @@ public class UserView implements IView<UserController> {
             new LoginInfo(user, resetPassword)
                 .sendToPrinter("Benutzerinfo wird erstellt", Tools::showUnexpectedErrorWarning));
     Object message =
-        new Object[]{
-            "Der Anmeldename ist:\n",
-            new JTextField(user.getUsername()) {
-              {
-                setEditable(false);
-              }
-            },
-            "Das generierte Passwort ist Folgendes:\n",
-            new JTextField(resetPassword) {
-              {
-                setEditable(false);
-              }
-            },
-            "Bitte logge dich möglichst zeitnah ein,\num das Passwort zu ändern.\n",
-            printButton
+        new Object[] {
+          "Der Anmeldename ist:\n",
+          new JTextField(user.getUsername()) {
+            {
+              setEditable(false);
+            }
+          },
+          "Das generierte Passwort ist Folgendes:\n",
+          new JTextField(resetPassword) {
+            {
+              setEditable(false);
+            }
+          },
+          "Bitte logge dich möglichst zeitnah ein,\num das Passwort zu ändern.\n",
+          printButton
         };
     JOptionPane.showMessageDialog(
         parentComponent,
@@ -289,19 +280,19 @@ public class UserView implements IView<UserController> {
   public boolean askForAddPermissionFullMember(int no) {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        no
-            + " Anteile sind eingetragen - \n"
-            + "Soll der Mitglied-Status zu \"Mitglied\" geändert werden?")
+            getTopComponent(),
+            no
+                + " Anteile sind eingetragen - \n"
+                + "Soll der Mitglied-Status zu \"Mitglied\" geändert werden?")
         == 0;
   }
 
   public boolean askForRemovePermissionFullMember() {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "0 Anteile sind eingetragen - \n"
-            + "Soll der Mitglied-Status zu \"kein Mitglied\" geändert werden?")
+            getTopComponent(),
+            "0 Anteile sind eingetragen - \n"
+                + "Soll der Mitglied-Status zu \"kein Mitglied\" geändert werden?")
         == 0;
   }
 
@@ -356,12 +347,11 @@ public class UserView implements IView<UserController> {
 
   public boolean confirmDelete() {
     return JOptionPane.showConfirmDialog(
-        null,
-        "Soll das Benutzerkonto wirklich gelöscht werden?",
-        "Löschbestätigung",
-        JOptionPane.OK_CANCEL_OPTION,
-        JOptionPane.QUESTION_MESSAGE)
+            null,
+            "Soll das Benutzerkonto wirklich gelöscht werden?",
+            "Löschbestätigung",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
         == JOptionPane.OK_OPTION;
   }
-
 }

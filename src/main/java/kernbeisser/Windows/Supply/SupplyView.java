@@ -1,12 +1,6 @@
 package kernbeisser.Windows.Supply;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -15,10 +9,8 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -51,11 +43,9 @@ public class SupplyView implements IView<SupplyController> {
   private JButton commit;
   private JButton cancel;
   private JButton importSupplyFile;
-  @Getter
-  private JPanel printButtonPanel;
+  @Getter private JPanel printButtonPanel;
 
-  @Linked
-  private SupplyController controller;
+  @Linked private SupplyController controller;
 
   private ObjectForm<Article> objectForm;
 
@@ -176,8 +166,7 @@ public class SupplyView implements IView<SupplyController> {
                 "Ausdrucken",
                 e -> controller.becomePrinted(e) ? selected : unselected,
                 controller::togglePrint,
-                (e) -> {
-                },
+                (e) -> {},
                 (int) (100 * Setting.LABEL_SCALE_FACTOR.getDoubleValue())));
   }
 
@@ -188,8 +177,8 @@ public class SupplyView implements IView<SupplyController> {
 
   public boolean commitClose() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Bist du sicher, dass du das Fenster schließen\nund die jetzige Eingabe beenden willst?")
+            getTopComponent(),
+            "Bist du sicher, dass du das Fenster schließen\nund die jetzige Eingabe beenden willst?")
         == 0;
   }
 
@@ -205,11 +194,10 @@ public class SupplyView implements IView<SupplyController> {
 
   public boolean shouldPrintLabels() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Soll ich mir die ausgewählten Etiketten für den Ausdruck merken?",
-        "Später drucken",
-        JOptionPane.YES_NO_OPTION)
+            getTopComponent(),
+            "Soll ich mir die ausgewählten Etiketten für den Ausdruck merken?",
+            "Später drucken",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
-
 }

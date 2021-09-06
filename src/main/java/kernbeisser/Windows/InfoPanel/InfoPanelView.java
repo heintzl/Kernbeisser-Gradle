@@ -1,7 +1,5 @@
 package kernbeisser.Windows.InfoPanel;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -23,8 +21,7 @@ public class InfoPanelView implements IView<InfoPanelController> {
   private JPanel main;
   private JTextPane infoText;
 
-  @Linked
-  private InfoPanelController controller;
+  @Linked private InfoPanelController controller;
 
   private String getBuildDate() {
     try {
@@ -86,5 +83,4 @@ public class InfoPanelView implements IView<InfoPanelController> {
   public String getTitle() {
     return "Softwareinformationen";
   }
-
 }

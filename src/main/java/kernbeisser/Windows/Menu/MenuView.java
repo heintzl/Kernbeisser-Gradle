@@ -1,15 +1,8 @@
 package kernbeisser.Windows.Menu;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
-import java.util.Locale;
 import java.util.concurrent.CancellationException;
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ControllerButton;
@@ -96,8 +89,7 @@ public class MenuView implements IView<MenuController> {
     logout.setToolTipText(LogInModel.getLoggedIn().getFullName() + " vom Programm abmelden");
   }
 
-  @Linked
-  private MenuController controller;
+  @Linked private MenuController controller;
 
   @Override
   public @NotNull JComponent getContent() {
@@ -237,5 +229,4 @@ public class MenuView implements IView<MenuController> {
   public String getTitle() {
     return "Menü";
   }
-
 }

@@ -1,11 +1,6 @@
 package kernbeisser.Forms.FormImplemetations.Supplier;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import java.awt.Insets;
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
@@ -16,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SupplierView implements IView<SupplierController> {
 
-  @Linked
-  private SupplierController controller;
+  @Linked private SupplierController controller;
 
   private JPanel main;
   private AccessCheckingField<Supplier, String> location;
@@ -30,8 +24,7 @@ public class SupplierView implements IView<SupplierController> {
   private AccessCheckingField<Supplier, String> street;
   private AccessCheckingField<Supplier, String> email;
 
-  @Getter
-  private ObjectForm<Supplier> objectForm;
+  @Getter private ObjectForm<Supplier> objectForm;
 
   @Override
   public void initialize(SupplierController controller) {
@@ -90,11 +83,11 @@ public class SupplierView implements IView<SupplierController> {
 
   public boolean messageConfirmSurcharge(double defaultSurcharge) {
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        String.format(
-            "Ist der eingegebene Standartzuschlag von %.2f%% korrekt?", defaultSurcharge * 100),
-        "Komischer Zuschlag!",
-        JOptionPane.DEFAULT_OPTION)
+            getContent(),
+            String.format(
+                "Ist der eingegebene Standartzuschlag von %.2f%% korrekt?", defaultSurcharge * 100),
+            "Komischer Zuschlag!",
+            JOptionPane.DEFAULT_OPTION)
         == 0;
   }
 
@@ -113,5 +106,4 @@ public class SupplierView implements IView<SupplierController> {
         "Der Lieferant ist noch Artikeln zugewiesen und kann daher nicht gelöscht werden!",
         "Lieferant wird noch verwendet.");
   }
-
 }

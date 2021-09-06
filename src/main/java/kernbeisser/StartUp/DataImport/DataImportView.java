@@ -1,8 +1,5 @@
 package kernbeisser.StartUp.DataImport;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.Windows.MVC.IView;
@@ -24,11 +21,9 @@ public class DataImportView implements IView<DataImportController> {
   private JLabel currentActionItems;
   private JLabel currentActionUser;
   private JCheckBox importStandardAdmin;
-  @Getter
-  private JPasswordField adminPassword;
+  @Getter private JPasswordField adminPassword;
 
-  @Linked
-  private DataImportController controller;
+  @Linked private DataImportController controller;
 
   boolean createStandardAdmin() {
     return importStandardAdmin.isSelected();
@@ -171,5 +166,4 @@ public class DataImportView implements IView<DataImportController> {
   public String getTitle() {
     return "Daten importieren";
   }
-
 }

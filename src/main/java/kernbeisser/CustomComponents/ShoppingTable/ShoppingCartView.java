@@ -3,19 +3,14 @@ package kernbeisser.CustomComponents.ShoppingTable;
 import static java.lang.Math.round;
 import static java.text.MessageFormat.format;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.*;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -39,11 +34,9 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   private JLabel underMinWarning;
   private boolean autoScrollDown;
 
-  @Linked
-  private boolean editable;
+  @Linked private boolean editable;
 
-  @Linked
-  private ShoppingCartController controller;
+  @Linked private ShoppingCartController controller;
 
   public void setObjects(Collection<ShoppingItem> items) {
     autoScrollDown = true;
@@ -91,8 +84,8 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
                         shoppingItem ->
                             shoppingItem.getName()
                                 + (shoppingItem.getSuppliersShortName() != null
-                                ? " [" + shoppingItem.getSuppliersShortName() + "]"
-                                : ""))
+                                    ? " [" + shoppingItem.getSuppliersShortName() + "]"
+                                    : ""))
                 .withColumnAdjustor(e -> e.setMinWidth(500)),
             Columns.create("Inhalt", ShoppingItem::getContentAmount, SwingConstants.RIGHT),
             Columns.create("Menge", ShoppingItem::getDisplayAmount, SwingConstants.RIGHT),
@@ -168,5 +161,4 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   public ObjectTable<ShoppingItem> getShoppingItemsTable() {
     return shoppingItems;
   }
-
 }

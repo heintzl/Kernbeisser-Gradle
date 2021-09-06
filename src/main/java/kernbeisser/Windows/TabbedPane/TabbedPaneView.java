@@ -1,9 +1,5 @@
 package kernbeisser.Windows.TabbedPane;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import java.awt.Dimension;
-import java.awt.Insets;
 import javax.swing.*;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -14,12 +10,10 @@ public class TabbedPaneView implements IView<TabbedPaneController> {
   private JTabbedPane tabbedPane;
   private JPanel main;
 
-  @Linked
-  private TabbedPaneController controller;
+  @Linked private TabbedPaneController controller;
 
   @Override
-  public void initialize(TabbedPaneController controller) {
-  }
+  public void initialize(TabbedPaneController controller) {}
 
   @Override
   public @NotNull JComponent getContent() {
@@ -40,5 +34,4 @@ public class TabbedPaneView implements IView<TabbedPaneController> {
   public void setSelected(int index) {
     tabbedPane.setSelectedIndex(index);
   }
-
 }

@@ -1,17 +1,11 @@
 package kernbeisser.Windows.LogIn.SimpleLogIn;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Locale;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -31,8 +25,7 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
   private JButton quit;
   private JProgressBar loadingMenuIndicator;
 
-  @Linked
-  private SimpleLogInController controller;
+  @Linked private SimpleLogInController controller;
 
   char[] getPassword() {
     return password.getPassword();
@@ -115,5 +108,4 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
   public String getTitle() {
     return "Anmelden";
   }
-
 }

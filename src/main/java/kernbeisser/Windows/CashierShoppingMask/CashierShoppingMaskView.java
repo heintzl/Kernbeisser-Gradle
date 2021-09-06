@@ -1,14 +1,8 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.util.Collection;
-import java.util.Locale;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -32,11 +26,9 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   private JButton userInfo;
   private JButton close;
 
-  @Linked
-  private CashierShoppingMaskController controller;
+  @Linked private CashierShoppingMaskController controller;
 
-  @Linked
-  private SearchBoxController<User> searchBoxController;
+  @Linked private SearchBoxController<User> searchBoxController;
 
   private void createUIComponents() {
     searchBoxView = searchBoxController.getView();
@@ -110,11 +102,11 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
 
   public boolean commitClose() {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Bist du dir sicher das du den Ladendienst beenden\n"
-            + "und den Ladendienst-Report ausdrucken möchtest?",
-        "Ladendienst beenden",
-        JOptionPane.YES_NO_OPTION)
+            getTopComponent(),
+            "Bist du dir sicher das du den Ladendienst beenden\n"
+                + "und den Ladendienst-Report ausdrucken möchtest?",
+            "Ladendienst beenden",
+            JOptionPane.YES_NO_OPTION)
         == 0;
   }
 
@@ -143,5 +135,4 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
         getTopComponent(),
         "Es ist bereits ein Einkaufs-Fenster geöffnet, um mehrere Einkaufsfenster öffnen zu können, aktiviere dies bitte explizit in deinen Einstellungen.");
   }
-
 }

@@ -1,8 +1,5 @@
 package kernbeisser.Forms.FormImplemetations.Article;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.util.Collection;
 import javax.swing.*;
@@ -56,8 +53,7 @@ public class ArticleView implements IView<ArticleController> {
 
   private ObjectForm<Article> articleObjectForm;
 
-  @Linked
-  private ArticleController controller;
+  @Linked private ArticleController controller;
 
   private void createUIComponents() {
     itemName =
@@ -155,8 +151,8 @@ public class ArticleView implements IView<ArticleController> {
   boolean kbNumberAlreadyExists() {
     return 0
         == JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Die Artikelnummer ist bereits vergeben. Soll die nächste freie gewählt werden?");
+            getTopComponent(),
+            "Die Artikelnummer ist bereits vergeben. Soll die nächste freie gewählt werden?");
   }
 
   void barcodeAlreadyExists() {
@@ -246,22 +242,21 @@ public class ArticleView implements IView<ArticleController> {
   public void setBarcode(String s) {
     if (Tools.canInvoke(this::checkArticleBarcodeWritePermission)
         && JOptionPane.showConfirmDialog(
-        getTopComponent(), "Soll der Barcode auf " + s + " gesetzt werden?")
-        == 0) {
+                getTopComponent(), "Soll der Barcode auf " + s + " gesetzt werden?")
+            == 0) {
       barcode.setText(s);
     }
   }
 
   @Key(PermissionKey.ARTICLE_BARCODE_WRITE)
-  private void checkArticleBarcodeWritePermission() {
-  }
+  private void checkArticleBarcodeWritePermission() {}
 
   public boolean isSameArticle(Article nearest) {
     return JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        "Es wurde ein Artikel gefunden der einen sehr identischen Namen hat:\n"
-            + nearest.toString()
-            + "\nWollen sie trozedem einen neuen Artikel erstellen?")
+            getTopComponent(),
+            "Es wurde ein Artikel gefunden der einen sehr identischen Namen hat:\n"
+                + nearest.toString()
+                + "\nWollen sie trozedem einen neuen Artikel erstellen?")
         == 0;
   }
 
@@ -275,5 +270,4 @@ public class ArticleView implements IView<ArticleController> {
   public void messageUnitRequired() {
     JOptionPane.showMessageDialog(getContent(), "Bitte setzten sie die Einheit.");
   }
-
 }

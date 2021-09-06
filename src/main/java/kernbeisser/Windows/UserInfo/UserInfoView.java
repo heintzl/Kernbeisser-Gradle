@@ -3,9 +3,6 @@ package kernbeisser.Windows.UserInfo;
 import static java.lang.String.format;
 import static kernbeisser.Useful.Tools.optional;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -14,11 +11,8 @@ import java.nio.file.Files;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -73,16 +67,13 @@ public class UserInfoView implements IView<UserInfoController> {
   private JRadioButton optCurrent;
   private JRadioButton optLast;
   private JButton printStatement;
-  @Getter
-  private JButton editUser;
+  @Getter private JButton editUser;
   private JButton close;
   private AdvancedComboBox<StatementType> statementType;
 
-  @Getter
-  private ObjectForm<User> userObjectForm;
+  @Getter private ObjectForm<User> userObjectForm;
 
-  @Linked
-  private UserInfoController controller;
+  @Linked private UserInfoController controller;
 
   void setUserGroupMembers(Collection<User> users) {
     userGroup.setObjects(users);
@@ -246,5 +237,4 @@ public class UserInfoView implements IView<UserInfoController> {
   public void messageSelectPurchaseFirst() {
     JOptionPane.showMessageDialog(getContent(), "Bitte wähle zunächst einen Einkauf aus.");
   }
-
 }

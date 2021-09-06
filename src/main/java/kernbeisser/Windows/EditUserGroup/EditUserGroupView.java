@@ -2,10 +2,6 @@ package kernbeisser.Windows.EditUserGroup;
 
 import static kernbeisser.Useful.Tools.optional;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 import javax.swing.*;
@@ -36,11 +32,9 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   private JButton editSoli;
   private JLabel updateInfo;
 
-  @Linked
-  private EditUserGroupController controller;
+  @Linked private EditUserGroupController controller;
 
-  @Linked
-  private SearchBoxController<UserGroup> searchBoxController;
+  @Linked private SearchBoxController<UserGroup> searchBoxController;
 
   private void createUIComponents() {
     userGroupSearchBoxView = searchBoxController.getView();
@@ -80,12 +74,12 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
           getTopComponent(), "Du bist bereits alleine in einer Nutzergruppe!");
     } else {
       if (JOptionPane.showConfirmDialog(
-          getTopComponent(),
-          controller.getModel().getUser().getFullName()
-              + ", möchtest du wirklich deine Nutzergruppe verlassen?\n"
-              + "Guthaben und Solidaraufschlag werden nicht übernommen...",
-          "Gruppe verlassen",
-          JOptionPane.OK_CANCEL_OPTION)
+              getTopComponent(),
+              controller.getModel().getUser().getFullName()
+                  + ", möchtest du wirklich deine Nutzergruppe verlassen?\n"
+                  + "Guthaben und Solidaraufschlag werden nicht übernommen...",
+              "Gruppe verlassen",
+              JOptionPane.OK_CANCEL_OPTION)
           == 0) {
         controller.leaveUserGroup();
         boolean ownUserGroupChange = !controller.getModel().getCaller().isPresent();
@@ -119,7 +113,7 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
               + "in deiner Nutzergruppe sind.";
     }
     if (JOptionPane.showConfirmDialog(
-        getTopComponent(), message, "Gruppe wechseln", JOptionPane.OK_CANCEL_OPTION)
+            getTopComponent(), message, "Gruppe wechseln", JOptionPane.OK_CANCEL_OPTION)
         != 0) {
       return;
     }
@@ -190,5 +184,4 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   public String getTitle() {
     return "Nutzergruppe wechseln (" + controller.getModel().getUser().getFullName() + ")";
   }
-
 }

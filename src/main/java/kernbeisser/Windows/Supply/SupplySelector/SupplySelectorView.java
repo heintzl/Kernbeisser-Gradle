@@ -1,11 +1,6 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Insets;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Comparator;
@@ -14,10 +9,8 @@ import java.util.concurrent.CancellationException;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -141,10 +134,10 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
 
   public void messageCommitDelete() {
     if (JOptionPane.showConfirmDialog(
-        getContent(),
-        "Willst du diese wirklich Lieferung löschen? Dieser Vorgang kann nicht rückgänging gemacht werden!",
-        "Potezieller Datenverlusst",
-        JOptionPane.YES_NO_OPTION)
+            getContent(),
+            "Willst du diese wirklich Lieferung löschen? Dieser Vorgang kann nicht rückgänging gemacht werden!",
+            "Potezieller Datenverlusst",
+            JOptionPane.YES_NO_OPTION)
         != 0) {
       throw new CancellationException();
     }
@@ -153,5 +146,4 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   public void messageSelectSupplyFirst() {
     message("Bitte wähle zunächst eine Lieferung aus!", "Keine Lieferung ausgewählt!");
   }
-
 }

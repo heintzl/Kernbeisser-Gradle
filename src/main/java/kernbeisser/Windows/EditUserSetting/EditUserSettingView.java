@@ -1,8 +1,5 @@
 package kernbeisser.Windows.EditUserSetting;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import javax.swing.*;
 import kernbeisser.Enums.Theme;
@@ -18,8 +15,7 @@ public class EditUserSettingView implements IView<EditUserSettingController> {
   private JPanel main;
   private JLabel exampleText;
   private JCheckBox openMultipleShoppingMasks;
-  @Linked
-  private EditUserSettingController controller;
+  @Linked private EditUserSettingController controller;
 
   public void setThemes(Theme[] values) {
     themes.removeAllItems();
@@ -73,5 +69,4 @@ public class EditUserSettingView implements IView<EditUserSettingController> {
   public void setAllowMultipleShoppingMasks(boolean b) {
     openMultipleShoppingMasks.setSelected(b);
   }
-
 }

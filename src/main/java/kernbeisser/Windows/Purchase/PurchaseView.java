@@ -1,9 +1,5 @@
 package kernbeisser.Windows.Purchase;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import java.awt.Insets;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
@@ -27,11 +23,9 @@ public class PurchaseView implements IView<PurchaseController> {
   private JLabel sellerL;
   private ShoppingCartView cartView;
 
-  @Linked
-  private PurchaseController controller;
+  @Linked private PurchaseController controller;
 
-  @Linked
-  private ShoppingCartController cartController;
+  @Linked private ShoppingCartController cartController;
 
   void setDate(String date) {
     this.date.setText(date);
@@ -68,5 +62,4 @@ public class PurchaseView implements IView<PurchaseController> {
   public @NotNull JComponent getContent() {
     return main;
   }
-
 }

@@ -1,14 +1,8 @@
 package kernbeisser.Windows.Pay;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.util.List;
-import java.util.Locale;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -30,8 +24,7 @@ public class PayView implements IView<PayController> {
   JButton setCustomerStandard;
   private PayController controller;
 
-  @Linked
-  private ShoppingCartController shoppingCartController;
+  @Linked private ShoppingCartController shoppingCartController;
 
   private void createUIComponents() {
     shoppingCartView = shoppingCartController.getView();
@@ -51,13 +44,13 @@ public class PayView implements IView<PayController> {
 
   public void confirmLogging(String name, double value) {
     if (JOptionPane.showConfirmDialog(
-        getTopComponent(),
-        String.format(
-            "Ist der Einkauf in Höhe von %.2f€ von %s in das Log-Buch eintragen worden?",
-            value, name),
-        "Log-Bucheintrag",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE)
+            getTopComponent(),
+            String.format(
+                "Ist der Einkauf in Höhe von %.2f€ von %s in das Log-Buch eintragen worden?",
+                value, name),
+            "Log-Bucheintrag",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
         != 0) {
       JOptionPane.showMessageDialog(
           getTopComponent(),
@@ -98,5 +91,4 @@ public class PayView implements IView<PayController> {
             + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
             + " zu gehen.");
   }
-
 }

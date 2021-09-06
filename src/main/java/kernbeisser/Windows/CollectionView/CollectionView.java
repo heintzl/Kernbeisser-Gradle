@@ -1,13 +1,9 @@
 package kernbeisser.Windows.CollectionView;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -39,8 +35,7 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   private JTextField searchChosen;
   private JLabel iconAvailable;
   private JLabel iconChosen;
-  @Linked
-  private CollectionController<T> controller;
+  @Linked private CollectionController<T> controller;
   public static final int NONE = 0;
   public static final int AVAILABLE = 1;
   public static final int CHOSEN = 2;
@@ -135,10 +130,10 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
 
   boolean confirmCancel() {
     return JOptionPane.showConfirmDialog(
-        getContent(),
-        "Soll die Eingabe beendet werden? Alle Änderungen werden verworfen.",
-        "Eingabe abbrechen",
-        JOptionPane.OK_CANCEL_OPTION)
+            getContent(),
+            "Soll die Eingabe beendet werden? Alle Änderungen werden verworfen.",
+            "Eingabe abbrechen",
+            JOptionPane.OK_CANCEL_OPTION)
         == JOptionPane.OK_OPTION;
   }
 
@@ -151,5 +146,4 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     additionalControls.setVisible(true);
     additionalControls.add(component);
   }
-
 }
