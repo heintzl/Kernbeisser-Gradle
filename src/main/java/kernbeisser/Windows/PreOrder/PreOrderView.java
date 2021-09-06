@@ -91,6 +91,8 @@ public class PreOrderView implements IView<PreOrderController> {
                 e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())),
                 SwingConstants.RIGHT),
             new CustomizableColumn<>("Anzahl", PreOrder::getAmount)
+                .withLeftClickConsumer(controller::editAmount)
+                .withRightClickConsumer(controller::editAmount)
                 .withAlignmentX(SwingConstants.CENTER));
     if (!controller.restrictToLoggedIn)
       preOrders.addColumnAtIndex(
