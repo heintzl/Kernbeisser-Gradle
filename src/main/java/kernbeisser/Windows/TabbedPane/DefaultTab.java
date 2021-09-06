@@ -68,8 +68,7 @@ public class DefaultTab {
     main =
         new JPanel() {
           @Override
-          protected void paintComponent(Graphics g) {
-          }
+          protected void paintComponent(Graphics g) {}
         };
   }
 
@@ -87,8 +86,14 @@ public class DefaultTab {
     main.setFocusable(false);
     main.setMinimumSize(new Dimension(142, 20));
     main.setPreferredSize(new Dimension(200, 20));
-    main.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null,
-        TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+    main.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createEmptyBorder(),
+            null,
+            TitledBorder.DEFAULT_JUSTIFICATION,
+            TitledBorder.DEFAULT_POSITION,
+            null,
+            null));
     close = new JButton();
     close.setBorderPainted(false);
     close.setContentAreaFilled(false);
@@ -102,21 +107,58 @@ public class DefaultTab {
     close.setVerticalAlignment(1);
     close.setVerticalTextPosition(1);
     close.setVisible(true);
-    main.add(close,
-        new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE,
+    main.add(
+        close,
+        new GridConstraints(
+            0,
+            3,
+            1,
+            1,
+            GridConstraints.ANCHOR_NORTH,
+            GridConstraints.FILL_NONE,
             GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+            GridConstraints.SIZEPOLICY_FIXED,
+            null,
+            null,
+            null,
+            0,
+            false));
     icon = new JLabel();
     icon.setFocusable(false);
     icon.setText("");
-    main.add(icon,
-        new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE,
-            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+    main.add(
+        icon,
+        new GridConstraints(
+            0,
+            0,
+            1,
+            1,
+            GridConstraints.ANCHOR_NORTHWEST,
+            GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED,
+            GridConstraints.SIZEPOLICY_FIXED,
+            null,
+            null,
+            null,
+            0,
             false));
     final Spacer spacer1 = new Spacer();
-    main.add(spacer1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER,
-        GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null,
-        0, false));
+    main.add(
+        spacer1,
+        new GridConstraints(
+            0,
+            2,
+            1,
+            1,
+            GridConstraints.ANCHOR_CENTER,
+            GridConstraints.FILL_HORIZONTAL,
+            GridConstraints.SIZEPOLICY_WANT_GROW,
+            1,
+            null,
+            null,
+            null,
+            0,
+            false));
     tabTitle = new JLabel();
     tabTitle.setFocusable(false);
     Font tabTitleFont = this.$$$getFont$$$(null, -1, 16, tabTitle.getFont());
@@ -124,15 +166,25 @@ public class DefaultTab {
       tabTitle.setFont(tabTitleFont);
     }
     tabTitle.setText("text");
-    main.add(tabTitle,
-        new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE,
-            GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+    main.add(
+        tabTitle,
+        new GridConstraints(
+            0,
+            1,
+            1,
+            1,
+            GridConstraints.ANCHOR_NORTHWEST,
+            GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_FIXED,
+            GridConstraints.SIZEPOLICY_FIXED,
+            null,
+            null,
+            null,
+            0,
             false));
   }
 
-  /**
-   * @noinspection ALL
-   */
+  /** @noinspection ALL */
   private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
     if (currentFont == null) {
       return null;
@@ -148,18 +200,22 @@ public class DefaultTab {
         resultName = currentFont.getName();
       }
     }
-    Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(),
-        size >= 0 ? size : currentFont.getSize());
+    Font font =
+        new Font(
+            resultName,
+            style >= 0 ? style : currentFont.getStyle(),
+            size >= 0 ? size : currentFont.getSize());
     boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
-    Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize())
-        : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
-    return fontWithFallback instanceof FontUIResource ? fontWithFallback
+    Font fontWithFallback =
+        isMac
+            ? new Font(font.getFamily(), font.getStyle(), font.getSize())
+            : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
+    return fontWithFallback instanceof FontUIResource
+        ? fontWithFallback
         : new FontUIResource(fontWithFallback);
   }
 
-  /**
-   * @noinspection ALL
-   */
+  /** @noinspection ALL */
   public JComponent $$$getRootComponent$$$() {
     return main;
   }
