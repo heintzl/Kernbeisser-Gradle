@@ -15,6 +15,7 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -93,7 +94,11 @@ public class PreOrderView implements IView<PreOrderController> {
             new CustomizableColumn<>("Anzahl", PreOrder::getAmount)
                 .withLeftClickConsumer(controller::editAmount)
                 .withRightClickConsumer(controller::editAmount)
-                .withAlignmentX(SwingConstants.CENTER));
+                .withAlignmentX(SwingConstants.CENTER),
+            Columns.create(
+                "Bestellt am",
+                e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
+                SwingConstants.RIGHT));
     if (!controller.restrictToLoggedIn)
       preOrders.addColumnAtIndex(
           0,
@@ -108,7 +113,7 @@ public class PreOrderView implements IView<PreOrderController> {
           Columns.createIconColumn(
               IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
               controller::delete,
-              e -> true));
+              e -> e.getOrderedOn() == null));
     }
     user = new AdvancedComboBox<>(User::getFullName);
   }

@@ -60,6 +60,11 @@ public class PreOrder implements Serializable, UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATE_DATE_WRITE)})
   private Instant createDate;
 
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
+  private Instant orderedOn;
+
   public static List<PreOrder> getAll(String condition) {
     return Tools.getAll(PreOrder.class, condition);
   }
