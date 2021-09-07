@@ -2,6 +2,7 @@ package kernbeisser.Windows.PreOrder;
 
 import java.awt.*;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -66,6 +67,11 @@ public class PreOrderModel implements IModel<PreOrderController> {
     }
   }
 
+  Collection<PreOrder> getUnorderedPreOrders() {
+    return em.createQuery("select p from PreOrder p where orderedOn is null", PreOrder.class)
+        .getResultList();
+  }
+
   static double containerNetPrice(Article article) {
     return new ShoppingItem(article, 0, 0, true).getItemNetPrice() * article.getContainerSize();
   }
@@ -100,7 +106,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public int exportPreOrder(Component parent) throws IOException {
-    return CSVExport.exportPreOrder(parent, getAllPreOrders(false));
+    return CSVExport.exportPreOrder(parent, getUnorderedPreOrders());
   }
 
   void toggleDelivery(PreOrder p) {
@@ -120,5 +126,12 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   public void setAmount(PreOrder preOrder, int amount) {
     preOrder.setAmount(amount);
+  }
+
+  public void setAllExported() {
+    Instant orderInstant = Instant.now();
+    for (PreOrder o : getUnorderedPreOrders()) {
+      o.setOrderedOn(orderInstant);
+    }
   }
 }
