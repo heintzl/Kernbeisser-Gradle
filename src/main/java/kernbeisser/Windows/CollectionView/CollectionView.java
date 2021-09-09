@@ -9,6 +9,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTable.RegexFilter;
+import kernbeisser.CustomComponents.ObjectTable.RowFilter;
 import kernbeisser.Useful.DocumentChangeListener;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -58,6 +59,15 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
   void setEditable(boolean editable) {
     availableSec.setVisible(editable);
     moveSec.setVisible(editable);
+  }
+
+  public void addRowFilter(RowFilter<T> rowfilter, int scope) {
+    if ((scope & 1) == 1) {
+      available.setRowFilter(rowfilter);
+    }
+    if ((scope & 2) == 2) {
+      chosen.setRowFilter(rowfilter);
+    }
   }
 
   public void addSearchbox(int scope) {
