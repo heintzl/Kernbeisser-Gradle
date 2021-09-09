@@ -16,11 +16,13 @@ public class ClipboardFilter<T> implements RowFilter<T> {
   Collection<T> filterHits;
 
   public ClipboardFilter(Function<String[], Collection<T>> clipBoardEntryEvaluator) {
-    this("", clipBoardEntryEvaluator);
+    this(clipBoardEntryEvaluator, "", "");
   }
 
   public ClipboardFilter(
-      String explainingMessage, Function<String[], Collection<T>> clipBoardEntryEvaluator) {
+      Function<String[], Collection<T>> clipBoardEntryEvaluator,
+      String explainingMessage,
+      String savedDialogName) {
     if (!explainingMessage.isEmpty()) {
       RememberDialog.showDialog(
           LogInModel.getLoggedIn(),

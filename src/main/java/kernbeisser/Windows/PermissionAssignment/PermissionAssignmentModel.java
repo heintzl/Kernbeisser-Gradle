@@ -93,8 +93,9 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   }
 
   public ClipboardFilter<User> getClpBoardRowFilter() {
-    return new ClipboardFilter<User>(
+    return new ClipboardFilter<>(
+        this::getUserRowFilter,
         "Bitte Nachname und Vorname als 2 Tabellenspalten in die Zwischenablage kopieren!",
-        this::getUserRowFilter);
+        "clpBoardFilterPermissionAssignment");
   }
 }
