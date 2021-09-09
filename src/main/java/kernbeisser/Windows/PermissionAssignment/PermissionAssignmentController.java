@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
@@ -57,6 +58,18 @@ public class PermissionAssignmentController
                         && (p.getName().equals("@CASHIER") || !onlyCashier)))
             .collect(Collectors.toList()));
     user.getView().addSearchbox(CollectionView.BOTH);
+    JCheckBox toggleClipBoardFilter = new JCheckBox("Auf Zwischenablage filtern");
+    toggleClipBoardFilter.addActionListener(
+        e -> toggleClipBoardFiltering(toggleClipBoardFilter.isSelected()));
+    user.addControls(toggleClipBoardFilter);
+  }
+
+  private void toggleClipBoardFiltering(boolean selected) {
+    if (selected) {
+      user.getView().setRowFilter(model.getClpBoardRowFilter(), 1);
+    } else {
+      user.getView().setRowFilter(null, 1);
+    }
   }
 
   public void loadPermission(ActionEvent actionEvent) {
