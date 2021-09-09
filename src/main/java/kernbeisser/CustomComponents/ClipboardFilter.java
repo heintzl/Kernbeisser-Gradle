@@ -5,21 +5,40 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.util.Collection;
 import java.util.function.Function;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
+import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 
 public class ClipboardFilter<T> implements RowFilter<T> {
 
   Collection<T> filterHits;
 
   public ClipboardFilter(Function<String[], Collection<T>> clipBoardEntryEvaluator) {
-    String clpBoard = getClipboard();
-    if (!clpBoard.isEmpty()) {
-      filterHits = clipBoardEntryEvaluator.apply(clpBoard.split("\n"));
-    }
+    this("", clipBoardEntryEvaluator);
   }
 
-  public ClipboardFilter(String explainingMessage, Function<String, T> clipBoardEntryEvaluator) {}
+  public ClipboardFilter(
+      String explainingMessage, Function<String[], Collection<T>> clipBoardEntryEvaluator) {
+    if (!explainingMessage.isEmpty()) {
+      RememberDialog.showDialog(
+          LogInModel.getLoggedIn(),
+          "clpBoardFilterPermissionAssignment",
+          null,
+          explainingMessage,
+          "Filterung auf Zwischenablage");
+    }
+    String clpBoard = getClipboard();
+    filterHits = clipBoardEntryEvaluator.apply(clpBoard.split("\n"));
+    if (filterHits.isEmpty()) {
+      JOptionPane.showMessageDialog(
+          null,
+          "Die Zwischenablage enthält anscheinend keine passenden Informationen!",
+          "Filterung auf Zwischenablage",
+          JOptionPane.WARNING_MESSAGE);
+    }
+  }
 
   private static String getClipboard() {
     Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);

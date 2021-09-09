@@ -58,10 +58,18 @@ public class PermissionAssignmentController
                         && (p.getName().equals("@CASHIER") || !onlyCashier)))
             .collect(Collectors.toList()));
     user.getView().addSearchbox(CollectionView.BOTH);
-    JButton toggleClipBoardFilter = new JButton("Auf Zwischenablage filtern");
+    JCheckBox toggleClipBoardFilter = new JCheckBox("Auf Zwischenablage filtern");
     toggleClipBoardFilter.addActionListener(
-        e -> user.getView().addRowFilter(model.getClpBoardRowFilter(), 1));
+        e -> toggleClipBoardFiltering(toggleClipBoardFilter.isSelected()));
     user.addControls(toggleClipBoardFilter);
+  }
+
+  private void toggleClipBoardFiltering(boolean selected) {
+    if (selected) {
+      user.getView().setRowFilter(model.getClpBoardRowFilter(), 1);
+    } else {
+      user.getView().setRowFilter(null, 1);
+    }
   }
 
   public void loadPermission(ActionEvent actionEvent) {

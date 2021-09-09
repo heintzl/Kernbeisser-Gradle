@@ -61,7 +61,7 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     moveSec.setVisible(editable);
   }
 
-  public void addRowFilter(RowFilter<T> rowfilter, int scope) {
+  public void setRowFilter(RowFilter<T> rowfilter, int scope) {
     if ((scope & 1) == 1) {
       available.setRowFilter(rowfilter);
     }

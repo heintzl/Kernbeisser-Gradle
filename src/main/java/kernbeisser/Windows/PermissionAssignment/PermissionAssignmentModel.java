@@ -12,7 +12,6 @@ import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Setter;
 import lombok.var;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Supplier;
 
 public class PermissionAssignmentModel implements IModel<PermissionAssignmentController> {
@@ -79,21 +78,23 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   }
 
   private Collection<User> getUserRowFilter(String[] rows) {
-    var userNames =
-        Arrays.stream(rows)
-            .map(r -> StringUtils.join(Arrays.copyOfRange(r.split("\t"), 0, 1), "&"))
-            .collect(Collectors.toList());
+    var userNames = Arrays.stream(rows).map(r -> r.replace("\t", "&")).collect(Collectors.toList());
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-            "Select u from User u where u.surname + '&' + u.firstName in :ul", User.class)
-        .setParameter("ul", userNames)
-        .getResultList();
+    var result =
+        em.createQuery(
+                "Select u from User u where concat(u.surname, '&', u.firstName) in (:ul)",
+                User.class)
+            .setParameter("ul", userNames)
+            .getResultList();
+    return result;
   }
 
   public ClipboardFilter<User> getClpBoardRowFilter() {
-    return new ClipboardFilter<User>(this::getUserRowFilter);
+    return new ClipboardFilter<User>(
+        "Bitte Nachname und Vorname als 2 Tabellenspalten in die Zwischenablage kopieren!",
+        this::getUserRowFilter);
   }
 }
