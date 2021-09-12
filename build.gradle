@@ -68,11 +68,17 @@ jar {
     }
 }
 
+task copyAgent(type: Copy){
+    from 'src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar'
+    into "$buildDir/libs"
+}
+
 task copyProductionFolderContent(type: Copy){
     from 'production'
     into "$buildDir/libs"
 }
 
+copyProductionFolderContent.dependsOn copyAgent
 processResources.dependsOn copyProductionFolderContent
 
 spotless {
