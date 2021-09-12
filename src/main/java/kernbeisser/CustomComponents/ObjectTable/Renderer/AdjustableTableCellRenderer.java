@@ -15,6 +15,8 @@ public class AdjustableTableCellRenderer<T> extends DefaultTableCellRenderer {
   @Override
   public Component getTableCellRendererComponent(
       JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    if (value == null)
+      return super.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
     Property<T> property = (Property<T>) value;
     customizers.forEach(
         e -> e.customizeFor(this, property.getParent(), isSelected, hasFocus, row, column));

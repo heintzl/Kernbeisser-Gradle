@@ -8,6 +8,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserSettingView implements IView<EditUserSettingController> {
+
   private JButton commit;
   private JComboBox<Theme> themes;
   private JSlider fontSize;

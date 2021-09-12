@@ -17,6 +17,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
+
   private JButton search;
   private JTextField searchInput;
   private ObjectTable<T> objects;

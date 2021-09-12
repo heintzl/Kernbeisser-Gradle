@@ -134,7 +134,9 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
         .getVerticalScrollBar()
         .addAdjustmentListener(
             e -> {
-              if (autoScrollDown) e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+              if (autoScrollDown) {
+                e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+              }
               autoScrollDown = false;
             });
     CompoundBorder border =

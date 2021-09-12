@@ -28,29 +28,24 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ArticleView implements IView<ArticleController> {
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, String> itemName;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, Supplier>
-      supplier;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double> netPrice;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double> deposit;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Integer>
-      kbItemNumber;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Integer>
-      supplierItemNumber;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double> crateDeposit;
-  private kernbeisser.CustomComponents.PermissionButton searchPriceList;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, PriceList>
-      priceList;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Integer> amount;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double>
-      containerSize;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, MetricUnits>
-      metricUnits;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Long> barcode;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckBox<Article> showInShoppingMask;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckBox<Article> weighable;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, String> extraInfo;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox<Article, VAT> vat;
+
+  private AccessCheckingField<Article, String> itemName;
+  private AccessCheckingComboBox<Article, Supplier> supplier;
+  private AccessCheckingField<Article, Double> netPrice;
+  private AccessCheckingField<Article, Double> deposit;
+  private AccessCheckingField<Article, Integer> kbItemNumber;
+  private AccessCheckingField<Article, Integer> supplierItemNumber;
+  private AccessCheckingField<Article, Double> crateDeposit;
+  private PermissionButton searchPriceList;
+  private AccessCheckingComboBox<Article, PriceList> priceList;
+  private AccessCheckingField<Article, Integer> amount;
+  private AccessCheckingField<Article, Double> containerSize;
+  private AccessCheckingComboBox<Article, MetricUnits> metricUnits;
+  private AccessCheckingField<Article, Long> barcode;
+  private AccessCheckBox<Article> showInShoppingMask;
+  private AccessCheckBox<Article> weighable;
+  private AccessCheckingField<Article, String> extraInfo;
+  private AccessCheckingComboBox<Article, VAT> vat;
   private JPanel main;
   private AccessCheckingComboBox<Article, SurchargeGroup> surchargeGroup;
   private AccessCheckingComboBox<Article, ShopRange> shopRange;

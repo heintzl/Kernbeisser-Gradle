@@ -13,6 +13,7 @@ import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class PayView implements IView<PayController> {
+
   private JPanel main;
   private JPanel shoppingListPanel;
   private ShoppingCartView shoppingCartView;

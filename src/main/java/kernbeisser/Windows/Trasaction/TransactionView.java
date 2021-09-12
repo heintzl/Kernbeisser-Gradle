@@ -28,9 +28,10 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class TransactionView implements IView<TransactionController> {
+
   private JButton transferTransactions;
-  private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<User> to;
-  private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<User> from;
+  private AdvancedComboBox<User> to;
+  private AdvancedComboBox<User> from;
   private JCheckBox fromKBValue;
   private DoubleParseField value;
   private ObjectTable<Transaction> transactions;
@@ -299,7 +300,9 @@ public class TransactionView implements IView<TransactionController> {
 
           @Override
           public void stateChanged(ChangeEvent e) {
-            if (lastState == fromKBValue.isSelected()) return;
+            if (lastState == fromKBValue.isSelected()) {
+              return;
+            }
             lastState = !lastState;
             if (fromKBValue.isSelected()) {
               toKBValue.setSelected(false);
@@ -317,7 +320,9 @@ public class TransactionView implements IView<TransactionController> {
 
           @Override
           public void stateChanged(ChangeEvent e) {
-            if (lastState == toKBValue.isSelected()) return;
+            if (lastState == toKBValue.isSelected()) {
+              return;
+            }
             lastState = !lastState;
             if (toKBValue.isSelected()) {
               fromKBValue.setSelected(false);

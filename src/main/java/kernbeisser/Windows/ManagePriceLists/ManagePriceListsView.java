@@ -15,6 +15,7 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsView implements IView<ManagePriceListsController> {
+
   private JButton addPriceList;
   private JButton deletePriceList;
   private JButton renamePriceList;

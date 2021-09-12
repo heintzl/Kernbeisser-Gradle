@@ -1,20 +1,23 @@
+
+
 plugins {
     id 'java'
     id 'idea'
     id "io.freefair.lombok" version "5.3.0"
     id 'com.diffplug.gradle.spotless' version '4.0.1'
     id 'com.github.jakemarsden.git-hooks' version '0.0.2'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
 group 'Kernbeisser'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
     maven {
-        url "http://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/"
+        url "https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/"
     }
 }
 
@@ -30,7 +33,7 @@ dependencies {
     def hibernateVersion = '5.3.12.Final'
     implementation 'org.hibernate:hibernate-agroal:'+hibernateVersion
     implementation "org.hibernate:hibernate-envers:"+hibernateVersion
-
+    implementation files("${rootDir}/libs/forms_rt.jar")
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
     implementation 'at.favre.lib:bcrypt:0.9.0'
     implementation "com.github.jiconfont:jiconfont-font_awesome:4.7.0.1"
@@ -39,13 +42,11 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.13.3'
     implementation 'net.sf.jasperreports:jasperreports:6.15.0'
     implementation 'net.sf.jasperreports:jasperreports-fonts:6.15.0'
-
     implementation 'org.jfree:jfreechart:1.5.0'
     implementation 'com.formdev:flatlaf:0.30'
     implementation 'org.json:json:20190722'
     implementation 'org.jetbrains:annotations:15.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-
 
 
     implementation 'com.google.guava:guava:30.0-jre'
@@ -60,15 +61,25 @@ dependencies {
     testImplementation 'org.mockito:mockito-junit-jupiter:3.7.7'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.0'
 }
-task fatJar(type: Jar) {
+
+jar {
     manifest {
-        attributes 'Implementation-Title': 'Kernbeisser',
-                'Main-Class': 'java.kernbeisser.Main'
+        attributes 'Main-Class': 'kernbeisser.Main'
     }
-    archivesBaseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
 }
+
+task copyAgent(type: Copy){
+    from 'src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar'
+    into "$buildDir/libs"
+}
+
+task copyProductionFolderContent(type: Copy){
+    from 'production'
+    into "$buildDir/libs"
+}
+
+copyProductionFolderContent.dependsOn copyAgent
+processResources.dependsOn copyProductionFolderContent
 
 spotless {
     java {

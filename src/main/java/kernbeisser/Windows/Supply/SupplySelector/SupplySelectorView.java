@@ -15,6 +15,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -31,7 +32,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private JButton openOtherFolder;
   private JButton export;
   private ObjectTable<LineContent> lineContents;
-  private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<ResolveStatus> filter;
+  private AdvancedComboBox<ResolveStatus> filter;
   private JButton printProduce;
 
   @Override

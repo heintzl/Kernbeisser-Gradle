@@ -14,6 +14,7 @@ import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
 public class SettingView implements IView<SettingController> {
+
   private ObjectTable<Setting> settingValues;
   private JButton cancel;
   private JPanel main;

@@ -13,6 +13,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
+
   private JButton add;
   private JButton edit;
   private JButton back;

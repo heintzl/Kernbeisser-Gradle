@@ -18,6 +18,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class EditUserGroupView implements IView<EditUserGroupController> {
+
   private ObjectTable<User> currentUserGroup;
   private JButton leaveUserGroup;
   private JButton changeUserGroup;

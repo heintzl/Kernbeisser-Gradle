@@ -17,6 +17,8 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
+import kernbeisser.CustomComponents.TextFields.DoubleParseField;
+import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -46,14 +48,14 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private JRadioButton optCustomProduct;
   private JRadioButton optDeposit;
   private JRadioButton optDepositReturn;
-  private kernbeisser.CustomComponents.TextFields.IntegerParseField kbNumber;
-  private kernbeisser.CustomComponents.TextFields.IntegerParseField suppliersItemNumber;
+  private IntegerParseField kbNumber;
+  private IntegerParseField suppliersItemNumber;
   private JTextField articleName;
-  private kernbeisser.CustomComponents.TextFields.DoubleParseField price;
-  private kernbeisser.CustomComponents.TextFields.DoubleParseField netPrice;
-  private kernbeisser.CustomComponents.TextFields.DoubleParseField containerSize;
-  private kernbeisser.CustomComponents.TextFields.DoubleParseField amount;
-  private kernbeisser.CustomComponents.TextFields.DoubleParseField deposit;
+  private DoubleParseField price;
+  private DoubleParseField netPrice;
+  private DoubleParseField containerSize;
+  private DoubleParseField amount;
+  private DoubleParseField deposit;
   private JPanel westPanel;
   private JPanel eastPanel;
   private JPanel eastUpperPanel;
@@ -67,7 +69,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private JLabel netPriceUnit;
   private JLabel amountUnit;
   private JLabel containerUnit;
-  private kernbeisser.CustomComponents.TextFields.IntegerParseField variablePercentage;
+  private IntegerParseField variablePercentage;
   private JCheckBox rememberReductionSetting;
   private JButton editUser;
   private JButton addPrice;
@@ -423,7 +425,9 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
             .format(shoppingItem.getContainerSize() * (isWeighable ? 1000 : 1)));
     containerUnit.setText(shoppingItem.getContainerUnits().getShortName());
     try {
-      if (shoppingItem.getVatValue() > 0) setVat(shoppingItem.getVatValue());
+      if (shoppingItem.getVatValue() > 0) {
+        setVat(shoppingItem.getVatValue());
+      }
     } catch (InvalidVATValueException e) {
       e.printStackTrace();
       vat.setSelectedIndex(-1);
@@ -782,7 +786,9 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           if (isWeighable && !isPreordered) {
             amount.setText("");
           } else {
-            if (amount.getText().isEmpty()) amount.setText("1");
+            if (amount.getText().isEmpty()) {
+              amount.setText("1");
+            }
           }
           amount.selectAll();
           amount.requestFocusInWindow();
@@ -798,7 +804,9 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
           @Override
           public void keyReleased(KeyEvent e) {
-            if (suppliersItemNumber.getText().equals(lastSearch)) return;
+            if (suppliersItemNumber.getText().equals(lastSearch)) {
+              return;
+            }
             controller.searchBySupplierItemsNumber();
             lastSearch = suppliersItemNumber.getText();
           }
@@ -813,7 +821,9 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            if (netPrice.isEnabled()) recalculatePrice();
+            if (netPrice.isEnabled()) {
+              recalculatePrice();
+            }
             priceEntered(e.getKeyCode());
           }
         });
@@ -847,7 +857,9 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER) addToCart();
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+              addToCart();
+            }
           }
         });
 

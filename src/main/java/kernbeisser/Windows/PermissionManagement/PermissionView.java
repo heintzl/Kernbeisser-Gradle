@@ -20,6 +20,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class PermissionView implements IView<PermissionController> {
+
   private ObjectTable<PermissionKey> permission;
   private JPanel main;
   private JComboBox<Class> category;

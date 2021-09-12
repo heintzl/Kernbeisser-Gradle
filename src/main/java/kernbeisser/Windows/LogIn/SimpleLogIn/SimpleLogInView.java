@@ -17,6 +17,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleLogInView implements IView<SimpleLogInController> {
+
   private JButton logIn;
   private JPasswordField password;
   private JTextField username;

@@ -47,14 +47,14 @@ public class MenuView implements IView<MenuController> {
   private JPanel main;
   private InfoPanelView infoPanel;
   private JPanel menuPanel;
-  private kernbeisser.CustomComponents.ControllerButton openCashierShoppingMask;
+  private ControllerButton openCashierShoppingMask;
   private ControllerButton editPriceList;
   private ControllerButton editArticles;
   private ControllerButton editSurchargeTables;
-  private kernbeisser.CustomComponents.ControllerButton changePassword;
-  private kernbeisser.CustomComponents.ControllerButton openSelfPreorder;
-  private kernbeisser.CustomComponents.ControllerButton showUserInfo;
-  private kernbeisser.CustomComponents.ControllerButton editUserSettings;
+  private ControllerButton changePassword;
+  private ControllerButton openSelfPreorder;
+  private ControllerButton showUserInfo;
+  private ControllerButton editUserSettings;
   private ControllerButton editUsers;
   private ControllerButton doTransactionPayIn;
   private ControllerButton changePermissions;
@@ -180,7 +180,9 @@ public class MenuView implements IView<MenuController> {
             },
             SoloShoppingMaskController.class,
             e -> {
-              if (e != null) e.openTab();
+              if (e != null) {
+                e.openTab();
+              }
             });
     addBeginner =
         new ControllerButton(

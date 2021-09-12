@@ -9,6 +9,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class PurchaseView implements IView<PurchaseController> {
+
   private JButton finish;
   private JLabel date;
   private JLabel count;

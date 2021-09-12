@@ -16,6 +16,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
+import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -31,14 +32,13 @@ import org.jetbrains.annotations.NotNull;
 public class SupplyView implements IView<SupplyController> {
 
   private JPanel main;
-  private kernbeisser.CustomComponents.TextFields.IntegerParseField suppliersNumber;
+  private IntegerParseField suppliersNumber;
   private JComboBox<Supplier> supplier;
   private JButton add;
   private ObjectTable<ShoppingItem> shoppingItems;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double>
-      containerSize;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, Double> netPrice;
-  private kernbeisser.Forms.ObjectForm.Components.AccessCheckingField<Article, String> name;
+  private AccessCheckingField<Article, Double> containerSize;
+  private AccessCheckingField<Article, Double> netPrice;
+  private AccessCheckingField<Article, String> name;
   private DoubleParseField amount;
   private JButton commit;
   private JButton cancel;

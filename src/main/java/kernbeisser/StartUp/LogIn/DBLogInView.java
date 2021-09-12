@@ -9,6 +9,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class DBLogInView implements IView<DBLogInController> {
+
   private JButton logIn;
   private JTextField url;
   private JTextField username;

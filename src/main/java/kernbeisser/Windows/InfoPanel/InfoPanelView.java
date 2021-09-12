@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.text.html.HTMLEditorKit;
 import kernbeisser.Config.Config;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
@@ -20,7 +21,7 @@ public class InfoPanelView implements IView<InfoPanelController> {
   private JPanel main;
   private JTextPane infoText;
 
-  @Linked private kernbeisser.Windows.InfoPanel.InfoPanelController controller;
+  @Linked private InfoPanelController controller;
 
   private String getBuildDate() {
     try {
@@ -34,7 +35,7 @@ public class InfoPanelView implements IView<InfoPanelController> {
 
   @Override
   public void initialize(InfoPanelController controller) {
-    infoText.setEditorKit(new javax.swing.text.html.HTMLEditorKit());
+    infoText.setEditorKit(new HTMLEditorKit());
     infoText.setEditable(false);
     infoText.setText(
         "<HTML><BODY>"
@@ -58,7 +59,7 @@ public class InfoPanelView implements IView<InfoPanelController> {
             + "<BODY></HTML>");
     infoText.addHyperlinkListener(
         e -> {
-          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          if (e.getEventType() == EventType.ACTIVATED) {
             try {
               Desktop.getDesktop().browse(e.getURL().toURI());
             } catch (IOException | URISyntaxException f) {

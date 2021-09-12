@@ -94,6 +94,8 @@
       <element id="library" level="project" name="Gradle: io.agroal:agroal-pool:0.4" />
       <element id="library" level="project" name="Gradle: org.jfree:jfreechart:1.5.0" />
       <element id="library" level="project" name="Gradle: org.opentest4j:opentest4j:1.2.0" />
+      <element id="library" level="project" name="Gradle: org.hibernate:hibernate-envers:5.3.12.Final" />
+      <element id="library" level="project" name="Gradle: org.junit.jupiter:junit-jupiter-params:5.7.0" />
     </root>
   </artifact>
 </component>

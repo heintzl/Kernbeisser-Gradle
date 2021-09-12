@@ -98,7 +98,9 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
   void setDifferences(Collection<ArticleMerge> articleDifference) {
     differences.setObjects(articleDifference);
-    if (articleDifference.size() > 0) differences.getSelectionModel().setSelectionInterval(0, 0);
+    if (articleDifference.size() > 0) {
+      differences.getSelectionModel().setSelectionInterval(0, 0);
+    }
   }
 
   private void initForDiff(@NotNull MappedDifference... mappedDifferences) {
@@ -143,7 +145,9 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     MappedDifference[] mappedDifferences = getSelectedFilter();
     differences.setRowFilter(
         articleMerge -> {
-          if (articleMerge.isResolved()) return false;
+          if (articleMerge.isResolved()) {
+            return false;
+          }
           return articleMerge.containsConflict(mappedDifferences);
         });
   }

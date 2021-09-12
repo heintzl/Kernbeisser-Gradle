@@ -5,7 +5,8 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class TabbedPaneView implements IView<kernbeisser.Windows.TabbedPane.TabbedPaneController> {
+public class TabbedPaneView implements IView<TabbedPaneController> {
+
   private JTabbedPane tabbedPane;
   private JPanel main;
 
@@ -21,7 +22,9 @@ public class TabbedPaneView implements IView<kernbeisser.Windows.TabbedPane.Tabb
 
   void removeTab(int index) {
     tabbedPane.removeTabAt(index);
-    if (index != 0) setSelected(0);
+    if (index != 0) {
+      setSelected(0);
+    }
   }
 
   public JTabbedPane getTabbedPane() {

@@ -12,6 +12,7 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.User;
@@ -22,7 +23,8 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class PreOrderView implements IView<PreOrderController> {
-  private kernbeisser.CustomComponents.PermissionButton add;
+
+  private PermissionButton add;
   private ObjectTable<PreOrder> preOrders;
   private IntegerParseField amount;
   private JLabel name;
@@ -31,7 +33,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private JPanel main;
   private JPanel insertSection;
   private JLabel netPrice;
-  private kernbeisser.CustomComponents.ComboBox.AdvancedComboBox<User> user;
+  private AdvancedComboBox<User> user;
   private IntegerParseField kkNumber;
   private JButton close;
   JButton abhakplanButton;
@@ -108,6 +110,7 @@ public class PreOrderView implements IView<PreOrderController> {
               controller::toggleDelivery,
               e -> showSelectionPopup(),
               100));
+    }
     if (controller.userMayEdit()) {
       preOrders.addColumn(
           Columns.createIconColumn(
@@ -186,7 +189,9 @@ public class PreOrderView implements IView<PreOrderController> {
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_DELETE) controller.delete(getSelectedOrders());
+            if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+              controller.delete(getSelectedOrders());
+            }
           }
         });
 
@@ -198,10 +203,14 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   private void userAction(boolean fromFnKey) {
-    if (!fromFnKey) enableControls(true);
+    if (!fromFnKey) {
+      enableControls(true);
+    }
     if (controller.searchKK()) {
       amount.requestFocusInWindow();
-      if (fromFnKey) controller.add();
+      if (fromFnKey) {
+        controller.add();
+      }
     } else {
       kkNumber.requestFocusInWindow();
     }

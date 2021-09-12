@@ -7,6 +7,7 @@ import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.PermissionButton;
+import kernbeisser.CustomComponents.PermissionComboBox;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
@@ -17,10 +18,11 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class CashierShoppingMaskView implements IView<CashierShoppingMaskController> {
+
   private JPanel main;
   private SearchBoxView<User> searchBoxView;
   private PermissionButton openShoppingMask;
-  private kernbeisser.CustomComponents.PermissionComboBox<User> secondSellerUsername;
+  private PermissionComboBox<User> secondSellerUsername;
   private JButton userInfo;
   private JButton close;
 

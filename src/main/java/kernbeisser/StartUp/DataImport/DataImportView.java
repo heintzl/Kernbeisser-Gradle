@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class DataImportView implements IView<DataImportController> {
+
   private JPanel main;
   private JButton importData;
   private JButton cancel;

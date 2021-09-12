@@ -12,6 +12,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangePasswordView implements IView<ChangePasswordController> {
+
   private JPanel main;
   private JButton changePassword;
   private JPasswordField currentPassword;

@@ -11,6 +11,7 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class ArticleSelectorView implements IView<ArticleSelectorController> {
+
   private JPanel main;
   private JButton chooseButton;
   private SearchBoxView<Article> searchBox;

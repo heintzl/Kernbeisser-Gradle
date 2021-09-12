@@ -15,6 +15,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 
 public class DefaultTab {
+
   private JLabel tabTitle;
   private JLabel icon;
   private JPanel main;
