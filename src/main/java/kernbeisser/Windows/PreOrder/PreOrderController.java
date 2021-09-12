@@ -230,6 +230,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     PreOrderView view = getView();
     try {
       if (model.exportPreOrder(view.getContent()) == JFileChooser.APPROVE_OPTION) {
+        model.setAllExported();
         view.messageExportSuccess();
       } else {
         view.messageExportCanceled();
@@ -237,6 +238,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     } catch (IOException e) {
       view.messageExportError(e);
     }
+    getView().repaintTable();
   }
 
   void toggleDelivery(PreOrder p) {
@@ -254,6 +256,9 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   public void editAmount(PreOrder preOrder) {
+    if (preOrder.getOrderedOn() != null) {
+      return;
+    }
     String response = getView().inputAmount(preOrder.getAmount(), false);
     boolean exit = false;
     do {

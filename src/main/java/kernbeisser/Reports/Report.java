@@ -24,6 +24,7 @@ import kernbeisser.Exeptions.NoPurchasesFoundException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
+import lombok.var;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -87,22 +88,26 @@ public abstract class Report {
     return Config.getConfig().getReports().getOutputDirectory().toPath();
   }
 
-  private static PrintRequestAttributeSet getPageFormatFromReport(JasperPrint jpsPrint) {
+  private static PrintRequestAttributeSet getPageFormatFromReport(JasperPrint jspPrint) {
     PrintRequestAttributeSet result = new HashPrintRequestAttributeSet();
     result.add(
-        jpsPrint.getOrientationValue() == OrientationEnum.PORTRAIT
+        jspPrint.getOrientationValue() == OrientationEnum.PORTRAIT
             ? OrientationRequested.PORTRAIT
             : OrientationRequested.LANDSCAPE);
     result.add(
-        Math.max(jpsPrint.getPageWidth(), jpsPrint.getPageHeight()) <= 600
+        Math.max(jspPrint.getPageWidth(), jspPrint.getPageHeight()) <= 600
             ? MediaSizeName.ISO_A5
             : MediaSizeName.ISO_A4);
     return result;
   }
 
-  private static PrintServiceAttributeSet getPrinter(boolean useOSDefaultPrinter) {
+  private static PrintServiceAttributeSet getPrinter(
+      boolean useOSDefaultPrinter, JasperPrint jspPrint) {
     PrintServiceAttributeSet result = new HashPrintServiceAttributeSet();
-    String printer = Setting.PRINTER.getValue();
+    String printer = Setting.ALTERNATIVE_A5_PRINTER.getValue();
+    if (printer.isEmpty() || Math.max(jspPrint.getPageWidth(), jspPrint.getPageHeight()) > 600) {
+      printer = Setting.PRINTER.getValue();
+    }
     if (useOSDefaultPrinter || printer.equals("OS_default")) {
       printer = PrinterJob.getPrinterJob().getPrintService().getName();
     }
@@ -127,10 +132,12 @@ public abstract class Report {
                   new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 2);
               pm.setProgress(1);
               pm.setNote("Druck wird erstellt...");
+              var jasperPrint = getJspPrint();
               JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
-              printExporter.setExporterInput(new SimpleExporterInput(getJspPrint()));
-              PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(getJspPrint());
-              PrintServiceAttributeSet serviceAttributeSet = getPrinter(useOSDefaultPrinter);
+              printExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+              PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(jasperPrint);
+              PrintServiceAttributeSet serviceAttributeSet =
+                  getPrinter(useOSDefaultPrinter, jasperPrint);
               SimplePrintServiceExporterConfiguration printConfig =
                   new SimplePrintServiceExporterConfiguration();
               printConfig.setPrintRequestAttributeSet(requestAttributeSet);

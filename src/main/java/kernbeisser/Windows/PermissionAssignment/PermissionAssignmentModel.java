@@ -1,8 +1,10 @@
 package kernbeisser.Windows.PermissionAssignment;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
@@ -73,5 +75,27 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
           .forEach(em::persist);
     }
     em.flush();
+  }
+
+  private Collection<User> getUserRowFilter(String[] rows) {
+    var userNames = Arrays.stream(rows).map(r -> r.replace("\t", "&")).collect(Collectors.toList());
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    var result =
+        em.createQuery(
+                "Select u from User u where concat(u.surname, '&', u.firstName) in (:ul)",
+                User.class)
+            .setParameter("ul", userNames)
+            .getResultList();
+    return result;
+  }
+
+  public ClipboardFilter<User> getClpBoardRowFilter() {
+    return new ClipboardFilter<>(
+        this::getUserRowFilter,
+        "Bitte Nachname und Vorname als 2 Tabellenspalten in die Zwischenablage kopieren!",
+        "clpBoardFilterPermissionAssignment");
   }
 }
