@@ -15,6 +15,7 @@ import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Tasks.Catalog.Merge.ArticleMerge;
 import kernbeisser.Tasks.Catalog.Merge.MappedDifference;
 import kernbeisser.Tasks.Catalog.Merge.Solution;
+import kernbeisser.Useful.KornKraft;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 
@@ -109,7 +110,7 @@ public class SynchronizeArticleController
 
   public void importCatalogFromInternet() {
     try {
-      String urlAddress = getView().messageRequestInputURL();
+      String urlAddress = getView().messageRequestInputURL(KornKraft.findLastValidURL().orElse(""));
       URL url = new URL(urlAddress);
       BufferedReader bufferedReader =
           new BufferedReader(new InputStreamReader(url.openStream(), Catalog.DEFAULT_ENCODING));
