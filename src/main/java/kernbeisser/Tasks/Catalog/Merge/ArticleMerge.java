@@ -23,7 +23,7 @@ public class ArticleMerge {
         .filter(e -> e.getArticleDifference().equals(difference))
         .filter(e -> e.getSolution() == Solution.NO_SOLUTION)
         .forEach(e -> e.setSolution(solution));
-    if (articleDifferences.stream()
+    if (articleDifferences.size() == 0 ||articleDifferences.stream()
         .map(ArticleDifference::getSolution)
         .noneMatch(e -> e.equals(Solution.NO_SOLUTION))) resolved = true;
   }
