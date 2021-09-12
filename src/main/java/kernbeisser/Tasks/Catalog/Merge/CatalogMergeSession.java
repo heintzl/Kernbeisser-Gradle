@@ -138,7 +138,8 @@ public class CatalogMergeSession {
                   catalogDataSource);
           if (!revisionSearch.isPresent()) {
             return new ArticleMerge(
-                newVersion, newVersion, MergeStatus.ADDED, Collections.emptyList()).resolved();
+                    newVersion, newVersion, MergeStatus.ADDED, Collections.emptyList())
+                .resolved();
           }
           Article revision = revisionSearch.get();
           if (isArticleBaseChange(revision, newVersion)) {
