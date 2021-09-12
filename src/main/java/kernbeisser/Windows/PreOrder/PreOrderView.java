@@ -110,7 +110,6 @@ public class PreOrderView implements IView<PreOrderController> {
               controller::toggleDelivery,
               e -> showSelectionPopup(),
               100));
-    }
     if (controller.userMayEdit()) {
       preOrders.addColumn(
           Columns.createIconColumn(
