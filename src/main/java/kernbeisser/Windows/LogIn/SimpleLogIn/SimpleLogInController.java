@@ -11,6 +11,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.CannotLogInException;
+import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Main;
@@ -23,7 +24,6 @@ import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
-import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 
 public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
 

@@ -16,6 +16,7 @@ import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
+import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
@@ -24,7 +25,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
-import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
 
 @Entity
 @Table(
