@@ -242,9 +242,10 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     differences.removeAll(collection);
   }
 
-  public String messageRequestInputURL() {
+  public String messageRequestInputURL(String initValue) {
     return Optional.ofNullable(
-            JOptionPane.showInputDialog("Bitte geben sie die Kornkraft BNN-Datei URL ein:"))
+            JOptionPane.showInputDialog(
+                "Bitte geben sie die Kornkraft BNN-Datei URL ein:", initValue))
         .orElseThrow(CancellationException::new);
   }
 

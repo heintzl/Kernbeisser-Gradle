@@ -78,8 +78,13 @@ task copyProductionFolderContent(type: Copy){
     into "$buildDir/libs"
 }
 
+task copyReportsFolder(type: Copy){
+    from 'reports'
+    into "$buildDir/libs/reports"
+}
+
 copyProductionFolderContent.dependsOn copyAgent
-processResources.dependsOn copyProductionFolderContent
+processResources.dependsOn copyProductionFolderContent, copyReportsFolder
 
 spotless {
     java {
