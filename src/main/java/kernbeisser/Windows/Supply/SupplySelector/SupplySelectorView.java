@@ -101,7 +101,9 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 e -> String.format("%.2f€", e.getTotalPrice()),
                 SwingUtilities.RIGHT,
                 Column.NUMBER_SORTER),
-            Columns.createIconColumn("S", e -> getIcon(e.getStatus())));
+            Columns.<LineContent>createIconColumn("S", e -> getIcon(e.getStatus()))
+                .withColumnAdjustor(
+                    column -> column.setMaxWidth(Tools.scaleWithLabelScalingFactor(20))));
   }
 
   private static final Icon okIcon = createIcon(FontAwesome.CHECK_CIRCLE, new Color(0x238678));

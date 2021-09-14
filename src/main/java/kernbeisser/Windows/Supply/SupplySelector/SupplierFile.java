@@ -58,11 +58,11 @@ public class SupplierFile {
   }
 
   public void checkFractionalItemMultiplier(double itemMultiplier, int kkNumber) {
-    if (itemMultiplier % 1 == 0) {
+    if (itemMultiplier % 1 != 0) {
       Main.logger.warn(
           String.format(
-              "fractional item multiplier while reading KKSupplierFile content Article[%s]",
-              kkNumber));
+              "fractional item multiplier while reading KKSupplierFile content Article[%s] itemmultiplier: [%f]",
+              kkNumber, itemMultiplier));
     }
   }
 
@@ -82,28 +82,24 @@ public class SupplierFile {
               .orElseGet(() -> createArticle(content));
       // create shopping item
       ShoppingItem shoppingItem = new ShoppingItem(article, 0, false);
-      checkFractionalItemMultiplier(
-          content.getContainerMultiplier() * content.getContainerSize(), content.getKkNumber());
-      shoppingItem.setItemMultiplier(
+      double rawItemMultiplier =
           (shoppingItem.isWeighAble()
                   ? getAsItemMultiplierAmount(content)
-                  : (int) Math.round(content.getContainerMultiplier() * content.getContainerSize()))
-              * -1);
+                  : content.getContainerMultiplier() * content.getContainerSize())
+              * -1;
+      checkFractionalItemMultiplier(rawItemMultiplier, content.getKkNumber());
+      shoppingItem.setItemMultiplier((int) Math.round(rawItemMultiplier));
       items.add(shoppingItem);
     }
     return items;
   }
 
-  private int getAsItemMultiplierAmount(LineContent content) {
-    return (int)
-        Math.round(
-            content
-                .getUnit()
-                .inUnit(
-                    MetricUnits.GRAM,
-                    content.getContainerMultiplier()
-                        * content.getContainerSize()
-                        * content.getAmount()));
+  private double getAsItemMultiplierAmount(LineContent content) {
+    return content
+        .getUnit()
+        .inUnit(
+            MetricUnits.GRAM,
+            content.getContainerMultiplier() * content.getContainerSize() * content.getAmount());
   }
 
   private @NotNull Article createArticle(LineContent content) {
