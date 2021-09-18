@@ -25,7 +25,7 @@ public class Columns {
 
   public static <T> @NotNull CustomizableColumn<T> create(
       @NotNull String name, @NotNull Getter<T, Object> propertyFactory, int alignment) {
-    return new CustomizableColumn<>(name, propertyFactory).withAlignmentX(alignment);
+    return new CustomizableColumn<>(name, propertyFactory).withHorizontalAlignment(alignment);
   }
 
   public static <T> @NotNull CustomizableColumn<T> create(
@@ -34,7 +34,7 @@ public class Columns {
       int alignment,
       Comparator<Object> sorter) {
     return new CustomizableColumn<>(name, propertyFactory)
-        .withAlignmentX(alignment)
+        .withHorizontalAlignment(alignment)
         .withSorter(sorter);
   }
 

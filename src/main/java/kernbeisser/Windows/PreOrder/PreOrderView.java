@@ -96,7 +96,7 @@ public class PreOrderView implements IView<PreOrderController> {
             new CustomizableColumn<>("Anzahl", PreOrder::getAmount)
                 .withLeftClickConsumer(controller::editAmount)
                 .withRightClickConsumer(controller::editAmount)
-                .withAlignmentX(SwingConstants.CENTER),
+                .withHorizontalAlignment(SwingConstants.CENTER),
             Columns.create(
                 "Bestellt am",
                 e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
