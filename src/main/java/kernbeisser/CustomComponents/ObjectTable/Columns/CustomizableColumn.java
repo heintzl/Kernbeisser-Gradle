@@ -76,8 +76,9 @@ public class CustomizableColumn<T> extends DefaultColumn<T> {
         });
   }
 
-  public CustomizableColumn<T> withAlignmentX(@MagicConstant int alignmentX) {
-    withCellAdjustor((SimpleCellAdjustor<T>) (comp, t) -> comp.setAlignmentX(alignmentX));
+  public CustomizableColumn<T> withHorizontalAlignment(@MagicConstant int horizontalAlignment) {
+    withCellAdjustor(
+        (SimpleCellAdjustor<T>) (comp, t) -> comp.setHorizontalAlignment(horizontalAlignment));
     return this;
   }
 

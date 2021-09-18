@@ -47,7 +47,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             true,
             new CustomizableColumn<>("Name", Article::getName)
                 .withColumnAdjustor(column -> column.setMinWidth(600))
-                .withAlignmentX(LEFT),
+                .withHorizontalAlignment(LEFT),
             Columns.create(
                 "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName(), RIGHT),
             Columns.create("Ladennummer", Article::getKbNumber, RIGHT),
