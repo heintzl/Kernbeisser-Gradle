@@ -106,7 +106,6 @@ public final class Config {
 
   @Data
   public static class Reports {
-    private File reportDirectory = new File(".");
     private File outputDirectory = new File("../output");
     private HashMap<String, String> reports = new HashMap<>();
   }

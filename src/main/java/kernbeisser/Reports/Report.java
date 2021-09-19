@@ -2,9 +2,9 @@ package kernbeisser.Reports;
 
 import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterJob;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -45,10 +45,6 @@ public abstract class Report {
 
   private final String outFileName;
 
-  private static Path getReportsFolder() {
-    return Config.getConfig().getReports().getReportDirectory().toPath();
-  }
-
   protected Report(String reportDefinition, String outFileName) {
     this.outFileName = outFileName;
     this.reportDefinition = reportDefinition;
@@ -70,17 +66,17 @@ public abstract class Report {
     }
   }
 
-  private static File getReportFile(String key) {
+  private static InputStream getReportSource(String key) {
     String value = Config.getConfig().getReports().getReports().get(key);
     if (value == null) {
       throw new UnsupportedOperationException(
           "cannot find JRE file path in config reports map for [" + key + "]");
     }
-    return getReportsFolder().resolve(value).toAbsolutePath().toFile();
+    return Report.class.getClassLoader().getResourceAsStream("reports/" + value);
   }
 
   private static JasperReport getJasperReport(String key) throws JRException {
-    JasperDesign jspDesign = JRXmlLoader.load(getReportFile(key));
+    JasperDesign jspDesign = JRXmlLoader.load(getReportSource(key));
     return JasperCompileManager.compileReport(jspDesign);
   }
 
