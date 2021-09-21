@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/kernbeisser_jar</output-path>
     <root id="root">
       <element id="directory" name="reports">
-        <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources/reports" />
+        <element id="dir-copy" path="$PROJECT_DIR$/reports" />
       </element>
       <element id="dir-copy" path="$PROJECT_DIR$/production" />
       <element id="archive" name="kernbeisser.jar">

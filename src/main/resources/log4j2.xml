@@ -18,16 +18,6 @@
     <Logger name="org.hibernate.type.descriptor.sql" level="debug" additivity="false">
       <AppenderRef ref="Console-Appender"/>
     </Logger>
-    <Logger name="log4j.logger.com.jaspersoft.commons.semantic.datasource.impl.
-    SemanticLayerSecurityResolverImpl" level="debug" additivity="false">
-      <AppenderRef ref="Console-Appender"/>
-    </Logger>
-    <Logger name="log4j.logger.com.jaspersoft.commons.semantic.dsimpl.JdbcTableDataSet" level="debug" additivity="false">
-      <AppenderRef ref="Console-Appender"/>
-    </Logger>
-    <Logger name="log4j.logger.com.jaspersoft.commons.util.JSControlledJdbcQueryExecuter" level="debug" additivity="false">
-      <AppenderRef ref="Console-Appender"/>
-    </Logger>
     <Root level="info">
       <AppenderRef ref="Console-Appender"/>
     </Root>
