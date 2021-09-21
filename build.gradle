@@ -68,6 +68,10 @@ jar {
     }
 }
 
+shadowJar {
+    append 'jasperreports_extension.properties'
+}
+
 task copyAgent(type: Copy){
     from 'src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar'
     into "$buildDir/libs"
