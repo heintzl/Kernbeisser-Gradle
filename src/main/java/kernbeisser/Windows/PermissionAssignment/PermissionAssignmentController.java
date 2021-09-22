@@ -1,11 +1,13 @@
 package kernbeisser.Windows.PermissionAssignment;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
@@ -60,16 +62,23 @@ public class PermissionAssignmentController
     user.getView().addSearchbox(CollectionView.BOTH);
     JCheckBox toggleClipBoardFilter = new JCheckBox("Auf Zwischenablage filtern");
     toggleClipBoardFilter.addActionListener(
-        e -> toggleClipBoardFiltering(toggleClipBoardFilter.isSelected()));
+        e -> toggleClipBoardFiltering(toggleClipBoardFilter.isSelected(), toggleClipBoardFilter));
     user.addControls(toggleClipBoardFilter);
   }
 
-  private void toggleClipBoardFiltering(boolean selected) {
+  private void toggleClipBoardFiltering(boolean selected, JCheckBox control) {
     if (selected) {
-      user.getView().setRowFilter(model.getClpBoardRowFilter(), 1);
+      ClipboardFilter<User> clpFilter = model.getClpBoardRowFilter();
+      if (clpFilter.isFiltered()) {
+        user.getView().setRowFilter(clpFilter, 3);
+      } else {
+        control.setSelected(false);
+        selected = false;
+      }
     } else {
-      user.getView().setRowFilter(null, 1);
+      user.getView().setRowFilter(null, 3);
     }
+    control.setFont(control.getFont().deriveFont(selected ? Font.BOLD : Font.PLAIN));
   }
 
   public void loadPermission(ActionEvent actionEvent) {

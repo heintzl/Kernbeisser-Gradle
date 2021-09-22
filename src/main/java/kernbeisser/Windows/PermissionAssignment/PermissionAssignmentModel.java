@@ -17,6 +17,7 @@ import org.apache.logging.log4j.util.Supplier;
 public class PermissionAssignmentModel implements IModel<PermissionAssignmentController> {
 
   @Setter private Permission recent;
+  private boolean showFilterExplanation = true;
 
   public List<Permission> getPermissions() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -93,9 +94,12 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   }
 
   public ClipboardFilter<User> getClpBoardRowFilter() {
+    String explanation =
+        showFilterExplanation
+            ? "Bitte Nachname und Vorname als 2 Tabellenspalten in die Zwischenablage kopieren!"
+            : "";
+    showFilterExplanation = false;
     return new ClipboardFilter<>(
-        this::getUserRowFilter,
-        "Bitte Nachname und Vorname als 2 Tabellenspalten in die Zwischenablage kopieren!",
-        "clpBoardFilterPermissionAssignment");
+        this::getUserRowFilter, explanation, "clpBoardFilterPermissionAssignment");
   }
 }
