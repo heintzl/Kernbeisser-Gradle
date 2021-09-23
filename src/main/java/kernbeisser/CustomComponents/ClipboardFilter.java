@@ -13,7 +13,7 @@ import kernbeisser.Windows.LogIn.LogInModel;
 
 public class ClipboardFilter<T> implements RowFilter<T> {
 
-  Collection<T> filterHits;
+  private final Collection<T> filterHits;
 
   public ClipboardFilter(Function<String[], Collection<T>> clipBoardEntryEvaluator) {
     this(clipBoardEntryEvaluator, "", "");
@@ -33,13 +33,17 @@ public class ClipboardFilter<T> implements RowFilter<T> {
     }
     String clpBoard = getClipboard();
     filterHits = clipBoardEntryEvaluator.apply(clpBoard.split("\n"));
-    if (filterHits.isEmpty()) {
+    if (!isFiltered()) {
       JOptionPane.showMessageDialog(
           null,
           "Die Zwischenablage enthält anscheinend keine passenden Informationen!",
           "Filterung auf Zwischenablage",
           JOptionPane.WARNING_MESSAGE);
     }
+  }
+
+  public boolean isFiltered() {
+    return !filterHits.isEmpty();
   }
 
   private static String getClipboard() {
