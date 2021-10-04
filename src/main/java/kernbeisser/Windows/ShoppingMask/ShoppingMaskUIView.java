@@ -23,6 +23,7 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.Enums.ArticleConstants;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
@@ -395,9 +396,14 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
   }
 
+  private boolean isCustomArticle(ShoppingItem item) {
+    return item.getKbNumber() == ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier();
+  }
+
   void loadItemStats(ShoppingItem shoppingItem) {
     currentItem = shoppingItem;
     isWeighable = shoppingItem.isWeighAble();
+    if (isCustomArticle(shoppingItem)) return;
     String itemPriceUnits = shoppingItem.getPriceUnits().getShortName();
     double unitNetPrice =
         shoppingItem.getItemNetPrice()
@@ -438,7 +444,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   private void recalculatePrice() {
     if (currentItem.getKbNumber() > 0 || isPreordered) {
-      price.setText(String.format("%.2f", controller.recalculatePrice(netPrice.getSafeValue())));
+      double retailPrice = controller.recalculatePrice(netPrice.getSafeValue());
+      price.setText(Double.isNaN(retailPrice) ? "" : String.format("%.2f", retailPrice));
     }
   }
 

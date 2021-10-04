@@ -201,15 +201,18 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   ShoppingItem createCustomItem(Supplier supplier) {
-    Article articleBase = new Article();
-    articleBase.setSupplier(supplier);
-    articleBase.setVat(getView().getVat());
-    return new ShoppingItem(articleBase, getView().getDiscount(), getView().isPreordered());
+    Article article =
+        Articles.getCustomArticleVersion(
+            e -> {
+              e.setSupplier(supplier);
+              e.setVat(getView().getVat());
+            });
+    return new ShoppingItem(article, getView().getDiscount(), getView().isPreordered());
   }
 
   ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
     synchronized (Access.ACCESS_LOCK) {
-      AccessManager before = Access.getDefaultManager();
+      AccessManager defaultManager = Access.getDefaultManager();
       try {
         Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
         switch (getView().getArticleType()) {
@@ -237,27 +240,29 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
             return ShoppingItem.createProduce(getRelevantPrice(), getView().isPreordered());
 
           case CUSTOM_PRODUCT:
-            Article customArticle = new Article();
+            Article customArticle =
+                Articles.getCustomArticleVersion(
+                    before -> {
+                      before.setName(getView().getItemName());
+                      before.setSupplier(getView().getSupplier());
+                      before.setVat(getView().getVat());
+                      if (getView().isPreordered()) {
+                        before.setSurchargeGroup(
+                            getView().getSupplier().getOrPersistDefaultSurchargeGroup());
+                      } else {
+                        before.setSurchargeGroup(
+                            Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup());
+                      }
 
-            customArticle.setName(getView().getItemName());
-            customArticle.setSupplier(getView().getSupplier());
-            customArticle.setVat(getView().getVat());
-            if (getView().isPreordered()) {
-              customArticle.setSurchargeGroup(
-                  getView().getSupplier().getOrPersistDefaultSurchargeGroup());
-            } else {
-              customArticle.setSurchargeGroup(
-                  Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup());
-            }
-
-            customArticle.setNetPrice(
-                getView().isPreordered()
-                    ? getView().getNetPrice()
-                    : getView().getPrice()
-                        / (1. + getView().getVat().getValue())
-                        / (1. + customArticle.getSurchargeGroup().getSurcharge()));
-            customArticle.setMetricUnits(MetricUnits.PIECE);
-            customArticle.setContainerSize(1.);
+                      before.setNetPrice(
+                          getView().isPreordered()
+                              ? getView().getNetPrice()
+                              : getView().getPrice()
+                                  / (1. + getView().getVat().getValue())
+                                  / (1. + before.getSurchargeGroup().getSurcharge()));
+                      before.setMetricUnits(MetricUnits.PIECE);
+                      before.setContainerSize(1.);
+                    });
 
             return new ShoppingItem(customArticle, 0, getView().isPreordered());
 
@@ -280,7 +285,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
             return null;
         }
       } finally {
-        Access.setDefaultManager(before);
+        Access.setDefaultManager(defaultManager);
       }
     }
   }

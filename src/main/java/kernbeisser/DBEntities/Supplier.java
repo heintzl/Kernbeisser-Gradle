@@ -165,6 +165,10 @@ public class Supplier implements Serializable {
     return getOrCreateSupplierByShortName("PF", "Kennung Pfand", 0);
   }
 
+  public static Supplier getCustomProductSupplier() {
+    return getOrCreateSupplierByShortName("CP", "Kennung Benutzerdefiniert", 0);
+  }
+
   public static List<Supplier> getAll(String condition) {
     return Tools.getAll(Supplier.class, condition);
   }
