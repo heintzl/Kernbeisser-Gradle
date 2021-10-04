@@ -255,7 +255,7 @@ public class ShoppingItem implements Serializable {
       String name,
       double price,
       VAT vat,
-      int kbNumber,
+      int uniqueIdentifier,
       Supplier supplier,
       boolean hasContainerDiscount) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -285,10 +285,11 @@ public class ShoppingItem implements Serializable {
       et.begin();
       Article article = new Article();
       article.setName(name);
-      article.setKbNumber(kbNumber);
+      article.setKbNumber(uniqueIdentifier);
       article.setMetricUnits(MetricUnits.NONE);
       article.setVat(vat);
       article.setSupplier(supplier);
+      article.setSuppliersItemNumber(uniqueIdentifier);
       Access.runWithAccessManager(
           AccessManager.NO_ACCESS_CHECKING,
           () -> article.setSurchargeGroup(supplier.getOrPersistDefaultSurchargeGroup(em)));
@@ -296,7 +297,8 @@ public class ShoppingItem implements Serializable {
       em.persist(article);
       em.flush();
       et.commit();
-      return createRawPriceProduct(name, price, vat, kbNumber, supplier, hasContainerDiscount);
+      return createRawPriceProduct(
+          name, price, vat, uniqueIdentifier, supplier, hasContainerDiscount);
     }
   }
 
@@ -305,7 +307,7 @@ public class ShoppingItem implements Serializable {
         RawPrice.PRODUCE.getName(),
         price,
         VAT.LOW,
-        -1,
+        ArticleConstants.PRODUCE.getUniqueIdentifier(),
         Supplier.getProduceSupplier(),
         hasContainerDiscount);
   }
@@ -315,7 +317,7 @@ public class ShoppingItem implements Serializable {
         RawPrice.BAKERY.getName(),
         price,
         VAT.LOW,
-        -2,
+        ArticleConstants.BAKERY.getUniqueIdentifier(),
         Supplier.getBakerySupplier(),
         hasContainerDiscount);
   }
@@ -323,7 +325,12 @@ public class ShoppingItem implements Serializable {
   public static ShoppingItem createSolidaritySurcharge(double price, VAT vat, double surcharge) {
     ShoppingItem solidarity =
         createRawPriceProduct(
-            RawPrice.SOLIDARITY.getName(), price, vat, -4, Supplier.getSolidaritySupplier(), false);
+            RawPrice.SOLIDARITY.getName(),
+            price,
+            vat,
+            ArticleConstants.SOLIDARITY.getUniqueIdentifier(),
+            Supplier.getSolidaritySupplier(),
+            false);
     solidarity.solidaritySurchargeItem = true;
     solidarity.name =
         (int) (surcharge * 100)
@@ -343,7 +350,12 @@ public class ShoppingItem implements Serializable {
   public static ShoppingItem createDeposit(double price) {
     ShoppingItem deposit =
         createRawPriceProduct(
-            RawPrice.DEPOSIT.getName(), price, VAT.HIGH, -3, Supplier.getDepositSupplier(), false);
+            RawPrice.DEPOSIT.getName(),
+            price,
+            VAT.HIGH,
+            ArticleConstants.DEPOSIT.getUniqueIdentifier(),
+            Supplier.getDepositSupplier(),
+            false);
     deposit.name += price < 0 ? " zurück" : "";
     deposit.depositItem = true;
     return deposit;

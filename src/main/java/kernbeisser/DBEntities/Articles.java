@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -18,6 +19,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
+import kernbeisser.Enums.ArticleConstants;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
@@ -362,5 +364,28 @@ public class Articles {
       persistence.setPrintPool(true);
       em.persist(persistence);
     }
+  }
+
+  public static Article getCustomArticleVersion(Consumer<Article> transformer) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Article article =
+        Tools.optional(
+                em.createQuery("select a from Article a where a.kbNumber =:kb", Article.class)
+                    .setParameter("kb", ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
+            .orElseGet(
+                () -> {
+                  Article out = new Article();
+                  out.setKbNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
+                  out.setSupplier(Supplier.getCustomProductSupplier());
+                  out.setSurchargeGroup(out.getSupplier().getOrPersistDefaultSurchargeGroup());
+                  out.setSuppliersItemNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
+                  return out;
+                });
+    transformer.accept(article);
+    em.persist(article);
+    return article;
   }
 }
