@@ -155,7 +155,8 @@ public class SupplyView implements IView<SupplyController> {
         new ObjectTable<>(
             Columns.create("Lieferant", ShoppingItem::getSupplier),
             Columns.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber),
-            Columns.create("Gebinde-Anzahl", p -> -p.getItemMultiplier() / p.getContainerSize()),
+            Columns.create(
+                "Gebinde-Anzahl", p -> -Math.abs(p.getItemMultiplier()) / p.getContainerSize()),
             Columns.create("Name", ShoppingItem::getName),
             Columns.create("Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice())),
             Columns.create("Gebindegröße", ShoppingItem::getContainerSize),

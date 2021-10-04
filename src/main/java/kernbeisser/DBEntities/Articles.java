@@ -3,6 +3,9 @@ package kernbeisser.DBEntities;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -281,6 +284,37 @@ public class Articles {
   public static Article withValidKBNumber(Article article, EntityManager em) {
     article.setKbNumber(Articles.nextFreeKBNumber(em));
     return article;
+  }
+
+  public static Map<Long, Integer> calculateAmounts() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    List<Object[]> out =
+        em.createQuery("select s.articleId, s.itemMultiplier from ShoppingItem s").getResultList();
+    HashMap<Long, Integer> amountMapper = new HashMap<>();
+    for (Object[] objects : out) {
+      long articleId = (long) objects[0];
+      int amount = objects[1] == null ? 0 : (int) objects[1];
+      Integer before = amountMapper.get(articleId);
+      amountMapper.put(articleId, before == null ? amount : before + amount);
+    }
+    return amountMapper;
+  }
+
+  public static long calculateCurrentAmount(Article article) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Long result =
+        em.createQuery(
+                "select sum(s.itemMultiplier) from ShoppingItem s where s.articleId = :aid",
+                Long.class)
+            .setParameter("aid", (long) article.getId())
+            .getSingleResult();
+    return result == null ? 0 : -result;
   }
 
   public static void addToPrintPool(Collection<Article> print) {

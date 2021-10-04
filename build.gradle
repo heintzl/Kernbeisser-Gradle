@@ -66,6 +66,7 @@ jar {
     manifest {
         attributes 'Main-Class': 'kernbeisser.Main'
     }
+ //   fileMode 750
 }
 
 shadowJar {
@@ -75,20 +76,27 @@ shadowJar {
 task copyAgent(type: Copy){
     from 'src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar'
     into "$buildDir/libs"
+ //   fileMode 750
 }
 
 task copyProductionFolderContent(type: Copy){
     from 'production'
     into "$buildDir/libs"
+//    fileMode 750
 }
 
 task copyReportsFolder(type: Copy){
     from 'reports'
     into "$buildDir/libs/reports"
+//    fileMode 750
 }
 
+//task chmodRecursively(type: Exec){
+//    commandLine "chmod", "-R", "755", "$buildDir"
+//}
+
 copyProductionFolderContent.dependsOn copyAgent
-processResources.dependsOn copyProductionFolderContent, copyReportsFolder
+processResources.dependsOn copyProductionFolderContent, copyReportsFolder//, chmodRecursively
 
 spotless {
     java {

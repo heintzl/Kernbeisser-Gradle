@@ -31,7 +31,7 @@ public class SupplyModel implements IModel<SupplyController> {
     EntityTransaction et = em.getTransaction();
     et.begin();
     for (ShoppingItem item : shoppingItems) {
-      item.setItemMultiplier(-item.getItemMultiplier());
+      item.setItemMultiplier(-Math.abs(item.getItemMultiplier()));
       em.persist(item);
     }
     em.flush();
