@@ -291,6 +291,15 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.INFORMATION_MESSAGE);
   }
 
+  public void messageNothingToExport() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Es gibt keine Vorbestellungen, die noch nicht exportiert wurden!",
+        "Vorbestellungsexport",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
   public void messageExportCanceled() {
     Tools.beep();
     JOptionPane.showMessageDialog(

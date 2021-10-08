@@ -235,6 +235,10 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   public void exportPreOrder() {
     PreOrderView view = getView();
+    if (model.getUnorderedPreOrders().size() == 0) {
+      getView().messageNothingToExport();
+      return;
+    }
     try {
       if (model.exportPreOrder(view.getContent()) == JFileChooser.APPROVE_OPTION) {
         model.setAllExported();
