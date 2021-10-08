@@ -162,9 +162,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
               pasteDataInView(p);
               getView().setKkNumber(p.getSuppliersItemNumber());
             })
-        .withCloseEvent(() -> getView().searchArticle.setEnabled(true))
         .openIn(new SubWindow(getView().traceViewContainer()));
-    getView().searchArticle.setEnabled(false);
   }
 
   @Override
