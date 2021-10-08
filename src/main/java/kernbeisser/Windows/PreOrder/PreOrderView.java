@@ -312,6 +312,17 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
+  public boolean confirmDelivery(int numDelivered) {
+    Tools.beep();
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            numDelivered
+                + " Vorbestellungen sind als ausgeliefert markiert. Sollen sie aus der Vorbestellung entfernt werden?",
+            "Vorbestellung schließen",
+            JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
+  }
+
   public String inputAmount(int amount, boolean retry) {
     String initValue = MessageFormat.format("{0, number, 0}", amount).trim();
     String message = "";

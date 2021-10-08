@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import javax.persistence.NoResultException;
 import javax.swing.*;
@@ -78,8 +79,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       getView().noPreOrderSelected();
       return;
     }
-    model.remove(preOrder);
-    getView().remove(preOrder);
+    delete(Collections.singleton(preOrder));
   }
 
   void delete(Collection<PreOrder> preOrders) {
@@ -88,8 +88,9 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       return;
     }
     for (PreOrder preOrder : preOrders) {
-      model.remove(preOrder);
-      getView().remove(preOrder);
+      if (model.remove(preOrder)) {
+        getView().remove(preOrder);
+      }
     }
   }
 
@@ -99,6 +100,12 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   @Override
   protected boolean commitClose() {
+    int numDelivered = model.getDelivery().size();
+    if (numDelivered > 0) {
+      if (!getView().confirmDelivery(numDelivered)) {
+        return false;
+      }
+    }
     model.close();
     return true;
   }
