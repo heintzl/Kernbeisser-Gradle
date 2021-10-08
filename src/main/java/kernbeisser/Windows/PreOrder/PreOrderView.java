@@ -291,6 +291,15 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.INFORMATION_MESSAGE);
   }
 
+  public void messageNothingToExport() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Es gibt keine Vorbestellungen, die noch nicht exportiert wurden!",
+        "Vorbestellungsexport",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
   public void messageExportCanceled() {
     Tools.beep();
     JOptionPane.showMessageDialog(
@@ -310,6 +319,17 @@ public class PreOrderView implements IView<PreOrderController> {
             + "\nauf dessen Namen die Vorbestellung ausgeführt werden soll.",
         "Kein Benutzer ausgewählt",
         JOptionPane.WARNING_MESSAGE);
+  }
+
+  public boolean confirmDelivery(int numDelivered) {
+    Tools.beep();
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            numDelivered
+                + " Vorbestellungen sind als ausgeliefert markiert. Sollen sie aus der Vorbestellung entfernt werden?",
+            "Vorbestellung schließen",
+            JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
   }
 
   public String inputAmount(int amount, boolean retry) {
