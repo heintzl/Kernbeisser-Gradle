@@ -3,9 +3,7 @@ package kernbeisser.Security.Access;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.WeakHashMap;
+import java.util.*;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -32,9 +30,39 @@ public class Access {
 
   @Setter private static boolean useCustomProtection = true;
 
-  @Getter private static final WeakHashMap<Object, AccessManager> exceptions = new WeakHashMap<>();
+  private static final Map<Wrapper, AccessManager> exceptions = new WeakHashMap<>();
+
+  public static void putException(Object o, AccessManager accessManager) {
+    exceptions.put(Wrapper.of(o), accessManager);
+  }
+
+  public static void removeException(Object o) {
+    exceptions.remove(Wrapper.of(o));
+  }
 
   private static PermissionSet[] arrayCache = new PermissionSet[400];
+
+  private static class Wrapper {
+    private final Object key;
+
+    private Wrapper(Object key) {
+      this.key = key;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      return o instanceof Wrapper && ((Wrapper) o).key == key;
+    }
+
+    @Override
+    public int hashCode() {
+      return key.hashCode();
+    }
+
+    public static Wrapper of(Object key) {
+      return new Wrapper(key);
+    }
+  }
 
   static {
     loadUnprotectedInstanceExceptions();
@@ -46,7 +74,7 @@ public class Access {
     synchronized (ACCESS_LOCK) {
       PermissionSet keys = getOrAnalyse(object, methodName, methodId);
       if (useCustomProtection) {
-        AccessManager accessManager = exceptions.get(object);
+        AccessManager accessManager = exceptions.get(Wrapper.of(object));
         if (accessManager != null)
           if (accessManager.hasAccess(object, methodName, signature, keys)) {
             return;
@@ -66,7 +94,7 @@ public class Access {
   // TODO: FIX CLOSING OF CASHIER SHOPPING MASK
   public static void loadUnprotectedInstanceExceptions() {
     for (PermissionConstants value : PermissionConstants.values()) {
-      exceptions.put(value.getPermission(), AccessManager.NO_ACCESS_CHECKING);
+      exceptions.put(Wrapper.of(value.getPermission()), AccessManager.NO_ACCESS_CHECKING);
     }
   }
 
@@ -75,7 +103,7 @@ public class Access {
   }
 
   public static Optional<AccessManager> getCustomAccessManager(Object o) {
-    return Optional.ofNullable(exceptions.get(o));
+    return Optional.ofNullable(exceptions.get(Wrapper.of(o)));
   }
 
   private static PermissionSet runCallerAnalyse(Object object, String methodName, long methodId) {

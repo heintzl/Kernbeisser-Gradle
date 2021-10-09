@@ -49,7 +49,7 @@ public class DataImportModel implements IModel<DataImportController> {
     EntityTransaction et = em.getTransaction();
     et.begin();
     User user = new User();
-    Access.getExceptions().put(user, AccessManager.NO_ACCESS_CHECKING);
+    Access.putException(user, AccessManager.NO_ACCESS_CHECKING);
     user.setFirstName("System");
     user.setSurname("Admin");
     user.setUsername("Admin");
@@ -61,7 +61,7 @@ public class DataImportModel implements IModel<DataImportController> {
     em.persist(user.getUserGroup());
     em.persist(user);
     em.flush();
-    Access.getExceptions().remove(user);
+    Access.removeException(user);
   }
 
   void parsePriceLists(Stream<String> f, Consumer<Integer> progress) {

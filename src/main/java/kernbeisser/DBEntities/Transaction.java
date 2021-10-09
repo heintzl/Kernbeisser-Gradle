@@ -183,9 +183,9 @@ public class Transaction implements UserRelated {
     try {
       Method method = UserGroup.class.getDeclaredMethod("setValue", double.class);
       method.setAccessible(true);
-      Access.getExceptions().put(transaction, AccessManager.NO_ACCESS_CHECKING);
+      Access.putException(transaction, AccessManager.NO_ACCESS_CHECKING);
       method.invoke(transaction, Tools.roundCurrency(value));
-      Access.getExceptions().remove(transaction);
+      Access.removeException(transaction);
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
