@@ -1,9 +1,6 @@
 package kernbeisser.Forms.ObjectForm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import javax.swing.*;
 import kernbeisser.Enums.Mode;
@@ -49,14 +46,12 @@ public class ObjectForm<P> {
     setData(data);
   }
 
-  public P getData(Mode m) throws CannotParseException {
-    checkValidSource();
-    P originalCopy = Tools.clone(original);
+  private void copyDataInto(P destination) throws CannotParseException {
     boolean success = true;
     for (ObjectFormComponent<P> component : components) {
       if (component instanceof BoundedWriteProperty) {
         try {
-          ((BoundedWriteProperty<P, ?>) component).set(originalCopy);
+          ((BoundedWriteProperty<P, ?>) component).set(destination);
         } catch (PermissionKeyRequiredException e) {
           ((BoundedWriteProperty<?, ?>) component).setPropertyModifiable(false);
         } catch (CannotParseException e) {
@@ -68,6 +63,12 @@ public class ObjectForm<P> {
       }
     }
     if (!success) throw new CannotParseException();
+  }
+
+  public P getData(Mode m) throws CannotParseException {
+    checkValidSource();
+    P originalCopy = Tools.clone(original);
+    copyDataInto(originalCopy);
     validateObject(originalCopy, m);
     return originalCopy;
   }

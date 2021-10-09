@@ -3,15 +3,14 @@ package kernbeisser.Security.Access;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.WeakHashMap;
+import java.util.*;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Unsafe.PermissionKeyMethodVisitor;
+import kernbeisser.Useful.WeakReferenceMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -32,7 +31,15 @@ public class Access {
 
   @Setter private static boolean useCustomProtection = true;
 
-  @Getter private static final WeakHashMap<Object, AccessManager> exceptions = new WeakHashMap<>();
+  private static final Map<Object, AccessManager> exceptions = new WeakReferenceMap<>();
+
+  public static void putException(Object o, AccessManager accessManager) {
+    exceptions.put(o, accessManager);
+  }
+
+  public static void removeException(Object o) {
+    exceptions.remove(o);
+  }
 
   private static PermissionSet[] arrayCache = new PermissionSet[400];
 

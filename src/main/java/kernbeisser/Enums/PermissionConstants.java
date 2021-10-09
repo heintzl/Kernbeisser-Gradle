@@ -75,9 +75,9 @@ public enum PermissionConstants {
   }
 
   public static void cleanAdminPermission(User currentUser) {
-    Access.getExceptions().put(currentUser, AccessManager.NO_ACCESS_CHECKING);
+    Access.putException(currentUser, AccessManager.NO_ACCESS_CHECKING);
     Permission adminPermission = ADMIN.getPermission();
-    Access.getExceptions().put(adminPermission, AccessManager.NO_ACCESS_CHECKING);
+    Access.putException(adminPermission, AccessManager.NO_ACCESS_CHECKING);
     adminPermission.setKeySet(allPermissions().minus(PermissionKey.getNonAdminPermissions()));
     Set<Permission> adminPermissionSet = new java.util.HashSet<>();
     adminPermissionSet.add(adminPermission);
@@ -89,6 +89,6 @@ public enum PermissionConstants {
     em.merge(adminPermission);
     em.merge(currentUser);
     em.flush();
-    Access.getExceptions().remove(currentUser);
+    Access.removeException(currentUser);
   }
 }
