@@ -53,7 +53,7 @@ public class Access {
     synchronized (ACCESS_LOCK) {
       PermissionSet keys = getOrAnalyse(object, methodName, methodId);
       if (useCustomProtection) {
-        AccessManager accessManager = exceptions.get(object);
+        AccessManager accessManager = exceptions.get(Wrapper.of(object));
         if (accessManager != null)
           if (accessManager.hasAccess(object, methodName, signature, keys)) {
             return;
@@ -73,7 +73,7 @@ public class Access {
   // TODO: FIX CLOSING OF CASHIER SHOPPING MASK
   public static void loadUnprotectedInstanceExceptions() {
     for (PermissionConstants value : PermissionConstants.values()) {
-      exceptions.put(value.getPermission(), AccessManager.NO_ACCESS_CHECKING);
+      exceptions.put(Wrapper.of(value.getPermission()), AccessManager.NO_ACCESS_CHECKING);
     }
   }
 
@@ -82,7 +82,7 @@ public class Access {
   }
 
   public static Optional<AccessManager> getCustomAccessManager(Object o) {
-    return Optional.ofNullable(exceptions.get(o));
+    return Optional.ofNullable(exceptions.get(Wrapper.of(o)));
   }
 
   private static PermissionSet runCallerAnalyse(Object object, String methodName, long methodId) {

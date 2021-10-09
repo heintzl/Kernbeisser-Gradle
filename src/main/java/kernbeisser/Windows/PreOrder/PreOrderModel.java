@@ -19,11 +19,12 @@ import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Getter;
 
 public class PreOrderModel implements IModel<PreOrderController> {
   private final EntityManager em = DBConnection.getEntityManager();
   private EntityTransaction et = em.getTransaction();
-  private final Set<PreOrder> delivery = new HashSet<>();
+  @Getter private final Set<PreOrder> delivery = new HashSet<>();
 
   {
     et.begin();
@@ -48,9 +49,13 @@ public class PreOrderModel implements IModel<PreOrderController> {
     em.flush();
   }
 
-  public void remove(PreOrder selected) {
-    delivery.remove(selected);
-    removeLazy(selected);
+  public boolean remove(PreOrder selected) {
+    if (selected.getOrderedOn() == null) {
+      delivery.remove(selected);
+      removeLazy(selected);
+      return true;
+    }
+    return false;
   }
 
   public Article getByBarcode(String s) throws NoResultException {
