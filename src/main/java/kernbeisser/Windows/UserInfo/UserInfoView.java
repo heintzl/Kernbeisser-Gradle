@@ -86,14 +86,14 @@ public class UserInfoView implements IView<UserInfoController> {
   void setValueHistory(Collection<Transaction> valueChanges) {
     if (valueChanges.size() == 0) {
       Transaction noHistory = new Transaction();
-      Access.getExceptions().put(noHistory, AccessManager.NO_ACCESS_CHECKING);
+      Access.putException(noHistory, AccessManager.NO_ACCESS_CHECKING);
       noHistory.setInfo("keine Umsätze");
       noHistory.setValue(0.0);
       noHistory.setFromUser(controller.getModel().getUser());
       noHistory.setToUser(controller.getModel().getUser());
       noHistory.setTransactionType(TransactionType.INFO);
       noHistory.setDate(Instant.now());
-      Access.getExceptions().remove(noHistory);
+      Access.removeException(noHistory);
       valueChanges.add(noHistory);
     }
     this.valueHistory.setObjects(valueChanges);

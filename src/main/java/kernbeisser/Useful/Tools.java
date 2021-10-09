@@ -30,6 +30,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
+import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.SecuredOptional;
 import kernbeisser.Security.Utils.*;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -406,6 +407,8 @@ public class Tools {
     }
     assert instance != null;
     copyInto(object, instance);
+    T finalInstance = instance;
+    Access.getCustomAccessManager(object).ifPresent(e -> Access.putException(finalInstance, e));
     return instance;
   }
 
