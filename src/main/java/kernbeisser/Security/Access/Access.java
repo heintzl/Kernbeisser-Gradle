@@ -10,6 +10,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Unsafe.PermissionKeyMethodVisitor;
+import kernbeisser.Useful.WeakReferenceMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -30,39 +31,17 @@ public class Access {
 
   @Setter private static boolean useCustomProtection = true;
 
-  private static final Map<Wrapper, AccessManager> exceptions = new WeakHashMap<>();
+  private static final Map<Object, AccessManager> exceptions = new WeakReferenceMap<>();
 
   public static void putException(Object o, AccessManager accessManager) {
-    exceptions.put(Wrapper.of(o), accessManager);
+    exceptions.put(o, accessManager);
   }
 
   public static void removeException(Object o) {
-    exceptions.remove(Wrapper.of(o));
+    exceptions.remove(o);
   }
 
   private static PermissionSet[] arrayCache = new PermissionSet[400];
-
-  private static class Wrapper {
-    private final Object key;
-
-    private Wrapper(Object key) {
-      this.key = key;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      return o instanceof Wrapper && ((Wrapper) o).key == key;
-    }
-
-    @Override
-    public int hashCode() {
-      return key.hashCode();
-    }
-
-    public static Wrapper of(Object key) {
-      return new Wrapper(key);
-    }
-  }
 
   static {
     loadUnprotectedInstanceExceptions();

@@ -12,7 +12,6 @@ class AccessTest {
   @BeforeAll
   static void beforeAll() {
     Access.setDefaultManager(AccessManager.ACCESS_DENIED);
-    Access.getExceptions().clear();
   }
 
   @Test
@@ -36,7 +35,7 @@ class AccessTest {
   void accessExceptionTest() {
     Article article = new Article();
     Access.runWithAccessManager(AccessManager.NO_ACCESS_CHECKING, () -> article.setId(42242));
-    Access.getExceptions().put(article, AccessManager.NO_ACCESS_CHECKING);
+    Access.putException(article, AccessManager.NO_ACCESS_CHECKING);
     assertDoesNotThrow(article::getName);
   }
 }
