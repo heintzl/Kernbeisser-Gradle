@@ -80,7 +80,8 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     var notToRemove = new ArrayList<>(loaded);
     loaded.removeAll(hadBefore);
     hadBefore.removeAll(notToRemove);
-    Collection<User> willGet = loaded.stream().map(e -> em.find(User.class, e.getId())).collect(Collectors.toList());
+    Collection<User> willGet =
+        loaded.stream().map(e -> em.find(User.class, e.getId())).collect(Collectors.toList());
     boolean skipUserAccessChecking =
         ignoreUserPermission && Tools.canInvoke(this::checkGrantCashierPermission);
     if (skipUserAccessChecking) {
@@ -90,8 +91,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     }
     if (!(hadBefore.isEmpty() && willGet.isEmpty()) && confirm.get()) {
       hadBefore.stream().peek(e -> e.getPermissions().remove(permission)).forEach(em::persist);
-      willGet.stream().peek(e -> e.getPermissions().add(permission))
-          .forEach(em::persist);
+      willGet.stream().peek(e -> e.getPermissions().add(permission)).forEach(em::persist);
     }
     em.flush();
     if (skipUserAccessChecking) {
