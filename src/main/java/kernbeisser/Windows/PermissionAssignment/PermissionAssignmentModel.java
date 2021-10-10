@@ -8,10 +8,16 @@ import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
+import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Setter;
 import lombok.var;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.util.Supplier;
 
 public class PermissionAssignmentModel implements IModel<PermissionAssignmentController> {
@@ -52,8 +58,14 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
         .getResultList();
   }
 
+  @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
+  private void checkGrantCashierPermission() {}
+
   public void setPermission(
-      Permission permission, Collection<User> loaded, Supplier<Boolean> confirm) {
+      Permission permission,
+      Collection<User> loaded,
+      Supplier<Boolean> confirm,
+      boolean ignoreUserPermission) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -68,14 +80,25 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     var notToRemove = new ArrayList<>(loaded);
     loaded.removeAll(hadBefore);
     hadBefore.removeAll(notToRemove);
-    if (!(hadBefore.isEmpty() && loaded.isEmpty()) && confirm.get()) {
+    Collection<User> willGet =
+        loaded.stream().map(e -> em.find(User.class, e.getId())).collect(Collectors.toList());
+    boolean skipUserAccessChecking =
+        ignoreUserPermission && Tools.canInvoke(this::checkGrantCashierPermission);
+    if (skipUserAccessChecking) {
+      for (Object u : CollectionUtils.union(willGet, hadBefore)) {
+        Access.putException(u, AccessManager.NO_ACCESS_CHECKING);
+      }
+    }
+    if (!(hadBefore.isEmpty() && willGet.isEmpty()) && confirm.get()) {
       hadBefore.stream().peek(e -> e.getPermissions().remove(permission)).forEach(em::persist);
-      loaded.stream()
-          .map(e -> em.find(User.class, e.getId()))
-          .peek(e -> e.getPermissions().add(permission))
-          .forEach(em::persist);
+      willGet.stream().peek(e -> e.getPermissions().add(permission)).forEach(em::persist);
     }
     em.flush();
+    if (skipUserAccessChecking) {
+      for (Object u : CollectionUtils.union(willGet, hadBefore)) {
+        Access.removeException(u);
+      }
+    }
   }
 
   private Collection<User> getUserRowFilter(String[] rows) {

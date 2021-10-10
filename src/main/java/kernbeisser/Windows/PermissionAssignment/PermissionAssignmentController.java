@@ -95,7 +95,10 @@ public class PermissionAssignmentController
     Optional<Collection<User>> before = model.getRecent().map(model::assignedUsers);
     if (!before.isPresent() || before.get().equals(user.getModel().getLoaded())) return;
     model.setPermission(
-        model.getRecent().get(), user.getModel().getLoaded(), () -> getView().confirmChanges());
+        model.getRecent().get(),
+        user.getModel().getLoaded(),
+        () -> getView().confirmChanges(),
+        onlyCashier);
   }
 
   public static PermissionAssignmentController cashierPermissionController() {
@@ -104,6 +107,7 @@ public class PermissionAssignmentController
 
   @Override
   protected void closed() {
-    model.setPermission(model.getRecent().get(), user.getModel().getLoaded(), () -> true);
+    model.setPermission(
+        model.getRecent().get(), user.getModel().getLoaded(), () -> true, onlyCashier);
   }
 }
