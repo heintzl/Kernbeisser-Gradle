@@ -46,7 +46,6 @@ public class ObjectForm<P> {
     setData(data);
   }
 
-
   private void copyDataInto(P destination) throws CannotParseException {
     boolean success = true;
     for (ObjectFormComponent<P> component : components) {
