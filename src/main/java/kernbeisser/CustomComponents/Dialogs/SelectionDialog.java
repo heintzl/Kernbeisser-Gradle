@@ -2,6 +2,7 @@ package kernbeisser.CustomComponents.Dialogs;
 
 import java.awt.Component;
 import java.util.Collection;
+import java.util.Optional;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -10,13 +11,13 @@ public class SelectionDialog {
 
   private static String lastChoice = null;
 
-  public static <T> T select(Component parent, String title, Collection<T> values) {
+  public static <T> Optional<T> select(Component parent, String title, Collection<T> values) {
     JComboBox<T> comboBox = new JComboBox<>();
     switch (values.size()) {
       case 0:
-        return null;
+        return Optional.empty();
       case 1:
-        return values.iterator().next();
+        return Optional.ofNullable(values.iterator().next());
       default:
         for (T value : values) {
           comboBox.addItem(value);
@@ -29,11 +30,11 @@ public class SelectionDialog {
         parent, new Object[] {new JLabel(title), comboBox}, title, JOptionPane.INFORMATION_MESSAGE);
     int index = comboBox.getSelectedIndex();
     if (index == -1) {
-      return null;
+      return Optional.empty();
     } else {
       T t = comboBox.getItemAt(index);
       lastChoice = t.toString();
-      return t;
+      return Optional.of(t);
     }
   }
 }
