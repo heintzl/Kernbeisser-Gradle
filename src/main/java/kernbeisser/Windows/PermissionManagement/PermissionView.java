@@ -4,17 +4,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
+import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -133,37 +133,31 @@ public class PermissionView implements IView<PermissionController> {
   }
 
   private void exportPermissions(ActionEvent event) {
-    int result =
-        JOptionPane.showOptionDialog(
+    Optional<ExportTypes> typeSelection =
+        SelectionDialog.select(
             getTopComponent(),
             "In welchem Format sollen die Berechtigungen exportiert werden?",
-            "Export - Format",
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            new Object[] {"CSV", "JSON"},
-            "JSON");
-    String ext;
-    switch (result) {
-      case -1:
-      default:
-        return;
-      case 0:
-        ext = "CSV";
-        break;
-      case 1:
-        ext = "JSON";
-        break;
-    }
+            Arrays.asList(ExportTypes.JSON, ExportTypes.CSV));
+    if (!typeSelection.isPresent()) return;
+    ExportTypes type = typeSelection.get();
     JFileChooser jFileChooser = new JFileChooser();
     jFileChooser.setFileFilter(
-        new FileNameExtensionFilter("Berechtigungs-" + ext, ext.toLowerCase(Locale.ROOT)));
+        new FileNameExtensionFilter(
+            "Berechtigungs-" + type.getName(), type.getFileNameExtension()));
     jFileChooser.addActionListener(
         e -> {
           if (jFileChooser.getSelectedFile() != null) {
             try {
-              if (ext.equals("CSV")) controller.exportCsv(jFileChooser.getSelectedFile());
-              if (ext.equals("JSON")) controller.exportTo(jFileChooser.getSelectedFile());
+              switch (type) {
+                case JSON:
+                  controller.exportTo(jFileChooser.getSelectedFile());
+                  break;
+                case CSV:
+                  controller.exportCsv(jFileChooser.getSelectedFile());
+                  break;
+                default:
+                  throw new IllegalStateException("Unexpected value: " + type);
+              }
             } catch (IOException ioException) {
               JOptionPane.showMessageDialog(
                   getTopComponent(),
