@@ -66,9 +66,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     Article article = getView().getObjectForm().getData(null);
     ShoppingItem item = new ShoppingItem(article, 0, true);
     item.setItemMultiplier((int) Math.round(amount * item.getContainerSize()));
-    if (!model.getShoppingItems().contains(item)) {
-      model.setBecomePrinted(article, true);
-    }
+    model.addToPrint(article);
     model.getShoppingItems().add(item);
     getView().getObjectForm().applyMode(Mode.EDIT);
     return item;
