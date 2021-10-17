@@ -13,6 +13,7 @@ import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.ActionPermission;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.CSV;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -165,5 +166,9 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   public void exportTo(File selectedFile) throws IOException {
     PermissionRepresentation.write(
         selectedFile, new PermissionRepresentation(Permission.getAll(null)));
+  }
+
+  public void exportCsv(File file) throws IOException {
+    CSV.dumpIntoCsv(getView().getPermission(), file);
   }
 }

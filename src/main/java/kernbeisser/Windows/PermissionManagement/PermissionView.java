@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import javax.swing.*;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PermissionView implements IView<PermissionController> {
 
-  private ObjectTable<PermissionKey> permission;
+  @lombok.Getter private ObjectTable<PermissionKey> permission;
   private JPanel main;
   private JComboBox<Class> category;
   private JButton back;
@@ -132,13 +133,37 @@ public class PermissionView implements IView<PermissionController> {
   }
 
   private void exportPermissions(ActionEvent event) {
+    int result =
+        JOptionPane.showOptionDialog(
+            getTopComponent(),
+            "In welchem Format sollen die Berechtigungen exportiert werden?",
+            "Export - Format",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            new Object[] {"CSV", "JSON"},
+            "JSON");
+    String ext;
+    switch (result) {
+      case -1:
+      default:
+        return;
+      case 0:
+        ext = "CSV";
+        break;
+      case 1:
+        ext = "JSON";
+        break;
+    }
     JFileChooser jFileChooser = new JFileChooser();
-    jFileChooser.setFileFilter(new FileNameExtensionFilter("Berechtigungs-JSON", "json"));
+    jFileChooser.setFileFilter(
+        new FileNameExtensionFilter("Berechtigungs-" + ext, ext.toLowerCase(Locale.ROOT)));
     jFileChooser.addActionListener(
         e -> {
           if (jFileChooser.getSelectedFile() != null) {
             try {
-              controller.exportTo(jFileChooser.getSelectedFile());
+              if (ext.equals("CSV")) controller.exportCsv(jFileChooser.getSelectedFile());
+              if (ext.equals("JSON")) controller.exportCsv(jFileChooser.getSelectedFile());
             } catch (IOException ioException) {
               JOptionPane.showMessageDialog(
                   getTopComponent(),
