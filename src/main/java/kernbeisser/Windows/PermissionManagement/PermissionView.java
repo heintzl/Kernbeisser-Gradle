@@ -163,7 +163,7 @@ public class PermissionView implements IView<PermissionController> {
           if (jFileChooser.getSelectedFile() != null) {
             try {
               if (ext.equals("CSV")) controller.exportCsv(jFileChooser.getSelectedFile());
-              if (ext.equals("JSON")) controller.exportCsv(jFileChooser.getSelectedFile());
+              if (ext.equals("JSON")) controller.exportTo(jFileChooser.getSelectedFile());
             } catch (IOException ioException) {
               JOptionPane.showMessageDialog(
                   getTopComponent(),
