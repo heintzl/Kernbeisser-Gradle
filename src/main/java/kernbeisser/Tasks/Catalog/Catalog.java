@@ -1,6 +1,7 @@
 package kernbeisser.Tasks.Catalog;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Pattern;
 import kernbeisser.DBEntities.Article;
@@ -8,6 +9,7 @@ import kernbeisser.DBEntities.CatalogDataSource;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Useful.Tools;
 
 public class Catalog {
 
@@ -42,27 +44,10 @@ public class Catalog {
     base.setSupplier(kkSupplier);
     base.setMetricUnits(extractUnit(catalogDataSource.getLadeneinheit()));
     base.setNetPrice(catalogDataSource.getPreis());
-    try {
-      if (DIM3AMOUNT.matcher(catalogDataSource.getLadeneinheit()).matches()) {
-        String[] parts = catalogDataSource.getLadeneinheit().split("x");
-        double x = filterDouble(parts[0]);
-        double y = filterDouble(parts[1]);
-        extractAmount(base, x * y);
-      } else {
-        double parsedAmount =
-            Double.parseDouble(
-                CHARACTER_FILTER
-                    .matcher(catalogDataSource.getLadeneinheit())
-                    .replaceAll("")
-                    .replace(",", "."));
-        extractAmount(base, parsedAmount);
-      }
-    } catch (NumberFormatException e) {
-      double parsedAmount = base.getContainerSize();
-      extractAmount(base, parsedAmount);
-      base.setContainerSize(1);
-      base.setWeighable(true);
-    }
+    double parsedAmount =
+        Arrays.stream(Tools.allNumbers(catalogDataSource.getLadeneinheit()))
+            .reduce(1, (a, b) -> a * b);
+    extractAmount(base, parsedAmount);
     return base;
   }
 
