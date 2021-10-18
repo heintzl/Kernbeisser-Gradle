@@ -14,7 +14,7 @@ public class ArticleDifference<T> {
   @Setter @Getter @NonNull private Solution solution = Solution.NO_SOLUTION;
 
   public double distance() {
-    return articleDifference.distance(newVersion, previousVersion);
+    return articleDifference.distance(previousVersion, newVersion);
   }
 
   public T getPreviousVersion() {

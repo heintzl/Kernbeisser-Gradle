@@ -36,6 +36,10 @@ public class ArticleMerge {
         .anyMatch(e -> Arrays.asList(differences).contains(e));
   }
 
+  public double getMaxDistance() {
+    return articleDifferences.stream().mapToDouble(ArticleDifference::distance).max().orElse(0);
+  }
+
   ArticleMerge resolved() {
     resolved = true;
     return this;
