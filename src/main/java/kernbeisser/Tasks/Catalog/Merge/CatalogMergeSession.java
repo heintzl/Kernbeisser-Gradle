@@ -142,6 +142,10 @@ public class CatalogMergeSession {
                 .resolved();
           }
           Article revision = revisionSearch.get();
+          if (revision.getShopRange() == ShopRange.NOT_IN_RANGE)
+            return new ArticleMerge(
+                    revision, newVersion, MergeStatus.NO_CONFLICTS, Collections.emptyList())
+                .resolved();
           if (isArticleBaseChange(revision, newVersion)) {
             return new ArticleMerge(
                     revision, newVersion, MergeStatus.BASE_CHANGE, Collections.emptyList())
