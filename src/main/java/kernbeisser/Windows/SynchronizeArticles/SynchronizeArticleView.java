@@ -152,7 +152,16 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
           if (articleMerge.isResolved()) {
             return false;
           }
-          return Arrays.stream(mappedDifferences).mapToDouble(e -> Math.abs(e.distance(e.get(articleMerge.getRevision()),e.get(articleMerge.getNewState())))).max().orElse(0) < getAllowedDifference()
+          return Arrays.stream(mappedDifferences)
+                      .mapToDouble(
+                          e ->
+                              Math.abs(
+                                  e.distance(
+                                      e.get(articleMerge.getRevision()),
+                                      e.get(articleMerge.getNewState()))))
+                      .max()
+                      .orElse(0)
+                  < getAllowedDifference()
               && articleMerge.containsConflict(mappedDifferences);
         });
   }
