@@ -954,7 +954,8 @@ public class Tools {
         if (numberBeginIndex == -1) numberBeginIndex = i;
       } else {
         if (numberBeginIndex == -1) continue;
-        out[storeIndex++] = Double.parseDouble(s.substring(numberBeginIndex, i).replace(",", "."));
+        String nbrString = s.substring(numberBeginIndex, i).replace(",", ".");
+        if (!nbrString.equals(".")) out[storeIndex++] = Double.parseDouble(nbrString);
         numberBeginIndex = -1;
       }
     }
