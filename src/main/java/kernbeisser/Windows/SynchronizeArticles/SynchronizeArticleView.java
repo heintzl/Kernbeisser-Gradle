@@ -21,6 +21,7 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Adjustors.IconCustomizer;
 import kernbeisser.CustomComponents.ObjectTable.Adjustors.SimpleCellAdjustor;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -57,6 +58,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private JLabel progressName;
   private JPanel progress;
   private JButton importCatalogFromInternet;
+  private JButton cancel;
 
   @Linked private SynchronizeArticleController controller;
 
@@ -69,8 +71,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
           differences.requestFocusInWindow();
           differences.selectAll();
         });
-    maxAllowedDiff.addActionListener(e -> setObjectFilter());
-    filter.addActionListener(e -> setObjectFilter());
+    maxAllowedDiff.addActionListener(e -> filterTable());
+    filter.addActionListener(e -> filterTable());
     useKernbeisser.addActionListener(e -> controller.useKernbeisser());
     useKornkraft.addActionListener(e -> controller.useKornkraft());
     removeSelection.addActionListener(e -> differences.clearSelection());
@@ -82,6 +84,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     differences.setRowFilter(articleMerge -> !articleMerge.isResolved());
     differenceFilter.getModel().setAllowNullSelection(true);
     differenceFilter.getRenderer().setNoSelectionText("Alle Kategorien");
+    cancel.addActionListener(controller::cancel);
     initForDiff(MappedDifference.values());
   }
 
@@ -136,6 +139,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
                                   mappedDifference.get(e.getRevision()),
                                   mappedDifference.get(e.getNewState()))
                               * 100))
+              .withSorter(Column.NUMBER_SORTER)
               .withCellAdjustor(new IconCustomizer<>(e -> getIcon(e, mappedDifference))));
     }
     filterTable();
@@ -148,7 +152,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
           if (articleMerge.isResolved()) {
             return false;
           }
-          return articleMerge.containsConflict(mappedDifferences);
+          return Math.abs(articleMerge.getMaxDistance()) < getAllowedDifference()
+              && articleMerge.containsConflict(mappedDifferences);
         });
   }
 
@@ -174,10 +179,10 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   }
 
   public double getAllowedDifference() {
-    return maxAllowedDiff.getSafeValue() / 100;
+    return maxAllowedDiff.getSafeValue() == 0.
+        ? Double.MAX_VALUE
+        : maxAllowedDiff.getSafeValue() / 100;
   }
-
-  public void setObjectFilter() {}
 
   Collection<ArticleMerge> getSelectedObjects() {
     return differences.getSelectedObjects();
@@ -251,5 +256,15 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
   public void messageInvalidURL() {
     message("Die eingegebene URL ist nicht korrekt!", "URL nicht korrekt!");
+  }
+
+  public boolean commitCancel() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Soll die akutelle Aktualiesierung des Kornkraft Kataloges abgebrochen werden?",
+            "Konrkraft Katalog abbrechen?",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE)
+        == 0;
   }
 }

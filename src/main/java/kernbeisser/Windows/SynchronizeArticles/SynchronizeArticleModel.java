@@ -74,4 +74,9 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
   public void checkDiffs() {
     mergeSession.checkMergeStatus();
   }
+
+  public void kill() {
+    if (mergeSession != null) mergeSession.kill();
+    mergeSession = null;
+  }
 }

@@ -290,4 +290,9 @@ public class CatalogMergeSession {
     }
     return differences;
   }
+
+  public void kill() {
+    et.rollback();
+    em.close();
+  }
 }

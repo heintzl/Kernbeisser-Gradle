@@ -1,5 +1,6 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
+import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -119,5 +120,11 @@ public class SynchronizeArticleController
     } catch (IOException e) {
       getView().messageInvalidURL();
     }
+  }
+
+  public void cancel(ActionEvent actionEvent) {
+    if (!getView().commitCancel()) return;
+    model.kill();
+    getView().back();
   }
 }
