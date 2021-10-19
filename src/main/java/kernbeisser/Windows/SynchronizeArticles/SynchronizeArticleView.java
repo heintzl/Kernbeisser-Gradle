@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
+import java.util.stream.Collectors;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -51,7 +52,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private JButton removeSelection;
   private JButton importCatalog;
   private JButton autoLinkCatalogSurchargeGroups;
-  private AdvancedComboBox<MappedDifference> differenceFilter;
+  private AdvancedComboBox<Filter> differenceFilter;
   private DoubleParseField maxAllowedDiff;
   private JButton useKernbeisserAndIgnore;
   private JProgressBar progressBar;
@@ -61,6 +62,31 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private JButton cancel;
 
   @Linked private SynchronizeArticleController controller;
+
+  private enum Filter {
+    CONTAINER_SIZE_AND_PRICE(MappedDifference.CONTAINER_SIZE, MappedDifference.PRICE),
+    PRICE(MappedDifference.PRICE),
+    CONTAINER_SIZE(MappedDifference.CONTAINER_SIZE),
+    AMOUNT(MappedDifference.AMOUNT),
+    NAME(MappedDifference.NAME);
+    @lombok.Getter private final MappedDifference[] differences;
+    private final String displayText;
+
+    Filter(String displayText, MappedDifference... differences) {
+      this.displayText = displayText;
+      this.differences = differences;
+    }
+
+    Filter(MappedDifference... differences) {
+      this.displayText =
+          Arrays.stream(differences).map(Difference::getName).collect(Collectors.joining(" & "));
+      this.differences = differences;
+    }
+
+    String getDisplayText() {
+      return displayText;
+    }
+  }
 
   @Override
   public void initialize(SynchronizeArticleController controller) {
@@ -85,7 +111,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     differenceFilter.getModel().setAllowNullSelection(true);
     differenceFilter.getRenderer().setNoSelectionText("Alle Kategorien");
     cancel.addActionListener(controller::cancel);
-    initForDiff(MappedDifference.values());
+    differenceFilter.setItems(Arrays.asList(Filter.values()));
+    initForDiff(getSelectedFilter());
   }
 
   @Override
@@ -96,7 +123,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   private void createUIComponents() {
     differences = new ObjectTable<>();
     maxAllowedDiff = new DoubleParseField();
-    differenceFilter = new AdvancedComboBox<>(Difference::getName);
+    differenceFilter = new AdvancedComboBox<>(Filter::getDisplayText);
   }
 
   void setDifferences(Collection<ArticleMerge> articleDifference) {
@@ -183,7 +210,7 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   MappedDifference[] getSelectedFilter() {
     return differenceFilter
         .getSelected()
-        .map(v -> new MappedDifference[] {v})
+        .map(Filter::getDifferences)
         .orElse(MappedDifference.values());
   }
 
@@ -228,10 +255,6 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
   public void surchargeGroupsSet() {
     JOptionPane.showMessageDialog(
         getTopComponent(), "Die Zuschlagsgruppen wurden erfolgreich gesetzt!");
-  }
-
-  public void setAllDiffs(MappedDifference[] mappedDiffs) {
-    differenceFilter.setItems(Arrays.asList(mappedDiffs));
   }
 
   public void mergeDiffsFirst() {

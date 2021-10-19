@@ -29,9 +29,7 @@ public class SynchronizeArticleController
   }
 
   @Override
-  public void fillView(SynchronizeArticleView synchronizeArticleView) {
-    getView().setAllDiffs(MappedDifference.values());
-  }
+  public void fillView(SynchronizeArticleView synchronizeArticleView) {}
 
   public void useKernbeisser() {
     applySolution(Solution.KEEP);
