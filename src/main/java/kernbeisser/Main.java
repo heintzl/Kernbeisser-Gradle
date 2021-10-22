@@ -22,6 +22,7 @@ import kernbeisser.DBEntities.Job;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
+import kernbeisser.StartUp.SplashScreenHandler;
 import kernbeisser.Useful.Tools;
 import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
@@ -44,8 +45,13 @@ public class Main {
     logger.info("Free memory at start " + Runtime.getRuntime().freeMemory() / 1048576 + "MB");
     // Runs the jar with more memory if not enough is reserved
     checkRequiredMemory(args);
+    SplashScreenHandler splashScreenHandler =
+        new SplashScreenHandler(140, 345, 14, Color.DARK_GRAY);
+    splashScreenHandler.setSplashComment("Stelle Verbindung zur Datenbank her");
     DBConnection.getEntityManager();
+    splashScreenHandler.setSplashComment("Initialisiere UI");
     buildEnvironment();
+    splashScreenHandler.setSplashComment("Prüfe Datenbankversion");
     checkVersion();
     if (!Setting.DB_INITIALIZED.getBooleanValue()) {
       SwingUtilities.invokeLater(() -> new DataImportController().openTab());
