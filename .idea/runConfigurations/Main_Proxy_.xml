@@ -2,7 +2,7 @@
   <configuration default="false" name="Main(Proxy)" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="kernbeisser.Main" />
     <module name="kernbeisser.main" />
-    <option name="VM_PARAMETERS" value="-javaagent:&quot;src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar&quot;=&quot;kernbeisser$kernbeisser.Security.Key$kernbeisser.Security.Access.Access.hasAccess(this,\&quot;%s\&quot;, \&quot;%s\&quot;, %dL);&quot;" />
+    <option name="VM_PARAMETERS" value="-splash:KernbeisserSplash.png -javaagent:&quot;src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar&quot;=&quot;kernbeisser$kernbeisser.Security.Key$kernbeisser.Security.Access.Access.hasAccess(this,\&quot;%s\&quot;, \&quot;%s\&quot;, %dL);&quot;" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
