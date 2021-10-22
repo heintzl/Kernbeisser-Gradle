@@ -61,6 +61,7 @@ public class EditSurchargeGroupController
     if (!surchargeGroup.getSupplier().equals(getView().getSelectedSupplier()))
       setSurchargeGroupsFor(surchargeGroup.getSupplier());
     getView().getObjectForm().setSource(surchargeGroup);
+    getView().setEditAvailable(false);
   }
 
   void setSurchargeGroupsFor(Supplier s) {
@@ -141,5 +142,9 @@ public class EditSurchargeGroupController
 
   public Collection<Supplier> getSuppliers() {
     return model.getAllSuppliers();
+  }
+
+  public void surchargeGroupChanged() {
+    getView().setEditAvailable(true);
   }
 }

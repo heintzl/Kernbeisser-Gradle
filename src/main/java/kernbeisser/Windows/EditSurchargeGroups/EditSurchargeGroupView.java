@@ -1,9 +1,11 @@
 package kernbeisser.Windows.EditSurchargeGroups;
 
+import java.awt.*;
 import java.util.Collection;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.Node;
@@ -18,6 +20,8 @@ import kernbeisser.Forms.ObjectForm.Components.DataAnchor;
 import kernbeisser.Forms.ObjectForm.Components.DataListener;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Useful.DocumentChangeListener;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -60,6 +64,15 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
     add.addActionListener(e -> controller.addSurchargeGroup());
     edit.addActionListener(e -> controller.editSurchargeGroup());
     delete.addActionListener(e -> controller.removeSurchargeGroup());
+    name.getDocument()
+        .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
+    surcharge
+        .getDocument()
+        .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
+    edit.setIcon(
+        IconFontSwing.buildIcon(
+            FontAwesome.PENCIL, Tools.scaleWithLabelScalingFactor(14), new Color(0x0095FF)));
+    superGroup.addActionListener(e -> controller.surchargeGroupChanged());
     commit.addActionListener(e -> back());
     superGroup.setAllowNull(true);
     objectTree.addSelectionListener(controller::surchargeGroupSelected);
@@ -144,5 +157,9 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
     return JOptionPane.showConfirmDialog(
             getTopComponent(), "Soll die Zuschlagsgruppe wirklich gelöscht werden?")
         == 0;
+  }
+
+  public void setEditAvailable(boolean b) {
+    edit.setEnabled(b);
   }
 }
