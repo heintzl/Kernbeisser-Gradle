@@ -5,7 +5,6 @@ import java.util.Collection;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
-import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.Node;
@@ -22,7 +21,6 @@ import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.DocumentChangeListener;
 import kernbeisser.Useful.Icons;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -71,7 +69,7 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
         .getDocument()
         .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
     edit.setIcon(Icons.defaultIcon(FontAwesome.PENCIL, new Color(0x0095FF)));
-    add.setIcon(Icons.defaultIcon(FontAwesome.PLUS,new Color(0x58C06E)));
+    add.setIcon(Icons.defaultIcon(FontAwesome.PLUS, new Color(0x58C06E)));
     delete.setIcon(Icons.defaultIcon(FontAwesome.TRASH, new Color(0xAB2525)));
     superGroup.addActionListener(e -> controller.surchargeGroupChanged());
     commit.addActionListener(e -> back());
