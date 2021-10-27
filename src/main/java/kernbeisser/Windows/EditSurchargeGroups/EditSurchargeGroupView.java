@@ -21,6 +21,7 @@ import kernbeisser.Forms.ObjectForm.Components.DataListener;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.DocumentChangeListener;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -69,9 +70,9 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
     surcharge
         .getDocument()
         .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
-    edit.setIcon(
-        IconFontSwing.buildIcon(
-            FontAwesome.PENCIL, Tools.scaleWithLabelScalingFactor(14), new Color(0x0095FF)));
+    edit.setIcon(Icons.defaultIcon(FontAwesome.PENCIL, new Color(0x0095FF)));
+    add.setIcon(Icons.defaultIcon(FontAwesome.PLUS,new Color(0x58C06E)));
+    delete.setIcon(Icons.defaultIcon(FontAwesome.TRASH, new Color(0xAB2525)));
     superGroup.addActionListener(e -> controller.surchargeGroupChanged());
     commit.addActionListener(e -> back());
     superGroup.setAllowNull(true);
@@ -161,5 +162,6 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
 
   public void setEditAvailable(boolean b) {
     edit.setEnabled(b);
+    delete.setEnabled(b);
   }
 }

@@ -41,6 +41,7 @@ public class EditSurchargeGroupController
             .collect(Collectors.toList()));
     editSurchargeGroupView.setSupplier(Supplier.getKKSupplier());
     loadForCurrentSupplier();
+    getView().setEditAvailable(false);
   }
 
   public void validate(SurchargeGroup surchargeGroup, Mode mode) throws CannotParseException {
@@ -61,7 +62,7 @@ public class EditSurchargeGroupController
     if (!surchargeGroup.getSupplier().equals(getView().getSelectedSupplier()))
       setSurchargeGroupsFor(surchargeGroup.getSupplier());
     getView().getObjectForm().setSource(surchargeGroup);
-    getView().setEditAvailable(false);
+    getView().setEditAvailable(true);
   }
 
   void setSurchargeGroupsFor(Supplier s) {
