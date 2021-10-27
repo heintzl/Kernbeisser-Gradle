@@ -1,5 +1,6 @@
 package kernbeisser.Windows.EditSurchargeGroups;
 
+import java.awt.*;
 import java.util.Collection;
 import javax.swing.*;
 import jiconfont.IconCode;
@@ -18,6 +19,8 @@ import kernbeisser.Forms.ObjectForm.Components.DataAnchor;
 import kernbeisser.Forms.ObjectForm.Components.DataListener;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Useful.DocumentChangeListener;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -60,6 +63,15 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
     add.addActionListener(e -> controller.addSurchargeGroup());
     edit.addActionListener(e -> controller.editSurchargeGroup());
     delete.addActionListener(e -> controller.removeSurchargeGroup());
+    name.getDocument()
+        .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
+    surcharge
+        .getDocument()
+        .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
+    edit.setIcon(Icons.defaultIcon(FontAwesome.PENCIL, new Color(0x0095FF)));
+    add.setIcon(Icons.defaultIcon(FontAwesome.PLUS, new Color(0x58C06E)));
+    delete.setIcon(Icons.defaultIcon(FontAwesome.TRASH, new Color(0xAB2525)));
+    superGroup.addActionListener(e -> controller.surchargeGroupChanged());
     commit.addActionListener(e -> back());
     superGroup.setAllowNull(true);
     objectTree.addSelectionListener(controller::surchargeGroupSelected);
@@ -144,5 +156,10 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
     return JOptionPane.showConfirmDialog(
             getTopComponent(), "Soll die Zuschlagsgruppe wirklich gelöscht werden?")
         == 0;
+  }
+
+  public void setEditAvailable(boolean b) {
+    edit.setEnabled(b);
+    delete.setEnabled(b);
   }
 }
