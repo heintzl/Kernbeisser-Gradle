@@ -3,9 +3,9 @@ package kernbeisser.Enums;
 import lombok.Getter;
 
 public enum ShopRange {
-  NOT_IN_RANGE("Nicht im Sortiment", false),
-  IN_RANGE("Im Sortiment", true),
-  PERMANENT_RANGE("Dauersortiment", true);
+  NOT_IN_RANGE("Nicht im Ladensortiment", false),
+  IN_RANGE("Ladensortiment(Temporär)", true),
+  PERMANENT_RANGE("Ladensortiment(Dauerhaft)", true);
 
   private final String name;
 

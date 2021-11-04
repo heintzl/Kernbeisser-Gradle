@@ -495,7 +495,7 @@ public class User implements Serializable, UserRelated {
         em.createQuery(
                 "select u from User u where not "
                     + GENERIC_USERS_CONDITION
-                    + " order by firstName,surname asc",
+                    + " order by surname,firstName asc",
                 User.class)
             .getResultList();
     if (withKbUser) result.add(0, User.getKernbeisserUser());

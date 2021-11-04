@@ -51,11 +51,21 @@ public class ArticleModel implements IModel<ArticleController> {
   }
 
   Collection<Supplier> getAllSuppliers() {
-    return Supplier.getAll(null);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select s from Supplier s order by s.name asc", Supplier.class)
+        .getResultList();
   }
 
   Collection<PriceList> getAllPriceLists() {
-    return PriceList.getAll(null);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select s from PriceList s order by s.name asc", PriceList.class)
+        .getResultList();
   }
 
   public int nextUnusedArticleNumber(int kbNumber) {
@@ -91,7 +101,8 @@ public class ArticleModel implements IModel<ArticleController> {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select s from SurchargeGroup s where supplier = :sid", SurchargeGroup.class)
+            "select s from SurchargeGroup s where supplier = :sid order by s.name asc",
+            SurchargeGroup.class)
         .setParameter("sid", s)
         .getResultList();
   }

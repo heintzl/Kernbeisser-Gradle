@@ -117,7 +117,7 @@ public class PreOrderView implements IView<PreOrderController> {
               controller::delete,
               e -> e.getOrderedOn() == null));
     }
-    user = new AdvancedComboBox<>(User::getFullName);
+    user = new AdvancedComboBox<>(e -> e.getSurname() + " " + e.getFirstName());
   }
 
   private void showSelectionPopup() {
@@ -181,6 +181,15 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
 
+    user.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+              kkNumber.requestFocusInWindow();
+            }
+          }
+        });
     user.addActionListener(e -> userAction(false));
     add.addActionListener(e -> controller.add());
 
@@ -210,9 +219,7 @@ public class PreOrderView implements IView<PreOrderController> {
       if (fromFnKey) {
         controller.add();
       }
-    } else {
-      kkNumber.requestFocusInWindow();
-    }
+    } // kkNumber.requestFocusInWindow();
   }
 
   void fnKeyAction(String i) {
