@@ -58,6 +58,12 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
     }
   }
 
+  @Override
+  public void remove(Article article) {
+    if (!getView().messageCommitDelete(article)) return;
+    super.remove(article);
+  }
+
   public int parseAmount(String s) throws SilentParseException {
     var view = getView();
     MetricUnits unit = view.getMetricUnits();

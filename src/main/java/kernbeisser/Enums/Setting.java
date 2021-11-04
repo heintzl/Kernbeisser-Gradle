@@ -73,7 +73,8 @@ public enum Setting {
   KK_SUPPLY_TO_TIME("24"),
   KK_SUPPLY_DAY_OF_WEEK(DayOfWeek.TUESDAY),
   KK_SUPPLY_PRODUCE_SUPPLIER_ITEM_NUMBER_RANGE("700000/799999"),
-  KK_SUPPLY_DIR(".");
+  KK_SUPPLY_DIR("."),
+  COMBO_BOX_SEARCH_TIMEOUT("500");
 
   // defines the type like in java style
   // Value: Type:

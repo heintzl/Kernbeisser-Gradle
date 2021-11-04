@@ -270,4 +270,13 @@ public class ArticleView implements IView<ArticleController> {
   public void messageUnitRequired() {
     JOptionPane.showMessageDialog(getContent(), "Bitte setzten sie die Einheit.");
   }
+
+  public boolean messageCommitDelete(Article article) {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            String.format("Soll der Artikel %s wirklich gelöscht werden?", article.getName()),
+            "Artikel löschen?",
+            JOptionPane.YES_NO_OPTION)
+        == 0;
+  }
 }

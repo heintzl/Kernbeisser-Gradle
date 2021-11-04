@@ -1,9 +1,6 @@
 package kernbeisser.CustomComponents.ComboBox;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
@@ -12,6 +9,7 @@ import lombok.Getter;
 public class AdvancedComboBox<T> extends JComboBox<T> {
 
   @Getter private final AdvancedComboBoxRenderer<T> renderer;
+  @Getter private final AdvancedComboBoxKeySelectionManager<T> selectionManager;
 
   public AdvancedComboBox() {
     this(Object::toString);
@@ -20,7 +18,16 @@ public class AdvancedComboBox<T> extends JComboBox<T> {
   public AdvancedComboBox(Function<T, String> stringFormer) {
     super(new AdvancedComboBoxModel<>());
     this.renderer = new AdvancedComboBoxRenderer<>(stringFormer);
+    this.selectionManager =
+        new AdvancedComboBoxKeySelectionManager<>(
+            (a, b) ->
+                renderer
+                    .getStringFormer()
+                    .apply(a)
+                    .toUpperCase(Locale.ROOT)
+                    .startsWith(b.toUpperCase(Locale.ROOT)));
     setRenderer(renderer);
+    setKeySelectionManager(selectionManager);
   }
 
   @Override
