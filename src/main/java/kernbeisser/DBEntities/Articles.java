@@ -1,6 +1,7 @@
 package kernbeisser.DBEntities;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.ArticleConstants;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
@@ -69,11 +71,7 @@ public class Articles {
   }
 
   public static Optional<ObjectState<Article>> getByKbNumber(
-      int kbNumber, boolean filterShopRange) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
+      EntityManager em, int kbNumber, boolean filterShopRange) {
     return Optional.ofNullable(
         em.createQuery("select i from Article i where kbNumber = :n", Article.class)
             .setParameter("n", kbNumber)
@@ -82,6 +80,15 @@ public class Articles {
             .findAny()
             .map(ObjectState::currentState)
             .orElseGet(() -> searchInArticleHistoryForKbNumber(em, kbNumber).orElse(null)));
+  }
+
+  public static Optional<ObjectState<Article>> getByKbNumber(
+      int kbNumber, boolean filterShopRange) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return getByKbNumber(em, kbNumber, filterShopRange);
   }
 
   public static Optional<ObjectState<Article>> searchInArticleHistoryForKbNumber(
@@ -370,6 +377,21 @@ public class Articles {
       persistence.setPrintPool(true);
       em.persist(persistence);
     }
+  }
+
+  public static Collection<Article> getAllActiveArticlesFromPriceList(
+      EntityManager em, PriceList priceList) {
+    if (!Setting.INVENTORY_LOOK_FOR_ARTICLE_USAGE.getBooleanValue()) {
+      return priceList.getAllArticles(em);
+    }
+    Instant expireDate =
+        Instant.now().minus(Setting.INVENTORY_INACTIVE_ARTICLE.getIntValue(), ChronoUnit.DAYS);
+    return em.createQuery(
+            "select a from Article a where a.priceList = :p and a.kbNumber in (select s.kbNumber from ShoppingItem s where s.createDate > :expireDate)",
+            Article.class)
+        .setParameter("p", priceList)
+        .setParameter("expireDate", expireDate)
+        .getResultList();
   }
 
   public static Article getCustomArticleVersion(Consumer<Article> transformer) {

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
-import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
@@ -44,7 +43,6 @@ public class Access {
   private static PermissionSet[] arrayCache = new PermissionSet[400];
 
   static {
-    loadUnprotectedInstanceExceptions();
     defaultManager = AccessManager.ACCESS_DENIED;
   }
 
@@ -66,14 +64,6 @@ public class Access {
         throw new PermissionKeyRequiredException(
             "PermissionSet doesn't contain the following keys:" + keys);
       }
-    }
-  }
-
-  // TODO: IMPLEMENT USER RELATED PEEK ACCESS CHECKING
-  // TODO: FIX CLOSING OF CASHIER SHOPPING MASK
-  public static void loadUnprotectedInstanceExceptions() {
-    for (PermissionConstants value : PermissionConstants.values()) {
-      exceptions.put(value.getPermission(), AccessManager.NO_ACCESS_CHECKING);
     }
   }
 

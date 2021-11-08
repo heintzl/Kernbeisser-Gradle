@@ -25,8 +25,8 @@
         <class>kernbeisser.DBEntities.Offer</class>
         <class>kernbeisser.DBEntities.SettingValue</class>
         <class>kernbeisser.DBEntities.UserSettingValue</class>
-        <class>kernbeisser.DBEntities.Inventory</class>
-        <class>kernbeisser.DBEntities.InventoryState</class>
+        <class>kernbeisser.DBEntities.Shelf</class>
+        <class>kernbeisser.DBEntities.ArticleStock</class>
         <class>kernbeisser.DBEntities.Shelf</class>
         <class>kernbeisser.DBEntities.IgnoredDialog</class>
         <properties>

@@ -16,6 +16,7 @@ import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +25,8 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   @Linked @Getter private SearchBoxController<T> searchBoxController;
 
   @Linked private final String title;
+
+  @Setter private boolean forceExtraButtonState;
 
   public ObjectViewController(
       String title,
@@ -54,11 +57,11 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     if (searchBoxController.getSelectedObject().isPresent()) {
       view.setEditAvailable(model.isEditAvailable());
       view.setRemoveAvailable(model.isRemoveAvailable());
-      setExtraButtonsAvailable(true);
+      if (forceExtraButtonState) setExtraButtonsAvailable(true);
     } else {
       view.setEditAvailable(false);
       view.setRemoveAvailable(false);
-      setExtraButtonsAvailable(false);
+      if (forceExtraButtonState) setExtraButtonsAvailable(false);
     }
   }
 

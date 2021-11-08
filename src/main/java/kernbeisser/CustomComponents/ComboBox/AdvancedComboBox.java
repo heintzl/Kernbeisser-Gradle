@@ -58,4 +58,12 @@ public class AdvancedComboBox<T> extends JComboBox<T> {
     }
     super.setModel(aModel);
   }
+
+  public void addSelectionListener(SelectionListener<T> selectionListener) {
+    addActionListener(e -> getSelected().ifPresent(selectionListener::select));
+  }
+
+  public interface SelectionListener<T> {
+    void select(T t);
+  }
 }
