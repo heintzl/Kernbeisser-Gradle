@@ -40,6 +40,7 @@ public class PreOrderView implements IView<PreOrderController> {
   JButton bestellungExportierenButton;
   JButton searchArticle;
   private JLabel caption;
+  private JLabel itemAmount;
 
   private JPopupMenu popupSelectionColumn;
   @Linked private PreOrderController controller;
@@ -377,5 +378,9 @@ public class PreOrderView implements IView<PreOrderController> {
   @Override
   public String getTitle() {
     return (controller.restrictToLoggedIn ? "Meine " : "") + "Vorbestellung";
+  }
+
+  public void setItemAmount(String s) {
+    itemAmount.setText(s);
   }
 }

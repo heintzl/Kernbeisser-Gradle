@@ -1,7 +1,9 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
@@ -16,11 +18,13 @@ import javax.swing.SwingUtilities;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
+import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +38,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private ObjectTable<LineContent> lineContents;
   private AdvancedComboBox<ResolveStatus> filter;
   private JButton printProduce;
+  private JButton verifyArticlesButton;
 
   @Override
   public void initialize(SupplySelectorController controller) {
@@ -59,6 +64,27 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     openOtherFolder.addActionListener(e -> controller.requestDirectoryChange());
     export.addActionListener(e -> controller.exportShoppingItems());
     printProduce.addActionListener(e -> controller.printProduce());
+    verifyArticlesButton.addActionListener(this::verifyArticle);
+  }
+
+  private void verifyArticle(ActionEvent actionEvent) {
+    String artNrStr = JOptionPane.showInputDialog("Artikel:");
+    if (artNrStr == null) return;
+    int artNr = Integer.parseInt(artNrStr);
+    Collection<LineContent> found = new ArrayList<>();
+    for (LineContent content : lineContents) {
+      if (content.getKkNumber() == artNr) {
+        found.add(content);
+      }
+    }
+    SelectionDialog.select(getTopComponent(), "Artikel:", found)
+        .ifPresent(
+            e -> {
+              message(e.toString());
+              e.verify();
+            });
+    lineContents.getModel().fireTableDataChanged();
+    verifyArticle(actionEvent);
   }
 
   public void setFilterOptions(Collection<ResolveStatus> filters) {
@@ -84,7 +110,8 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 SwingConstants.LEFT,
                 Comparator.comparing(
                     ((Object s) -> Instant.from(Date.INSTANT_DATE_TIME.parse((String) s))))),
-            Columns.create("Anzahl Artikel", Supply::getArticleCount),
+            Columns.create("Anzahl Artikel", Supply::getArticleCount)
+                .withRightClickConsumer(this::listSupplyFiles),
             Columns.create("Summe", e -> String.format("%.2f€", e.getContentSum())));
     lineContents =
         new ObjectTable<LineContent>(
@@ -103,13 +130,24 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 Column.NUMBER_SORTER),
             Columns.<LineContent>createIconColumn("S", e -> getIcon(e.getStatus()))
                 .withColumnAdjustor(
-                    column -> column.setMaxWidth(Tools.scaleWithLabelScalingFactor(20))));
+                    column -> column.setMaxWidth(Tools.scaleWithLabelScalingFactor(20))),
+            Columns.createIconColumn("", e -> e.isVerified() ? verified : notVerified));
+  }
+
+  private void listSupplyFiles(Supply supply) {
+    ObjectTable<SupplierFile> supplierFiles =
+        new ObjectTable<>(Columns.create("Auftrag", e -> e.getHeader().getOrderNr()));
+    supplierFiles.setObjects(supply.getSupplierFiles());
+    new ComponentController(supplierFiles).openTab();
   }
 
   private static final Icon okIcon = createIcon(FontAwesome.CHECK_CIRCLE, new Color(0x238678));
   private static final Icon addedIcon = createIcon(FontAwesome.PLUS, new Color(0xB648BA));
   private static final Icon ignoreIcon = createIcon(FontAwesome.EXCLAMATION_CIRCLE, Color.ORANGE);
   private static final Icon produceIcon = createIcon(FontAwesome.LEAF, new Color(0x0D5C0A));
+
+  private static final Icon verified = okIcon;
+  private static final Icon notVerified = ignoreIcon;
 
   private static Icon createIcon(FontAwesome icon, Color color) {
     return IconFontSwing.buildIcon(icon, Tools.scaleWithLabelScalingFactor(15), color);

@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.Node;
@@ -131,8 +132,10 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
     surchargeGroupArticles =
         new ObjectTable<>(
             Columns.create("Artikelname", Article::getName),
-            Columns.create("Kbnr.", Article::getKbNumber),
-            Columns.create("Lieferantennr.", Article::getSuppliersItemNumber));
+            Columns.create("Kbnr.", Article::getKbNumber).withSorter(Column.NUMBER_SORTER),
+            Columns.create("Lieferantennr.", Article::getSuppliersItemNumber)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Sortiment", Article::getShopRange));
   }
 
   public Supplier getSelectedSupplier() {
