@@ -1,11 +1,18 @@
 package kernbeisser.VersionIntegrationTools;
 
 import kernbeisser.Enums.Setting;
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import kernbeisser.VersionIntegrationTools.UpdatingTools.BaseVersion;
+import kernbeisser.VersionIntegrationTools.UpdatingTools.PermissionKeyChange;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public enum Version {
-  BASE_VERSION(BaseVersion.class);
+  BASE_VERSION(BaseVersion.class),
+  UNUSED_PERMISSION_KEY_REMOVING(PermissionKeyChange.class);
+  public static final Logger logger = LogManager.getLogger(Version.class);
   private final Class<? extends VersionUpdatingTool> updatingToolClass;
 
   Version(Class<? extends VersionUpdatingTool> updatingToolClass) {
@@ -19,12 +26,8 @@ public enum Version {
 
   private void runUpdate() {
     VersionUpdatingTool tool = createTool();
-    if (tool.getVersion() != this) {
-      throw new VersionUpdatingException(
-          "The Version integration tool of " + this + " doesn't refer to correct enum value");
-    }
     try {
-      tool.runIntegration();
+      Access.runWithAccessManager(AccessManager.NO_ACCESS_CHECKING, tool::runIntegration);
     } catch (NullPointerException e) {
       throw new VersionUpdatingException("Nullptr. Exception while updating version", e);
     }
@@ -38,7 +41,7 @@ public enum Version {
     Version[] versions = Version.values();
     for (int i = version.ordinal() + 1; i < versions.length; i++) {
       versions[i].runUpdate();
-      Setting.DB_VERSION.changeValue(version.name());
+      Setting.DB_VERSION.changeValue(versions[i].name());
     }
   }
 

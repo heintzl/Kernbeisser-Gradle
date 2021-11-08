@@ -10,6 +10,7 @@ import kernbeisser.Security.ActionPermission;
 import kernbeisser.Security.PermissionSet;
 
 public enum PermissionKey {
+  DEPRECATED(null),
 
   // (only for CollectionProxy)
   READ_ITERABLE_VALUE(null),
@@ -147,16 +148,6 @@ public enum PermissionKey {
   CONTAINER_DELIVERY_WRITE(PreOrder.class),
   CONTAINER_CREATE_DATE_READ(PreOrder.class),
   CONTAINER_CREATE_DATE_WRITE(PreOrder.class),
-  INVENTORY_ID_READ(Inventory.class),
-  INVENTORY_ID_WRITE(Inventory.class),
-  INVENTORY_CREATION_TIME_STAMP_READ(Inventory.class),
-  INVENTORY_CREATION_TIME_STAMP_WRITE(Inventory.class),
-  INVENTORY_STATE_ID_READ(InventoryState.class),
-  INVENTORY_STATE_ID_WRITE(InventoryState.class),
-  INVENTORY_STATE_ARTICLE_READ(InventoryState.class),
-  INVENTORY_STATE_ARTICLE_WRITE(InventoryState.class),
-  INVENTORY_STATE_COUNT_READ(InventoryState.class),
-  INVENTORY_STATE_COUNT_WRITE(InventoryState.class),
   ADD_JOB(Job.class),
   EDIT_JOB(Job.class),
   REMOVE_JOB(Job.class),
@@ -226,6 +217,8 @@ public enum PermissionKey {
   SHELF_ID_WRITE(Shelf.class),
   SHELF_LOCATION_READ(Shelf.class),
   SHELF_LOCATION_WRITE(Shelf.class),
+  SHELF_COMMENT_READ(Shelf.class),
+  SHELF_COMMENT_WRITE(Shelf.class),
   SHELF_ARTICLES_READ(Shelf.class),
   SHELF_ARTICLES_WRITE(Shelf.class),
   SHOPPING_ITEM_ID_READ(ShoppingItem.class),

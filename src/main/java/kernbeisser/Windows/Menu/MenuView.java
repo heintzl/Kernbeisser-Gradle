@@ -24,6 +24,7 @@ import kernbeisser.Windows.EditUserSetting.EditUserSettingController;
 import kernbeisser.Windows.EditUsers.EditUsers;
 import kernbeisser.Windows.InfoPanel.InfoPanelController;
 import kernbeisser.Windows.InfoPanel.InfoPanelView;
+import kernbeisser.Windows.Inventory.InventoryController;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
@@ -75,6 +76,7 @@ public class MenuView implements IView<MenuController> {
   private JButton logout;
   private ControllerButton permissionAssignment;
   private JButton grantCashierRole;
+  private JButton beginnInventory;
 
   @Override
   public void initialize(MenuController controller) {
@@ -218,6 +220,7 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             PermissionAssignmentController::cashierPermissionController,
             PermissionAssignmentController.class);
+    beginnInventory = new ControllerButton(InventoryController::new, InventoryController.class);
   }
 
   @Override

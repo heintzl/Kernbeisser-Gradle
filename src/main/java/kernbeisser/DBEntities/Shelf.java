@@ -24,10 +24,15 @@ public class Shelf {
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_WRITE)})
   private String location;
 
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.SHELF_COMMENT_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SHELF_COMMENT_WRITE)})
+  private String comment;
+
   @JoinColumn
   @ManyToMany
   @Getter(
       onMethod_ = {@Key({PermissionKey.SHELF_ARTICLES_READ, PermissionKey.SHELF_ARTICLES_WRITE})})
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ARTICLES_WRITE)})
-  private Set<Article> articles = new HashSet<>();
+  private Set<PriceList> priceLists = new HashSet<>();
 }
