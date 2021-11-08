@@ -93,4 +93,8 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   public void setRowFilter(RowFilter<T> rowFilter) {
     objects.setRowFilter(rowFilter);
   }
+
+  public ObjectTable<T> getObjectTable() {
+    return objects;
+  }
 }

@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -145,6 +146,10 @@ public class PriceList implements Serializable {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
+    return getAllArticles(em);
+  }
+
+  public List<Article> getAllArticles(EntityManager em) {
     return em.createQuery("select a from Article a where a.priceList = :p", Article.class)
         .setParameter("p", this)
         .getResultList();
@@ -200,6 +205,19 @@ public class PriceList implements Serializable {
       public Node<? extends PriceList> getParent() {
         return null;
       }
+    };
+  }
+
+  public static Source<PriceList> onlyWithContent() {
+    return () -> {
+      @Cleanup EntityManager em = DBConnection.getEntityManager();
+      @Cleanup("commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      return em.createQuery(
+              "select p from PriceList p where p in (select a.priceList from Article a)",
+              PriceList.class)
+          .getResultList();
     };
   }
 }
