@@ -38,6 +38,8 @@ public class LineContent {
   // 1 white space
   // placeholder Nr. 1234567890123
   private double price; // 3
+  private double discount;
+  private boolean verified;
 
   public static List<LineContent> parseContents(List<String> lines, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
@@ -138,6 +140,7 @@ public class LineContent {
     content.origin = line.substring(73, 77).replace(" ", "");
     content.qualitySign = line.substring(77, 80).replace(" ", "");
     content.price = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
+    content.discount = Integer.parseInt(line.substring(133, 136)) / 10000.;
     return content;
   }
 
@@ -175,5 +178,13 @@ public class LineContent {
             .map(e -> ResolveStatus.OK)
             .orElse(ResolveStatus.ADDED);
     return resolveStatus;
+  }
+
+  public void verify() {
+    verified = true;
+  }
+
+  public String toString() {
+    return name + getTotalPrice() + "€";
   }
 }

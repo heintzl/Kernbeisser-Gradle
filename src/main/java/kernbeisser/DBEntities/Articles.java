@@ -20,6 +20,7 @@ import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.ArticleConstants;
+import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
@@ -30,6 +31,8 @@ import org.hibernate.envers.query.AuditEntity;
 
 public class Articles {
 
+  private Articles() {}
+
   public static Article getEmptyArticle() {
     Article empty = new Article();
     Access.runWithAccessManager(
@@ -37,6 +40,9 @@ public class Articles {
         () -> {
           empty.setName("Kein Artikel gefunden");
           empty.setSurchargeGroup(new SurchargeGroup());
+          empty.setAmount(0);
+          empty.setNetPrice(0);
+          empty.setMetricUnits(MetricUnits.NONE);
         });
     return empty;
   }
@@ -387,5 +393,16 @@ public class Articles {
     transformer.accept(article);
     em.persist(article);
     return article;
+  }
+
+  public static String getContentAmount(Article article) {
+    if (article.isWeighable()
+        || article.getMetricUnits() == MetricUnits.NONE
+        || article.getMetricUnits() == MetricUnits.PIECE
+        || !(article.getAmount() > 0)) {
+      return "";
+    } else {
+      return article.getAmount() + " " + article.getMetricUnits().getShortName();
+    }
   }
 }

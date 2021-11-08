@@ -121,6 +121,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
             ShoppingItem.displayOnlyShoppingItem(articleKornkraft, 0, true).getRetailPrice()
                 * containerSize));
     view.setItemName(articleKornkraft.getName());
+    view.setItemAmount(Articles.getContentAmount(articleKornkraft));
   }
 
   private PreOrder obtainFromView() {

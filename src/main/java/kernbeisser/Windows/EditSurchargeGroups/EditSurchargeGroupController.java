@@ -13,7 +13,6 @@ import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
 import kernbeisser.Config.Config;
 import kernbeisser.CustomComponents.ObjectTree.Node;
-import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Mode;
@@ -83,7 +82,7 @@ public class EditSurchargeGroupController
 
   void calculateSurchargeValues() {
     Map<SurchargeGroup, Map<Double, List<String>>> calcResult = Tools.productSurchargeToGroup();
-    SettingValue.setValue(Setting.IS_DEFAULT_SURCHARGES, "false");
+    Setting.IS_DEFAULT_SURCHARGES.changeValue("false");
     try {
       File resultFile =
           Config.getConfig()

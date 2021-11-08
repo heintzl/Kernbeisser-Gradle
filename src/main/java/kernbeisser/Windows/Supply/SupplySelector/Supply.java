@@ -55,7 +55,9 @@ public class Supply {
       int h = dateTime.getHour();
       DayOfWeek d = dateTime.getDayOfWeek();
       if (h >= hFrom && h <= hTo && d.equals(dayOfTheWeek)) {
-        findOrCreate(supplies, date, maxSecDiff).supplierFiles.add(SupplierFile.parse(file));
+        SupplierFile supplierFile = SupplierFile.parse(file);
+        if (supplierFile.getHeader().getOrderType() == 8)
+          findOrCreate(supplies, date, maxSecDiff).supplierFiles.add(supplierFile);
       }
     }
     return supplies;
@@ -78,6 +80,8 @@ public class Supply {
   }
 
   public double getContentSum() {
-    return getAllLineContents().stream().mapToDouble(LineContent::getTotalPrice).sum();
+    return getAllLineContents().stream()
+        .mapToDouble(lineContent -> (1 - lineContent.getDiscount()) * lineContent.getTotalPrice())
+        .sum();
   }
 }
