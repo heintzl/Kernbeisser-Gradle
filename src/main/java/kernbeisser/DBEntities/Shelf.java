@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,6 +12,7 @@ import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table
@@ -45,6 +47,8 @@ public class Shelf {
       onMethod_ = {@Key({PermissionKey.SHELF_ARTICLES_READ, PermissionKey.SHELF_ARTICLES_WRITE})})
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ARTICLES_WRITE)})
   private Set<Article> articles = new HashSet<>();
+
+  @CreationTimestamp @Getter private Instant createDate;
 
   public Collection<Article> getAllArticles() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();

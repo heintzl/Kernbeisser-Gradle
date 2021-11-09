@@ -418,6 +418,24 @@ public class ShoppingItem implements Serializable {
         : getItemMultiplier() + " " + getSalesUnits().getShortName();
   }
 
+  public String getDisplayContainerCount() {
+    double amount =
+        isWeighAble()
+            ? (getMetricUnits().inUnit(MetricUnits.KILOGRAM, itemMultiplier))
+            : itemMultiplier / containerSize;
+    String unit =
+        isWeighAble()
+            ? getMetricUnits() == MetricUnits.MILLILITER
+                ? MetricUnits.LITER.getShortName()
+                : MetricUnits.KILOGRAM.getShortName()
+            : " Geb.";
+    return String.format("%s%s", roundIfNecessary(-amount), unit);
+  }
+
+  public String roundIfNecessary(double d) {
+    return d == Math.round(d) ? String.valueOf(Math.round(d)) : String.format("%.2f", d);
+  }
+
   public String getContentAmount() {
     if (isWeighAble()
         || this.getMetricUnits() == MetricUnits.NONE
