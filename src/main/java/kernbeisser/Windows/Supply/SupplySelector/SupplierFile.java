@@ -71,27 +71,34 @@ public class SupplierFile {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    ArrayList<ShoppingItem> items = new ArrayList<>();
-
     Supplier kkSupplier = Supplier.getKKSupplier();
-    for (LineContent content : contents) {
-      if (content.getStatus() == ResolveStatus.IGNORE
-          || content.getStatus() == ResolveStatus.PRODUCE) continue;
-      Article article =
-          Articles.getBySuppliersItemNumber(kkSupplier, content.getKkNumber())
-              .orElseGet(() -> createArticle(content));
-      // create shopping item
-      ShoppingItem shoppingItem = new ShoppingItem(article, 0, false);
-      double rawItemMultiplier =
-          (shoppingItem.isWeighAble()
-                  ? getAsItemMultiplierAmount(content)
-                  : content.getContainerMultiplier() * content.getContainerSize())
-              * -1;
-      checkFractionalItemMultiplier(rawItemMultiplier, content.getKkNumber());
-      shoppingItem.setItemMultiplier((int) Math.round(rawItemMultiplier));
-      items.add(shoppingItem);
-    }
-    return items;
+    return contents.stream()
+        .filter(this::shouldBecomeShoppingItem)
+        .map(e -> createShoppingItem(kkSupplier, e))
+        .collect(Collectors.toList());
+  }
+
+  private boolean shouldBecomeShoppingItem(LineContent content) {
+    return !(content.getStatus() == ResolveStatus.IGNORE
+        || content.getStatus() == ResolveStatus.PRODUCE);
+  }
+
+  public Article findOrCreateArticle(Supplier kkSupplier, LineContent content) {
+    return Articles.getBySuppliersItemNumber(kkSupplier, content.getKkNumber())
+        .orElseGet(() -> createArticle(content));
+  }
+
+  private ShoppingItem createShoppingItem(Supplier kkSupplier, LineContent content) {
+    ShoppingItem shoppingItem =
+        new ShoppingItem(findOrCreateArticle(kkSupplier, content), 0, false);
+    double rawItemMultiplier =
+        (shoppingItem.isWeighAble()
+                ? getAsItemMultiplierAmount(content)
+                : content.getContainerMultiplier() * content.getContainerSize())
+            * -1;
+    checkFractionalItemMultiplier(rawItemMultiplier, content.getKkNumber());
+    shoppingItem.setItemMultiplier((int) Math.round(rawItemMultiplier));
+    return shoppingItem;
   }
 
   private double getAsItemMultiplierAmount(LineContent content) {
