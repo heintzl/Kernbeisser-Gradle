@@ -79,7 +79,6 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
 
   public Column<Transaction> generateAfterValueChangeColumn() {
     return new Column<Transaction>() {
-      double value = 0;
 
       @Override
       public TableCellRenderer getRenderer() {
@@ -91,14 +90,13 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
 
       @Override
       public String getName() {
-        value = 0;
         return "Verbleibend";
       }
 
       @Override
       public Object getValue(Transaction valueChange) {
-        value += model.getSignedTransactionValue(valueChange);
-        return String.format("%.2f€", value);
+        return String.format(
+            "%.2f€", model.getValueAfterTransaction(valueChange, model.getUser().getUserGroup()));
       }
     };
   }
