@@ -204,6 +204,7 @@
                     </constraints>
                     <properties>
                       <actionCommand value="Artikel bearbeiten"/>
+                      <enabled value="false"/>
                       <font/>
                       <requestFocusEnabled value="false"/>
                       <text value="Aktionsartikel bearbeiten"/>
