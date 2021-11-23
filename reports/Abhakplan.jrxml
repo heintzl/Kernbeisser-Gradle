@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Abhakplan" pageWidth="595" pageHeight="842" columnWidth="499" leftMargin="48" rightMargin="48" topMargin="20" bottomMargin="20" uuid="4bbac286-dab4-4299-9984-7be3c020703c">
 	<property name="com.jaspersoft.studio.unit." value="cm"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
@@ -13,11 +13,13 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
+	<field name="article.amount" class="java.lang.Integer"/>
 	<field name="user.fullName" class="java.lang.String"/>
 	<field name="article.name" class="java.lang.String"/>
 	<field name="article.suppliersItemNumber" class="java.lang.Integer"/>
 	<field name="amount" class="java.lang.Integer"/>
 	<field name="retarded" class="java.lang.Boolean"/>
+	<field name="article.metricUnits.shortName" class="java.lang.String"/>
 	<group name="User">
 		<groupExpression><![CDATA[$F{user.fullName}]]></groupExpression>
 		<groupHeader>
@@ -72,21 +74,21 @@
 				<text><![CDATA[fehlt]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="110" y="30" width="50" height="20" uuid="1f7713d1-ddba-46e2-b05f-b6846da71e8f"/>
+				<reportElement x="94" y="30" width="40" height="20" uuid="1f7713d1-ddba-46e2-b05f-b6846da71e8f"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[Menge]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="180" y="30" width="50" height="20" uuid="f0f8b4bc-12fc-4f15-8f4c-e61afcae6b57"/>
+				<reportElement x="134" y="30" width="54" height="20" uuid="f0f8b4bc-12fc-4f15-8f4c-e61afcae6b57"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[KK-Nr.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="240" y="30" width="50" height="20" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4"/>
+				<reportElement x="241" y="30" width="50" height="20" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
@@ -106,13 +108,27 @@
 				</textElement>
 				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="192" y="30" width="50" height="20" uuid="f0428fe8-e982-494c-b59b-4e0a32655790"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Packung]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="1" splitType="Stretch"/>
+		<band height="1" splitType="Stretch">
+			<staticText>
+				<reportElement x="208" y="0" width="100" height="1" uuid="555f8dc4-4db1-41ff-b322-5b5aec7c8a41">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a059afa1-9962-4b7b-9a46-10c2a9cd72c6"/>
+				</reportElement>
+				<text><![CDATA[article.amount]]></text>
+			</staticText>
+		</band>
 	</columnHeader>
 	<detail>
-		<band height="18" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<rectangle>
 				<reportElement x="10" y="2" width="12" height="12" uuid="dcd1c446-4c2a-4fa5-8035-f3b40e4c8fc9">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -124,7 +140,7 @@
 				</reportElement>
 			</rectangle>
 			<textField>
-				<reportElement x="100" y="1" width="40" height="17" uuid="39fb4ddd-c63d-4856-87a5-950048fae6ea">
+				<reportElement x="84" y="1" width="40" height="17" uuid="39fb4ddd-c63d-4856-87a5-950048fae6ea">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="716b65a5-898a-48ee-8873-f89cfdb56be9"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -133,14 +149,14 @@
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="150" y="1" width="10" height="16" uuid="5788b0e3-76be-435e-be6f-725db43c7019"/>
+				<reportElement x="128" y="1" width="10" height="16" uuid="5788b0e3-76be-435e-be6f-725db43c7019"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="12"/>
 				</textElement>
 				<text><![CDATA[x]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="180" y="1" width="50" height="17" uuid="e8f3a35c-13e0-4f21-acc2-f1481c73286f">
+				<reportElement x="137" y="1" width="50" height="17" uuid="e8f3a35c-13e0-4f21-acc2-f1481c73286f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0fcc61-6f33-42f3-91b0-b2f6988d712f"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -149,7 +165,7 @@
 				<textFieldExpression><![CDATA[$F{article.suppliersItemNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="240" y="1" width="258" height="17" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
+				<reportElement x="239" y="1" width="260" height="17" printWhenGroupChanges="User" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
 					<printWhenExpression><![CDATA[!$F{retarded}]]></printWhenExpression>
 				</reportElement>
@@ -159,7 +175,7 @@
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="300" y="0" width="198" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
+				<reportElement x="299" y="0" width="198" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
 					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
 				</reportElement>
@@ -169,7 +185,7 @@
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="240" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
+				<reportElement x="239" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
 					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
@@ -177,6 +193,15 @@
 				</textElement>
 				<text><![CDATA[Nachlief.:]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="192" y="1" width="42" height="17" uuid="5230a6f1-3825-43c0-83a3-0e5397ab0a75">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0fcc61-6f33-42f3-91b0-b2f6988d712f"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed" size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{article.amount} + $F{article.metricUnits.shortName}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
