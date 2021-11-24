@@ -237,8 +237,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
     return "Katalog sychronisieren";
   }
 
-  public File requestInputFile(String... extensions) {
-    JFileChooser fileChooser = new JFileChooser();
+  public File requestInputFile(File defaultDir, String... extensions) {
+    JFileChooser fileChooser = new JFileChooser(defaultDir);
     fileChooser.setFileFilter(new FileNameExtensionFilter("Source-File", extensions));
     fileChooser.showOpenDialog(getTopComponent());
     return fileChooser.getSelectedFile();

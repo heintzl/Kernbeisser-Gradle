@@ -3,14 +3,12 @@ package kernbeisser.Windows.Supply.SupplySelector;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.UnsupportedLookAndFeelException;
+import kernbeisser.Config.Config;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
@@ -23,6 +21,7 @@ import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 public class SupplySelectorController extends Controller<SupplySelectorView, SupplySelectorModel> {
 
@@ -41,32 +40,35 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   @Override
   public void fillView(SupplySelectorView supplySelectorView) {
     getView().setFilterOptions(Arrays.asList(ResolveStatus.values()));
-    loadSettingsDir();
+    loadDefaultDir();
   }
 
-  public void loadSettingsDir() {
-    File directory = new File(Setting.KK_SUPPLY_DIR.getStringValue());
-    if (!directory.isDirectory()) {
-      requestDirectoryChange(Setting.KK_SUPPLY_DIR.getStringValue());
+  public void loadDefaultDir() {
+    File defaultDir = Config.getConfig().getDefaultKornkraftInboxDir();
+    if (!defaultDir.isDirectory()) {
+      getView().messageDefaultDirNotFound();
+      openOtherDir(defaultDir.getAbsolutePath());
       return;
     }
+    loadDir(defaultDir);
+  }
+
+  public void loadDir(@NotNull File dir) {
+    if (!dir.isDirectory()) throw new IllegalArgumentException("Not a directory");
     getView()
         .setSupplies(
             Supply.extractSupplies(
-                directory.listFiles(),
+                Objects.requireNonNull(dir.listFiles()),
                 Setting.KK_SUPPLY_FROM_TIME.getIntValue(),
                 Setting.KK_SUPPLY_TO_TIME.getIntValue(),
                 Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)));
   }
 
-  public void requestDirectoryChange() {
-    requestDirectoryChange(Setting.KK_SUPPLY_DIR.getValue());
-  }
-
-  public void requestDirectoryChange(String pathBefore) {
+  public void openOtherDir(String pathBefore) {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setCurrentDirectory(new File(pathBefore));
     fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    fileChooser.setDialogTitle("Kornkraft Ordner auswählen");
     fileChooser.addActionListener(
         e -> {
           File selected = fileChooser.getSelectedFile();
@@ -74,8 +76,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
             getView().back();
             return;
           }
-          Setting.KK_SUPPLY_DIR.changeValue(selected.getAbsolutePath());
-          loadSettingsDir();
+          loadDir(selected);
         });
     fileChooser.showOpenDialog(getView().getContent());
   }
@@ -90,7 +91,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
                 supplierFile.getOrigin().delete();
               }
             });
-    loadSettingsDir();
+    loadDefaultDir();
   }
 
   public void exportShoppingItems() {
