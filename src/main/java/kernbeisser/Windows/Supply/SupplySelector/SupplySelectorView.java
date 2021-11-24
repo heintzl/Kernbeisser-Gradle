@@ -33,7 +33,6 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private JPanel main;
   private ObjectTable<Supply> supplySelector;
   private JButton deleteSupply;
-  private JButton openOtherFolder;
   private JButton export;
   private ObjectTable<LineContent> lineContents;
   private AdvancedComboBox<ResolveStatus> filter;
@@ -61,7 +60,6 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 FontAwesome.QUESTION, Tools.scaleWithLabelScalingFactor(15), Color.RED));
     filter.getRenderer().setNoSelectionText("Alle Artikel");
     deleteSupply.addActionListener(controller::deleteCurrentSupply);
-    openOtherFolder.addActionListener(e -> controller.requestDirectoryChange());
     export.addActionListener(e -> controller.exportShoppingItems());
     printProduce.addActionListener(e -> controller.printProduce());
     verifyArticlesButton.addActionListener(this::verifyArticle);
@@ -185,5 +183,11 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
 
   public void messageSelectSupplyFirst() {
     message("Bitte wähle zunächst eine Lieferung aus!", "Keine Lieferung ausgewählt!");
+  }
+
+  public void messageDefaultDirNotFound() {
+    message(
+        "Das Standardverzeichnis konnte nicht gefunden werden!\nIst der USB-Stick eingesteckt?",
+        "Standardverzeichnis nicht gefunden");
   }
 }

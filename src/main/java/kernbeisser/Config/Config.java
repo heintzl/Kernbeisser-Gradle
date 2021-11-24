@@ -68,6 +68,10 @@ public final class Config {
 
   private File imagePath = new File("images");
 
+  private File defaultKornkraftInboxDir = new File("USB:\\kornkraft");
+
+  private File defaultBnnInboxDir = new File("USB:\\bnn");
+
   @Getter(AccessLevel.PRIVATE)
   private DBAccess dbAccess = new DBAccess();
 

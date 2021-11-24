@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
+import javax.swing.filechooser.FileSystemView;
+import kernbeisser.Config.Config;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Catalog.Catalog;
@@ -62,7 +64,12 @@ public class SynchronizeArticleController
 
   public void setProductGroups() {
     try {
-      model.setProductGroups(Files.lines(getView().requestInputFile("json", "JSON").toPath()));
+      model.setProductGroups(
+          Files.lines(
+              getView()
+                  .requestInputFile(
+                      FileSystemView.getFileSystemView().getHomeDirectory(), "json", "JSON")
+                  .toPath()));
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -77,7 +84,10 @@ public class SynchronizeArticleController
     try {
       importCatalogSource(
           Files.readAllLines(
-              getView().requestInputFile("csv", "BNN", "bnn", "txt", "TXT").toPath(),
+              getView()
+                  .requestInputFile(
+                      Config.getConfig().getDefaultBnnInboxDir(), "csv", "BNN", "bnn", "txt", "TXT")
+                  .toPath(),
               Catalog.DEFAULT_ENCODING));
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);

@@ -43,14 +43,6 @@
               <text value="Ausgewählte Lieferung löschen"/>
             </properties>
           </component>
-          <component id="74f33" class="javax.swing.JButton" binding="openOtherFolder" default-binding="true">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Lieferungsordner ändern"/>
-            </properties>
-          </component>
         </children>
       </grid>
       <grid id="84aa2" layout-manager="GridLayoutManager" row-count="3" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
