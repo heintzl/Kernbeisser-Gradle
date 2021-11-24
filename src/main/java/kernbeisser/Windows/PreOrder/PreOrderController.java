@@ -1,7 +1,6 @@
 package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -238,15 +237,10 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       getView().messageNothingToExport();
       return;
     }
-    try {
-      if (model.exportPreOrder(view.getContent()) == JFileChooser.APPROVE_OPTION) {
-        model.setAllExported();
-        view.messageExportSuccess();
-      } else {
-        view.messageExportCanceled();
-      }
-    } catch (IOException e) {
-      view.messageExportError(e);
+    if (model.exportPreOrder(view.getContent())) {
+      view.messageExportSuccess();
+    } else {
+      view.messageExportCanceled();
     }
     getView().repaintTable();
   }

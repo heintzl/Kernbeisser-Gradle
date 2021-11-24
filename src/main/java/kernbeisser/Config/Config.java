@@ -78,6 +78,8 @@ public final class Config {
 
   private Reports reports = new Reports();
 
+  private Preorders preorders = new Preorders();
+
   public DBAccess getDBAccessData() {
     DBAccess dbAccess = getConfig().getDbAccess();
     if (dbAccess.getPassword() == null || dbAccess.getPassword().replace(" ", "").equals("")) {
@@ -109,5 +111,10 @@ public final class Config {
     private File reportDirectory = new File(".");
     private File outputDirectory = new File("../output");
     private HashMap<String, String> reports = new HashMap<>();
+  }
+
+  @Data
+  public static class Preorders {
+    private File exportDirectory = new File("../preorder");
   }
 }

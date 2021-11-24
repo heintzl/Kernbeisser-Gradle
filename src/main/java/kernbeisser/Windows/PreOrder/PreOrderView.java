@@ -312,7 +312,7 @@ public class PreOrderView implements IView<PreOrderController> {
     Tools.beep();
     JOptionPane.showMessageDialog(
         getContent(),
-        "Der Export der Vorbestellung wurde abgebrochen",
+        "Der Export der Vorbestellung wurde abgebrochen oder ist fehlgeschlagen!",
         "Vorbestellungsexport",
         JOptionPane.WARNING_MESSAGE);
   }
