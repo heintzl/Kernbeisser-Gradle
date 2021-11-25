@@ -332,14 +332,15 @@ public class ShoppingItem implements Serializable {
             Supplier.getSolidaritySupplier(),
             false);
     solidarity.solidaritySurchargeItem = true;
+    solidarity.vatValue = vat.getValue();
     solidarity.name =
         (int) (surcharge * 100)
-            + " % "
+            + "% "
             + RawPrice.SOLIDARITY.getName()
-            + " MWSt. "
-            + (vat == VAT.HIGH ? "voll" : "ermäßigt");
+            + " auf Artikel mit "
+            + Math.round(solidarity.vatValue * 100)
+            + "% MWSt.";
     solidarity.vat = vat;
-    solidarity.vatValue = vat.getValue();
     return solidarity;
   }
 
