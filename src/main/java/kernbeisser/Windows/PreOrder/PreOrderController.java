@@ -188,6 +188,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
     keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
     keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
+    keyCapture.addALT(KeyEvent.VK_S, () -> openSearchWindow());
+    keyCapture.addCTRL(KeyEvent.VK_F, () -> openSearchWindow());
     boolean editable = userMayEdit();
     view.setInsertSectionEnabled(editable);
     String preOrdersFor =

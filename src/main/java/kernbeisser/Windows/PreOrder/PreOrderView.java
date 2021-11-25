@@ -63,6 +63,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void setKkNumber(int s) {
     kkNumber.setText(String.valueOf(s));
+    amount.requestFocusInWindow();
   }
 
   void setNetPrice(double s) {
