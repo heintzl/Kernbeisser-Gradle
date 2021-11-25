@@ -2,7 +2,6 @@ package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -58,18 +57,23 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void add() {
+    var view = getView();
     try {
       PreOrder order = obtainFromView();
+      if (!order.getArticle().getSupplier().equals(Supplier.getKKSupplier())) {
+        view.messageIsNotKKArticle();
+        return;
+      }
       if (order.getUser() == null) {
-        getView().notifyNoUserSelected();
+        view.notifyNoUserSelected();
         return;
       }
       model.add(order);
-      getView().addPreOrder(order);
+      view.addPreOrder(order);
       noArticleFound();
-      getView().resetArticleNr();
+      view.resetArticleNr();
     } catch (NoResultException e) {
-      getView().noItemFound();
+      view.noItemFound();
     }
   }
 

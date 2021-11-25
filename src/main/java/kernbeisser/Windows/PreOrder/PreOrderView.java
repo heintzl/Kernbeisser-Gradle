@@ -317,6 +317,15 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
+  public void messageIsNotKKArticle() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Zur Zeit können hier nur Kornkraft Artikel vorbestellt werden!",
+        "Falscher Lieferant",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
   public void notifyNoUserSelected() {
     Tools.beep();
     JOptionPane.showMessageDialog(
