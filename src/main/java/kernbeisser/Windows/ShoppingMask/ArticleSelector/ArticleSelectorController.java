@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ShoppingMask.ArticleSelector;
 
+import java.awt.*;
 import java.util.function.Consumer;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
@@ -42,6 +43,10 @@ public class ArticleSelectorController
   public void choose() {
     model.getConsumer().accept(searchBoxController.getSelectedObject().orElse(null));
     getView().back();
+  }
+
+  public void modifyNamedComponent(String name, Consumer<Component> modifier) {
+    searchBoxController.modifyNamedComponent(name, modifier);
   }
 
   @Override
