@@ -64,16 +64,23 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   Collection<PreOrder> getAllPreOrders(boolean restricted) {
     if (restricted) {
-      return em.createQuery("select p from PreOrder p where p.user = :u", PreOrder.class)
+      return em.createQuery(
+              "select p from PreOrder p where p.user = :u order by p.article.suppliersItemNumber",
+              PreOrder.class)
           .setParameter("u", LogInModel.getLoggedIn())
           .getResultList();
     } else {
-      return em.createQuery("select p from PreOrder p", PreOrder.class).getResultList();
+      return em.createQuery(
+              "select p from PreOrder p order by p.user.username, p.article.suppliersItemNumber",
+              PreOrder.class)
+          .getResultList();
     }
   }
 
   Collection<PreOrder> getUnorderedPreOrders() {
-    return em.createQuery("select p from PreOrder p where orderedOn is null", PreOrder.class)
+    return em.createQuery(
+            "select p from PreOrder p where orderedOn is null order by p.article.suppliersItemNumber",
+            PreOrder.class)
         .getResultList();
   }
 
