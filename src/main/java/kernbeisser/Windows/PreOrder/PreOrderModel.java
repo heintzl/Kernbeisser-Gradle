@@ -1,7 +1,6 @@
 package kernbeisser.Windows.PreOrder;
 
 import java.awt.*;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,6 +12,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
@@ -64,16 +64,23 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   Collection<PreOrder> getAllPreOrders(boolean restricted) {
     if (restricted) {
-      return em.createQuery("select p from PreOrder p where p.user = :u", PreOrder.class)
+      return em.createQuery(
+              "select p from PreOrder p where p.user = :u order by p.article.suppliersItemNumber",
+              PreOrder.class)
           .setParameter("u", LogInModel.getLoggedIn())
           .getResultList();
     } else {
-      return em.createQuery("select p from PreOrder p", PreOrder.class).getResultList();
+      return em.createQuery(
+              "select p from PreOrder p order by p.user.username, p.article.suppliersItemNumber",
+              PreOrder.class)
+          .getResultList();
     }
   }
 
   Collection<PreOrder> getUnorderedPreOrders() {
-    return em.createQuery("select p from PreOrder p where orderedOn is null", PreOrder.class)
+    return em.createQuery(
+            "select p from PreOrder p where orderedOn is null order by p.article.suppliersItemNumber",
+            PreOrder.class)
         .getResultList();
   }
 
@@ -110,8 +117,15 @@ public class PreOrderModel implements IModel<PreOrderController> {
         .sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
   }
 
-  public int exportPreOrder(Component parent) throws IOException {
-    return CSVExport.exportPreOrder(parent, getUnorderedPreOrders());
+  public boolean exportPreOrder(Component parent) {
+    int preorderNr = Setting.LAST_EXPORTED_PREORDER_NR.getIntValue() + 1;
+    String defaultFilename = "KornkraftBestellung_" + String.format("%05d.csv", preorderNr);
+    boolean result = CSVExport.exportPreOrder(parent, getUnorderedPreOrders(), defaultFilename);
+    if (result) {
+      setAllExported();
+      Setting.LAST_EXPORTED_PREORDER_NR.changeValue(preorderNr);
+    }
+    return result;
   }
 
   void toggleDelivery(PreOrder p) {
@@ -133,7 +147,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     preOrder.setAmount(amount);
   }
 
-  public void setAllExported() {
+  private void setAllExported() {
     Instant orderInstant = Instant.now();
     for (PreOrder o : getUnorderedPreOrders()) {
       o.setOrderedOn(orderInstant);

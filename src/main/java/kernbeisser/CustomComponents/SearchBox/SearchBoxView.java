@@ -14,6 +14,7 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
@@ -22,7 +23,7 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   private JTextField searchInput;
   private ObjectTable<T> objects;
   private JPanel main;
-  private JPanel extraOptionsPanel;
+  @Getter private JPanel extraOptionsPanel;
 
   @Linked private SearchBoxController<T> controller;
 
@@ -40,10 +41,6 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
 
   public Optional<T> getSelectedObject() {
     return objects.getSelectedObject();
-  }
-
-  JPanel getExtraOptionsPanel() {
-    return extraOptionsPanel;
   }
 
   private void createUIComponents() {

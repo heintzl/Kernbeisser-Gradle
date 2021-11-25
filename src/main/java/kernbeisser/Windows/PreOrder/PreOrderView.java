@@ -63,6 +63,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void setKkNumber(int s) {
     kkNumber.setText(String.valueOf(s));
+    amount.requestFocusInWindow();
   }
 
   void setNetPrice(double s) {
@@ -312,8 +313,17 @@ public class PreOrderView implements IView<PreOrderController> {
     Tools.beep();
     JOptionPane.showMessageDialog(
         getContent(),
-        "Der Export der Vorbestellung wurde abgebrochen",
+        "Der Export der Vorbestellung wurde abgebrochen oder ist fehlgeschlagen!",
         "Vorbestellungsexport",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
+  public void messageIsNotKKArticle() {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Zur Zeit können hier nur Kornkraft Artikel vorbestellt werden!",
+        "Falscher Lieferant",
         JOptionPane.WARNING_MESSAGE);
   }
 

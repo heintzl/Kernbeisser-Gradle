@@ -1,9 +1,7 @@
 package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -59,18 +57,23 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void add() {
+    var view = getView();
     try {
       PreOrder order = obtainFromView();
+      if (!order.getArticle().getSupplier().equals(Supplier.getKKSupplier())) {
+        view.messageIsNotKKArticle();
+        return;
+      }
       if (order.getUser() == null) {
-        getView().notifyNoUserSelected();
+        view.notifyNoUserSelected();
         return;
       }
       model.add(order);
-      getView().addPreOrder(order);
+      view.addPreOrder(order);
       noArticleFound();
-      getView().resetArticleNr();
+      view.resetArticleNr();
     } catch (NoResultException e) {
-      getView().noItemFound();
+      view.noItemFound();
     }
   }
 
@@ -157,13 +160,23 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     getView().addPreOrder(preOrder);
   }
 
+  void articleSearch(Article a) {
+    pasteDataInView(a);
+    getView().setKkNumber(a.getSuppliersItemNumber());
+  }
+
   void openSearchWindow() {
-    new ArticleSelectorController(
-            p -> {
-              pasteDataInView(p);
-              getView().setKkNumber(p.getSuppliersItemNumber());
-            })
-        .openIn(new SubWindow(getView().traceViewContainer()));
+    var searchWindow = new ArticleSelectorController(this::articleSearch);
+    searchWindow.modifyNamedComponent(
+        "KKFilter",
+        c -> {
+          var checkbox = (JCheckBox) c;
+          if (!checkbox.isSelected()) {
+            checkbox.doClick();
+          }
+          c.setEnabled(false);
+        });
+    searchWindow.openIn(new SubWindow(getView().traceViewContainer()));
   }
 
   @Override
@@ -175,6 +188,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
     keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
     keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
+    keyCapture.addALT(KeyEvent.VK_S, () -> openSearchWindow());
+    keyCapture.addCTRL(KeyEvent.VK_F, () -> openSearchWindow());
     boolean editable = userMayEdit();
     view.setInsertSectionEnabled(editable);
     String preOrdersFor =
@@ -184,7 +199,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     view.setCaption(preOrdersFor, editable);
     view.enableControls(false);
     if (restrictToLoggedIn) {
-      view.setUsers(Arrays.asList(LogInModel.getLoggedIn()));
+      view.setUsers(Collections.singletonList(LogInModel.getLoggedIn()));
       view.setUserEnabled(false);
     } else {
       view.setUsers(User.getAllUserFullNames(true));
@@ -238,15 +253,10 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       getView().messageNothingToExport();
       return;
     }
-    try {
-      if (model.exportPreOrder(view.getContent()) == JFileChooser.APPROVE_OPTION) {
-        model.setAllExported();
-        view.messageExportSuccess();
-      } else {
-        view.messageExportCanceled();
-      }
-    } catch (IOException e) {
-      view.messageExportError(e);
+    if (model.exportPreOrder(view.getContent())) {
+      view.messageExportSuccess();
+    } else {
+      view.messageExportCanceled();
     }
     getView().repaintTable();
   }
