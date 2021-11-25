@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Supplier;
 import lombok.Setter;
 
 public class ArticleFilter {
@@ -13,6 +14,7 @@ public class ArticleFilter {
   @Setter private boolean filterNoBarcode = false;
   @Setter private boolean filterShowInShop = false;
   @Setter private boolean filterShopRange = true;
+  @Setter private boolean filterKK = false;
 
   Runnable callback;
 
@@ -26,7 +28,8 @@ public class ArticleFilter {
         e ->
             !(filterNoBarcode && e.getBarcode() != null)
                 && !(filterShowInShop && !e.isShowInShop())
-                && !(filterShopRange && !e.getShopRange().isVisible()),
+                && !(filterShopRange && !e.getShopRange().isVisible())
+                && !(filterKK && !e.getSupplier().equals(Supplier.getKKSupplier())),
         max);
   }
 
@@ -38,7 +41,7 @@ public class ArticleFilter {
           filterNoBarcode = noBarcode.isSelected();
           callback.run();
         });
-    noBarcode.setSelected(false);
+    noBarcode.setSelected(filterNoBarcode);
     checkBoxes.add(noBarcode);
     final JCheckBox showInShop = new JCheckBox("Favoriten Artikel");
     showInShop.addActionListener(
@@ -46,16 +49,25 @@ public class ArticleFilter {
           filterShowInShop = showInShop.isSelected();
           callback.run();
         });
-    showInShop.setSelected(false);
+    showInShop.setSelected(filterShowInShop);
     checkBoxes.add(showInShop);
-    JCheckBox onlyShopRange = new JCheckBox("nur KB Sortiment");
+    final JCheckBox onlyShopRange = new JCheckBox("nur KB Sortiment");
     onlyShopRange.addActionListener(
         e -> {
           filterShopRange = onlyShopRange.isSelected();
           callback.run();
         });
-    onlyShopRange.setSelected(true);
+    onlyShopRange.setSelected(filterShopRange);
     checkBoxes.add(onlyShopRange);
+    final JCheckBox onlyKK = new JCheckBox("nur Kornkraft Sortiment");
+    onlyKK.setName("KKFilter");
+    onlyKK.addActionListener(
+        e -> {
+          filterKK = onlyKK.isSelected();
+          callback.run();
+        });
+    onlyKK.setSelected(filterKK);
+    checkBoxes.add(onlyKK);
     return checkBoxes;
   }
 }

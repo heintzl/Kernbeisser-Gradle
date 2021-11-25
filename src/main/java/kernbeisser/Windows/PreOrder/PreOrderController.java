@@ -156,13 +156,23 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     getView().addPreOrder(preOrder);
   }
 
+  void articleSearch(Article a) {
+    pasteDataInView(a);
+    getView().setKkNumber(a.getSuppliersItemNumber());
+  }
+
   void openSearchWindow() {
-    new ArticleSelectorController(
-            p -> {
-              pasteDataInView(p);
-              getView().setKkNumber(p.getSuppliersItemNumber());
-            })
-        .openIn(new SubWindow(getView().traceViewContainer()));
+    var searchWindow = new ArticleSelectorController(this::articleSearch);
+    searchWindow.modifyNamedComponent(
+        "KKFilter",
+        c -> {
+          var checkbox = (JCheckBox) c;
+          if (!checkbox.isSelected()) {
+            checkbox.doClick();
+          }
+          c.setEnabled(false);
+        });
+    searchWindow.openIn(new SubWindow(getView().traceViewContainer()));
   }
 
   @Override
@@ -183,7 +193,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     view.setCaption(preOrdersFor, editable);
     view.enableControls(false);
     if (restrictToLoggedIn) {
-      view.setUsers(Arrays.asList(LogInModel.getLoggedIn()));
+      view.setUsers(Collections.singletonList(LogInModel.getLoggedIn()));
       view.setUserEnabled(false);
     } else {
       view.setUsers(User.getAllUserFullNames(true));
