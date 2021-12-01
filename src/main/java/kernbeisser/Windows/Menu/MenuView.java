@@ -163,6 +163,7 @@ public class MenuView implements IView<MenuController> {
             false);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();
+    placeHolderControllerButton2.setVisible(false);
     openSelfShoppingMask =
         new ControllerButton(
             () -> {
