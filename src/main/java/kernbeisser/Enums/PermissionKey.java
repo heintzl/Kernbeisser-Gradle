@@ -39,6 +39,7 @@ public enum PermissionKey {
   ACTION_OPEN_EDIT_USER_GROUP(ActionPermission.class),
   ACTION_OPEN_EDIT_USER_SETTING(ActionPermission.class),
   ACTION_OPEN_EDIT_USERS(ActionPermission.class),
+  ACTION_OPEN_INVENTORY(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICE_LISTS(ActionPermission.class),
   ACTION_OPEN_PRE_ORDER(ActionPermission.class),
   ACTION_OPEN_PRINT_LABELS(ActionPermission.class),
@@ -483,6 +484,7 @@ public enum PermissionKey {
             .put("ACTION_OPEN_EDIT_USER_GROUP", "Nutzergruppe wechseln")
             .put("ACTION_OPEN_EDIT_USER_SETTING", "Persönliche Programmeinstellungen bearbeiten")
             .put("ACTION_OPEN_EDIT_USERS", "Benutzer bearbeiten")
+            .put("ACTION_OPEN_INVETORY", "Inventur")
             .put("ACTION_OPEN_MANAGE_PRICE_LISTS", "Preislisten bearbeiten")
             .put("ACTION_OPEN_PRE_ORDER", "Vorbestellung für alle öffnen")
             .put("ACTION_OPEN_OWN_PRE_ORDER", "Vorbestellung für mich öffnen")
