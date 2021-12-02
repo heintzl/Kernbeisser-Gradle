@@ -24,4 +24,8 @@ public class ArticleDifference<T> {
   public T getNewVersion() {
     return newVersion;
   }
+
+  public boolean hasSolution() {
+    return Solution.NO_SOLUTION != solution;
+  }
 }
