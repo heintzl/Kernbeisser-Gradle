@@ -1,7 +1,7 @@
 package kernbeisser.Tasks.Catalog.Merge;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import kernbeisser.DBEntities.Article;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -29,17 +29,6 @@ public class ArticleMerge {
             .noneMatch(e -> e.equals(Solution.NO_SOLUTION))) resolved = true;
   }
 
-  public boolean containsConflict(MappedDifference... differences) {
-    return articleDifferences.stream()
-        .filter(e -> e.getSolution().equals(Solution.NO_SOLUTION))
-        .map(ArticleDifference::getArticleDifference)
-        .anyMatch(e -> Arrays.asList(differences).contains(e));
-  }
-
-  public double getMaxDistance() {
-    return articleDifferences.stream().mapToDouble(ArticleDifference::distance).max().orElse(0);
-  }
-
   ArticleMerge resolved() {
     resolved = true;
     return this;
@@ -57,5 +46,11 @@ public class ArticleMerge {
             articleDifferences);
     if (merge.mergeStatus == MergeStatus.NO_CONFLICTS) return merge.resolved();
     else return merge;
+  }
+
+  public Optional<ArticleDifference<?>> getDifference(MappedDifference mappedDifference) {
+    return articleDifferences.stream()
+        .filter(e -> e.getArticleDifference().equals(mappedDifference))
+        .findFirst();
   }
 }
