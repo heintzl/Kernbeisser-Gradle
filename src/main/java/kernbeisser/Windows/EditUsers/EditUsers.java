@@ -1,12 +1,13 @@
 package kernbeisser.Windows.EditUsers;
 
 import java.awt.*;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
+import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -15,7 +16,6 @@ import kernbeisser.Forms.FormImplemetations.User.UserView;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Security.Key;
-import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Useful.Users;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -32,17 +32,11 @@ public class EditUsers extends ObjectViewController<User> {
     super("Benutzer bearbeiten", new UserController(), false);
     setSearchBoxController(
         userFilter::searchable,
-        Columns.create("Vorname", User::getFirstName),
-        Columns.create("Nachname", User::getSurname),
+        Columns.create("Vorname", User::getFirstName).withDefaultFilter(),
+        Columns.create("Nachname", User::getSurname).withDefaultFilter(),
         Columns.create("Benutzername", User::getUsername),
-        Columns.create("Dienste", User::getJobsAsString),
-        Columns.create(
-                "Guthaben",
-                (Getter<User, Object>)
-                    user ->
-                        String.format(
-                            "%.2f€", user.getUserGroup().getValue(), SwingConstants.RIGHT))
-            .withSorter(Column.NUMBER_SORTER));
+        Columns.create("Dienste", User::getJobsAsString).withDefaultFilter(),
+        Columns.create("Berechtigungen", this::formatPermissions).withDefaultFilter());
     addComponents(userFilter.createFilterOptionButtons());
   }
 
@@ -60,6 +54,16 @@ public class EditUsers extends ObjectViewController<User> {
         "Ermöglicht es, die Benutzergruppe für einen Benutzer zu wechseln, ohne dass der Wechsel mit Passwort bestätigt werden muss");
     addButton(editUserGroup, this::openUserGroupEditor);
     hasAdminTools = true;
+  }
+
+  private String formatPermissions(User u) {
+    return u.getPermissionsAsAvailable().stream()
+        .filter(
+            p ->
+                (!p.getName()
+                    .matches("@KEY_PERMISSION|@IN_RELATION_TO_OWN_USER|@IMPORT|@APPLICATION")))
+        .map(Permission::getNeatName)
+        .collect(Collectors.joining(", "));
   }
 
   public void resetPassword(User user) {
