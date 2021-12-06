@@ -36,6 +36,13 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
 
   private final ArticleFilter articleFilter = new ArticleFilter(this::refreshList);
 
+  private String formatArticleSurcharge(Article article) {
+    return article.getSurchargeGroup().getName()
+        + " ("
+        + Math.round(article.getSurchargeGroup().getSurcharge() * 100)
+        + "%)";
+  }
+
   @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
   public EditItemsController() {
     super(new EditItemsModel());
@@ -46,12 +53,13 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             articleFilter::searchable,
             true,
             new CustomizableColumn<>("Name", Article::getName)
-                .withColumnAdjustor(column -> column.setMinWidth(600))
+                .withDefaultFilter()
+                .withColumnAdjustor(column -> column.setPreferredWidth(600))
                 .withHorizontalAlignment(LEFT),
             Columns.create(
                 "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName(), RIGHT),
             Columns.create("Ladennummer", Article::getKbNumber, RIGHT),
-            Columns.create("Lieferant", Article::getSupplier, LEFT),
+            Columns.create("Lieferant", Article::getSupplier, LEFT).withDefaultFilter(),
             Columns.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT),
             Columns.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein", LEFT),
             Columns.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice()), RIGHT),
@@ -59,6 +67,8 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             Columns.create("MwSt.", e -> e.getVat().getName(), RIGHT),
             Columns.create("Gebindegröße", Article::getContainerSize, RIGHT),
             Columns.create("Preisliste", Article::getPriceList, LEFT),
+            Columns.create("Zuschlaggruppe", this::formatArticleSurcharge, LEFT)
+                .withDefaultFilter(),
             Columns.create("Barcode", Article::getBarcode, RIGHT));
     this.capture =
         new BarcodeCapture(
