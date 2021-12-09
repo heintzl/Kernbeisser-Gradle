@@ -118,7 +118,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
     JOptionPane.showMessageDialog(
         getTopComponent(),
         "Der Ausdruck ist fehlgeschlagen! Das ist nicht so schlimm,\n"
-            + "die Bons von heute erscheinen dann erst beim nächsten erfolgreichen Ausdruck!");
+            + "die Umsätze von heute erscheinen dann erst beim nächsten erfolgreichen Ausdruck!");
   }
 
   public void messageDoPanic(long no) {
@@ -126,7 +126,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
         getTopComponent(),
         "Der Ausdruck ist fehlgeschlagen! Da jetzt schon seit "
             + no
-            + " Bons kein \n"
+            + " Umsätzen kein \n"
             + "Bericht erstellt wurde, sollte die It-Gruppe informiert werden.");
   }
 

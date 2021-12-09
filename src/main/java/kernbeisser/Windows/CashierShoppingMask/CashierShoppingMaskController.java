@@ -5,8 +5,8 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
-import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
@@ -105,7 +105,8 @@ public class CashierShoppingMaskController
 
   @Override
   protected boolean commitClose() {
-    if (Purchase.getLastBonNo() <= Setting.LAST_PRINTED_BON_NR.getLongValue()) return true;
+    if (Transaction.getLastTransactionId() <= Setting.LAST_PRINTED_TRANSACTION_ID.getLongValue())
+      return true;
     if (!getView().commitClose()) return false;
     model.printTillRoll(this::handleResult);
     return true;
@@ -113,9 +114,13 @@ public class CashierShoppingMaskController
 
   private void handleResult(Boolean b) {
     if (!b) {
-      long missedBons = Purchase.getLastBonNo() - Setting.LAST_PRINTED_BON_NR.getLongValue();
-      if (missedBons > 20) {
-        getView().messageDoPanic(missedBons);
+      long missedTransactions =
+          Transaction.getTransactionRange(
+                  Setting.LAST_PRINTED_TRANSACTION_ID.getLongValue(),
+                  Transaction.getLastTransactionId())
+              .size();
+      if (missedTransactions > 40) {
+        getView().messageDoPanic(missedTransactions);
       } else {
         getView().messageDontPanic();
       }
