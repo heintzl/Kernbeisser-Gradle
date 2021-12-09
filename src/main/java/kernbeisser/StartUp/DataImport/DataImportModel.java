@@ -278,12 +278,15 @@ public class DataImportModel implements IModel<DataImportController> {
     f.forEach(
         e -> {
           String[] columns = e.split(";");
-          try {
-            articleCollectionHashMap.put(
-                Articles.parse(columns, barcode, names, suppliers, defaultGroup, priceListHashMap),
-                Articles.extractOffers(columns));
-          } catch (CannotParseException ex) {
-            errorCollector.collect(ex);
+          if (!columns[5].equals("SoZ")) {
+            try {
+              articleCollectionHashMap.put(
+                  Articles.parse(
+                      columns, barcode, names, suppliers, defaultGroup, priceListHashMap),
+                  Articles.extractOffers(columns));
+            } catch (CannotParseException ex) {
+              errorCollector.collect(ex);
+            }
           }
         });
     Main.logger.warn("Ignored " + errorCollector.count() + " articles errors:");

@@ -379,7 +379,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             try {
               T object = getObjects().get(entry.getIdentifier());
               return rowFilter.isDisplayed(object)
-                  && isInStandardFilter(object)
+                  && (standardColumnFilters.isEmpty() || isInStandardFilter(object))
                   && swingRowFilter.include(entry);
             } catch (IndexOutOfBoundsException e) {
               System.out.println(entry.getIdentifier());
@@ -393,7 +393,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private boolean isInStandardFilter(T t) {
     boolean result = true;
     for (Map.Entry<Column<T>, JTextField> filter : standardColumnFilters.entrySet()) {
-      String text = (String) filter.getKey().getValue(t);
+      String text = filter.getKey().getValue(t).toString();
       result =
           Pattern.compile(filter.getValue().getText(), Pattern.CASE_INSENSITIVE)
               .matcher(text)

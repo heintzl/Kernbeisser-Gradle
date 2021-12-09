@@ -104,7 +104,11 @@ public class Supplier implements Serializable {
           .getSingleResult();
     } catch (NoResultException e) {
       SurchargeGroup defaultGroup = new SurchargeGroup();
-      defaultGroup.setSupplier(this);
+      if (this.shortName.equals("GRE")) {
+        defaultGroup.setSupplier(getSupplierByShortName("GR"));
+      } else {
+        defaultGroup.setSupplier(this);
+      }
       defaultGroup.setName(SurchargeGroup.defaultListNameQualifier(this));
       em.persist(defaultGroup);
       em.flush();

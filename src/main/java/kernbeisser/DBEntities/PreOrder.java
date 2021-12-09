@@ -72,7 +72,7 @@ public class PreOrder implements Serializable, UserRelated {
   // required for PreOrderChecklist Report
   public boolean isRetarded() {
     return ChronoUnit.DAYS.between(createDate, Instant.now())
-        > Setting.PREORDERRETARD_THRESHOLD.getIntValue();
+        > Setting.PREORDER_RETARD_THRESHOLD.getIntValue();
   }
 
   public int getKBNumber() {

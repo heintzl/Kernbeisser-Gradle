@@ -35,8 +35,14 @@ public class Articles {
     article.setKbNumber(Integer.parseInt(rawArticleValues[2]));
     article.setAmount(Integer.parseInt(rawArticleValues[3]));
     article.setNetPrice(Integer.parseInt(rawArticleValues[4]) / 100.);
-    article.setSupplier(suppliers.get(rawArticleValues[5].replace("GRE", "GR")));
-    article.setSurchargeGroup(defaultGroup.get(article.getSupplier()));
+    String supplierValue = rawArticleValues[5];
+    if (supplierValue.equals("GRE")) {
+      article.setSupplier(suppliers.get("GR"));
+      article.setSurchargeGroup(defaultGroup.get(suppliers.get("GRE")));
+    } else {
+      article.setSupplier(suppliers.get(supplierValue));
+      article.setSurchargeGroup(defaultGroup.get(article.getSupplier()));
+    }
     try {
       Long ib = Long.parseLong(rawArticleValues[6]);
       if (!barcodes.contains(ib)) {
