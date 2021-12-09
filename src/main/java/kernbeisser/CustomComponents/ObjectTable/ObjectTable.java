@@ -379,7 +379,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
             try {
               T object = getObjects().get(entry.getIdentifier());
               return rowFilter.isDisplayed(object)
-                  && isInStandardFilter(object)
+                  && (standardColumnFilters.isEmpty() || isInStandardFilter(object))
                   && swingRowFilter.include(entry);
             } catch (IndexOutOfBoundsException e) {
               System.out.println(entry.getIdentifier());

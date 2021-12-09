@@ -30,7 +30,7 @@ public class ArticleFilter {
                 && !(filterShowInShop && !e.isShowInShop())
                 && !(filterShopRange && !e.getShopRange().isVisible())
                 && !(filterKK && !e.getSupplier().equals(Supplier.getKKSupplier())),
-        max);
+        20000);
   }
 
   public List<JComponent> createFilterCheckboxes() {
