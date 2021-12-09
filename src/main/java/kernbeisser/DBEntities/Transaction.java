@@ -5,11 +5,14 @@ import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Exeptions.NoPurchasesFoundException;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
@@ -17,6 +20,7 @@ import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
+import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +36,7 @@ public class Transaction implements UserRelated {
   @GeneratedValue
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_WRITE)})
-  private int id;
+  private long id;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_VALUE_READ)})
@@ -200,6 +204,35 @@ public class Transaction implements UserRelated {
         value,
         TransactionType.PURCHASE,
         "Einkauf vom " + Date.INSTANT_DATE.format(LocalDate.now()));
+  }
+
+  public static long getLastTransactionId() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return Optional.ofNullable(
+            em.createQuery("select max(id) from Transaction t", Long.class).getSingleResult())
+        .orElse(-1L);
+  }
+
+  public static List<Transaction> getTransactionRange(
+      long startTransactionId, long endTransactionId) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    List<Transaction> transactions =
+        em.createQuery(
+                "select t from Transaction t where t.id between :from and :to order by id",
+                Transaction.class)
+            .setParameter("from", startTransactionId)
+            .setParameter("to", endTransactionId)
+            .getResultList();
+    if (transactions.isEmpty()) {
+      throw new NoPurchasesFoundException();
+    }
+    return transactions;
   }
 
   @Override

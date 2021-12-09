@@ -2,13 +2,11 @@ package kernbeisser.Reports;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
@@ -21,32 +19,31 @@ import org.jetbrains.annotations.NotNull;
 public class AccountingReport extends Report {
 
   private final long reportNo;
-  private final long startBon;
-  private final long endBon;
+  private final List<Transaction> transactions;
   private final List<Purchase> purchases;
   private final boolean withNames;
 
-  public AccountingReport(long reportNo, long startBon, long endBon, boolean withNames)
+  public AccountingReport(long reportNo, List<Transaction> transactions, boolean withNames)
       throws NoPurchasesFoundException {
     super(
         "accountingReportFileName",
-        String.format("KernbeisserBuchhaltungBonUebersicht_%d_%d", startBon, endBon));
+        String.format("KernbeisserBuchhaltungBonUebersicht_%d", reportNo));
     this.reportNo = reportNo;
-    this.startBon = startBon;
-    this.endBon = endBon;
+    this.transactions = transactions;
     this.purchases = getPurchases();
     this.withNames = withNames;
   }
 
-  private List<Purchase> getPurchases() {
+  private List<Purchase> getPurchases() throws NoResultException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     List<Purchase> purchases =
-        em.createQuery("select p from Purchase p where p.id between :from and :to", Purchase.class)
-            .setParameter("from", startBon)
-            .setParameter("to", endBon)
+        em.createQuery(
+                "select p from Purchase p where p.session in (select s from SaleSession s where s.transaction in (:transactions))",
+                Purchase.class)
+            .setParameter("transactions", transactions)
             .getResultList();
     if (purchases.isEmpty()) {
       throw new NoPurchasesFoundException();
@@ -152,7 +149,8 @@ public class AccountingReport extends Report {
     return reportParams;
   }
 
-  private static Map<String, Object> getAccountingTransactionParams(List<Purchase> purchases) {
+  private static Map<String, Object> getAccountingTransactionParams(
+      List<Transaction> transactions) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -161,26 +159,7 @@ public class AccountingReport extends Report {
     double transactionCreditPayIn = 0.0;
     double transactionSpecialPayments = 0.0;
     double transactionPurchases = 0.0;
-    Instant startDate;
-    long lastReportedBonNo = purchases.get(0).getId() - 1;
-    Purchase bon = em.find(Purchase.class, lastReportedBonNo);
-    if (bon == null) {
-      startDate =
-          em.createQuery("select min(t.date) from Transaction t", Instant.class)
-              .getSingleResult()
-              .minusSeconds(1);
-    } else {
-      startDate = bon.getSession().getTransaction().getDate();
-    }
-    Instant endDate = purchases.get(purchases.size() - 1).getCreateDate();
-    List<Transaction> transactions =
-        em.createQuery(
-                "select t from Transaction t where t.date > :from and t.date <= :to",
-                Transaction.class)
-            .setParameter("from", startDate)
-            .setParameter("to", endDate)
-            .getResultList();
-
+    Instant startDate = transactions.get(0).getDate();
     User kbUser = User.getKernbeisserUser();
     for (Transaction t : transactions) {
       double direction = t.getFromUser().equals(kbUser) ? -1.0 : 1.0;
@@ -214,7 +193,7 @@ public class AccountingReport extends Report {
   Map<String, Object> getReportParams() {
     try {
       Map<String, Object> reportParams = getAccountingPurchaseParams(purchases);
-      reportParams.putAll(getAccountingTransactionParams(purchases));
+      reportParams.putAll(getAccountingTransactionParams(transactions));
       reportParams.put(
           "reportTitle", reportNo == 0 ? "Umsatzbericht" : "LD-Endabrechnung Nr. " + reportNo);
       return reportParams;
