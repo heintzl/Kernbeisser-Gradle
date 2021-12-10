@@ -89,8 +89,39 @@ public class Transaction implements UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_CREATEDBY_WRITE)})
   private User createdBy;
 
+  /* the following member variables are used to pass non static values to reports */
+  @Column @Transient @Getter private String fromIdentification;
+
+  @Column @Transient @Getter private String toIdentification;
+
   public static List<Transaction> getAll(String condition) {
     return Tools.getAll(Transaction.class, condition);
+  }
+
+  public Transaction withUserIdentifications(boolean withNames) {
+
+    Transaction out = this;
+    User from = fromUser;
+    User to = toUser;
+    if (withNames) {
+      out.fromIdentification = from.getFullName();
+      out.toIdentification = to.getFullName();
+    } else {
+      out.fromIdentification = Integer.toString(from.getId());
+      out.toIdentification = Integer.toString(to.getId());
+    }
+    return out;
+  }
+
+  public byte relationToUserGroup(UserGroup userGroup) {
+    byte result;
+    if (fromUserGroup.equals(userGroup)) return -1;
+    if (toUserGroup.equals(userGroup)) return 1;
+    return 0;
+  }
+
+  public byte relationToKernbeisser() {
+    return relationToUserGroup(User.getKernbeisserUser().getUserGroup());
   }
 
   public String getDescription() {
