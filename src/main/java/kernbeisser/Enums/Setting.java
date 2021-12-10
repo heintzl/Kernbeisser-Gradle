@@ -61,6 +61,8 @@ public enum Setting {
   LAST_PRINTED_ACCOUNTING_REPORT_NR("0"),
   LAST_EXPORTED_PREORDER_NR("0"),
   LABELS_PER_PAGE("40"),
+  REPORT_FOOTLINE(
+      "Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813"),
   OFFER_PREFIX("*AK* "),
   PREORDER_RETARD_THRESHOLD("10"),
   WARN_ARTICLE_DIFFERENCE("10"),

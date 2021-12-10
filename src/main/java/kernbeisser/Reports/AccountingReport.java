@@ -1,7 +1,6 @@
 package kernbeisser.Reports;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -78,7 +77,6 @@ public class AccountingReport extends Report {
     double sumVatHiSolidarity = 0.0;
     double sumVatLoSolidarity = 0.0;
     double sumDeposit = 0.0;
-    Timestamp endDate = Timestamp.from(purchases.get(purchases.size() - 1).getCreateDate());
 
     long t_high = countVatValues(purchases, VAT.HIGH);
     long t_low = countVatValues(purchases, VAT.LOW);
@@ -136,7 +134,6 @@ public class AccountingReport extends Report {
     }
 
     Map<String, Object> reportParams = new HashMap<>();
-    reportParams.put("end", endDate);
     reportParams.put("vatHiValue", vatHiValue);
     reportParams.put("vatLoValue", vatLoValue);
     reportParams.put("sumTotalPurchased", sumTotalPurchased);
@@ -159,7 +156,6 @@ public class AccountingReport extends Report {
     double transactionCreditPayIn = 0.0;
     double transactionSpecialPayments = 0.0;
     double transactionPurchases = 0.0;
-    Instant startDate = transactions.get(0).getDate();
     User kbUser = User.getKernbeisserUser();
     for (Transaction t : transactions) {
       double direction = t.getFromUser().equals(kbUser) ? -1.0 : 1.0;
@@ -180,7 +176,8 @@ public class AccountingReport extends Report {
       }
     }
     Map<String, Object> reportParams = new HashMap<>();
-    reportParams.put("start", Timestamp.from(startDate));
+    reportParams.put("start", Timestamp.from(transactions.get(0).getDate()));
+    reportParams.put("end", Timestamp.from(transactions.get(transactions.size() - 1).getDate()));
     reportParams.put("transactionSaldo", transactionSaldo);
     reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
     reportParams.put("transactionSpecialPayments", transactionSpecialPayments);

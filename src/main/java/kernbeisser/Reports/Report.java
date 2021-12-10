@@ -55,10 +55,12 @@ public abstract class Report {
   }
 
   private JasperPrint lazyGetJspPrint() {
+    var params = getReportParams();
+    params.put("reportFooter", Setting.REPORT_FOOTLINE.getStringValue());
     try {
       return JasperFillManager.fillReport(
           getJasperReport(reportDefinition),
-          getReportParams(),
+          params,
           new JRBeanCollectionDataSource(getDetailCollection()));
     } catch (JRException e) {
       if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
