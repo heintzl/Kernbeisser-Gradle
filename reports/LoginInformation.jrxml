@@ -13,6 +13,7 @@
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<style name="Bold" markup="none" isBold="true"/>
 	<parameter name="password" class="java.lang.String"/>
+	<parameter name="reportFooter" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -324,14 +325,14 @@ Bei der ersten Anmeldung wirst Du dazu aufgefordert, dein Passwort zu ändern!]]
 	</detail>
 	<pageFooter>
 		<band height="15" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
+			<textField>
+				<reportElement x="0" y="5" width="379" height="10" uuid="65179785-2379-4ba4-8ffe-da925edc9c92"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="7"/>
 					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
-				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{reportFooter}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 	<summary>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Bonrolle" pageWidth="420" pageHeight="595" columnWidth="380" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -14,6 +14,7 @@
 	<style name="Bold" markup="none" isBold="true"/>
 	<parameter name="start" class="java.sql.Timestamp" isForPrompting="false"/>
 	<parameter name="ende" class="java.sql.Timestamp" isForPrompting="false"/>
+	<parameter name="reportFooter" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -204,14 +205,14 @@
 	</detail>
 	<pageFooter>
 		<band height="15" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
+			<textField>
+				<reportElement x="0" y="5" width="379" height="10" uuid="5c994c4e-a36d-4bbd-804e-3a5598f25e25"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="7"/>
 					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
-				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{reportFooter}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 	<summary>
