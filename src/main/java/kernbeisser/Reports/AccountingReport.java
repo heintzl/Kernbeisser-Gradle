@@ -1,6 +1,5 @@
 package kernbeisser.Reports;
 
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -12,6 +11,7 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.NoPurchasesFoundException;
+import kernbeisser.Useful.Date;
 import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +48,14 @@ public class AccountingReport extends Report {
       throw new NoPurchasesFoundException();
     }
     return purchases;
+  }
+
+  static String getReportTitle(long reportNo, List<Transaction> transactions) {
+    return (reportNo == 0 ? "Umsatzbericht " : "LD-Endabrechnung Nr. " + reportNo)
+        + "    "
+        + Date.INSTANT_DATE.format(transactions.get(0).getDate())
+        + " bis "
+        + Date.INSTANT_DATE.format(transactions.get(transactions.size() - 1).getDate());
   }
 
   static long countVatValues(Collection<Purchase> purchases, VAT vat) {
@@ -176,8 +184,6 @@ public class AccountingReport extends Report {
       }
     }
     Map<String, Object> reportParams = new HashMap<>();
-    reportParams.put("start", Timestamp.from(transactions.get(0).getDate()));
-    reportParams.put("end", Timestamp.from(transactions.get(transactions.size() - 1).getDate()));
     reportParams.put("transactionSaldo", transactionSaldo);
     reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
     reportParams.put("transactionSpecialPayments", transactionSpecialPayments);
@@ -191,8 +197,7 @@ public class AccountingReport extends Report {
     try {
       Map<String, Object> reportParams = getAccountingPurchaseParams(purchases);
       reportParams.putAll(getAccountingTransactionParams(transactions));
-      reportParams.put(
-          "reportTitle", reportNo == 0 ? "Umsatzbericht" : "LD-Endabrechnung Nr. " + reportNo);
+      reportParams.put("reportTitle", getReportTitle(reportNo, transactions));
       return reportParams;
     } catch (InvalidVATValueException e) {
       throw new RuntimeException(e);

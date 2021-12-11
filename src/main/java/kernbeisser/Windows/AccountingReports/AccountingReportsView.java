@@ -2,7 +2,6 @@ package kernbeisser.Windows.AccountingReports;
 
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
-import com.google.common.collect.Lists;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -44,6 +43,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JRadioButton optCurrent;
   private JRadioButton optPermissionHolders;
   private JCheckBox permissionHoldersWithKeys;
+  private DatePicker accountingReportStartDate;
+  private DatePicker accountingReportEndDate;
   private Map<JComponent, JRadioButton> optionalComponents;
 
   @Linked private AccountingReportsController controller;
@@ -61,7 +62,9 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
       controller.exportTillroll(getDateValue(tillRollStartDate), getDateValue(tillRollEndDate));
     } else if (optAccountingReport.isSelected()) {
       controller.exportAccountingReport(
-          startBon.getSelected(), endBon.getSelected(), accountingReportWithNames.isSelected());
+          getDateValue(accountingReportStartDate),
+          getDateValue(accountingReportEndDate),
+          accountingReportWithNames.isSelected());
     } else if (optUserBalance.isSelected()) {
       controller.exportUserBalance(userBalanceWithNames.isSelected());
     } else if (optKeyUserList.isSelected()) {
@@ -81,14 +84,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     allUser.forEach(user::addItem);
   }
 
-  public void setBons(List<Purchase> allPurchases) {
-    startBon.removeAllItems();
-    endBon.removeAllItems();
-    startBon.setItems(Lists.reverse(allPurchases));
-    endBon.setItems(Lists.reverse(allPurchases));
-    //    Purchase.getLastBon().ifPresent(p -> endBon.setSelectedItem(p));
-  }
-
   private void enableComponents() {
     optionalComponents.forEach((c, opt) -> c.setEnabled(opt.isSelected()));
   }
@@ -96,8 +91,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   @Override
   public void initialize(AccountingReportsController controller) {
     optionalComponents = new HashMap<>();
-    optionalComponents.put(startBon, optAccountingReport);
-    optionalComponents.put(endBon, optAccountingReport);
+    optionalComponents.put(accountingReportStartDate, optAccountingReport);
+    optionalComponents.put(accountingReportEndDate, optAccountingReport);
     optionalComponents.put(accountingReportWithNames, optAccountingReport);
     optionalComponents.put(tillRollStartDate, optTillRoll);
     optionalComponents.put(tillRollEndDate, optTillRoll);
@@ -122,6 +117,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     var now = LocalDate.now(ZoneId.systemDefault());
     tillRollStartDate.setDate(now);
     tillRollEndDate.setDate(now);
+    accountingReportStartDate.setDate(now);
+    accountingReportEndDate.setDate(now);
     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));
     optionalComponents.values().stream()
         .distinct()
@@ -160,17 +157,17 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   }
 
   private void createUIComponents() {
-    startBon = new AdvancedComboBox<>(this::BonNoAndDate);
-    endBon = new AdvancedComboBox<>(this::BonNoAndDate);
+    accountingReportStartDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
+    accountingReportEndDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
     user = new AdvancedComboBox<>(User::getFullName);
     tillRollStartDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
     tillRollEndDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
   }
 
-  public void messageBonValues() {
+  public void messageDateValues() {
     JOptionPane.showMessageDialog(
         getContent(),
-        "Die Startbon-Nummer muss kleiner sein, als die Endbon-Nummer!",
+        "Das Startdatum muss vor dem Enddatum liegen!",
         "Ungütlige Eingabe",
         JOptionPane.WARNING_MESSAGE);
   }
