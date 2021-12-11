@@ -23,6 +23,7 @@
 	<parameter name="VatSumLow" class="java.lang.Double"/>
 	<parameter name="VatSumHigh" class="java.lang.Double"/>
 	<parameter name="SumTotal" class="java.lang.Double"/>
+	<parameter name="reportFooter" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -265,14 +266,14 @@
 	</detail>
 	<pageFooter>
 		<band height="15" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="5" width="380" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
+			<textField>
+				<reportElement x="0" y="5" width="379" height="10" uuid="0d40d4ce-308e-4f1e-aa4f-a4485477d017"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="7"/>
 					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
-				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{reportFooter}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 	<summary>

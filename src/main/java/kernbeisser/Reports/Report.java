@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import javax.print.attribute.HashPrintRequestAttributeSet;
@@ -55,7 +56,9 @@ public abstract class Report {
   }
 
   private JasperPrint lazyGetJspPrint() {
-    var params = getReportParams();
+    Map<String, Object> params = new HashMap<>();
+    var reportParams = getReportParams();
+    if (reportParams != null) params.putAll(reportParams);
     params.put("reportFooter", Setting.REPORT_FOOTLINE.getStringValue());
     try {
       return JasperFillManager.fillReport(

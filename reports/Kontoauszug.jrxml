@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Kontoauszug" pageWidth="595" pageHeight="420" orientation="Landscape" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Kontoauszug" pageWidth="595" pageHeight="420" orientation="Landscape" columnWidth="525" leftMargin="50" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
 	<style name="Bold" markup="none" isBold="true"/>
@@ -9,6 +9,7 @@
 	<parameter name="endValue" class="java.lang.Double"/>
 	<parameter name="statementType" class="java.lang.String"/>
 	<parameter name="userGroup" class="kernbeisser.DBEntities.UserGroup"/>
+	<parameter name="reportFooter" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -23,7 +24,7 @@
 		<groupHeader>
 			<band height="14">
 				<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
-					<reportElement x="480" y="0" width="70" height="14" uuid="f4a974c2-66fa-454b-8f86-f6df9d28900c"/>
+					<reportElement x="454" y="0" width="70" height="14" uuid="f4a974c2-66fa-454b-8f86-f6df9d28900c"/>
 					<textElement textAlignment="Right">
 						<font fontName="DejaVu Sans Condensed" isBold="true"/>
 					</textElement>
@@ -43,7 +44,7 @@
 		<groupFooter>
 			<band height="14">
 				<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
-					<reportElement x="479" y="0" width="70" height="14" uuid="3abb39b8-f269-4c84-8316-034b3f2ffa0e"/>
+					<reportElement x="453" y="0" width="70" height="14" uuid="3abb39b8-f269-4c84-8316-034b3f2ffa0e"/>
 					<textElement textAlignment="Right">
 						<font fontName="DejaVu Sans Condensed" isBold="true"/>
 					</textElement>
@@ -69,14 +70,14 @@
 	<title>
 		<band height="25" splitType="Stretch">
 			<textField pattern="dd.MM.YYYY">
-				<reportElement style="Bold" x="450" y="0" width="100" height="20" uuid="2a7bb94a-038f-4159-9ef9-80038ab17924"/>
+				<reportElement style="Bold" x="424" y="0" width="100" height="20" uuid="2a7bb94a-038f-4159-9ef9-80038ab17924"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="450" height="20" uuid="d3df7cc9-5e4b-471a-af85-940cac886be9"/>
+				<reportElement x="0" y="0" width="424" height="20" uuid="d3df7cc9-5e4b-471a-af85-940cac886be9"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
@@ -87,21 +88,21 @@
 	<pageHeader>
 		<band height="16" splitType="Stretch">
 			<textField>
-				<reportElement x="460" y="0" width="45" height="14" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
+				<reportElement x="434" y="0" width="45" height="14" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="506" y="0" width="44" height="14" uuid="24631cf1-5277-48a1-a10f-f758907adcdf"/>
+				<reportElement x="480" y="0" width="44" height="14" uuid="24631cf1-5277-48a1-a10f-f758907adcdf"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement x="0" y="0" width="460" height="14" uuid="36019647-30bc-49b5-a294-8bc7fdd2aae0"/>
+				<reportElement x="0" y="0" width="434" height="14" uuid="36019647-30bc-49b5-a294-8bc7fdd2aae0"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
@@ -132,7 +133,7 @@
 				<text><![CDATA[Datum]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="440" y="0" width="54" height="14" uuid="0793f290-9317-4f13-9fde-351f3a5a2c6c">
+				<reportElement x="414" y="0" width="54" height="14" uuid="0793f290-9317-4f13-9fde-351f3a5a2c6c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b88ff362-74cb-4ac5-93b1-36119f99d004"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -141,7 +142,7 @@
 				<text><![CDATA[Eingang]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="494" y="0" width="56" height="14" uuid="9f711e13-67e1-4ff2-80b7-b3c0a3f7437e">
+				<reportElement x="468" y="0" width="56" height="14" uuid="9f711e13-67e1-4ff2-80b7-b3c0a3f7437e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b88ff362-74cb-4ac5-93b1-36119f99d004"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -163,7 +164,7 @@
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
-			<textField textAdjust="ScaleFont">
+			<textField textAdjust="StretchHeight">
 				<reportElement x="50" y="0" width="150" height="14" uuid="fc71b211-9234-46b2-8b6f-414a7dfd5551">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe745555-7c80-41c2-aee0-3a3e97b25e6c"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -184,7 +185,7 @@
 				<textFieldExpression><![CDATA[java.sql.Timestamp.from($F{date})]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
-				<reportElement x="440" y="0" width="54" height="14" uuid="8879b278-9839-485e-a9a4-e94fe986c27e">
+				<reportElement x="414" y="0" width="54" height="14" uuid="8879b278-9839-485e-a9a4-e94fe986c27e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b88ff362-74cb-4ac5-93b1-36119f99d004"/>
 					<printWhenExpression><![CDATA[!$F{fromUserGroup}.equals($P{userGroup})]]></printWhenExpression>
 				</reportElement>
@@ -194,7 +195,7 @@
 				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
-				<reportElement x="494" y="0" width="56" height="14" uuid="589d4147-35ce-4759-acda-3b74ff0e7f01">
+				<reportElement x="468" y="0" width="56" height="14" uuid="589d4147-35ce-4759-acda-3b74ff0e7f01">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b88ff362-74cb-4ac5-93b1-36119f99d004"/>
 					<printWhenExpression><![CDATA[$F{fromUserGroup}.equals($P{userGroup})]]></printWhenExpression>
 				</reportElement>
@@ -204,7 +205,7 @@
 				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement x="200" y="0" width="240" height="14" uuid="5c37230b-ecb0-46d7-a20f-c74103692cea">
+				<reportElement x="200" y="0" width="224" height="14" uuid="5c37230b-ecb0-46d7-a20f-c74103692cea">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4bf90643-e108-400b-b357-e365eef1d9e7"/>
 				</reportElement>
 				<textElement>
@@ -217,14 +218,14 @@
 	</detail>
 	<pageFooter>
 		<band height="15" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="5" width="549" height="10" uuid="240fba3f-edef-48b6-81e3-3144e4b60981"/>
+			<textField>
+				<reportElement x="0" y="5" width="503" height="10" uuid="caa180b6-1423-4a5f-997f-d487826e6837"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="7"/>
 					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
-				<text><![CDATA[Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{reportFooter}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 	<summary>
