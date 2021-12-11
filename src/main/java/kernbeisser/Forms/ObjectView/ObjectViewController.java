@@ -57,11 +57,14 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
     if (searchBoxController.getSelectedObject().isPresent()) {
       view.setEditAvailable(model.isEditAvailable());
       view.setRemoveAvailable(model.isRemoveAvailable());
-      if (forceExtraButtonState) setExtraButtonsAvailable(true);
+      // TODO julikiller added this condition for inventory in #538, which breaks functionality of
+      // extra buttons in other windows: if (forceExtraButtonState)
+      setExtraButtonsAvailable(true);
     } else {
       view.setEditAvailable(false);
       view.setRemoveAvailable(false);
-      if (forceExtraButtonState) setExtraButtonsAvailable(false);
+      // TODO see above! if (forceExtraButtonState)
+      setExtraButtonsAvailable(false);
     }
   }
 
