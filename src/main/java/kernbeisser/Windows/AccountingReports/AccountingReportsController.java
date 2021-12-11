@@ -1,14 +1,15 @@
 package kernbeisser.Windows.AccountingReports;
 
-import java.time.Instant;
+import java.time.*;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.Optional;
-import kernbeisser.DBEntities.Purchase;
+import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
+import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Reports.*;
 import kernbeisser.Security.Key;
@@ -60,21 +61,37 @@ public class AccountingReportsController
   }
 
   public void exportTillroll(Instant startDate, Instant endDate) {
+    if (!startDate.isBefore(endDate)) {
+      getView().messageDateValues();
+      return;
+    }
     exportReport(
         new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Bonrolle wird erstellt");
   }
 
-  public void exportAccountingReport(
-      Optional<Purchase> startBon, Optional<Purchase> endBon, boolean withNames) {
+  public void exportAccountingReport(Instant startDate, Instant endDate, boolean withNames) {
     var view = getView();
-    long startBonNo = startBon.map(Purchase::getId).orElse(0L);
-    long endBonNo = endBon.map(Purchase::getId).orElse(Purchase.getLastBonNo());
-    if (startBonNo > endBonNo) {
-      view.messageBonValues();
+    ZoneId local = ZoneId.systemDefault();
+    // endDate = ZonedDateTime.now(local);
+    var localStartDate = ZonedDateTime.ofInstant(startDate, local).with(ChronoField.HOUR_OF_DAY, 0);
+    var localEndDate =
+        ZonedDateTime.ofInstant(endDate, local)
+            .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay());
+    if (!localStartDate.isBefore(localEndDate)) {
+      view.messageDateValues();
       return;
     }
+    var reportTransactions =
+        Transaction.getTransactionDateRange(
+            Instant.from(localStartDate), Instant.from(localEndDate));
+    if (reportTransactions.stream()
+        .anyMatch(t -> t.getTransactionType() == TransactionType.PURCHASE)) {
+      exportReport(
+          new AccountingReport(0, reportTransactions, withNames),
+          "Ladendienst Endabrechnung wird erstellt");
+    }
     exportReport(
-        new AccountingReport(0, startBonNo, endBonNo, withNames),
+        new AccountingTransactionsReport(0, reportTransactions, withNames),
         "Ladendienst Endabrechnung wird erstellt");
   }
 
@@ -99,7 +116,6 @@ public class AccountingReportsController
   @Override
   public void fillView(AccountingReportsView accountingReportsView) {
     accountingReportsView.setUser(User.getAllUserFullNames(true));
-    accountingReportsView.setBons(Purchase.getAll(null));
     accountingReportsView.getOptAccountingReport().doClick();
   }
 }

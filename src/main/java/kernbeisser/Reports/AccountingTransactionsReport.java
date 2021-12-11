@@ -31,8 +31,7 @@ public class AccountingTransactionsReport extends Report {
     Map<String, Object> reportParams = new HashMap<>();
     reportParams.put("userGroup", User.getKernbeisserUser().getUserGroup());
     reportParams.put("reportNo", reportNo);
-    reportParams.put(
-        "reportTitle", reportNo == 0 ? "Umsatzbericht" : "LD-Endabrechnung Nr. " + reportNo);
+    reportParams.put("reportTitle", AccountingReport.getReportTitle(reportNo, transactions));
     return reportParams;
   }
 

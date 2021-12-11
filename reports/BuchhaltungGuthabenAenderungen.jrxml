@@ -89,8 +89,8 @@
 				</textElement>
 				<text><![CDATA[Guthabeneinzahlungen und Sonderzahlungen]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="0" y="0" width="190" height="18" uuid="2deda8af-85c5-4401-ae0b-0e22dee88789"/>
+			<textField textAdjust="ScaleFont">
+				<reportElement x="0" y="0" width="370" height="18" uuid="2deda8af-85c5-4401-ae0b-0e22dee88789"/>
 				<textElement markup="html">
 					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>

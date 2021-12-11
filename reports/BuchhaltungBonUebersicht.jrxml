@@ -124,33 +124,12 @@
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="0" y="0" width="190" height="18" uuid="0a66738d-03f9-4959-b612-b03903b9f47c"/>
+			<textField textAdjust="ScaleFont">
+				<reportElement x="0" y="0" width="370" height="18" uuid="0a66738d-03f9-4959-b612-b03903b9f47c"/>
 				<textElement markup="html">
 					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd.MM.yyyy">
-				<reportElement x="202" y="0" width="80" height="17" uuid="7a75b882-0b4d-49b0-aa8c-1a305b4e73a9"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{start}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="282" y="0" width="20" height="17" uuid="8a113340-aac1-4c55-a116-a893f447752f"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["bis"]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd.MM.yyyy">
-				<reportElement x="302" y="0" width="81" height="17" uuid="ad2d5a31-078e-4b26-b441-a373d9903e0b"/>
-				<textElement textAlignment="Right">
-					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{end}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

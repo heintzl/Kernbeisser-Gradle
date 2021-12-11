@@ -266,6 +266,24 @@ public class Transaction implements UserRelated {
     return transactions;
   }
 
+  public static List<Transaction> getTransactionDateRange(Instant startDate, Instant endDate) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    List<Transaction> transactions =
+        em.createQuery(
+                "select t from Transaction t where t.date between :from and :to order by id",
+                Transaction.class)
+            .setParameter("from", startDate)
+            .setParameter("to", endDate)
+            .getResultList();
+    if (transactions.isEmpty()) {
+      throw new NoPurchasesFoundException();
+    }
+    return transactions;
+  }
+
   @Override
   public boolean isInRelation(@NotNull User user) {
     return (fromUser == null && toUser == null)
