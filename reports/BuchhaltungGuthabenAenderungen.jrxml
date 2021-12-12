@@ -29,6 +29,7 @@
 	<field name="info" class="java.lang.String"/>
 	<field name="transactionType" class="kernbeisser.Enums.TransactionType"/>
 	<field name="toUserGroup" class="kernbeisser.DBEntities.UserGroup"/>
+	<sortField name="transactionType"/>
 	<variable name="groupCumulatedBalance" class="java.lang.Double" resetType="Group" resetGroup="TransactionType" calculation="Sum">
 		<variableExpression><![CDATA[($F{fromUserGroup}.equals($P{userGroup}) ? -1 : ($F{toUserGroup}.equals($P{userGroup}) ? 1 : 0)) * $F{value}]]></variableExpression>
 	</variable>
