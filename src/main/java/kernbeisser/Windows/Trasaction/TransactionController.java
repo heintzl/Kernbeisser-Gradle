@@ -101,7 +101,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
     model.addTransaction(transaction);
     refreshTable();
     view.setValue("");
-    view.setTo(null);
+    view.resetTo();
     view.setInfo("");
   }
 
