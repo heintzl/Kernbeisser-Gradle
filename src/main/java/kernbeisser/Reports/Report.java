@@ -21,7 +21,7 @@ import javax.print.attribute.standard.PrinterName;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Exeptions.NoPurchasesFoundException;
+import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
@@ -225,7 +225,7 @@ public abstract class Report {
           "Fehler beim Dateizugriff",
           JOptionPane.ERROR_MESSAGE);
       throw new RuntimeException(f);
-    } catch (NoPurchasesFoundException n) {
+    } catch (NoTransactionsFoundException n) {
       JOptionPane.showMessageDialog(
           null,
           "Keine Bons gefunden, die den Kriterien entsprechen!",

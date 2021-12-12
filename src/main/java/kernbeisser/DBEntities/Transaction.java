@@ -12,7 +12,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
-import kernbeisser.Exeptions.NoPurchasesFoundException;
+import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
@@ -261,7 +261,7 @@ public class Transaction implements UserRelated {
             .setParameter("to", endTransactionId)
             .getResultList();
     if (transactions.isEmpty()) {
-      throw new NoPurchasesFoundException();
+      throw new NoTransactionsFoundException();
     }
     return transactions;
   }
@@ -279,9 +279,25 @@ public class Transaction implements UserRelated {
             .setParameter("to", endDate)
             .getResultList();
     if (transactions.isEmpty()) {
-      throw new NoPurchasesFoundException();
+      throw new NoTransactionsFoundException();
     }
     return transactions;
+  }
+
+  public boolean isPurchase() {
+    return (transactionType == TransactionType.PURCHASE);
+  }
+
+  public boolean isAccountingReportTransaction() {
+    switch (transactionType) {
+      case INITIALIZE:
+      case PAYIN:
+        return true;
+      case USER_GENERATED:
+        return relationToKernbeisser() != 0;
+      default:
+        return false;
+    }
   }
 
   @Override
