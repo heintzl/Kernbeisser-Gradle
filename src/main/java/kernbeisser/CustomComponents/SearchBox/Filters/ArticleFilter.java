@@ -23,14 +23,15 @@ public class ArticleFilter {
   }
 
   public Collection<Article> searchable(String query, int max) {
+    Supplier kkSupplier = Supplier.getKKSupplier();
     return Articles.getDefaultAll(
         query,
         e ->
-            !(filterNoBarcode && e.getBarcode() != null)
-                && !(filterShowInShop && !e.isShowInShop())
-                && !(filterShopRange && !e.getShopRange().isVisible())
-                && !(filterKK && !e.getSupplier().equals(Supplier.getKKSupplier())),
-        20000);
+            (!filterNoBarcode || e.getBarcode() == null)
+                && (!filterShowInShop || e.isShowInShop())
+                && (!filterShopRange || e.getShopRange().isVisible())
+                && (!filterKK || e.getSupplier().equals(kkSupplier)),
+        10000);
   }
 
   public List<JComponent> createFilterCheckboxes() {
