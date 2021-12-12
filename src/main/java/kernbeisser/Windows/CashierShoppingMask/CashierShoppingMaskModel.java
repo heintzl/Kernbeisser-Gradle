@@ -1,18 +1,18 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.TransactionType;
-import kernbeisser.Reports.AccountingReport;
-import kernbeisser.Reports.AccountingTransactionsReport;
+import kernbeisser.Reports.UserBalanceReport;
+import kernbeisser.Windows.AccountingReports.AccountingReportsModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Data;
-import lombok.var;
 
 @Data
 public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskController> {
@@ -22,36 +22,33 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
     return User.defaultSearch(searchQuery, 500);
   }
 
-  void printTillRoll(Consumer<Boolean> resultConsumer) {
+  void printAccountingReports(Consumer<Boolean> resultConsumer) {
     long from = Setting.LAST_PRINTED_TRANSACTION_ID.getLongValue();
     long id = Transaction.getLastTransactionId();
     long no = Setting.LAST_PRINTED_ACCOUNTING_REPORT_NR.getLongValue() + 1;
     List<Transaction> reportTransactions = Transaction.getTransactionRange(from + 1, id);
-    new AccountingReport(no, reportTransactions, true)
-        .sendToPrinter(
-            "Ladendienst wird gedruckt",
-            (e) -> {
-              resultConsumer.accept(false);
-            });
-    resultConsumer.accept(true);
-    var reportOtherTransactions =
-        reportTransactions.stream()
-            .filter(
-                t ->
-                    t.getTransactionType() == TransactionType.PAYIN
-                        || t.getTransactionType() == TransactionType.INITIALIZE
-                        || (t.getTransactionType() == TransactionType.USER_GENERATED
-                            && t.relationToKernbeisser() != 0))
-            .collect(Collectors.toList());
-    if (!reportOtherTransactions.isEmpty()) {
-      new AccountingTransactionsReport(no, reportOtherTransactions, true)
-          .sendToPrinter(
-              "Ladendienst wird gedruckt",
-              (e) -> {
-                resultConsumer.accept(false);
-              });
+    if (AccountingReportsModel.exportAccountingReports(reportTransactions, no, false)) {
+      Setting.LAST_PRINTED_TRANSACTION_ID.changeValue(id);
+      Setting.LAST_PRINTED_ACCOUNTING_REPORT_NR.changeValue(no);
+    } else {
+      resultConsumer.accept(false);
     }
-    Setting.LAST_PRINTED_TRANSACTION_ID.changeValue(id);
-    Setting.LAST_PRINTED_ACCOUNTING_REPORT_NR.changeValue(no);
+
+    Instant lastUserBalance = Instant.parse(Setting.LAST_USER_BALANCE_REPORT.getStringValue());
+    if (lastUserBalance
+        .plus(Setting.USER_BALANCE_REPORT_INTERVAL.getIntValue(), ChronoUnit.DAYS)
+        .isBefore(Instant.now())) {
+      AtomicBoolean success = new AtomicBoolean(true);
+      new UserBalanceReport(false)
+          .sendToPrinter(
+              "Kontostände werden gedruckt",
+              (e) -> {
+                success.set(false);
+              });
+      if (success.get()) {
+        Setting.LAST_USER_BALANCE_REPORT.changeValue(
+            Instant.now().truncatedTo(ChronoUnit.DAYS).toString());
+      }
+    }
   };
 }
