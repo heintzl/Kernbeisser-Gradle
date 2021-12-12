@@ -103,6 +103,10 @@ public class TransactionView implements IView<TransactionController> {
     to.setSelectedItem(u);
   }
 
+  void resetTo() {
+    if (to.isEnabled()) setTo(null);
+  }
+
   User getFrom() {
     return from.getSelected().orElseThrow(NoResultException::new);
   }
