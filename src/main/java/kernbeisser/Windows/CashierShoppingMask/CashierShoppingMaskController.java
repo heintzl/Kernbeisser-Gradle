@@ -108,7 +108,7 @@ public class CashierShoppingMaskController
     if (Transaction.getLastTransactionId() <= Setting.LAST_PRINTED_TRANSACTION_ID.getLongValue())
       return true;
     if (!getView().commitClose()) return false;
-    model.printTillRoll(this::handleResult);
+    model.printAccountingReports(this::handleResult);
     return true;
   }
 
