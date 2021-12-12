@@ -8,10 +8,7 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Enums.SaleSessionType;
-import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.UserSetting;
+import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Security.Key;
@@ -114,13 +111,15 @@ public class CashierShoppingMaskController
 
   private void handleResult(Boolean b) {
     if (!b) {
-      long missedTransactions =
+      long missedPurchases =
           Transaction.getTransactionRange(
                   Setting.LAST_PRINTED_TRANSACTION_ID.getLongValue(),
                   Transaction.getLastTransactionId())
-              .size();
-      if (missedTransactions > 40) {
-        getView().messageDoPanic(missedTransactions);
+              .stream()
+              .filter(Transaction::isPurchase)
+              .count();
+      if (missedPurchases > 40) {
+        getView().messageDoPanic(missedPurchases);
       } else {
         getView().messageDontPanic();
       }
