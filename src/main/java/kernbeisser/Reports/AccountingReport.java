@@ -10,7 +10,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
-import kernbeisser.Exeptions.NoPurchasesFoundException;
+import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Useful.Date;
 import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public class AccountingReport extends Report {
   private final boolean withNames;
 
   public AccountingReport(long reportNo, List<Transaction> transactions, boolean withNames)
-      throws NoPurchasesFoundException {
+      throws NoTransactionsFoundException {
     super(
         "accountingReportFileName",
         String.format("KernbeisserBuchhaltungBonUebersicht_%d", reportNo));
@@ -45,7 +45,7 @@ public class AccountingReport extends Report {
             .setParameter("transactions", transactions)
             .getResultList();
     if (purchases.isEmpty()) {
-      throw new NoPurchasesFoundException();
+      throw new NoTransactionsFoundException();
     }
     return purchases;
   }

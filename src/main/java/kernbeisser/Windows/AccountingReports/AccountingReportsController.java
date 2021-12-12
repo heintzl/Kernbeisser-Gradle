@@ -4,13 +4,14 @@ import java.time.*;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
-import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Reports.*;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
@@ -81,18 +82,18 @@ public class AccountingReportsController
       view.messageDateValues();
       return;
     }
-    var reportTransactions =
-        Transaction.getTransactionDateRange(
-            Instant.from(localStartDate), Instant.from(localEndDate));
-    if (reportTransactions.stream()
-        .anyMatch(t -> t.getTransactionType() == TransactionType.PURCHASE)) {
-      exportReport(
-          new AccountingReport(0, reportTransactions, withNames),
-          "Ladendienst Endabrechnung wird erstellt");
+    try {
+      var reportTransactions =
+          Transaction.getTransactionDateRange(
+                  Instant.from(localStartDate), Instant.from(localEndDate))
+              .stream()
+              .filter(t -> t.isAccountingReportTransaction() || t.isPurchase())
+              .collect(Collectors.toList());
+      if (reportTransactions.isEmpty()) throw new NoTransactionsFoundException();
+      AccountingReportsModel.exportAccountingReports(reportTransactions, 0, withNames);
+    } catch (NoTransactionsFoundException e) {
+      view.messageNoItems("Umsatzbericht");
     }
-    exportReport(
-        new AccountingTransactionsReport(0, reportTransactions, withNames),
-        "Ladendienst Endabrechnung wird erstellt");
   }
 
   public void exportUserBalance(boolean userBalanceWithNames) {

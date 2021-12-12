@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Exeptions.NoPurchasesFoundException;
+import kernbeisser.Exeptions.NoTransactionsFoundException;
 
 public class AccountingTransactionsReport extends Report {
 
@@ -17,7 +17,7 @@ public class AccountingTransactionsReport extends Report {
 
   public AccountingTransactionsReport(
       long reportNo, List<Transaction> transactions, boolean withNames)
-      throws NoPurchasesFoundException {
+      throws NoTransactionsFoundException {
     super(
         "accountingTransactionReportFileName",
         String.format("KernbeisserBuchhaltungEinSonderzahlungen_%d", reportNo));
