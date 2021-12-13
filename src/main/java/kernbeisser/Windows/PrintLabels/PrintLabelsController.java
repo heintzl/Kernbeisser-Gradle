@@ -42,7 +42,13 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   public static JButton getLaunchButton(ViewContainer targetComponent) {
     long printPoolSize = Articles.getArticlePrintPoolSize();
-    JButton launchButton = new JButton("Etiketten drucken" + (printPoolSize > 0 ? " *" : ""));
+    JButton launchButton =
+        new JButton("Etiketten drucken" + (printPoolSize > 0 ? " *" : "")) {
+          @Override
+          public void setEnabled(boolean b) {
+            super.setEnabled(b);
+          }
+        };
     launchButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
     launchButton.setToolTipText("Öffnet das Fenster für den Etikettendruck");
     launchButton.addActionListener(

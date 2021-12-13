@@ -113,7 +113,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
   public void addButton(JButton button) {
     ObjectViewView<?> view = getView();
     button.setFont(view.getButtonFont());
-    button.setEnabled(false);
+    if (forceExtraButtonState) button.setEnabled(false);
     view.getExtraButtonPanel().add(button);
   }
 
