@@ -5,6 +5,7 @@ import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
 import javax.persistence.NoResultException;
+import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
@@ -77,6 +78,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
                     Articles.getByBarcode(Long.parseLong(e)).orElseThrow(NoResultException::new),
                     Mode.EDIT));
     objectViewController.addComponents(articleFilter.createFilterCheckboxes());
+    objectViewController.setForceExtraButtonState(false);
   }
 
   void refreshList() {
