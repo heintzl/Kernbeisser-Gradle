@@ -53,7 +53,7 @@ public class UserBalanceReport extends Report {
     for (UserGroup ug : userGroups) {
       double value = ug.getValue();
       sum += value;
-      if (sum < 0) {
+      if (value < 0) {
         sum_negative += value;
       } else {
         sum_positive += value;
