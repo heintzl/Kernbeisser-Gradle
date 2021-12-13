@@ -12,7 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 public enum Version {
   BASE_VERSION(BaseVersion.class),
-  UNUSED_PERMISSION_KEY_REMOVING(PermissionKeyChange.class);
+  UNUSED_PERMISSION_KEY_REMOVING(PermissionKeyChange.class),
+  REFACTOR_DB_VERSIONING(RemoveDeprectatedSettings.class);
   public static final Logger logger = LogManager.getLogger(Version.class);
   private final Class<? extends VersionUpdatingTool> updatingToolClass;
 
