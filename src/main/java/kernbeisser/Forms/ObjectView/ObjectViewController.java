@@ -26,7 +26,7 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
 
   @Linked private final String title;
 
-  @Setter private boolean forceExtraButtonState;
+  @Setter private boolean forceExtraButtonState = true;
 
   public ObjectViewController(
       String title,
