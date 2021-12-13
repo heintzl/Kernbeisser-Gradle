@@ -9,12 +9,14 @@ import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Config.IgnoreThis;
+import kernbeisser.DBEntities.SystemSetting;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Main;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
+import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.ViewContainers.JFrameWindow;
 import org.hibernate.service.spi.ServiceException;
 
@@ -125,7 +127,7 @@ public class DBConnection {
     et.commit();
     em.close();
     reload();
-    Setting.DB_VERSION.changeValue(Setting.DB_VERSION.getDefaultValue());
+    SystemSetting.setValue(SystemSetting.DB_VERSION, Version.newestVersion().name());
     Setting.DB_INITIALIZED.changeValue(false);
     Setting.INFO_LINE_LAST_CATALOG.changeValue(Setting.INFO_LINE_LAST_CATALOG.getDefaultValue());
     Main.logger.info("DB update complete");

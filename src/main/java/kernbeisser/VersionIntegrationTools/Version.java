@@ -1,17 +1,19 @@
 package kernbeisser.VersionIntegrationTools;
 
-import kernbeisser.Enums.Setting;
+import kernbeisser.DBEntities.SystemSetting;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import kernbeisser.VersionIntegrationTools.UpdatingTools.BaseVersion;
 import kernbeisser.VersionIntegrationTools.UpdatingTools.PermissionKeyChange;
+import kernbeisser.VersionIntegrationTools.UpdatingTools.RemoveDeprectatedSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public enum Version {
   BASE_VERSION(BaseVersion.class),
-  UNUSED_PERMISSION_KEY_REMOVING(PermissionKeyChange.class);
+  UNUSED_PERMISSION_KEY_REMOVING(PermissionKeyChange.class),
+  REFACTOR_DB_VERSIONING(RemoveDeprectatedSettings.class);
   public static final Logger logger = LogManager.getLogger(Version.class);
   private final Class<? extends VersionUpdatingTool> updatingToolClass;
 
@@ -41,11 +43,11 @@ public enum Version {
     Version[] versions = Version.values();
     for (int i = version.ordinal() + 1; i < versions.length; i++) {
       versions[i].runUpdate();
-      Setting.DB_VERSION.changeValue(versions[i].name());
+      SystemSetting.setValue(SystemSetting.DB_VERSION, versions[i].name());
     }
   }
 
   public static void checkAndUpdateVersion() {
-    updateFrom(Setting.DB_VERSION.getEnumValue(Version.class));
+    updateFrom(Version.valueOf(SystemSetting.getValue(SystemSetting.DB_VERSION)));
   }
 }
