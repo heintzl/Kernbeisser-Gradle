@@ -24,6 +24,7 @@
         <class>kernbeisser.DBEntities.Permission</class>
         <class>kernbeisser.DBEntities.Offer</class>
         <class>kernbeisser.DBEntities.SettingValue</class>
+        <class>kernbeisser.DBEntities.SystemSetting</class>
         <class>kernbeisser.DBEntities.UserSettingValue</class>
         <class>kernbeisser.DBEntities.Shelf</class>
         <class>kernbeisser.DBEntities.ArticleStock</class>
