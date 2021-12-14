@@ -2,10 +2,17 @@
   "imagePath": {
     "path": "images"
   },
+  "defaultKornkraftInboxDir": {
+    "path": "USB:\\kornkraft"
+  },
+  "defaultBnnInboxDir": {
+    "path": "USB:\\bnn"
+  },
   "dbAccess": {
     "url": "jdbc:mysql://localhost/kernbeisser",
     "username": "Application",
-    "password": ""
+    "password": "",
+    "encoding": ""
   },
   "reports": {
     "reportDirectory": {
@@ -19,13 +26,19 @@
       "articleLabel": "Etiketten.jrxml",
       "transactionStatement": "Kontoauszug.jrxml",
       "tillrollFileName": "Bonrolle.jrxml",
+      "loginInfo": "LoginInformation.jrxml",
       "preOrderChecklist": "Abhakplan.jrxml",
       "permissionHolders": "RollenInhaber.jrxml",
       "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
+      "accountingTransactionReportFileName": "BuchhaltungGuthabenAenderungen.jrxml",
       "keyUserListFileName": "BenutzerSchluessel.jrxml",
       "invoiceFileName": "Kerni_Rechnung.jrxml",
-      "priceList": "Preisliste.jrxml",
-      "loginInfo": "LoginInformation.jrxml"
+      "priceList": "Preisliste.jrxml"
+    }
+  },
+  "preorders": {
+    "exportDirectory": {
+      "path": "USB:\\kornkraftBestellung"
     }
   }
 }
