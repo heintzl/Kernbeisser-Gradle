@@ -39,7 +39,7 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
         .plus(Setting.USER_BALANCE_REPORT_INTERVAL.getIntValue(), ChronoUnit.DAYS)
         .isBefore(Instant.now())) {
       AtomicBoolean success = new AtomicBoolean(true);
-      new UserBalanceReport(false)
+      new UserBalanceReport(no, false)
           .sendToPrinter(
               "Kontostände werden gedruckt",
               (e) -> {

@@ -16,6 +16,7 @@
 	<parameter name="sum" class="java.lang.Double"/>
 	<parameter name="sum_positive" class="java.lang.Double"/>
 	<parameter name="sum_negative" class="java.lang.Double"/>
+	<parameter name="reportTitle" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -31,13 +32,13 @@
 	</background>
 	<title>
 		<band height="22" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="0" width="280" height="20" uuid="a8e30bf7-7991-468f-8542-a3a9d1eff6dc"/>
+			<textField>
+				<reportElement x="0" y="0" width="396" height="20" uuid="39e6671a-16ef-4fef-ae60-f0f5c3bc7173"/>
 				<textElement markup="html">
 					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Guthabenstände]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
+			</textField>
 			<textField pattern="dd.MM.yyyy HH:mm">
 				<reportElement style="Bold" x="396" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
 				<textElement textAlignment="Right">
