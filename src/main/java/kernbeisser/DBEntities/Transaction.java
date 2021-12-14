@@ -33,7 +33,8 @@ import org.jetbrains.annotations.NotNull;
 public class Transaction implements UserRelated {
 
   @Id
-  @GeneratedValue
+  @Column(updatable = false, insertable = false, nullable = false)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_WRITE)})
   private long id;

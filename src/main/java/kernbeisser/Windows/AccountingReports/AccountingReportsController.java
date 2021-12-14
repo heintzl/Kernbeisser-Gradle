@@ -97,7 +97,7 @@ public class AccountingReportsController
   }
 
   public void exportUserBalance(boolean userBalanceWithNames) {
-    exportReport(new UserBalanceReport(userBalanceWithNames), "Guthabenstände werden erstellt");
+    exportReport(new UserBalanceReport(0, userBalanceWithNames), "Guthabenstände werden erstellt");
   }
 
   public void exportKeyUserList(String sortOrder) {

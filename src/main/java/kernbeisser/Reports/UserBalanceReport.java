@@ -18,13 +18,15 @@ public class UserBalanceReport extends Report {
   final Timestamp timeStamp;
   private final boolean withNames;
   private List<UserGroup> userGroups;
+  private final long reportNo;
 
-  public UserBalanceReport(boolean withNames) {
+  public UserBalanceReport(long reportNo, boolean withNames) {
     super(
         "userBalanceFileName",
         String.format(
             "KernbeisserGuthabenstände_%s",
             Timestamp.from(Instant.now().truncatedTo(ChronoUnit.MINUTES)).toString()));
+    this.reportNo = reportNo;
     this.withNames = withNames;
     this.timeStamp = Timestamp.from(Instant.now().truncatedTo(ChronoUnit.MINUTES));
     this.userGroups = getUserGroups();
@@ -62,6 +64,9 @@ public class UserBalanceReport extends Report {
     params.put("sum", sum);
     params.put("sum_negative", sum_negative);
     params.put("sum_positive", sum_positive);
+    params.put(
+        "reportTitle",
+        "Guthabenstände" + (reportNo == 0 ? "" : " zu LD-Endabrechnung Nr. " + reportNo));
     return params;
   }
 
