@@ -33,8 +33,8 @@ dependencies {
     constraints {
         implementation("org.apache.logging.log4j:log4j-core") {
             version {
-                strictly("[2.15, 3[")
-                prefer("2.15.0")
+                strictly("[2.17, 3[")
+                prefer("2.17.0")
             }
             because("CVE-2021-44228: Log4j vulnerable to remote code execution")
         }
@@ -47,8 +47,8 @@ dependencies {
     implementation 'at.favre.lib:bcrypt:0.9.0'
     implementation "com.github.jiconfont:jiconfont-font_awesome:4.7.0.1"
     implementation "com.github.jiconfont:jiconfont-swing:1.0.0"
-    implementation 'org.apache.logging.log4j:log4j-api:2.15.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.15.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.17.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.0'
     implementation 'net.sf.jasperreports:jasperreports:6.15.0'
     implementation 'net.sf.jasperreports:jasperreports-fonts:6.15.0'
     implementation 'org.jfree:jfreechart:1.5.0'
