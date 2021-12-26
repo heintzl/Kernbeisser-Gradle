@@ -16,6 +16,7 @@ import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
@@ -155,7 +156,9 @@ public class PreOrderView implements IView<PreOrderController> {
   void noItemFound() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Es konnte kein Kornkraft-Artikel mit dieser Kornkraft-/Kernbeißer-Nummer gefunden werden.");
+        "Es konnte kein Kornkraft-Artikel mit dieser Kornkraft-/"
+            + Setting.STORE_NAME.getStringValue()
+            + "-Nummer gefunden werden.");
   }
 
   void resetArticleNr() {

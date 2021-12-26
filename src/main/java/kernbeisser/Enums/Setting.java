@@ -64,6 +64,7 @@ public enum Setting {
   USER_BALANCE_REPORT_INTERVAL("28"),
   LAST_USER_BALANCE_REPORT("2010-01-01T00:00:00.000Z"),
   LABELS_PER_PAGE("40"),
+  STORE_NAME("Kernbeißer"),
   REPORT_FOOTLINE(
       "Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813"),
   OFFER_PREFIX("*AK* "),

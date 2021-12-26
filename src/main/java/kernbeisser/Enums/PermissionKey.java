@@ -495,7 +495,9 @@ public enum PermissionKey {
             .put("ACTION_EDIT_OWN_DATA", "Persönliche Informationen bearbeiten")
             .put("ACTION_LOGIN", "Anmelden")
             .put("ACTION_TRANSACTION_FROM_OTHER", "Überweisungen für andere tätigen")
-            .put("ACTION_TRANSACTION_FROM_KB", "Überweisungen für Kernbeißer tätigen")
+            .put(
+                "ACTION_TRANSACTION_FROM_KB",
+                "Überweisungen für " + Setting.STORE_NAME.getStringValue() + " tätigen")
             .put("ACTION_ORDER_CONTAINER", "Vorbestellungen für alle bearbeiten")
             .put("ACTION_ORDER_OWN_CONTAINER", "Vorbestellungen für mich bearbeiten")
             .put("ACTION_OPEN_ADMIN_TOOLS", "Benutzer administrieren")
