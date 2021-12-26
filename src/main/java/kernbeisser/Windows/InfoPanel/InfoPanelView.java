@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.text.html.HTMLEditorKit;
 import kernbeisser.Config.Config;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -40,9 +41,13 @@ public class InfoPanelView implements IView<InfoPanelController> {
     infoText.setText(
         "<HTML><BODY>"
             + "<table border=\"0\">"
-            + "<tr><td colspan=\"2\"><h1>Kernbeißer Ladenprogramm</h1></td></tr>"
+            + "<tr><td colspan=\"2\"><h1>"
+            + Setting.STORE_NAME.getStringValue()
+            + " Ladenprogramm</h1></td></tr>"
             + "<tr><td valign=\"top\"><i>Beschreibung:</i></td>"
-            + "<td>Dieses Programm wurde für den Ladenbetrieb der Kernbeißer Verbraucher-Erzeuger-Genossenschaft"
+            + "<td>Dieses Programm wurde für den Ladenbetrieb der "
+            + Setting.STORE_NAME.getStringValue()
+            + " Verbraucher-Erzeuger-Genossenschaft"
             + " in Braunschweig (https://www.kernbeisser-bs.de) entwickelt. "
             + "Es wurde in Java als quelloffene Software implementiert.</td></tr>"
             + "<tr><td><i>Sourcecode:</i></td><td><a href=\"https://github.com/julikiller98/Kernbeisser-Gradle\">"

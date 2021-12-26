@@ -145,7 +145,10 @@ public class TransactionView implements IView<TransactionController> {
         new ObjectTable<>(
             Columns.create(
                 "Von",
-                e -> e.getFromUser() == null ? "Kernbeißer" : (e.getFromUser().getFullName(true))),
+                e ->
+                    e.getFromUser() == null
+                        ? Setting.STORE_NAME.getStringValue()
+                        : (e.getFromUser().getFullName(true))),
             Columns.create("An", e -> e.getToUser().getFullName(true)),
             Columns.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
             Columns.create("Info", Transaction::getInfo));
@@ -232,8 +235,10 @@ public class TransactionView implements IView<TransactionController> {
         getTopComponent(),
         "Wenn diese Überweisung eine Guthabeneinzahlung ist, muss sie über den "
             + "Menüpunkt \"Guthaben buchen\" durchgeführt werden.\nWenn es eine andere Art "
-            + "der Übertragung vom Kernbeißerkonto ist, muss das im Info-Feld vermerkt werden, "
-            + "z.B. durch Angabe einer Belegnummer");
+            + "der Übertragung vom "
+            + Setting.STORE_NAME.getStringValue()
+            + "konto ist, muss das "
+            + "im Info-Feld vermerkt werden, z.B. durch Angabe einer Belegnummer");
   }
 
   public int commitUnsavedTransactions(int count) {
@@ -298,6 +303,7 @@ public class TransactionView implements IView<TransactionController> {
           }
         });
     info.setEnabled(Tools.canInvoke(() -> new Transaction().setInfo("")));
+    fromKBValue.setText("Von " + Setting.STORE_NAME.getStringValue());
     fromKBValue.addChangeListener(
         new ChangeListener() {
           private boolean lastState = false;
@@ -318,6 +324,7 @@ public class TransactionView implements IView<TransactionController> {
             }
           }
         });
+    toKBValue.setText("An " + Setting.STORE_NAME.getStringValue());
     toKBValue.addChangeListener(
         new ChangeListener() {
           private boolean lastState = false;

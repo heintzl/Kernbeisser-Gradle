@@ -3,6 +3,7 @@ package kernbeisser.Windows.Menu;
 import java.awt.*;
 import java.util.concurrent.CancellationException;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ControllerButton;
@@ -77,11 +78,16 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton permissionAssignment;
   private JButton grantCashierRole;
   private JButton beginnInventory;
+  private JPanel menugroupMyAccount;
 
   @Override
   public void initialize(MenuController controller) {
     ((Frame) TabbedPaneModel.getMainPanel().getContainer())
-        .setTitle("Kernbeißer (" + LogInModel.getLoggedIn().getFullName() + ")");
+        .setTitle(
+            Setting.STORE_NAME.getStringValue()
+                + " ("
+                + LogInModel.getLoggedIn().getFullName()
+                + ")");
     logout.setIcon(
         IconFontSwing.buildIcon(
             FontAwesome.POWER_OFF,
@@ -89,6 +95,8 @@ public class MenuView implements IView<MenuController> {
             new Color(182, 46, 4)));
     logout.addActionListener(e -> back());
     logout.setToolTipText(LogInModel.getLoggedIn().getFullName() + " vom Programm abmelden");
+    TitledBorder myAccountBorder = (TitledBorder) menugroupMyAccount.getBorder();
+    myAccountBorder.setTitle("Mein " + Setting.STORE_NAME.getStringValue() + "-Konto");
   }
 
   @Linked private MenuController controller;
