@@ -1,9 +1,9 @@
 package kernbeisser.DBEntities;
 
-import com.google.common.collect.ImmutableMap;
 import java.util.*;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
@@ -62,21 +62,10 @@ public class Permission {
   }
 
   public String getNeatName() {
-    ImmutableMap<String, String> nameTranslations =
-        ImmutableMap.<String, String>builder()
-            .put("@KEY_PERMISSION", "<Schlüssel Inhaber>")
-            .put("@IMPORT", "<Aus alter Version übernommen>")
-            .put("@FULL_MEMBER", "<Vollmitglied>")
-            .put("@APPLICATION", "<Applikation>")
-            .put("@ADMIN", "<Administration>")
-            .put("@IN_RELATION_TO_OWN_USER", "<eigene Daten>")
-            .put("@CASHIER", "<Ladendienst>")
-            .put("@BASIC_ACCESS", "<Basis-Anwender>")
-            .build();
     if (!name.startsWith("@")) {
       return name;
     } else {
-      return nameTranslations.getOrDefault(name, name);
+      return PermissionConstants.getTranslation(name);
     }
   }
 
