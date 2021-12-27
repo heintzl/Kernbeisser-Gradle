@@ -141,7 +141,7 @@ public class UserView implements IView<UserController> {
     hasKey.setReadable(Tools.canInvoke(this::checkUserKernbeisserKeyReadPermission));
     hasKey.setWriteable(Tools.canInvoke(this::checkUserKernbeisserKeyWritePermission));
     shares.setInputVerifier(IntegerVerifier.from(0, 1, 3, 10));
-    shares.setEnabled(!controller.isBeginner());
+    shares.setEnabled(!controller.isTrialMember());
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
     objectForm.registerObjectValidators(controller::validateUser, controller::validateFullname);
   }
@@ -277,13 +277,15 @@ public class UserView implements IView<UserController> {
         JOptionPane.INFORMATION_MESSAGE);
   }
 
-  public boolean askForAddPermissionFullMember(int no) {
+  public boolean askForAddPermissionFullMember(int no, boolean trialMember) {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
             no
                 + " Anteile sind eingetragen - \n"
-                + "Soll der Mitglied-Status zu \"Mitglied\" geändert werden?")
+                + "Soll der Mitglied-Status zu \"Voll-Mitglied\" geändert"
+                + (trialMember ? " und die Probemitgliedschaft aufgehoben " : "")
+                + "werden?")
         == 0;
   }
 

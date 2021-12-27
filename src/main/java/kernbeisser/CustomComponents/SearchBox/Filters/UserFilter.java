@@ -13,7 +13,8 @@ public class UserFilter {
   public static final int FILTER_ALL = 0;
   public static final int FILTER_ACTIVE = 1;
   public static final int FILTER_INACTIVE = 2;
-  public static final int FILTER_BEGINNERS = 3;
+  public static final int FILTER_TRIAL_MEMBERS = 3;
+  public static final int FILTER_NON_MEMBERS = 4;
 
   int userFilter;
 
@@ -33,8 +34,11 @@ public class UserFilter {
       case FILTER_INACTIVE:
         filter = (u -> !u.isActive());
         break;
-      case FILTER_BEGINNERS:
-        filter = User::isBeginner;
+      case FILTER_TRIAL_MEMBERS:
+        filter = User::isTrialMember;
+        break;
+      case FILTER_NON_MEMBERS:
+        filter = (u -> !(u.isTrialMember() || u.isFullMember()));
         break;
       default:
         filter = (u -> true);
@@ -61,7 +65,11 @@ public class UserFilter {
     filterGroup.add(filterButton);
     filterButtons.add(filterButton);
     filterButton = new JRadioButton("Probemitglieder");
-    filterButton.addActionListener(e -> setFilterState(FILTER_BEGINNERS));
+    filterButton.addActionListener(e -> setFilterState(FILTER_TRIAL_MEMBERS));
+    filterGroup.add(filterButton);
+    filterButtons.add(filterButton);
+    filterButton = new JRadioButton("Nicht-Mitglieder");
+    filterButton.addActionListener(e -> setFilterState(FILTER_NON_MEMBERS));
     filterGroup.add(filterButton);
     filterButtons.add(filterButton);
     filterButton = new JRadioButton("Alle");
