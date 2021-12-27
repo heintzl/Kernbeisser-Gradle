@@ -84,6 +84,15 @@ public class UserController extends FormController<UserView, UserModel, User> {
     }
   }
 
+  public void validatePermissions(User user, Mode mode) throws CannotParseException {
+    if (mode != Mode.REMOVE) {
+      if (model.invalidMembershipRoles(user)) {
+        getView().invalidMembership();
+        throw new CannotParseException();
+      }
+    }
+  }
+
   @Override
   public void fillView(UserView userView) {}
 

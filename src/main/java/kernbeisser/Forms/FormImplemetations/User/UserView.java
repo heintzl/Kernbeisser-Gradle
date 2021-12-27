@@ -143,7 +143,8 @@ public class UserView implements IView<UserController> {
     shares.setInputVerifier(IntegerVerifier.from(0, 1, 3, 10));
     shares.setEnabled(!controller.isTrialMember());
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
-    objectForm.registerObjectValidators(controller::validateUser, controller::validateFullname);
+    objectForm.registerObjectValidators(
+        controller::validateFullname, controller::validatePermissions, controller::validateUser);
   }
 
   @Key(PermissionKey.USER_KERNBEISSER_KEY_READ)
@@ -231,6 +232,12 @@ public class UserView implements IView<UserController> {
     JOptionPane.showMessageDialog(getTopComponent(), "Die eingegeben Werte sind nicht korrekt!");
   }
 
+  public void invalidPermissions() {
+    Color savedForeground = editPermission.getForeground();
+    editPermission.setForeground(Color.RED);
+    editPermission.addActionListener(e -> editPermission.setForeground(savedForeground));
+  }
+
   public void setUsername(String username) {
     this.username.setText(username);
   }
@@ -313,6 +320,16 @@ public class UserView implements IView<UserController> {
             + "\" ist bereits belegt. Bitte den Benutzer so benennen, "
             + "dass Vor- und Nachname eindeutig sind!",
         "Name nicht eindeutig",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
+  public void invalidMembership() {
+    invalidPermissions();
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Niemand kann gleichzeitig Probemitglied und Vollmitglied sein.\n"
+            + "Bitte eine der Mitglied-Rollen entfernen!",
+        "Fehlerhafte Rollenzuweisung",
         JOptionPane.WARNING_MESSAGE);
   }
 

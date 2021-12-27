@@ -61,4 +61,8 @@ public class UserModel implements IModel<UserController> {
             .size()
         > 0;
   }
+
+  public boolean invalidMembershipRoles(User user) {
+    return (user.isFullMember() && user.isTrialMember());
+  }
 }
