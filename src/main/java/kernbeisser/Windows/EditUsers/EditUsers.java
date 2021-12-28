@@ -59,7 +59,7 @@ public class EditUsers extends ObjectViewController<User> {
     hasAdminTools = true;
   }
 
-  @Key(PermissionKey.ACTION_ADD_BEGINNER)
+  @Key(PermissionKey.ACTION_ADD_TRIAL_MEMBER)
   private void addTrialMemberReport() {
     if (hasTrialMemberReport) return;
     JButton trialMemberReport =

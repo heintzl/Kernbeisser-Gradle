@@ -49,7 +49,7 @@ public enum PermissionKey {
   ACTION_OPEN_DB_LOG_IN(ActionPermission.class),
 
   // Actions
-  ACTION_ADD_BEGINNER(ActionPermission.class),
+  ACTION_ADD_TRIAL_MEMBER(ActionPermission.class),
   ACTION_EDIT_OWN_DATA(ActionPermission.class),
   ACTION_LOGIN(ActionPermission.class),
   ACTION_TRANSACTION_FROM_OTHER(ActionPermission.class),
@@ -491,7 +491,7 @@ public enum PermissionKey {
             .put("ACTION_OPEN_SUPPLY", "Lieferung eingeben")
             .put("ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW", "Kornkraft-Katalog synchronisieren")
             .put("ACTION_OPEN_DB_LOG_IN", "Datenverbindung bearbeiten")
-            .put("ACTION_ADD_BEGINNER", "Probemitglied aufnehmen")
+            .put("ACTION_ADD_TRIAL_MEMBER", "Probemitglied aufnehmen")
             .put("ACTION_EDIT_OWN_DATA", "Persönliche Informationen bearbeiten")
             .put("ACTION_LOGIN", "Anmelden")
             .put("ACTION_TRANSACTION_FROM_OTHER", "Überweisungen für andere tätigen")

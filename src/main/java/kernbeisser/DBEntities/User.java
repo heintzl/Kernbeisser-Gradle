@@ -231,7 +231,7 @@ public class User implements Serializable, UserRelated {
   @Key(PermissionKey.REMOVE_USER)
   private void deleteUser() {}
 
-  @Key(PermissionKey.ACTION_ADD_BEGINNER)
+  @Key(PermissionKey.ACTION_ADD_TRIAL_MEMBER)
   private void deleteTrialMember() {}
 
   public boolean canDelete() {

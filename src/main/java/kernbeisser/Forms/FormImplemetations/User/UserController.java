@@ -120,7 +120,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
   @Key(PermissionKey.REMOVE_USER)
   private void generalRemovePermission() {}
 
-  @Key(PermissionKey.ACTION_ADD_BEGINNER)
+  @Key(PermissionKey.ACTION_ADD_TRIAL_MEMBER)
   private void beginnerRemovePermission() {}
 
   @Override
