@@ -15,7 +15,9 @@ import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Forms.FormImplemetations.User.UserView;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
+import kernbeisser.Reports.TrialMemberReport;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Users;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -26,6 +28,7 @@ public class EditUsers extends ObjectViewController<User> {
   UserFilter userFilter =
       new UserFilter(() -> getSearchBoxController().invokeSearch(), UserFilter.FILTER_ACTIVE);
   boolean hasAdminTools = false;
+  boolean hasTrialMemberReport = false;
 
   @Key(PermissionKey.ACTION_OPEN_EDIT_USERS)
   public EditUsers() {
@@ -54,6 +57,23 @@ public class EditUsers extends ObjectViewController<User> {
         "Ermöglicht es, die Benutzergruppe für einen Benutzer zu wechseln, ohne dass der Wechsel mit Passwort bestätigt werden muss");
     addButton(editUserGroup, this::openUserGroupEditor);
     hasAdminTools = true;
+  }
+
+  @Key(PermissionKey.ACTION_ADD_BEGINNER)
+  private void addTrialMemberReport() {
+    if (hasTrialMemberReport) return;
+    JButton trialMemberReport =
+        new JButton("Probemitglieder-Liste") {
+          @Override
+          public void setEnabled(boolean b) {
+            super.setEnabled(true);
+          }
+        };
+    trialMemberReport.setIcon(
+        IconFontSwing.buildIcon(FontAwesome.LIST, 20, new Color(255, 115, 0)));
+    trialMemberReport.setToolTipText("Erzeugt die Liste der Probemitglieder");
+    addButton(trialMemberReport, e -> showTrialMemberReport());
+    hasTrialMemberReport = true;
   }
 
   private String formatPermissions(User u) {
@@ -87,11 +107,17 @@ public class EditUsers extends ObjectViewController<User> {
         == 0;
   }
 
+  public void showTrialMemberReport() {
+    new TrialMemberReport()
+        .sendToPrinter("Probemitgliederliste wird gedruckt", Tools::showUnexpectedErrorWarning);
+  }
+
   @Override
   public void fillView(ObjectViewView<User> userObjectViewView) {
     super.fillView(userObjectViewView);
     try {
       addAdministrationTools();
+      addTrialMemberReport();
     } catch (PermissionKeyRequiredException ignored) {
     }
   }
