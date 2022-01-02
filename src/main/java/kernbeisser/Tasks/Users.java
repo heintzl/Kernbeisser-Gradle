@@ -6,10 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Job;
-import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.InvalidTransactionException;
@@ -56,13 +54,19 @@ public class Users {
         user.setTown(s);
       }
     }
-    // Permission?
-    switch (Integer.parseInt(stringRaw[28])) {
-        // TODO
-    }
     */
+    // Permission?
+    Permission permission = new Permission();
+    Integer role = Integer.parseInt(stringRaw[28]);
+    if (user.getShares() > 0) {
+      permission = PermissionConstants.FULL_MEMBER.getPermission();
+    } else if (role == 1) {
+      permission = PermissionConstants.TRIAL_MEMBER.getPermission();
+    } else {
+      permission = PermissionConstants.BASIC_ACCESS.getPermission();
+    }
+    user.getPermissions().add(permission);
     user.setEmail(stringRaw[29]);
-    // CreateDate: isn't used(create new CreateDate), column 22
     // TransactionDates: not used, column 24
     // TransactionValues: not used, column 25
     // ommitted: user.setStreet(stringRaw[34]);
@@ -182,7 +186,7 @@ public class Users {
             JOptionPane.QUESTION_MESSAGE);
     if (response == JOptionPane.YES_OPTION) {
       JComboBox<StatementType> statementType = new JComboBox<>();
-      Arrays.stream(StatementType.values()).forEach(s -> statementType.addItem(s));
+      Arrays.stream(StatementType.values()).forEach(statementType::addItem);
       statementType.setSelectedItem(StatementType.ANNUAL);
       if (JOptionPane.showConfirmDialog(
               null, statementType, "Art des Auszugs", JOptionPane.OK_CANCEL_OPTION)
