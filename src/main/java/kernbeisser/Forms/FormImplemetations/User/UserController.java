@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class UserController extends FormController<UserView, UserModel, User> {
 
-  @Getter private boolean trialMember = false;
+  @Getter private boolean trialMemberMode = false;
 
   public UserController() {
     super(new UserModel());
@@ -29,7 +29,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
 
   public static UserController getBeginnerUserController() {
     var controller = new UserController();
-    controller.trialMember = true;
+    controller.trialMemberMode = true;
     return controller;
   }
 
@@ -66,7 +66,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
               .hashToString(Setting.HASH_COSTS.getIntValue(), passwordToken.toCharArray()));
       user.setForcePasswordChange(true);
       user.getPermissions().add(PermissionConstants.BASIC_ACCESS.getPermission());
-      if (isTrialMember()) {
+      if (this.isTrialMemberMode()) {
         user.getPermissions().add(PermissionConstants.TRIAL_MEMBER.getPermission());
       }
       user.setUserGroup(new UserGroup());

@@ -64,6 +64,7 @@ public class UserView implements IView<UserController> {
   private JPanel main;
   private AccessCheckingLabel<User> jobs;
   private AccessCheckingLabel<User> updateInfo;
+  private AccessCheckingLabel<User> creationInfo;
 
   @Linked private UserController controller;
 
@@ -124,6 +125,7 @@ public class UserView implements IView<UserController> {
             email,
             chgJobs,
             jobs,
+            creationInfo,
             updateInfo);
     objectForm.setObjectDistinction("Der Benutzer");
     KeyAdapter refreshUsername =
@@ -141,7 +143,7 @@ public class UserView implements IView<UserController> {
     hasKey.setReadable(Tools.canInvoke(this::checkUserKernbeisserKeyReadPermission));
     hasKey.setWriteable(Tools.canInvoke(this::checkUserKernbeisserKeyWritePermission));
     shares.setInputVerifier(IntegerVerifier.from(0, 1, 3, 10));
-    shares.setEnabled(!controller.isTrialMember());
+    shares.setEnabled(!controller.isTrialMemberMode());
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
     objectForm.registerObjectValidators(
         controller::validateFullname, controller::validatePermissions, controller::validateUser);
@@ -216,6 +218,7 @@ public class UserView implements IView<UserController> {
             .withCloseEvent(() -> jobs.setText(Job.concatenateJobs(chgJobs.getData())));
     jobs = new AccessCheckingLabel<>(User::getJobsAsString);
     updateInfo = new AccessCheckingLabel<>(this::getUpdateInfo);
+    creationInfo = new AccessCheckingLabel<>(this::getCreationInfo);
   }
 
   private String getUpdateInfo(User u) {
@@ -223,6 +226,14 @@ public class UserView implements IView<UserController> {
       return Date.INSTANT_DATE.format(u.getUpdateDate())
           + " durch "
           + u.getUpdateBy().getFullName();
+    } catch (NullPointerException e) {
+      return "(nicht gespeichert)";
+    }
+  }
+
+  private String getCreationInfo(User u) {
+    try {
+      return Date.INSTANT_DATE.format(u.getCreateDate());
     } catch (NullPointerException e) {
       return "(nicht gespeichert)";
     }
