@@ -1,5 +1,6 @@
 package kernbeisser.Enums;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -17,7 +18,6 @@ import lombok.Cleanup;
 public enum PermissionConstants {
   // the permission with all rights reserved
   ADMIN(allPermissions()),
-  // the default permission for all new users
   FULL_MEMBER(PermissionKey.ACTION_LOGIN),
   // the permission which is given to all imported users from the old application
   IMPORT,
@@ -26,7 +26,9 @@ public enum PermissionConstants {
   APPLICATION(PermissionKey.values()),
   IN_RELATION_TO_OWN_USER(PermissionKey.find(User.class).toArray(new PermissionKey[0])),
   CASHIER(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK),
-  BASIC_ACCESS(PermissionKey.ACTION_LOGIN);
+  // the default permission for all new users
+  BASIC_ACCESS(PermissionKey.ACTION_LOGIN),
+  TRIAL_MEMBER(PermissionKey.ACTION_LOGIN);
 
   private final Permission bounded;
 
@@ -44,6 +46,22 @@ public enum PermissionConstants {
 
   public Permission getPermission() {
     return bounded;
+  }
+
+  public static String getTranslation(String permissionName) {
+    ImmutableMap<String, String> nameTranslations =
+        ImmutableMap.<String, String>builder()
+            .put("@KEY_PERMISSION", "<Schlüssel Inhaber>")
+            .put("@IMPORT", "<Aus alter Version übernommen>")
+            .put("@FULL_MEMBER", "<Vollmitglied>")
+            .put("@APPLICATION", "<Applikation>")
+            .put("@ADMIN", "<Administration>")
+            .put("@IN_RELATION_TO_OWN_USER", "<eigene Daten>")
+            .put("@CASHIER", "<Ladendienst>")
+            .put("@BASIC_ACCESS", "<Basis-Anwender>")
+            .put("@TRIAL_MEMBER", "<Probemitglied>")
+            .build();
+    return nameTranslations.getOrDefault(permissionName, permissionName);
   }
 
   private static Permission loadOrCreate(PermissionConstants constants) {

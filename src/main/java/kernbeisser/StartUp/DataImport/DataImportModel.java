@@ -3,11 +3,11 @@ package kernbeisser.StartUp.DataImport;
 import static kernbeisser.Useful.Users.generateUserRelatedToken;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
@@ -115,6 +115,7 @@ public class DataImportModel implements IModel<DataImportController> {
     HashMap<String, User> importedUsers = new HashMap<>();
     HashSet<String> userNames = new HashSet<>();
     HashMap<String, Job> jobs = new HashMap<>();
+    HashMap<User, Instant> userCreateDates = new HashMap<>();
     Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
     final boolean relatedPassword = Setting.GENERATE_PASSWORD_RELATED_TO_USERNAME.getBooleanValue();
     Permission importPermission = PermissionConstants.IMPORT.getPermission();
@@ -134,7 +135,6 @@ public class DataImportModel implements IModel<DataImportController> {
           String userFullname = users[0].getFullName();
           UserGroup userGroup = Users.getUserGroup(rawUserData);
           User transactionUser = users[0];
-
           if (importedUsers.containsKey(userFullname)) {
             User existingUser = importedUsers.get(userFullname);
             transactionUser = existingUser;
@@ -166,13 +166,23 @@ public class DataImportModel implements IModel<DataImportController> {
                         ? generateUserRelatedToken(users[0].getUsername()).toCharArray()
                         : "start".toCharArray()));
             users[0].getPermissions().add(importPermission);
-            if (users[0].getShares() > 0) {
-              users[0].getPermissions().add(fullMemberPermission);
-            }
             if (users[0].getKernbeisserKey() != -1) {
               users[0].getPermissions().add(keyPermission);
             }
             em.persist(users[0]);
+            Optional<Instant> createDate =
+                Optional.ofNullable(
+                    rawUserData[30].equals("?")
+                        ? Instant.EPOCH
+                        : LocalDate.parse(
+                                rawUserData[30], DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                            .atStartOfDay(ZoneId.systemDefault())
+                            .toInstant());
+            em.createNativeQuery("UPDATE User SET createDate = :d WHERE id = :uid")
+                .setParameter("uid", users[0].getId())
+                .setParameter("d", createDate.orElse(Instant.EPOCH))
+                .executeUpdate();
+
             importedUsers.put(userFullname, users[0]);
           }
 

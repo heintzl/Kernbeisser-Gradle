@@ -231,12 +231,12 @@ public class User implements Serializable, UserRelated {
   @Key(PermissionKey.REMOVE_USER)
   private void deleteUser() {}
 
-  @Key(PermissionKey.ACTION_ADD_BEGINNER)
-  private void deleteBeginner() {}
+  @Key(PermissionKey.ACTION_ADD_TRIAL_MEMBER)
+  private void deleteTrialMember() {}
 
   public boolean canDelete() {
     return Tools.canInvoke(this::deleteUser)
-        || (isBeginner() && (Tools.canInvoke(this::deleteBeginner)));
+        || (isTrialMember() && (Tools.canInvoke(this::deleteTrialMember)));
   }
 
   public boolean delete() {
@@ -454,8 +454,12 @@ public class User implements Serializable, UserRelated {
     return new HashSet<>(Tools.transform(IgnoredDialog.getAllFor(this), IgnoredDialog::getOrigin));
   }
 
-  public boolean isBeginner() {
-    return !getPermissionsAsAvailable().contains(PermissionConstants.FULL_MEMBER.getPermission());
+  public boolean isTrialMember() {
+    return getPermissionsAsAvailable().contains(PermissionConstants.TRIAL_MEMBER.getPermission());
+  }
+
+  public boolean isFullMember() {
+    return getPermissionsAsAvailable().contains(PermissionConstants.FULL_MEMBER.getPermission());
   }
 
   public boolean isKernbeisser() {

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class UserController extends FormController<UserView, UserModel, User> {
 
-  @Getter private boolean beginner = false;
+  @Getter private boolean trialMemberMode = false;
 
   public UserController() {
     super(new UserModel());
@@ -29,7 +29,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
 
   public static UserController getBeginnerUserController() {
     var controller = new UserController();
-    controller.beginner = true;
+    controller.trialMemberMode = true;
     return controller;
   }
 
@@ -42,10 +42,15 @@ public class UserController extends FormController<UserView, UserModel, User> {
     if (mode != Mode.REMOVE) {
       try {
         int shares = user.getShares();
-        boolean fullMember =
-            user.getPermissions().contains(PermissionConstants.FULL_MEMBER.getPermission());
-        if (shares > 0 && !fullMember && getView().askForAddPermissionFullMember(shares)) {
+        boolean fullMember = user.isFullMember();
+        boolean trialMember = user.isTrialMember();
+        if (shares > 0
+            && !fullMember
+            && getView().askForAddPermissionFullMember(shares, trialMember)) {
           user.getPermissions().add(PermissionConstants.FULL_MEMBER.getPermission());
+          if (trialMember) {
+            user.getPermissions().remove(PermissionConstants.TRIAL_MEMBER.getPermission());
+          }
         } else {
           if (shares == 0 && fullMember && getView().askForRemovePermissionFullMember()) {
             user.getPermissions().remove(PermissionConstants.FULL_MEMBER.getPermission());
@@ -61,6 +66,9 @@ public class UserController extends FormController<UserView, UserModel, User> {
               .hashToString(Setting.HASH_COSTS.getIntValue(), passwordToken.toCharArray()));
       user.setForcePasswordChange(true);
       user.getPermissions().add(PermissionConstants.BASIC_ACCESS.getPermission());
+      if (this.isTrialMemberMode()) {
+        user.getPermissions().add(PermissionConstants.TRIAL_MEMBER.getPermission());
+      }
       user.setUserGroup(new UserGroup());
       Tools.persist(user.getUserGroup());
       getView().showPasswordToken(passwordToken, user);
@@ -71,6 +79,15 @@ public class UserController extends FormController<UserView, UserModel, User> {
     if (mode != Mode.REMOVE) {
       if (model.fullNameExists(user)) {
         getView().wrongFullname(user.getFullName());
+        throw new CannotParseException();
+      }
+    }
+  }
+
+  public void validatePermissions(User user, Mode mode) throws CannotParseException {
+    if (mode != Mode.REMOVE) {
+      if (model.invalidMembershipRoles(user)) {
+        getView().invalidMembership();
         throw new CannotParseException();
       }
     }
@@ -103,7 +120,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
   @Key(PermissionKey.REMOVE_USER)
   private void generalRemovePermission() {}
 
-  @Key(PermissionKey.ACTION_ADD_BEGINNER)
+  @Key(PermissionKey.ACTION_ADD_TRIAL_MEMBER)
   private void beginnerRemovePermission() {}
 
   @Override

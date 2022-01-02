@@ -92,7 +92,7 @@ public class MenuController extends Controller<MenuView, MenuModel> {
     SwingUtilities.getWindowAncestor(getView().getContent()).dispose();
   }
 
-  @Key(PermissionKey.ACTION_ADD_BEGINNER)
+  @Key(PermissionKey.ACTION_ADD_TRIAL_MEMBER)
   public FormEditorController<User> generateAddBeginnerForm() {
     User beginnerUser = new User();
     Access.putException(beginnerUser, AccessManager.NO_ACCESS_CHECKING);

@@ -31,6 +31,7 @@
       "permissionHolders": "RollenInhaber.jrxml",
       "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
       "accountingTransactionReportFileName": "BuchhaltungGuthabenAenderungen.jrxml",
+      "trialMemberReportFileName": "Probemitglieder.jrxml",
       "keyUserListFileName": "BenutzerSchluessel.jrxml",
       "invoiceFileName": "Kerni_Rechnung.jrxml",
       "priceList": "Preisliste.jrxml"

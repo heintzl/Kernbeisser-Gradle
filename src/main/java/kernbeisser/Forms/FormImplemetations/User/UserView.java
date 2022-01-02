@@ -64,6 +64,7 @@ public class UserView implements IView<UserController> {
   private JPanel main;
   private AccessCheckingLabel<User> jobs;
   private AccessCheckingLabel<User> updateInfo;
+  private AccessCheckingLabel<User> creationInfo;
 
   @Linked private UserController controller;
 
@@ -124,6 +125,7 @@ public class UserView implements IView<UserController> {
             email,
             chgJobs,
             jobs,
+            creationInfo,
             updateInfo);
     objectForm.setObjectDistinction("Der Benutzer");
     KeyAdapter refreshUsername =
@@ -141,9 +143,10 @@ public class UserView implements IView<UserController> {
     hasKey.setReadable(Tools.canInvoke(this::checkUserKernbeisserKeyReadPermission));
     hasKey.setWriteable(Tools.canInvoke(this::checkUserKernbeisserKeyWritePermission));
     shares.setInputVerifier(IntegerVerifier.from(0, 1, 3, 10));
-    shares.setEnabled(!controller.isBeginner());
+    shares.setEnabled(!controller.isTrialMemberMode());
     objectForm.registerUniqueCheck(username, controller::isUsernameUnique);
-    objectForm.registerObjectValidators(controller::validateUser, controller::validateFullname);
+    objectForm.registerObjectValidators(
+        controller::validateFullname, controller::validatePermissions, controller::validateUser);
   }
 
   @Key(PermissionKey.USER_KERNBEISSER_KEY_READ)
@@ -215,6 +218,7 @@ public class UserView implements IView<UserController> {
             .withCloseEvent(() -> jobs.setText(Job.concatenateJobs(chgJobs.getData())));
     jobs = new AccessCheckingLabel<>(User::getJobsAsString);
     updateInfo = new AccessCheckingLabel<>(this::getUpdateInfo);
+    creationInfo = new AccessCheckingLabel<>(this::getCreationInfo);
   }
 
   private String getUpdateInfo(User u) {
@@ -227,8 +231,22 @@ public class UserView implements IView<UserController> {
     }
   }
 
+  private String getCreationInfo(User u) {
+    try {
+      return Date.INSTANT_DATE.format(u.getCreateDate());
+    } catch (NullPointerException e) {
+      return "(nicht gespeichert)";
+    }
+  }
+
   public void invalidInput() {
     JOptionPane.showMessageDialog(getTopComponent(), "Die eingegeben Werte sind nicht korrekt!");
+  }
+
+  public void invalidPermissions() {
+    Color savedForeground = editPermission.getForeground();
+    editPermission.setForeground(Color.RED);
+    editPermission.addActionListener(e -> editPermission.setForeground(savedForeground));
   }
 
   public void setUsername(String username) {
@@ -277,13 +295,15 @@ public class UserView implements IView<UserController> {
         JOptionPane.INFORMATION_MESSAGE);
   }
 
-  public boolean askForAddPermissionFullMember(int no) {
+  public boolean askForAddPermissionFullMember(int no, boolean trialMember) {
     Tools.beep();
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
             no
                 + " Anteile sind eingetragen - \n"
-                + "Soll der Mitglied-Status zu \"Mitglied\" geändert werden?")
+                + "Soll der Mitglied-Status zu \"Voll-Mitglied\" geändert"
+                + (trialMember ? " und die Probemitgliedschaft aufgehoben " : "")
+                + "werden?")
         == 0;
   }
 
@@ -311,6 +331,16 @@ public class UserView implements IView<UserController> {
             + "\" ist bereits belegt. Bitte den Benutzer so benennen, "
             + "dass Vor- und Nachname eindeutig sind!",
         "Name nicht eindeutig",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
+  public void invalidMembership() {
+    invalidPermissions();
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Niemand kann gleichzeitig Probemitglied und Vollmitglied sein.\n"
+            + "Bitte eine der Mitglied-Rollen entfernen!",
+        "Fehlerhafte Rollenzuweisung",
         JOptionPane.WARNING_MESSAGE);
   }
 

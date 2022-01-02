@@ -36,11 +36,21 @@ public class CashierShoppingMaskController
             Columns.create("Vorname", User::getFirstName),
             Columns.create("Nachname", User::getSurname),
             Columns.create("Benutzername", User::getUsername),
-            Columns.create("Probemitglied", e -> e.isBeginner() ? "Ja" : "Nein"));
+            Columns.create("Mitgliedschaft", this::getMembership));
     searchBoxController.addLostSelectionListener(() -> selectUser(null));
     searchBoxController.addSelectionListener(this::selectUser);
     searchBoxController.addDoubleClickListener(e -> openMaskWindow());
     searchBoxController.addExtraComponents(userFilter.createFilterOptionButtons());
+  }
+
+  private String getMembership(User user) {
+    if (user.isTrialMember()) {
+      return "Probe";
+    } else if (user.isFullMember()) {
+      return "Voll";
+    } else {
+      return "Keine";
+    }
   }
 
   public void changeFilter() {
