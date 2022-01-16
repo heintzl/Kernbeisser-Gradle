@@ -7,6 +7,7 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Proxy;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Windows.MVC.IModel;
@@ -32,7 +33,7 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     user = Proxy.removeProxy(User.getById(user.getId()));
   }
 
-  boolean changeUserGroup(int user, int destination) {
+  boolean changeUserGroup(int user, int destination) throws MissingFullMemberException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();

@@ -12,7 +12,10 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Exeptions.CannotLogInException;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Useful.Date;
+import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.Users;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +45,8 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
         new ObjectTable<>(
             Columns.create("Vorname", User::getFirstName),
             Columns.create("Nachname", User::getSurname),
-            Columns.create("Benutzername", User::getUsername));
+            Columns.create("Benutzername", User::getUsername),
+            Columns.create("Mitgliedschaft", Users::getMembership));
   }
 
   String getUsername() {
@@ -81,12 +85,18 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
               "Gruppe verlassen",
               JOptionPane.OK_CANCEL_OPTION)
           == 0) {
-        controller.leaveUserGroup();
-        boolean ownUserGroupChange = !controller.getModel().getCaller().isPresent();
-        String message =
-            "Du hast deine Nutzergruppe erfolgreich verlassen\n"
-                + "und bist nun alleine in einer Nutzergruppe.";
+        String message;
+        if (controller.leaveUserGroup()) {
+          message =
+              "Du hast deine Nutzergruppe erfolgreich verlassen\n"
+                  + "und bist nun alleine in einer Nutzergruppe.";
+        } else {
+          message =
+              "Du kannst die Gruppe nicht verlassen, weil Du das einzige Vollmitglied der Gruppe bist.\n"
+                  + "Es muss mindestens ein Vollmitglied in der Gruppe bleiben.";
+        }
         JOptionPane.showMessageDialog(getTopComponent(), message);
+        boolean ownUserGroupChange = !controller.getModel().getCaller().isPresent();
         if (ownUserGroupChange) {
           back();
         }
@@ -134,6 +144,13 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
     } catch (CannotLogInException e) {
       JOptionPane.showMessageDialog(
           getTopComponent(), "Das eingegebene Passwort stimmt nicht überein.");
+    } catch (MissingFullMemberException m) {
+      Tools.beep();
+      JOptionPane.showMessageDialog(
+          getTopComponent(),
+          m.getMessage(),
+          "Gruppenwechsel nicht möglich",
+          JOptionPane.ERROR_MESSAGE);
     }
   }
 

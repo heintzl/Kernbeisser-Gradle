@@ -11,6 +11,7 @@ import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Reports.TransactionStatement;
 import kernbeisser.Security.Access.Access;
@@ -132,7 +133,8 @@ public class Users {
     }
   }
 
-  public static boolean switchUserGroup(int userId, int userGroupId) {
+  public static boolean switchUserGroup(int userId, int userGroupId)
+      throws MissingFullMemberException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       @Cleanup(value = "commit")
@@ -151,8 +153,8 @@ public class Users {
                 destination.setInterestThisYear(
                     destination.getInterestThisYear() + current.getInterestThisYear()));
       }
-      em.persist(destination);
       currentUser.setUserGroup(destination);
+      em.persist(destination);
       em.persist(currentUser);
       em.close();
       return true;
@@ -199,9 +201,16 @@ public class Users {
     return response != JOptionPane.CANCEL_OPTION;
   }
 
-  public static void leaveUserGroup(User user) {
+  public static void leaveUserGroup(User user) throws MissingFullMemberException {
     UserGroup newUserGroup = new UserGroup();
-    Tools.persist(newUserGroup);
-    switchUserGroup(user.getId(), newUserGroup.getId());
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    em.persist(newUserGroup);
+    try {
+      switchUserGroup(user.getId(), newUserGroup.getId());
+    } catch (MissingFullMemberException e) {
+      em.remove(newUserGroup);
+      throw e;
+    }
   }
 }

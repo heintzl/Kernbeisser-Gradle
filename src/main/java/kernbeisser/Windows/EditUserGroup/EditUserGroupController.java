@@ -13,6 +13,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.Tools;
@@ -76,12 +77,17 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
     getView().setCurrentUserGroup(model.getUser().getUserGroup());
   }
 
-  public void leaveUserGroup() {
-    Users.leaveUserGroup(model.getUser());
-    pushViewRefresh();
+  public boolean leaveUserGroup() {
+    try {
+      Users.leaveUserGroup(model.getUser());
+      pushViewRefresh();
+      return true;
+    } catch (MissingFullMemberException e) {
+      return false;
+    }
   }
 
-  public boolean changeUserGroup() throws CannotLogInException {
+  public boolean changeUserGroup() throws CannotLogInException, MissingFullMemberException {
     boolean success;
     Optional<UserGroup> targetGroup = userGroupSearchBoxController.getSelectedObject();
     if (targetGroup.isPresent()
