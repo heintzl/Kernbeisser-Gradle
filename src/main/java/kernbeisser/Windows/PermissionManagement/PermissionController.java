@@ -158,7 +158,6 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     if (!PermissionRepresentation.putInDB(selectedFile)) {
       return false;
     }
-    ;
     loadSolutions();
     return true;
   }

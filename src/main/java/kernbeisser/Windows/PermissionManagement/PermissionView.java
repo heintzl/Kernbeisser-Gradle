@@ -2,8 +2,10 @@ package kernbeisser.Windows.PermissionManagement;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -13,9 +15,11 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +114,17 @@ public class PermissionView implements IView<PermissionController> {
   }
 
   private void importPermissions(ActionEvent event) {
-    JFileChooser jFileChooser = new JFileChooser();
+    File file = new File("importPath.txt");
+    String importPath = ".";
+    if (file.exists()) {
+      try {
+        List<String> fileLines = Files.readAllLines(file.toPath());
+        importPath = fileLines.get(0);
+      } catch (IOException e) {
+        Tools.showUnexpectedErrorWarning(e);
+      }
+    }
+    JFileChooser jFileChooser = new JFileChooser(importPath);
     jFileChooser.setFileFilter(new FileNameExtensionFilter("Berechtigungs-JSON", "json"));
     jFileChooser.addActionListener(
         e -> {
@@ -127,6 +141,7 @@ public class PermissionView implements IView<PermissionController> {
                       + jFileChooser.getSelectedFile()
                       + " kann nicht gefunden werden");
             }
+            DBConnection.reload();
           }
         });
     jFileChooser.showDialog(getTopComponent(), "Importieren");
