@@ -49,6 +49,16 @@ public class Users {
         .substring(40);
   }
 
+  public static String getMembership(User user) {
+    if (user.isTrialMember()) {
+      return "Probe";
+    } else if (user.isFullMember()) {
+      return "Voll";
+    } else {
+      return "Keine";
+    }
+  }
+
   public static byte pos(byte[] bytes, int index) {
     return bytes[index % bytes.length];
   }

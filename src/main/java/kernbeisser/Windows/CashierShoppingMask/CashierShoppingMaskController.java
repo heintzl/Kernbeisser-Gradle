@@ -12,6 +12,7 @@ import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Users;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -36,21 +37,11 @@ public class CashierShoppingMaskController
             Columns.create("Vorname", User::getFirstName),
             Columns.create("Nachname", User::getSurname),
             Columns.create("Benutzername", User::getUsername),
-            Columns.create("Mitgliedschaft", this::getMembership));
+            Columns.create("Mitgliedschaft", Users::getMembership));
     searchBoxController.addLostSelectionListener(() -> selectUser(null));
     searchBoxController.addSelectionListener(this::selectUser);
     searchBoxController.addDoubleClickListener(e -> openMaskWindow());
     searchBoxController.addExtraComponents(userFilter.createFilterOptionButtons());
-  }
-
-  private String getMembership(User user) {
-    if (user.isTrialMember()) {
-      return "Probe";
-    } else if (user.isFullMember()) {
-      return "Voll";
-    } else {
-      return "Keine";
-    }
   }
 
   public void changeFilter() {
