@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.InconsistentUserGroupValueException;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
@@ -169,8 +171,17 @@ public class UserGroup implements UserRelated {
                 tuple -> ((Integer) tuple.get("ugid")), tuple -> ((Double) tuple.get("tSum"))));
   }
 
-  public static boolean checkUserGroupConsistency() {
-    return getInvalidUserGroupTransactionSums().isEmpty();
+  public static void checkUserGroupConsistency()
+      throws InconsistentUserGroupValueException, MissingFullMemberException {
+    if (!getInvalidUserGroupTransactionSums().isEmpty()) {
+      throw new InconsistentUserGroupValueException();
+    }
+    ;
+    for (UserGroup ug : UserGroup.getAll(null)) {
+      User.validateGroupMemberships(
+          ug.getMembers(),
+          "Benutzergruppe(n) ohne Vollmitglied gefunden. Bitte den Vorstand informieren.");
+    }
   }
 
   private static UserGroup getWithTransactionSum(int id, double sum) {

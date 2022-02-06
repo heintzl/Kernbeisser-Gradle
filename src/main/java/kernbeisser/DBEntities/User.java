@@ -179,11 +179,12 @@ public class User implements Serializable, UserRelated {
     if (setUpdatedBy && LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
   }
 
-  private boolean validateMemberships(Collection<User> members) {
-    if (members.size() <= 1) {
-      return true;
+  public static void validateGroupMemberships(Collection<User> members, String exceptionMessage)
+      throws MissingFullMemberException {
+    if (members.size() > 1 && !members.stream().anyMatch(User::isFullMember)) {
+      throw new MissingFullMemberException(exceptionMessage);
     }
-    return members.stream().anyMatch(User::isFullMember);
+    ;
   }
 
   @Key(PermissionKey.USER_USER_GROUP_WRITE)
@@ -205,18 +206,15 @@ public class User implements Serializable, UserRelated {
       if (this.userGroup != null) {
         var remainingMembers = this.userGroup.getMembers();
         remainingMembers.remove(this);
-        if (!validateMemberships(remainingMembers)) {
-          throw new MissingFullMemberException(
-              "In der alten Benutzergruppe muss ein mindestens ein Vollmitglied bleiben");
-        }
+        validateGroupMemberships(
+            remainingMembers,
+            "In der alten Benutzergruppe muss ein mindestens ein Vollmitglied bleiben");
       }
     } else {
       var newMembers = userGroup.getMembers();
       newMembers.add(this);
-      if (!validateMemberships(newMembers)) {
-        throw new MissingFullMemberException(
-            "In der neuen Benutzergruppe muss mindestens ein Vollmitglied sein");
-      }
+      validateGroupMemberships(
+          newMembers, "In der neuen Benutzergruppe muss mindestens ein Vollmitglied sein");
     }
     this.userGroup = userGroup;
   }
