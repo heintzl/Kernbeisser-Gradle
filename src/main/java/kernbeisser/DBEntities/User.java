@@ -150,13 +150,13 @@ public class User implements Serializable, UserRelated {
   private boolean unreadable = false;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_READ)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_WRITE)})
+  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_WRITE)})
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_READ)})
   private Instant lastPasswordChange;
 
   @Column
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_READ)})
   private boolean forcePasswordChange = false;
 
   @Column
@@ -181,10 +181,14 @@ public class User implements Serializable, UserRelated {
 
   public static void validateGroupMemberships(Collection<User> members, String exceptionMessage)
       throws MissingFullMemberException {
-    if (members.size() > 1 && !members.stream().anyMatch(User::isFullMember)) {
+    if (members.size() > 1 && members.stream().noneMatch(User::isFullMember)) {
       throw new MissingFullMemberException(exceptionMessage);
     }
     ;
+  }
+
+  public void validateGroupMemberships(String exceptionMessage) throws MissingFullMemberException {
+    validateGroupMemberships(this.getAllGroupMembers(), exceptionMessage);
   }
 
   @Key(PermissionKey.USER_USER_GROUP_WRITE)
@@ -208,7 +212,7 @@ public class User implements Serializable, UserRelated {
         remainingMembers.remove(this);
         validateGroupMemberships(
             remainingMembers,
-            "In der alten Benutzergruppe muss ein mindestens ein Vollmitglied bleiben");
+            "In der alten Benutzergruppe muss mindestens ein Vollmitglied bleiben");
       }
     } else {
       var newMembers = userGroup.getMembers();
