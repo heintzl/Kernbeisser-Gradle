@@ -1,8 +1,11 @@
 package kernbeisser.Windows.SoloShoppingMask;
 
 import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
+import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -17,11 +20,16 @@ public class SoloShoppingMaskController
   @Linked private final ShoppingMaskUIController shoppingMaskUIController;
 
   @Key(PermissionKey.ACTION_OPEN_SOLO_SHOPPING_MASK)
-  public SoloShoppingMaskController() throws NotEnoughCreditException {
+  public SoloShoppingMaskController() throws NotEnoughCreditException, MissingFullMemberException {
     super(new SoloShoppingMaskModel());
     SaleSession saleSession = new SaleSession(SaleSessionType.SOLO);
-    saleSession.setCustomer(LogInModel.getLoggedInFromDB());
-    saleSession.setSeller(LogInModel.getLoggedIn());
+    User user = LogInModel.getLoggedInFromDB();
+    user.validateGroupMemberships(
+        "Du darfst nicht selbst Einkaufen, weil weder du, noch  die Mitglieder deiner Benutzergruppe "
+            + Setting.STORE_NAME.getStringValue()
+            + "-Mitglied sind.");
+    saleSession.setCustomer(user);
+    saleSession.setSeller(user);
     this.shoppingMaskUIController = new ShoppingMaskUIController(saleSession);
   }
 
