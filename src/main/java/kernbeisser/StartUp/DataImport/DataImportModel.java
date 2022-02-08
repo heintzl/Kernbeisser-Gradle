@@ -27,6 +27,7 @@ import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Main;
 import kernbeisser.Security.Access.Access;
@@ -57,8 +58,7 @@ public class DataImportModel implements IModel<DataImportController> {
         BCrypt.withDefaults()
             .hashToString(Setting.HASH_COSTS.getIntValue(), password.toCharArray()));
     user.getPermissions().add(PermissionConstants.ADMIN.getPermission());
-    user.setUserGroup(new UserGroup());
-    em.persist(user.getUserGroup());
+    user.setNewUserGroup(em);
     em.persist(user);
     em.flush();
     Access.removeException(user);
@@ -157,7 +157,12 @@ public class DataImportModel implements IModel<DataImportController> {
             }
 
           } else {
-            users[0].setUserGroup(userGroup);
+            try {
+              users[0].setUserGroup(userGroup);
+            } catch (MissingFullMemberException e) {
+              Main.logger.warn(e);
+              userGroup = users[0].setNewUserGroup();
+            }
             em.persist(userGroup);
             users[0].setPassword(
                 hasher.hashToString(
@@ -205,18 +210,33 @@ public class DataImportModel implements IModel<DataImportController> {
           if (importedUsers.containsKey(userFullname)) {
             User existingUser = importedUsers.get(userFullname);
             if (existingUser.isPrimary()) {
-              Users.switchUserGroup(existingUser.getId(), users[0].getUserGroup().getId());
+              try {
+                Users.switchUserGroup(existingUser.getId(), users[0].getUserGroup().getId());
+              } catch (MissingFullMemberException e) {
+                Main.logger.warn(
+                    "Unsuccessfully tried to put user "
+                        + userFullname
+                        + " into group with "
+                        + users[0].getUserGroup().getMembersAsString()
+                        + ": "
+                        + e.getMessage());
+              }
             } else {
               Main.logger.warn(
                   "Ignored duplicate secondary user "
                       + userFullname
-                      + "who already is in usergroup: "
+                      + " who already is in usergroup: "
                       + existingUser.getUserGroup().getMembersAsString());
             }
 
           } else {
             if (!users[1].getFirstName().equals("")) {
-              users[1].setUserGroup(userGroup);
+              try {
+                users[1].setUserGroup(userGroup);
+              } catch (MissingFullMemberException e) {
+                Main.logger.warn(e);
+                users[1].setNewUserGroup(em);
+              }
               users[1].setPassword(
                   hasher.hashToString(
                       4,

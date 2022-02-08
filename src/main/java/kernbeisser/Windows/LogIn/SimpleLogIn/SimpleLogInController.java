@@ -10,10 +10,7 @@ import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
-import kernbeisser.Exeptions.CannotLogInException;
-import kernbeisser.Exeptions.InvalidValue;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Exeptions.PermissionRequired;
+import kernbeisser.Exeptions.*;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
@@ -70,12 +67,21 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
               } catch (InvalidValue e) {
                 Tools.showUnexpectedErrorWarning(e);
               }
-              if (!UserGroup.checkUserGroupConsistency()) {
+              try {
+                UserGroup.checkUserGroupConsistency();
+              } catch (PermissionKeyRequiredException ignored) {
+              } catch (InconsistentUserGroupValueException e) {
                 JOptionPane.showMessageDialog(
                     getView().getTopComponent(),
                     "Die Transaktionsdaten weichen von den Kontoständen ab.\n"
                         + "Bitte den Vorstand oder die Buchhaltung informieren!",
                     "Inkonsistenter Datenbestand",
+                    JOptionPane.WARNING_MESSAGE);
+              } catch (MissingFullMemberException f) {
+                JOptionPane.showMessageDialog(
+                    getView().getTopComponent(),
+                    f.getMessage(),
+                    "Benutzergruppe ohne Vollmitglied",
                     JOptionPane.WARNING_MESSAGE);
               }
               ;

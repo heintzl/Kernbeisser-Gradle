@@ -7,8 +7,10 @@ import javax.swing.border.TitledBorder;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ControllerButton;
+import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.StartUp.LogIn.DBLogInController;
@@ -106,7 +108,20 @@ public class MenuView implements IView<MenuController> {
     return main;
   }
 
+  private boolean inheritsFullMembership() {
+    User user = LogInModel.getLoggedIn();
+    if (LogInModel.getLoggedIn().isFullMember()) return true;
+    if (user.getUserGroup().getMembers().size() == 1) return false;
+    try {
+      user.validateGroupMemberships("");
+      return true;
+    } catch (MissingFullMemberException e) {
+      return false;
+    }
+  }
+
   private void createUIComponents() {
+    boolean inheritsFullMembership = inheritsFullMembership();
     infoPanel = new InfoPanelController().getView();
     openCashierShoppingMask =
         new ControllerButton(
@@ -169,6 +184,7 @@ public class MenuView implements IView<MenuController> {
             PreOrderController.class,
             Controller::openTab,
             false);
+    if (openSelfPreorder.isEnabled()) openSelfPreorder.setEnabled(inheritsFullMembership);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();
     placeHolderControllerButton2.setVisible(false);
@@ -187,6 +203,14 @@ public class MenuView implements IView<MenuController> {
                     "Nicht genug Guthaben",
                     JOptionPane.WARNING_MESSAGE);
                 throw new CancellationException();
+              } catch (MissingFullMemberException f) {
+                Tools.beep();
+                JOptionPane.showMessageDialog(
+                    getContent(),
+                    f.getMessage(),
+                    "keine Berechtigung",
+                    JOptionPane.WARNING_MESSAGE);
+                throw new CancellationException();
               }
             },
             SoloShoppingMaskController.class,
@@ -195,6 +219,8 @@ public class MenuView implements IView<MenuController> {
                 e.openTab();
               }
             });
+    if (openCashierShoppingMask.isEnabled())
+      openCashierShoppingMask.setEnabled(inheritsFullMembership);
     addBeginner =
         new ControllerButton(
             controller::generateAddBeginnerForm,

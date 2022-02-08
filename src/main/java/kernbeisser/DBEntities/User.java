@@ -17,6 +17,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidValue;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
@@ -140,7 +141,6 @@ public class User implements Serializable, UserRelated {
 
   @ManyToOne
   @JoinColumn(nullable = false)
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_WRITE)})
   @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_READ)})
   private UserGroup userGroup;
 
@@ -150,13 +150,13 @@ public class User implements Serializable, UserRelated {
   private boolean unreadable = false;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_READ)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_WRITE)})
+  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_WRITE)})
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_READ)})
   private Instant lastPasswordChange;
 
   @Column
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_READ)})
   private boolean forcePasswordChange = false;
 
   @Column
@@ -177,6 +177,50 @@ public class User implements Serializable, UserRelated {
   @PreUpdate
   private void setUpdateBy() {
     if (setUpdatedBy && LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
+  }
+
+  public static void validateGroupMemberships(Collection<User> members, String exceptionMessage)
+      throws MissingFullMemberException {
+    if (members.size() > 1 && members.stream().noneMatch(User::isFullMember)) {
+      throw new MissingFullMemberException(exceptionMessage);
+    }
+    ;
+  }
+
+  public void validateGroupMemberships(String exceptionMessage) throws MissingFullMemberException {
+    validateGroupMemberships(this.getAllGroupMembers(), exceptionMessage);
+  }
+
+  @Key(PermissionKey.USER_USER_GROUP_WRITE)
+  public void setNewUserGroup(EntityManager em) {
+    em.persist(this.setNewUserGroup());
+  }
+
+  @Key(PermissionKey.USER_USER_GROUP_WRITE)
+  public UserGroup setNewUserGroup() {
+    UserGroup newUserGroup = new UserGroup();
+    this.userGroup = newUserGroup;
+    return newUserGroup;
+  }
+
+  @Key(PermissionKey.USER_USER_GROUP_WRITE)
+  public void setUserGroup(UserGroup userGroup) throws MissingFullMemberException {
+
+    if (isFullMember()) {
+      if (this.userGroup != null) {
+        var remainingMembers = this.userGroup.getMembers();
+        remainingMembers.remove(this);
+        validateGroupMemberships(
+            remainingMembers,
+            "In der alten Benutzergruppe muss mindestens ein Vollmitglied bleiben");
+      }
+    } else {
+      var newMembers = userGroup.getMembers();
+      newMembers.add(this);
+      validateGroupMemberships(
+          newMembers, "In der neuen Benutzergruppe muss mindestens ein Vollmitglied sein");
+    }
+    this.userGroup = userGroup;
   }
 
   public static final String GENERIC_USERS_CONDITION =
@@ -401,9 +445,7 @@ public class User implements Serializable, UserRelated {
       kernbeisser.setFirstName("Konto");
       kernbeisser.setSurname("Kernbeisser");
       kernbeisser.setUsername("kernbeisser");
-      UserGroup kernbeisserValue = new UserGroup();
-      em.persist(kernbeisserValue);
-      kernbeisser.setUserGroup(kernbeisserValue);
+      kernbeisser.setNewUserGroup(em);
       em.persist(kernbeisser);
       em.flush();
       et.commit();
