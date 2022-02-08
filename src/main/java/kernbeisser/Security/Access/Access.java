@@ -101,10 +101,12 @@ public class Access {
         "cannot find method with name and id: " + methodName + ":" + methodId);
   }
 
-  public static boolean expectHasPermission(Serializable serializable) {
+  public static boolean expectHasActionPermission(Serializable serializable) {
     if (defaultManager instanceof PermissionKeyBasedAccessManager)
       return ((PermissionKeyBasedAccessManager) defaultManager)
-          .hasPermission(peekPermissions(serializable));
+          .hasPermission(
+              peekPermissions(serializable)
+                  .operator(PermissionKey.getAllActionPermissions(), (a, b) -> a & b));
     throw new UnsupportedOperationException("Default access manager is not peek able");
   }
 

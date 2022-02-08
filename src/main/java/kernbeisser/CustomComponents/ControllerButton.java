@@ -72,7 +72,7 @@ public class ControllerButton extends JButton {
     Tools.scaleFont(this, 1.1);
 
     // checking if the user has the required access to open up the window
-    if (Access.expectHasPermission(controllerInitializer)) {
+    if (Access.expectHasActionPermission(controllerInitializer)) {
       AtomicReference<SoftReference<C>> controllerRef =
           new AtomicReference<>(new SoftReference<>(null));
       if (preInit) {
