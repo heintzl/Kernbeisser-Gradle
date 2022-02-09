@@ -516,7 +516,7 @@ public class User implements Serializable, UserRelated {
     return getAllGroupMembers().stream()
         .map(User::getPermissionsAsAvailable)
         .flatMap(Collection::stream)
-        .map(Permission::getKeySet)
+        .map(Permission::getKeySetAsAvailable)
         .flatMap(Collection::stream)
         .anyMatch(PermissionKey.GO_UNDER_MIN::equals);
   }

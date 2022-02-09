@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Security.ActionPermission;
 import kernbeisser.Security.PermissionSet;
+import lombok.Getter;
 
 public enum PermissionKey {
   DEPRECATED(null),
@@ -408,6 +409,11 @@ public enum PermissionKey {
   public PermissionKey getReadKey() {
     return valueOf(name().replace("_WRITE", "_READ"));
   }
+
+  @Getter(lazy = true)
+  private static final PermissionSet allActionPermissions =
+      PermissionSet.asPermissionSet(
+          PermissionKey.find(ActionPermission.class).toArray(new PermissionKey[0]));
 
   public static Collection<PermissionKey> find(Class<?> category) {
     Collection<PermissionKey> out = new ArrayList<>();
