@@ -88,11 +88,15 @@ public class UserGroup implements UserRelated {
     }
   }
 
-  public UserGroup withMembersAsString(boolean withNames) {
+  public UserGroup withMembersAsStyledString(boolean withNames) {
     UserGroup result = new UserGroup();
     result.membersAsString =
         getMembers().stream()
-            .map(m -> withNames ? m.getFullName() : String.valueOf(m.getId()))
+            .map(
+                m ->
+                    Tools.jasperTaggedStyling(
+                        withNames ? m.getFullName() : String.valueOf(m.getId()),
+                        m.isFullMember() ? "" : "i"))
             .collect(Collectors.joining(", "));
     result.id = getId();
     result.value = getValue();
