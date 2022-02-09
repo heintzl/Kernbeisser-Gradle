@@ -6,9 +6,11 @@ import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Shelf.ShelfController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
+import kernbeisser.Security.Key;
 import kernbeisser.Useful.CSV;
 import kernbeisser.Windows.Inventory.Counting.CountingController;
 import kernbeisser.Windows.MVC.Controller;
@@ -18,6 +20,7 @@ import lombok.SneakyThrows;
 public class InventoryController extends Controller<InventoryView, InventoryModel> {
   @Linked private final ObjectViewController<Shelf> shelfViewController;
 
+  @Key(PermissionKey.ACTION_OPEN_INVENTORY)
   public InventoryController() throws PermissionKeyRequiredException {
     super(new InventoryModel());
     this.shelfViewController =
