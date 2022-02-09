@@ -94,7 +94,7 @@
 				<reportElement x="0" y="0" width="125" height="10" uuid="3b6ed2dc-38dc-4450-aaf0-e6e965b40f92">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c8454755-3143-48a1-8fbd-46538ec5da37"/>
 				</reportElement>
-				<textElement>
+				<textElement markup="styled">
 					<font fontName="DejaVu Sans Condensed" size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{membersAsString}]]></textFieldExpression>

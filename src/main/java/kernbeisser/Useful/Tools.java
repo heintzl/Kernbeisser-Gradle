@@ -987,4 +987,9 @@ public class Tools {
     List<Number> revisions = auditReaderFactory.getRevisions(o.getClass(), Tools.getId(o));
     return revisions.get(revisions.size() - 1).intValue();
   }
+
+  public static String jasperTaggedStyling(String text, String markup) {
+    if (markup.isEmpty()) return text;
+    return "<" + markup + ">" + text + "</" + markup + ">";
+  }
 }

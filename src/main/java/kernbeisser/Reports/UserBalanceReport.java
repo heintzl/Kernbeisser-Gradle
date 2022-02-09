@@ -41,7 +41,7 @@ public class UserBalanceReport extends Report {
         .getResultStream()
         .filter(
             ug -> !ug.getMembers().stream().allMatch(u -> u.isUnreadable() || u.isKernbeisser()))
-        .map(ug -> ug.withMembersAsString(this.withNames))
+        .map(ug -> ug.withMembersAsStyledString(this.withNames))
         .sorted((u1, u2) -> u1.getMembersAsString().compareToIgnoreCase(u2.getMembersAsString()))
         .collect(Collectors.toList());
   }
