@@ -219,8 +219,9 @@ public class MenuView implements IView<MenuController> {
                 e.openTab();
               }
             });
-    if (openCashierShoppingMask.isEnabled())
-      openCashierShoppingMask.setEnabled(inheritsFullMembership);
+    if (openSelfShoppingMask.isEnabled()) {
+      openSelfShoppingMask.setEnabled(inheritsFullMembership);
+    }
     addBeginner =
         new ControllerButton(
             controller::generateAddBeginnerForm,

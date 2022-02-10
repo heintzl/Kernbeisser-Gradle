@@ -32,6 +32,7 @@ import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.Users;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -118,7 +119,8 @@ public class UserInfoView implements IView<UserInfoController> {
         new ObjectTable<User>(
             Columns.create("Benutzername", User::getUsername),
             Columns.create("Vorname", User::getFirstName),
-            Columns.create("Nachname", User::getSurname));
+            Columns.create("Nachname", User::getSurname),
+            Columns.create("Mitgliedschaft", Users::getMembership));
     jobs =
         new ObjectTable<Job>(
             Columns.create("Name", Job::getName),
