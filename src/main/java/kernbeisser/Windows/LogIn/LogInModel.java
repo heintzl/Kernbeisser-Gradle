@@ -27,11 +27,10 @@ public final class LogInModel implements IModel {
   }
 
   public static User getLoggedInFromDB() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.find(User.class, loggedIn.getId());
+    loggedIn = (User.getById(loggedIn.getId()));
+    Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
+    Access.setDefaultManager(new UserRelatedAccessManager(loggedIn));
+    return loggedIn;
   }
 
   public static void logIn(String username, char[] password)
