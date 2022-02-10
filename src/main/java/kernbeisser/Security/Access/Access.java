@@ -62,7 +62,12 @@ public class Access {
       }
       if (!defaultManager.hasAccess(object, methodName, signature, keys)) {
         throw new PermissionKeyRequiredException(
-            "PermissionSet doesn't contain the following keys:" + keys);
+            "Method "
+                + methodName
+                + " on Object: "
+                + object
+                + " - PermissionSet doesn't contain the following keys:"
+                + keys);
       }
     }
   }
