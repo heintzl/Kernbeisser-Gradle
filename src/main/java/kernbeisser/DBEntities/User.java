@@ -332,16 +332,6 @@ public class User implements Serializable, UserRelated {
         .getResultList();
   }
 
-  /*  public boolean isActive() {
-      Instant expireDate =
-          Instant.now().minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS);
-      return getAllPurchases().stream()
-          .map(Purchase::getCreateDate)
-          .max(Comparator.comparingLong(d -> d.getLong(ChronoField.INSTANT_SECONDS)))
-          .orElse(Instant.MIN)
-          .isAfter(expireDate);
-    }
-  */
   public static User getById(int parseInt) {
     return DBConnection.getEntityManager().find(User.class, parseInt);
   }
@@ -427,7 +417,9 @@ public class User implements Serializable, UserRelated {
     }
   }
 
-  public static User getKernbeisserUser() {
+  private static final User KERNBEISSER_USER = readKernbeisserUser();
+
+  private static User readKernbeisserUser() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       @Cleanup(value = "commit")
@@ -449,8 +441,12 @@ public class User implements Serializable, UserRelated {
       em.persist(kernbeisser);
       em.flush();
       et.commit();
-      return getKernbeisserUser();
+      return readKernbeisserUser();
     }
+  }
+
+  public static User getKernbeisserUser() {
+    return KERNBEISSER_USER;
   }
 
   public double valueAt(Instant instant) {
