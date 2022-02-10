@@ -23,7 +23,7 @@ public class SoloShoppingMaskController
   public SoloShoppingMaskController() throws NotEnoughCreditException, MissingFullMemberException {
     super(new SoloShoppingMaskModel());
     SaleSession saleSession = new SaleSession(SaleSessionType.SOLO);
-    User user = LogInModel.getLoggedIn();
+    User user = LogInModel.getLoggedInFromDB();
     if (!user.isFullMember() && user.getUserGroup().getMembers().size() == 1) {
       throw new MissingFullMemberException(
           "Du darfst nicht selbst einkaufen, weil du kein "
