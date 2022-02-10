@@ -10,6 +10,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
@@ -17,11 +18,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.jetbrains.annotations.NotNull;
 
 @Table
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
-public class Purchase {
+public class Purchase implements UserRelated {
   @Id
   @GeneratedValue(generator = "increment")
   @GenericGenerator(name = "increment", strategy = "increment")
@@ -110,5 +112,11 @@ public class Purchase {
         em.createQuery("select p from Purchase p order by p.id desc", Purchase.class)
             .setMaxResults(1)
             .getSingleResult());
+  }
+
+  @Override
+  public boolean isInRelation(@NotNull User user) {
+    return session == null
+        || user.getUserGroup().getId() == session.getCustomer().getUserGroup().getId();
   }
 }

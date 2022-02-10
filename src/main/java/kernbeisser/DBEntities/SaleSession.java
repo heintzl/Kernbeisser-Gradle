@@ -5,15 +5,17 @@ import javax.persistence.*;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table
 @EqualsAndHashCode(doNotUseGetters = true)
-public class SaleSession {
+public class SaleSession implements UserRelated {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Getter(onMethod_ = {@Key(PermissionKey.SALE_SESSION_ID_READ)})
@@ -62,5 +64,10 @@ public class SaleSession {
 
   public String getSessionTypeName() {
     return sessionType == null ? "UNKNOWN" : getSessionType().name();
+  }
+
+  @Override
+  public boolean isInRelation(@NotNull User user) {
+    return user.getUserGroup().equals(customer.getUserGroup());
   }
 }
