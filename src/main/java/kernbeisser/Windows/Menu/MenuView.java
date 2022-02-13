@@ -246,8 +246,7 @@ public class MenuView implements IView<MenuController> {
     doUserDefiniedTransaction =
         new ControllerButton(
             () ->
-                new TransactionController(
-                    LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
+                new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
             TransactionController.class);
     permissionAssignment =
         new ControllerButton(

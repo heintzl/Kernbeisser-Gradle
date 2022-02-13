@@ -333,7 +333,11 @@ public class User implements Serializable, UserRelated {
   }
 
   public static User getById(int parseInt) {
-    return DBConnection.getEntityManager().find(User.class, parseInt);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.find(User.class, parseInt);
   }
 
   @kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)
@@ -417,9 +421,7 @@ public class User implements Serializable, UserRelated {
     }
   }
 
-  private static final User KERNBEISSER_USER = readKernbeisserUser();
-
-  private static User readKernbeisserUser() {
+  public static User getKernbeisserUser() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       @Cleanup(value = "commit")
@@ -441,12 +443,8 @@ public class User implements Serializable, UserRelated {
       em.persist(kernbeisser);
       em.flush();
       et.commit();
-      return readKernbeisserUser();
+      return getKernbeisserUser();
     }
-  }
-
-  public static User getKernbeisserUser() {
-    return KERNBEISSER_USER;
   }
 
   public double valueAt(Instant instant) {
