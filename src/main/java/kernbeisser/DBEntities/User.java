@@ -571,7 +571,7 @@ public class User implements Serializable, UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return user.userGroup.equals(this.userGroup);
+    return user.id == this.id || user.userGroup.equals(this.userGroup);
   }
 
   public boolean userGroupEquals(UserGroup userGroup) {
