@@ -193,6 +193,7 @@ public class Transaction implements UserRelated {
       String info,
       UserGroup fromUG,
       UserGroup toUG) {
+    LogInModel.checkRefreshRequirements(fromUG, toUG);
     Transaction transaction = new Transaction();
     transaction.value = value;
     transaction.toUser = to;
@@ -212,6 +213,7 @@ public class Transaction implements UserRelated {
       em.merge(from);
     }
     em.flush();
+
     return transaction;
   }
 
