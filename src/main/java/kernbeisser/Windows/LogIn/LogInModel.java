@@ -14,23 +14,25 @@ import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Access.UserRelatedAccessManager;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+import lombok.Getter;
+import lombok.Setter;
 
 public final class LogInModel implements IModel {
 
-  private static User loggedIn;
+  @Getter
+  private static int loggedInId;
+  private static UserRelatedAccessManager userRelatedAccessManager;
+  @Getter
+  @Setter
+  private static boolean requiresRefresh = false;
 
   public static User getLoggedIn() {
-    return loggedIn;
-  }
-
-  public static User getLoggedInFromDB() {
-    loggedIn = (User.getById(loggedIn.getId()));
-    Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
-    Access.setDefaultManager(new UserRelatedAccessManager(loggedIn));
-    return loggedIn;
+    if (loggedInId == -1) throw new RuntimeException("No user is logged in");
+    return User.getById(loggedInId);
   }
 
   public static void logIn(String username, char[] password)
@@ -46,10 +48,11 @@ public final class LogInModel implements IModel {
               .setParameter("username", username)
               .getSingleResult();
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
-        loggedIn = user;
-        Access.setDefaultManager(new UserRelatedAccessManager(loggedIn));
+        loggedInId = user.getId();
+        userRelatedAccessManager = new UserRelatedAccessManager(getLoggedIn());
+        Access.setDefaultManager(userRelatedAccessManager);
         if (!Tools.canInvoke(() -> new LogInModel().canLogIn())) {
-          loggedIn = null;
+          loggedInId = -1;
           Access.setDefaultManager(AccessManager.ACCESS_DENIED);
           throw new PermissionRequired();
         }
