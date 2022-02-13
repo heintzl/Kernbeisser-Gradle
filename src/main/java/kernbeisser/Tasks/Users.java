@@ -17,6 +17,7 @@ import kernbeisser.Reports.TransactionStatement;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Cleanup;
 
 public class Users {
@@ -143,6 +144,7 @@ public class Users {
       User currentUser = em.find(User.class, userId);
       UserGroup current = currentUser.getUserGroup();
       UserGroup destination = em.find(UserGroup.class, userGroupId);
+      LogInModel.checkRefreshRequirements(currentUser, current, destination);
       if (current.getMembers().size() < 2) {
         if (!confirmGroupVoid(currentUser)) return false;
         Transaction.switchGroupTransaction(
@@ -172,6 +174,8 @@ public class Users {
           "Gruppenwechsel",
           JOptionPane.ERROR_MESSAGE);
       return false;
+    } finally {
+      LogInModel.refreshAccessManagerIfRequired();
     }
   }
 
@@ -204,8 +208,12 @@ public class Users {
   public static void leaveUserGroup(User user) throws MissingFullMemberException {
     UserGroup newUserGroup = new UserGroup();
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
+    et.begin();
     em.persist(newUserGroup);
+    et.commit();
+    et.begin();
     try {
       switchUserGroup(user.getId(), newUserGroup.getId());
     } catch (MissingFullMemberException e) {
