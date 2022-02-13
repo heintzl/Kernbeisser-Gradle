@@ -23,12 +23,9 @@ import lombok.Setter;
 
 public final class LogInModel implements IModel {
 
-  @Getter
-  private static int loggedInId;
+  @Getter private static int loggedInId;
   private static UserRelatedAccessManager userRelatedAccessManager;
-  @Getter
-  @Setter
-  private static boolean requiresRefresh = false;
+  @Getter @Setter private static boolean requiresRefresh = false;
 
   public static User getLoggedIn() {
     if (loggedInId == -1) throw new RuntimeException("No user is logged in");
@@ -62,6 +59,26 @@ public final class LogInModel implements IModel {
       }
     } catch (NoResultException e) {
       throw new CannotLogInException();
+    }
+  }
+
+  public static void checkRefreshRequirements(UserRelated... userRelated) {
+    User loggedIn = getLoggedIn();
+    for (UserRelated ur : userRelated) {
+      if (ur.isInRelation(loggedIn)) {
+        requiresRefresh = true;
+      }
+    }
+  }
+
+  public static void refreshAccessManager() {
+    userRelatedAccessManager.setTargetUser(getLoggedIn());
+    requiresRefresh = false;
+  }
+
+  public static void refreshAccessManagerIfRequired() {
+    if (requiresRefresh) {
+      refreshAccessManager();
     }
   }
 
