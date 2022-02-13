@@ -73,17 +73,17 @@ public class UserGroup implements UserRelated {
       onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)})
   private double solidaritySurcharge;
 
-  @Transient private Optional<Double> oldSolidarity;
+  @Transient private Double oldSolidarity;
 
   @PostLoad
   private void rememberValues() {
-    oldSolidarity = Optional.of(solidaritySurcharge);
+    oldSolidarity = solidaritySurcharge;
   }
 
   @PreUpdate
   @PrePersist
   private void setUpdateBy() {
-    if (!Optional.of(solidaritySurcharge).equals(oldSolidarity)) {
+    if (Optional.ofNullable(oldSolidarity).filter(d -> d != solidaritySurcharge).isPresent()) {
       if (LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
     }
   }

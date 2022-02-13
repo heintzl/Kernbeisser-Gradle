@@ -159,7 +159,7 @@ public class Transaction implements UserRelated {
         }
       }
       if (value < 0 && toUG.getValue() + value < minValue) {
-        if (!to.mayGoUnderMin()) {
+        if (!to.equals(User.getKernbeisserUser()) && !to.mayGoUnderMin()) {
           throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the receiving user ["
                   + from.getId()
@@ -193,6 +193,7 @@ public class Transaction implements UserRelated {
       String info,
       UserGroup fromUG,
       UserGroup toUG) {
+    LogInModel.checkRefreshRequirements(fromUG, toUG);
     Transaction transaction = new Transaction();
     transaction.value = value;
     transaction.toUser = to;
@@ -202,8 +203,8 @@ public class Transaction implements UserRelated {
     transaction.info = info;
     transaction.transactionType = transactionType;
     transaction.createdBy = LogInModel.getLoggedIn();
-    setValue(fromUG, fromUG.getValue() - value);
-    setValue(toUG, toUG.getValue() + value);
+    changeValue(fromUG, -value);
+    changeValue(toUG, value);
     em.persist(fromUG);
     em.persist(toUG);
     em.persist(transaction);
@@ -212,15 +213,16 @@ public class Transaction implements UserRelated {
       em.merge(from);
     }
     em.flush();
+
     return transaction;
   }
 
-  private static void setValue(UserGroup transaction, double value) {
+  private static void changeValue(UserGroup transaction, double value) {
     try {
       Method method = UserGroup.class.getDeclaredMethod("setValue", double.class);
       method.setAccessible(true);
       Access.putException(transaction, AccessManager.NO_ACCESS_CHECKING);
-      method.invoke(transaction, Tools.roundCurrency(value));
+      method.invoke(transaction, Tools.roundCurrency(transaction.getValue() + value));
       Access.removeException(transaction);
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
       Tools.showUnexpectedErrorWarning(e);

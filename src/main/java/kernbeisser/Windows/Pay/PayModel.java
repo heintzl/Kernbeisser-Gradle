@@ -15,6 +15,7 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Reports.InvoiceReport;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
@@ -98,6 +99,8 @@ public class PayModel implements IModel<PayController> {
       // only happens if the code doesn't reach the commit statement
       if (et.isActive()) {
         et.rollback();
+      } else {
+        LogInModel.refreshAccessManagerIfRequired();
       }
     }
   }

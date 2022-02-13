@@ -14,24 +14,22 @@ import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Access.UserRelatedAccessManager;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+import lombok.Getter;
+import lombok.Setter;
 
 public final class LogInModel implements IModel {
 
-  private static User loggedIn;
+  @Getter private static int loggedInId;
+  private static UserRelatedAccessManager userRelatedAccessManager;
+  @Getter @Setter private static boolean requiresRefresh = false;
 
   public static User getLoggedIn() {
-    return loggedIn;
-  }
-
-  public static User getLoggedInFromDB() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.find(User.class, loggedIn.getId());
+    if (loggedInId == -1) throw new RuntimeException("No user is logged in");
+    return User.getById(loggedInId);
   }
 
   public static void logIn(String username, char[] password)
@@ -47,10 +45,11 @@ public final class LogInModel implements IModel {
               .setParameter("username", username)
               .getSingleResult();
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
-        loggedIn = user;
-        Access.setDefaultManager(new UserRelatedAccessManager(loggedIn));
+        loggedInId = user.getId();
+        userRelatedAccessManager = new UserRelatedAccessManager(getLoggedIn());
+        Access.setDefaultManager(userRelatedAccessManager);
         if (!Tools.canInvoke(() -> new LogInModel().canLogIn())) {
-          loggedIn = null;
+          loggedInId = -1;
           Access.setDefaultManager(AccessManager.ACCESS_DENIED);
           throw new PermissionRequired();
         }
@@ -60,6 +59,26 @@ public final class LogInModel implements IModel {
       }
     } catch (NoResultException e) {
       throw new CannotLogInException();
+    }
+  }
+
+  public static void checkRefreshRequirements(UserRelated... userRelated) {
+    User loggedIn = getLoggedIn();
+    for (UserRelated ur : userRelated) {
+      if (ur.isInRelation(loggedIn)) {
+        requiresRefresh = true;
+      }
+    }
+  }
+
+  public static void refreshAccessManager() {
+    userRelatedAccessManager.setTargetUser(getLoggedIn());
+    requiresRefresh = false;
+  }
+
+  public static void refreshAccessManagerIfRequired() {
+    if (requiresRefresh) {
+      refreshAccessManager();
     }
   }
 

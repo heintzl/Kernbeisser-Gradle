@@ -4,11 +4,12 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Security.Relations.UserRelated;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 public class UserRelatedAccessManager extends PermissionSetAccessManager {
 
-  private final User targetUser;
+  @Setter private User targetUser;
 
   private final PermissionSet inRelation;
 

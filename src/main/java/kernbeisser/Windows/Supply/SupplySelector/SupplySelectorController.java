@@ -7,17 +7,13 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
-import javax.swing.UnsupportedLookAndFeelException;
 import kernbeisser.Config.Config;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Main;
 import kernbeisser.Reports.PriceListReport;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.SneakyThrows;
@@ -28,12 +24,6 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   public SupplySelectorController(Consumer<Collection<ShoppingItem>> consumer)
       throws PermissionKeyRequiredException {
     super(new SupplySelectorModel(consumer));
-  }
-
-  public static void main(String[] args) throws UnsupportedLookAndFeelException {
-    Main.buildEnvironment();
-    Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
-    new SupplySelectorController(e -> {}).openTab();
   }
 
   @SneakyThrows

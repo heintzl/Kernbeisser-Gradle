@@ -16,7 +16,9 @@ import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessListenerManager;
 import kernbeisser.Security.Access.AccessManager;
+import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -150,7 +152,11 @@ public class ObjectForm<P> {
     checkValidSource();
     try {
       P data = getData(Mode.EDIT);
+      if (data instanceof UserRelated) {
+        LogInModel.checkRefreshRequirements((UserRelated) data);
+      }
       Tools.edit(Tools.getId(original), data);
+      LogInModel.refreshAccessManagerIfRequired();
       JOptionPane.showMessageDialog(null, objectDistinction + " wurde erfolgreich bearbeitet");
       return true;
     } catch (CannotParseException e) {

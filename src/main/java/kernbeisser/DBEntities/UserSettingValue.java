@@ -64,7 +64,7 @@ public class UserSettingValue implements UserRelated {
   }
 
   public static String getValueFor(User user, UserSetting setting) {
-    if (loaded == null || loaded.getId() != user.getId()) {
+    if (loaded == null || !loaded.equals(user)) {
       loadUser(user);
     }
     String out = values.get(setting);

@@ -332,18 +332,12 @@ public class User implements Serializable, UserRelated {
         .getResultList();
   }
 
-  /*  public boolean isActive() {
-      Instant expireDate =
-          Instant.now().minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS);
-      return getAllPurchases().stream()
-          .map(Purchase::getCreateDate)
-          .max(Comparator.comparingLong(d -> d.getLong(ChronoField.INSTANT_SECONDS)))
-          .orElse(Instant.MIN)
-          .isAfter(expireDate);
-    }
-  */
   public static User getById(int parseInt) {
-    return DBConnection.getEntityManager().find(User.class, parseInt);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.find(User.class, parseInt);
   }
 
   @kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)
@@ -577,7 +571,7 @@ public class User implements Serializable, UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return user.userGroup.equals(this.userGroup);
+    return user.id == this.id || user.userGroup.equals(this.userGroup);
   }
 
   public boolean userGroupEquals(UserGroup userGroup) {

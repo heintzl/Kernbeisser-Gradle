@@ -84,7 +84,6 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
                     "Benutzergruppe ohne Vollmitglied",
                     JOptionPane.WARNING_MESSAGE);
               }
-              ;
               if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
                 new ChangePasswordController(LogInModel.getLoggedIn(), true)
                     .openIn(new SubWindow(view.traceViewContainer()));
