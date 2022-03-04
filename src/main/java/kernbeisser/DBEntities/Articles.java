@@ -406,13 +406,16 @@ public class Articles {
             .orElseGet(
                 () -> {
                   Article out = new Article();
+                  Access.putException(out, AccessManager.NO_ACCESS_CHECKING);
                   out.setKbNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
                   out.setSupplier(Supplier.getCustomProductSupplier());
                   out.setSurchargeGroup(out.getSupplier().getOrPersistDefaultSurchargeGroup());
                   out.setSuppliersItemNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
+                  Access.removeException(out);
                   return out;
                 });
-    transformer.accept(article);
+    Access.runWithAccessManager(
+        AccessManager.NO_ACCESS_CHECKING, () -> transformer.accept(article));
     em.persist(article);
     return article;
   }
