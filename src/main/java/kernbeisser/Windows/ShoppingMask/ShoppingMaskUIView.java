@@ -126,10 +126,11 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   public void addToCart() {
+    if (amount.getText().isEmpty() && !isWeighable) amount.setText("1");
     if (controller.addToShoppingCart()) {
       articleTypeInitialize(currentArticleType);
     }
-    amount.setText("1");
+    amount.setText("");
   }
 
   void loadUserInfo(SaleSession saleSession) {
