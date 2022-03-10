@@ -4,10 +4,7 @@ import kernbeisser.DBEntities.SystemSetting;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
-import kernbeisser.VersionIntegrationTools.UpdatingTools.BaseVersion;
-import kernbeisser.VersionIntegrationTools.UpdatingTools.BeginnerPermissionKeyChange;
-import kernbeisser.VersionIntegrationTools.UpdatingTools.PermissionKeyChange;
-import kernbeisser.VersionIntegrationTools.UpdatingTools.RemoveDeprectatedSettings;
+import kernbeisser.VersionIntegrationTools.UpdatingTools.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +12,8 @@ public enum Version {
   BASE_VERSION(BaseVersion.class),
   UNUSED_PERMISSION_KEY_REMOVING(PermissionKeyChange.class),
   REFACTOR_DB_VERSIONING(RemoveDeprectatedSettings.class),
-  TRIAL_MEMBERSHIP(BeginnerPermissionKeyChange.class);
+  TRIAL_MEMBERSHIP(BeginnerPermissionKeyChange.class),
+  SAVE_TRANSACTIONREPORT_NO(AddTransactionReportNo.class);
   public static final Logger logger = LogManager.getLogger(Version.class);
   private final Class<? extends VersionUpdatingTool> updatingToolClass;
 

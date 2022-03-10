@@ -84,6 +84,11 @@ public class Transaction implements UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_WRITE)})
   private String info;
 
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ACCOUNTINGREPORTNO_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ACCOUNTINGREPORTNO_WRITE)})
+  private Long accountingReportNo;
+
   @JoinColumn
   @ManyToOne
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_CREATEDBY_READ)})
