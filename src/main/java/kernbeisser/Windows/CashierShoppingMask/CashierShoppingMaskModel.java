@@ -30,6 +30,7 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
     if (AccountingReportsModel.exportAccountingReports(reportTransactions, no, false)) {
       Setting.LAST_PRINTED_TRANSACTION_ID.changeValue(id);
       Setting.LAST_PRINTED_ACCOUNTING_REPORT_NR.changeValue(no);
+      Transaction.writeAccountingReportNo(reportTransactions, no);
     } else {
       resultConsumer.accept(false);
     }

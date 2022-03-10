@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.*;
@@ -253,6 +254,19 @@ public class Transaction implements UserRelated {
     return Optional.ofNullable(
             em.createQuery("select max(id) from Transaction t", Long.class).getSingleResult())
         .orElse(-1L);
+  }
+
+  public static void writeAccountingReportNo(Collection<Transaction> transactions, long no) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (Transaction transaction : transactions) {
+      transaction.setAccountingReportNo(no);
+      em.merge(transaction);
+    }
+    ;
+    et.commit();
   }
 
   public static List<Transaction> getTransactionRange(
