@@ -1,7 +1,6 @@
 package kernbeisser.Windows.AccountingReports;
 
 import java.time.*;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -15,6 +14,7 @@ import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Reports.*;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskModel;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.var;
 
@@ -70,29 +70,21 @@ public class AccountingReportsController
         new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Bonrolle wird erstellt");
   }
 
-  public void exportAccountingReport(Instant startDate, Instant endDate, boolean withNames) {
+  public void exportAccountingReport(int reportNo, boolean withNames) {
     var view = getView();
-    ZoneId local = ZoneId.systemDefault();
-    // endDate = ZonedDateTime.now(local);
-    var localStartDate = ZonedDateTime.ofInstant(startDate, local).with(ChronoField.HOUR_OF_DAY, 0);
-    var localEndDate =
-        ZonedDateTime.ofInstant(endDate, local)
-            .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay());
-    if (!localStartDate.isBefore(localEndDate)) {
-      view.messageDateValues();
-      return;
-    }
-    try {
-      var reportTransactions =
-          Transaction.getTransactionDateRange(
-                  Instant.from(localStartDate), Instant.from(localEndDate))
-              .stream()
-              .filter(t -> t.isAccountingReportTransaction() || t.isPurchase())
-              .collect(Collectors.toList());
-      if (reportTransactions.isEmpty()) throw new NoTransactionsFoundException();
-      AccountingReportsModel.exportAccountingReports(reportTransactions, 0, withNames);
-    } catch (NoTransactionsFoundException e) {
-      view.messageNoItems("Umsatzbericht");
+    if (reportNo == Transaction.getLastReportNo() + 1) {
+      CashierShoppingMaskModel.printAccountingReports(view::messageNoAccountingReport);
+    } else {
+      try {
+        var reportTransactions =
+            Transaction.getTransactionsByReportNo(reportNo).stream()
+                .filter(t -> t.isAccountingReportTransaction() || t.isPurchase())
+                .collect(Collectors.toList());
+        if (reportTransactions.isEmpty()) throw new NoTransactionsFoundException();
+        AccountingReportsModel.exportAccountingReports(reportTransactions, reportNo, withNames);
+      } catch (NoTransactionsFoundException e) {
+        view.messageEmptyReportNo(reportNo);
+      }
     }
   }
 

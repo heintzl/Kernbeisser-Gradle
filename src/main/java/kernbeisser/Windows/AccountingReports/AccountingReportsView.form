@@ -147,7 +147,7 @@
               </component>
               <component id="d71a" class="kernbeisser.CustomComponents.ComboBox.AdvancedComboBox" binding="user" custom-create="true">
                 <constraints>
-                  <grid row="2" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties/>
@@ -163,21 +163,21 @@
               </component>
               <component id="4cfe5" class="javax.swing.JComboBox" binding="transactionStatementType">
                 <constraints>
-                  <grid row="3" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties/>
               </component>
               <component id="25f1" class="com.github.lgooddatepicker.components.DatePicker" binding="tillRollStartDate" custom-create="true">
                 <constraints>
-                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="2" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties/>
               </component>
               <component id="18b6d" class="javax.swing.JComboBox" binding="userKeySortOrder">
                 <constraints>
-                  <grid row="5" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="5" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -186,7 +186,7 @@
               </component>
               <component id="31ac9" class="javax.swing.JCheckBox" binding="userBalanceWithNames" default-binding="true">
                 <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -195,7 +195,7 @@
               </component>
               <vspacer id="fa104">
                 <constraints>
-                  <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="7" column="2" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
               </vspacer>
@@ -205,30 +205,12 @@
                   <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
-                  <text value="von:"/>
-                </properties>
-              </component>
-              <component id="28963" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <text value="bis:"/>
-                </properties>
-              </component>
-              <component id="d0f97" class="javax.swing.JCheckBox" binding="accountingReportWithNames">
-                <constraints>
-                  <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <text value="Klarnamen ausgeben"/>
+                  <text value="Nr."/>
                 </properties>
               </component>
               <component id="e22dd" class="javax.swing.JRadioButton" binding="optLast">
                 <constraints>
-                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -237,7 +219,7 @@
               </component>
               <component id="7707" class="javax.swing.JRadioButton" binding="optCurrent">
                 <constraints>
-                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -255,7 +237,7 @@
               </component>
               <component id="f6157" class="javax.swing.JCheckBox" binding="permissionHoldersWithKeys">
                 <constraints>
-                  <grid row="6" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="6" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -266,7 +248,7 @@
               </component>
               <component id="86a9d" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -275,24 +257,26 @@
               </component>
               <component id="b8fa2" class="com.github.lgooddatepicker.components.DatePicker" binding="tillRollEndDate" custom-create="true">
                 <constraints>
-                  <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="dd4a7" class="com.github.lgooddatepicker.components.DatePicker" binding="accountingReportStartDate" custom-create="true">
+              <component id="b5b2f" class="javax.swing.JComboBox" binding="accountingReportNo">
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="21420" class="com.github.lgooddatepicker.components.DatePicker" binding="accountingReportEndDate" custom-create="true">
+              <component id="d0f97" class="javax.swing.JCheckBox" binding="accountingReportWithNames">
                 <constraints>
-                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <text value="Klarnamen ausgeben"/>
+                </properties>
               </component>
             </children>
           </grid>

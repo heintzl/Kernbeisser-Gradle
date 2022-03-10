@@ -22,7 +22,7 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
     return User.defaultSearch(searchQuery, 500);
   }
 
-  void printAccountingReports(Consumer<Boolean> resultConsumer) {
+  public static void printAccountingReports(Consumer<Boolean> resultConsumer) {
     long from = Setting.LAST_PRINTED_TRANSACTION_ID.getLongValue();
     long id = Transaction.getLastTransactionId();
     long no = Transaction.getLastReportNo() + 1;

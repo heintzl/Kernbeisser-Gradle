@@ -9,8 +9,10 @@ import java.util.*;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Purchase;
+import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
@@ -43,8 +45,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JRadioButton optCurrent;
   private JRadioButton optPermissionHolders;
   private JCheckBox permissionHoldersWithKeys;
-  private DatePicker accountingReportStartDate;
-  private DatePicker accountingReportEndDate;
+  private JComboBox<String> accountingReportNo;
   private Map<JComponent, JRadioButton> optionalComponents;
 
   @Linked private AccountingReportsController controller;
@@ -62,8 +63,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
       controller.exportTillroll(getDateValue(tillRollStartDate), getDateValue(tillRollEndDate));
     } else if (optAccountingReport.isSelected()) {
       controller.exportAccountingReport(
-          getDateValue(accountingReportStartDate),
-          getDateValue(accountingReportEndDate),
+          Integer.parseInt(((String) accountingReportNo.getSelectedItem()).replace(" (neu)", "")),
           accountingReportWithNames.isSelected());
     } else if (optUserBalance.isSelected()) {
       controller.exportUserBalance(userBalanceWithNames.isSelected());
@@ -91,8 +91,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   @Override
   public void initialize(AccountingReportsController controller) {
     optionalComponents = new HashMap<>();
-    optionalComponents.put(accountingReportStartDate, optAccountingReport);
-    optionalComponents.put(accountingReportEndDate, optAccountingReport);
+    optionalComponents.put(accountingReportNo, optAccountingReport);
     optionalComponents.put(accountingReportWithNames, optAccountingReport);
     optionalComponents.put(tillRollStartDate, optTillRoll);
     optionalComponents.put(tillRollEndDate, optTillRoll);
@@ -114,11 +113,20 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
       userKeySortOrder.addItem(s);
     }
     optCurrent.setSelected(true);
+
     var now = LocalDate.now(ZoneId.systemDefault());
     tillRollStartDate.setDate(now);
     tillRollEndDate.setDate(now);
-    accountingReportStartDate.setDate(now);
-    accountingReportEndDate.setDate(now);
+
+    int maxReportNo = (int) Transaction.getLastReportNo();
+    for (int i = 1; i <= maxReportNo; i++) {
+      accountingReportNo.addItem(Integer.toString(i));
+    }
+    accountingReportNo.setSelectedIndex(maxReportNo - 1);
+    if (Transaction.getLastTransactionId() > Setting.LAST_PRINTED_TRANSACTION_ID.getIntValue()) {
+      accountingReportNo.addItem((maxReportNo + 1) + " (neu)");
+    }
+
     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));
     optionalComponents.values().stream()
         .distinct()
@@ -136,6 +144,22 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
         getContent(),
         "Im angegebenen Zeitraum liegen keine Umsätze vor.",
         title,
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void messageEmptyReportNo(long reportNo) {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Zur Berichtsnummer " + reportNo + " liegen keine Umsätze vor.",
+        "Umsatzbericht",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void messageNoAccountingReport(boolean b) {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Der Bericht wurde " + (b ? "" : "nicht") + " erfolgreich erstellt",
+        "Umsatzbericht",
         JOptionPane.INFORMATION_MESSAGE);
   }
 
@@ -157,8 +181,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   }
 
   private void createUIComponents() {
-    accountingReportStartDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
-    accountingReportEndDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
     user = new AdvancedComboBox<>(User::getFullName);
     tillRollStartDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
     tillRollEndDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
