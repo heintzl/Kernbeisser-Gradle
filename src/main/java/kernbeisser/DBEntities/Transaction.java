@@ -256,17 +256,28 @@ public class Transaction implements UserRelated {
         .orElse(-1L);
   }
 
+  public static long getLastReportNo() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return Optional.ofNullable(
+            em.createQuery("select max(accountingReportNo) from Transaction t", Long.class)
+                .getSingleResult())
+        .orElse(0L);
+  }
+
   public static void writeAccountingReportNo(Collection<Transaction> transactions, long no) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    for (Transaction transaction : transactions) {
-      transaction.setAccountingReportNo(no);
-      em.merge(transaction);
+    for (Transaction t : transactions) {
+      if (t.accountingReportNo == null) {
+        t.setAccountingReportNo(no);
+        em.merge(t);
+      }
     }
-    ;
-    et.commit();
   }
 
   public static List<Transaction> getTransactionRange(
@@ -281,6 +292,23 @@ public class Transaction implements UserRelated {
                 Transaction.class)
             .setParameter("from", startTransactionId)
             .setParameter("to", endTransactionId)
+            .getResultList();
+    if (transactions.isEmpty()) {
+      throw new NoTransactionsFoundException();
+    }
+    return transactions;
+  }
+
+  public static List<Transaction> getTransactionsByReportNo(long reportNo) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    List<Transaction> transactions =
+        em.createQuery(
+                "select t from Transaction t where t.accountingReportNo = :no order by id",
+                Transaction.class)
+            .setParameter("no", reportNo)
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();
