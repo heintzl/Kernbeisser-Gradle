@@ -1,6 +1,7 @@
 package kernbeisser.Windows.EditUserGroup;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -38,12 +39,14 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
                 UserGroup.defaultSearch(s, m).stream()
                     .filter(
                         new Predicate<UserGroup>() {
-                          final UserGroup kernbeisserUserGroup =
-                              User.getKernbeisserUser().getUserGroup();
+                          final List<UserGroup> genericUserGroups =
+                              User.getGenericUsers().stream()
+                                  .map(User::getUserGroup)
+                                  .collect(Collectors.toList());
 
                           @Override
                           public boolean test(UserGroup userGroup) {
-                            return !kernbeisserUserGroup.equals(userGroup);
+                            return !genericUserGroups.contains(userGroup);
                           }
                         })
                     .collect(Collectors.toCollection(ArrayList::new)),

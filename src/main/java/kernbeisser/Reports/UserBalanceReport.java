@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import lombok.Cleanup;
 
@@ -37,10 +38,10 @@ public class UserBalanceReport extends Report {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select u from UserGroup u", UserGroup.class)
+    return em.createQuery(
+            "select u from UserGroup u where not " + User.GENERIC_USERS_CONDITION, UserGroup.class)
         .getResultStream()
-        .filter(
-            ug -> !ug.getMembers().stream().allMatch(u -> u.isUnreadable() || u.isKernbeisser()))
+        .filter(ug -> !ug.getMembers().stream().allMatch(User::isUnreadable))
         .map(ug -> ug.withMembersAsStyledString(this.withNames))
         .sorted((u1, u2) -> u1.getMembersAsString().compareToIgnoreCase(u2.getMembersAsString()))
         .collect(Collectors.toList());
