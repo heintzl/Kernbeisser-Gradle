@@ -12,8 +12,8 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
-import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.StatementType;
+import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -123,8 +123,10 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
       accountingReportNo.addItem(Integer.toString(i));
     }
     accountingReportNo.setSelectedIndex(maxReportNo - 1);
-    if (Transaction.getLastTransactionId() > Setting.LAST_PRINTED_TRANSACTION_ID.getIntValue()) {
+    try {
+      Transaction.getUnreportedTransactions();
       accountingReportNo.addItem((maxReportNo + 1) + " (neu)");
+    } catch (NoTransactionsFoundException ignored) {
     }
 
     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));

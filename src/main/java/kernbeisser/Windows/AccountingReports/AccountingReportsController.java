@@ -73,7 +73,12 @@ public class AccountingReportsController
   public void exportAccountingReport(int reportNo, boolean withNames) {
     var view = getView();
     if (reportNo == Transaction.getLastReportNo() + 1) {
-      CashierShoppingMaskModel.printAccountingReports(view::messageNoAccountingReport);
+      try {
+        CashierShoppingMaskModel.printAccountingReports(
+            Transaction.getUnreportedTransactions(), view::messageNoAccountingReport);
+      } catch (NoTransactionsFoundException e) {
+        view.messageEmptyReportNo(reportNo);
+      }
     } else {
       try {
         var reportTransactions =

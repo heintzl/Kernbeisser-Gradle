@@ -246,16 +246,6 @@ public class Transaction implements UserRelated {
         "Einkauf vom " + Date.INSTANT_DATE.format(LocalDate.now()));
   }
 
-  public static long getLastTransactionId() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return Optional.ofNullable(
-            em.createQuery("select max(id) from Transaction t", Long.class).getSingleResult())
-        .orElse(-1L);
-  }
-
   public static long getLastReportNo() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -278,25 +268,6 @@ public class Transaction implements UserRelated {
         em.merge(t);
       }
     }
-  }
-
-  public static List<Transaction> getTransactionRange(
-      long startTransactionId, long endTransactionId) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    List<Transaction> transactions =
-        em.createQuery(
-                "select t from Transaction t where t.id between :from and :to order by id",
-                Transaction.class)
-            .setParameter("from", startTransactionId)
-            .setParameter("to", endTransactionId)
-            .getResultList();
-    if (transactions.isEmpty()) {
-      throw new NoTransactionsFoundException();
-    }
-    return transactions;
   }
 
   public static List<Transaction> getTransactionsByReportNo(long reportNo) {
@@ -327,6 +298,23 @@ public class Transaction implements UserRelated {
                 Transaction.class)
             .setParameter("from", startDate)
             .setParameter("to", endDate)
+            .getResultList();
+    if (transactions.isEmpty()) {
+      throw new NoTransactionsFoundException();
+    }
+    return transactions;
+  }
+
+  public static List<Transaction> getUnreportedTransactions() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    List<Transaction> transactions =
+        em.createQuery(
+                "select t from Transaction t where t.accountingReportNo IS NULL AND :shopUser IN (t.fromUser, t.toUser) order by id",
+                Transaction.class)
+            .setParameter("shopUser", User.getKernbeisserUser())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();
