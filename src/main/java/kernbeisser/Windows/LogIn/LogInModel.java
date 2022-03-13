@@ -64,6 +64,7 @@ public final class LogInModel implements IModel {
 
   public static void checkRefreshRequirements(UserRelated... userRelated) {
     User loggedIn = getLoggedIn();
+    if (loggedIn == null) return;
     for (UserRelated ur : userRelated) {
       if (ur.isInRelation(loggedIn)) {
         requiresRefresh = true;
