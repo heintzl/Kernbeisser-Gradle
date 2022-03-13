@@ -257,6 +257,17 @@ public class Transaction implements UserRelated {
         .orElse(0L);
   }
 
+  public static long getLastIdOfReportNo(long reportNo) throws NoResultException {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select max(id) from Transaction t where accountingReportNo = :no", Long.class)
+        .setParameter("no", reportNo)
+        .getSingleResult();
+  }
+
   public static void writeAccountingReportNo(Collection<Transaction> transactions, long no) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")

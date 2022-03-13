@@ -4,16 +4,10 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
-import lombok.Cleanup;
 
 public class UserBalanceReport extends Report {
   final Timestamp timeStamp;
@@ -42,22 +36,7 @@ public class UserBalanceReport extends Report {
 
   @Override
   Map<String, Object> getReportParams() {
-    Map<String, Object> params = new HashMap<>();
-    double sum = 0;
-    double sum_negative = 0;
-    double sum_positive = 0;
-    for (UserGroup ug : userGroups) {
-      double value = ug.getValue();
-      sum += value;
-      if (value < 0) {
-        sum_negative += value;
-      } else {
-        sum_positive += value;
-      }
-    }
-    params.put("sum", sum);
-    params.put("sum_negative", sum_negative);
-    params.put("sum_positive", sum_positive);
+    Map<String, Object> params = UserGroup.getValueAggregates();
     params.put(
         "reportTitle",
         "Guthabenstände" + (reportNo == 0 ? "" : " zu LD-Endabrechnung Nr. " + reportNo));

@@ -172,6 +172,30 @@ public class UserGroup implements UserRelated {
     return sb.toString();
   }
 
+  private static UserGroup historicGroup(UserGroup ug, Double historicValue) {
+    ug.setValue(historicValue);
+    return ug;
+  }
+
+  private static List<UserGroup> getValuesAtTransactionId(Long tId) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "SELECT ug AS ug, SUM(CASE WHEN ug = t.fromUserGroup THEN -t.value ELSE t.value END) AS tSum "
+                + "FROM UserGroup ug INNER JOIN Transaction t ON ug IN (t.fromUserGroup, t.toUserGroup) "
+                + "WHERE t.id <= :tid AND ug in (select u.userGroup from User u where u.unreadable = false and not "
+                + User.GENERIC_USERS_CONDITION
+                + ") "
+                + "GROUP BY ug",
+            Tuple.class)
+        .setParameter("tid", tId)
+        .getResultStream()
+        .map(t -> historicGroup((UserGroup) t.get("ug"), (Double) t.get("tSum")))
+        .collect(Collectors.toList());
+  }
+
   private static Map<Integer, Double> getInvalidUserGroupTransactionSums() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -212,6 +236,36 @@ public class UserGroup implements UserRelated {
     return getInvalidUserGroupTransactionSums().entrySet().stream()
         .map(e -> getWithTransactionSum(e.getKey(), e.getValue()))
         .collect(Collectors.toList());
+  }
+
+  public static Map<String, Object> getValueAggregatesAtReportNo(long reportNo)
+      throws NoResultException {
+    return getValueAggregatesAtTransactionId(Transaction.getLastIdOfReportNo(reportNo));
+  }
+
+  public static Map<String, Object> getValueAggregates() {
+    return getValueAggregatesAtTransactionId(Long.MAX_VALUE);
+  }
+
+  public static Map<String, Object> getValueAggregatesAtTransactionId(Long tId) {
+    Map<String, Object> params = new HashMap<>();
+    double sum = 0;
+    double sum_negative = 0;
+    double sum_positive = 0;
+    var historicGroups = getValuesAtTransactionId(tId);
+    for (UserGroup ug : historicGroups) {
+      double value = ug.getValue();
+      sum += value;
+      if (value < 0) {
+        sum_negative += value;
+      } else {
+        sum_positive += value;
+      }
+    }
+    params.put("sum", sum);
+    params.put("sum_negative", sum_negative);
+    params.put("sum_positive", sum_positive);
+    return params;
   }
 
   @Override
