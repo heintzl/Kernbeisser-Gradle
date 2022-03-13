@@ -263,7 +263,7 @@ public class Transaction implements UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select max(id) from Transaction t where accountingReportNo = :no", Long.class)
+            "select max(id) from Transaction t where accountingReportNo <= :no", Long.class)
         .setParameter("no", reportNo)
         .getSingleResult();
   }

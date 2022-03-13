@@ -184,15 +184,6 @@
                   <model/>
                 </properties>
               </component>
-              <component id="31ac9" class="javax.swing.JCheckBox" binding="userBalanceWithNames" default-binding="true">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <text value="Klarnamen ausgeben"/>
-                </properties>
-              </component>
               <vspacer id="fa104">
                 <constraints>
                   <grid row="7" column="2" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
@@ -276,6 +267,31 @@
                 </constraints>
                 <properties>
                   <text value="Klarnamen ausgeben"/>
+                </properties>
+              </component>
+              <component id="31ac9" class="javax.swing.JCheckBox" binding="userBalanceWithNames" default-binding="true">
+                <constraints>
+                  <grid row="1" column="3" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Klarnamen ausgeben"/>
+                </properties>
+              </component>
+              <component id="2bcc9" class="javax.swing.JComboBox" binding="userBalanceReportNo">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="d2a3f" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Nr."/>
                 </properties>
               </component>
             </children>

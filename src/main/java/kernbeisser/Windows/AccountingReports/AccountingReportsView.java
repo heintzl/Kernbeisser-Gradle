@@ -31,8 +31,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JPanel main;
   private JRadioButton optTillRoll;
   @Getter private JRadioButton optAccountingReport;
-  private AdvancedComboBox<Purchase> startBon;
-  private AdvancedComboBox<Purchase> endBon;
   private JRadioButton optUserBalance;
   private JCheckBox userBalanceWithNames;
   private JCheckBox accountingReportWithNames;
@@ -46,6 +44,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JRadioButton optPermissionHolders;
   private JCheckBox permissionHoldersWithKeys;
   private JComboBox<String> accountingReportNo;
+  private JComboBox<String> userBalanceReportNo;
   private Map<JComponent, JRadioButton> optionalComponents;
 
   @Linked private AccountingReportsController controller;
@@ -63,10 +62,18 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
       controller.exportTillroll(getDateValue(tillRollStartDate), getDateValue(tillRollEndDate));
     } else if (optAccountingReport.isSelected()) {
       controller.exportAccountingReport(
-          Integer.parseInt(((String) accountingReportNo.getSelectedItem()).replace(" (neu)", "")),
+          Long.parseLong(
+              ((String) accountingReportNo.getSelectedItem()).replace(" (neu erstellen)", "")),
           accountingReportWithNames.isSelected());
     } else if (optUserBalance.isSelected()) {
-      controller.exportUserBalance(userBalanceWithNames.isSelected());
+      String selectedReport = (String) userBalanceReportNo.getSelectedItem();
+      long reportNo;
+      if (selectedReport.equals("aktuell")) {
+        reportNo = -1;
+      } else {
+        reportNo = Long.parseLong(selectedReport);
+      }
+      controller.exportUserBalance(reportNo, userBalanceWithNames.isSelected());
     } else if (optKeyUserList.isSelected()) {
       controller.exportKeyUserList(userKeySortOrder.getSelectedItem().toString());
     } else if (optTransactionStatement.isSelected()) {
@@ -96,6 +103,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     optionalComponents.put(tillRollStartDate, optTillRoll);
     optionalComponents.put(tillRollEndDate, optTillRoll);
     optionalComponents.put(userBalanceWithNames, optUserBalance);
+    optionalComponents.put(userBalanceReportNo, optUserBalance);
     optionalComponents.put(user, optTransactionStatement);
     optionalComponents.put(optLast, optTransactionStatement);
     optionalComponents.put(optCurrent, optTransactionStatement);
@@ -121,12 +129,17 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     int maxReportNo = (int) Transaction.getLastReportNo();
     for (int i = 1; i <= maxReportNo; i++) {
       accountingReportNo.addItem(Integer.toString(i));
+      userBalanceReportNo.addItem(Integer.toString(i));
     }
-    accountingReportNo.setSelectedIndex(maxReportNo - 1);
+    userBalanceReportNo.addItem("aktuell");
+    userBalanceReportNo.setSelectedIndex(maxReportNo);
     try {
       Transaction.getUnreportedTransactions();
-      accountingReportNo.addItem((maxReportNo + 1) + " (neu)");
+      accountingReportNo.addItem((maxReportNo + 1) + " (neu erstellen)");
+      accountingReportNo.setSelectedIndex(maxReportNo);
+      userBalanceReportNo.setSelectedIndex(maxReportNo);
     } catch (NoTransactionsFoundException ignored) {
+      accountingReportNo.setSelectedIndex(maxReportNo - 1);
     }
 
     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));

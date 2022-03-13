@@ -177,7 +177,7 @@ public class UserGroup implements UserRelated {
     return ug;
   }
 
-  private static List<UserGroup> getValuesAtTransactionId(Long tId) {
+  private static List<UserGroup> getValuesAtTransactionId(Long tId, boolean withUnreadables) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -185,12 +185,13 @@ public class UserGroup implements UserRelated {
     return em.createQuery(
             "SELECT ug AS ug, SUM(CASE WHEN ug = t.fromUserGroup THEN -t.value ELSE t.value END) AS tSum "
                 + "FROM UserGroup ug INNER JOIN Transaction t ON ug IN (t.fromUserGroup, t.toUserGroup) "
-                + "WHERE t.id <= :tid AND ug in (select u.userGroup from User u where u.unreadable = false and not "
+                + "WHERE t.id <= :tid AND ug in (select u.userGroup from User u where (:all = true OR u.unreadable = false) and not "
                 + User.GENERIC_USERS_CONDITION
                 + ") "
                 + "GROUP BY ug",
             Tuple.class)
         .setParameter("tid", tId)
+        .setParameter("all", withUnreadables)
         .getResultStream()
         .map(t -> historicGroup((UserGroup) t.get("ug"), (Double) t.get("tSum")))
         .collect(Collectors.toList());
@@ -238,21 +239,26 @@ public class UserGroup implements UserRelated {
         .collect(Collectors.toList());
   }
 
-  public static Map<String, Object> getValueAggregatesAtReportNo(long reportNo)
+  public static Map<String, Object> getValueAggregatesAtTransactionId(long transactionId)
       throws NoResultException {
-    return getValueAggregatesAtTransactionId(Transaction.getLastIdOfReportNo(reportNo));
+    return getValueAggregatesAtTransactionId(transactionId, true);
   }
 
   public static Map<String, Object> getValueAggregates() {
-    return getValueAggregatesAtTransactionId(Long.MAX_VALUE);
+    return getValueAggregatesAtTransactionId(Long.MAX_VALUE, false);
   }
 
-  public static Map<String, Object> getValueAggregatesAtTransactionId(Long tId) {
+  public static List<UserGroup> getUserGroupsAtTransactionId(long transactionId) {
+    return getValuesAtTransactionId(transactionId, true);
+  }
+
+  private static Map<String, Object> getValueAggregatesAtTransactionId(
+      Long tId, boolean withUnreadables) {
     Map<String, Object> params = new HashMap<>();
     double sum = 0;
     double sum_negative = 0;
     double sum_positive = 0;
-    var historicGroups = getValuesAtTransactionId(tId);
+    var historicGroups = getValuesAtTransactionId(tId, withUnreadables);
     for (UserGroup ug : historicGroups) {
       double value = ug.getValue();
       sum += value;

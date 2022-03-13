@@ -70,7 +70,7 @@ public class AccountingReportsController
         new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Bonrolle wird erstellt");
   }
 
-  public void exportAccountingReport(int reportNo, boolean withNames) {
+  public void exportAccountingReport(long reportNo, boolean withNames) {
     var view = getView();
     if (reportNo == Transaction.getLastReportNo() + 1) {
       try {
@@ -93,8 +93,9 @@ public class AccountingReportsController
     }
   }
 
-  public void exportUserBalance(boolean userBalanceWithNames) {
-    exportReport(new UserBalanceReport(0, userBalanceWithNames), "Guthabenstände werden erstellt");
+  public void exportUserBalance(long reportNo, boolean userBalanceWithNames) {
+    exportReport(
+        new UserBalanceReport(reportNo, userBalanceWithNames), "Guthabenstände werden erstellt");
   }
 
   public void exportKeyUserList(String sortOrder) {

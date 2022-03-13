@@ -182,9 +182,9 @@ public class AccountingReport extends Report {
         }
       }
     }
-    Transaction lastTransaction =
-        transactions.stream().max(Comparator.comparingLong(Transaction::getId)).get();
-    Map<String, Object> reportParams = UserGroup.getValueAggregatesAtReportNo(this.reportNo);
+    long lastTransactionId = transactions.stream().mapToLong(Transaction::getId).max().getAsLong();
+    Map<String, Object> reportParams =
+        UserGroup.getValueAggregatesAtTransactionId(lastTransactionId);
     reportParams.put("transactionSaldo", transactionSaldo);
     reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
     reportParams.put("transactionSpecialPayments", transactionSpecialPayments);

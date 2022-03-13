@@ -28,9 +28,9 @@ public class AccountingTransactionsReport extends Report {
 
   @Override
   Map<String, Object> getReportParams() {
-    Transaction lastTransaction =
-        transactions.stream().max(Comparator.comparingLong(Transaction::getId)).get();
-    Map<String, Object> reportParams = UserGroup.getValueAggregatesAtReportNo(reportNo);
+    long lastTransactionId = transactions.stream().mapToLong(Transaction::getId).max().getAsLong();
+    Map<String, Object> reportParams =
+        UserGroup.getValueAggregatesAtTransactionId(lastTransactionId);
     reportParams.put("userGroup", User.getKernbeisserUser().getUserGroup());
     reportParams.put("reportNo", reportNo);
     reportParams.put("reportTitle", AccountingReport.getReportTitle(reportNo, transactions));
