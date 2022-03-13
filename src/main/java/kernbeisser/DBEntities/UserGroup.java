@@ -88,6 +88,20 @@ public class UserGroup implements UserRelated {
     }
   }
 
+  public static List<UserGroup> getActiveUserGroups() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select ug from UserGroup ug where ug in "
+                + "(select u.userGroup from User u where u.unreadable = false and not "
+                + User.GENERIC_USERS_CONDITION
+                + ")",
+            UserGroup.class)
+        .getResultList();
+  }
+
   public UserGroup withMembersAsStyledString(boolean withNames) {
     UserGroup result = new UserGroup();
     result.membersAsString =

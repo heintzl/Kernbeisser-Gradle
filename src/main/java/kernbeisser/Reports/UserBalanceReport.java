@@ -34,14 +34,7 @@ public class UserBalanceReport extends Report {
   }
 
   private List<UserGroup> getUserGroups() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select u from UserGroup u where not " + User.GENERIC_USERS_CONDITION, UserGroup.class)
-        .getResultStream()
-        .filter(ug -> !ug.getMembers().stream().allMatch(User::isUnreadable))
+    return UserGroup.getActiveUserGroups().stream()
         .map(ug -> ug.withMembersAsStyledString(this.withNames))
         .sorted((u1, u2) -> u1.getMembersAsString().compareToIgnoreCase(u2.getMembersAsString()))
         .collect(Collectors.toList());
