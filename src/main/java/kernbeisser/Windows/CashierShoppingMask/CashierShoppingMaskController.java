@@ -1,5 +1,6 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
+import java.util.List;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
@@ -10,6 +11,7 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.NoSelectionException;
+import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Users;
@@ -103,22 +105,19 @@ public class CashierShoppingMaskController
 
   @Override
   protected boolean commitClose() {
-    if (Transaction.getLastTransactionId() <= Setting.LAST_PRINTED_TRANSACTION_ID.getLongValue())
+    try {
+      List<Transaction> unreportedTransactions = Transaction.getUnreportedTransactions();
+      if (!getView().commitClose()) return false;
+      model.printAccountingReports(unreportedTransactions, this::handleResult);
       return true;
-    if (!getView().commitClose()) return false;
-    model.printAccountingReports(this::handleResult);
-    return true;
+    } catch (NoTransactionsFoundException e) {
+      return true;
+    }
   }
 
   private void handleResult(Boolean b) {
     if (!b) {
-      long missedPurchases =
-          Transaction.getTransactionRange(
-                  Setting.LAST_PRINTED_TRANSACTION_ID.getLongValue(),
-                  Transaction.getLastTransactionId())
-              .stream()
-              .filter(Transaction::isPurchase)
-              .count();
+      long missedPurchases = Transaction.getUnreportedTransactions().size();
       if (missedPurchases > 40) {
         getView().messageDoPanic(missedPurchases);
       } else {

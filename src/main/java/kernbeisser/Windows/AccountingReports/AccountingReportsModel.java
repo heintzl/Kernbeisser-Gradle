@@ -38,20 +38,22 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
   public static boolean exportAccountingReports(
       List<Transaction> transactions, long no, boolean withNames) {
     AtomicBoolean success = new AtomicBoolean(true);
+    boolean printValueSums = true;
     if (transactions.stream().anyMatch(Transaction::isPurchase)) {
-      new AccountingReport(no, transactions, true)
+      new AccountingReport(no, transactions, withNames)
           .sendToPrinter(
               "Ladendienst wird gedruckt",
               (e) -> {
                 success.set(false);
               });
+      printValueSums = false;
     }
     var otherTransactions =
         transactions.stream()
             .filter(Transaction::isAccountingReportTransaction)
             .collect(Collectors.toList());
     if (!otherTransactions.isEmpty()) {
-      new AccountingTransactionsReport(no, otherTransactions, true)
+      new AccountingTransactionsReport(no, otherTransactions, withNames, printValueSums)
           .sendToPrinter(
               "Ladendienst wird gedruckt",
               (e) -> {

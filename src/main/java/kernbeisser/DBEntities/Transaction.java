@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.*;
@@ -83,6 +84,11 @@ public class Transaction implements UserRelated {
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_INFO_WRITE)})
   private String info;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ACCOUNTINGREPORTNO_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ACCOUNTINGREPORTNO_WRITE)})
+  private Long accountingReportNo;
 
   @JoinColumn
   @ManyToOne
@@ -240,28 +246,51 @@ public class Transaction implements UserRelated {
         "Einkauf vom " + Date.INSTANT_DATE.format(LocalDate.now()));
   }
 
-  public static long getLastTransactionId() {
+  public static long getLastReportNo() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     return Optional.ofNullable(
-            em.createQuery("select max(id) from Transaction t", Long.class).getSingleResult())
-        .orElse(-1L);
+            em.createQuery("select max(accountingReportNo) from Transaction t", Long.class)
+                .getSingleResult())
+        .orElse(0L);
   }
 
-  public static List<Transaction> getTransactionRange(
-      long startTransactionId, long endTransactionId) {
+  public static long getLastIdOfReportNo(long reportNo) throws NoResultException {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select max(id) from Transaction t where accountingReportNo <= :no", Long.class)
+        .setParameter("no", reportNo)
+        .getSingleResult();
+  }
+
+  public static void writeAccountingReportNo(Collection<Transaction> transactions, long no) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (Transaction t : transactions) {
+      if (t.accountingReportNo == null) {
+        t.setAccountingReportNo(no);
+        em.merge(t);
+      }
+    }
+  }
+
+  public static List<Transaction> getTransactionsByReportNo(long reportNo) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     List<Transaction> transactions =
         em.createQuery(
-                "select t from Transaction t where t.id between :from and :to order by id",
+                "select t from Transaction t where t.accountingReportNo = :no order by id",
                 Transaction.class)
-            .setParameter("from", startTransactionId)
-            .setParameter("to", endTransactionId)
+            .setParameter("no", reportNo)
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();
@@ -280,6 +309,23 @@ public class Transaction implements UserRelated {
                 Transaction.class)
             .setParameter("from", startDate)
             .setParameter("to", endDate)
+            .getResultList();
+    if (transactions.isEmpty()) {
+      throw new NoTransactionsFoundException();
+    }
+    return transactions;
+  }
+
+  public static List<Transaction> getUnreportedTransactions() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    List<Transaction> transactions =
+        em.createQuery(
+                "select t from Transaction t where t.accountingReportNo IS NULL AND :shopUser IN (t.fromUser, t.toUser) order by id",
+                Transaction.class)
+            .setParameter("shopUser", User.getKernbeisserUser())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();

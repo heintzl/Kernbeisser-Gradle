@@ -17,6 +17,10 @@
 	<parameter name="reportNo" class="java.lang.Long"/>
 	<parameter name="reportTitle" class="java.lang.String"/>
 	<parameter name="reportFooter" class="java.lang.String"/>
+	<parameter name="sum" class="java.lang.Double"/>
+	<parameter name="sum_positive" class="java.lang.Double"/>
+	<parameter name="sum_negative" class="java.lang.Double"/>
+	<parameter name="printValueSums" class="java.lang.Boolean"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -167,7 +171,8 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="15" splitType="Prevent">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField textAdjust="ScaleFont">
 				<reportElement x="50" y="0" width="150" height="14" uuid="fc71b211-9234-46b2-8b6f-414a7dfd5551">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe745555-7c80-41c2-aee0-3a3e97b25e6c"/>
@@ -233,7 +238,7 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="33" splitType="Stretch">
+		<band height="71" splitType="Stretch">
 			<staticText>
 				<reportElement x="280" y="4" width="110" height="14" uuid="9c3a3528-91c6-4a4f-832d-1dca345b0445">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4bf90643-e108-400b-b357-e365eef1d9e7"/>
@@ -250,6 +255,66 @@
 					<font fontName="DejaVu Sans Condensed" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{reportCumulatedBalance}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="41" width="214" height="14" uuid="e6eb5f4a-ca8e-44dd-9e03-38e5184d00b3">
+					<printWhenExpression><![CDATA[$P{printValueSums}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Summe aller Schulden:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="27" width="214" height="14" uuid="a0a846f1-6cd1-41f2-9402-cf61cd9f801d">
+					<printWhenExpression><![CDATA[$P{printValueSums}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Summe aller Guthaben:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="55" width="214" height="14" uuid="9dbdd0ff-878c-486a-ac9a-89a320de1303">
+					<printWhenExpression><![CDATA[$P{printValueSums}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed"/>
+				</textElement>
+				<text><![CDATA[Summe aller Kontostände:]]></text>
+			</staticText>
+			<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
+				<reportElement x="352" y="27" width="54" height="14" uuid="cb4a3265-64c8-4070-8f2d-f832a62ccd4b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$P{printValueSums}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{sum_positive}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
+				<reportElement x="352" y="55" width="54" height="14" uuid="4fcab096-5b4e-45f4-92db-c24217bc4b62">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$P{printValueSums}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{sum}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€">
+				<reportElement x="352" y="41" width="54" height="14" uuid="33745b64-6da2-4dfc-b9e1-eb45ab9528b3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$P{printValueSums}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{sum_negative}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

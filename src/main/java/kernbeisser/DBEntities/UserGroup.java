@@ -88,6 +88,20 @@ public class UserGroup implements UserRelated {
     }
   }
 
+  public static List<UserGroup> getActiveUserGroups() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "select ug from UserGroup ug where ug in "
+                + "(select u.userGroup from User u where u.unreadable = false and not "
+                + User.GENERIC_USERS_CONDITION
+                + ")",
+            UserGroup.class)
+        .getResultList();
+  }
+
   public UserGroup withMembersAsStyledString(boolean withNames) {
     UserGroup result = new UserGroup();
     result.membersAsString =
@@ -158,6 +172,31 @@ public class UserGroup implements UserRelated {
     return sb.toString();
   }
 
+  private static UserGroup historicGroup(UserGroup ug, Double historicValue) {
+    ug.setValue(historicValue);
+    return ug;
+  }
+
+  private static List<UserGroup> getValuesAtTransactionId(Long tId, boolean withUnreadables) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            "SELECT ug AS ug, SUM(CASE WHEN ug = t.fromUserGroup THEN -t.value ELSE t.value END) AS tSum "
+                + "FROM UserGroup ug INNER JOIN Transaction t ON ug IN (t.fromUserGroup, t.toUserGroup) "
+                + "WHERE t.id <= :tid AND ug in (select u.userGroup from User u where (:all = true OR u.unreadable = false) and not "
+                + User.GENERIC_USERS_CONDITION
+                + ") "
+                + "GROUP BY ug",
+            Tuple.class)
+        .setParameter("tid", tId)
+        .setParameter("all", withUnreadables)
+        .getResultStream()
+        .map(t -> historicGroup((UserGroup) t.get("ug"), (Double) t.get("tSum")))
+        .collect(Collectors.toList());
+  }
+
   private static Map<Integer, Double> getInvalidUserGroupTransactionSums() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -198,6 +237,41 @@ public class UserGroup implements UserRelated {
     return getInvalidUserGroupTransactionSums().entrySet().stream()
         .map(e -> getWithTransactionSum(e.getKey(), e.getValue()))
         .collect(Collectors.toList());
+  }
+
+  public static Map<String, Object> getValueAggregatesAtTransactionId(long transactionId)
+      throws NoResultException {
+    return getValueAggregatesAtTransactionId(transactionId, true);
+  }
+
+  public static Map<String, Object> getValueAggregates() {
+    return getValueAggregatesAtTransactionId(Long.MAX_VALUE, false);
+  }
+
+  public static List<UserGroup> getUserGroupsAtTransactionId(long transactionId) {
+    return getValuesAtTransactionId(transactionId, true);
+  }
+
+  private static Map<String, Object> getValueAggregatesAtTransactionId(
+      Long tId, boolean withUnreadables) {
+    Map<String, Object> params = new HashMap<>();
+    double sum = 0;
+    double sum_negative = 0;
+    double sum_positive = 0;
+    var historicGroups = getValuesAtTransactionId(tId, withUnreadables);
+    for (UserGroup ug : historicGroups) {
+      double value = ug.getValue();
+      sum += value;
+      if (value < 0) {
+        sum_negative += value;
+      } else {
+        sum_positive += value;
+      }
+    }
+    params.put("sum", sum);
+    params.put("sum_negative", sum_negative);
+    params.put("sum_positive", sum_positive);
+    return params;
   }
 
   @Override

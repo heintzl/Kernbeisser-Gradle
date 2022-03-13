@@ -325,7 +325,9 @@ public class User implements Serializable, UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select u from User u where u.unreadable = false and lower(u.username) != 'admin' and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
+            "select u from User u where u.unreadable = false and not "
+                + User.GENERIC_USERS_CONDITION
+                + " and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
             User.class)
         .setParameter("search", s + "%")
         .setMaxResults(max)

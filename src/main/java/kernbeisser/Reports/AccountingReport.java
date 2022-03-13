@@ -154,8 +154,7 @@ public class AccountingReport extends Report {
     return reportParams;
   }
 
-  private static Map<String, Object> getAccountingTransactionParams(
-      List<Transaction> transactions) {
+  private Map<String, Object> getAccountingTransactionParams(List<Transaction> transactions) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -183,7 +182,9 @@ public class AccountingReport extends Report {
         }
       }
     }
-    Map<String, Object> reportParams = new HashMap<>();
+    long lastTransactionId = transactions.stream().mapToLong(Transaction::getId).max().getAsLong();
+    Map<String, Object> reportParams =
+        UserGroup.getValueAggregatesAtTransactionId(lastTransactionId);
     reportParams.put("transactionSaldo", transactionSaldo);
     reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
     reportParams.put("transactionSpecialPayments", transactionSpecialPayments);
