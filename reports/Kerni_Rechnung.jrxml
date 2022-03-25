@@ -301,13 +301,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{CreditWarning}?"Bitte auf das Guthaben einzahlen!":""]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="5" y="5" width="110" height="28" forecolor="#919191" uuid="63ddc39a-4af5-4884-be67-c3bf92680ce9"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="24"/>
-				</textElement>
-				<text><![CDATA[Muster!]]></text>
-			</staticText>
 		</band>
 	</summary>
 </jasperReport>
