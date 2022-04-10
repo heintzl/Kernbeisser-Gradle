@@ -12,6 +12,7 @@ import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsView implements IView<ManagePriceListsController> {
@@ -25,6 +26,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   private JPanel main;
   private JButton moveItems;
   private JButton print;
+  @Setter private JButton editPriceList;
 
   @Linked private ManagePriceListsController controller;
 
@@ -36,6 +38,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     moveArticles.addActionListener(controller);
     moveItems.addActionListener(controller);
     print.addActionListener(controller);
+    editPriceList.addActionListener(controller);
   }
 
   @Override
@@ -54,8 +57,13 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   @NotNull
   private void priceListNodeSelection(Node<PriceList> e) {
-    deletePriceList.setEnabled(e.isLeaf());
-    articles.setObjects(controller.getAllArticles(e.getValue()));
+    boolean isLeaf = e.isLeaf();
+    deletePriceList.setEnabled(isLeaf);
+    editPriceList.setEnabled(isLeaf);
+    if (isLeaf) {
+      articles.setObjects(controller.getAllArticles(e.getValue()));
+    }
+    ;
   }
 
   Node<PriceList> getSelectedNode() {
@@ -87,6 +95,10 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   public void selectionRequired() {
     JOptionPane.showMessageDialog(getTopComponent(), "Bitte wähle zunächst eine Preisliste aus.");
+  }
+
+  public void refreshNode() {
+    articles.setObjects(controller.getAllArticles(getSelectedNode().getValue()));
   }
 
   public void requestRepaint() {

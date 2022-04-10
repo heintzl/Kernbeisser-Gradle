@@ -12,7 +12,6 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
 
   private JPanel main;
   private CollectionView collectionView;
-  private JButton printSheetInfo;
 
   @Linked private CollectionController<Article> articles;
 
