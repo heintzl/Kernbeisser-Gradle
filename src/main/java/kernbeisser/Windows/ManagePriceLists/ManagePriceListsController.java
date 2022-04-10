@@ -9,7 +9,9 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
+import kernbeisser.Windows.EditPriceList.EditPriceListController;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePriceListsController
@@ -91,8 +93,13 @@ public class ManagePriceListsController
   private void moveItems() {
     if (getView().getSelectedNode() == null) {
       getView().selectionRequired();
-
     } else getView().requiresPriceList(this::moveItems);
+  }
+
+  private void edit() {
+    PriceList selection = getView().getSelectedNode().getValue();
+    new EditPriceListController(selection).openIn(new SubWindow(getView().traceViewContainer()));
+    getView().refreshNode();
   }
 
   private void print() {
@@ -134,6 +141,9 @@ public class ManagePriceListsController
         break;
       case "PRINT":
         print();
+        break;
+      case "EDIT":
+        edit();
         break;
       default:
         throw new UnsupportedOperationException(e.getActionCommand() + " is not a valid command");
