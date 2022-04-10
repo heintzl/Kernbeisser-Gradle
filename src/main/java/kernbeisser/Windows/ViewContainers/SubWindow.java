@@ -14,6 +14,7 @@ public class SubWindow extends JDialog implements ViewContainer {
 
   private Controller<?, ?> controller;
   private final ViewContainer parent;
+  private boolean requiresCloseListener = true;
 
   public SubWindow(@NotNull ViewContainer viewContainer) {
     super(viewContainer.getLoaded().getView().getTopComponent(), ModalityType.APPLICATION_MODAL);
@@ -28,6 +29,7 @@ public class SubWindow extends JDialog implements ViewContainer {
             }
           }
         });
+    requiresCloseListener = false;
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
   }
 
@@ -40,17 +42,18 @@ public class SubWindow extends JDialog implements ViewContainer {
     setSize(Tools.floatingSubwindowSize(controller));
     setLocationRelativeTo(parent.getLoaded().getView().getTopComponent());
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-    addWindowListener(
-        new WindowAdapter() {
-          @Override
-          public void windowClosing(WindowEvent e) {
-            if (controller.requestClose()) {
-              controller.notifyClosed();
-              dispose();
+    if (requiresCloseListener) {
+      addWindowListener(
+          new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+              if (controller.requestClose()) {
+                controller.notifyClosed();
+                dispose();
+              }
             }
-          }
-        });
-
+          });
+    }
     setVisible(true);
   }
 
