@@ -65,25 +65,30 @@ public enum PermissionConstants {
   }
 
   private static Permission loadOrCreate(PermissionConstants constants) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      @Cleanup(value = "commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      return em.createQuery("select p from Permission p where name like :pcn", Permission.class)
-          .setParameter("pcn", "@" + constants.name())
-          .getSingleResult();
-    } catch (NoResultException e) {
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      Permission permission = new Permission();
-      permission.getKeySet().addAll(constants.defaultPermissionKeys);
-      permission.setName("@" + constants.name());
-      em.persist(permission);
-      em.flush();
-      et.commit();
-      return loadOrCreate(constants);
-    }
+    return Access.runWithAccessManager(
+        AccessManager.NO_ACCESS_CHECKING,
+        () -> {
+          @Cleanup EntityManager em = DBConnection.getEntityManager();
+          try {
+            @Cleanup(value = "commit")
+            EntityTransaction et = em.getTransaction();
+            et.begin();
+            return em.createQuery(
+                    "select p from Permission p where name like :pcn", Permission.class)
+                .setParameter("pcn", "@" + constants.name())
+                .getSingleResult();
+          } catch (NoResultException e) {
+            EntityTransaction et = em.getTransaction();
+            et.begin();
+            Permission permission = new Permission();
+            permission.getKeySet().addAll(constants.defaultPermissionKeys);
+            permission.setName("@" + constants.name());
+            em.persist(permission);
+            em.flush();
+            et.commit();
+            return loadOrCreate(constants);
+          }
+        });
   }
 
   public static PermissionSet allPermissions() {
