@@ -22,10 +22,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
-import lombok.Cleanup;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
@@ -34,6 +31,7 @@ import org.hibernate.envers.Audited;
 @Table(name = "PriceLists")
 @EqualsAndHashCode(doNotUseGetters = true)
 @Audited
+@NoArgsConstructor
 public class PriceList implements Serializable {
 
   @Id
@@ -67,13 +65,16 @@ public class PriceList implements Serializable {
   @Setter(onMethod_ = {@Key(PermissionKey.PRICE_LIST_ID_WRITE)})
   private Instant createDate;
 
+  public PriceList(String name) {
+    this.name = name;
+  }
+
   public static void savePriceList(String name) {
     savePriceList(name, null);
   }
 
   public static void savePriceList(String priceListName, PriceList superPriceList) {
-    PriceList p = new PriceList();
-    p.setName(priceListName);
+    PriceList p = new PriceList(priceListName);
     p.setSuperPriceList(superPriceList);
     Tools.runInSession(em -> em.persist(p));
   }
@@ -183,12 +184,7 @@ public class PriceList implements Serializable {
     return new Node<PriceList>() {
       @Override
       public PriceList getValue() {
-        return new PriceList() {
-          @Override
-          public String toString() {
-            return "Preislisten";
-          }
-        };
+        return new PriceList("Preislisten");
       }
 
       @Override

@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ManagePriceLists;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -7,6 +8,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Reports.PriceListReport;
 import kernbeisser.Reports.Report;
@@ -16,10 +18,6 @@ import lombok.Cleanup;
 import org.hibernate.Session;
 
 public class ManagePriceListsModel implements IModel<ManagePriceListsController> {
-
-  void savePriceList(String name, PriceList superPriceList) {
-    PriceList.savePriceList(name, superPriceList);
-  }
 
   public void deletePriceList(PriceList toDelete) throws PersistenceException {
     PriceList.deletePriceList(toDelete);
@@ -51,21 +49,22 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
   }
 
   public void add(Node<PriceList> selectedNode, String requestName) throws PersistenceException {
-    PriceList newPriceList = new PriceList();
-    newPriceList.setName(requestName);
-    newPriceList.setSuperPriceList(selectedNode.getValue());
+    PriceList newPriceList = new PriceList(requestName);
+    if (selectedNode.getValue().getId() != 0) {
+      newPriceList.setSuperPriceList(selectedNode.getValue());
+    }
     Tools.persist(newPriceList);
   }
 
-  public void moveItems(PriceList target, PriceList destination) {
+  public void moveItems(Collection<Article> articles, PriceList destination) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    em.createQuery("UPDATE Article set priceList = :d where priceList = :t")
-        .setParameter("t", target)
-        .setParameter("d", destination)
-        .executeUpdate();
+    for (Article a : articles) {
+      a.setPriceList(destination);
+      em.merge(a);
+    }
     em.flush();
   }
 

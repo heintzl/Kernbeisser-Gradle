@@ -73,8 +73,7 @@ public class DataImportModel implements IModel<DataImportController> {
     f.forEach(
         e -> {
           String[] columns = e.split(";");
-          PriceList pl = new PriceList();
-          pl.setName(columns[0]);
+          PriceList pl = new PriceList(columns[0]);
           pl.setSuperPriceList(priceLists.get(columns[1]));
           priceLists.put(pl.getName(), pl);
         });

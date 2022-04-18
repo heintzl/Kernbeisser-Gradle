@@ -1,5 +1,7 @@
 package kernbeisser.Windows.ManagePriceLists;
 
+import java.awt.*;
+import java.util.Collection;
 import java.util.function.Consumer;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -21,12 +23,14 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   private JButton deletePriceList;
   private JButton renamePriceList;
   private ObjectTable<Article> articles;
-  private JButton moveArticles;
+  private JButton movePriceList;
   private ObjectTree<PriceList> priceLists;
   private JPanel main;
-  private JButton moveItems;
+  private JButton moveArticles;
   private JButton print;
   @Setter private JButton editPriceList;
+  private JPanel treeButtonPanel;
+  private JPanel contentButtonPanel;
 
   @Linked private ManagePriceListsController controller;
 
@@ -35,10 +39,12 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     addPriceList.addActionListener(controller);
     deletePriceList.addActionListener(controller);
     renamePriceList.addActionListener(controller);
+    movePriceList.addActionListener(controller);
     moveArticles.addActionListener(controller);
-    moveItems.addActionListener(controller);
     print.addActionListener(controller);
     editPriceList.addActionListener(controller);
+    setTreeButtonsEnabled(false);
+    setContentButtonsEnabled(false);
   }
 
   @Override
@@ -57,40 +63,80 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   @NotNull
   private void priceListNodeSelection(Node<PriceList> e) {
+    addPriceList.setEnabled(true);
     boolean isLeaf = e.isLeaf();
     deletePriceList.setEnabled(isLeaf);
     editPriceList.setEnabled(isLeaf);
+    boolean isRoot = e.getValue().getId() == 0;
+    movePriceList.setEnabled(!isRoot);
+    renamePriceList.setEnabled(!isRoot);
     if (isLeaf) {
-      articles.setObjects(controller.getAllArticles(e.getValue()));
+      Collection<Article> priceListArticles = controller.getAllArticles(e.getValue());
+      articles.setObjects(priceListArticles);
+      print.setEnabled(!priceListArticles.isEmpty());
+      moveArticles.setEnabled(!priceListArticles.isEmpty());
+    } else {
+      articles.clear();
+      print.setEnabled(false);
+      moveArticles.setEnabled(false);
     }
-    ;
   }
 
   Node<PriceList> getSelectedNode() {
     return priceLists.getSelected();
   }
 
+  public Collection<Article> getSelectedArticles() {
+    return articles.getSelectedObjects();
+  }
+
   public boolean commitMovement(PriceList from, PriceList to) {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Bist du sicher, dass die Preisliste '"
+            "Bist du sicher, dass die ausgewählten Artikel '"
                 + from.getName()
                 + "',\n"
                 + "in die Preisliste '"
                 + to.getName()
-                + "' verschoben werden soll?")
+                + "' verschoben werden sollen?")
         == 0;
   }
 
-  public void requiresPriceList(Consumer<Node<PriceList>> consumer) {
+  private void setTreeButtonsEnabled(boolean b) {
+    for (Component c : treeButtonPanel.getComponents()) {
+      if (c instanceof JButton) {
+        c.setEnabled(b);
+      }
+    }
+  }
+
+  private void setContentButtonsEnabled(boolean b) {
+    for (Component c : contentButtonPanel.getComponents()) {
+      if (c instanceof JButton) {
+        c.setEnabled(b);
+      }
+    }
+  }
+
+  public void getPriceListNode(Consumer<Node<PriceList>> consumer, boolean onlyLeaves) {
     ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
     priceListObjectTree.addSelectionListener(
         e -> {
-          consumer.accept(e);
-          IView.traceViewContainer(priceListObjectTree).requestClose();
+          if (!onlyLeaves || e.isLeaf()) {
+            consumer.accept(e);
+            IView.traceViewContainer(priceListObjectTree).requestClose();
+          }
         });
     new ComponentController(priceListObjectTree, "Preisliste auswählen")
         .openIn(new SubWindow(traceViewContainer()));
+  }
+
+  public void requiresPriceList(Consumer<Node<PriceList>> consumer) {
+    getPriceListNode(consumer, false);
+  }
+
+  public void requiresPriceListLeaf(Consumer<Node<PriceList>> consumer) {
+    getPriceListNode(consumer, true);
   }
 
   public void selectionRequired() {
@@ -117,7 +163,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   public boolean commitItemMovement(PriceList from, PriceList to) {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Bist du sicher, dass die Artikel der Preisliste '"
+            "Bist du sicher, dass die markierten Artikel der Preisliste '"
                 + from.getName()
                 + "',\n"
                 + "in die Preisliste '"
@@ -131,11 +177,19 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   public void cannotDelete() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
-        "Die Preisliste kann nicht gelöscht werden, da Artikel oder Preislisten auf diese verweisen.");
+        "Die Preisliste kann nicht gelöscht werden, da sie Artikel oder andere Preislisten enthält.");
   }
 
   public void nameAlreadyExists(String name) {
     JOptionPane.showMessageDialog(getTopComponent(), "Der Name " + name + " existiert bereits.");
+  }
+
+  public void warningNoArticlesSelected() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Es sind keine Artikel zum Verschieben ausgewählt!",
+        "Artikel verschieben",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   @Override

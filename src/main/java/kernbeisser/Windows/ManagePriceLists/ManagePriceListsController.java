@@ -2,6 +2,7 @@ package kernbeisser.Windows.ManagePriceLists;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTree.Node;
@@ -50,6 +51,9 @@ public class ManagePriceListsController
 
   private void rename() {
     String name = getView().requestName();
+    if (name.isEmpty()) {
+      return;
+    }
     try {
       model.renamePriceList(getView().getSelectedNode().getValue(), name);
       getView().requestRepaint();
@@ -65,6 +69,9 @@ public class ManagePriceListsController
       return;
     }
     String name = getView().requestName();
+    if (name.isEmpty()) {
+      return;
+    }
     try {
       model.add(getView().getSelectedNode(), name);
       getView().requestRepaint();
@@ -83,17 +90,25 @@ public class ManagePriceListsController
   }
 
   private void moveItems(Node<PriceList> target) {
-    PriceList selection = getView().getSelectedNode().getValue();
-    if (getView().commitItemMovement(selection, target.getValue())) {
-      model.moveItems(selection, target.getValue());
-      getView().requestRepaint();
+    ManagePriceListsView view = getView();
+    Collection<Article> articles = view.getSelectedArticles();
+    if (articles.isEmpty()) {
+      view.warningNoArticlesSelected();
+      return;
+    }
+    if (view.commitItemMovement(view.getSelectedNode().getValue(), target.getValue())) {
+      model.moveItems(articles, target.getValue());
+      view.refreshNode();
     }
   }
 
   private void moveItems() {
     if (getView().getSelectedNode() == null) {
       getView().selectionRequired();
-    } else getView().requiresPriceList(this::moveItems);
+      return;
+    }
+    getView().requiresPriceListLeaf(this::moveItems);
+    getView().refreshNode();
   }
 
   private void edit() {
