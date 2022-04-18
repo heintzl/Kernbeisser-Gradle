@@ -1,5 +1,6 @@
 package kernbeisser.Windows.ManagePriceLists;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -7,6 +8,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Reports.PriceListReport;
 import kernbeisser.Reports.Report;
@@ -57,15 +59,15 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
     Tools.persist(newPriceList);
   }
 
-  public void moveItems(PriceList target, PriceList destination) {
+  public void moveItems(Collection<Article> articles, PriceList destination) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    em.createQuery("UPDATE Article set priceList = :d where priceList = :t")
-        .setParameter("t", target)
-        .setParameter("d", destination)
-        .executeUpdate();
+    for (Article a : articles) {
+      a.setPriceList(destination);
+      em.merge(a);
+    }
     em.flush();
   }
 
