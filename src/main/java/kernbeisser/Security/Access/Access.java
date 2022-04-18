@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
@@ -65,7 +67,7 @@ public class Access {
             "Method "
                 + methodName
                 + " on Object: "
-                + object
+                + getSafeToStringValue(object)
                 + " - PermissionSet doesn't contain the following keys:"
                 + keys);
       }
@@ -209,5 +211,34 @@ public class Access {
         defaultManager = before;
       }
     }
+  }
+
+  public static <T> T runWithAccessManager(AccessManager accessManager, Supplier<T> runnable) {
+    synchronized (ACCESS_LOCK) {
+      AccessManager before = defaultManager;
+      try {
+        defaultManager = accessManager;
+        return runnable.get();
+      } finally {
+        defaultManager = before;
+      }
+    }
+  }
+
+  // Ensures that no infinity callback to the AccessManager happens during the toString() method
+  public static String getSafeToStringValue(Object object) {
+    return invoke(object, Object::toString)
+        .orElse(
+            "(No access to toString() Obj Hash: "
+                + object.getClass().getName()
+                + "@"
+                + Integer.toHexString(object.hashCode())
+                + ")");
+  }
+
+  public static <T> Optional<T> invoke(Object o, Function<Object, T> supplier) {
+    AccessListenerManager spy = new AccessListenerManager(Access.getAccessManager(o));
+    T returnVal = runWithAccessManager(spy, () -> supplier.apply(o));
+    return Optional.ofNullable(spy.isSuccess() ? returnVal : null);
   }
 }
