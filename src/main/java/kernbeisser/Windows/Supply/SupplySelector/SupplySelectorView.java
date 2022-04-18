@@ -8,13 +8,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -38,6 +32,9 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private AdvancedComboBox<ResolveStatus> filter;
   private JButton printProduce;
   private JButton verifyArticlesButton;
+  private JProgressBar progressBar1;
+  private JPanel loadingIndicator;
+  private JButton viewOrders;
 
   @Override
   public void initialize(SupplySelectorController controller) {
@@ -63,6 +60,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     export.addActionListener(e -> controller.exportShoppingItems());
     printProduce.addActionListener(e -> controller.printProduce());
     verifyArticlesButton.addActionListener(this::verifyArticle);
+    viewOrders.addActionListener(controller::viewOrders);
   }
 
   private void verifyArticle(ActionEvent actionEvent) {
@@ -179,6 +177,10 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
         != 0) {
       throw new CancellationException();
     }
+  }
+
+  public void setLoadingIndicatorVisible(boolean b) {
+    loadingIndicator.setVisible(b);
   }
 
   public void messageSelectSupplyFirst() {

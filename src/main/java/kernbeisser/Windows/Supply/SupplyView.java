@@ -5,12 +5,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import javax.persistence.NoResultException;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -44,6 +39,8 @@ public class SupplyView implements IView<SupplyController> {
   private JButton cancel;
   private JButton importSupplyFile;
   @Getter private JPanel printButtonPanel;
+  private JLabel total;
+  private JLabel produce;
 
   @Linked private SupplyController controller;
 
@@ -61,7 +58,6 @@ public class SupplyView implements IView<SupplyController> {
     add.addActionListener(e -> addItem());
     amount.addActionListener(e -> addItem());
     suppliersNumber.addActionListener(e -> addItem());
-    amount.addActionListener(e -> addItem());
     shoppingItems.addKeyListener(
         new KeyAdapter() {
           @Override
@@ -125,7 +121,11 @@ public class SupplyView implements IView<SupplyController> {
     containerSize.setText("0.0");
     name.setText("Keinen Artikel gefunden");
     netPrice.setText("0.00");
-    add.setEnabled(false);
+    setAddAvailable(false);
+  }
+
+  void setAddAvailable(boolean b) {
+    add.setEnabled(b);
   }
 
   public void setShoppingItems(Collection<ShoppingItem> shoppingItems) {
@@ -137,6 +137,14 @@ public class SupplyView implements IView<SupplyController> {
     for (Supplier s : suppliers) {
       supplier.addItem(s);
     }
+  }
+
+  void setTotal(double d) {
+    total.setText(String.format("%.2f€", d));
+  }
+
+  void setProduce(double d) {
+    produce.setText(String.format("%.2f€", d));
   }
 
   private void createUIComponents() {
@@ -162,6 +170,16 @@ public class SupplyView implements IView<SupplyController> {
             Columns.create(
                 "Gebinde-Preis",
                 e -> String.format("%.2f", e.getItemNetPrice() * e.getContainerSize())),
+            Columns.create(
+                "Gesamtpreis",
+                e ->
+                    String.format(
+                        "%.2f€,",
+                        Math.abs(
+                            e.getItemNetPrice()
+                                * (e.isWeighAble()
+                                    ? (e.getItemMultiplier() / 1000.)
+                                    : e.getItemMultiplier())))),
             Columns.createIconColumn(
                 "Ausdrucken",
                 e -> controller.becomePrinted(e) ? selected : unselected,

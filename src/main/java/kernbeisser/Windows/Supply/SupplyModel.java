@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
@@ -17,9 +16,11 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
+import lombok.Setter;
 
 public class SupplyModel implements IModel<SupplyController> {
 
+  @Getter @Setter private double appendedProducePrice = 0;
   private final Set<Article> print = new HashSet<>();
   @Getter private final Collection<ShoppingItem> shoppingItems = new ArrayList<>();
 
@@ -69,11 +70,6 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   public boolean articleExists(int suppliersItemNumber) {
-    try {
-      findBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersItemNumber);
-      return true;
-    } catch (NoResultException e) {
-      return false;
-    }
+    return findBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersItemNumber).isPresent();
   }
 }
