@@ -19,10 +19,6 @@ import org.hibernate.Session;
 
 public class ManagePriceListsModel implements IModel<ManagePriceListsController> {
 
-  void savePriceList(String name, PriceList superPriceList) {
-    PriceList.savePriceList(name, superPriceList);
-  }
-
   public void deletePriceList(PriceList toDelete) throws PersistenceException {
     PriceList.deletePriceList(toDelete);
   }
@@ -53,9 +49,10 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
   }
 
   public void add(Node<PriceList> selectedNode, String requestName) throws PersistenceException {
-    PriceList newPriceList = new PriceList();
-    newPriceList.setName(requestName);
-    newPriceList.setSuperPriceList(selectedNode.getValue());
+    PriceList newPriceList = new PriceList(requestName);
+    if (selectedNode.getValue().getId() != 0) {
+      newPriceList.setSuperPriceList(selectedNode.getValue());
+    }
     Tools.persist(newPriceList);
   }
 

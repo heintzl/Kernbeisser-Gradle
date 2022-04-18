@@ -51,6 +51,9 @@ public class ManagePriceListsController
 
   private void rename() {
     String name = getView().requestName();
+    if (name.isEmpty()) {
+      return;
+    }
     try {
       model.renamePriceList(getView().getSelectedNode().getValue(), name);
       getView().requestRepaint();
@@ -66,6 +69,9 @@ public class ManagePriceListsController
       return;
     }
     String name = getView().requestName();
+    if (name.isEmpty()) {
+      return;
+    }
     try {
       model.add(getView().getSelectedNode(), name);
       getView().requestRepaint();
