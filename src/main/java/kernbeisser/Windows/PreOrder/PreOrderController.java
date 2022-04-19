@@ -104,10 +104,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   @Override
   protected boolean commitClose() {
     int numDelivered = model.getDelivery().size();
-    if (numDelivered > 0) {
-      if (!getView().confirmDelivery(numDelivered)) {
-        return false;
-      }
+    if (!getView().confirmDelivery(numDelivered)) {
+      return false;
     }
     model.close();
     return true;
@@ -202,7 +200,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       view.setUsers(Collections.singletonList(LogInModel.getLoggedIn()));
       view.setUserEnabled(false);
     } else {
-      view.setUsers(User.getAllUserFullNames(true));
+      view.setUsers(User.getAllUserFullNames(true, true));
     }
     view.setPreOrders(model.getAllPreOrders(restrictToLoggedIn));
     view.setAmount("1");

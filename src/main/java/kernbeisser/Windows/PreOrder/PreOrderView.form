@@ -66,6 +66,8 @@
               <gridbag top="0" left="3" bottom="0" right="3" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
+              <background color="-1"/>
+              <font style="1"/>
               <text value="Label"/>
             </properties>
           </component>

@@ -356,8 +356,11 @@ public class User implements Serializable, UserRelated {
   }
 
   public String getFullName(boolean firstSurname) {
+    if (isKernbeisser()) {
+      return surname;
+    }
     return firstSurname
-        ? Tools.accessString(this::getSurname) + " " + Tools.accessString(this::getFirstName)
+        ? Tools.accessString(this::getSurname) + ", " + Tools.accessString(this::getFirstName)
         : Tools.accessString(this::getFirstName) + " " + Tools.accessString(this::getSurname);
   }
 
@@ -528,7 +531,7 @@ public class User implements Serializable, UserRelated {
     getIgnoredDialogs().add(name);
   }
 
-  public static Collection<User> getAllUserFullNames(boolean withKbUser) {
+  public static Collection<User> getAllUserFullNames(boolean withKbUser, boolean orderSurname) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -537,7 +540,9 @@ public class User implements Serializable, UserRelated {
         em.createQuery(
                 "select u from User u where not "
                     + GENERIC_USERS_CONDITION
-                    + " order by firstname,surName asc",
+                    + " order by "
+                    + (orderSurname ? "surName, firstname" : "firstname, surName")
+                    + " asc",
                 User.class)
             .getResultList();
     if (withKbUser) result.add(0, User.getKernbeisserUser());
@@ -554,13 +559,16 @@ public class User implements Serializable, UserRelated {
   }
 
   public static void populateUserComboBox(
-      AdvancedComboBox<User> box, boolean withKbUser, Predicate<User> filter) {
+      AdvancedComboBox<User> box,
+      boolean withKbUser,
+      boolean surnameFirst,
+      Predicate<User> filter) {
     Optional<User> selected = box.getSelected();
     List<User> boxItems = new ArrayList<>();
     if (withKbUser) {
       boxItems.add(User.getKernbeisserUser());
     }
-    getAllUserFullNames(false).stream().filter(filter).forEach(boxItems::add);
+    getAllUserFullNames(false, surnameFirst).stream().filter(filter).forEach(boxItems::add);
     box.setItems(boxItems);
     if (box.isEnabled()) {
       if (selected.isPresent() && filter.test(selected.get())) {

@@ -152,8 +152,8 @@ public class TransactionView implements IView<TransactionController> {
             Columns.create("An", e -> e.getToUser().getFullName(true)),
             Columns.create("Überweisungsbetrag", e -> String.format("%.2f€", e.getValue())),
             Columns.create("Info", Transaction::getInfo));
-    from = new AdvancedComboBox<>(User::getFullName);
-    to = new AdvancedComboBox<>(User::getFullName);
+    from = new AdvancedComboBox<>(u -> u.getFullName(true));
+    to = new AdvancedComboBox<>(u -> u.getFullName(true));
   }
 
   void success(int count) {

@@ -85,7 +85,7 @@ public class PreOrderView implements IView<PreOrderController> {
     }
     preOrders =
         new ObjectTable<PreOrder>(
-            Columns.create("Benutzer", e -> e.getUser().getFullName()),
+            Columns.create("Benutzer", e -> e.getUser().getFullName(true)),
             Columns.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
             Columns.create(
                 "Kornkraftnummer",
@@ -120,7 +120,7 @@ public class PreOrderView implements IView<PreOrderController> {
               controller::delete,
               e -> e.getOrderedOn() == null));
     }
-    user = new AdvancedComboBox<>(e -> e.getSurname() + " " + e.getFirstName());
+    user = new AdvancedComboBox<>(e -> e.getFullName(true));
   }
 
   private void showSelectionPopup() {
@@ -343,14 +343,29 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   public boolean confirmDelivery(int numDelivered) {
+    int numPreorders = preOrders.getObjects().size();
+    if (numPreorders == 0) {
+      return true;
+    }
     Tools.beep();
+    String message = "";
+    if (numDelivered > 0) {
+      message =
+          numDelivered
+              + " Vorbestellungen sind als ausgeliefert markiert und werden aus der Vorbestellung entfernt.";
+    }
+    if (numDelivered < numPreorders) {
+      if (!message.isEmpty()) {
+        message += "\n";
+      }
+      message +=
+          numPreorders
+              - numDelivered
+              + " Vorbestellungen bleiben bestehen und werden hoffentlich bald nachgeliefert...";
+    }
     return JOptionPane.showConfirmDialog(
-            getContent(),
-            numDelivered
-                + " Vorbestellungen sind als ausgeliefert markiert. Sollen sie aus der Vorbestellung entfernt werden?",
-            "Vorbestellung schließen",
-            JOptionPane.YES_NO_OPTION)
-        == JOptionPane.YES_OPTION;
+            getContent(), message, "Vorbestellung schließen", JOptionPane.OK_CANCEL_OPTION)
+        == JOptionPane.OK_OPTION;
   }
 
   public String inputAmount(int amount, boolean retry) {
