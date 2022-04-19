@@ -4,24 +4,32 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.DayOfWeek;
 import java.util.*;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import kernbeisser.Config.Config;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Reports.PriceListReport;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.SneakyThrows;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplySelectorController extends Controller<SupplySelectorView, SupplySelectorModel> {
 
-  public SupplySelectorController(Consumer<Collection<ShoppingItem>> consumer)
+  private final Object LOAD_LOCK = new Object();
+
+  public SupplySelectorController(BiConsumer<Supply, Collection<ShoppingItem>> consumer)
       throws PermissionKeyRequiredException {
     super(new SupplySelectorModel(consumer));
   }
@@ -40,18 +48,30 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
       openOtherDir(defaultDir.getAbsolutePath());
       return;
     }
-    loadDir(defaultDir);
+    loadDirAsync(defaultDir);
   }
 
   public void loadDir(@NotNull File dir) {
     if (!dir.isDirectory()) throw new IllegalArgumentException("Not a directory");
-    getView()
-        .setSupplies(
-            Supply.extractSupplies(
-                Objects.requireNonNull(dir.listFiles()),
-                Setting.KK_SUPPLY_FROM_TIME.getIntValue(),
-                Setting.KK_SUPPLY_TO_TIME.getIntValue(),
-                Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)));
+    synchronized (LOAD_LOCK) {
+      getView()
+          .setSupplies(
+              Supply.extractSupplies(
+                  Objects.requireNonNull(dir.listFiles()),
+                  Setting.KK_SUPPLY_FROM_TIME.getIntValue(),
+                  Setting.KK_SUPPLY_TO_TIME.getIntValue(),
+                  Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)));
+    }
+  }
+
+  public void loadDirAsync(@NotNull File dir) {
+    new Thread(
+            () -> {
+              getView().setLoadingIndicatorVisible(true);
+              loadDir(dir);
+              getView().setLoadingIndicatorVisible(false);
+            })
+        .start();
   }
 
   public void openOtherDir(String pathBefore) {
@@ -66,7 +86,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
             getView().back();
             return;
           }
-          loadDir(selected);
+          loadDirAsync(selected);
         });
     fileChooser.showOpenDialog(getView().getContent());
   }
@@ -94,6 +114,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
     model
         .getConsumer()
         .accept(
+            supply,
             supply.getSupplierFiles().stream()
                 .map(SupplierFile::collectShoppingItems)
                 .flatMap(Collection::stream)
@@ -139,5 +160,30 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   private static double roundForCents(double price, double cent) {
     double dis = price % cent;
     return dis < cent / 2. ? price - dis : price + (cent - dis);
+  }
+
+  public void viewOrders(ActionEvent actionEvent) {
+    getView()
+        .getSelectedSupply()
+        .ifPresent(
+            supply -> {
+              ObjectTable<SupplierFile> ot =
+                  new ObjectTable<>(
+                      Columns.create("Auftragsnummern", e -> e.getHeader().getOrderNr()),
+                      Columns.create(
+                          "Auftragssumme",
+                          e ->
+                              String.format(
+                                  "%.2f€",
+                                  e.getContents().stream()
+                                      .mapToDouble(LineContent::getTotalPrice)
+                                      .sum())));
+              ot.setObjects(supply.getSupplierFiles());
+              SubWindow sw = new SubWindow(getView().traceViewContainer());
+              var cc = new ComponentController(new JScrollPane(ot));
+              sw.setTitle(
+                  "Aufträge der Lierung vom " + Date.INSTANT_DATE.format(supply.getDeliveryDate()));
+              cc.openIn(sw);
+            });
   }
 }
