@@ -17,8 +17,9 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.RawPrice;
-import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Utils.Getter;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +72,7 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
   }
 
   private void createUIComponents() {
-    float scaleFactor = Setting.LABEL_SCALE_FACTOR.getFloatValue();
+    float scaleFactor = UserSetting.FONT_SCALE_FACTOR.getFloatValue(LogInModel.getLoggedIn());
     float fontSize = 14.0f * scaleFactor;
     float tableIconSize = 13.0f * scaleFactor;
     int rowHeight = round(24 * scaleFactor);

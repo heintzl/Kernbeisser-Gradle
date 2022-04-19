@@ -23,13 +23,11 @@ import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.UserGroup;
-import kernbeisser.Enums.ArticleConstants;
-import kernbeisser.Enums.ArticleType;
-import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.VAT;
+import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -750,7 +748,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   @Override
   public void initialize(ShoppingMaskUIController controller) {
-    float fontSize = Setting.LABEL_SCALE_FACTOR.getFloatValue() * 8f + 4f;
+    float fontSize =
+        UserSetting.FONT_SCALE_FACTOR.getFloatValue(LogInModel.getLoggedIn()) * 8f + 4f;
     resizeFonts(ShoppingItemPanel, fontSize);
     articleTypesWithSettablePrice =
         EnumSet.of(ArticleType.CUSTOM_PRODUCT, ArticleType.BAKED_GOODS, ArticleType.PRODUCE);

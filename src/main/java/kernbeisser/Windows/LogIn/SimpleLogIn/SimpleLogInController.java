@@ -13,6 +13,7 @@ import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.*;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.UiTools;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
@@ -102,6 +103,9 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     try {
       UIManager.setLookAndFeel(
           UserSetting.THEME.getEnumValue(Theme.class, LogInModel.getLoggedIn()).getLookAndFeel());
+      UiTools.scaleFonts(UserSetting.FONT_SCALE_FACTOR.getFloatValue(LogInModel.getLoggedIn()));
+      SwingUtilities.updateComponentTreeUI(
+          TabbedPaneModel.getMainPanel().getView().getTabbedPane());
     } catch (UnsupportedLookAndFeelException e) {
       Tools.showUnexpectedErrorWarning(e);
     } catch (PermissionKeyRequiredException p) {

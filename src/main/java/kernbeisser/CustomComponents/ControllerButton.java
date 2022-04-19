@@ -18,6 +18,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.StaticMethodTransformer.StaticMethodTransformer;
 import kernbeisser.Security.Utils.AccessSupplier;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
@@ -62,9 +63,7 @@ public class ControllerButton extends JButton {
           boolean preInit) {
     Class<V> vClass = Controller.getViewClass(clazz);
     IView<?> iView = StaticMethodTransformer.createStaticInterface(IView.class, vClass);
-    setIcon(
-        IconFontSwing.buildIcon(
-            iView.getTabIcon(), Tools.scaleWithLabelScalingFactor(16), new Color(0xFF00CCFF)));
+    setIcon(Icons.defaultIcon(iView.getTabIcon(), new Color(0xFF00CCFF)));
     setRolloverIcon(
         IconFontSwing.buildIcon(
             iView.getTabIcon(), Tools.scaleWithLabelScalingFactor(16), new Color(0x04ACCD)));

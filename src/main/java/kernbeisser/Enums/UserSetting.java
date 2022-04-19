@@ -17,7 +17,7 @@ public enum UserSetting {
       }
     }
   },
-  FONT_SCALE_FACTOR("1"),
+  FONT_SCALE_FACTOR("1.2"),
   CREATE_BEEP_SOUND("true"),
   PRINT_RECEIPT("false"),
   ALLOW_MULTIPLE_SHOPPING_MASK_INSTANCES("false");

@@ -593,23 +593,6 @@ public class Tools {
     return null;
   }
 
-  public static void scaleLabelSize(float scaleFactor) {
-    Enumeration<Object> keys = UIManager.getDefaults().keys();
-    while (keys.hasMoreElements()) {
-      Object key = keys.nextElement();
-      Font before = UIManager.getFont(key);
-      if (key.toString().endsWith(".font")) {
-        UIManager.put(
-            key,
-            new Font(
-                before.getName(), before.getStyle(), Math.round(before.getSize() * scaleFactor)));
-      }
-    }
-    // maybe work not for all LAFs
-    UIManager.put("Table.rowHeight", (int) ((int) UIManager.get("Table.rowHeight") * scaleFactor));
-    System.out.println(UIManager.get("Table.font"));
-  }
-
   public static Field findInAllSuperClasses(Class<?> clazz, String name)
       throws NoSuchFieldException {
     while (!clazz.equals(Object.class)) {
@@ -674,7 +657,7 @@ public class Tools {
 
   public static int scaleWithLabelScalingFactor(int value) {
     try {
-      return (int) (value * Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
+      return (int) (value * UserSetting.FONT_SCALE_FACTOR.getFloatValue(LogInModel.getLoggedIn()));
     } catch (NumberFormatException e) {
       return value;
     }

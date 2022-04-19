@@ -4,6 +4,7 @@ import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
@@ -11,6 +12,7 @@ import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
 import kernbeisser.StartUp.LogIn.DBLogInController;
+import kernbeisser.Useful.UiTools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
@@ -78,6 +80,7 @@ public class MenuController extends Controller<MenuView, MenuModel> {
         == 0) {
       alreadyAsked = true;
       if (TabbedPaneModel.resetMainPanel()) {
+        UiTools.scaleFonts(Setting.LABEL_SCALE_FACTOR.getFloatValue());
         new SimpleLogInController().openTab();
         return true;
       }

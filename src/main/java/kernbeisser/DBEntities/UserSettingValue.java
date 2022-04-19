@@ -58,8 +58,8 @@ public class UserSettingValue implements UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select u from UserSettingValue u where u.id = :id", UserSettingValue.class)
-        .setParameter("id", user.getId())
+            "select u from UserSettingValue u where u.user.id = :uid", UserSettingValue.class)
+        .setParameter("uid", user.getId())
         .getResultList();
   }
 

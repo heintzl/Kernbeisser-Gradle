@@ -23,7 +23,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.StartUp.SplashScreenHandler;
-import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.UiTools;
 import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -117,7 +117,7 @@ public class Main {
     logger.info("register FontAwesome");
     IconFontSwing.register(FontAwesome.getIconFont());
     try {
-      Tools.scaleLabelSize(Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
+      UiTools.scaleFonts(Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
     } catch (NumberFormatException ignored) {
     }
   }

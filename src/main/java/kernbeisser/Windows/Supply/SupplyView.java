@@ -15,10 +15,10 @@ import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -185,7 +185,7 @@ public class SupplyView implements IView<SupplyController> {
                 e -> controller.becomePrinted(e) ? selected : unselected,
                 controller::togglePrint,
                 (e) -> {},
-                (int) (100 * Setting.LABEL_SCALE_FACTOR.getDoubleValue())));
+                Tools.scaleWithLabelScalingFactor(100)));
   }
 
   public void invalidInput() {

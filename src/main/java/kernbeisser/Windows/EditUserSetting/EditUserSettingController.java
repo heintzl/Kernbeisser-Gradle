@@ -10,6 +10,7 @@ import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.UiTools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +46,7 @@ public class EditUserSettingController extends Controller<EditUserSettingView, E
             new Font(
                 before.getName(),
                 before.getStyle(),
-                Math.round(before.getSize() * getView().getFontSize())));
+                Math.round(UiTools.DEFAULT_LABEL_SIZE * getView().getFontSize())));
   }
 
   void commit() {
