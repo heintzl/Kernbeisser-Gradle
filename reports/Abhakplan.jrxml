@@ -52,7 +52,7 @@
 				</textElement>
 				<text><![CDATA[Abhakplan Vorbestellungen Kronkraft]]></text>
 			</staticText>
-			<textField pattern="dd.MM.yyyy HH:mm">
+			<textField pattern="dd.MM.yyyy">
 				<reportElement x="369" y="0" width="130" height="20" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
@@ -128,17 +128,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
-			<rectangle>
-				<reportElement x="10" y="2" width="12" height="12" uuid="dcd1c446-4c2a-4fa5-8035-f3b40e4c8fc9">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</rectangle>
-			<rectangle>
-				<reportElement x="67" y="2" width="12" height="12" uuid="7abb3947-8d8d-4b74-8ade-1db155792baa">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</rectangle>
+		<band height="21" splitType="Stretch">
 			<textField>
 				<reportElement x="84" y="1" width="40" height="17" uuid="39fb4ddd-c63d-4856-87a5-950048fae6ea">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="716b65a5-898a-48ee-8873-f89cfdb56be9"/>
@@ -202,6 +192,21 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{article.amount} + $F{article.metricUnits.shortName}]]></textFieldExpression>
 			</textField>
+			<ellipse>
+				<reportElement x="10" y="3" width="7" height="8" uuid="a611692c-34ba-45e0-8286-e4b7b16e4eb9">
+					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
+					<property name="com.jaspersoft.studio.unit.y" value="cm"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</ellipse>
+			<ellipse>
+				<reportElement x="70" y="3" width="7" height="8" uuid="ef99c579-0c87-4537-b1fe-ef97f41c1050"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</ellipse>
 		</band>
 	</detail>
 	<columnFooter>
