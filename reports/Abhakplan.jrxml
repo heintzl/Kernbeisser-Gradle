@@ -10,6 +10,7 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="cm"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="cm"/>
+	<parameter name="deliveryDate" class="java.time.LocalDate"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -18,12 +19,15 @@
 	<field name="article.name" class="java.lang.String"/>
 	<field name="article.suppliersItemNumber" class="java.lang.Integer"/>
 	<field name="amount" class="java.lang.Integer"/>
-	<field name="retarded" class="java.lang.Boolean"/>
+	<field name="dueLimit" class="java.time.LocalDate"/>
 	<field name="article.metricUnits.shortName" class="java.lang.String"/>
+	<variable name="isRetarded" class="java.lang.Boolean">
+		<variableExpression><![CDATA[$P{deliveryDate}.isAfter($F{dueLimit})]]></variableExpression>
+	</variable>
 	<group name="User">
 		<groupExpression><![CDATA[$F{user.fullName}]]></groupExpression>
 		<groupHeader>
-			<band height="21">
+			<band height="20">
 				<textField>
 					<reportElement x="0" y="0" width="420" height="20" uuid="02c5579c-a688-4b75-b4ad-9adc6e296e8c"/>
 					<textElement>
@@ -34,7 +38,9 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="33"/>
+			<band height="6">
+				<property name="com.jaspersoft.studio.unit.height" value="cm"/>
+			</band>
 		</groupFooter>
 	</group>
 	<background>
@@ -53,11 +59,11 @@
 				<text><![CDATA[Abhakplan Vorbestellungen Kronkraft]]></text>
 			</staticText>
 			<textField pattern="dd.MM.yyyy">
-				<reportElement x="369" y="0" width="130" height="20" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722"/>
+				<reportElement x="280" y="0" width="218" height="20" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Lieferdatum: " + $P{deliveryDate}.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy"))]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="30" width="60" height="20" uuid="b807eccd-37c2-4275-833a-829353351db3"/>
@@ -128,7 +134,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="21" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField>
 				<reportElement x="84" y="1" width="40" height="17" uuid="39fb4ddd-c63d-4856-87a5-950048fae6ea">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="716b65a5-898a-48ee-8873-f89cfdb56be9"/>
@@ -157,7 +163,7 @@
 			<textField>
 				<reportElement x="239" y="1" width="260" height="17" printWhenGroupChanges="User" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
-					<printWhenExpression><![CDATA[!$F{retarded}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[!$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="13"/>
@@ -167,7 +173,7 @@
 			<textField>
 				<reportElement x="299" y="0" width="198" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
-					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="13" isBold="true" isItalic="true"/>
@@ -176,7 +182,7 @@
 			</textField>
 			<staticText>
 				<reportElement x="239" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
-					<printWhenExpression><![CDATA[$F{retarded}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="12" isBold="true" isItalic="true"/>
@@ -193,8 +199,9 @@
 				<textFieldExpression><![CDATA[$F{article.amount} + $F{article.metricUnits.shortName}]]></textFieldExpression>
 			</textField>
 			<ellipse>
-				<reportElement x="10" y="3" width="7" height="8" uuid="a611692c-34ba-45e0-8286-e4b7b16e4eb9">
+				<reportElement x="10" y="4" width="7" height="8" uuid="a611692c-34ba-45e0-8286-e4b7b16e4eb9">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
+					<property name="com.jaspersoft.studio.unit.x" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="cm"/>
 				</reportElement>
 				<graphicElement>
@@ -202,7 +209,9 @@
 				</graphicElement>
 			</ellipse>
 			<ellipse>
-				<reportElement x="70" y="3" width="7" height="8" uuid="ef99c579-0c87-4537-b1fe-ef97f41c1050"/>
+				<reportElement x="70" y="4" width="7" height="8" uuid="ef99c579-0c87-4537-b1fe-ef97f41c1050">
+					<property name="com.jaspersoft.studio.unit.y" value="cm"/>
+				</reportElement>
 				<graphicElement>
 					<pen lineWidth="1.5"/>
 				</graphicElement>

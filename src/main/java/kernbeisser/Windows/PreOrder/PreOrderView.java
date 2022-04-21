@@ -4,8 +4,13 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import javax.swing.*;
+
+import com.github.lgooddatepicker.components.DatePicker;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -392,6 +397,24 @@ public class PreOrderView implements IView<PreOrderController> {
       response = response.trim();
     }
     return response;
+  }
+
+  public LocalDate inputDeliveryDate() {
+    JPanel datePickerPanel = new JPanel();
+    datePickerPanel.setLayout(new BoxLayout(datePickerPanel, BoxLayout.Y_AXIS));
+    JLabel infoText = new JLabel("Bitte das Lieferdatum auswählen:");
+    DatePicker datePicker = new DatePicker();
+    datePicker.setDate(LocalDate.now().with(TemporalAdjusters.previous(Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
+    datePickerPanel.add(infoText);
+    datePickerPanel.add(datePicker);
+
+    if (JOptionPane.showConfirmDialog(
+            getContent(),
+            datePickerPanel,
+            "Abhakplan",
+            JOptionPane.OK_CANCEL_OPTION
+    ) == JOptionPane.CANCEL_OPTION) {return null;}
+    return datePicker.getDate();
   }
 
   public void setUserEnabled(boolean enabled) {

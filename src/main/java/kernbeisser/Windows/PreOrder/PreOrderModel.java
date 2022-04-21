@@ -2,6 +2,7 @@ package kernbeisser.Windows.PreOrder;
 
 import java.awt.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -111,9 +112,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.begin();
   }
 
-  public void printCheckList() {
+  public void printCheckList(LocalDate deliveryDate) {
     saveData();
-    new PreOrderChecklist(getAllPreOrders(false))
+    new PreOrderChecklist(deliveryDate, getAllPreOrders(false))
         .sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
   }
 

@@ -2,6 +2,9 @@ package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -186,8 +189,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
     keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
     keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
-    keyCapture.addALT(KeyEvent.VK_S, () -> openSearchWindow());
-    keyCapture.addCTRL(KeyEvent.VK_F, () -> openSearchWindow());
+    keyCapture.addALT(KeyEvent.VK_S, this::openSearchWindow);
+    keyCapture.addCTRL(KeyEvent.VK_F, this::openSearchWindow);
     boolean editable = userMayEdit();
     view.setInsertSectionEnabled(editable);
     String preOrdersFor =
@@ -242,7 +245,10 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   public void printChecklist() {
-    model.printCheckList();
+    LocalDate deliveryDate = getView().inputDeliveryDate();
+    if (deliveryDate != null) {
+      model.printCheckList(deliveryDate);
+    }
   }
 
   public void exportPreOrder() {

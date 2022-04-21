@@ -66,7 +66,7 @@ public enum Setting {
   REPORT_FOOTLINE(
       "Kernbeißer Verbraucher-Erzeuger-Genossenschaft eG, Bültenweg 71, 38106 Braunschweig, Steuer-Nr.:  14/201/08813"),
   OFFER_PREFIX("*AK* "),
-  PREORDER_RETARD_THRESHOLD("10"),
+  PREORDER_RETARD_THRESHOLD("6"),
   WARN_ARTICLE_DIFFERENCE("10"),
   VALIDATE_EMAIL_SYNTAX("false"),
   IS_DEFAULT_SURCHARGES("true"),
