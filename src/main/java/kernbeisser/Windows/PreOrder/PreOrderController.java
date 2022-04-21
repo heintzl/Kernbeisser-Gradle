@@ -2,9 +2,7 @@ package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -106,8 +104,13 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   @Override
   protected boolean commitClose() {
-    int numDelivered = model.getDelivery().size();
-    if (!getView().confirmDelivery(numDelivered)) {
+    Collection<PreOrder> delivery = model.getDelivery();
+    int numDelivered = delivery.size();
+    Collection<PreOrder> remaining = model.getAllPreOrders(false);
+    remaining.removeAll(delivery);
+    long numOverdue =
+        remaining.stream().filter(p -> p.getDueDate().isBefore(LocalDate.now())).count();
+    if (!getView().confirmDelivery(numDelivered, numOverdue)) {
       return false;
     }
     model.close();

@@ -1,5 +1,6 @@
 package kernbeisser.Windows.PreOrder;
 
+import com.github.lgooddatepicker.components.DatePicker;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -9,8 +10,6 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import javax.swing.*;
-
-import com.github.lgooddatepicker.components.DatePicker;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -347,9 +346,8 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
-  public boolean confirmDelivery(int numDelivered) {
-    int numPreorders = preOrders.getObjects().size();
-    if (numPreorders == 0) {
+  public boolean confirmDelivery(long numDelivered, long numOverdue) {
+    if (numDelivered == 0 && numOverdue == 0) {
       return true;
     }
     Tools.beep();
@@ -357,16 +355,23 @@ public class PreOrderView implements IView<PreOrderController> {
     if (numDelivered > 0) {
       message =
           numDelivered
-              + " Vorbestellungen sind als ausgeliefert markiert und werden aus der Vorbestellung entfernt.";
+              + " Vorbestellung"
+              + (numDelivered == 1
+                  ? " ist als ausgeliefert markiert und wird"
+                  : "en sind als ausgeliefert markiert und werden")
+              + " aus der Vorbestellung entfernt.";
     }
-    if (numDelivered < numPreorders) {
+    if (numOverdue > 0) {
       if (!message.isEmpty()) {
         message += "\n";
       }
       message +=
-          numPreorders
-              - numDelivered
-              + " Vorbestellungen bleiben bestehen und werden hoffentlich bald nachgeliefert...";
+          numOverdue
+              + " überfällige Vorbestellung"
+              + (numOverdue == 1
+                  ? " bleibt in der Liste und wird"
+                  : "en bleiben in der Liste und werden")
+              + " hoffentlich bald nachgeliefert...";
     }
     return JOptionPane.showConfirmDialog(
             getContent(), message, "Vorbestellung schließen", JOptionPane.OK_CANCEL_OPTION)
@@ -404,16 +409,19 @@ public class PreOrderView implements IView<PreOrderController> {
     datePickerPanel.setLayout(new BoxLayout(datePickerPanel, BoxLayout.Y_AXIS));
     JLabel infoText = new JLabel("Bitte das Lieferdatum auswählen:");
     DatePicker datePicker = new DatePicker();
-    datePicker.setDate(LocalDate.now().with(TemporalAdjusters.previous(Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
+    datePicker.setDate(
+        LocalDate.now()
+            .with(
+                TemporalAdjusters.previous(
+                    Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
     datePickerPanel.add(infoText);
     datePickerPanel.add(datePicker);
 
     if (JOptionPane.showConfirmDialog(
-            getContent(),
-            datePickerPanel,
-            "Abhakplan",
-            JOptionPane.OK_CANCEL_OPTION
-    ) == JOptionPane.CANCEL_OPTION) {return null;}
+            getContent(), datePickerPanel, "Abhakplan", JOptionPane.OK_CANCEL_OPTION)
+        == JOptionPane.CANCEL_OPTION) {
+      return null;
+    }
     return datePicker.getDate();
   }
 
