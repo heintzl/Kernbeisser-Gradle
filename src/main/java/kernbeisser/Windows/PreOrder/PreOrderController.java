@@ -251,6 +251,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     LocalDate deliveryDate = getView().inputDeliveryDate();
     if (deliveryDate != null) {
       model.printCheckList(deliveryDate);
+      getView().repaintTable();
     }
   }
 

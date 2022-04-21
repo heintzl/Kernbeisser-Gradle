@@ -116,6 +116,11 @@ public class PreOrderModel implements IModel<PreOrderController> {
     saveData();
     new PreOrderChecklist(deliveryDate, getAllPreOrders(false))
         .sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
+    for (PreOrder p : getAllPreOrders(false)) {
+      if (p.getOrderedOn() != null && p.isShopOrder()) {
+        delivery.add(p);
+      }
+    }
   }
 
   public boolean exportPreOrder(Component parent) {
