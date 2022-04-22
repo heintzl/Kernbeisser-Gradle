@@ -70,6 +70,11 @@ public class Articles {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
+  public static boolean isKkArticle(Article article) {
+    Supplier supplier = article.getSupplier();
+    return (supplier != null && supplier.equals(Supplier.getKKSupplier()));
+  }
+
   public static Optional<ObjectState<Article>> getByKbNumber(
       EntityManager em, int kbNumber, boolean filterShopRange) {
     return Optional.ofNullable(

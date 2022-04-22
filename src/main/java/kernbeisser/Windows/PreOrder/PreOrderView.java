@@ -46,6 +46,7 @@ public class PreOrderView implements IView<PreOrderController> {
   JButton searchArticle;
   private JLabel caption;
   private JLabel itemAmount;
+  private IntegerParseField shopNumber;
 
   private JPopupMenu popupSelectionColumn;
   @Linked private PreOrderController controller;
@@ -68,7 +69,18 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void setKkNumber(int s) {
     kkNumber.setText(String.valueOf(s));
+  }
+
+  void focusOnAmount() {
     amount.requestFocusInWindow();
+  }
+
+  int getShopNumber() {
+    return shopNumber.getSafeValue();
+  }
+
+  void setShopNumber(int s) {
+    shopNumber.setText(String.valueOf(s));
   }
 
   void setNetPrice(double s) {
@@ -190,6 +202,19 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
 
+    shopNumber.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (controller.searchShopNo()) {
+              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                amount.selectAll();
+                amount.requestFocusInWindow();
+              }
+            }
+          }
+        });
+
     user.addKeyListener(
         new KeyAdapter() {
           @Override
@@ -239,6 +264,7 @@ public class PreOrderView implements IView<PreOrderController> {
   void enableControls(boolean enabled) {
     searchArticle.setEnabled(enabled);
     kkNumber.setEnabled(enabled);
+    shopNumber.setEnabled(enabled);
     amount.setEnabled(enabled);
     add.setEnabled(enabled);
   }
@@ -325,11 +351,14 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
-  public void messageIsNotKKArticle() {
+  public void messageIsNotKKArticle(boolean ísShopOrder) {
     Tools.beep();
     JOptionPane.showMessageDialog(
         getContent(),
-        "Zur Zeit können hier nur Kornkraft Artikel vorbestellt werden!",
+        "Zur Zeit können hier nur Kornkraft Artikel "
+            + (ísShopOrder
+                ? "bestellt werden."
+                : "vorbestellt werden.\nFür andere Lieferanten bitte einen Bestellzettel ausfüllen."),
         "Falscher Lieferant",
         JOptionPane.WARNING_MESSAGE);
   }

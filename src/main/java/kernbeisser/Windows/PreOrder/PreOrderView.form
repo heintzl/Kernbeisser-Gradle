@@ -37,14 +37,14 @@
         <children>
           <component id="3c80b" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="amount">
             <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties/>
           </component>
           <component id="fc434" class="javax.swing.JLabel" binding="containerSize">
             <constraints>
-              <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -53,7 +53,7 @@
           </component>
           <component id="44b3" class="javax.swing.JLabel" binding="sellingPrice">
             <constraints>
-              <grid row="1" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -62,7 +62,7 @@
           </component>
           <component id="826af" class="javax.swing.JLabel" binding="name">
             <constraints>
-              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -73,7 +73,7 @@
           </component>
           <component id="be695" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -82,7 +82,7 @@
           </component>
           <component id="c2dd3" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -91,7 +91,7 @@
           </component>
           <component id="3ede1" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -100,7 +100,7 @@
           </component>
           <component id="dce6a" class="kernbeisser.CustomComponents.PermissionButton" binding="add">
             <constraints>
-              <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -109,18 +109,9 @@
               <text value="Übernehmen"/>
             </properties>
           </component>
-          <component id="780fd" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <text value="Anzahl"/>
-            </properties>
-          </component>
           <component id="ef033" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -129,7 +120,7 @@
           </component>
           <component id="85fe7" class="javax.swing.JLabel" binding="netPrice">
             <constraints>
-              <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -177,7 +168,7 @@
           </component>
           <component id="cde31" class="javax.swing.JButton" binding="searchArticle">
             <constraints>
-              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -188,7 +179,7 @@
           </component>
           <component id="602fe" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -197,12 +188,37 @@
           </component>
           <component id="c6116" class="javax.swing.JLabel" binding="itemAmount">
             <constraints>
-              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
               <text value="Label"/>
             </properties>
+          </component>
+          <component id="780fd" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <text value="Anzahl"/>
+            </properties>
+          </component>
+          <component id="8c5f8" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <text value="KB-Nr."/>
+            </properties>
+          </component>
+          <component id="8925f" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="shopNumber">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="3" bottom="0" right="3" weightx="0.0" weighty="1.0"/>
+            </constraints>
+            <properties/>
           </component>
         </children>
       </grid>

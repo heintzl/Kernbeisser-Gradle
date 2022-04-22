@@ -13,6 +13,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Export.CSVExport;
@@ -33,6 +34,11 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   Optional<Article> getItemByKkNumber(int kkNumber) {
     return Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber);
+  }
+
+  Optional<Article> getItemByShopNumber(int shopNumber) {
+    Optional<ObjectState<Article>> article = Articles.getByKbNumber(shopNumber, false);
+    return article.map(ObjectState::getValue);
   }
 
   public void add(PreOrder preOrder) {
