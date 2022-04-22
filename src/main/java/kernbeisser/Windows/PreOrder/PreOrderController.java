@@ -2,6 +2,7 @@ package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   private final KeyCapture keyCapture;
   private final BarcodeCapture barcodeCapture;
+  private Article selectedArticle = null;
   boolean restrictToLoggedIn;
 
   public PreOrderController(boolean restrictToLoggedIn) {
@@ -44,14 +46,31 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     if (view.getKkNumber() != 0) {
       Optional<Article> searchResult = model.getItemByKkNumber(view.getKkNumber());
       if (searchResult.isPresent()) {
-        pasteDataInView(searchResult.get());
+        pasteDataInView(searchResult.get(), false);
         return true;
       } else {
-        noArticleFound();
+        noArticleFound(false);
         return false;
       }
     } else {
-      noArticleFound();
+      noArticleFound(false);
+      return false;
+    }
+  }
+
+  boolean searchShopNo() {
+    PreOrderView view = getView();
+    if (view.getShopNumber() != 0) {
+      Optional<Article> searchResult = model.getItemByShopNumber(view.getShopNumber());
+      if (searchResult.isPresent()) {
+        pasteDataInView(searchResult.get(), true);
+        return true;
+      } else {
+        noArticleFound(true);
+        return false;
+      }
+    } else {
+      noArticleFound(true);
       return false;
     }
   }
@@ -60,8 +79,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     var view = getView();
     try {
       PreOrder order = obtainFromView();
-      if (!order.getArticle().getSupplier().equals(Supplier.getKKSupplier())) {
-        view.messageIsNotKKArticle();
+      if (!Articles.isKkArticle(order.getArticle())) {
+        view.messageIsNotKKArticle(order.getUser().isKernbeisser());
         return;
       }
       if (order.getUser() == null) {
@@ -70,7 +89,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       }
       model.add(order);
       view.addPreOrder(order);
-      noArticleFound();
+      noArticleFound(false);
       view.resetArticleNr();
     } catch (NoResultException e) {
       view.noItemFound();
@@ -97,23 +116,33 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
-  void noArticleFound() {
-    pasteDataInView(Articles.getEmptyArticle());
+  void noArticleFound(boolean isByShopNumber) {
+    pasteDataInView(Articles.getEmptyArticle(), isByShopNumber);
+    selectedArticle = null;
   }
 
   @Override
   protected boolean commitClose() {
-    int numDelivered = model.getDelivery().size();
-    if (numDelivered > 0) {
-      if (!getView().confirmDelivery(numDelivered)) {
-        return false;
-      }
+    Collection<PreOrder> delivery = model.getDelivery();
+    int numDelivered = delivery.size();
+    Collection<PreOrder> remaining = model.getAllPreOrders(false);
+    remaining.removeAll(delivery);
+    long numOverdue =
+        remaining.stream()
+            .filter(
+                p ->
+                    Optional.ofNullable(p.getDueDate())
+                        .orElse(LocalDate.MAX)
+                        .isBefore(LocalDate.now()))
+            .count();
+    if (!getView().confirmDelivery(numDelivered, numOverdue)) {
+      return false;
     }
     model.close();
     return true;
   }
 
-  void pasteDataInView(Article articleKornkraft) {
+  void pasteDataInView(Article articleKornkraft, boolean isByShopNumber) {
     var view = getView();
     double containerSize = articleKornkraft.getContainerSize();
     view.setContainerSize(new DecimalFormat("0.###").format(containerSize));
@@ -124,23 +153,23 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
             ShoppingItem.displayOnlyShoppingItem(articleKornkraft, 0, true).getRetailPrice()
                 * containerSize));
     view.setItemName(articleKornkraft.getName());
+    if (isByShopNumber && Articles.isKkArticle(articleKornkraft)) {
+      view.setKkNumber(articleKornkraft.getSuppliersItemNumber());
+    } else {
+      view.setShopNumber(articleKornkraft.getKbNumber());
+    }
     view.setItemAmount(Articles.getContentAmount(articleKornkraft));
+    selectedArticle = articleKornkraft;
   }
 
   private PreOrder obtainFromView() {
     PreOrder preOrder = new PreOrder();
-    Article article = findArticle();
     var view = getView();
     preOrder.setUser(view.getUser());
-    preOrder.setArticle(article);
+    preOrder.setArticle(selectedArticle);
     preOrder.setAmount(view.getAmount());
-    preOrder.setInfo(article.getInfo());
+    preOrder.setInfo(selectedArticle.getInfo());
     return preOrder;
-  }
-
-  private Article findArticle() {
-    if (getView().getKkNumber() == 0) throw new NoResultException();
-    return model.getItemByKkNumber(getView().getKkNumber()).orElseThrow(NoResultException::new);
   }
 
   void insert(Article article) {
@@ -161,8 +190,9 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void articleSearch(Article a) {
-    pasteDataInView(a);
+    pasteDataInView(a, false);
     getView().setKkNumber(a.getSuppliersItemNumber());
+    getView().focusOnAmount();
   }
 
   void openSearchWindow() {
@@ -188,8 +218,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
     keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
     keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
-    keyCapture.addALT(KeyEvent.VK_S, () -> openSearchWindow());
-    keyCapture.addCTRL(KeyEvent.VK_F, () -> openSearchWindow());
+    keyCapture.addALT(KeyEvent.VK_S, this::openSearchWindow);
+    keyCapture.addCTRL(KeyEvent.VK_F, this::openSearchWindow);
     boolean editable = userMayEdit();
     view.setInsertSectionEnabled(editable);
     String preOrdersFor =
@@ -202,14 +232,14 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       view.setUsers(Collections.singletonList(LogInModel.getLoggedIn()));
       view.setUserEnabled(false);
     } else {
-      view.setUsers(User.getAllUserFullNames(true));
+      view.setUsers(User.getAllUserFullNames(true, true));
     }
     view.setPreOrders(model.getAllPreOrders(restrictToLoggedIn));
     view.setAmount("1");
     view.searchArticle.addActionListener(e -> openSearchWindow());
     view.bestellungExportierenButton.setEnabled(!restrictToLoggedIn);
     view.abhakplanButton.setEnabled(!restrictToLoggedIn);
-    noArticleFound();
+    noArticleFound(false);
   }
 
   boolean userMayEdit() {
@@ -244,7 +274,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   public void printChecklist() {
-    model.printCheckList();
+    LocalDate deliveryDate = getView().inputDeliveryDate();
+    if (deliveryDate != null) {
+      model.printCheckList(deliveryDate);
+      getView().repaintTable();
+    }
   }
 
   public void exportPreOrder() {

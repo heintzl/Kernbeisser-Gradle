@@ -1,14 +1,19 @@
 package kernbeisser.Windows.PreOrder;
 
+import com.github.lgooddatepicker.components.DatePicker;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -42,6 +47,7 @@ public class PreOrderView implements IView<PreOrderController> {
   JButton searchArticle;
   private JLabel caption;
   private JLabel itemAmount;
+  private IntegerParseField shopNumber;
 
   private JPopupMenu popupSelectionColumn;
   @Linked private PreOrderController controller;
@@ -64,11 +70,40 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void setKkNumber(int s) {
     kkNumber.setText(String.valueOf(s));
+  }
+
+  void focusOnAmount() {
     amount.requestFocusInWindow();
+  }
+
+  int getShopNumber() {
+    return shopNumber.getSafeValue();
+  }
+
+  void setShopNumber(int s) {
+    shopNumber.setText(String.valueOf(s));
   }
 
   void setNetPrice(double s) {
     netPrice.setText(String.format("%.2f€", s));
+  }
+
+  private static String getDueDateAsString(PreOrder preOrder) {
+    boolean isSlow = preOrder.getArticle().getName().contains("*V*");
+    String displayText = isSlow ? "ab " : "";
+    if (preOrder.getDueDate().isAfter(LocalDate.now())) {
+      displayText += Date.INSTANT_DATE.format(preOrder.getDueDate());
+    } else {
+      displayText =
+          "NL "
+              + displayText
+              + Date.INSTANT_DATE.format(
+                  LocalDate.now()
+                      .with(
+                          TemporalAdjusters.next(
+                              Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
+    }
+    return displayText;
   }
 
   private void createUIComponents() {
@@ -85,25 +120,30 @@ public class PreOrderView implements IView<PreOrderController> {
     }
     preOrders =
         new ObjectTable<PreOrder>(
-            Columns.create("Benutzer", e -> e.getUser().getFullName()),
-            Columns.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
-            Columns.create(
-                "Kornkraftnummer",
-                e -> e.getArticle().getSuppliersItemNumber(),
-                SwingConstants.RIGHT),
+            Columns.create("Benutzer", e -> e.getUser().getFullName(true)),
+            new CustomizableColumn<PreOrder>("Ladennummer", PreOrder::getKBNumber)
+                .withHorizontalAlignment(SwingConstants.RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
+            new CustomizableColumn<PreOrder>(
+                    "Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber())
+                .withHorizontalAlignment(SwingConstants.RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Produktname", e -> e.getArticle().getName()),
-            Columns.create(
-                "Netto-Preis",
-                e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())),
-                SwingConstants.RIGHT),
+            new CustomizableColumn<PreOrder>(
+                    "Netto-Preis",
+                    e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())))
+                .withHorizontalAlignment(SwingConstants.RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
             new CustomizableColumn<>("Anzahl", PreOrder::getAmount)
                 .withLeftClickConsumer(controller::editAmount)
                 .withRightClickConsumer(controller::editAmount)
-                .withHorizontalAlignment(SwingConstants.CENTER),
+                .withHorizontalAlignment(SwingConstants.CENTER)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create(
                 "Bestellt am",
                 e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
-                SwingConstants.RIGHT));
+                SwingConstants.RIGHT),
+            Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
     if (!controller.restrictToLoggedIn)
       preOrders.addColumnAtIndex(
           0,
@@ -120,7 +160,7 @@ public class PreOrderView implements IView<PreOrderController> {
               controller::delete,
               e -> e.getOrderedOn() == null));
     }
-    user = new AdvancedComboBox<>(e -> e.getSurname() + " " + e.getFirstName());
+    user = new AdvancedComboBox<>(e -> e.getFullName(true));
   }
 
   private void showSelectionPopup() {
@@ -186,6 +226,19 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
 
+    shopNumber.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (controller.searchShopNo()) {
+              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                amount.selectAll();
+                amount.requestFocusInWindow();
+              }
+            }
+          }
+        });
+
     user.addKeyListener(
         new KeyAdapter() {
           @Override
@@ -235,6 +288,7 @@ public class PreOrderView implements IView<PreOrderController> {
   void enableControls(boolean enabled) {
     searchArticle.setEnabled(enabled);
     kkNumber.setEnabled(enabled);
+    shopNumber.setEnabled(enabled);
     amount.setEnabled(enabled);
     add.setEnabled(enabled);
   }
@@ -321,11 +375,14 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
-  public void messageIsNotKKArticle() {
+  public void messageIsNotKKArticle(boolean ísShopOrder) {
     Tools.beep();
     JOptionPane.showMessageDialog(
         getContent(),
-        "Zur Zeit können hier nur Kornkraft Artikel vorbestellt werden!",
+        "Zur Zeit können hier nur Kornkraft Artikel "
+            + (ísShopOrder
+                ? "bestellt werden."
+                : "vorbestellt werden.\nFür andere Lieferanten bitte einen Bestellzettel ausfüllen."),
         "Falscher Lieferant",
         JOptionPane.WARNING_MESSAGE);
   }
@@ -342,15 +399,36 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
-  public boolean confirmDelivery(int numDelivered) {
+  public boolean confirmDelivery(long numDelivered, long numOverdue) {
+    if (numDelivered == 0 && numOverdue == 0) {
+      return true;
+    }
     Tools.beep();
+    String message = "";
+    if (numDelivered > 0) {
+      message =
+          numDelivered
+              + " Vorbestellung"
+              + (numDelivered == 1
+                  ? " ist als ausgeliefert markiert und wird"
+                  : "en sind als ausgeliefert markiert und werden")
+              + " aus der Vorbestellung entfernt.";
+    }
+    if (numOverdue > 0) {
+      if (!message.isEmpty()) {
+        message += "\n";
+      }
+      message +=
+          numOverdue
+              + " überfällige Vorbestellung"
+              + (numOverdue == 1
+                  ? " bleibt in der Liste und wird"
+                  : "en bleiben in der Liste und werden")
+              + " hoffentlich bald nachgeliefert...";
+    }
     return JOptionPane.showConfirmDialog(
-            getContent(),
-            numDelivered
-                + " Vorbestellungen sind als ausgeliefert markiert. Sollen sie aus der Vorbestellung entfernt werden?",
-            "Vorbestellung schließen",
-            JOptionPane.YES_NO_OPTION)
-        == JOptionPane.YES_OPTION;
+            getContent(), message, "Vorbestellung schließen", JOptionPane.OK_CANCEL_OPTION)
+        == JOptionPane.OK_OPTION;
   }
 
   public String inputAmount(int amount, boolean retry) {
@@ -377,6 +455,28 @@ public class PreOrderView implements IView<PreOrderController> {
       response = response.trim();
     }
     return response;
+  }
+
+  public LocalDate inputDeliveryDate() {
+    JPanel datePickerPanel = new JPanel();
+    datePickerPanel.setLayout(new BoxLayout(datePickerPanel, BoxLayout.Y_AXIS));
+    JLabel infoText = new JLabel("Bitte das Lieferdatum auswählen:");
+    DatePicker datePicker = new DatePicker();
+    datePicker.setDate(
+        LocalDate.now()
+            .minusDays(2)
+            .with(
+                TemporalAdjusters.next(
+                    Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
+    datePickerPanel.add(infoText);
+    datePickerPanel.add(datePicker);
+
+    if (JOptionPane.showConfirmDialog(
+            getContent(), datePickerPanel, "Abhakplan", JOptionPane.OK_CANCEL_OPTION)
+        == JOptionPane.CANCEL_OPTION) {
+      return null;
+    }
+    return datePicker.getDate();
   }
 
   public void setUserEnabled(boolean enabled) {

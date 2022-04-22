@@ -1,8 +1,11 @@
 package kernbeisser.DBEntities;
 
 import java.io.Serializable;
+import java.time.DayOfWeek;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
@@ -69,10 +72,21 @@ public class PreOrder implements Serializable, UserRelated {
     return Tools.getAll(PreOrder.class, condition);
   }
 
+  public LocalDate getDueDate() {
+    Instant orderDate = orderedOn == null ? createDate : orderedOn;
+    return orderDate
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+        .with(TemporalAdjusters.next(Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)));
+  }
+
   // required for PreOrderChecklist Report
-  public boolean isRetarded() {
-    return ChronoUnit.DAYS.between(createDate, Instant.now())
-        > Setting.PREORDER_RETARD_THRESHOLD.getIntValue();
+  public LocalDate getDueLimit() {
+    LocalDate dueDate = getDueDate();
+    if (dueDate == null) {
+      return null;
+    }
+    return getDueDate().plusDays(Setting.PREORDER_RETARD_THRESHOLD.getIntValue());
   }
 
   public int getKBNumber() {

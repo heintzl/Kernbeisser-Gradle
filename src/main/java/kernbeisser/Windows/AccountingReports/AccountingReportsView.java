@@ -196,7 +196,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   }
 
   private void createUIComponents() {
-    user = new AdvancedComboBox<>(User::getFullName);
+    user = new AdvancedComboBox<>(u -> u.getFullName(true));
     tillRollStartDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
     tillRollEndDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
   }

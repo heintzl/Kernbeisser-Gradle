@@ -114,7 +114,7 @@ public class AccountingReportsController
 
   @Override
   public void fillView(AccountingReportsView accountingReportsView) {
-    accountingReportsView.setUser(User.getAllUserFullNames(true));
+    accountingReportsView.setUser(User.getAllUserFullNames(true, true));
     accountingReportsView.getOptAccountingReport().doClick();
   }
 }

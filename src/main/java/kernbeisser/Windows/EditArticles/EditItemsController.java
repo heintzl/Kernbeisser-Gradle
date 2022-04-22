@@ -7,13 +7,12 @@ import java.awt.event.KeyEvent;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
-import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
@@ -57,16 +56,33 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
                 .withDefaultFilter()
                 .withColumnAdjustor(column -> column.setPreferredWidth(600))
                 .withHorizontalAlignment(LEFT),
-            Columns.create(
-                "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName(), RIGHT),
-            Columns.create("Ladennummer", Article::getKbNumber, RIGHT),
+            new CustomizableColumn<Article>(
+                    "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName())
+                .withHorizontalAlignment(RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Ladennummer", Article::getKbNumber, RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Lieferant", Article::getSupplier, LEFT).withDefaultFilter(),
-            Columns.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT),
-            Columns.create("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein", LEFT),
-            Columns.create("Nettopreis", e -> String.format("%.2f€", e.getNetPrice()), RIGHT),
+            Columns.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
+            new CustomizableColumn<Article>("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein")
+                .withDefaultFilter(),
+            new CustomizableColumn<Article>(
+                    "Nettopreis", e -> String.format("%.2f€", e.getNetPrice()))
+                .withHorizontalAlignment(RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
+            new CustomizableColumn<Article>(
+                    "Verkaufspreis", e -> String.format("%.2f€", Articles.calculateRetailPrice(e)))
+                .withHorizontalAlignment(RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit()), RIGHT),
-            Columns.create("MwSt.", e -> e.getVat().getName(), RIGHT),
-            Columns.create("Gebindegröße", Article::getContainerSize, RIGHT),
+            new CustomizableColumn<Article>("MwSt.", e -> e.getVat().getName())
+                .withHorizontalAlignment(RIGHT)
+                .withDefaultFilter(),
+            new CustomizableColumn<Article>(
+                    "Gebindegröße", e -> String.format("%.3f", e.getContainerSize()))
+                .withHorizontalAlignment(RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Preisliste", Article::getPriceList, LEFT),
             Columns.create("Zuschlaggruppe", this::formatArticleSurcharge, LEFT)
                 .withDefaultFilter(),

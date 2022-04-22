@@ -90,15 +90,15 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
   }
 
   @Override
-  @Key(PermissionKey.ADD_USER)
+  @Key(PermissionKey.ADD_ARTICLE)
   public void addPermission() {}
 
   @Override
-  @Key(PermissionKey.EDIT_USER)
+  @Key(PermissionKey.EDIT_ARTICLE)
   public void editPermission() {}
 
   @Override
-  @Key(PermissionKey.REMOVE_USER)
+  @Key(PermissionKey.REMOVE_ARTICLE)
   public void removePermission() {}
 
   @Override
