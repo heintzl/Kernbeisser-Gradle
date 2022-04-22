@@ -13,6 +13,7 @@ import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -89,24 +90,20 @@ public class PreOrderView implements IView<PreOrderController> {
 
   private static String getDueDateAsString(PreOrder preOrder) {
     boolean isSlow = preOrder.getArticle().getName().contains("*V*");
-    if (preOrder.getOrderedOn() == null) {
-      return "";
+    String displayText = isSlow ? "ab " : "";
+    if (preOrder.getDueDate().isAfter(LocalDate.now())) {
+      displayText += Date.INSTANT_DATE.format(preOrder.getDueDate());
     } else {
-      String displayText = isSlow ? "ab " : "";
-      if (preOrder.getDueDate().isAfter(LocalDate.now())) {
-        displayText += Date.INSTANT_DATE.format(preOrder.getDueDate());
-      } else {
-        displayText =
-            "NL "
-                + displayText
-                + Date.INSTANT_DATE.format(
-                    LocalDate.now()
-                        .with(
-                            TemporalAdjusters.next(
-                                Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
-      }
-      return displayText;
+      displayText =
+          "NL "
+              + displayText
+              + Date.INSTANT_DATE.format(
+                  LocalDate.now()
+                      .with(
+                          TemporalAdjusters.next(
+                              Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
     }
+    return displayText;
   }
 
   private void createUIComponents() {
@@ -124,20 +121,24 @@ public class PreOrderView implements IView<PreOrderController> {
     preOrders =
         new ObjectTable<PreOrder>(
             Columns.create("Benutzer", e -> e.getUser().getFullName(true)),
-            Columns.create("Ladennummer", PreOrder::getKBNumber, SwingConstants.RIGHT),
-            Columns.create(
-                "Kornkraftnummer",
-                e -> e.getArticle().getSuppliersItemNumber(),
-                SwingConstants.RIGHT),
+            new CustomizableColumn<PreOrder>("Ladennummer", PreOrder::getKBNumber)
+                .withHorizontalAlignment(SwingConstants.RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
+            new CustomizableColumn<PreOrder>(
+                    "Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber())
+                .withHorizontalAlignment(SwingConstants.RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Produktname", e -> e.getArticle().getName()),
-            Columns.create(
-                "Netto-Preis",
-                e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())),
-                SwingConstants.RIGHT),
+            new CustomizableColumn<PreOrder>(
+                    "Netto-Preis",
+                    e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())))
+                .withHorizontalAlignment(SwingConstants.RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
             new CustomizableColumn<>("Anzahl", PreOrder::getAmount)
                 .withLeftClickConsumer(controller::editAmount)
                 .withRightClickConsumer(controller::editAmount)
-                .withHorizontalAlignment(SwingConstants.CENTER),
+                .withHorizontalAlignment(SwingConstants.CENTER)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create(
                 "Bestellt am",
                 e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
