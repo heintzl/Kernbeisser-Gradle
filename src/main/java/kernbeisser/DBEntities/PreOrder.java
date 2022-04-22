@@ -5,7 +5,6 @@ import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import javax.persistence.*;
@@ -74,10 +73,8 @@ public class PreOrder implements Serializable, UserRelated {
   }
 
   public LocalDate getDueDate() {
-    if (orderedOn == null) {
-      return null;
-    }
-    return orderedOn
+    Instant orderDate = orderedOn == null ? createDate : orderedOn;
+    return orderDate
         .atZone(ZoneId.systemDefault())
         .toLocalDate()
         .with(TemporalAdjusters.next(Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)));
@@ -85,7 +82,11 @@ public class PreOrder implements Serializable, UserRelated {
 
   // required for PreOrderChecklist Report
   public LocalDate getDueLimit() {
-    return getDueDate().plus(Setting.PREORDER_RETARD_THRESHOLD.getIntValue(), ChronoUnit.DAYS);
+    LocalDate dueDate = getDueDate();
+    if (dueDate == null) {
+      return null;
+    }
+    return getDueDate().plusDays(Setting.PREORDER_RETARD_THRESHOLD.getIntValue());
   }
 
   public int getKBNumber() {
