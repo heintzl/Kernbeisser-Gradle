@@ -87,6 +87,28 @@ public class PreOrderView implements IView<PreOrderController> {
     netPrice.setText(String.format("%.2f€", s));
   }
 
+  private static String getDueDateAsString(PreOrder preOrder) {
+    boolean isSlow = preOrder.getArticle().getName().contains("*V*");
+    if (preOrder.getOrderedOn() == null) {
+      return "";
+    } else {
+      String displayText = isSlow ? "ab " : "";
+      if (preOrder.getDueDate().isAfter(LocalDate.now())) {
+        displayText += Date.INSTANT_DATE.format(preOrder.getDueDate());
+      } else {
+        displayText =
+            "NL "
+                + displayText
+                + Date.INSTANT_DATE.format(
+                    LocalDate.now()
+                        .with(
+                            TemporalAdjusters.next(
+                                Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
+      }
+      return displayText;
+    }
+  }
+
   private void createUIComponents() {
     Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
     Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
@@ -119,7 +141,8 @@ public class PreOrderView implements IView<PreOrderController> {
             Columns.create(
                 "Bestellt am",
                 e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
-                SwingConstants.RIGHT));
+                SwingConstants.RIGHT),
+            Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
     if (!controller.restrictToLoggedIn)
       preOrders.addColumnAtIndex(
           0,
