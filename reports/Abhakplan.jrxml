@@ -87,14 +87,14 @@
 				<text><![CDATA[Menge]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="134" y="30" width="54" height="20" uuid="f0f8b4bc-12fc-4f15-8f4c-e61afcae6b57"/>
+				<reportElement x="134" y="30" width="48" height="20" uuid="f0f8b4bc-12fc-4f15-8f4c-e61afcae6b57"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[KK-Nr.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="241" y="30" width="50" height="20" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4"/>
+				<reportElement x="246" y="30" width="50" height="20" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
@@ -115,7 +115,7 @@
 				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="192" y="30" width="50" height="20" uuid="f0428fe8-e982-494c-b59b-4e0a32655790"/>
+				<reportElement x="196" y="30" width="50" height="20" uuid="f0428fe8-e982-494c-b59b-4e0a32655790"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
@@ -152,7 +152,7 @@
 				<text><![CDATA[x]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="137" y="1" width="50" height="17" uuid="e8f3a35c-13e0-4f21-acc2-f1481c73286f">
+				<reportElement x="137" y="1" width="45" height="17" uuid="e8f3a35c-13e0-4f21-acc2-f1481c73286f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0fcc61-6f33-42f3-91b0-b2f6988d712f"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -161,7 +161,7 @@
 				<textFieldExpression><![CDATA[$F{article.suppliersItemNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="239" y="1" width="260" height="17" printWhenGroupChanges="User" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
+				<reportElement x="244" y="1" width="254" height="17" printWhenGroupChanges="User" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
 					<printWhenExpression><![CDATA[!$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
@@ -171,7 +171,7 @@
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="299" y="0" width="198" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
+				<reportElement x="304" y="0" width="194" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
 					<printWhenExpression><![CDATA[$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
@@ -181,7 +181,7 @@
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="239" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
+				<reportElement x="244" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
 					<printWhenExpression><![CDATA[$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
@@ -190,7 +190,7 @@
 				<text><![CDATA[Nachlief.:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="192" y="1" width="42" height="17" uuid="5230a6f1-3825-43c0-83a3-0e5397ab0a75">
+				<reportElement x="188" y="1" width="50" height="17" uuid="5230a6f1-3825-43c0-83a3-0e5397ab0a75">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0fcc61-6f33-42f3-91b0-b2f6988d712f"/>
 				</reportElement>
 				<textElement textAlignment="Right">
