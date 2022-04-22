@@ -463,8 +463,9 @@ public class PreOrderView implements IView<PreOrderController> {
     DatePicker datePicker = new DatePicker();
     datePicker.setDate(
         LocalDate.now()
+            .minusDays(2)
             .with(
-                TemporalAdjusters.previous(
+                TemporalAdjusters.next(
                     Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
     datePickerPanel.add(infoText);
     datePickerPanel.add(datePicker);
