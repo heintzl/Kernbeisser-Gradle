@@ -24,6 +24,7 @@ import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 
 public class PreOrderModel implements IModel<PreOrderController> {
+
   private final EntityManager em = DBConnection.getEntityManager();
   private EntityTransaction et = em.getTransaction();
   @Getter private final Set<PreOrder> delivery = new HashSet<>();
@@ -72,13 +73,13 @@ public class PreOrderModel implements IModel<PreOrderController> {
   Collection<PreOrder> getAllPreOrders(boolean restricted) {
     if (restricted) {
       return em.createQuery(
-              "select p from PreOrder p where p.user = :u order by p.article.suppliersItemNumber",
+              "select p from PreOrder p where delivery IS NULL AND p.user = :u order by p.article.suppliersItemNumber",
               PreOrder.class)
           .setParameter("u", LogInModel.getLoggedIn())
           .getResultList();
     } else {
       return em.createQuery(
-              "select p from PreOrder p order by p.user.username, p.article.suppliersItemNumber",
+              "select p from PreOrder p where delivery IS NULL order by p.user.username, p.article.suppliersItemNumber",
               PreOrder.class)
           .getResultList();
     }
@@ -99,12 +100,16 @@ public class PreOrderModel implements IModel<PreOrderController> {
     delivery.forEach(
         p -> {
           Article article = p.getArticle();
-          if (p.getUser().equals(User.getKernbeisserUser())
-              && !article.getShopRange().isVisible()) {
-            article.setShopRange(ShopRange.IN_RANGE);
-            em.merge(article);
+          if (p.getUser().equals(User.getKernbeisserUser())) {
+            removeLazy(p);
+            if (!article.getShopRange().isVisible()) {
+              article.setShopRange(ShopRange.IN_RANGE);
+              em.merge(article);
+            }
+          } else {
+            p.setDelivery(Instant.now());
+            em.merge(p);
           }
-          removeLazy(p);
         });
     em.flush();
     et.commit();
@@ -120,7 +125,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   public void printCheckList(LocalDate deliveryDate) {
     saveData();
-    new PreOrderChecklist(deliveryDate, getAllPreOrders(false))
+    new PreOrderChecklist(
+            deliveryDate, getAllPreOrders(false)) // .stream().filter(p -> p.getOrderedOn() !=
+        // null).collect(Collectors.toList()))
         .sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
     for (PreOrder p : getAllPreOrders(false)) {
       if (p.getOrderedOn() != null && p.isShopOrder()) {
