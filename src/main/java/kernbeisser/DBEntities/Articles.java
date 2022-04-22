@@ -275,6 +275,14 @@ public class Articles {
         .getCreateDate();
   }
 
+  public static double calculateRetailPrice(Article article) {
+    double retailPrice =
+        article.getNetPrice()
+            * (1 + article.getVat().getValue())
+            * (1 + article.getSurchargeGroup().getSurcharge());
+    return Tools.roundCurrency(retailPrice);
+  }
+
   public static Article createOfferArticle(
       Article base, double specialNetPrice, Instant from, Instant to) {
     if (base.isOffer()) throw new IllegalArgumentException("article is already a offer");
