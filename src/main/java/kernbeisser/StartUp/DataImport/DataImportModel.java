@@ -369,9 +369,18 @@ public class DataImportModel implements IModel<DataImportController> {
       EntityTransaction et = em.getTransaction();
       et.begin();
       csvWriter.writeAll(
-          em.createQuery("select u.username from User u", String.class)
+          em.createQuery("select u from User u", User.class)
               .getResultStream()
-              .map(e -> new String[] {e, generateUserRelatedToken(e)})
+              .filter(e -> !e.isKernbeisser() && !e.isSysAdmin())
+              .map(
+                  e ->
+                      new String[] {
+                        e.getFirstName(),
+                        e.getSurname(),
+                        e.getEmail(),
+                        e.getUsername(),
+                        generateUserRelatedToken(e.getUsername())
+                      })
               .collect(Collectors.toCollection(ArrayList::new)));
       csvWriter.flush();
 
