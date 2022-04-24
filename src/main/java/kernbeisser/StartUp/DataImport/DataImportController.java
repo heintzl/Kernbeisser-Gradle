@@ -151,8 +151,21 @@ public class DataImportController extends Controller<DataImportView, DataImportM
         new Thread(
                 () -> {
                   view.setUserProgress(0);
+                  boolean exportCSV = getView().shouldExportPasswordsAsCsv();
                   model.parseJobs(jobs, view::setUserProgress);
-                  model.parseUsers(user, view::setUserProgress);
+                  model.parseUsers(user, view::setUserProgress, exportCSV);
+                  if (exportCSV) {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogTitle("Password-CSV speichern...");
+                    fileChooser.addActionListener(
+                        e -> {
+                          File selectedFile = fileChooser.getSelectedFile();
+                          if (selectedFile != null) {
+                            model.createUserPasswordCsv(selectedFile);
+                          }
+                        });
+                    fileChooser.showSaveDialog(getView().getTopComponent());
+                  }
                   Main.logger.info("User thread finished");
                   try {
                     articleThread.join();

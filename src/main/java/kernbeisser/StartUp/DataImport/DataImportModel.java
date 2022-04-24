@@ -3,12 +3,17 @@ package kernbeisser.StartUp.DataImport;
 import static kernbeisser.Useful.Users.generateUserRelatedToken;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.opencsv.CSVWriterBuilder;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -41,6 +46,8 @@ import kernbeisser.Useful.ErrorCollector;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+import lombok.var;
+import org.jetbrains.annotations.NotNull;
 
 public class DataImportModel implements IModel<DataImportController> {
 
@@ -110,13 +117,13 @@ public class DataImportModel implements IModel<DataImportController> {
     et.commit();
   }
 
-  void parseUsers(Stream<String> f, Consumer<Integer> progress) {
+  void parseUsers(
+      Stream<String> f, Consumer<Integer> progress, boolean generateUserRelatedPasswords) {
     HashMap<String, User> importedUsers = new HashMap<>();
     HashSet<String> userNames = new HashSet<>();
     HashMap<String, Job> jobs = new HashMap<>();
     HashMap<User, Instant> userCreateDates = new HashMap<>();
     Job.getAll(null).forEach(e -> jobs.put(e.getName(), e));
-    final boolean relatedPassword = Setting.GENERATE_PASSWORD_RELATED_TO_USERNAME.getBooleanValue();
     Permission importPermission = PermissionConstants.IMPORT.getPermission();
     Permission keyPermission = PermissionConstants.KEY_PERMISSION.getPermission();
     Permission fullMemberPermission = PermissionConstants.FULL_MEMBER.getPermission();
@@ -166,7 +173,7 @@ public class DataImportModel implements IModel<DataImportController> {
             users[0].setPassword(
                 hasher.hashToString(
                     4,
-                    relatedPassword
+                    generateUserRelatedPasswords
                         ? generateUserRelatedToken(users[0].getUsername()).toCharArray()
                         : "start".toCharArray()));
             users[0].getPermissions().add(importPermission);
@@ -239,7 +246,7 @@ public class DataImportModel implements IModel<DataImportController> {
               users[1].setPassword(
                   hasher.hashToString(
                       4,
-                      relatedPassword
+                      generateUserRelatedPasswords
                           ? generateUserRelatedToken(users[1].getUsername()).toCharArray()
                           : "start".toCharArray()));
               users[1].getPermissions().add(importPermission);
@@ -351,5 +358,25 @@ public class DataImportModel implements IModel<DataImportController> {
         });
     em.flush();
     progress.accept(2);
+  }
+
+  public void createUserPasswordCsv(@NotNull File selectedFile) {
+    if (selectedFile.isDirectory()) throw new IllegalArgumentException("file is a directory");
+    try {
+      var csvWriter = new CSVWriterBuilder(new FileWriter(selectedFile)).build();
+      @Cleanup EntityManager em = DBConnection.getEntityManager();
+      @Cleanup(value = "commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      csvWriter.writeAll(
+          em.createQuery("select u.username from User u", String.class)
+              .getResultStream()
+              .map(e -> new String[] {e, generateUserRelatedToken(e)})
+              .collect(Collectors.toCollection(ArrayList::new)));
+      csvWriter.flush();
+
+    } catch (IOException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
   }
 }
