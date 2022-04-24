@@ -22,6 +22,7 @@ public class DataImportView implements IView<DataImportController> {
   private JLabel currentActionUser;
   private JCheckBox importStandardAdmin;
   @Getter private JPasswordField adminPassword;
+  private JCheckBox exportPasswordCSV;
 
   @Linked private DataImportController controller;
 
@@ -165,5 +166,9 @@ public class DataImportView implements IView<DataImportController> {
   @Override
   public String getTitle() {
     return "Daten importieren";
+  }
+
+  public boolean shouldExportPasswordsAsCsv() {
+    return exportPasswordCSV.isSelected();
   }
 }
