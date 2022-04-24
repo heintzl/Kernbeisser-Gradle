@@ -176,6 +176,7 @@ public class DataImportModel implements IModel<DataImportController> {
                     generateUserRelatedPasswords
                         ? generateUserRelatedToken(users[0].getUsername()).toCharArray()
                         : "start".toCharArray()));
+            users[0].setForcePasswordChange(true);
             users[0].getPermissions().add(importPermission);
             if (users[0].getKernbeisserKey() != -1) {
               users[0].getPermissions().add(keyPermission);
@@ -249,6 +250,7 @@ public class DataImportModel implements IModel<DataImportController> {
                       generateUserRelatedPasswords
                           ? generateUserRelatedToken(users[1].getUsername()).toCharArray()
                           : "start".toCharArray()));
+              users[1].setForcePasswordChange(true);
               users[1].getPermissions().add(importPermission);
               em.persist(users[1]);
               importedUsers.put(userFullname, users[1]);
