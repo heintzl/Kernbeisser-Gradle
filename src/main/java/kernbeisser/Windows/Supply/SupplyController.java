@@ -13,6 +13,7 @@ import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
@@ -72,7 +73,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   private void checkInput() throws CannotParseException {
-    if (!model.articleExists(getView().getSuppliersItemNumber())) {
+    if (!model.articleExists(getView().getSelected(),getView().getSuppliersItemNumber())) {
       throw new NoResultException();
     }
   }
@@ -80,7 +81,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   public ShoppingItem addItem(double amount) throws CannotParseException {
     checkInput();
     Article article = getView().getObjectForm().getData(null);
-    ShoppingItem item = new ShoppingItem(article, 0, true);
+    ShoppingItem item = new ShoppingItem(article, 0, false);
     double rawItemMultiplier =
         (item.isWeighAble()
                 ? item.getMetricUnits().inUnit(MetricUnits.GRAM, item.getAmount() * amount)
@@ -90,6 +91,8 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     item.setItemMultiplier((int) Math.round(rawItemMultiplier));
     model.addToPrint(article);
     model.getShoppingItems().add(item);
+    getView().getObjectForm().setShowSuccessDialog(false);
+    getView().getObjectForm().applyMode(Mode.EDIT);
     getView().noArticleFound();
     recalculateTotal();
     return item;
@@ -249,6 +252,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     article.setContainerSize(content.getContainerSize());
     article.setShopRange(ShopRange.NOT_IN_RANGE);
     article.setSurchargeGroup(pattern.getSurchargeGroup());
+    article.setVat(pattern.getVat());
     article.setPriceList(pattern.getPriceList());
     article.setVerified(false);
     article.setKbNumber(Articles.nextFreeKBNumber(em));

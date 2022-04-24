@@ -1,10 +1,6 @@
 package kernbeisser.Windows.Supply;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -69,7 +65,12 @@ public class SupplyModel implements IModel<SupplyController> {
     return !print.isEmpty();
   }
 
-  public boolean articleExists(int suppliersItemNumber) {
-    return findBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersItemNumber).isPresent();
+  public boolean articleExists(Supplier supplier, int suppliersItemNumber) {
+    return findBySuppliersItemNumber(supplier, suppliersItemNumber).isPresent();
+  }
+
+  public Article getBySuppliersItemNumber(Supplier selected, int suppliersItemNumber) {
+    return Articles.getBySuppliersItemNumber(selected, suppliersItemNumber).orElseThrow(NoSuchElementException::new);
+
   }
 }
