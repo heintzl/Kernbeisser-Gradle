@@ -122,7 +122,7 @@ public final class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SUPPLIERS_ITEM_NUMBER_WRITE)})
   private int suppliersItemNumber;
 
-  @Column
+  @Column(nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_VAT_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_VAT_WRITE)})
   private VAT vat;
