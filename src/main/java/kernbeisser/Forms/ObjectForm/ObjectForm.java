@@ -30,8 +30,7 @@ public class ObjectForm<P> {
 
   @Getter @Setter private String objectDistinction = "Das Objekt";
 
-  @Setter
-  private boolean showSuccessDialog = true;
+  @Setter private boolean showSuccessDialog = true;
 
   private P original;
 
@@ -160,8 +159,8 @@ public class ObjectForm<P> {
       }
       Tools.edit(Tools.getId(original), data);
       LogInModel.refreshAccessManagerIfRequired();
-      if(showSuccessDialog)
-      JOptionPane.showMessageDialog(null, objectDistinction + " wurde erfolgreich bearbeitet");
+      if (showSuccessDialog)
+        JOptionPane.showMessageDialog(null, objectDistinction + " wurde erfolgreich bearbeitet");
       return true;
     } catch (CannotParseException e) {
       notifyException(e);

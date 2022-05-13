@@ -73,7 +73,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   private void checkInput() throws CannotParseException {
-    if (!model.articleExists(getView().getSelected(),getView().getSuppliersItemNumber())) {
+    if (!model.articleExists(getView().getSelected(), getView().getSuppliersItemNumber())) {
       throw new NoResultException();
     }
   }

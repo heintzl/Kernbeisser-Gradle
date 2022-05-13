@@ -55,7 +55,11 @@ public class Supply {
       int h = dateTime.getHour();
       DayOfWeek d = dateTime.getDayOfWeek();
       int dayDifferenceThreshold = Setting.SUPPLY_DAY_DIFFERENCE_THRESHOLD.getIntValue();
-      if (h >= hFrom && h <= hTo && (d.equals(dayOfTheWeek) || d.equals(dayOfTheWeek.minus(dayDifferenceThreshold)) || d.equals(dayOfTheWeek.plus(dayDifferenceThreshold)))) {
+      if (h >= hFrom
+          && h <= hTo
+          && (d.equals(dayOfTheWeek)
+              || d.equals(dayOfTheWeek.minus(dayDifferenceThreshold))
+              || d.equals(dayOfTheWeek.plus(dayDifferenceThreshold)))) {
         SupplierFile supplierFile = SupplierFile.parse(file);
         if (supplierFile.getHeader().getOrderType() == 8)
           findOrCreate(supplies, date, maxSecDiff).supplierFiles.add(supplierFile);

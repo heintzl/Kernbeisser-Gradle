@@ -85,8 +85,7 @@ public enum Setting {
   INVENTORY_COUNTING_EXPIRE_HOURS("48"),
   INVENTORY_INACTIVE_ARTICLE("365"),
   INVENTORY_LOOK_FOR_ARTICLE_USAGE("true"),
-  SUPPLY_DAY_DIFFERENCE_THRESHOLD("1")
-  ;
+  SUPPLY_DAY_DIFFERENCE_THRESHOLD("1");
 
   // defines the type like in java style
   // Value: Type:
