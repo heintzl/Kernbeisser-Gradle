@@ -18,6 +18,7 @@ import javax.print.attribute.PrintServiceAttributeSet;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.PrinterName;
+import javax.print.attribute.standard.Sides;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Enums.Setting;
@@ -25,6 +26,7 @@ import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.var;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -49,6 +51,8 @@ public abstract class Report {
   private static Path getReportsFolder() {
     return Config.getConfig().getReports().getReportDirectory().toPath();
   }
+
+  @Setter private boolean duplexPrint = true;
 
   protected Report(String reportDefinition, String outFileName) {
     this.outFileName = outFileName;
@@ -124,12 +128,15 @@ public abstract class Report {
     if (Setting.PRINTER.getValue().equals("PDF-Export")) {
       exportPdf(message, Report::pdfExportException);
     } else {
-      sendToPrinter(false, message, exConsumer);
+      sendToPrinter(false, message, duplexPrint, exConsumer);
     }
   }
 
-  public void sendToPrinter(
-      boolean useOSDefaultPrinter, String message, Consumer<Throwable> exConsumer) {
+  private void sendToPrinter(
+      boolean useOSDefaultPrinter,
+      String message,
+      boolean displayPrintDialog,
+      Consumer<Throwable> exConsumer) {
 
     new Thread(
             () -> {
@@ -141,6 +148,9 @@ public abstract class Report {
               JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
               printExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
               PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(jasperPrint);
+              if (displayPrintDialog) {
+                requestAttributeSet.add(Sides.DUPLEX);
+              }
               PrintServiceAttributeSet serviceAttributeSet =
                   getPrinter(useOSDefaultPrinter, jasperPrint);
               SimplePrintServiceExporterConfiguration printConfig =
@@ -166,7 +176,7 @@ public abstract class Report {
                           "Drucken",
                           JOptionPane.OK_CANCEL_OPTION)
                       == JOptionPane.OK_OPTION) {
-                    sendToPrinter(true, message, exConsumer);
+                    sendToPrinter(true, message, displayPrintDialog, exConsumer);
                   } else {
                     Tools.showPrintAbortedWarning(e, false);
                   }
