@@ -46,7 +46,7 @@ public class Users {
                     new byte[16],
                     xor(username.getBytes(StandardCharsets.UTF_8), IgnoreThis.ignoreIt())),
             StandardCharsets.UTF_8)
-        .substring(40);
+        .substring(53);
   }
 
   public static String getMembership(User user) {
