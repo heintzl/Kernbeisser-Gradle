@@ -2,6 +2,7 @@ package kernbeisser.Reports;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ public class PreOrderChecklist extends Report {
     this.preorder =
         preorder.stream()
             .filter(p -> !p.getUser().equals(User.getKernbeisserUser()))
+            .sorted(Comparator.comparing(p -> p.getUser().getFullName(true)))
             .collect(Collectors.toList());
   }
 

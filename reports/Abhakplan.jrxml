@@ -14,13 +14,12 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="article.amount" class="java.lang.Integer"/>
 	<field name="user.fullName" class="java.lang.String"/>
 	<field name="article.name" class="java.lang.String"/>
 	<field name="article.suppliersItemNumber" class="java.lang.Integer"/>
 	<field name="amount" class="java.lang.Integer"/>
 	<field name="dueLimit" class="java.time.LocalDate"/>
-	<field name="article.metricUnits.shortName" class="java.lang.String"/>
+	<field name="containerInfo" class="java.lang.String"/>
 	<variable name="isRetarded" class="java.lang.Boolean">
 		<variableExpression><![CDATA[$P{deliveryDate}.isAfter($F{dueLimit})]]></variableExpression>
 	</variable>
@@ -94,7 +93,7 @@
 				<text><![CDATA[KK-Nr.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="246" y="30" width="50" height="20" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4"/>
+				<reportElement x="271" y="30" width="50" height="20" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4"/>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
 				</textElement>
@@ -161,7 +160,7 @@
 				<textFieldExpression><![CDATA[$F{article.suppliersItemNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="244" y="1" width="254" height="17" printWhenGroupChanges="User" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
+				<reportElement x="269" y="1" width="229" height="17" printWhenGroupChanges="User" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
 					<printWhenExpression><![CDATA[!$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
@@ -171,7 +170,7 @@
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="304" y="0" width="194" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
+				<reportElement x="329" y="0" width="169" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
 					<printWhenExpression><![CDATA[$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
@@ -181,7 +180,7 @@
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="244" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
+				<reportElement x="269" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
 					<printWhenExpression><![CDATA[$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
@@ -189,14 +188,14 @@
 				</textElement>
 				<text><![CDATA[Nachlief.:]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="188" y="1" width="50" height="17" uuid="5230a6f1-3825-43c0-83a3-0e5397ab0a75">
+			<textField textAdjust="ScaleFont">
+				<reportElement x="188" y="1" width="77" height="17" uuid="5230a6f1-3825-43c0-83a3-0e5397ab0a75">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0fcc61-6f33-42f3-91b0-b2f6988d712f"/>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="13"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{article.amount} + $F{article.metricUnits.shortName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{containerInfo}]]></textFieldExpression>
 			</textField>
 			<ellipse>
 				<reportElement x="10" y="4" width="7" height="8" uuid="a611692c-34ba-45e0-8286-e4b7b16e4eb9">
