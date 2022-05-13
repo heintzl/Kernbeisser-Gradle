@@ -93,7 +93,13 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   static double containerNetPrice(Article article) {
-    return new ShoppingItem(article, 0, 0, true).getItemNetPrice() * article.getContainerSize();
+    return ShoppingItem.displayOnlyShoppingItem(article, 0, true).getItemNetPrice()
+        * (article.isWeighable() ? 1 : article.getContainerSize());
+  }
+
+  static double containerRetailPrice(Article article) {
+    return ShoppingItem.displayOnlyShoppingItem(article, 0, true).getItemRetailPrice()
+        * (article.isWeighable() ? 1 : article.getContainerSize());
   }
 
   public void close() {

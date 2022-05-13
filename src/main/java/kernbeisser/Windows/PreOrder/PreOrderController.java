@@ -146,10 +146,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     view.setContainerSize(Articles.getContentAmount(articleKornkraft));
     view.setNetPrice(PreOrderModel.containerNetPrice(articleKornkraft));
     view.setSellingPrice(
-        String.format(
-            "%.2f€",
-            ShoppingItem.displayOnlyShoppingItem(articleKornkraft, 0, true).getRetailPrice()
-                * articleKornkraft.getContainerSize()));
+        String.format("%.2f€", PreOrderModel.containerRetailPrice(articleKornkraft)));
     view.setItemName(articleKornkraft.getName());
     if (isByShopNumber && Articles.isKkArticle(articleKornkraft)) {
       view.setKkNumber(articleKornkraft.getSuppliersItemNumber());
