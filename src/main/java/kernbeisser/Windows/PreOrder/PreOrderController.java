@@ -1,7 +1,6 @@
 package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
@@ -144,21 +143,19 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   void pasteDataInView(Article articleKornkraft, boolean isByShopNumber) {
     var view = getView();
-    double containerSize = articleKornkraft.getContainerSize();
-    view.setContainerSize(new DecimalFormat("0.###").format(containerSize));
+    view.setContainerSize(Articles.getContentAmount(articleKornkraft));
     view.setNetPrice(PreOrderModel.containerNetPrice(articleKornkraft));
     view.setSellingPrice(
         String.format(
             "%.2f€",
             ShoppingItem.displayOnlyShoppingItem(articleKornkraft, 0, true).getRetailPrice()
-                * containerSize));
+                * articleKornkraft.getContainerSize()));
     view.setItemName(articleKornkraft.getName());
     if (isByShopNumber && Articles.isKkArticle(articleKornkraft)) {
       view.setKkNumber(articleKornkraft.getSuppliersItemNumber());
     } else {
       view.setShopNumber(articleKornkraft.getKbNumber());
     }
-    view.setItemAmount(Articles.getContentAmount(articleKornkraft));
     selectedArticle = articleKornkraft;
   }
 
