@@ -25,7 +25,7 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
   public static void printAccountingReports(
       List<Transaction> reportTransactions, Consumer<Boolean> resultConsumer) {
     long no = Transaction.getLastReportNo() + 1;
-    if (AccountingReportsModel.exportAccountingReports(reportTransactions, no, false)) {
+    if (AccountingReportsModel.exportAccountingReports(reportTransactions, no, false, true)) {
       Transaction.writeAccountingReportNo(reportTransactions, no);
     } else {
       resultConsumer.accept(false);

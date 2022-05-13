@@ -48,6 +48,8 @@ public class PreOrderView implements IView<PreOrderController> {
   JButton searchArticle;
   private JLabel caption;
   private IntegerParseField shopNumber;
+
+  private JCheckBox duplexPrint;
   private JPopupMenu popupSelectionColumn;
 
   @Linked private PreOrderController controller;
@@ -86,6 +88,10 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void setNetPrice(double s) {
     netPrice.setText(String.format("%.2f€", s));
+  }
+
+  public boolean getDuplexPrint() {
+    return duplexPrint.isSelected();
   }
 
   private static String getDueDateAsString(PreOrder preOrder) {

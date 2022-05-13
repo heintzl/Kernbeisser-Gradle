@@ -18,6 +18,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
+import kernbeisser.Reports.Report;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
@@ -129,12 +130,14 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.begin();
   }
 
-  public void printCheckList(LocalDate deliveryDate) {
+  public void printCheckList(LocalDate deliveryDate, boolean duplexPrint) {
     saveData();
-    new PreOrderChecklist(
-            deliveryDate, getAllPreOrders(false)) // .stream().filter(p -> p.getOrderedOn() !=
-        // null).collect(Collectors.toList()))
-        .sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
+    Report report =
+        new PreOrderChecklist(
+            deliveryDate, getAllPreOrders(false)); // .stream().filter(p -> p.getOrderedOn() !=
+    // null).collect(Collectors.toList()))
+    report.setDuplexPrint(duplexPrint);
+    report.sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
     for (PreOrder p : getAllPreOrders(false)) {
       if (p.getOrderedOn() != null && p.isShopOrder()) {
         delivery.add(p);

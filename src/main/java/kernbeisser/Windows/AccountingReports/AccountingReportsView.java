@@ -45,6 +45,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JCheckBox permissionHoldersWithKeys;
   private JComboBox<String> accountingReportNo;
   private JComboBox<String> userBalanceReportNo;
+  private JCheckBox duplexPrint;
   private Map<JComponent, JRadioButton> optionalComponents;
 
   @Linked private AccountingReportsController controller;
@@ -55,6 +56,10 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
 
   ExportTypes getExportType() {
     return (ExportTypes) exportType.getSelectedItem();
+  }
+
+  boolean getDuplexPrint() {
+    return duplexPrint.isSelected();
   }
 
   void submit(AccountingReportsController controller) {
@@ -117,6 +122,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     for (ExportTypes t : exportTypes) {
       exportType.addItem(t);
     }
+    exportType.addActionListener(e -> duplexPrint.setEnabled(getExportType() == ExportTypes.PRINT));
     for (String s : controller.getUserKeySortOrders()) {
       userKeySortOrder.addItem(s);
     }
