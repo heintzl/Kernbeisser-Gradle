@@ -83,7 +83,11 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   void setShopNumber(int s) {
-    shopNumber.setText(String.valueOf(s));
+    if (s == 0) {
+      shopNumber.setText("");
+    } else {
+      shopNumber.setText(String.valueOf(s));
+    }
   }
 
   void setNetPrice(double s) {
@@ -236,8 +240,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchKK()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                amount.selectAll();
-                amount.requestFocusInWindow();
+                controller.add();
               }
             }
           }
@@ -249,8 +252,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchShopNo()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                amount.selectAll();
-                amount.requestFocusInWindow();
+                controller.add();
               }
             }
           }
