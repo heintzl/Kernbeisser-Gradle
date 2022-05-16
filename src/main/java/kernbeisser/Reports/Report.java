@@ -7,9 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.HashPrintServiceAttributeSet;
@@ -169,14 +167,19 @@ public abstract class Report {
                 pm.setNote("Fertig");
                 pm.close();
               } catch (JRException e) {
-
-                if (e.getMessageKey().equals("export.print.service.not.found")) {
+                String errorMessage = e.getMessage().toLowerCase(Locale.ROOT);
+                Collection<String> printerNotFoundMessages =
+                    Arrays.asList(
+                        "not a 2d print service", // ubuntu
+                        "no suitable print service found" // windows
+                        );
+                if (printerNotFoundMessages.stream().anyMatch(errorMessage::contains)) {
                   Main.logger.error(e.getMessage(), e);
                   if (JOptionPane.showConfirmDialog(
                           null,
                           "Der konfigurierte Drucker \""
                               + serviceAttributeSet.get(PrinterName.class)
-                              + "\" kann nicht gefunden werden!\n"
+                              + "\"\nkann nicht gefunden werden!\n"
                               + "Soll stattdessen der Standarddrucker verwendet werden?",
                           "Drucken",
                           JOptionPane.OK_CANCEL_OPTION)
