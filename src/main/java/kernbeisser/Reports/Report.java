@@ -110,12 +110,14 @@ public abstract class Report {
     return result;
   }
 
-  private static PrintServiceAttributeSet getPrinter(
-      boolean useOSDefaultPrinter, JasperPrint jspPrint) {
+  private PrintServiceAttributeSet getPrinter(boolean useOSDefaultPrinter, JasperPrint jspPrint) {
     PrintServiceAttributeSet result = new HashPrintServiceAttributeSet();
     String printer = Setting.ALTERNATIVE_A5_PRINTER.getValue();
     if (printer.isEmpty() || Math.max(jspPrint.getPageWidth(), jspPrint.getPageHeight()) > 600) {
       printer = Setting.PRINTER.getValue();
+    }
+    if (duplexPrint) {
+      printer += Setting.DUPLEX_PRINTER_SUFFIX.getStringValue();
     }
     if (useOSDefaultPrinter || printer.equals("OS_default")) {
       printer = PrinterJob.getPrinterJob().getPrintService().getName();
@@ -135,7 +137,7 @@ public abstract class Report {
   private void sendToPrinter(
       boolean useOSDefaultPrinter,
       String message,
-      boolean displayPrintDialog,
+      boolean duplexPrint,
       Consumer<Throwable> exConsumer) {
 
     new Thread(
@@ -148,9 +150,10 @@ public abstract class Report {
               JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
               printExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
               PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(jasperPrint);
-              if (displayPrintDialog) {
+              if (duplexPrint) {
                 requestAttributeSet.add(Sides.DUPLEX);
               }
+
               PrintServiceAttributeSet serviceAttributeSet =
                   getPrinter(useOSDefaultPrinter, jasperPrint);
               SimplePrintServiceExporterConfiguration printConfig =
@@ -171,12 +174,14 @@ public abstract class Report {
                   Main.logger.error(e.getMessage(), e);
                   if (JOptionPane.showConfirmDialog(
                           null,
-                          "Der konfigurierte Drucker kann nicht gefunden werden!\n"
+                          "Der konfigurierte Drucker \""
+                              + serviceAttributeSet.get(PrinterName.class)
+                              + "\" kann nicht gefunden werden!\n"
                               + "Soll stattdessen der Standarddrucker verwendet werden?",
                           "Drucken",
                           JOptionPane.OK_CANCEL_OPTION)
                       == JOptionPane.OK_OPTION) {
-                    sendToPrinter(true, message, displayPrintDialog, exConsumer);
+                    sendToPrinter(true, message, duplexPrint, exConsumer);
                   } else {
                     Tools.showPrintAbortedWarning(e, false);
                   }

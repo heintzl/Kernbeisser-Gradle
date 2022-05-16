@@ -58,6 +58,7 @@ public enum Setting {
   DAYS_BEFORE_INACTIVITY("180"),
   PRINTER("PDF-Export"),
   ALTERNATIVE_A5_PRINTER(""),
+  DUPLEX_PRINTER_SUFFIX(""),
   LAST_EXPORTED_PREORDER_NR("0"),
   USER_BALANCE_REPORT_INTERVAL("28"),
   LAST_USER_BALANCE_REPORT("2010-01-01T00:00:00.000Z"),
@@ -264,7 +265,7 @@ public enum Setting {
   }
 
   public static Class<?> getExpectedType(@NotNull Setting setting) {
-    if (setting.getDefaultValue().matches("\\d*")) {
+    if (setting.getDefaultValue().matches("\\d+")) {
       return Integer.class;
     }
     if (setting.getDefaultValue().matches("\\d+[.]\\d*")) {
