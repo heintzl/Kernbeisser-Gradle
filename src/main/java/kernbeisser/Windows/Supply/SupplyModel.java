@@ -70,7 +70,7 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   public Article getBySuppliersItemNumber(Supplier selected, int suppliersItemNumber) {
-    return Articles.getBySuppliersItemNumber(selected, suppliersItemNumber).orElseThrow(NoSuchElementException::new);
-
+    return Articles.getBySuppliersItemNumber(selected, suppliersItemNumber)
+        .orElseThrow(NoSuchElementException::new);
   }
 }

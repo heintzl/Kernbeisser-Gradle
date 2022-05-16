@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -434,13 +435,18 @@ public class Articles {
   }
 
   public static String getContentAmount(Article article) {
+    String containerInfo = new DecimalFormat("0.###").format(article.getContainerSize());
     if (article.isWeighable()
         || article.getMetricUnits() == MetricUnits.NONE
         || article.getMetricUnits() == MetricUnits.PIECE
         || !(article.getAmount() > 0)) {
-      return "";
+      return containerInfo;
     } else {
-      return article.getAmount() + " " + article.getMetricUnits().getShortName();
+      return containerInfo
+          + " x "
+          + article.getAmount()
+          + " "
+          + article.getMetricUnits().getShortName();
     }
   }
 }

@@ -210,6 +210,10 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     ((TableRowSorter<?>) getRowSorter()).sort();
   }
 
+  public void setSortKeys(RowSorter.SortKey... sortKey) {
+    getRowSorter().setSortKeys(Arrays.asList(sortKey));
+  }
+
   private void applyStandardFilter(JPopupMenu p, Column<T> c, JTextField text) {
     if (text == null) {
       standardColumnFilters.remove(c);

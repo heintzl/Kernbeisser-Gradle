@@ -108,6 +108,10 @@ public class PreOrder implements Serializable, UserRelated {
     return user.equals(User.getKernbeisserUser());
   }
 
+  public String getContainerInfo() {
+    return Articles.getContentAmount(getArticle());
+  }
+
   @Override
   public String toString() {
     return "Container[" + id + "]";

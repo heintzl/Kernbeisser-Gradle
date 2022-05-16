@@ -7,9 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.HashPrintServiceAttributeSet;
@@ -18,6 +16,7 @@ import javax.print.attribute.PrintServiceAttributeSet;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.PrinterName;
+import javax.print.attribute.standard.Sides;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Enums.Setting;
@@ -25,6 +24,7 @@ import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.var;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -49,6 +49,8 @@ public abstract class Report {
   private static Path getReportsFolder() {
     return Config.getConfig().getReports().getReportDirectory().toPath();
   }
+
+  @Setter private boolean duplexPrint = true;
 
   protected Report(String reportDefinition, String outFileName) {
     this.outFileName = outFileName;
@@ -106,12 +108,14 @@ public abstract class Report {
     return result;
   }
 
-  private static PrintServiceAttributeSet getPrinter(
-      boolean useOSDefaultPrinter, JasperPrint jspPrint) {
+  private PrintServiceAttributeSet getPrinter(boolean useOSDefaultPrinter, JasperPrint jspPrint) {
     PrintServiceAttributeSet result = new HashPrintServiceAttributeSet();
     String printer = Setting.ALTERNATIVE_A5_PRINTER.getValue();
     if (printer.isEmpty() || Math.max(jspPrint.getPageWidth(), jspPrint.getPageHeight()) > 600) {
       printer = Setting.PRINTER.getValue();
+    }
+    if (duplexPrint) {
+      printer += Setting.DUPLEX_PRINTER_SUFFIX.getStringValue();
     }
     if (useOSDefaultPrinter || printer.equals("OS_default")) {
       printer = PrinterJob.getPrinterJob().getPrintService().getName();
@@ -124,12 +128,15 @@ public abstract class Report {
     if (Setting.PRINTER.getValue().equals("PDF-Export")) {
       exportPdf(message, Report::pdfExportException);
     } else {
-      sendToPrinter(false, message, exConsumer);
+      sendToPrinter(false, message, duplexPrint, exConsumer);
     }
   }
 
-  public void sendToPrinter(
-      boolean useOSDefaultPrinter, String message, Consumer<Throwable> exConsumer) {
+  private void sendToPrinter(
+      boolean useOSDefaultPrinter,
+      String message,
+      boolean duplexPrint,
+      Consumer<Throwable> exConsumer) {
 
     new Thread(
             () -> {
@@ -141,6 +148,10 @@ public abstract class Report {
               JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
               printExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
               PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(jasperPrint);
+              if (duplexPrint) {
+                requestAttributeSet.add(Sides.DUPLEX);
+              }
+
               PrintServiceAttributeSet serviceAttributeSet =
                   getPrinter(useOSDefaultPrinter, jasperPrint);
               SimplePrintServiceExporterConfiguration printConfig =
@@ -156,17 +167,24 @@ public abstract class Report {
                 pm.setNote("Fertig");
                 pm.close();
               } catch (JRException e) {
-
-                if (e.getMessageKey().equals("export.print.service.not.found")) {
+                String errorMessage = e.getMessage().toLowerCase(Locale.ROOT);
+                Collection<String> printerNotFoundMessages =
+                    Arrays.asList(
+                        "not a 2d print service", // ubuntu
+                        "no suitable print service found" // windows
+                        );
+                if (printerNotFoundMessages.stream().anyMatch(errorMessage::contains)) {
                   Main.logger.error(e.getMessage(), e);
                   if (JOptionPane.showConfirmDialog(
                           null,
-                          "Der konfigurierte Drucker kann nicht gefunden werden!\n"
+                          "Der konfigurierte Drucker \""
+                              + serviceAttributeSet.get(PrinterName.class)
+                              + "\"\nkann nicht gefunden werden!\n"
                               + "Soll stattdessen der Standarddrucker verwendet werden?",
                           "Drucken",
                           JOptionPane.OK_CANCEL_OPTION)
                       == JOptionPane.OK_OPTION) {
-                    sendToPrinter(true, message, exConsumer);
+                    sendToPrinter(true, message, duplexPrint, exConsumer);
                   } else {
                     Tools.showPrintAbortedWarning(e, false);
                   }

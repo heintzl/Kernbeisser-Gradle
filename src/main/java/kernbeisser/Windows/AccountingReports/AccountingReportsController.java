@@ -55,7 +55,11 @@ public class AccountingReportsController
     var exportType = view.getExportType();
     try {
       AccountingReportsModel.exportReport(
-          exportType, report, message, e -> consumePdfException(e, exportType));
+          exportType,
+          report,
+          message,
+          view.getDuplexPrint(),
+          e -> consumePdfException(e, exportType));
     } catch (UnsupportedOperationException e) {
       view.messageNotImplemented(exportType);
     }
@@ -86,7 +90,8 @@ public class AccountingReportsController
                 .filter(t -> t.isAccountingReportTransaction() || t.isPurchase())
                 .collect(Collectors.toList());
         if (reportTransactions.isEmpty()) throw new NoTransactionsFoundException();
-        AccountingReportsModel.exportAccountingReports(reportTransactions, reportNo, withNames);
+        AccountingReportsModel.exportAccountingReports(
+            reportTransactions, reportNo, withNames, view.getDuplexPrint());
       } catch (NoTransactionsFoundException e) {
         view.messageEmptyReportNo(reportNo);
       }

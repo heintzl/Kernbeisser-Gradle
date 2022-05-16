@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -46,10 +47,11 @@ public class PreOrderView implements IView<PreOrderController> {
   JButton bestellungExportierenButton;
   JButton searchArticle;
   private JLabel caption;
-  private JLabel itemAmount;
   private IntegerParseField shopNumber;
 
+  private JCheckBox duplexPrint;
   private JPopupMenu popupSelectionColumn;
+
   @Linked private PreOrderController controller;
 
   void setInsertSectionEnabled(boolean b) {
@@ -81,11 +83,19 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   void setShopNumber(int s) {
-    shopNumber.setText(String.valueOf(s));
+    if (s == 0) {
+      shopNumber.setText("");
+    } else {
+      shopNumber.setText(String.valueOf(s));
+    }
   }
 
   void setNetPrice(double s) {
     netPrice.setText(String.format("%.2f€", s));
+  }
+
+  public boolean getDuplexPrint() {
+    return duplexPrint.isSelected();
   }
 
   private static String getDueDateAsString(PreOrder preOrder) {
@@ -144,6 +154,7 @@ public class PreOrderView implements IView<PreOrderController> {
                 e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
                 SwingConstants.RIGHT),
             Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
+    Column<PreOrder> sortColumn = Columns.create("Id", PreOrder::getId);
     if (!controller.restrictToLoggedIn)
       preOrders.addColumnAtIndex(
           0,
@@ -160,12 +171,22 @@ public class PreOrderView implements IView<PreOrderController> {
               controller::delete,
               e -> e.getOrderedOn() == null));
     }
+    preOrders.addColumnAtIndex(0, sortColumn);
+    TableColumn hiddenColumn = preOrders.getColumnModel().getColumn(0);
+    hiddenColumn.setMinWidth(0);
+    hiddenColumn.setMaxWidth(0);
+    setDefaultSortOrder();
     user = new AdvancedComboBox<>(e -> e.getFullName(true));
   }
 
   private void showSelectionPopup() {
     Point mousePosition = preOrders.getMousePosition();
     popupSelectionColumn.show(preOrders, mousePosition.x, mousePosition.y);
+  }
+
+  void setDefaultSortOrder() {
+    preOrders.setSortKeys(new RowSorter.SortKey(0, SortOrder.DESCENDING));
+    preOrders.sort();
   }
 
   void setAllDelivered(boolean allDelivered) {
@@ -219,8 +240,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchKK()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                amount.selectAll();
-                amount.requestFocusInWindow();
+                controller.add();
               }
             }
           }
@@ -232,8 +252,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchShopNo()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                amount.selectAll();
-                amount.requestFocusInWindow();
+                controller.add();
               }
             }
           }
@@ -299,6 +318,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
   public void addPreOrder(PreOrder order) {
     preOrders.add(order);
+    setDefaultSortOrder();
   }
 
   public void refreshPreOrder(PreOrder order) {
@@ -491,9 +511,5 @@ public class PreOrderView implements IView<PreOrderController> {
   @Override
   public String getTitle() {
     return (controller.restrictToLoggedIn ? "Meine " : "") + "Vorbestellung";
-  }
-
-  public void setItemAmount(String s) {
-    itemAmount.setText(s);
   }
 }

@@ -58,6 +58,7 @@ public enum Setting {
   DAYS_BEFORE_INACTIVITY("180"),
   PRINTER("PDF-Export"),
   ALTERNATIVE_A5_PRINTER(""),
+  DUPLEX_PRINTER_SUFFIX(""),
   LAST_EXPORTED_PREORDER_NR("0"),
   USER_BALANCE_REPORT_INTERVAL("28"),
   LAST_USER_BALANCE_REPORT("2010-01-01T00:00:00.000Z"),
@@ -85,8 +86,7 @@ public enum Setting {
   INVENTORY_COUNTING_EXPIRE_HOURS("48"),
   INVENTORY_INACTIVE_ARTICLE("365"),
   INVENTORY_LOOK_FOR_ARTICLE_USAGE("true"),
-  SUPPLY_DAY_DIFFERENCE_THRESHOLD("1")
-  ;
+  SUPPLY_DAY_DIFFERENCE_THRESHOLD("1");
 
   // defines the type like in java style
   // Value: Type:
@@ -265,7 +265,7 @@ public enum Setting {
   }
 
   public static Class<?> getExpectedType(@NotNull Setting setting) {
-    if (setting.getDefaultValue().matches("\\d*")) {
+    if (setting.getDefaultValue().matches("\\d+")) {
       return Integer.class;
     }
     if (setting.getDefaultValue().matches("\\d+[.]\\d*")) {
