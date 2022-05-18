@@ -30,7 +30,7 @@ public class PriceListReportArticle {
     priceListArticle.weighAble = item.isWeighAble();
     priceListArticle.lastDeliveryMonth = item.getLastDeliveryMonth();
     priceListArticle.containerSize = item.getContainerSize();
-    priceListArticle.unitAmount = item.getContentAmount();
+    priceListArticle.unitAmount = item.getPriceInfoAmount();
     return priceListArticle;
   }
 }

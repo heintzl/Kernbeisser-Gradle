@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
@@ -25,12 +26,13 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
     return new CollectionController<>(
         new ArrayList<>(),
         Source.empty(),
-        Columns.create("Lieferant", PrintLabelsModel::getArticleSupplierName),
-        Columns.create("Name", Article::getName),
-        Columns.create("Ladennummer", Article::getKbNumber),
-        Columns.create("Lieferantennummer", Article::getSuppliersItemNumber),
-        Columns.create("Barcode", Article::getBarcode),
-        Columns.create("Preisliste", Article::getPriceList));
+        Columns.create("Name", Article::getName).withDefaultFilter(),
+        Columns.create("Ladennummer", Article::getKbNumber)
+            .withSorter(Column.NUMBER_SORTER)
+            .withDefaultFilter(),
+        Columns.create("Lieferantennummer", Article::getSuppliersItemNumber)
+            .withSorter(Column.NUMBER_SORTER)
+            .withDefaultFilter());
   }
 
   public Collection<Article> getAllArticles() {
@@ -46,14 +48,20 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
         .getResultList();
   }
 
-  private static String getArticleSupplierName(Article article) {
+  static String getArticleSupplierName(Article article) {
     return article.getSupplier().getName();
   }
 
   void print(CollectionController<Article> articles) {
-    new ArticleLabel(
-            articles.getModel().getLoaded().stream().distinct().collect(Collectors.toList()))
+    List<Article> printPool =
+        articles.getModel().getLoaded().stream()
+            .flatMap(a -> Collections.nCopies(a.getPrintPool(), a).stream())
+            .collect(Collectors.toList());
+    new ArticleLabel(printPool)
         .sendToPrinter("Drucke Ladenschilder", Tools::showUnexpectedErrorWarning);
-    articles.selectAllChosen();
+  }
+
+  void setPrintPool(Article article, int numberOfLabels) {
+    article.setPrintPool(numberOfLabels);
   }
 }

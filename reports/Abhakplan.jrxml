@@ -14,7 +14,7 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="user.fullName" class="java.lang.String"/>
+	<field name="user.reverseFullName" class="java.lang.String"/>
 	<field name="article.name" class="java.lang.String"/>
 	<field name="article.suppliersItemNumber" class="java.lang.Integer"/>
 	<field name="amount" class="java.lang.Integer"/>
@@ -23,8 +23,8 @@
 	<variable name="isRetarded" class="java.lang.Boolean">
 		<variableExpression><![CDATA[$P{deliveryDate}.isAfter($F{dueLimit})]]></variableExpression>
 	</variable>
-	<group name="User">
-		<groupExpression><![CDATA[$F{user.fullName}]]></groupExpression>
+	<group name="User" keepTogether="true">
+		<groupExpression><![CDATA[$F{user.reverseFullName}]]></groupExpression>
 		<groupHeader>
 			<band height="20">
 				<textField>
@@ -32,7 +32,7 @@
 					<textElement>
 						<font fontName="DejaVu Sans Condensed" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{user.fullName}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{user.reverseFullName}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

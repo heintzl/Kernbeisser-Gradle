@@ -15,7 +15,7 @@ public class CollectionModel<T> implements IModel<CollectionController<T>> {
   @Setter private Source<T> source;
   @Getter private final Column<T>[] columns;
   private Collection<T> originalContent;
-  boolean saveChanges;
+  @Getter boolean saveChanges;
 
   public CollectionModel(Collection<T> loaded, Source<T> source, Column<T>[] columns) {
     this.columns = columns;

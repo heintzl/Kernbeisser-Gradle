@@ -355,6 +355,10 @@ public class User implements Serializable, UserRelated {
     return getFullName(false);
   }
 
+  public String getReverseFullName() {
+    return getFullName(true);
+  }
+
   public String getFullName(boolean firstSurname) {
     if (isKernbeisser()) {
       return surname;
