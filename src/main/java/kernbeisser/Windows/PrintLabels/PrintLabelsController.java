@@ -41,7 +41,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     articles.addCollectionModifiedListener(this::refreshPrintButton);
     articles.addObjectsListener(this::onObjectsSelected);
     printButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
-    printButton.addActionListener(e -> getModel().print(articles));
+    printButton.addActionListener((e) -> print());
 
     articles
         .getView()
@@ -49,17 +49,18 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
         .addColumnAtIndex(
             0,
             Columns.create("Anzahl", Article::getPrintPool)
-                .withLeftClickConsumer(this::editPrintpool));
+                .withLeftClickConsumer(this::editPrintPool));
     ObjectTable<Article> available = articles.getView().getAvailable();
     available.addColumnAtIndex(
-        0, Columns.create("Lieferant", PrintLabelsModel::getArticleSupplierName));
-    available.addColumn(Columns.create("Barcode", Article::getBarcode));
-    available.addColumn(Columns.create("Preisliste", Article::getPriceList));
+        0,
+        Columns.create("Lieferant", PrintLabelsModel::getArticleSupplierName).withDefaultFilter());
+    available.addColumn(Columns.create("Barcode", Article::getBarcode).withDefaultFilter());
+    available.addColumn(Columns.create("Preisliste", Article::getPriceList).withDefaultFilter());
     articles.addControls(printButton, printSheetInfo);
     model.setPrintPoolBefore(Articles.getPrintPool());
   }
 
-  private void editPrintpool(Article article) {
+  private void editPrintPool(Article article) {
     String response = getView().inputNumber(article.getPrintPool(), false);
     boolean exit = false;
     do {
@@ -125,6 +126,22 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     printSheetInfo.setText(infoText);
   }
 
+  private void print() {
+    model.print(articles);
+    if (getView().confirmPrintSuccess()) {
+      articles.selectAllChosen();
+      persistPrintPoolIfNecessary(false);
+    }
+  }
+
+  private void persistPrintPoolIfNecessary(boolean confirm) {
+    var newPrintPool = articles.getModel().getLoaded();
+    if (newPrintPool.equals(model.getPrintPoolBefore())) return;
+    if (confirm && !(articles.getModel().isSaveChanges() || getView().confirmChanges())) return;
+    Articles.replacePrintPool(newPrintPool);
+    model.setPrintPoolBefore(newPrintPool);
+  }
+
   @Override
   public void fillView(PrintLabelsView printLabelsView) {
     articles.setLoadedAndSource(Articles.getPrintPool(), model::getAllArticles);
@@ -133,12 +150,6 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   @Override
   protected void closed() {
-    var newPrintPool = articles.getModel().getLoaded();
-    if (!newPrintPool.equals(model.getPrintPoolBefore())
-        && articles.getModel().isSaveChanges()
-        && getView().confirmChanges()) {
-      Articles.replacePrintPool(newPrintPool);
-    }
-    ;
+    persistPrintPoolIfNecessary(true);
   }
 }

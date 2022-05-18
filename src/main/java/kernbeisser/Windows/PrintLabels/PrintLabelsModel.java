@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
@@ -25,9 +26,13 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
     return new CollectionController<>(
         new ArrayList<>(),
         Source.empty(),
-        Columns.create("Name", Article::getName),
-        Columns.create("Ladennummer", Article::getKbNumber),
-        Columns.create("Lieferantennummer", Article::getSuppliersItemNumber));
+        Columns.create("Name", Article::getName).withDefaultFilter(),
+        Columns.create("Ladennummer", Article::getKbNumber)
+            .withSorter(Column.NUMBER_SORTER)
+            .withDefaultFilter(),
+        Columns.create("Lieferantennummer", Article::getSuppliersItemNumber)
+            .withSorter(Column.NUMBER_SORTER)
+            .withDefaultFilter());
   }
 
   public Collection<Article> getAllArticles() {
@@ -54,10 +59,9 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
             .collect(Collectors.toList());
     new ArticleLabel(printPool)
         .sendToPrinter("Drucke Ladenschilder", Tools::showUnexpectedErrorWarning);
-    articles.selectAllChosen();
   }
 
-  void setPrintPool(Article article, int size) {
-    article.setPrintPool(size);
+  void setPrintPool(Article article, int numberOfLabels) {
+    article.setPrintPool(numberOfLabels);
   }
 }

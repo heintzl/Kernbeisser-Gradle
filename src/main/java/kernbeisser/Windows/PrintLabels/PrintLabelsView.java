@@ -39,6 +39,16 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
         == JOptionPane.YES_OPTION;
   }
 
+  public boolean confirmPrintSuccess() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Sollen die gedruckten Etiketten aus der Zusammenstellung entfernt werden?",
+            "Etiketten zusammenstellen",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
+        == JOptionPane.YES_OPTION;
+  }
+
   public void refreshChosenArticle(Article article) {
     articles.getView().getChosen().replace(article, article);
   }
@@ -73,6 +83,4 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
   public String getTitle() {
     return "Etiketten Zusammenstellen";
   }
-
-  public void refreshView() {}
 }
