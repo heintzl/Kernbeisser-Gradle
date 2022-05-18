@@ -433,8 +433,9 @@ public class Articles {
 
   public static String getContentAmount(Article article) {
     String containerInfo = new DecimalFormat("0.###").format(article.getContainerSize());
-    if (article.isWeighable()
-        || article.getMetricUnits() == MetricUnits.NONE
+    if (article.isWeighable()) {
+      return containerInfo + " " + article.getMetricUnits().getDisplayUnit().getShortName();
+    } else if (article.getMetricUnits() == MetricUnits.NONE
         || article.getMetricUnits() == MetricUnits.PIECE
         || !(article.getAmount() > 0)) {
       return containerInfo;
