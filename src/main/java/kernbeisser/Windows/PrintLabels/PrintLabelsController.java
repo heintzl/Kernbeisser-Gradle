@@ -2,6 +2,8 @@ package kernbeisser.Windows.PrintLabels;
 
 import java.awt.*;
 import java.util.Collection;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -88,19 +90,32 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     new PrintLabelsController().openIn(new SubWindow(targetComponent));
   }
 
+  public static void setLabelPrintText(JButton button) {
+    boolean pendingLabels = Articles.getArticlePrintPoolSize() > 0;
+    button.setText("Etiketten drucken" + (pendingLabels ? " *" : ""));
+  }
+
+  public static void refreshLaunchButton(JButton launchButton) {
+    Executors.newSingleThreadScheduledExecutor()
+        .schedule(() -> setLabelPrintText(launchButton), 1000, TimeUnit.MILLISECONDS);
+  }
+
   public static JButton getLaunchButton(ViewContainer targetComponent) {
-    long printPoolSize = Articles.getArticlePrintPoolSize();
     JButton launchButton =
-        new JButton("Etiketten drucken" + (printPoolSize > 0 ? " *" : "")) {
+        new JButton() {
           @Override
           public void setEnabled(boolean b) {
             super.setEnabled(b);
           }
         };
     launchButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
+    setLabelPrintText(launchButton);
     launchButton.setToolTipText("Öffnet das Fenster für den Etikettendruck");
     launchButton.addActionListener(
-        e -> new PrintLabelsController().openIn(new SubWindow(targetComponent)));
+        e ->
+            new PrintLabelsController()
+                .withCloseEvent(() -> refreshLaunchButton(launchButton))
+                .openIn(new SubWindow(targetComponent)));
     return launchButton;
   }
 
