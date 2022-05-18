@@ -448,6 +448,14 @@ public class ShoppingItem implements Serializable {
     }
   }
 
+  public String getPriceInfoAmount() {
+    if (isWeighAble()) {
+      return "pro " + metricUnits.getDisplayUnit().getShortName();
+    } else {
+      return getContentAmount();
+    }
+  }
+
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
   public double calculatePreciseRetailPrice(double netPrice) {
     return netPrice * (1 + vatValue) * (1 + surcharge) * (1 - discount / 100.);
