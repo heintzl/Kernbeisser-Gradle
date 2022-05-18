@@ -55,6 +55,18 @@ public enum MetricUnits implements Named {
     this.shortName = shortName;
   }
 
+  public MetricUnits getDisplayUnit() {
+    switch (this) {
+      case MILLILITER:
+        return LITER;
+      case MILLIGRAM:
+      case GRAM:
+        return KILOGRAM;
+      default:
+        return this;
+    }
+  }
+
   public double inUnit(MetricUnits metricUnits, double amount) {
     return (amount * getBaseFactor()) / metricUnits.getBaseFactor();
   }
