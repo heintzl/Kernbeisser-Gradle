@@ -28,6 +28,8 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   private final JButton printButton = new JButton();
   private final JLabel printSheetInfo = new JLabel();
 
+  private boolean saved = false;
+
   private void onObjectsSelected(Collection<Article> articles, Boolean chosen) {
     articles.forEach(e -> e.setPrintPool(chosen ? 1 : 0));
   }
@@ -132,7 +134,9 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   @Override
   protected void closed() {
     var newPrintPool = articles.getModel().getLoaded();
-    if (!newPrintPool.equals(model.getPrintPoolBefore()) && getView().confirmChanges()) {
+    if (!newPrintPool.equals(model.getPrintPoolBefore())
+        && articles.getModel().isSaveChanges()
+        && getView().confirmChanges()) {
       Articles.replacePrintPool(newPrintPool);
     }
     ;
