@@ -17,7 +17,8 @@ import lombok.Setter;
 public class SupplyModel implements IModel<SupplyController> {
 
   @Getter @Setter private double appendedProducePrice = 0;
-  private final Set<Article> print = new HashSet<>();
+  private final Map<Article, Integer> print = new HashMap<>();
+  private final Map<Integer, Integer> printPoolBefore = new HashMap<>();
   @Getter private final Collection<ShoppingItem> shoppingItems = new ArrayList<>();
 
   void commit() {
@@ -45,20 +46,17 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   void print() {
-    Articles.addToPrintPool(print);
+    Articles.addToPrintPool(print, printPoolBefore);
     print.clear();
   }
 
-  public void togglePrint(Article bases) {
-    if (!print.remove(bases)) print.add(bases);
+  public void setPrintNumber(Article article, Integer number) {
+    print.put(article, number);
+    printPoolBefore.putIfAbsent(article.getId(), article.getPrintPool());
   }
 
-  public void addToPrint(Article becomePrinted) {
-    print.add(becomePrinted);
-  }
-
-  public boolean becomePrinted(Article article) {
-    return print.contains(article);
+  public int getPrintNumber(Article article) {
+    return Optional.ofNullable(print.get(article)).orElse(0);
   }
 
   public boolean isPrintSelected() {

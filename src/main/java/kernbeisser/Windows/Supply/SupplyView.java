@@ -1,6 +1,6 @@
 package kernbeisser.Windows.Supply;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -18,7 +18,6 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -86,7 +85,7 @@ public class SupplyView implements IView<SupplyController> {
   void addItem() {
     try {
       try {
-        shoppingItems.add(controller.addItem(getAmount()));
+        shoppingItems.add(0, controller.addItem(getAmount()));
       } catch (NullPointerException e) {
         throw new NoResultException();
       }
@@ -157,16 +156,20 @@ public class SupplyView implements IView<SupplyController> {
             Article::getContainerSize,
             Article::setContainerSize,
             AccessCheckingField.DOUBLE_FORMER);
-    Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
-    Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
+    Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE_O, 18, new Color(0x3D3D3D));
+    Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE_O, 18, new Color(0x313131));
     shoppingItems =
         new ObjectTable<>(
-            Columns.create("Lieferant", ShoppingItem::getSupplier),
+            Columns.create("Lieferant", ShoppingItem::getSupplier)
+                .withColumnAdjustor(e -> e.setPreferredWidth(200)),
             Columns.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber),
-            Columns.create("Gebinde-Anzahl", ShoppingItem::getDisplayContainerCount),
-            Columns.create("Name", ShoppingItem::getName),
+            Columns.create("Anzahl", ShoppingItem::getDisplayContainerCount),
+            Columns.create("Name", ShoppingItem::getName)
+                .withColumnAdjustor(e -> e.setPreferredWidth(400)),
             Columns.create("Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice())),
             Columns.create("Gebindegröße", ShoppingItem::getContainerSize),
+            Columns.<ShoppingItem>createIconColumn(
+                "Auswiegware", e -> (e.isWeighAble() ? selected : unselected)),
             Columns.create(
                 "Gebinde-Preis",
                 e -> String.format("%.2f", e.getItemNetPrice() * e.getContainerSize())),
@@ -174,23 +177,20 @@ public class SupplyView implements IView<SupplyController> {
                 "Gesamtpreis",
                 e ->
                     String.format(
-                        "%.2f€,",
+                        "%.2f€",
                         Math.abs(
                             e.getItemNetPrice()
                                 * (e.isWeighAble()
                                     ? (e.getItemMultiplier() / 1000.)
                                     : e.getItemMultiplier())))),
-            Columns.createIconColumn(
-                "Ausdrucken",
-                e -> controller.becomePrinted(e) ? selected : unselected,
-                controller::togglePrint,
-                (e) -> {},
-                Tools.scaleWithLabelScalingFactor(100)));
+            Columns.create("Ausdrucken", controller::getPrintNumber)
+                .withLeftClickConsumer(controller::setPrintNumberToAmount)
+                .withRightClickConsumer(controller::setPrintNumberTo1));
   }
 
   public void invalidInput() {
     JOptionPane.showMessageDialog(
-        getTopComponent(), "Bitte überpüfe die rot markierten Felder nach Fehlern!");
+        getTopComponent(), "Bitte überprüfe die rot markierten Felder nach Fehlern!");
   }
 
   public boolean commitClose() {

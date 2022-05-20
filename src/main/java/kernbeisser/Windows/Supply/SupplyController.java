@@ -89,7 +89,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             * -1;
     checkFractionalItemMultiplier(rawItemMultiplier, item.getSuppliersItemNumber());
     item.setItemMultiplier((int) Math.round(rawItemMultiplier));
-    model.addToPrint(article);
+    setPrintNumberToAmount(item);
     model.getShoppingItems().add(item);
     getView().getObjectForm().setShowSuccessDialog(false);
     getView().getObjectForm().applyMode(Mode.EDIT);
@@ -134,13 +134,18 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     getView().setProduce(produce);
   }
 
-  public void togglePrint(ShoppingItem t) {
-    model.togglePrint(t.getArticleNow().get());
+  public void setPrintNumberToAmount(ShoppingItem t) {
+    model.setPrintNumber(t.getArticleNow().get(), -(int) Math.round(t.getContainerCount()));
     getView().repaintTable();
   }
 
-  public boolean becomePrinted(ShoppingItem e) {
-    return model.becomePrinted(e.getArticleNow().get());
+  public void setPrintNumberTo1(ShoppingItem t) {
+    model.setPrintNumber(t.getArticleNow().get(), 1);
+    getView().repaintTable();
+  }
+
+  public int getPrintNumber(ShoppingItem e) {
+    return model.getPrintNumber(e.getArticleNow().get());
   }
 
   public void openImportSupplyFile() {
@@ -148,7 +153,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             (supply, shoppingItems) -> {
               for (ShoppingItem item : shoppingItems) {
                 model.getShoppingItems().add(item);
-                model.togglePrint(item.getArticleNow().get());
+                setPrintNumberToAmount(item);
               }
               getView().setShoppingItems(model.getShoppingItems());
               getModel()

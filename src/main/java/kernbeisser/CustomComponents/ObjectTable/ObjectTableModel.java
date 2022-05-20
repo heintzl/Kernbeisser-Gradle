@@ -62,8 +62,8 @@ public class ObjectTableModel<T> extends AbstractTableModel {
     fireTableStructureChanged();
   }
 
-  public void addObject(T in) {
-    this.objects.add(in);
+  public void addObject(int index, T in) {
+    this.objects.add(index, in);
     fireTableRowsInserted(this.objects.size() - 1, this.objects.size() - 1);
   }
 

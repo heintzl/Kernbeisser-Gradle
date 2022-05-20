@@ -346,14 +346,16 @@ public class Articles {
     return result == null ? 0 : -result;
   }
 
-  public static void addToPrintPool(Collection<Article> print) {
+  public static void addToPrintPool(
+      Map<Article, Integer> print, Map<Integer, Integer> printPoolBefore) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    for (Article article : print) {
+    for (Article article : print.keySet()) {
       Article persistence = em.find(Article.class, article.getId());
-      persistence.setPrintPool(1);
+      persistence.setPrintPool(
+          Optional.ofNullable(printPoolBefore.get(article.getId())).orElse(0) + print.get(article));
       em.persist(persistence);
     }
   }
