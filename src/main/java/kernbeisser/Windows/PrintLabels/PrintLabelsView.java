@@ -1,7 +1,9 @@
 package kernbeisser.Windows.PrintLabels;
 
 import java.text.MessageFormat;
+import javax.persistence.NoResultException;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
@@ -53,6 +55,24 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
     articles.getView().getChosen().replace(article, article);
   }
 
+  public void processBarcode(String s) {
+    try {
+      Article article = PrintLabelsModel.getByBarcode(s);
+      CollectionView<Article> articleCollectionView = articles.getView();
+      ObjectTable<Article> objectTable = articleCollectionView.getChosen();
+      int row = objectTable.getModel().getObjects().indexOf(article);
+      if (row == -1) {
+        objectTable = articleCollectionView.getAvailable();
+        row = objectTable.getModel().getObjects().indexOf(article);
+      }
+      if (row == -1) return;
+      objectTable.selectRow(row);
+      objectTable.requestFocusInWindow();
+    } catch (NoResultException e) {
+      noArticleFoundForBarcode(s);
+    }
+  }
+
   public String inputNumber(int amount, boolean retry) {
     String initValue = MessageFormat.format("{0, number, 0}", amount).trim();
     String message = "";
@@ -77,6 +97,15 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
       response = response.trim();
     }
     return response;
+  }
+
+  public void noArticleFoundForBarcode(String barcode) {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Konnte keinen Kornkraft-Artikel mit Barcode \"" + barcode + "\" finden",
+        "Artikel nicht gefunden",
+        JOptionPane.INFORMATION_MESSAGE);
   }
 
   @Override

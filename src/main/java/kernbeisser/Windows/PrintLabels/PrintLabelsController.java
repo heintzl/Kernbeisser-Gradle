@@ -1,12 +1,14 @@
 package kernbeisser.Windows.PrintLabels;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
@@ -29,12 +31,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   private final JButton printButton = new JButton();
   private final JLabel printSheetInfo = new JLabel();
-
-  private boolean saved = false;
-
-  private void onObjectsSelected(Collection<Article> articles, Boolean chosen) {
-    articles.forEach(e -> e.setPrintPool(chosen ? 1 : 0));
-  }
+  private final BarcodeCapture barcodeCapture;
 
   @Key(PermissionKey.ACTION_OPEN_PRINT_LABELS)
   public PrintLabelsController() throws PermissionKeyRequiredException {
@@ -60,6 +57,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     available.addColumn(Columns.create("Preisliste", Article::getPriceList).withDefaultFilter());
     articles.addControls(printButton, printSheetInfo);
     model.setPrintPoolBefore(Articles.getPrintPool());
+    barcodeCapture = new BarcodeCapture(getView()::processBarcode);
   }
 
   private void editPrintPool(Article article) {
@@ -157,6 +155,10 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     model.setPrintPoolBefore(newPrintPool);
   }
 
+  private void onObjectsSelected(Collection<Article> articles, Boolean chosen) {
+    articles.forEach(e -> e.setPrintPool(chosen ? 1 : 0));
+  }
+
   @Override
   public void fillView(PrintLabelsView printLabelsView) {
     articles.setLoadedAndSource(Articles.getPrintPool(), model::getAllArticles);
@@ -166,5 +168,10 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   @Override
   protected void closed() {
     persistPrintPoolIfNecessary(true);
+  }
+
+  @Override
+  protected boolean processKeyboardInput(KeyEvent e) {
+    return barcodeCapture.processKeyEvent(e);
   }
 }

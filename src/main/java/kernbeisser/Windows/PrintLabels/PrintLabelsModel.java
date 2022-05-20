@@ -4,10 +4,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Reports.ArticleLabel;
@@ -63,5 +65,9 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
 
   void setPrintPool(Article article, int numberOfLabels) {
     article.setPrintPool(numberOfLabels);
+  }
+
+  public static Article getByBarcode(String s) throws NoResultException {
+    return Articles.getByBarcode(Long.parseLong(s)).orElseThrow(NoResultException::new);
   }
 }
