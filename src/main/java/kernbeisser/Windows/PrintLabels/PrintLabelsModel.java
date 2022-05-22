@@ -28,7 +28,9 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
     return new CollectionController<>(
         new ArrayList<>(),
         Source.empty(),
-        Columns.create("Name", Article::getName).withDefaultFilter(),
+        Columns.create("Name", Article::getName)
+            .withDefaultFilter()
+            .withColumnAdjustor(e -> e.setPreferredWidth(200)),
         Columns.create("Ladennummer", Article::getKbNumber)
             .withSorter(Column.NUMBER_SORTER)
             .withDefaultFilter(),

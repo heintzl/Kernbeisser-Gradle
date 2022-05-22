@@ -130,7 +130,8 @@ public class PreOrderView implements IView<PreOrderController> {
     }
     preOrders =
         new ObjectTable<PreOrder>(
-            Columns.create("Benutzer", e -> e.getUser().getFullName(true)),
+            new CustomizableColumn<PreOrder>("Benutzer", e -> e.getUser().getFullName(true))
+                .withColumnAdjustor(e -> e.setPreferredWidth(150)),
             new CustomizableColumn<PreOrder>("Ladennummer", PreOrder::getKBNumber)
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
@@ -138,7 +139,8 @@ public class PreOrderView implements IView<PreOrderController> {
                     "Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber())
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create("Produktname", e -> e.getArticle().getName()),
+            new CustomizableColumn<PreOrder>("Produktname", e -> e.getArticle().getName())
+                .withColumnAdjustor(e -> e.setPreferredWidth(350)),
             new CustomizableColumn<PreOrder>(
                     "Netto-Preis",
                     e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())))
