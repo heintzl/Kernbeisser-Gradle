@@ -312,13 +312,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     barcodeCapture = new BarcodeCapture(this::processBarcode);
 
     keyCapture = new KeyCapture();
-    keyCapture.add(KeyEvent.VK_F2, () -> view.setAmount("2"));
-    keyCapture.add(KeyEvent.VK_F3, () -> view.setAmount("3"));
-    keyCapture.add(KeyEvent.VK_F4, () -> view.setAmount("4"));
-    keyCapture.add(KeyEvent.VK_F5, () -> view.setAmount("5"));
-    keyCapture.add(KeyEvent.VK_F6, () -> view.setAmount("6"));
-    keyCapture.add(KeyEvent.VK_F7, () -> view.setAmount("8"));
-    keyCapture.add(KeyEvent.VK_F8, () -> view.setAmount("10"));
+    keyCapture.addF2ToF8NumberActions(view::setAmount);
     keyCapture.add(KeyEvent.VK_INSERT, () -> view.articleTypeChange(ArticleType.PRODUCE));
     keyCapture.add(KeyEvent.VK_PAGE_UP, () -> view.articleTypeChange(ArticleType.BAKED_GOODS));
     keyCapture.add(KeyEvent.VK_END, () -> view.articleTypeChange(ArticleType.ARTICLE_NUMBER));

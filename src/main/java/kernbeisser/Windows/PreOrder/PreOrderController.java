@@ -205,13 +205,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   @Override
   public void fillView(PreOrderView view) {
-    keyCapture.add(KeyEvent.VK_F2, () -> view.fnKeyAction("2"));
-    keyCapture.add(KeyEvent.VK_F3, () -> view.fnKeyAction("3"));
-    keyCapture.add(KeyEvent.VK_F4, () -> view.fnKeyAction("4"));
-    keyCapture.add(KeyEvent.VK_F5, () -> view.fnKeyAction("5"));
-    keyCapture.add(KeyEvent.VK_F6, () -> view.fnKeyAction("6"));
-    keyCapture.add(KeyEvent.VK_F7, () -> view.fnKeyAction("8"));
-    keyCapture.add(KeyEvent.VK_F8, () -> view.fnKeyAction("10"));
+    keyCapture.addF2ToF8NumberActions(view::fnKeyAction);
     keyCapture.addALT(KeyEvent.VK_S, this::openSearchWindow);
     keyCapture.addCTRL(KeyEvent.VK_F, this::openSearchWindow);
     boolean editable = userMayEdit();
