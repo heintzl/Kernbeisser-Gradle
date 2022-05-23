@@ -280,6 +280,15 @@ public class Tools {
     em.flush();
   }
 
+  public static void noArticleFoundForBarcodeWarning(Component parentComponent, String barcode) {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        parentComponent,
+        "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden",
+        "Artikel nicht gefunden",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
   public static void showUnexpectedErrorWarning(Throwable e) throws RuntimeException {
     Main.logger.error(e.getMessage(), e);
     JOptionPane.showMessageDialog(

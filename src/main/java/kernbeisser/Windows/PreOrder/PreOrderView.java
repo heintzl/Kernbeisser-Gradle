@@ -352,24 +352,6 @@ public class PreOrderView implements IView<PreOrderController> {
             + "</h2></body></html>");
   }
 
-  public void noArticleFoundForBarcode(String barcode) {
-    Tools.beep();
-    JOptionPane.showMessageDialog(
-        getContent(),
-        "Konnte keinen Kornkraft-Artikel mit Barcode \"" + barcode + "\" finden",
-        "Artikel nicht gefunden",
-        JOptionPane.INFORMATION_MESSAGE);
-  }
-
-  public void messageExportError(Throwable e) {
-    Tools.beep();
-    JOptionPane.showMessageDialog(
-        getContent(),
-        "Der Export ist fehlgeschlagen. Ursache: \n" + e.getMessage(),
-        "Vorbestellungsexport",
-        JOptionPane.ERROR_MESSAGE);
-  }
-
   public void messageExportSuccess() {
     Tools.beep();
     JOptionPane.showMessageDialog(

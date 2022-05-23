@@ -15,6 +15,7 @@ import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
@@ -186,7 +187,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
         getView().addToCart();
       }
     } catch (NoResultException e) {
-      getView().messageBarcodeNotFound(barcode);
+      Tools.noArticleFoundForBarcodeWarning(getView().getContent(), Long.toString(barcode));
       getView().setKbNumber("");
     }
   }

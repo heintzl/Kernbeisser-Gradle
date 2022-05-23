@@ -69,7 +69,7 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
       objectTable.selectRow(row);
       objectTable.requestFocusInWindow();
     } catch (NoResultException e) {
-      noArticleFoundForBarcode(s);
+      Tools.noArticleFoundForBarcodeWarning(getContent(), s);
     }
   }
 
@@ -97,15 +97,6 @@ public class PrintLabelsView implements IView<PrintLabelsController> {
       response = response.trim();
     }
     return response;
-  }
-
-  public void noArticleFoundForBarcode(String barcode) {
-    Tools.beep();
-    JOptionPane.showMessageDialog(
-        getContent(),
-        "Konnte keinen Kornkraft-Artikel mit Barcode \"" + barcode + "\" finden",
-        "Artikel nicht gefunden",
-        JOptionPane.INFORMATION_MESSAGE);
   }
 
   @Override

@@ -257,7 +257,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     try {
       insert(model.getByBarcode(s));
     } catch (NoResultException e) {
-      getView().noArticleFoundForBarcode(s);
+      Tools.noArticleFoundForBarcodeWarning(getView().getContent(), s);
     }
   }
 
