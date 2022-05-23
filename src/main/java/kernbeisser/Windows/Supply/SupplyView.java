@@ -99,6 +99,10 @@ public class SupplyView implements IView<SupplyController> {
     }
   }
 
+  public void setAmount(String amount) {
+    this.amount.setText(amount);
+  }
+
   Supplier getSelected() {
     return (Supplier) supplier.getSelectedItem();
   }
