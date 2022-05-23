@@ -9,6 +9,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.ArticlePrintPool;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Components.Source;
@@ -18,11 +19,11 @@ import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
-import lombok.Setter;
 
 public class PrintLabelsModel implements IModel<PrintLabelsController> {
 
-  @Getter @Setter private Collection<Article> printPoolBefore;
+  @Getter private Map<Article, Integer> printPoolMapBefore;
+  @Getter private Map<Article, Integer> printPoolMap;
 
   public static CollectionController<Article> getArticleSource() {
     return new CollectionController<>(
@@ -39,7 +40,16 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
             .withDefaultFilter());
   }
 
-  public Collection<Article> getAllArticles() {
+  public int getPrintPool(Article article) {
+    return Optional.ofNullable(printPoolMap.get(article)).orElse(0);
+  }
+
+  public void setPrintPoolBefore(Map<Article, Integer> printPool) {
+    printPoolMapBefore = new HashMap<>(printPool);
+    printPoolMap = new HashMap<>(printPool);
+  }
+
+  public static Collection<Article> getAllArticles() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -59,14 +69,14 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
   void print(CollectionController<Article> articles) {
     List<Article> printPool =
         articles.getModel().getLoaded().stream()
-            .flatMap(a -> Collections.nCopies(a.getPrintPool(), a).stream())
+            .flatMap(a -> Collections.nCopies(ArticlePrintPool.get(a), a).stream())
             .collect(Collectors.toList());
     new ArticleLabel(printPool)
         .sendToPrinter("Drucke Ladenschilder", Tools::showUnexpectedErrorWarning);
   }
 
   void setPrintPool(Article article, int numberOfLabels) {
-    article.setPrintPool(numberOfLabels);
+    printPoolMap.put(article, numberOfLabels);
   }
 
   public static Article getByBarcode(String s) throws NoResultException {

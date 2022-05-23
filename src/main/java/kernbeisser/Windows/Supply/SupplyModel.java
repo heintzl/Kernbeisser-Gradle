@@ -4,10 +4,7 @@ import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -18,7 +15,7 @@ public class SupplyModel implements IModel<SupplyController> {
 
   @Getter @Setter private double appendedProducePrice = 0;
   private final Map<Article, Integer> print = new HashMap<>();
-  private final Map<Integer, Integer> printPoolBefore = new HashMap<>();
+  @Setter private Map<Article, Integer> printPoolBefore = new HashMap<>();
   @Getter private final Collection<ShoppingItem> shoppingItems = new ArrayList<>();
 
   void commit() {
@@ -46,13 +43,16 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   void print() {
-    Articles.addToPrintPool(print, printPoolBefore);
+    printPoolBefore.forEach(
+        (k, v) -> {
+          print.merge(k, v, Integer::sum);
+        });
+    ArticlePrintPool.setPrintPoolFromMap(print);
     print.clear();
   }
 
   public void setPrintNumber(Article article, Integer number) {
     print.put(article, number);
-    printPoolBefore.putIfAbsent(article.getId(), article.getPrintPool());
   }
 
   public int getPrintNumber(Article article) {

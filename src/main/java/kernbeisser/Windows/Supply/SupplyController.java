@@ -8,10 +8,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
@@ -38,6 +35,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   @Key(PermissionKey.ACTION_OPEN_SUPPLY)
   public SupplyController() {
     super(new SupplyModel());
+    model.setPrintPoolBefore(ArticlePrintPool.getPrintPoolAsMap());
   }
 
   @Override

@@ -351,7 +351,9 @@ public class Articles {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select a from Article a where a.printPool <> 0", Article.class)
+    return em.createQuery(
+            "select a from Article a where a in (select ap.article from ArticlePrintPool ap)",
+            Article.class)
         .getResultList();
   }
 
@@ -361,7 +363,8 @@ public class Articles {
     EntityTransaction et = em.getTransaction();
     et.begin();
     Long result =
-        em.createQuery("select sum (printPool) from Article a", Long.class).getSingleResult();
+        em.createQuery("select sum (number) from ArticlePrintPool ap", Long.class)
+            .getSingleResult();
     return result == null ? 0 : result;
   }
 
