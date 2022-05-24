@@ -167,7 +167,8 @@ public class SupplyView implements IView<SupplyController> {
             Columns.create("Lieferant", ShoppingItem::getSupplier)
                 .withColumnAdjustor(e -> e.setPreferredWidth(200)),
             Columns.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber),
-            Columns.create("Anzahl", ShoppingItem::getDisplayContainerCount),
+            Columns.create("Anzahl", ShoppingItem::getDisplayContainerCount)
+                .withLeftClickConsumer(controller::editItemMultiplier),
             Columns.create("Name", ShoppingItem::getName)
                 .withColumnAdjustor(e -> e.setPreferredWidth(400)),
             Columns.create("Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice())),
@@ -188,8 +189,8 @@ public class SupplyView implements IView<SupplyController> {
                                     ? (e.getItemMultiplier() / 1000.)
                                     : e.getItemMultiplier())))),
             Columns.create("Ausdrucken", controller::getPrintNumber)
-                .withLeftClickConsumer(controller::setPrintNumberToAmount)
-                .withRightClickConsumer(controller::setPrintNumberTo1));
+                .withLeftClickConsumer(controller::editPrintPool)
+                .withRightClickConsumer(controller::increaseItemPrintNumber));
   }
 
   public void invalidInput() {
@@ -207,6 +208,10 @@ public class SupplyView implements IView<SupplyController> {
   @Override
   public String getTitle() {
     return "Lieferung eingeben";
+  }
+
+  public void refreshRow(ShoppingItem item) {
+    shoppingItems.replace(item, item);
   }
 
   public void repaintTable() {

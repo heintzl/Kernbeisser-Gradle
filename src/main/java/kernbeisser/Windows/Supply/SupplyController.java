@@ -17,7 +17,6 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
-import kernbeisser.Main;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
@@ -45,6 +44,29 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     model.setPrintPoolBefore(ArticlePrintPool.getPrintPoolAsMap());
     keyCapture = new KeyCapture();
     barcodeCapture = new BarcodeCapture(this::processBarcode);
+  }
+
+  public void editPrintPool(ShoppingItem item) {
+    Article article = item.getArticleNow().get();
+    Integer newValue =
+        Tools.integerInputDialog(getView().getContent(), model.getPrintNumber(article));
+    if (newValue == null) {
+      return;
+    }
+    model.setPrintNumber(article, newValue);
+    getView().refreshRow(item);
+  }
+
+  public void editItemMultiplier(ShoppingItem item) {
+    Integer newValue =
+        Tools.integerInputDialog(
+            getView().getContent(), -(int) Math.round(item.getContainerCount()));
+    if (newValue == null) {
+      return;
+    }
+    model.setContainerMultiplier(item, newValue);
+    model.setPrintNumber(item.getArticleNow().get(), newValue);
+    getView().refreshRow(item);
   }
 
   @Override
@@ -99,14 +121,8 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     checkInput();
     Article article = getView().getObjectForm().getData(null);
     ShoppingItem item = new ShoppingItem(article, 0, false);
-    double rawItemMultiplier =
-        (item.isWeighAble()
-                ? item.getMetricUnits().inUnit(MetricUnits.GRAM, item.getAmount() * amount)
-                : amount * item.getContainerSize())
-            * -1;
-    checkFractionalItemMultiplier(rawItemMultiplier, item.getSuppliersItemNumber());
-    item.setItemMultiplier((int) Math.round(rawItemMultiplier));
-    setPrintNumberToAmount(item);
+    model.setContainerMultiplier(item, amount);
+    setPrintNumber(item);
     model.getShoppingItems().add(item);
     getView().getObjectForm().setShowSuccessDialog(false);
     getView().getObjectForm().applyMode(Mode.EDIT);
@@ -151,14 +167,15 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     getView().setProduce(produce);
   }
 
-  public void setPrintNumberToAmount(ShoppingItem t) {
+  public void setPrintNumber(ShoppingItem t) {
     model.setPrintNumber(t.getArticleNow().get(), -(int) Math.round(t.getContainerCount()));
     getView().repaintTable();
   }
 
-  public void setPrintNumberTo1(ShoppingItem t) {
-    model.setPrintNumber(t.getArticleNow().get(), 1);
-    getView().repaintTable();
+  public void increaseItemPrintNumber(ShoppingItem t) {
+    Article article = t.getArticleNow().get();
+    model.setPrintNumber(article, model.getPrintNumber(article) + 1);
+    getView().refreshRow(t);
   }
 
   public int getPrintNumber(ShoppingItem e) {
@@ -170,7 +187,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             (supply, shoppingItems) -> {
               for (ShoppingItem item : shoppingItems) {
                 model.getShoppingItems().add(item);
-                setPrintNumberToAmount(item);
+                setPrintNumber(item);
               }
               getView().setShoppingItems(model.getShoppingItems());
               getModel()
@@ -235,7 +252,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
                 ? getAsItemMultiplierAmount(content)
                 : content.getContainerMultiplier() * content.getContainerSize())
             * -1;
-    checkFractionalItemMultiplier(rawItemMultiplier, content.getKkNumber());
+    SupplyModel.checkFractionalItemMultiplier(rawItemMultiplier, content.getKkNumber());
     shoppingItem.setItemMultiplier((int) Math.round(rawItemMultiplier));
     return shoppingItem;
   }
@@ -246,15 +263,6 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
         .inUnit(
             MetricUnits.GRAM,
             content.getContainerMultiplier() * content.getContainerSize() * content.getAmount());
-  }
-
-  public static void checkFractionalItemMultiplier(double itemMultiplier, int kkNumber) {
-    if (itemMultiplier % 1 != 0) {
-      Main.logger.warn(
-          String.format(
-              "fractional item multiplier while reading KKSupplierFile content Article[%s] itemmultiplier: [%f]",
-              kkNumber, itemMultiplier));
-    }
   }
 
   private static @NotNull Article createArticle(LineContent content) {

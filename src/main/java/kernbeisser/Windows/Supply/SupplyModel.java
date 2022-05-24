@@ -5,6 +5,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -49,6 +51,25 @@ public class SupplyModel implements IModel<SupplyController> {
         });
     ArticlePrintPool.setPrintPoolFromMap(print);
     print.clear();
+  }
+
+  public void setContainerMultiplier(ShoppingItem item, double amount) {
+    double rawItemMultiplier =
+        (item.isWeighAble()
+                ? item.getMetricUnits().inUnit(MetricUnits.GRAM, item.getAmount() * amount)
+                : amount * item.getContainerSize())
+            * -1;
+    checkFractionalItemMultiplier(rawItemMultiplier, item.getSuppliersItemNumber());
+    item.setItemMultiplier((int) Math.round(rawItemMultiplier));
+  }
+
+  public static void checkFractionalItemMultiplier(double itemMultiplier, int suppliersItemNumber) {
+    if (itemMultiplier % 1 != 0) {
+      Main.logger.warn(
+          String.format(
+              "fractional item multiplier while reading KKSupplierFile content Article[%s] itemmultiplier: [%f]",
+              suppliersItemNumber, itemMultiplier));
+    }
   }
 
   public void setPrintNumber(Article article, Integer number) {
