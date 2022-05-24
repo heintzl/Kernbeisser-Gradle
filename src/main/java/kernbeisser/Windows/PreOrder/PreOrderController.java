@@ -302,25 +302,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     if (preOrder.getOrderedOn() != null) {
       return;
     }
-    String response = getView().inputAmount(preOrder.getAmount(), false);
-    boolean exit = false;
-    do {
-      if (response == null || response.equals("")) {
-        return;
-      } else {
-        try {
-          int alteredAmount = Integer.parseInt(response);
-          if (alteredAmount > 0) {
-            model.setAmount(preOrder, alteredAmount);
-            getView().refreshPreOrder(preOrder);
-            exit = true;
-          } else {
-            throw (new NumberFormatException());
-          }
-        } catch (NumberFormatException exception) {
-          response = getView().inputAmount(preOrder.getAmount(), true);
-        }
-      }
-    } while (!exit);
+    Integer newValue = Tools.integerInputDialog(getView().getContent(), preOrder.getAmount());
+    if (newValue == null) {
+      return;
+    }
+    model.setAmount(preOrder, newValue);
+    getView().refreshPreOrder(preOrder);
   }
 }

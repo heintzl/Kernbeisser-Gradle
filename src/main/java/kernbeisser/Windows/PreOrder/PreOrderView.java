@@ -4,7 +4,6 @@ import com.github.lgooddatepicker.components.DatePicker;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -433,32 +432,6 @@ public class PreOrderView implements IView<PreOrderController> {
     return JOptionPane.showConfirmDialog(
             getContent(), message, "Vorbestellung schließen", JOptionPane.OK_CANCEL_OPTION)
         == JOptionPane.OK_OPTION;
-  }
-
-  public String inputAmount(int amount, boolean retry) {
-    String initValue = MessageFormat.format("{0, number, 0}", amount).trim();
-    String message = "";
-    String response = "";
-    if (retry) { // item is piece, first try
-      message = "Die Eingabe ist ungültig. Bitte hier eine gültige Anzahl > 0 eingeben:";
-    } else { // item is piece later try
-      message = "Bitte neue Anzahl eingeben:";
-    }
-    Tools.beep();
-    response =
-        (String)
-            JOptionPane.showInputDialog(
-                getContent(),
-                message,
-                "Anzahl anpassen",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                null,
-                initValue);
-    if (response != null) {
-      response = response.trim();
-    }
-    return response;
   }
 
   public LocalDate inputDeliveryDate() {

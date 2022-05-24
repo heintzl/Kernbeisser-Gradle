@@ -18,6 +18,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
@@ -62,27 +63,14 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   }
 
   private void editPrintPool(Article article) {
-    String response = getView().inputNumber(model.getPrintPool(article), false);
-    boolean exit = false;
-    do {
-      if (response == null || response.equals("")) {
-        return;
-      } else {
-        try {
-          int alteredAmount = Integer.parseInt(response);
-          if (alteredAmount > 0) {
-            model.setPrintPool(article, alteredAmount);
-            getView().refreshChosenArticle(article);
-            refreshPrintButton();
-            exit = true;
-          } else {
-            throw (new NumberFormatException());
-          }
-        } catch (NumberFormatException exception) {
-          response = getView().inputNumber(article.getAmount(), true);
-        }
-      }
-    } while (!exit);
+    Integer newAmount =
+        Tools.integerInputDialog(getView().getContent(), model.getPrintPool(article));
+    if (newAmount == null) {
+      return;
+    }
+    model.setPrintPool(article, newAmount);
+    getView().refreshChosenArticle(article);
+    refreshPrintButton();
   }
 
   private static void openMe(ViewContainer targetComponent) {
