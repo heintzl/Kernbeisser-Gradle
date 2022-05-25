@@ -88,7 +88,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   Collection<PreOrder> getUnorderedPreOrders() {
     return em.createQuery(
-            "select p from PreOrder p where orderedOn is null order by p.article.suppliersItemNumber",
+            "select p from PreOrder p where delivery is null and orderedOn is null order by p.article.suppliersItemNumber",
             PreOrder.class)
         .getResultList();
   }
@@ -179,6 +179,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     Instant orderInstant = Instant.now();
     for (PreOrder o : getUnorderedPreOrders()) {
       o.setOrderedOn(orderInstant);
+      em.merge(o);
     }
   }
 }
