@@ -8,6 +8,7 @@ import javax.persistence.NoResultException;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
@@ -166,31 +167,38 @@ public class SupplyView implements IView<SupplyController> {
         new ObjectTable<>(
             Columns.create("Lieferant", ShoppingItem::getSupplier)
                 .withColumnAdjustor(e -> e.setPreferredWidth(200)),
-            Columns.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber),
+            Columns.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Anzahl", ShoppingItem::getDisplayContainerCount)
-                .withLeftClickConsumer(controller::editItemMultiplier),
+                .withLeftClickConsumer(controller::editItemMultiplier)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Name", ShoppingItem::getName)
                 .withColumnAdjustor(e -> e.setPreferredWidth(400)),
-            Columns.create("Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice())),
-            Columns.create("Gebindegröße", ShoppingItem::getContainerSize),
-            Columns.<ShoppingItem>createIconColumn(
-                "Auswiegware", e -> (e.isWeighAble() ? selected : unselected)),
-            Columns.create(
-                "Gebinde-Preis",
-                e -> String.format("%.2f", e.getItemNetPrice() * e.getContainerSize())),
-            Columns.create(
-                "Gesamtpreis",
-                e ->
-                    String.format(
-                        "%.2f€",
-                        Math.abs(
-                            e.getItemNetPrice()
-                                * (e.isWeighAble()
-                                    ? (e.getItemMultiplier() / 1000.)
-                                    : e.getItemMultiplier())))),
+            Columns.<ShoppingItem>create(
+                    "Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice()))
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Gebindegröße", ShoppingItem::getContainerSize)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.createIconColumn("Auswiegware", e -> (e.isWeighAble() ? selected : unselected)),
+            Columns.<ShoppingItem>create(
+                    "Gebinde-Preis",
+                    e -> String.format("%.2f", e.getItemNetPrice() * e.getContainerSize()))
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.<ShoppingItem>create(
+                    "Gesamtpreis",
+                    e ->
+                        String.format(
+                            "%.2f€",
+                            Math.abs(
+                                e.getItemNetPrice()
+                                    * (e.isWeighAble()
+                                        ? (e.getItemMultiplier() / 1000.)
+                                        : e.getItemMultiplier()))))
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Ausdrucken", controller::getPrintNumber)
                 .withLeftClickConsumer(controller::editPrintPool)
-                .withRightClickConsumer(controller::increaseItemPrintNumber));
+                .withRightClickConsumer(controller::increaseItemPrintNumber)
+                .withSorter(Column.NUMBER_SORTER));
   }
 
   public void invalidInput() {
