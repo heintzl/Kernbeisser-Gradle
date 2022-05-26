@@ -47,13 +47,12 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public void editPrintPool(ShoppingItem item) {
-    Article article = item.getArticleNow().get();
     Integer newValue =
-        Tools.integerInputDialog(getView().getContent(), model.getPrintNumber(article));
+        Tools.integerInputDialog(getView().getContent(), model.getPrintNumber(item), i -> i >= 0);
     if (newValue == null) {
       return;
     }
-    model.setPrintNumber(article, newValue);
+    model.setPrintNumber(item, newValue);
     getView().refreshRow(item);
   }
 
@@ -65,7 +64,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       return;
     }
     model.setContainerMultiplier(item, newValue);
-    model.setPrintNumber(item.getArticleNow().get(), newValue);
+    model.setPrintNumber(item, newValue);
     getView().refreshRow(item);
   }
 
@@ -122,8 +121,8 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     Article article = getView().getObjectForm().getData(null);
     ShoppingItem item = new ShoppingItem(article, 0, false);
     model.setContainerMultiplier(item, amount);
-    setPrintNumber(item);
     model.getShoppingItems().add(item);
+    setPrintNumber(item);
     getView().getObjectForm().setShowSuccessDialog(false);
     getView().getObjectForm().applyMode(Mode.EDIT);
     getView().noArticleFound();
@@ -167,19 +166,18 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     getView().setProduce(produce);
   }
 
-  public void setPrintNumber(ShoppingItem t) {
-    model.setPrintNumber(t.getArticleNow().get(), SupplyModel.getPrintNumberFromItem(t));
+  public void setPrintNumber(ShoppingItem item) {
+    model.setPrintNumber(item, SupplyModel.getPrintNumberFromItem(item));
     getView().repaintTable();
   }
 
-  public void increaseItemPrintNumber(ShoppingItem t) {
-    Article article = t.getArticleNow().get();
-    model.setPrintNumber(article, model.getPrintNumber(article) + 1);
-    getView().refreshRow(t);
+  public void increaseItemPrintNumber(ShoppingItem item) {
+    model.setPrintNumber(item, model.getPrintNumber(item) + 1);
+    getView().refreshRow(item);
   }
 
-  public int getPrintNumber(ShoppingItem e) {
-    return model.getPrintNumber(e.getArticleNow().get());
+  public int getPrintNumber(ShoppingItem item) {
+    return model.getPrintNumber(item);
   }
 
   public void openImportSupplyFile() {

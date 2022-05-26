@@ -16,7 +16,7 @@ import lombok.Setter;
 public class SupplyModel implements IModel<SupplyController> {
 
   @Getter @Setter private double appendedProducePrice = 0;
-  private final Map<Article, Integer> print = new HashMap<>();
+  private final Map<ShoppingItem, Integer> print = new HashMap<>();
   @Setter private Map<Article, Integer> printPoolBefore = new HashMap<>();
   @Getter private final Collection<ShoppingItem> shoppingItems = new ArrayList<>();
 
@@ -45,11 +45,13 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   void print() {
+    Map<Article, Integer> newPrintPool = new HashMap<>();
+    print.forEach((k, v) -> newPrintPool.merge(k.getArticleNow().get(), v, Integer::sum));
     printPoolBefore.forEach(
         (k, v) -> {
-          print.merge(k, v, Integer::sum);
+          newPrintPool.merge(k, v, Integer::sum);
         });
-    ArticlePrintPool.setPrintPoolFromMap(print);
+    ArticlePrintPool.setPrintPoolFromMap(newPrintPool);
     print.clear();
   }
 
@@ -72,12 +74,12 @@ public class SupplyModel implements IModel<SupplyController> {
     }
   }
 
-  public void setPrintNumber(Article article, Integer number) {
-    print.put(article, number);
+  public void setPrintNumber(ShoppingItem item, Integer number) {
+    print.put(item, number);
   }
 
-  public int getPrintNumber(Article article) {
-    return Optional.ofNullable(print.get(article)).orElse(0);
+  public int getPrintNumber(ShoppingItem item) {
+    return Optional.ofNullable(print.get(item)).orElse(0);
   }
 
   public boolean isPrintSelected() {
@@ -94,9 +96,9 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   public static Integer getPrintNumberFromItem(ShoppingItem item) {
-    int number = -(int) Math.round(item.getContainerCount());
-    if (item.getSuppliersItemNumber() < 100 && item.getSupplier().equals(Supplier.getKKSupplier()))
+    if (item.getSuppliersItemNumber() < 1000 && item.getSupplier().equals(Supplier.getKKSupplier()))
       return 0;
+    int number = -(int) Math.round(item.getContainerCount());
     if (item.isWeighAble() || number < 1) return 1;
     if (number > 10) return 10;
     return number;
