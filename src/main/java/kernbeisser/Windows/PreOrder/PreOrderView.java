@@ -16,7 +16,6 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
-import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
@@ -50,6 +49,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private IntegerParseField shopNumber;
 
   private JCheckBox duplexPrint;
+  private JButton defaultSortOrder;
   private JPopupMenu popupSelectionColumn;
 
   @Linked private PreOrderController controller;
@@ -129,28 +129,32 @@ public class PreOrderView implements IView<PreOrderController> {
       popupSelectionColumn.add(popupDeselectAll);
     }
     preOrders =
-        new ObjectTable<PreOrder>(
-            new CustomizableColumn<PreOrder>("Benutzer", e -> e.getUser().getFullName(true))
+        new ObjectTable<>(
+            Columns.<PreOrder>create("Benutzer", e -> e.getUser().getFullName(true))
                 .withColumnAdjustor(e -> e.setPreferredWidth(150)),
-            new CustomizableColumn<PreOrder>("Ladennummer", PreOrder::getKBNumber)
+            Columns.<PreOrder>create("Ladennummer", PreOrder::getKBNumber)
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            new CustomizableColumn<PreOrder>(
+            Columns.<PreOrder>create(
                     "Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber())
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            new CustomizableColumn<PreOrder>("Produktname", e -> e.getArticle().getName())
+            Columns.<PreOrder>create("Produktname", e -> e.getArticle().getName())
                 .withColumnAdjustor(e -> e.setPreferredWidth(350)),
-            new CustomizableColumn<PreOrder>(
+            Columns.<PreOrder>create(
                     "Netto-Preis",
                     e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())))
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            new CustomizableColumn<>("Anzahl", PreOrder::getAmount)
+            Columns.<PreOrder>create("Anzahl", PreOrder::getAmount)
                 .withLeftClickConsumer(controller::editAmount)
                 .withRightClickConsumer(controller::editAmount)
                 .withHorizontalAlignment(SwingConstants.CENTER)
                 .withSorter(Column.NUMBER_SORTER),
+            Columns.create(
+                "eingegeben am",
+                e -> Date.INSTANT_DATE.format(e.getCreateDate()),
+                SwingConstants.RIGHT),
             Columns.create(
                 "exportiert am",
                 e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
@@ -287,6 +291,7 @@ public class PreOrderView implements IView<PreOrderController> {
     searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
+    defaultSortOrder.addActionListener(e -> setDefaultSortOrder());
   }
 
   private void userAction(boolean fromFnKey) {
