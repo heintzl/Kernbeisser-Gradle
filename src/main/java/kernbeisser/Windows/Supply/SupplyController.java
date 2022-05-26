@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Supply;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Optional;
@@ -7,20 +8,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.swing.*;
+import kernbeisser.CustomComponents.BarcodeCapture;
+import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
-import kernbeisser.Main;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.PrintLabels.PrintLabelsController;
+import kernbeisser.Windows.PrintLabels.PrintLabelsModel;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import kernbeisser.Windows.Supply.SupplySelector.ResolveStatus;
 import kernbeisser.Windows.Supply.SupplySelector.SupplySelectorController;
@@ -34,10 +35,37 @@ import org.jetbrains.annotations.NotNull;
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   public static final Logger logger = LogManager.getLogger(SupplyController.class);
+  public final KeyCapture keyCapture;
+  public final BarcodeCapture barcodeCapture;
 
   @Key(PermissionKey.ACTION_OPEN_SUPPLY)
   public SupplyController() {
     super(new SupplyModel());
+    model.setPrintPoolBefore(ArticlePrintPool.getPrintPoolAsMap());
+    keyCapture = new KeyCapture();
+    barcodeCapture = new BarcodeCapture(this::processBarcode);
+  }
+
+  public void editPrintPool(ShoppingItem item) {
+    Integer newValue =
+        Tools.integerInputDialog(getView().getContent(), model.getPrintNumber(item), i -> i >= 0);
+    if (newValue == null) {
+      return;
+    }
+    model.setPrintNumber(item, newValue);
+    getView().refreshRow(item);
+  }
+
+  public void editItemMultiplier(ShoppingItem item) {
+    Integer newValue =
+        Tools.integerInputDialog(
+            getView().getContent(), -(int) Math.round(item.getContainerCount()));
+    if (newValue == null) {
+      return;
+    }
+    model.setContainerMultiplier(item, newValue);
+    model.setPrintNumber(item, newValue);
+    getView().refreshRow(item);
   }
 
   @Override
@@ -54,6 +82,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
           }
         });
     view.getPrintButtonPanel().add(printButton);
+    keyCapture.addF2ToF8NumberActions(getView()::setAmount);
   }
 
   private int last;
@@ -72,6 +101,15 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     }
   }
 
+  public void processBarcode(String s) {
+    try {
+      getView().getObjectForm().setSource(PrintLabelsModel.getByBarcode(s));
+      getView().addItem();
+    } catch (NoResultException e) {
+      Tools.noArticleFoundForBarcodeWarning(getView().getContent(), s);
+    }
+  }
+
   private void checkInput() throws CannotParseException {
     if (!model.articleExists(getView().getSelected(), getView().getSuppliersItemNumber())) {
       throw new NoResultException();
@@ -82,15 +120,9 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     checkInput();
     Article article = getView().getObjectForm().getData(null);
     ShoppingItem item = new ShoppingItem(article, 0, false);
-    double rawItemMultiplier =
-        (item.isWeighAble()
-                ? item.getMetricUnits().inUnit(MetricUnits.GRAM, item.getAmount() * amount)
-                : amount * item.getContainerSize())
-            * -1;
-    checkFractionalItemMultiplier(rawItemMultiplier, item.getSuppliersItemNumber());
-    item.setItemMultiplier((int) Math.round(rawItemMultiplier));
-    model.addToPrint(article);
+    model.setContainerMultiplier(item, amount);
     model.getShoppingItems().add(item);
+    setPrintNumber(item);
     getView().getObjectForm().setShowSuccessDialog(false);
     getView().getObjectForm().applyMode(Mode.EDIT);
     getView().noArticleFound();
@@ -134,13 +166,18 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     getView().setProduce(produce);
   }
 
-  public void togglePrint(ShoppingItem t) {
-    model.togglePrint(t.getArticleNow().get());
+  public void setPrintNumber(ShoppingItem item) {
+    model.setPrintNumber(item, SupplyModel.getPrintNumberFromItem(item));
     getView().repaintTable();
   }
 
-  public boolean becomePrinted(ShoppingItem e) {
-    return model.becomePrinted(e.getArticleNow().get());
+  public void increaseItemPrintNumber(ShoppingItem item) {
+    model.setPrintNumber(item, model.getPrintNumber(item) + 1);
+    getView().refreshRow(item);
+  }
+
+  public int getPrintNumber(ShoppingItem item) {
+    return model.getPrintNumber(item);
   }
 
   public void openImportSupplyFile() {
@@ -148,7 +185,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             (supply, shoppingItems) -> {
               for (ShoppingItem item : shoppingItems) {
                 model.getShoppingItems().add(item);
-                model.togglePrint(item.getArticleNow().get());
+                setPrintNumber(item);
               }
               getView().setShoppingItems(model.getShoppingItems());
               getModel()
@@ -213,7 +250,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
                 ? getAsItemMultiplierAmount(content)
                 : content.getContainerMultiplier() * content.getContainerSize())
             * -1;
-    checkFractionalItemMultiplier(rawItemMultiplier, content.getKkNumber());
+    SupplyModel.checkFractionalItemMultiplier(rawItemMultiplier, content.getKkNumber());
     shoppingItem.setItemMultiplier((int) Math.round(rawItemMultiplier));
     return shoppingItem;
   }
@@ -224,15 +261,6 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
         .inUnit(
             MetricUnits.GRAM,
             content.getContainerMultiplier() * content.getContainerSize() * content.getAmount());
-  }
-
-  public static void checkFractionalItemMultiplier(double itemMultiplier, int kkNumber) {
-    if (itemMultiplier % 1 != 0) {
-      Main.logger.warn(
-          String.format(
-              "fractional item multiplier while reading KKSupplierFile content Article[%s] itemmultiplier: [%f]",
-              kkNumber, itemMultiplier));
-    }
   }
 
   private static @NotNull Article createArticle(LineContent content) {
@@ -260,5 +288,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     em.persist(article);
     em.flush();
     return article;
+  }
+
+  @Override
+  protected boolean processKeyboardInput(KeyEvent e) {
+    return keyCapture.processKeyEvent(e) || barcodeCapture.processKeyEvent(e);
   }
 }

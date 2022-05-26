@@ -1,20 +1,24 @@
 package kernbeisser.Windows.PrintLabels;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.ArticlePrintPool;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
@@ -29,16 +33,12 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   private final JButton printButton = new JButton();
   private final JLabel printSheetInfo = new JLabel();
-
-  private boolean saved = false;
-
-  private void onObjectsSelected(Collection<Article> articles, Boolean chosen) {
-    articles.forEach(e -> e.setPrintPool(chosen ? 1 : 0));
-  }
+  private final BarcodeCapture barcodeCapture;
 
   @Key(PermissionKey.ACTION_OPEN_PRINT_LABELS)
   public PrintLabelsController() throws PermissionKeyRequiredException {
     super(new PrintLabelsModel());
+    model.setPrintPoolBefore(ArticlePrintPool.getPrintPoolAsMap());
     articles = PrintLabelsModel.getArticleSource();
     articles.addCollectionModifiedListener(this::refreshPrintButton);
     articles.addObjectsListener(this::onObjectsSelected);
@@ -50,7 +50,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
         .getChosen()
         .addColumnAtIndex(
             0,
-            Columns.create("Anzahl", Article::getPrintPool)
+            Columns.create("Anzahl", model::getPrintPool)
                 .withLeftClickConsumer(this::editPrintPool));
     ObjectTable<Article> available = articles.getView().getAvailable();
     available.addColumnAtIndex(
@@ -59,31 +59,18 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     available.addColumn(Columns.create("Barcode", Article::getBarcode).withDefaultFilter());
     available.addColumn(Columns.create("Preisliste", Article::getPriceList).withDefaultFilter());
     articles.addControls(printButton, printSheetInfo);
-    model.setPrintPoolBefore(Articles.getPrintPool());
+    barcodeCapture = new BarcodeCapture(getView()::processBarcode);
   }
 
   private void editPrintPool(Article article) {
-    String response = getView().inputNumber(article.getPrintPool(), false);
-    boolean exit = false;
-    do {
-      if (response == null || response.equals("")) {
-        return;
-      } else {
-        try {
-          int alteredAmount = Integer.parseInt(response);
-          if (alteredAmount > 0) {
-            model.setPrintPool(article, alteredAmount);
-            getView().refreshChosenArticle(article);
-            refreshPrintButton();
-            exit = true;
-          } else {
-            throw (new NumberFormatException());
-          }
-        } catch (NumberFormatException exception) {
-          response = getView().inputNumber(article.getAmount(), true);
-        }
-      }
-    } while (!exit);
+    Integer newAmount =
+        Tools.integerInputDialog(getView().getContent(), model.getPrintPool(article));
+    if (newAmount == null) {
+      return;
+    }
+    model.setPrintPool(article, newAmount);
+    getView().refreshChosenArticle(article);
+    refreshPrintButton();
   }
 
   private static void openMe(ViewContainer targetComponent) {
@@ -121,9 +108,9 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   public void refreshPrintButton() {
     int labelsPerPage = Setting.LABELS_PER_PAGE.getIntValue();
-    int labelCount = articles.getModel().getLoaded().stream().mapToInt(Article::getPrintPool).sum();
-    int pages = (labelCount - 1) / labelsPerPage + 1;
-    int emptyLabels = pages * labelsPerPage - labelCount;
+    long labelCount = model.getArticlePrintPoolSize();
+    long pages = (labelCount - 1) / labelsPerPage + 1;
+    long emptyLabels = pages * labelsPerPage - labelCount;
     String infoText =
         labelCount == 0
             ? "Keine Etiketten zu drucken"
@@ -150,21 +137,30 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   }
 
   private void persistPrintPoolIfNecessary(boolean confirm) {
-    var newPrintPool = articles.getModel().getLoaded();
-    if (newPrintPool.equals(model.getPrintPoolBefore())) return;
+    var newPrintPool = model.getPrintPoolMap();
+    if (newPrintPool.equals(model.getPrintPoolMapBefore())) return;
     if (confirm && !(articles.getModel().isSaveChanges() || getView().confirmChanges())) return;
-    Articles.replacePrintPool(newPrintPool);
+    ArticlePrintPool.setPrintPoolFromMap(newPrintPool);
     model.setPrintPoolBefore(newPrintPool);
+  }
+
+  private void onObjectsSelected(Collection<Article> articles, Boolean chosen) {
+    articles.forEach(e -> model.setPrintPool(e, chosen ? 1 : 0));
   }
 
   @Override
   public void fillView(PrintLabelsView printLabelsView) {
-    articles.setLoadedAndSource(Articles.getPrintPool(), model::getAllArticles);
+    articles.setLoadedAndSource(Articles.getPrintPool(), PrintLabelsModel::getAllArticles);
     articles.getView().addSearchbox(CollectionView.BOTH);
   }
 
   @Override
   protected void closed() {
     persistPrintPoolIfNecessary(true);
+  }
+
+  @Override
+  protected boolean processKeyboardInput(KeyEvent e) {
+    return barcodeCapture.processKeyEvent(e);
   }
 }

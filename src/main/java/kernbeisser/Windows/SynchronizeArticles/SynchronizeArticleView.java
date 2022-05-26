@@ -135,7 +135,8 @@ public class SynchronizeArticleView implements IView<SynchronizeArticleControlle
 
   private void initForDiff(@NotNull MappedDifference... mappedDifferences) {
     differences.setColumns(
-        Columns.create("Artikel", (Getter<ArticleMerge, Object>) e -> e.getRevision().getName()),
+        Columns.create("Artikel", (Getter<ArticleMerge, Object>) e -> e.getRevision().getName())
+            .withColumnAdjustor(e -> e.setPreferredWidth(400)),
         Columns.create(
             "Kornkraftnummer",
             (Getter<ArticleMerge, Object>) e -> e.getNewState().getSuppliersItemNumber()));

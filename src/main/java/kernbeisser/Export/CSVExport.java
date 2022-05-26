@@ -55,14 +55,9 @@ public class CSVExport {
                   Long.toString(
                       preOrderList.stream()
                           .collect(Collectors.summarizingInt(PreOrder::getAmount))
-                          .getSum()),
-                  preOrderList.stream()
-                      .map(p -> p.isShopOrder() ? "KB" : "VB")
-                      .distinct()
-                      .sorted()
-                      .collect(Collectors.joining(",")),
+                          .getSum())
                 }));
-    orders.add(0, new String[] {"artnr", "menge", "kommentar"});
+    orders.add(0, new String[] {"artnr", "menge"});
     return orders;
   }
 
