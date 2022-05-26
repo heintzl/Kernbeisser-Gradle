@@ -49,6 +49,10 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
     printPoolMap = new HashMap<>(printPool);
   }
 
+  public long getArticlePrintPoolSize() {
+    return printPoolMap.values().stream().mapToInt(i -> i).sum();
+  }
+
   public static Collection<Article> getAllArticles() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -76,7 +80,11 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
   }
 
   void setPrintPool(Article article, int numberOfLabels) {
-    printPoolMap.put(article, numberOfLabels);
+    if (numberOfLabels == 0) {
+      printPoolMap.remove(article);
+    } else {
+      printPoolMap.put(article, numberOfLabels);
+    }
   }
 
   public static Article getByBarcode(String s) throws NoResultException {

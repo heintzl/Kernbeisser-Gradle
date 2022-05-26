@@ -108,7 +108,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   public void refreshPrintButton() {
     int labelsPerPage = Setting.LABELS_PER_PAGE.getIntValue();
-    long labelCount = Articles.getArticlePrintPoolSize();
+    long labelCount = model.getArticlePrintPoolSize();
     long pages = (labelCount - 1) / labelsPerPage + 1;
     long emptyLabels = pages * labelsPerPage - labelCount;
     String infoText =
