@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
@@ -148,8 +149,10 @@ public class PreOrderModel implements IModel<PreOrderController> {
     saveData();
     Report report =
         new PreOrderChecklist(
-            deliveryDate, getAllPreOrders(false)); // .stream().filter(p -> p.getOrderedOn() !=
-    // null).collect(Collectors.toList()))
+            deliveryDate,
+            getAllPreOrders(false).stream()
+                .filter(p -> !isDelivered(p))
+                .collect(Collectors.toList()));
     report.setDuplexPrint(duplexPrint);
     report.sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
     for (PreOrder p : getAllPreOrders(false)) {
