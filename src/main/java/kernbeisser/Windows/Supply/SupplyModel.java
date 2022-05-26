@@ -92,4 +92,13 @@ public class SupplyModel implements IModel<SupplyController> {
     return Articles.getBySuppliersItemNumber(selected, suppliersItemNumber)
         .orElseThrow(NoSuchElementException::new);
   }
+
+  public static Integer getPrintNumberFromItem(ShoppingItem item) {
+    int number = -(int) Math.round(item.getContainerCount());
+    if (item.getSuppliersItemNumber() < 100 && item.getSupplier().equals(Supplier.getKKSupplier()))
+      return 0;
+    if (item.isWeighAble() || number < 1) return 1;
+    if (number > 10) return 10;
+    return number;
+  }
 }

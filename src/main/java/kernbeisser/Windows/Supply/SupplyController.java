@@ -168,7 +168,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public void setPrintNumber(ShoppingItem t) {
-    model.setPrintNumber(t.getArticleNow().get(), -(int) Math.round(t.getContainerCount()));
+    model.setPrintNumber(t.getArticleNow().get(), SupplyModel.getPrintNumberFromItem(t));
     getView().repaintTable();
   }
 
