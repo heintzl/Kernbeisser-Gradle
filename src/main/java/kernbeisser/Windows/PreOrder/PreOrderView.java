@@ -2,6 +2,8 @@ package kernbeisser.Windows.PreOrder;
 
 import com.github.lgooddatepicker.components.DatePicker;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.DayOfWeek;
@@ -9,6 +11,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
+import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -21,11 +24,13 @@ import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 public class PreOrderView implements IView<PreOrderController> {
@@ -50,7 +55,14 @@ public class PreOrderView implements IView<PreOrderController> {
 
   private JCheckBox duplexPrint;
   private JButton defaultSortOrder;
+  private JButton editPreOrder;
+  private JButton deletePreOrder;
+  private JButton cancelEdit;
   private JPopupMenu popupSelectionColumn;
+
+  @Setter private Mode mode;
+
+  private User addModeUser;
 
   @Linked private PreOrderController controller;
 
@@ -119,7 +131,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private void createUIComponents() {
     Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
     Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
-    if (!controller.restrictToLoggedIn) {
+    if (!controller.isRestrictToLoggedIn()) {
       JMenuItem popupSelectAll = new JMenuItem("alle auswählen");
       popupSelectAll.addActionListener(e -> setAllDelivered(true));
       JMenuItem popupDeselectAll = new JMenuItem("alle abwählen");
@@ -161,7 +173,7 @@ public class PreOrderView implements IView<PreOrderController> {
                 SwingConstants.RIGHT),
             Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
     Column<PreOrder> sortColumn = Columns.create("Id", PreOrder::getId);
-    if (!controller.restrictToLoggedIn)
+    if (!controller.isRestrictToLoggedIn())
       preOrders.addColumnAtIndex(
           0,
           Columns.createIconColumn(
@@ -246,7 +258,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchKK()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                controller.add();
+                addAction();
               }
             }
           }
@@ -258,7 +270,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchShopNo()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                controller.add();
+                addAction();
               }
             }
           }
@@ -274,8 +286,7 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
     user.addActionListener(e -> userAction(false));
-    add.addActionListener(e -> controller.add());
-
+    add.addActionListener(e -> addAction());
     preOrders.addKeyListener(
         new KeyAdapter() {
           @Override
@@ -285,6 +296,17 @@ public class PreOrderView implements IView<PreOrderController> {
             }
           }
         });
+    preOrders.addSelectionListener(e -> editPreOrder.setEnabled(true));
+    preOrders.addFocusListener(
+        new FocusListener() {
+          @Override
+          public void focusGained(FocusEvent e) {}
+
+          @Override
+          public void focusLost(FocusEvent e) {
+            editPreOrder.setEnabled(preOrders.getSelectedRow() > -1);
+          }
+        });
 
     amount.addActionListener(e -> controller.add());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
@@ -292,6 +314,11 @@ public class PreOrderView implements IView<PreOrderController> {
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
     defaultSortOrder.addActionListener(e -> setDefaultSortOrder());
+    editPreOrder.addActionListener(e -> startEditPreOrder());
+    cancelEdit.addActionListener(e -> cancelEditPreOrder());
+    deletePreOrder.addActionListener(e -> deletePreOrder());
+    mode = Mode.ADD;
+    refreshUIMode();
   }
 
   private void userAction(boolean fromFnKey) {
@@ -303,7 +330,7 @@ public class PreOrderView implements IView<PreOrderController> {
       if (fromFnKey) {
         controller.add();
       }
-    } // kkNumber.requestFocusInWindow();
+    }
   }
 
   void fnKeyAction(String i) {
@@ -317,6 +344,77 @@ public class PreOrderView implements IView<PreOrderController> {
     shopNumber.setEnabled(enabled);
     amount.setEnabled(enabled);
     add.setEnabled(enabled);
+  }
+
+  private void startEditPreOrder() {
+    try {
+      PreOrder editableOrder = preOrders.getSelectedObject().orElseThrow(NoResultException::new);
+      if (controller.isDelivered(editableOrder)) {
+        warningEditDelivered();
+        return;
+      }
+      if (editableOrder.getOrderedOn() != null && !confirmEditOrdered()) {
+        return;
+      }
+      setMode(Mode.EDIT);
+      user.getModel().setSelectedItem(editableOrder.getUser());
+      setShopNumber(editableOrder.getArticle().getKbNumber());
+      controller.pasteDataInView(editableOrder.getArticle(), true);
+      enableControls(true);
+    } catch (NoResultException e) {
+      noPreOrderSelected();
+    }
+  }
+
+  private void cancelEditPreOrder() {
+    setMode(Mode.ADD);
+  }
+
+  private void deletePreOrder() {
+    controller.forceDelete(preOrders.getSelectedObject().get());
+  }
+
+  void addAction() {
+    switch (mode) {
+      case ADD:
+        controller.add();
+        break;
+      case EDIT:
+        controller.edit(preOrders.getSelectedObject().get());
+        break;
+      default:
+    }
+  }
+
+  public void setMode(Mode mode) {
+    this.mode = mode;
+    refreshUIMode();
+  }
+
+  void refreshUIMode() {
+    boolean addMode = mode == Mode.ADD;
+    boolean restrictToLoggedIn = controller.isRestrictToLoggedIn();
+    user.setEnabled(addMode);
+    if (addMode) {
+      user.getModel().setSelectedItem(addModeUser);
+      enableControls(addModeUser != null);
+      controller.noArticleFound(false);
+      resetArticleNr();
+    } else {
+      addModeUser = (User) user.getSelectedItem();
+    }
+    bestellungExportierenButton.setEnabled(!restrictToLoggedIn && addMode);
+    abhakplanButton.setEnabled(!restrictToLoggedIn && addMode);
+    close.setEnabled(addMode);
+    editPreOrder.setEnabled(!restrictToLoggedIn && addMode && preOrders.getSelectedRow() > -1);
+    duplexPrint.setEnabled(addMode);
+    defaultSortOrder.setEnabled(addMode);
+    preOrders.setEnabled(addMode);
+    deletePreOrder.setEnabled(!addMode);
+    deletePreOrder.setVisible(!addMode);
+    cancelEdit.setEnabled(!addMode);
+    cancelEdit.setVisible(!addMode);
+    add.setText(addMode ? "Hinzufügen" : "Übernehmen");
   }
 
   public User getUser() {
@@ -345,7 +443,7 @@ public class PreOrderView implements IView<PreOrderController> {
     if (user.getModel().getSize() > 1) {
       user.setSelectedItem(null);
     }
-    enableControls(controller.restrictToLoggedIn);
+    enableControls(controller.isRestrictToLoggedIn());
   }
 
   public void setCaption(String forWho, boolean editable) {
@@ -462,6 +560,26 @@ public class PreOrderView implements IView<PreOrderController> {
     return datePicker.getDate();
   }
 
+  private void warningEditDelivered() {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Diese Vorbestellung ist als ausgeliefert gekennzeichnet.\n"
+            + "Sie kann nicht mehr bearbeitet werden!",
+        "Vorbestellung bearbeiten",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
+  private boolean confirmEditOrdered() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Achtung, diese Vorbestellung ist bereits für Kornkraft exportiert worden.\n"
+                + "Soll sie jetzt wirklich noch bearbeitet werden?",
+            "Vorbestellung bearbeiten",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE)
+        == JOptionPane.YES_OPTION;
+  }
+
   public void setUserEnabled(boolean enabled) {
     user.setEnabled(enabled);
   }
@@ -473,6 +591,6 @@ public class PreOrderView implements IView<PreOrderController> {
 
   @Override
   public String getTitle() {
-    return (controller.restrictToLoggedIn ? "Meine " : "") + "Vorbestellung";
+    return (controller.isRestrictToLoggedIn() ? "Meine " : "") + "Vorbestellung";
   }
 }

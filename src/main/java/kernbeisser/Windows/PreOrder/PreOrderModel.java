@@ -53,13 +53,27 @@ public class PreOrderModel implements IModel<PreOrderController> {
     em.flush();
   }
 
+  public void edit(PreOrder preOrder, PreOrder newPreOrder) {
+    Objects.requireNonNull(newPreOrder.getUser());
+    PreOrder p = em.find(PreOrder.class, preOrder.getId());
+    p.setAmount(newPreOrder.getAmount());
+    p.setArticle(newPreOrder.getArticle());
+    p.setInfo(newPreOrder.getInfo());
+    if (preOrder.getUser().equals(User.getKernbeisserUser())) {
+      Article a = em.find(Article.class, newPreOrder.getArticle().getId());
+      em.persist(a);
+    }
+    em.merge(preOrder);
+    em.flush();
+  }
+
   private void removeLazy(PreOrder selected) {
     em.remove(selected);
     em.flush();
   }
 
-  public boolean remove(PreOrder selected) {
-    if (selected.getOrderedOn() == null) {
+  public boolean remove(PreOrder selected, boolean force) {
+    if (force || selected.getOrderedOn() == null) {
       delivery.remove(selected);
       removeLazy(selected);
       return true;

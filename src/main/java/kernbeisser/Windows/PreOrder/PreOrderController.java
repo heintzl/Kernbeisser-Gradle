@@ -10,7 +10,9 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
@@ -18,6 +20,7 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import lombok.Getter;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +29,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   private final KeyCapture keyCapture;
   private final BarcodeCapture barcodeCapture;
   private Article selectedArticle = null;
-  boolean restrictToLoggedIn;
+  @Getter private final boolean restrictToLoggedIn;
 
   public PreOrderController(boolean restrictToLoggedIn) {
     super(new PreOrderModel());
@@ -78,26 +81,33 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     var view = getView();
     try {
       PreOrder order = obtainFromView();
-      if (!Articles.isKkArticle(order.getArticle())) {
-        view.messageIsNotKKArticle(order.getUser().isKernbeisser());
-        return;
-      }
-      if (order.getUser() == null) {
-        view.notifyNoUserSelected();
-        return;
-      }
       model.add(order);
       view.addPreOrder(order);
       noArticleFound(false);
       view.resetArticleNr();
     } catch (NoResultException e) {
       view.noItemFound();
+    } catch (InvalidValue ignored) {
+    }
+  }
+
+  void edit(PreOrder preOrder) {
+    var view = getView();
+    try {
+      PreOrder order = obtainFromView();
+      model.edit(preOrder, order);
+      view.refreshPreOrder(preOrder);
+      view.setMode(Mode.ADD);
+    } catch (NoResultException e) {
+      view.noItemFound();
+    } catch (InvalidValue ignored) {
     }
   }
 
   void delete(PreOrder preOrder) {
+    var view = getView();
     if (preOrder == null) {
-      getView().noPreOrderSelected();
+      view.noPreOrderSelected();
       return;
     }
     delete(Collections.singleton(preOrder));
@@ -109,10 +119,22 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       return;
     }
     for (PreOrder preOrder : preOrders) {
-      if (model.remove(preOrder)) {
+      if (model.remove(preOrder, false)) {
         getView().remove(preOrder);
       }
     }
+  }
+
+  void forceDelete(PreOrder preOrder) {
+    var view = getView();
+    if (preOrder == null) {
+      view.noPreOrderSelected();
+      return;
+    }
+    if (model.remove(preOrder, true)) {
+      getView().remove(preOrder);
+    }
+    view.setMode(Mode.ADD);
   }
 
   void noArticleFound(boolean isByShopNumber) {
@@ -156,13 +178,24 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     selectedArticle = articleKornkraft;
   }
 
-  private PreOrder obtainFromView() {
+  private PreOrder obtainFromView() throws InvalidValue, NoResultException {
+    if (selectedArticle == null) {
+      throw new NoResultException();
+    }
     PreOrder preOrder = new PreOrder();
     var view = getView();
     preOrder.setUser(view.getUser());
     preOrder.setArticle(selectedArticle);
     preOrder.setAmount(view.getAmount());
     preOrder.setInfo(selectedArticle.getInfo());
+    if (!Articles.isKkArticle(preOrder.getArticle())) {
+      view.messageIsNotKKArticle(preOrder.getUser().isKernbeisser());
+      throw new InvalidValue();
+    }
+    if (preOrder.getUser() == null) {
+      view.notifyNoUserSelected();
+      throw new InvalidValue();
+    }
     return preOrder;
   }
 

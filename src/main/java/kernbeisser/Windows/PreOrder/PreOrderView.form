@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="20" y="20" width="1099" height="503"/>
+      <xy x="20" y="20" width="1289" height="503"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -28,7 +28,7 @@
           </component>
         </children>
       </scrollpane>
-      <grid id="54b9d" binding="insertSection" layout-manager="GridLayoutManager" row-count="2" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="54b9d" binding="insertSection" layout-manager="GridLayoutManager" row-count="2" column-count="12" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -98,7 +98,7 @@
           </component>
           <component id="dce6a" class="kernbeisser.CustomComponents.PermissionButton" binding="add">
             <constraints>
-              <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="11" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <alignmentY value="0.0"/>
@@ -192,9 +192,25 @@
             </constraints>
             <properties/>
           </component>
+          <component id="d81cb" class="javax.swing.JButton" binding="deletePreOrder">
+            <constraints>
+              <grid row="1" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Löschen"/>
+            </properties>
+          </component>
+          <component id="26428" class="javax.swing.JButton" binding="cancelEdit">
+            <constraints>
+              <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Abbrechen"/>
+            </properties>
+          </component>
         </children>
       </grid>
-      <grid id="fce46" layout-manager="GridLayoutManager" row-count="1" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="fce46" layout-manager="GridLayoutManager" row-count="1" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -204,12 +220,12 @@
         <children>
           <hspacer id="1288e">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
           <component id="5cf6" class="javax.swing.JButton" binding="close">
             <constraints>
-              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Schließen"/>
@@ -217,7 +233,7 @@
           </component>
           <component id="a71f0" class="javax.swing.JButton" binding="abhakplanButton" default-binding="true">
             <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Abhakplan"/>
@@ -225,7 +241,7 @@
           </component>
           <component id="b94a6" class="javax.swing.JButton" binding="bestellungExportierenButton" default-binding="true">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Bestellung exportieren"/>
@@ -233,7 +249,7 @@
           </component>
           <component id="9d4d6" class="javax.swing.JCheckBox" binding="duplexPrint">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="doppelseitig Drucken"/>
@@ -245,6 +261,16 @@
             </constraints>
             <properties>
               <text value="nach Eingabereihenfolge sortieren"/>
+            </properties>
+          </component>
+          <component id="c6a90" class="javax.swing.JButton" binding="editPreOrder">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <alignmentY value="0.0"/>
+              <horizontalTextPosition value="0"/>
+              <text value="Bestellung bearbeiten"/>
             </properties>
           </component>
         </children>
