@@ -6,6 +6,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import javax.swing.*;
@@ -151,7 +152,7 @@ public class PreOrderView implements IView<PreOrderController> {
                 .withHorizontalAlignment(SwingConstants.CENTER)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create(
-                "Bestellt am",
+                "exportiert am",
                 e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
                 SwingConstants.RIGHT),
             Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
@@ -443,8 +444,8 @@ public class PreOrderView implements IView<PreOrderController> {
         LocalDate.now()
             .minusDays(2)
             .with(
-                TemporalAdjusters.next(
-                    Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
+                TemporalAdjusters.next(Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)))
+            .plus(1, ChronoUnit.DAYS));
     datePickerPanel.add(infoText);
     datePickerPanel.add(datePicker);
 
