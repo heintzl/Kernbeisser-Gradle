@@ -291,6 +291,11 @@ public class Tools {
   }
 
   public static Integer integerInputDialog(Component parentComponent, int initValue) {
+    return integerInputDialog(parentComponent, initValue, i -> i > 0);
+  }
+
+  public static Integer integerInputDialog(
+      Component parentComponent, int initValue, Predicate<Integer> predicate) {
     String response = inputNumber(parentComponent, initValue, false);
     do {
       if (response == null || response.equals("")) {
@@ -298,7 +303,7 @@ public class Tools {
       } else {
         try {
           int alteredValue = Integer.parseInt(response);
-          if (alteredValue > 0) {
+          if (predicate.test(alteredValue)) {
             return alteredValue;
           } else {
             throw (new NumberFormatException());
