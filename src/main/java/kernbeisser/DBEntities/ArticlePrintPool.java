@@ -108,14 +108,15 @@ public class ArticlePrintPool {
 
     for (Article a : newPrintPool.keySet()) {
       Long id = getArticlePrintPoolId(a);
-      if (id == null) {
-        em.persist(new ArticlePrintPool(a, newPrintPool.get(a)));
-      } else {
-        ArticlePrintPool articlePrintPool = em.find(ArticlePrintPool.class, id);
-        articlePrintPool.setNumber(newPrintPool.get(a));
-        em.merge(articlePrintPool);
+      if (newPrintPool.get(a) > 0) {
+        if (id == null) {
+          em.persist(new ArticlePrintPool(a, newPrintPool.get(a)));
+        } else {
+          ArticlePrintPool articlePrintPool = em.find(ArticlePrintPool.class, id);
+          articlePrintPool.setNumber(newPrintPool.get(a));
+          em.merge(articlePrintPool);
+        }
       }
     }
-    ;
   }
 }
