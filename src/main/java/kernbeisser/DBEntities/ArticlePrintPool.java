@@ -7,6 +7,7 @@ import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.StaticPermissionChecks;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -40,8 +41,8 @@ public class ArticlePrintPool {
     this.number = number;
   }
 
-  @Key(PermissionKey.ARTICLE_PRINT_AGAIN_READ)
   public static int get(Article article) {
+    StaticPermissionChecks.getStaticInstance().checkShouldReadArticlePrintPoolAgain();
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
