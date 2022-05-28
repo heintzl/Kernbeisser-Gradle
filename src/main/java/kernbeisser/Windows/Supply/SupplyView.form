@@ -47,7 +47,11 @@
           </component>
           <component id="faadb" class="javax.swing.JComboBox" binding="supplier">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="150" height="-1"/>
+                <preferred-size width="150" height="-1"/>
+                <maximum-size width="150" height="-1"/>
+              </grid>
             </constraints>
             <properties/>
           </component>
@@ -61,15 +65,7 @@
           </component>
           <component id="61f14" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="containerSize" custom-create="true">
             <constraints>
-              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="e9634" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="suppliersNumber">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
+              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
@@ -99,7 +95,7 @@
           </component>
           <component id="fb540" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="amount">
             <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="1"/>
@@ -115,7 +111,7 @@
           </component>
           <component id="e953c" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingField" binding="netPrice" custom-create="true">
             <constraints>
-              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
@@ -126,6 +122,14 @@
             <properties>
               <text value="Einzelpreis"/>
             </properties>
+          </component>
+          <component id="e9634" class="kernbeisser.CustomComponents.TextFields.IntegerParseField" binding="suppliersNumber">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
           </component>
         </children>
       </grid>

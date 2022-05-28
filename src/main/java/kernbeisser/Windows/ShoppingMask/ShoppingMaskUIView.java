@@ -472,15 +472,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     variablePercentage.setText("");
   }
 
-  public void messageBarcodeNotFound(long barcode) {
-    Tools.beep();
-    JOptionPane.showMessageDialog(
-        getContent(),
-        "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden",
-        "Artikel nicht gefunden",
-        JOptionPane.INFORMATION_MESSAGE);
-  }
-
   public void messageInvalidBarcode(String barcode) {
     Tools.beep();
     JOptionPane.showMessageDialog(

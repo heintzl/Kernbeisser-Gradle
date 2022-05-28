@@ -2,6 +2,7 @@ package kernbeisser.Windows.CollectionView;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.BiConsumer;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Forms.ObjectForm.Components.Source;
@@ -10,6 +11,8 @@ import kernbeisser.Windows.MVC.Controller;
 public class CollectionController<T> extends Controller<CollectionView<T>, CollectionModel<T>> {
 
   Collection<Runnable> collectionModifiedListeners = new ArrayList<>();
+
+  Collection<BiConsumer<Collection<T>, Boolean>> objectsListeners = new ArrayList<>();
 
   @SafeVarargs
   public CollectionController(Collection<T> edit, Source<T> source, Column<T>... columns) {
@@ -39,12 +42,16 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
   }
 
   public void selectAvailable() {
-    model.getLoaded().addAll(getView().getSelectedAvailableObjects());
+    Collection<T> selectedObjects = getView().getSelectedAvailableObjects();
+    model.getLoaded().addAll(selectedObjects);
+    applyObjectsListeners(selectedObjects, true);
     refresh();
   }
 
   public void selectChosen() {
-    model.getLoaded().removeAll(getView().getSelectedChosenObjects());
+    Collection<T> selectedObjects = getView().getSelectedChosenObjects();
+    model.getLoaded().removeAll(selectedObjects);
+    applyObjectsListeners(selectedObjects, false);
     refresh();
   }
 
@@ -57,13 +64,17 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
   }
 
   public void selectAllAvailable() {
-    model.getLoaded().addAll(getView().getAllAvailableObjects());
+    Collection<T> selectedObjects = getView().getAllAvailableObjects();
+    model.getLoaded().addAll(selectedObjects);
+    applyObjectsListeners(selectedObjects, true);
     getView().clearSearchBox();
     refresh();
   }
 
   public void selectAllChosen() {
-    model.getLoaded().removeAll(getView().getAllChosenObjects());
+    Collection<T> selectedObjects = getView().getAllChosenObjects();
+    model.getLoaded().removeAll(selectedObjects);
+    applyObjectsListeners(selectedObjects, false);
     getView().clearSearchBox();
     refresh();
   }
@@ -93,5 +104,15 @@ public class CollectionController<T> extends Controller<CollectionView<T>, Colle
 
   public void addCollectionModifiedListener(Runnable listener) {
     collectionModifiedListeners.add(listener);
+  }
+
+  public void addObjectsListener(BiConsumer<Collection<T>, Boolean> listener) {
+    objectsListeners.add(listener);
+  }
+
+  private void applyObjectsListeners(Collection<T> objects, Boolean chosen) {
+    for (BiConsumer<Collection<T>, Boolean> consumer : objectsListeners) {
+      consumer.accept(objects, chosen);
+    }
   }
 }

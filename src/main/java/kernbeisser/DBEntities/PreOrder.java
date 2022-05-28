@@ -73,7 +73,7 @@ public class PreOrder implements Serializable, UserRelated {
   }
 
   public LocalDate getDueDate() {
-    Instant orderDate = orderedOn == null ? createDate : orderedOn;
+    Instant orderDate = orderedOn == null ? Instant.now() : orderedOn;
     return orderDate
         .atZone(ZoneId.systemDefault())
         .toLocalDate()

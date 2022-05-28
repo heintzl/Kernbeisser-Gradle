@@ -201,6 +201,21 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     return popup;
   }
 
+  public void selectRow(int row) {
+    setRowSelectionInterval(row, row);
+    JViewport viewport = (JViewport) getParent();
+    Rectangle cellRectangle = getCellRect(getSelectedRow(), 0, true);
+    Rectangle visibleRectangle = viewport.getVisibleRect();
+    SwingUtilities.invokeLater(
+        () ->
+            scrollRectToVisible(
+                new Rectangle(
+                    cellRectangle.x,
+                    cellRectangle.y,
+                    (int) visibleRectangle.getWidth(),
+                    (int) visibleRectangle.getHeight())));
+  }
+
   private void removeStandardFilter(JPopupMenu p) {
     standardColumnFilters.clear();
     sort();
@@ -309,12 +324,20 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     in.forEach(this::add);
   }
 
+  public void add(int index, T in) {
+    if (in == null) {
+      throw new NullPointerException("Cannot add null object to ObjectTable");
+    }
+    ObjectTableModel<T> model = getModel();
+    model.addObject(index, in);
+  }
+
   public void add(T in) {
     if (in == null) {
       throw new NullPointerException("Cannot add null object to ObjectTable");
     }
     ObjectTableModel<T> model = getModel();
-    model.addObject(in);
+    model.addObject(model.getObjects().size(), in);
   }
 
   public void remove(T t) {

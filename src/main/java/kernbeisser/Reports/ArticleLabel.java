@@ -13,6 +13,7 @@ public class ArticleLabel extends Report {
 
   public ArticleLabel(List<Article> articles) {
     super("articleLabel", "Etiketten");
+    setDuplexPrint(false);
     this.articles = articles;
   }
 

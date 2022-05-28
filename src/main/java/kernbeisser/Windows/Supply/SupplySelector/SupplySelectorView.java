@@ -127,7 +127,8 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.<LineContent>createIconColumn("S", e -> getIcon(e.getStatus()))
                 .withColumnAdjustor(
                     column -> column.setMaxWidth(Tools.scaleWithLabelScalingFactor(20))),
-            Columns.createIconColumn("", e -> e.isVerified() ? verified : notVerified));
+            Columns.<LineContent>createIconColumn(
+                "", e -> e.isVerified() ? verified : notVerified));
   }
 
   private void listSupplyFiles(Supply supply) {

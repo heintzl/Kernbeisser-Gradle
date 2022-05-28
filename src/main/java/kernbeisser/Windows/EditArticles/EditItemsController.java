@@ -54,7 +54,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             true,
             new CustomizableColumn<>("Name", Article::getName)
                 .withDefaultFilter()
-                .withColumnAdjustor(column -> column.setPreferredWidth(600))
+                .withColumnAdjustor(column -> column.setPreferredWidth(400))
                 .withHorizontalAlignment(LEFT),
             new CustomizableColumn<Article>(
                     "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName())
@@ -62,7 +62,9 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Ladennummer", Article::getKbNumber, RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create("Lieferant", Article::getSupplier, LEFT).withDefaultFilter(),
+            Columns.create("Lieferant", Article::getSupplier, LEFT)
+                .withDefaultFilter()
+                .withColumnAdjustor(e -> e.setPreferredWidth(150)),
             Columns.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             new CustomizableColumn<Article>("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein")
@@ -83,7 +85,8 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
                     "Gebindegröße", e -> String.format("%.3f", e.getContainerSize()))
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create("Preisliste", Article::getPriceList, LEFT),
+            Columns.create("Preisliste", Article::getPriceList, LEFT)
+                .withColumnAdjustor(e -> e.setPreferredWidth(200)),
             Columns.create("Zuschlaggruppe", this::formatArticleSurcharge, LEFT)
                 .withDefaultFilter(),
             Columns.create("Barcode", Article::getBarcode, RIGHT));

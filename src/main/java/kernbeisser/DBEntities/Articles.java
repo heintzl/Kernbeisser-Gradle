@@ -346,24 +346,14 @@ public class Articles {
     return result == null ? 0 : -result;
   }
 
-  public static void addToPrintPool(Collection<Article> print) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    for (Article article : print) {
-      Article persistence = em.find(Article.class, article.getId());
-      persistence.setPrintPool(true);
-      em.persist(persistence);
-    }
-  }
-
   public static Collection<Article> getPrintPool() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select a from Article a where a.printPool = true", Article.class)
+    return em.createQuery(
+            "select a from Article a where a in (select ap.article from ArticlePrintPool ap)",
+            Article.class)
         .getResultList();
   }
 
@@ -373,24 +363,9 @@ public class Articles {
     EntityTransaction et = em.getTransaction();
     et.begin();
     Long result =
-        em.createQuery(
-                "select sum (case when printPool = true then 1 else 0 end) from Article a",
-                Long.class)
+        em.createQuery("select sum (number) from ArticlePrintPool ap", Long.class)
             .getSingleResult();
     return result == null ? 0 : result;
-  }
-
-  public static void replacePrintPool(Collection<Article> newPrintPool) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    em.createQuery("update Article set printPool = false").executeUpdate();
-    for (Article article : newPrintPool) {
-      Article persistence = em.find(Article.class, article.getId());
-      persistence.setPrintPool(true);
-      em.persist(persistence);
-    }
   }
 
   public static Collection<Article> getAllActiveArticlesFromPriceList(
@@ -436,8 +411,9 @@ public class Articles {
 
   public static String getContentAmount(Article article) {
     String containerInfo = new DecimalFormat("0.###").format(article.getContainerSize());
-    if (article.isWeighable()
-        || article.getMetricUnits() == MetricUnits.NONE
+    if (article.isWeighable()) {
+      return containerInfo + " " + article.getMetricUnits().getDisplayUnit().getShortName();
+    } else if (article.getMetricUnits() == MetricUnits.NONE
         || article.getMetricUnits() == MetricUnits.PIECE
         || !(article.getAmount() > 0)) {
       return containerInfo;

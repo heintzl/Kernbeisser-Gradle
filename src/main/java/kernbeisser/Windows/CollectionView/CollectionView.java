@@ -13,14 +13,15 @@ import kernbeisser.CustomComponents.ObjectTable.RowFilter;
 import kernbeisser.Useful.DocumentChangeListener;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class CollectionView<T> implements IView<CollectionController<T>> {
 
   private JButton commit;
   private JButton cancel;
-  private ObjectTable<T> available;
-  private ObjectTable<T> chosen;
+  @Getter private ObjectTable<T> available;
+  @Getter private ObjectTable<T> chosen;
   private JPanel main;
   private JButton add;
   private JButton addAll;

@@ -419,6 +419,12 @@ public class ShoppingItem implements Serializable {
         : getItemMultiplier() + " " + getSalesUnits().getShortName();
   }
 
+  public Double getContainerCount() {
+    return isWeighAble()
+        ? (getMetricUnits().inUnit(getMetricUnits().getDisplayUnit(), itemMultiplier))
+        : itemMultiplier / containerSize;
+  }
+
   public String getDisplayContainerCount() {
     double amount =
         isWeighAble()
@@ -445,6 +451,14 @@ public class ShoppingItem implements Serializable {
       return "";
     } else {
       return this.getAmount() + " " + this.getMetricUnits().getShortName();
+    }
+  }
+
+  public String getPriceInfoAmount() {
+    if (isWeighAble()) {
+      return "pro " + metricUnits.getDisplayUnit().getShortName();
+    } else {
+      return getContentAmount();
     }
   }
 

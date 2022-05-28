@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.text.MessageFormat;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.*;
@@ -278,6 +279,66 @@ public class Tools {
     collectionSupplier.apply(db).remove(value);
     em.persist(db);
     em.flush();
+  }
+
+  public static void noArticleFoundForBarcodeWarning(Component parentComponent, String barcode) {
+    Tools.beep();
+    JOptionPane.showMessageDialog(
+        parentComponent,
+        "Konnte keinen Artikel mit Barcode \"" + barcode + "\" finden",
+        "Artikel nicht gefunden",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public static Integer integerInputDialog(Component parentComponent, int initValue) {
+    return integerInputDialog(parentComponent, initValue, i -> i > 0);
+  }
+
+  public static Integer integerInputDialog(
+      Component parentComponent, int initValue, Predicate<Integer> predicate) {
+    String response = inputNumber(parentComponent, initValue, false);
+    do {
+      if (response == null || response.equals("")) {
+        return null;
+      } else {
+        try {
+          int alteredValue = Integer.parseInt(response);
+          if (predicate.test(alteredValue)) {
+            return alteredValue;
+          } else {
+            throw (new NumberFormatException());
+          }
+        } catch (NumberFormatException exception) {
+          response = inputNumber(parentComponent, initValue, true);
+        }
+      }
+    } while (true);
+  }
+
+  private static String inputNumber(Component parentComponent, int initValue, boolean retry) {
+    String initValueString = MessageFormat.format("{0, number, 0}", initValue).trim();
+    String message = "";
+    String response = "";
+    if (retry) { // item is piece, first try
+      message = "Die Eingabe ist ungültig. Bitte hier eine gültige Anzahl > 0 eingeben:";
+    } else { // item is piece later try
+      message = "Bitte neue Anzahl eingeben:";
+    }
+    Tools.beep();
+    response =
+        (String)
+            JOptionPane.showInputDialog(
+                parentComponent,
+                message,
+                "Anzahl anpassen",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                initValueString);
+    if (response != null) {
+      response = response.trim();
+    }
+    return response;
   }
 
   public static void showUnexpectedErrorWarning(Throwable e) throws RuntimeException {

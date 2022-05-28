@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
@@ -53,13 +54,27 @@ public class PreOrderModel implements IModel<PreOrderController> {
     em.flush();
   }
 
+  public void edit(PreOrder preOrder, PreOrder newPreOrder) {
+    Objects.requireNonNull(newPreOrder.getUser());
+    PreOrder p = em.find(PreOrder.class, preOrder.getId());
+    p.setAmount(newPreOrder.getAmount());
+    p.setArticle(newPreOrder.getArticle());
+    p.setInfo(newPreOrder.getInfo());
+    if (preOrder.getUser().equals(User.getKernbeisserUser())) {
+      Article a = em.find(Article.class, newPreOrder.getArticle().getId());
+      em.persist(a);
+    }
+    em.merge(preOrder);
+    em.flush();
+  }
+
   private void removeLazy(PreOrder selected) {
     em.remove(selected);
     em.flush();
   }
 
-  public boolean remove(PreOrder selected) {
-    if (selected.getOrderedOn() == null) {
+  public boolean remove(PreOrder selected, boolean force) {
+    if (force || selected.getOrderedOn() == null) {
       delivery.remove(selected);
       removeLazy(selected);
       return true;
@@ -88,7 +103,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   Collection<PreOrder> getUnorderedPreOrders() {
     return em.createQuery(
-            "select p from PreOrder p where orderedOn is null order by p.article.suppliersItemNumber",
+            "select p from PreOrder p where delivery is null and orderedOn is null order by p.article.suppliersItemNumber",
             PreOrder.class)
         .getResultList();
   }
@@ -134,8 +149,10 @@ public class PreOrderModel implements IModel<PreOrderController> {
     saveData();
     Report report =
         new PreOrderChecklist(
-            deliveryDate, getAllPreOrders(false)); // .stream().filter(p -> p.getOrderedOn() !=
-    // null).collect(Collectors.toList()))
+            deliveryDate,
+            getAllPreOrders(false).stream()
+                .filter(p -> !isDelivered(p))
+                .collect(Collectors.toList()));
     report.setDuplexPrint(duplexPrint);
     report.sendToPrinter("Abhakplan wird gedruckt...", Tools::showUnexpectedErrorWarning);
     for (PreOrder p : getAllPreOrders(false)) {
@@ -179,6 +196,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     Instant orderInstant = Instant.now();
     for (PreOrder o : getUnorderedPreOrders()) {
       o.setOrderedOn(orderInstant);
+      em.merge(o);
     }
   }
 }
