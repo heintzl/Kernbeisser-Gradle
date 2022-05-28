@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import javax.swing.*;
@@ -430,5 +431,31 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
       this.getFromRow(i).ifPresent(out::add);
     }
     return out;
+  }
+
+  public void addSelectionChangeListener(Consumer<Collection<T>> modelConsumer) {
+    getSelectionModel()
+        .addListSelectionListener(
+            e -> {
+              modelConsumer.accept(getSelectedObjects());
+            });
+  }
+
+  public void selectionComponent(Component component) {
+    component.setEnabled(!getSelectionModel().isSelectionEmpty());
+    getSelectionModel()
+        .addListSelectionListener(
+            e -> component.setEnabled(!getSelectionModel().isSelectionEmpty()));
+  }
+
+  public void selectionComponents(Component... components) {
+    for (Component component : components)
+      component.setEnabled(!getSelectionModel().isSelectionEmpty());
+    getSelectionModel()
+        .addListSelectionListener(
+            e -> {
+              for (Component component : components)
+                component.setEnabled(!getSelectionModel().isSelectionEmpty());
+            });
   }
 }

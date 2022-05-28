@@ -2,6 +2,7 @@ package kernbeisser.Windows.ManagePriceLists;
 
 import java.awt.*;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -31,6 +32,8 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   @Setter private JButton editPriceList;
   private JPanel treeButtonPanel;
   private JPanel contentButtonPanel;
+  private JButton addArticle;
+  private JButton editArticle;
 
   @Linked private ManagePriceListsController controller;
 
@@ -43,8 +46,10 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     moveArticles.addActionListener(controller);
     print.addActionListener(controller);
     editPriceList.addActionListener(controller);
-    setTreeButtonsEnabled(false);
-    setContentButtonsEnabled(false);
+    priceLists.addSelectionListener(this::priceListNodeSelection);
+    articles.selectionComponent(editArticle);
+    priceLists.selectionComponents(
+        deletePriceList, renamePriceList, movePriceList, moveArticles, editPriceList);
   }
 
   @Override
@@ -54,11 +59,18 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   private void createUIComponents() {
     priceLists = new ObjectTree<>(controller.getNode());
-    priceLists.addSelectionListener(this::priceListNodeSelection);
     articles =
         new ObjectTable<>(
             Columns.create("Name", Article::getName, SwingConstants.LEFT),
             Columns.create("Lieferant", Article::getSupplier, SwingConstants.LEFT));
+  }
+
+  private Optional<Article> getSelectedArticle() {
+    return articles.getSelectedObject();
+  }
+
+  private void messageNoArticleSelected() {
+    message("Um einen Artikel zu bearbeiten, muss zunächst ein Artikel ausgewählt werden.");
   }
 
   @NotNull
@@ -100,22 +112,6 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
                 + to.getName()
                 + "' verschoben werden sollen?")
         == 0;
-  }
-
-  private void setTreeButtonsEnabled(boolean b) {
-    for (Component c : treeButtonPanel.getComponents()) {
-      if (c instanceof JButton) {
-        c.setEnabled(b);
-      }
-    }
-  }
-
-  private void setContentButtonsEnabled(boolean b) {
-    for (Component c : contentButtonPanel.getComponents()) {
-      if (c instanceof JButton) {
-        c.setEnabled(b);
-      }
-    }
   }
 
   public void getPriceListNode(Consumer<Node<PriceList>> consumer, boolean onlyLeaves) {
