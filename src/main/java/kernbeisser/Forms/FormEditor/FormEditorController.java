@@ -28,7 +28,7 @@ public class FormEditorController<V> extends Controller<FormEditorView<V>, FormE
     getModel().getSubmit().run();
   }
 
-  public static <T> FormEditorController<T> open(
+  public static <T> FormEditorController<T> create(
       T source, FormController<?, ?, T> controller, Mode mode) {
     controller.getObjectContainer().setSource(source);
     controller.setMode(mode);

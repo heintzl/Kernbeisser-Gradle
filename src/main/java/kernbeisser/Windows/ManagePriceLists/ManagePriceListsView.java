@@ -1,7 +1,7 @@
 package kernbeisser.Windows.ManagePriceLists;
 
-import java.awt.*;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -31,20 +31,33 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   @Setter private JButton editPriceList;
   private JPanel treeButtonPanel;
   private JPanel contentButtonPanel;
+  private JButton addArticle;
+  private JButton editArticle;
 
   @Linked private ManagePriceListsController controller;
 
   @Override
   public void initialize(ManagePriceListsController controller) {
+    priceLists.addSelectionChangeListener(
+        node -> {
+          if (isNonRoot(node)) articles.setObjects(controller.getAllArticles(node.getValue()));
+          else articles.clear();
+        });
+    priceLists.selectionComponents(
+        this::isNonRoot, deletePriceList, renamePriceList, movePriceList);
+    priceLists.selectionComponents(this::nonEmptyPriceList, print, moveArticles);
+    priceLists.selectionComponents(Node::isLeaf, deletePriceList, editPriceList, addArticle);
     addPriceList.addActionListener(controller);
     deletePriceList.addActionListener(controller);
     renamePriceList.addActionListener(controller);
     movePriceList.addActionListener(controller);
+    editPriceList.addActionListener(controller);
+    articles.selectionComponent(editArticle);
+    articles.addDoubleClickListener(controller::editArticle);
+    editArticle.addActionListener(controller::editSelectedArticle);
+    addArticle.addActionListener(controller::addArticle);
     moveArticles.addActionListener(controller);
     print.addActionListener(controller);
-    editPriceList.addActionListener(controller);
-    setTreeButtonsEnabled(false);
-    setContentButtonsEnabled(false);
   }
 
   @Override
@@ -54,32 +67,26 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   private void createUIComponents() {
     priceLists = new ObjectTree<>(controller.getNode());
-    priceLists.addSelectionListener(this::priceListNodeSelection);
     articles =
         new ObjectTable<>(
             Columns.create("Name", Article::getName, SwingConstants.LEFT),
             Columns.create("Lieferant", Article::getSupplier, SwingConstants.LEFT));
   }
 
-  @NotNull
-  private void priceListNodeSelection(Node<PriceList> e) {
-    addPriceList.setEnabled(true);
-    boolean isLeaf = e.isLeaf();
-    deletePriceList.setEnabled(isLeaf);
-    editPriceList.setEnabled(isLeaf);
-    boolean isRoot = e.getValue().getId() == 0;
-    movePriceList.setEnabled(!isRoot);
-    renamePriceList.setEnabled(!isRoot);
-    if (isLeaf) {
-      Collection<Article> priceListArticles = controller.getAllArticles(e.getValue());
-      articles.setObjects(priceListArticles);
-      print.setEnabled(!priceListArticles.isEmpty());
-      moveArticles.setEnabled(!priceListArticles.isEmpty());
-    } else {
-      articles.clear();
-      print.setEnabled(false);
-      moveArticles.setEnabled(false);
-    }
+  private Optional<Article> getSelectedArticle() {
+    return articles.getSelectedObject();
+  }
+
+  private void messageNoArticleSelected() {
+    message("Um einen Artikel zu bearbeiten, muss zunächst ein Artikel ausgewählt werden.");
+  }
+
+  private boolean isNonRoot(Node<PriceList> node) {
+    return node.getValue().getId() != 0;
+  }
+
+  private boolean nonEmptyPriceList(Node<PriceList> node) {
+    return !controller.getAllArticles(node.getValue()).isEmpty();
   }
 
   Node<PriceList> getSelectedNode() {
@@ -102,23 +109,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
         == 0;
   }
 
-  private void setTreeButtonsEnabled(boolean b) {
-    for (Component c : treeButtonPanel.getComponents()) {
-      if (c instanceof JButton) {
-        c.setEnabled(b);
-      }
-    }
-  }
-
-  private void setContentButtonsEnabled(boolean b) {
-    for (Component c : contentButtonPanel.getComponents()) {
-      if (c instanceof JButton) {
-        c.setEnabled(b);
-      }
-    }
-  }
-
-  public void getPriceListNode(Consumer<Node<PriceList>> consumer, boolean onlyLeaves) {
+  public void requestPriceListSelection(Consumer<Node<PriceList>> consumer, boolean onlyLeaves) {
     ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
     priceListObjectTree.addSelectionListener(
         e -> {
@@ -131,16 +122,16 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
         .openIn(new SubWindow(traceViewContainer()));
   }
 
-  public void requiresPriceList(Consumer<Node<PriceList>> consumer) {
-    getPriceListNode(consumer, false);
+  public void requestPriceListSelection(Consumer<Node<PriceList>> consumer) {
+    requestPriceListSelection(consumer, false);
   }
 
   public void requiresPriceListLeaf(Consumer<Node<PriceList>> consumer) {
-    getPriceListNode(consumer, true);
+    requestPriceListSelection(consumer, true);
   }
 
-  public void selectionRequired() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Bitte wähle zunächst eine Preisliste aus.");
+  public void messageSelectionRequired() {
+    message("Bitte wähle zunächst eine Preisliste aus.");
   }
 
   public void refreshNode() {
@@ -152,8 +143,10 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   }
 
   public void cannotMoveIntoSelf() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(), "Die Preisliste kann nicht in sich selbst verschoben werden!");
+    message(
+        "Die Preisliste kann nicht in sich selbst verschoben werden!",
+        "Preisliste kann nicht verschoben werden.",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   public String requestName() {
@@ -175,18 +168,16 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   }
 
   public void cannotDelete() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(),
+    message(
         "Die Preisliste kann nicht gelöscht werden, da sie Artikel oder andere Preislisten enthält.");
   }
 
   public void nameAlreadyExists(String name) {
-    JOptionPane.showMessageDialog(getTopComponent(), "Der Name " + name + " existiert bereits.");
+    message("Der Name " + name + " existiert bereits.");
   }
 
   public void warningNoArticlesSelected() {
-    JOptionPane.showMessageDialog(
-        getTopComponent(),
+    message(
         "Es sind keine Artikel zum Verschieben ausgewählt!",
         "Artikel verschieben",
         JOptionPane.WARNING_MESSAGE);

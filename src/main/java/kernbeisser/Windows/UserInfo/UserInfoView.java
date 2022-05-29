@@ -152,7 +152,7 @@ public class UserInfoView implements IView<UserInfoController> {
   }
 
   FormEditorController<User> generateUserController() {
-    return FormEditorController.open(LogInModel.getLoggedIn(), new UserController(), Mode.EDIT);
+    return FormEditorController.create(LogInModel.getLoggedIn(), new UserController(), Mode.EDIT);
   }
 
   int getSelectedTabIndex() {

@@ -10,6 +10,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Security.StaticMethodTransformer.StaticInterface;
 import kernbeisser.Windows.ViewContainer;
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,7 +96,7 @@ public interface IView<
     message(message, title, JOptionPane.INFORMATION_MESSAGE);
   }
 
-  default void message(@NotNull String message, @Nullable String title, int type) {
+  default void message(@NotNull String message, @Nullable String title, @MagicConstant int type) {
     JOptionPane.showMessageDialog(getContent(), message, title, type);
   }
 }
