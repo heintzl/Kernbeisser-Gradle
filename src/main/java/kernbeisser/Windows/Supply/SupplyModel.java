@@ -18,7 +18,7 @@ public class SupplyModel implements IModel<SupplyController> {
   @Getter @Setter private double appendedProducePrice = 0;
   private final Map<ShoppingItem, Integer> print = new HashMap<>();
   @Setter private Map<Article, Integer> printPoolBefore = new HashMap<>();
-  @Getter private final Collection<ShoppingItem> shoppingItems = new ArrayList<>();
+  private final List<ShoppingItem> shoppingItems = new ArrayList<>();
 
   void commit() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -102,5 +102,27 @@ public class SupplyModel implements IModel<SupplyController> {
     if (item.isWeighAble() || number < 1) return 1;
     if (number > 10) return 10;
     return number;
+  }
+
+  public void addShoppingItem(ShoppingItem item) {
+    int existingItemIndex = shoppingItems.indexOf(item);
+    if (existingItemIndex != -1) {
+      ShoppingItem articleBefore = shoppingItems.get(existingItemIndex);
+      item.setItemMultiplier(item.getItemMultiplier() + articleBefore.getItemMultiplier());
+      shoppingItems.remove(existingItemIndex);
+    }
+    shoppingItems.add(0, item);
+  }
+
+  public List<ShoppingItem> getShoppingItems() {
+    return Collections.unmodifiableList(shoppingItems);
+  }
+
+  public void clearShoppingItems() {
+    shoppingItems.clear();
+  }
+
+  public void removeShoppingItem(ShoppingItem item) {
+    shoppingItems.remove(item);
   }
 }

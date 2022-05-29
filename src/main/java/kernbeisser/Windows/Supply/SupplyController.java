@@ -85,16 +85,16 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     keyCapture.addF2ToF8NumberActions(getView()::setAmount);
   }
 
-  private int last;
-
   void searchShoppingItem(Supplier supplier, int supNr) {
-    if (supNr == 0 || last == supNr) return;
+    if (supNr == 0) {
+      getView().noArticleFound();
+      return;
+    }
     try {
       getView()
           .getObjectForm()
           .setSource(
               model.findBySuppliersItemNumber(supplier, supNr).orElseThrow(NoResultException::new));
-      last = supNr;
       getView().setAddAvailable(true);
     } catch (NoResultException noResultException) {
       getView().noArticleFound();
@@ -116,23 +116,23 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     }
   }
 
-  public ShoppingItem addItem(double amount) throws CannotParseException {
+  public void addItem(double amount) throws CannotParseException {
     checkInput();
     Article article = getView().getObjectForm().getData(null);
     ShoppingItem item = new ShoppingItem(article, 0, false);
     model.setContainerMultiplier(item, amount);
-    model.getShoppingItems().add(item);
+    model.addShoppingItem(item);
     setPrintNumber(item);
     getView().getObjectForm().setShowSuccessDialog(false);
     getView().getObjectForm().applyMode(Mode.EDIT);
     getView().noArticleFound();
     recalculateTotal();
-    return item;
+    getView().setShoppingItems(model.getShoppingItems());
   }
 
   void commit() {
     model.commit();
-    model.getShoppingItems().clear();
+    model.clearShoppingItems();
     recalculateTotal();
     getView().back();
   }
@@ -144,7 +144,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public void remove(ShoppingItem selectedObject) {
-    model.getShoppingItems().remove(selectedObject);
+    model.removeShoppingItem(selectedObject);
     recalculateTotal();
   }
 
@@ -184,7 +184,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     new SupplySelectorController(
             (supply, shoppingItems) -> {
               for (ShoppingItem item : shoppingItems) {
-                model.getShoppingItems().add(item);
+                model.addShoppingItem(item);
                 setPrintNumber(item);
               }
               getView().setShoppingItems(model.getShoppingItems());

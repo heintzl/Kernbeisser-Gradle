@@ -19,6 +19,7 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Useful.DocumentChangeListener;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -48,13 +49,11 @@ public class SupplyView implements IView<SupplyController> {
 
   @Override
   public void initialize(SupplyController controller) {
-    suppliersNumber.addKeyListener(
-        new KeyAdapter() {
-          @Override
-          public void keyReleased(KeyEvent e) {
-            controller.searchShoppingItem(getSelected(), suppliersNumber.getSafeValue());
-          }
-        });
+    suppliersNumber
+        .getDocument()
+        .addDocumentListener(
+            (DocumentChangeListener)
+                e -> controller.searchShoppingItem(getSelected(), suppliersNumber.getSafeValue()));
     add.addActionListener(e -> addItem());
     amount.addActionListener(e -> addItem());
     suppliersNumber.addActionListener(e -> addItem());
@@ -86,7 +85,7 @@ public class SupplyView implements IView<SupplyController> {
   void addItem() {
     try {
       try {
-        shoppingItems.add(0, controller.addItem(getAmount()));
+        controller.addItem(getAmount());
       } catch (NullPointerException e) {
         throw new NoResultException();
       }
