@@ -119,12 +119,18 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   public void addItem(double amount) throws CannotParseException {
     checkInput();
     Article article = getView().getObjectForm().getData(null);
+    if (!article.equals(getView().getObjectForm().getOriginal())) {
+      if (!getView().confirmChanges()) {
+        getView().getObjectForm().setSource(getView().getObjectForm().getOriginal());
+        return;
+      }
+      getView().getObjectForm().setShowSuccessDialog(false);
+      getView().getObjectForm().applyMode(Mode.EDIT);
+    }
     ShoppingItem item = new ShoppingItem(article, 0, false);
     model.setContainerMultiplier(item, amount);
     model.addShoppingItem(item);
     setPrintNumber(item);
-    getView().getObjectForm().setShowSuccessDialog(false);
-    getView().getObjectForm().applyMode(Mode.EDIT);
     getView().noArticleFound();
     recalculateTotal();
     getView().setShoppingItems(model.getShoppingItems());

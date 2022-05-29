@@ -234,4 +234,14 @@ public class SupplyView implements IView<SupplyController> {
             JOptionPane.YES_NO_OPTION)
         == 0;
   }
+
+  public boolean confirmChanges() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Sollen die änderen an dem Artikel übernommen werden?",
+            "Artikel geändert",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
+        == 0;
+  }
 }
