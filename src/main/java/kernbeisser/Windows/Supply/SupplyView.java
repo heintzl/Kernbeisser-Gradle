@@ -238,7 +238,7 @@ public class SupplyView implements IView<SupplyController> {
   public boolean confirmChanges() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Sollen die änderen an dem Artikel übernommen werden?",
+            "Sollen die Änderungen am Artikel übernommen werden?",
             "Artikel geändert",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE)
