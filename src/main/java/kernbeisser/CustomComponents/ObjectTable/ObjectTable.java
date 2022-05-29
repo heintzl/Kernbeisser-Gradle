@@ -218,6 +218,9 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private void removeStandardFilter(JPopupMenu p) {
     standardColumnFilters.clear();
+    standardFilterPopups
+        .values()
+        .forEach(e -> ((JTextField) ((JPanel) e.getComponent(0)).getComponent(1)).setText(""));
     sort();
     p.setVisible(false);
   }
@@ -233,6 +236,8 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private void applyStandardFilter(JPopupMenu p, Column<T> c, JTextField text) {
     if (text == null) {
       standardColumnFilters.remove(c);
+      ((JTextField) ((JPanel) standardFilterPopups.get(c).getComponent(0)).getComponent(1))
+          .setText("");
       p.setVisible(false);
     } else {
       standardColumnFilters.put(c, text);
