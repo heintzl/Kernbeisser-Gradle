@@ -3,6 +3,7 @@ package kernbeisser.CustomComponents.ObjectTree;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
@@ -78,6 +79,18 @@ public class ObjectTree<T> extends JTree {
             e -> {
               for (Component component : components)
                 component.setEnabled(!getSelectionModel().isSelectionEmpty());
+            });
+  }
+
+  public void selectionComponents(Predicate<Node<T>> filter, Component... components) {
+    for (Component component : components)
+      component.setEnabled(!getSelectionModel().isSelectionEmpty() && filter.test(getSelected()));
+    getSelectionModel()
+        .addTreeSelectionListener(
+            e -> {
+              for (Component component : components)
+                component.setEnabled(
+                    !getSelectionModel().isSelectionEmpty() && filter.test(getSelected()));
             });
   }
 }

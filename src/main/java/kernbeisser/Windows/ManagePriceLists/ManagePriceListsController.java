@@ -4,11 +4,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Forms.FormEditor.FormEditorController;
+import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.EditPriceList.EditPriceListController;
 import kernbeisser.Windows.MVC.Controller;
@@ -33,8 +37,8 @@ public class ManagePriceListsController
   }
 
   private void move() {
-    if (getView().getSelectedNode() == null) getView().selectionRequired();
-    else getView().requiresPriceList(this::move);
+    if (getView().getSelectedNode() == null) getView().messageSelectionRequired();
+    else getView().requestPriceListSelection(this::move);
   }
 
   private void move(Node<PriceList> target) {
@@ -65,7 +69,7 @@ public class ManagePriceListsController
 
   private void add() {
     if (getView().getSelectedNode() == null) {
-      getView().selectionRequired();
+      getView().messageSelectionRequired();
       return;
     }
     String name = getView().requestName();
@@ -104,7 +108,7 @@ public class ManagePriceListsController
 
   private void moveItems() {
     if (getView().getSelectedNode() == null) {
-      getView().selectionRequired();
+      getView().messageSelectionRequired();
       return;
     }
     getView().requiresPriceListLeaf(this::moveItems);
@@ -120,12 +124,12 @@ public class ManagePriceListsController
   private void print() {
     ManagePriceListsView view = getView();
     if (view.getSelectedNode() == null) {
-      view.selectionRequired();
+      view.messageSelectionRequired();
     } else {
       PriceList selectedList = view.getSelectedNode().getValue();
       List<Article> articles = getAllArticles(selectedList);
       if (articles.size() == 0) {
-        view.selectionRequired();
+        view.messageSelectionRequired();
       } else {
         model.print(selectedList);
       }
@@ -167,4 +171,25 @@ public class ManagePriceListsController
 
   @Override
   public void fillView(ManagePriceListsView managePriceListsView) {}
+
+  public void editSelectedArticle(ActionEvent actionEvent) {
+    editArticle(
+        getView().getSelectedArticles().stream()
+            .findFirst()
+            .orElseThrow(NoSuchElementException::new));
+  }
+
+  public void editArticle(Article article) {
+    FormEditorController.create(article, new ArticleController(), Mode.EDIT)
+        .withCloseEvent(getView()::refreshNode)
+        .openIn(new SubWindow(getView().traceViewContainer()));
+  }
+
+  public void addArticle(ActionEvent event) {
+    Article article = new Article();
+    article.setPriceList(getView().getSelectedNode().getValue());
+    FormEditorController.create(article, new ArticleController(), Mode.ADD)
+        .withCloseEvent(getView()::refreshNode)
+        .openIn(new SubWindow(getView().traceViewContainer()));
+  }
 }
