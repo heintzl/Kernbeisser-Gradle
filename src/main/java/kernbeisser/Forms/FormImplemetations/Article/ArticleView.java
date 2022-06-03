@@ -254,9 +254,9 @@ public class ArticleView implements IView<ArticleController> {
   public boolean isSameArticle(Article nearest) {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Es wurde ein Artikel gefunden der einen sehr identischen Namen hat:\n"
+            "Es wurde ein anderer Artikel gefunden, der einen sehr ähnlichen Namen hat:\n"
                 + nearest.toString()
-                + "\nWollen sie trozedem einen neuen Artikel erstellen?")
+                + "\nSoll der Artikel trotzdem erstellt werden?")
         == 0;
   }
 
