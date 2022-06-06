@@ -24,6 +24,7 @@ public class PriceListReport extends Report {
   public PriceListReport(
       Collection<PriceListReportArticle> priceListReportArticles, String priceListName) {
     super("priceList", "Preisliste " + priceListName);
+    setDuplexPrint(false);
     this.priceListReportArticles = priceListReportArticles;
     this.priceListName = priceListName;
   }
