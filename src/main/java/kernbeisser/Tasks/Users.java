@@ -221,4 +221,19 @@ public class Users {
       throw e;
     }
   }
+
+  public static User createTestUserFrom(User user) throws MissingFullMemberException {
+    User newUser = new User();
+    User loggedIn = LogInModel.getLoggedIn();
+    newUser.setUsername("test." + user.getUsername());
+    newUser.setFirstName(user.getFirstName());
+    newUser.setSurname("Test: " + user.getSurname());
+    newUser.setPermissions(user.getPermissions());
+    newUser.setPhoneNumber1(user.getPhoneNumber1());
+    newUser.setTestOnly(true);
+    newUser.setPassword(loggedIn.getPassword());
+    newUser.setUserGroup(loggedIn.getUserGroup());
+    Tools.persist(newUser);
+    return newUser;
+  }
 }
