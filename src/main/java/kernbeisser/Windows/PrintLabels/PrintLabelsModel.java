@@ -9,11 +9,11 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.ArticlePrintPool;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Reports.ArticleLabel;
+import kernbeisser.Reports.Report;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IModel;
@@ -70,13 +70,18 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
     return article.getSupplier().getName();
   }
 
-  void print(CollectionController<Article> articles) {
+  void print(CollectionController<Article> articles, boolean pdf) {
     List<Article> printPool =
         articles.getModel().getLoaded().stream()
-            .flatMap(a -> Collections.nCopies(ArticlePrintPool.get(a), a).stream())
+            .flatMap(a -> Collections.nCopies(printPoolMap.get(a), a).stream())
             .collect(Collectors.toList());
-    new ArticleLabel(printPool)
-        .sendToPrinter("Drucke Ladenschilder", Tools::showUnexpectedErrorWarning);
+    Report report = new ArticleLabel(printPool);
+    String printMessage = "Drucke Ladenschilder";
+    if (pdf) {
+      report.exportPdf(printMessage, Tools::showUnexpectedErrorWarning);
+    } else {
+      report.sendToPrinter("Drucke Ladenschilder", Tools::showUnexpectedErrorWarning);
+    }
   }
 
   void setPrintPool(Article article, int numberOfLabels) {
