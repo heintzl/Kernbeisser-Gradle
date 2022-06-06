@@ -164,6 +164,11 @@ public class User implements Serializable, UserRelated {
   @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
   private boolean active = true;
 
+  @Column
+  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
+  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
+  private boolean testOnly = false;
+
   // primary only required during data import
   @Column @Transient @Getter @Setter private boolean primary;
 

@@ -166,15 +166,14 @@ public class UserController extends FormController<UserView, UserModel, User> {
     }
     var userGroup = user.getUserGroup();
     double userValue = userGroup.getValue();
-    if (userGroup.getMembers().size() > 1) {
+    if (!user.isTestOnly() && userGroup.getMembers().size() > 1) {
       getView().messageUserIsInGroup();
       return;
     }
-    if (userValue != 0.0) {
+    if (userValue != 0.0 && !(user.isTestOnly() && user.getUserGroup().getMembers().size() != 1)) {
       getView().messageUserBalanceExists(userValue);
       return;
     }
-    ;
     getView().messageDeleteSuccess(user.delete());
   }
 }

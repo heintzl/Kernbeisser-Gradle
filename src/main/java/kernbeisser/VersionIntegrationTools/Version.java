@@ -13,7 +13,8 @@ public enum Version {
   UNUSED_PERMISSION_KEY_REMOVING(PermissionKeyChange.class),
   REFACTOR_DB_VERSIONING(RemoveDeprectatedSettings.class),
   TRIAL_MEMBERSHIP(BeginnerPermissionKeyChange.class),
-  SAVE_TRANSACTIONREPORT_NO(AddTransactionReportNo.class);
+  SAVE_TRANSACTIONREPORT_NO(AddTransactionReportNo.class),
+  TEST_USERS(FillTestUserFlag.class);
   public static final Logger logger = LogManager.getLogger(Version.class);
   private final Class<? extends VersionUpdatingTool> updatingToolClass;
 

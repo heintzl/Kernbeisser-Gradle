@@ -48,9 +48,13 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
     available.addDoubleClickListener(e -> controller.selectAvailable());
     chosen.addDoubleClickListener(e -> controller.selectChosen());
     add.addActionListener(e -> controller.selectAvailable());
+    add.setToolTipText("markierte von rechts nach links");
     addAll.addActionListener(e -> controller.selectAllAvailable());
+    addAll.setToolTipText("alle gefilterten von rechts nach links");
     remove.addActionListener(e -> controller.selectChosen());
+    remove.setToolTipText("markierte von links nach rechts");
     removeAll.addActionListener(e -> controller.selectAllChosen());
+    removeAll.setToolTipText(" alle gefilterten von links nach rechts");
     cancel.addActionListener(e -> back());
     commit.addActionListener(e -> controller.exitWithSave());
     searchPanelAvailable.setVisible(false);

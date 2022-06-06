@@ -10,6 +10,7 @@ import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Forms.FormImplemetations.User.UserView;
@@ -56,6 +57,11 @@ public class EditUsers extends ObjectViewController<User> {
     editUserGroup.setToolTipText(
         "Ermöglicht es, die Benutzergruppe für einen Benutzer zu wechseln, ohne dass der Wechsel mit Passwort bestätigt werden muss");
     addButton(editUserGroup, this::openUserGroupEditor);
+    JButton createTestUser = new JButton("Testuser erstellen");
+    createTestUser.setIcon(IconFontSwing.buildIcon(FontAwesome.USER_SECRET, 20, Color.BLUE));
+    createTestUser.setToolTipText(
+        "Erstellt eine Kopie des markierten Benutzers mit seinen Berechtigungen. Der User befindet sich anschließend in deiner Benutzergruppe");
+    addButton(createTestUser, this::createTestUser);
     hasAdminTools = true;
   }
 
@@ -96,6 +102,24 @@ public class EditUsers extends ObjectViewController<User> {
     new EditUserGroupController(user, LogInModel.getLoggedIn())
         .withCloseEvent(() -> fillView(getView()))
         .openIn(new SubWindow(getView().traceViewContainer()));
+  }
+
+  private void createTestUser(User user) {
+    try {
+      JOptionPane.showMessageDialog(
+          getView().getContent(),
+          "Der User "
+              + kernbeisser.Tasks.Users.createTestUserFrom(user).getUsername()
+              + " wurde erfolgreich erstellt. Passwort ist das selbe, wie deins.",
+          "Testuser erstellen",
+          JOptionPane.INFORMATION_MESSAGE);
+    } catch (MissingFullMemberException e) {
+      JOptionPane.showMessageDialog(
+          getView().getContent(),
+          "Das dürfen leider nur Vollmitglieder",
+          "Testuser erstellen",
+          JOptionPane.ERROR_MESSAGE);
+    }
   }
 
   public boolean verifyPasswordChange(String username) {
