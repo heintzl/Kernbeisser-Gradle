@@ -170,23 +170,23 @@
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="329" y="0" width="169" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
+				<reportElement x="269" y="1" width="170" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b6ac997-8ccc-4d76-a8ba-44f661dc211d"/>
 					<printWhenExpression><![CDATA[$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="13" isBold="true" isItalic="true"/>
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="false" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="269" y="1" width="60" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
+				<reportElement x="440" y="2" width="58" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">
 					<printWhenExpression><![CDATA[$V{isRetarded}]]></printWhenExpression>
 				</reportElement>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="12" isBold="true" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Nachlief.:]]></text>
+				<text><![CDATA[Nachlief.]]></text>
 			</staticText>
 			<textField textAdjust="ScaleFont">
 				<reportElement x="188" y="1" width="77" height="17" uuid="5230a6f1-3825-43c0-83a3-0e5397ab0a75">
