@@ -1,6 +1,7 @@
 package kernbeisser.Tasks;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.google.common.collect.Sets;
 import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -228,7 +229,7 @@ public class Users {
     newUser.setUsername("test." + user.getUsername());
     newUser.setFirstName(user.getFirstName());
     newUser.setSurname("Test: " + user.getSurname());
-    newUser.setPermissions(user.getPermissions());
+    newUser.setPermissions(Sets.newHashSet(user.getPermissions()));
     newUser.setPhoneNumber1(user.getPhoneNumber1());
     newUser.setTestOnly(true);
     newUser.setPassword(loggedIn.getPassword());
