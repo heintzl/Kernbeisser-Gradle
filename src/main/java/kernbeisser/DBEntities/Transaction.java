@@ -144,6 +144,9 @@ public class Transaction implements UserRelated {
       String info)
       throws InvalidTransactionException {
 
+    if (from.isTestOnly() || to.isTestOnly()) {
+      throw new InvalidTransactionException("test users may not participate in transactions");
+    }
     UserGroup fromUG = em.find(UserGroup.class, from.getUserGroup().getId());
     UserGroup toUG = em.find(UserGroup.class, to.getUserGroup().getId());
     if (fromUG.equals(toUG)) {

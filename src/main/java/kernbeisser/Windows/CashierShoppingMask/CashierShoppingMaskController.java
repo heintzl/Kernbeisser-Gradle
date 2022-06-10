@@ -1,6 +1,7 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
@@ -28,14 +29,21 @@ public class CashierShoppingMaskController
     extends Controller<CashierShoppingMaskView, CashierShoppingMaskModel> {
 
   @Linked private final SearchBoxController<User> searchBoxController;
-  private UserFilter userFilter = new UserFilter(this::changeFilter, UserFilter.FILTER_ACTIVE);
+  private final UserFilter userFilter =
+      new UserFilter(this::changeFilter, UserFilter.FILTER_ACTIVE);
+
+  private List<User> searchable(String s, int max) {
+    return userFilter.searchable(s, max).stream()
+        .filter(u -> !u.isTestOnly())
+        .collect(Collectors.toList());
+  }
 
   @Key(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK)
   public CashierShoppingMaskController() {
     super(new CashierShoppingMaskModel());
     this.searchBoxController =
         new SearchBoxController<>(
-            userFilter::searchable,
+            this::searchable,
             Columns.create("Vorname", User::getFirstName),
             Columns.create("Nachname", User::getSurname),
             Columns.create("Benutzername", User::getUsername),
