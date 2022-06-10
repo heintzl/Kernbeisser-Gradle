@@ -177,7 +177,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   void fillUsers(boolean hidden) {
     TransactionView view = getView();
-    Predicate<User> filter = hidden ? User::isActive : e -> true;
+    Predicate<User> filter = hidden ? u -> !u.isTestOnly() && u.isActive() : u -> !u.isTestOnly();
     User.populateUserComboBox(view.getToControl(), true, true, filter);
     if (model.getTransactionType() == TransactionType.PAYIN) {
       view.getFromControl().setItems(Collections.singleton(User.getKernbeisserUser()));
