@@ -443,8 +443,12 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
 
   private void recalculatePrice() {
     if (currentItem.getKbNumber() > 0 || isPreordered) {
-      double retailPrice = controller.recalculatePrice(netPrice.getSafeValue());
-      price.setText(Double.isNaN(retailPrice) ? "" : String.format("%.2f", retailPrice));
+      try {
+        double retailPrice = controller.recalculatePrice();
+        price.setText(String.format("%.2f", retailPrice));
+      } catch (NullPointerException e) {
+        price.setText("");
+      }
     }
   }
 
