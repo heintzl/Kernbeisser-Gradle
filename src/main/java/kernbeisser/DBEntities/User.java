@@ -475,14 +475,12 @@ public class User implements Serializable, UserRelated {
         .where(
             builder.and(
                 builder.or(
-                    builder.equal(
-                        root.get("toUser").get("userGroup").get("id"), getUserGroup().getId()),
-                    builder.equal(
-                        root.get("fromUser").get("userGroup").get("id"), getUserGroup().getId()))),
+                    builder.equal(root.get("toUserGroup").get("id"), getUserGroup().getId()),
+                    builder.equal(root.get("fromUserGroup").get("id"), getUserGroup().getId()))),
             builder.lessThan(root.get("date"), instant));
     double value = 0;
     for (Transaction transaction : em.createQuery(query).getResultList()) {
-      if (transaction.getFromUser().getUserGroup().getId() == getUserGroup().getId()) {
+      if (transaction.getFromUserGroup().getId() == getUserGroup().getId()) {
         value -= transaction.getValue();
       } else {
         value += transaction.getValue();
