@@ -24,6 +24,7 @@ import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.ArticleConstants;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
@@ -276,12 +277,24 @@ public class Articles {
         .getCreateDate();
   }
 
-  public static double calculateRetailPrice(Article article) {
-    double retailPrice =
-        article.getNetPrice()
-            * (1 + article.getVat().getValue())
-            * (1 + article.getSurchargeGroup().getSurcharge());
-    return Tools.roundCurrency(retailPrice);
+  public static double getContainerSurchargeReduction() {
+    return Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue();
+  }
+
+  public static double calculateRetailPrice(
+      double netPrice, VAT vat, double surcharge, boolean preordered) {
+    return netPrice
+        * (1 + vat.getValue())
+        * (1 + surcharge * (preordered ? getContainerSurchargeReduction() : 1.0));
+  }
+
+  public static double calculateArticleRetailPrice(Article article) {
+    return Tools.roundCurrency(
+        calculateRetailPrice(
+            article.getNetPrice(),
+            article.getVat(),
+            article.getSurchargeGroup().getSurcharge(),
+            false));
   }
 
   public static Article createOfferArticle(

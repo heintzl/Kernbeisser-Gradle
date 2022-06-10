@@ -191,10 +191,6 @@ public class ShoppingItem implements Serializable {
     return Setting.OFFER_PREFIX.getStringValue();
   }
 
-  public static double getContainerSurchargeReduction() {
-    return Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue();
-  }
-
   /**
    * @param article most ShoppingItem properties are copied from given article. surcharge gets
    *     calculated
@@ -219,7 +215,7 @@ public class ShoppingItem implements Serializable {
                 // is unsafe call
                 ? Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup().getSurcharge()
                 : article.getSurchargeGroup().getSurcharge())
-            * (hasContainerDiscount ? getContainerSurchargeReduction() : 1);
+            * (hasContainerDiscount ? Articles.getContainerSurchargeReduction() : 1);
     if (supplier != null) {
       this.suppliersShortName = article.getSupplier().getShortName();
     }
