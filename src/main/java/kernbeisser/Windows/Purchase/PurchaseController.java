@@ -37,7 +37,7 @@ public class PurchaseController extends Controller<PurchaseView, PurchaseModel> 
   }
 
   public void printBon() {
-    PayModel.print(model.getLoaded().getId());
+    PayModel.printAt(model.getLoaded().getId());
   }
 
   public void fillShoppingCart() {

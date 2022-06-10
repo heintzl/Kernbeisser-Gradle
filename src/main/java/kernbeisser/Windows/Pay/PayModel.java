@@ -110,12 +110,22 @@ public class PayModel implements IModel<PayController> {
     transferCompleted.run();
   }
 
-  public static void print(long purchaseId) {
+  private static InvoiceReport getInvoiceReport(long purchaseId) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    new InvoiceReport(em.find(Purchase.class, purchaseId))
+    return new InvoiceReport(em.find(Purchase.class, purchaseId));
+  }
+
+  public static void print(long purchaseId) {
+    getInvoiceReport(purchaseId)
+        .sendToPrinter("Bon wird erstellt", Tools::showUnexpectedErrorWarning);
+  }
+
+  public static void printAt(long purchaseId) {
+    getInvoiceReport(purchaseId)
+        .atPurchaseTime()
         .sendToPrinter("Bon wird erstellt", Tools::showUnexpectedErrorWarning);
   }
 
