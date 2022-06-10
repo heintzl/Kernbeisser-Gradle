@@ -1,5 +1,6 @@
 package kernbeisser.Reports;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import kernbeisser.Enums.VAT;
 public class InvoiceReport extends Report {
 
   private final Purchase purchase;
+  private Instant at;
 
   public InvoiceReport(Purchase purchase) {
     super(
@@ -25,6 +27,11 @@ public class InvoiceReport extends Report {
     this.purchase = purchase;
   }
 
+  public InvoiceReport atPurchaseTime() {
+    at = purchase.getCreateDate();
+    return this;
+  }
+
   @Override
   Collection<?> getDetailCollection() {
     return purchase.getAllItems();
@@ -33,7 +40,12 @@ public class InvoiceReport extends Report {
   @Override
   Map<String, Object> getReportParams() {
     Collection<ShoppingItem> items = purchase.getAllItems();
-    double credit = purchase.getSession().getCustomer().getUserGroup().getValue();
+    double credit;
+    if (at == null) {
+      credit = purchase.getSession().getCustomer().getUserGroup().getValue();
+    } else {
+      credit = purchase.getSession().getCustomer().valueAt(at) - purchase.getSum();
+    }
     Map<String, Object> reportParams = new HashMap<>();
     reportParams.put("BonNo", purchase.getId());
     reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());

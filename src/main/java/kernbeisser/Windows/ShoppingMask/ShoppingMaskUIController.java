@@ -8,9 +8,11 @@ import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Dialogs.RememberDialog;
+import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.ArticleType;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Security.Access.Access;
@@ -192,23 +194,34 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     }
   }
 
-  public double recalculatePrice(double newNetPrice) {
-    try {
-      ShoppingItem item = extractShoppingItemFromUI();
-      return newNetPrice / item.getItemNetPrice() * item.getItemRetailPrice();
-    } catch (UndefinedInputException e) {
-      return 0.0;
+  public Double recalculatePrice() throws NullPointerException {
+    ShoppingMaskUIView view = getView();
+    Supplier supplier = view.getSupplier();
+    double netPrice = view.getNetPrice();
+    VAT vat = view.getVat();
+    double surcharge;
+    int suppliersItemNumber = view.getSuppliersNumber();
+    surcharge = supplier.getOrPersistDefaultSurchargeGroup().getSurcharge();
+    if (suppliersItemNumber > 0 && view.getArticleType() == ArticleType.ARTICLE_NUMBER) {
+      surcharge =
+          Articles.getBySuppliersItemNumber(supplier, suppliersItemNumber)
+              .map(a -> a.getSurchargeGroup().getSurcharge())
+              .orElse(surcharge);
     }
+    boolean preordered = view.isPreordered();
+    return Articles.calculateRetailPrice(netPrice, vat, surcharge, preordered);
   }
 
   ShoppingItem createCustomItem(Supplier supplier) {
-    Article article =
-        Articles.getCustomArticleVersion(
-            e -> {
-              e.setSupplier(supplier);
-              e.setVat(getView().getVat());
-            });
-    return new ShoppingItem(article, getView().getDiscount(), getView().isPreordered());
+    Article article = new Article();
+    article.setSupplier(supplier);
+    article.setVat(getView().getVat());
+    if (supplier != null) {
+      article.setSurchargeGroup(supplier.getOrPersistDefaultSurchargeGroup());
+    }
+    article.setName("");
+    return new ShoppingItem(
+        ObjectState.wrap(article, 0), getView().getDiscount(), getView().isPreordered());
   }
 
   ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {

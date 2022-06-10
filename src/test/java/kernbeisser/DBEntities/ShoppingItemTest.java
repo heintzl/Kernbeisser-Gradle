@@ -80,7 +80,7 @@ class ShoppingItemTest {
       double expected) {
     try (var staticMock = mockStatic(ShoppingItem.class)) {
       staticMock
-          .when(ShoppingItem::getContainerSurchargeReduction)
+          .when(Articles::getContainerSurchargeReduction)
           .thenReturn(containerDiscountReduction);
       staticMock.when(ShoppingItem::getOfferPrefix).thenReturn("AK");
     }
