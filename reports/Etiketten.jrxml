@@ -28,7 +28,9 @@
 		<band height="77" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 			<textField>
-				<reportElement x="3" y="4" width="126" height="16" uuid="301f7d9b-f8f5-4749-8218-0b6444df8d6f"/>
+				<reportElement x="3" y="4" width="126" height="16" uuid="301f7d9b-f8f5-4749-8218-0b6444df8d6f">
+					<property name="net.sf.jasperreports.text.truncate.at.char" value="true"/>
+				</reportElement>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="10" isBold="true"/>
 				</textElement>
