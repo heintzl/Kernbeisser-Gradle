@@ -24,7 +24,6 @@ import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, ShoppingMaskModel> {
@@ -33,6 +32,8 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   private BarcodeCapture barcodeCapture;
   private KeyCapture keyCapture;
 
+  private final ShoppingMaskUIView view;
+
   public ShoppingMaskUIController(SaleSession saleSession) throws NotEnoughCreditException {
     super(new ShoppingMaskModel(saleSession));
     this.shoppingCartController =
@@ -40,11 +41,11 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
             model.getValue(),
             model.getSaleSession().getCustomer().getUserGroup().getSolidaritySurcharge(),
             true);
+    this.view = getView();
   }
 
   private double getRelevantPrice() {
-    var view = getView();
-    return view.isPreordered() ? view.getNetPrice() : getView().getRetailPrice();
+    return view.isPreordered() ? view.getNetPrice() : view.getRetailPrice();
   }
 
   private boolean checkStorno(ShoppingItem item, boolean piece) {
@@ -52,7 +53,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     boolean exit = true;
     String response;
     if (piece && item.getItemMultiplier() < 0) {
-      response = getView().inputStornoRetailPrice(item.getItemRetailPrice(), false);
+      response = view.inputStornoRetailPrice(item.getItemRetailPrice(), false);
       do {
         if (response == null || response.hashCode() == 0 || response.hashCode() == 48) {
           result = false;
@@ -69,30 +70,30 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
             }
           } catch (NumberFormatException exception) {
             exit = false;
-            response = getView().inputStornoRetailPrice(item.getItemRetailPrice(), true);
+            response = view.inputStornoRetailPrice(item.getItemRetailPrice(), true);
           }
         }
       } while (!exit);
     } else if (!piece && item.getRetailPrice() < 0) {
       item.setName("St. " + item.getName());
-      result = (getView().confirmStorno());
+      result = (view.confirmStorno());
     }
     return result;
   }
 
   void emptyShoppingCart() {
-    if (shoppingCartController.getItems().size() != 0 && getView().confirmEmptyCart())
+    if (shoppingCartController.getItems().size() != 0 && view.confirmEmptyCart())
       shoppingCartController.emptyCart();
   }
 
   boolean addToShoppingCart() {
     boolean piece =
-        (getView().getArticleType() == ArticleType.ARTICLE_NUMBER
-            || getView().getArticleType() == ArticleType.CUSTOM_PRODUCT);
+        (view.getArticleType() == ArticleType.ARTICLE_NUMBER
+            || view.getArticleType() == ArticleType.CUSTOM_PRODUCT);
     try {
-      int discount = getView().getDiscount();
+      int discount = view.getDiscount();
       if (discount < 0 || discount > 100) {
-        getView().messageInvalidDiscount();
+        view.messageInvalidDiscount();
         return false;
       }
       ShoppingItem item = extractShoppingItemFromUI();
@@ -102,39 +103,38 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
               && item.getItemMultiplier() != 0)) return false;
 
       if (piece) {
-        if (getView().isPreordered() && getView().getNetPrice() > 0) {
+        if (view.isPreordered() && view.getNetPrice() > 0) {
           item.setItemNetPrice(
-              getView().getNetPrice() / (item.isWeighAble() ? 1 : item.getContainerSize()));
+              view.getNetPrice() / (item.isWeighAble() ? 1 : item.getContainerSize()));
           item.setItemRetailPriceFromNetPrice();
         }
 
         double itemMultiplier =
-            getView().getItemMultiplier()
+            view.getItemMultiplier()
                 * (item.isContainerDiscount() && !item.isWeighAble()
                     ? item.getContainerSize()
                     : 1.0);
         item.setItemMultiplier((int) Math.round(itemMultiplier));
         if (itemMultiplier % 1 != 0) {
-          getView().messageRoundedMultiplier(item.getDisplayAmount());
+          view.messageRoundedMultiplier(item.getDisplayAmount());
         }
       }
 
       if (item.getItemMultiplier() != 0
-          && (getView().getArticleType() == ArticleType.RETURN_DEPOSIT || checkStorno(item, piece))
+          && (view.getArticleType() == ArticleType.RETURN_DEPOSIT || checkStorno(item, piece))
           && checkWarningThresholds(item)) {
         shoppingCartController.addShoppingItem(item);
-        getView().setDiscount();
+        view.setDiscount();
         return true;
       }
       return false;
     } catch (UndefinedInputException undefinedInputException) {
-      getView().messageNoArticleFound();
+      view.messageNoArticleFound();
       return false;
     }
   }
 
   private boolean checkWarningThresholds(ShoppingItem item) {
-    var view = getView();
     return (shoppingCartController.getRemainingValue() - item.getRetailPrice() >= 0
             || model.getSaleSession().getCustomer().mayGoUnderMin()
             || view.messageUnderMin())
@@ -148,41 +148,41 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   void searchByKbNumber() {
-    int kbNumber = getView().getKBArticleNumber();
+    int kbNumber = view.getKBArticleNumber();
     if (kbNumber > 0) {
-      getView().defaultSettings();
+      view.defaultSettings();
       Article found = model.getArticleByKbNumber(kbNumber);
       if (found != null) {
-        getView().loadArticleStats(found);
+        view.loadArticleStats(found);
       } else {
-        getView().setSuppliersItemNumber("");
+        view.setSuppliersItemNumber("");
       }
     }
   }
 
   void searchBySupplierItemsNumber() {
-    Supplier supplier = getView().getSupplier();
-    if (supplier == null) getView().messageNoSupplier();
-    getView().defaultSettings();
-    Article found = model.getArticleBySupplierItemNumber(supplier, getView().getSuppliersNumber());
+    Supplier supplier = view.getSupplier();
+    if (supplier == null) view.messageNoSupplier();
+    view.defaultSettings();
+    Article found = model.getArticleBySupplierItemNumber(supplier, view.getSuppliersNumber());
     if (found != null) {
-      getView().loadArticleStats(found);
+      view.loadArticleStats(found);
     } else {
-      getView().setKbNumber("");
+      view.setKbNumber("");
     }
   }
 
   void searchByBarcode(long barcode) {
-    getView().setOptArticleNo();
+    view.setOptArticleNo();
     try {
       Article found = model.getByBarcode(barcode);
-      getView().loadArticleStats(found);
-      if (!getView().isPreordered()) {
-        getView().addToCart();
+      view.loadArticleStats(found);
+      if (!view.isPreordered()) {
+        view.addToCart();
       }
     } catch (NoResultException e) {
-      Tools.noArticleFoundForBarcodeWarning(getView().getContent(), Long.toString(barcode));
-      getView().setKbNumber("");
+      Tools.noArticleFoundForBarcodeWarning(view.getContent(), Long.toString(barcode));
+      view.setKbNumber("");
     }
   }
 
@@ -193,7 +193,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
 
   public Article extractArticleFromUI() throws NullPointerException {
     Article article = null;
-    ShoppingMaskUIView view = getView();
     int kbNumber = view.getKBArticleNumber();
     int suppliersItemNumber = view.getSuppliersNumber();
     Supplier supplier = view.getSupplier();
@@ -221,7 +220,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   Article createCustomArticle(Supplier supplier) {
     Article article = new Article();
     article.setSupplier(supplier);
-    article.setVat(getView().getVat());
+    article.setVat(view.getVat());
     if (supplier != null) {
       article.setSurchargeGroup(supplier.getOrPersistDefaultSurchargeGroup());
     }
@@ -232,7 +231,6 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
     synchronized (Access.ACCESS_LOCK) {
       AccessManager defaultManager = Access.getDefaultManager();
-      var view = getView();
       try {
         Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
         switch (view.getArticleType()) {
@@ -364,28 +362,28 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
               shoppingCartController.getItems(),
               () -> {
                 shoppingCartController.getItems().clear();
-                getView().back();
+                view.back();
               })
-          .openIn(new SubWindow(getView().traceViewContainer()));
+          .openIn(new SubWindow(view.traceViewContainer()));
     } else {
-      getView().messageCartIsEmpty();
+      view.messageCartIsEmpty();
     }
   }
 
   @Override
   public boolean commitClose() {
-    return shoppingCartController.getItems().size() == 0 || getView().confirmClose();
+    return shoppingCartController.getItems().size() == 0 || view.confirmClose();
   }
 
   void openSearchWindow() {
     new ArticleSelectorController(this::searchWindowResult)
-        .openIn(new SubWindow(getView().traceViewContainer()));
+        .openIn(new SubWindow(view.traceViewContainer()));
   }
 
   void searchWindowResult(Article article) {
-    getView().setOptArticleNo();
-    getView().loadArticleStats(article);
-    getView().setFocusOnAmount();
+    view.setOptArticleNo();
+    view.loadArticleStats(article);
+    view.setFocusOnAmount();
   }
 
   public void processBarcode(String barcode) {
@@ -393,7 +391,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
       long bc = Long.parseLong(barcode);
       searchByBarcode(bc);
     } catch (NumberFormatException e) {
-      getView().messageInvalidBarcode(barcode);
+      view.messageInvalidBarcode(barcode);
     }
   }
 
@@ -413,11 +411,11 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
 
   @Override
   public int hashCode() {
-    return Objects.hash(getView(), model, shoppingCartController);
+    return Objects.hash(view, model, shoppingCartController);
   }
 
   public void openUserInfo() {
     new UserInfoController(model.getSaleSession().getCustomer())
-        .openIn(new SubWindow(getView().traceViewContainer()));
+        .openIn(new SubWindow(view.traceViewContainer()));
   }
 }
