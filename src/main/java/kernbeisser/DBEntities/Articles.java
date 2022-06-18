@@ -1,5 +1,20 @@
 package kernbeisser.DBEntities;
 
+import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
@@ -10,22 +25,6 @@ import lombok.Cleanup;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.query.AuditEntity;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.text.DecimalFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class Articles {
 
@@ -154,14 +153,14 @@ public class Articles {
       EntityTransaction et = em.getTransaction();
       et.begin();
       return em.createQuery("select  i from Article i where name = :n", Article.class)
-              .setParameter("n", rawPrice.getName())
-              .getSingleResult();
+          .setParameter("n", rawPrice.getName())
+          .getSingleResult();
     } catch (NoResultException e) {
       ArticleConstants identifierEnum = ArticleConstants.CUSTOM_PRODUCT;
       ;
       AtomicReference<Supplier> supplier = new AtomicReference<>();
       VAT vat = VAT.LOW;
-      switch(rawPrice) {
+      switch (rawPrice) {
         case SOLIDARITY:
           supplier.set(Supplier.getSolidaritySupplier());
           identifierEnum = ArticleConstants.SOLIDARITY;
@@ -193,8 +192,8 @@ public class Articles {
       article.setSupplier(supplier.get());
       article.setSuppliersItemNumber(identifierEnum.getUniqueIdentifier());
       Access.runWithAccessManager(
-              AccessManager.NO_ACCESS_CHECKING,
-              () -> article.setSurchargeGroup(supplier.get().getOrPersistDefaultSurchargeGroup(em)));
+          AccessManager.NO_ACCESS_CHECKING,
+          () -> article.setSurchargeGroup(supplier.get().getOrPersistDefaultSurchargeGroup(em)));
       article.setShopRange(ShopRange.NOT_IN_RANGE);
       em.persist(article);
       em.flush();
@@ -332,13 +331,16 @@ public class Articles {
   }
 
   public static double calculateRetailPrice(
-      double netPrice, VAT vat, double surcharge, double discount, boolean preordered) throws NullPointerException{
+      double netPrice, VAT vat, double surcharge, double discount, boolean preordered)
+      throws NullPointerException {
     return netPrice
         * (1 + vat.getValue())
-        * (1 + surcharge * (preordered ? getContainerSurchargeReduction() : 1.0)) * (1 - discount / 100.);
+        * (1 + surcharge * (preordered ? getContainerSurchargeReduction() : 1.0))
+        * (1 - discount / 100.);
   }
 
-  public static double calculateArticleRetailPrice(Article article, double discount, boolean preordered) {
+  public static double calculateArticleRetailPrice(
+      Article article, double discount, boolean preordered) {
     return Tools.roundCurrency(
         calculateRetailPrice(
             article.getNetPrice(),

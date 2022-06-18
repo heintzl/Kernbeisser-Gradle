@@ -12,8 +12,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
@@ -228,7 +226,7 @@ public class ShoppingItem implements Serializable {
     if (hasContainerDiscount && this.weighAble) {
       this.itemNetPrice *= this.amount * this.metricUnits.getBaseFactor();
     }
-    this.itemRetailPrice = calculateItemRetailPrice(itemNetPrice);
+    setItemRetailPriceFromNetPrice();
     this.articleId = article.getId();
     this.articleRev = articleRev;
   }
@@ -248,9 +246,7 @@ public class ShoppingItem implements Serializable {
   }
 
   public static ShoppingItem createRawPriceProduct(
-      RawPrice rawPrice,
-      double price,
-      boolean hasContainerDiscount) {
+      RawPrice rawPrice, double price, boolean hasContainerDiscount) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       @Cleanup(value = "commit")
@@ -258,8 +254,7 @@ public class ShoppingItem implements Serializable {
       et.begin();
       ShoppingItem out =
           new ShoppingItem(
-              ObjectState.currentState(
-                  Articles.getOrCreateRawPriceArticle(rawPrice)),
+              ObjectState.currentState(Articles.getOrCreateRawPriceArticle(rawPrice)),
               0,
               hasContainerDiscount);
       if (hasContainerDiscount) {
@@ -278,25 +273,15 @@ public class ShoppingItem implements Serializable {
   }
 
   public static ShoppingItem createProduce(double price, boolean hasContainerDiscount) {
-    return createRawPriceProduct(
-        RawPrice.PRODUCE,
-        price,
-        hasContainerDiscount);
+    return createRawPriceProduct(RawPrice.PRODUCE, price, hasContainerDiscount);
   }
 
   public static ShoppingItem createBakeryProduct(double price, boolean hasContainerDiscount) {
-    return createRawPriceProduct(
-        RawPrice.BAKERY,
-        price,
-        hasContainerDiscount);
+    return createRawPriceProduct(RawPrice.BAKERY, price, hasContainerDiscount);
   }
 
   public static ShoppingItem createSolidaritySurcharge(double price, VAT vat, double surcharge) {
-    ShoppingItem solidarity =
-        createRawPriceProduct(
-            RawPrice.SOLIDARITY,
-            price,
-            false);
+    ShoppingItem solidarity = createRawPriceProduct(RawPrice.SOLIDARITY, price, false);
     solidarity.solidaritySurchargeItem = true;
     solidarity.vatValue = vat.getValue();
     solidarity.name =
@@ -315,11 +300,7 @@ public class ShoppingItem implements Serializable {
   }
 
   public static ShoppingItem createDeposit(double price) {
-    ShoppingItem deposit =
-        createRawPriceProduct(
-            RawPrice.DEPOSIT,
-            price,
-           false);
+    ShoppingItem deposit = createRawPriceProduct(RawPrice.DEPOSIT, price, false);
     deposit.name += price < 0 ? " zurück" : "";
     deposit.depositItem = true;
     return deposit;
@@ -426,13 +407,13 @@ public class ShoppingItem implements Serializable {
   }
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
-  public double calculatePreciseRetailPrice(double netPrice) {
-    return netPrice * (1 + vatValue) * (1 + surcharge) * (1 - discount / 100.);
+  public double calculatePreciseRetailPrice(double netPrice) throws NullPointerException {
+    return Articles.calculateRetailPrice(netPrice, vat, surcharge, discount, isContainerDiscount());
   }
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
-  public double calculateItemRetailPrice(double netPrice) {
-    return Tools.roundCurrency(calculatePreciseRetailPrice(netPrice));
+  public void setItemRetailPriceFromNetPrice() {
+    setItemRetailPrice(Tools.roundCurrency(calculatePreciseRetailPrice(itemNetPrice)));
   }
 
   public ShoppingItem createItemDeposit(int number, boolean isContainer) {
