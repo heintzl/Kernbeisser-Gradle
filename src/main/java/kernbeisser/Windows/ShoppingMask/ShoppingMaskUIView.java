@@ -98,7 +98,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   static Vector<Component> traversalOrder = new Vector<>(1);
   static FocusTraversal traversalPolicy;
   @Getter private boolean isPreordered = false;
-  private ShoppingItem currentItem;
 
   EnumSet<ArticleType> articleTypesWithSettablePrice;
   EnumSet<ArticleType> depositArticleTypes;
@@ -388,11 +387,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
   }
 
-  // TODO Remove
-  private boolean isCustomArticle(ShoppingItem item) {
-    return item.getKbNumber() == ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier();
-  }
-
   private String intToStringNot0(int value) {
     if (value == 0) return "";
     return Integer.toString(value);
@@ -449,19 +443,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     updateAllControls(currentArticleType);
   }
 
-  void loadItemStats(ShoppingItem shoppingItem) {
-    currentItem = shoppingItem;
-    isWeighable = shoppingItem.isWeighAble();
-    if (isCustomArticle(shoppingItem)) return;
-    String itemPriceUnits = shoppingItem.getPriceUnits().getShortName();
-    containerSize.setText(
-        new DecimalFormat("##.###")
-            .format(shoppingItem.getContainerSize() * (isWeighable ? 1000 : 1)));
-    containerUnit.setText(shoppingItem.getContainerUnits().getShortName());
-    deposit.setText(String.format("%.2f", shoppingItem.getSingleDeposit()));
-    updateAllControls(currentArticleType);
-  }
-
   private void recalculatePrice() {
     // Refactor => articlebased
     if (getKBArticleNumber() > 0 || isPreordered) {
@@ -487,7 +468,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     articleName.setText("Keinen Artikel gefunden!");
     itemMultiplierUnit.setText("");
     containerUnit.setText("");
-    currentItem = null;
   }
 
   void messageNoArticleFound() {
