@@ -75,7 +75,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
                 .withSorter(Column.NUMBER_SORTER),
             new CustomizableColumn<Article>(
                     "Verkaufspreis",
-                    e -> String.format("%.2f€", Articles.calculateArticleRetailPrice(e)))
+                    e -> String.format("%.2f€", Articles.calculateArticleRetailPrice(e, 0, false)))
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit()), RIGHT),

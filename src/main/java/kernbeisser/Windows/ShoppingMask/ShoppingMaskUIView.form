@@ -151,7 +151,7 @@
                       <text value="Verkaufspreis:"/>
                     </properties>
                   </component>
-                  <component id="bc220" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="price">
+                  <component id="bc220" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="retailPrice">
                     <constraints>
                       <grid row="7" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="5" bottom="0" right="5" weightx="0.3" weighty="0.0"/>
@@ -170,7 +170,7 @@
                       <text value="Menge:"/>
                     </properties>
                   </component>
-                  <component id="f8f5d" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="amount">
+                  <component id="f8f5d" class="kernbeisser.CustomComponents.TextFields.DoubleParseField" binding="itemMultiplier">
                     <constraints>
                       <grid row="8" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
@@ -208,7 +208,7 @@
                       <font size="16" style="0"/>
                     </properties>
                   </component>
-                  <component id="be8aa" class="javax.swing.JLabel" binding="priceUnit">
+                  <component id="be8aa" class="javax.swing.JLabel" binding="retailPriceUnit">
                     <constraints>
                       <grid row="7" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
@@ -219,7 +219,7 @@
                       <text value="€/kg"/>
                     </properties>
                   </component>
-                  <component id="6c207" class="javax.swing.JLabel" binding="amountUnit">
+                  <component id="6c207" class="javax.swing.JLabel" binding="itemMultiplierUnit">
                     <constraints>
                       <grid row="8" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
