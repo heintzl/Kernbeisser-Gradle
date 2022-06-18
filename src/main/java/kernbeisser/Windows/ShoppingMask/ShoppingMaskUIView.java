@@ -417,7 +417,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       double unitNetPrice =
           article.getNetPrice() * (isPreordered && !isWeighable ? article.getContainerSize() : 1.0);
       netPrice.setText(AccessCheckingField.UNSIGNED_CURRENCY_FORMER.toString(unitNetPrice));
-      retailPrice.setText(formattedPrice(controller.recalculatePrice(article, getDiscount(), isPreordered, false)));
+      retailPrice.setText(
+          formattedPrice(controller.recalculatePrice(article, getDiscount(), isPreordered, false)));
     } catch (NullPointerException e) {
       netPrice.setText("");
       retailPrice.setText("");
@@ -427,7 +428,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       String unit = MetricUnits.CONTAINER.getShortName();
       priceUnit += "/" + unit;
       itemMultiplierUnit.setText(unit);
-    } else if (getArticleType() == ArticleType.ARTICLE_NUMBER || getArticleType() == ArticleType.CUSTOM_PRODUCT){
+    } else if (getArticleType() == ArticleType.ARTICLE_NUMBER
+        || getArticleType() == ArticleType.CUSTOM_PRODUCT) {
       priceUnit += "/" + Articles.getPriceUnit(article).getShortName();
       itemMultiplierUnit.setText(Articles.getMultiplierUnit(article).getShortName());
     } else {
@@ -451,8 +453,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       Article article = controller.extractArticleFromUI();
       try {
         double retailPrice =
-            controller.recalculatePrice(
-                article, getDiscount(), isPreordered(), overWriteNetPrice);
+            controller.recalculatePrice(article, getDiscount(), isPreordered(), overWriteNetPrice);
         if (retailPrice <= 0) {
           throw new NullPointerException();
         }
@@ -883,7 +884,17 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           variablePercentage.requestFocusInWindow();
           disablePreordered();
         });
-    variablePercentage.addActionListener(e -> addToCart());
+    variablePercentage.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+              addToCart();
+            } else {
+              recalculateRetailPrice(false);
+            }
+          }
+        });
 
     editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
     editUser.addActionListener(e -> controller.openUserInfo());
@@ -925,6 +936,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       isPreordered = false;
       articleTypeInitialize(currentArticleType);
       articleNameOrVatChange();
+    } else {
+      recalculateRetailPrice(false);
     }
   }
 
