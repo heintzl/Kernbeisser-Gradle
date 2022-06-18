@@ -146,7 +146,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       loadArticleStats(controller.createCustomArticle(getSupplier()));
       if (isPreordered) {
         netPrice.setText(savedPrice);
-        recalculatePrice();
+        recalculateRetailPrice(false);
       } else {
         retailPrice.setText(savedPrice);
       }
@@ -173,7 +173,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   private void priceEntered(int keyCode) {
-    recalculatePrice();
+    recalculateRetailPrice(true);
     updateItemMultiplierControl(currentArticleType, isPreordered);
     if (itemMultiplier.isEnabled()) {
       itemMultiplier.selectAll();
@@ -417,22 +417,21 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       double unitNetPrice =
           article.getNetPrice() * (isPreordered && !isWeighable ? article.getContainerSize() : 1.0);
       netPrice.setText(AccessCheckingField.UNSIGNED_CURRENCY_FORMER.toString(unitNetPrice));
-      retailPrice.setText(
-          AccessCheckingField.UNSIGNED_CURRENCY_FORMER.toString(
-              controller.recalculatePrice(article, getDiscount(), isPreordered)
-                  * (isPreordered && !isWeighable ? article.getContainerSize() : 1.0)));
+      retailPrice.setText(formattedPrice(controller.recalculatePrice(article, getDiscount(), isPreordered, false)));
     } catch (NullPointerException e) {
       netPrice.setText("");
       retailPrice.setText("");
     }
-    String priceUnit = "€/";
+    String priceUnit = "€";
     if (isPreordered) {
       String unit = MetricUnits.CONTAINER.getShortName();
-      priceUnit += unit;
+      priceUnit += "/" + unit;
       itemMultiplierUnit.setText(unit);
-    } else {
-      priceUnit += Articles.getPriceUnit(article).getShortName();
+    } else if (getArticleType() == ArticleType.ARTICLE_NUMBER || getArticleType() == ArticleType.CUSTOM_PRODUCT){
+      priceUnit += "/" + Articles.getPriceUnit(article).getShortName();
       itemMultiplierUnit.setText(Articles.getMultiplierUnit(article).getShortName());
+    } else {
+      itemMultiplierUnit.setText("");
     }
     netPriceUnit.setText(priceUnit);
     retailPriceUnit.setText(priceUnit);
@@ -443,13 +442,17 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     updateAllControls(currentArticleType);
   }
 
-  private void recalculatePrice() {
-    // Refactor => articlebased
+  private String formattedPrice(double value) {
+    return AccessCheckingField.UNSIGNED_CURRENCY_FORMER.toString(value);
+  }
+
+  private void recalculateRetailPrice(boolean overWriteNetPrice) {
     if (getKBArticleNumber() > 0 || isPreordered) {
+      Article article = controller.extractArticleFromUI();
       try {
         double retailPrice =
             controller.recalculatePrice(
-                controller.extractArticleFromUI(), getDiscount(), isPreordered());
+                article, getDiscount(), isPreordered(), overWriteNetPrice);
         if (retailPrice <= 0) {
           throw new NullPointerException();
         }
@@ -817,7 +820,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
           @Override
           public void keyReleased(KeyEvent e) {
             if (netPrice.isEnabled()) {
-              recalculatePrice();
+              recalculateRetailPrice(false);
             }
             priceEntered(e.getKeyCode());
           }
