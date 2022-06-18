@@ -248,11 +248,8 @@ public class ShoppingItem implements Serializable {
   }
 
   public static ShoppingItem createRawPriceProduct(
-      String name,
+      RawPrice rawPrice,
       double price,
-      VAT vat,
-      int uniqueIdentifier,
-      Supplier supplier,
       boolean hasContainerDiscount) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
@@ -262,9 +259,7 @@ public class ShoppingItem implements Serializable {
       ShoppingItem out =
           new ShoppingItem(
               ObjectState.currentState(
-                  em.createQuery("select  i from Article i where name = :n", Article.class)
-                      .setParameter("n", name)
-                      .getSingleResult()),
+                  Articles.getOrCreateRawPriceArticle(rawPrice)),
               0,
               hasContainerDiscount);
       if (hasContainerDiscount) {
@@ -276,56 +271,31 @@ public class ShoppingItem implements Serializable {
       }
       out.setItemMultiplier((int) Math.round(price * 100.0));
       return out;
-    } catch (NoResultException e) {
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      Article article = new Article();
-      article.setName(name);
-      article.setKbNumber(uniqueIdentifier);
-      article.setMetricUnits(MetricUnits.NONE);
-      article.setVat(vat);
-      article.setSupplier(supplier);
-      article.setSuppliersItemNumber(uniqueIdentifier);
-      Access.runWithAccessManager(
-          AccessManager.NO_ACCESS_CHECKING,
-          () -> article.setSurchargeGroup(supplier.getOrPersistDefaultSurchargeGroup(em)));
-      article.setShopRange(ShopRange.NOT_IN_RANGE);
-      em.persist(article);
-      em.flush();
-      et.commit();
-      return createRawPriceProduct(
-          name, price, vat, uniqueIdentifier, supplier, hasContainerDiscount);
+    } catch (UnsupportedOperationException e) {
+      Tools.showUnexpectedErrorWarning(e);
+      return null;
     }
   }
 
   public static ShoppingItem createProduce(double price, boolean hasContainerDiscount) {
     return createRawPriceProduct(
-        RawPrice.PRODUCE.getName(),
+        RawPrice.PRODUCE,
         price,
-        VAT.LOW,
-        ArticleConstants.PRODUCE.getUniqueIdentifier(),
-        Supplier.getProduceSupplier(),
         hasContainerDiscount);
   }
 
   public static ShoppingItem createBakeryProduct(double price, boolean hasContainerDiscount) {
     return createRawPriceProduct(
-        RawPrice.BAKERY.getName(),
+        RawPrice.BAKERY,
         price,
-        VAT.LOW,
-        ArticleConstants.BAKERY.getUniqueIdentifier(),
-        Supplier.getBakerySupplier(),
         hasContainerDiscount);
   }
 
   public static ShoppingItem createSolidaritySurcharge(double price, VAT vat, double surcharge) {
     ShoppingItem solidarity =
         createRawPriceProduct(
-            RawPrice.SOLIDARITY.getName(),
+            RawPrice.SOLIDARITY,
             price,
-            vat,
-            ArticleConstants.SOLIDARITY.getUniqueIdentifier(),
-            Supplier.getSolidaritySupplier(),
             false);
     solidarity.solidaritySurchargeItem = true;
     solidarity.vatValue = vat.getValue();
@@ -347,12 +317,9 @@ public class ShoppingItem implements Serializable {
   public static ShoppingItem createDeposit(double price) {
     ShoppingItem deposit =
         createRawPriceProduct(
-            RawPrice.DEPOSIT.getName(),
+            RawPrice.DEPOSIT,
             price,
-            VAT.HIGH,
-            ArticleConstants.DEPOSIT.getUniqueIdentifier(),
-            Supplier.getDepositSupplier(),
-            false);
+           false);
     deposit.name += price < 0 ? " zurück" : "";
     deposit.depositItem = true;
     return deposit;

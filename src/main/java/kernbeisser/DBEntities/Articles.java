@@ -1,30 +1,8 @@
 package kernbeisser.DBEntities;
 
-import java.text.DecimalFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
-import kernbeisser.Enums.ArticleConstants;
-import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.VAT;
+import kernbeisser.Enums.*;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
@@ -32,6 +10,22 @@ import lombok.Cleanup;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.query.AuditEntity;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Articles {
 
@@ -151,6 +145,62 @@ public class Articles {
             .filter(Articles::articleIsActiveOffer)
             .findAny()
             .orElse(articles.stream().findFirst().orElse(null)));
+  }
+
+  public static Article getOrCreateRawPriceArticle(RawPrice rawPrice) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    try {
+      @Cleanup(value = "commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      return em.createQuery("select  i from Article i where name = :n", Article.class)
+              .setParameter("n", rawPrice.getName())
+              .getSingleResult();
+    } catch (NoResultException e) {
+      ArticleConstants identifierEnum = ArticleConstants.CUSTOM_PRODUCT;
+      ;
+      AtomicReference<Supplier> supplier = new AtomicReference<>();
+      VAT vat = VAT.LOW;
+      switch(rawPrice) {
+        case SOLIDARITY:
+          supplier.set(Supplier.getSolidaritySupplier());
+          identifierEnum = ArticleConstants.SOLIDARITY;
+          break;
+        case BAKERY:
+          supplier.set(Supplier.getBakerySupplier());
+          identifierEnum = ArticleConstants.BAKERY;
+          break;
+        case DEPOSIT:
+          supplier.set(Supplier.getDepositSupplier());
+          identifierEnum = ArticleConstants.DEPOSIT;
+          vat = VAT.HIGH;
+          break;
+        case PRODUCE:
+          supplier.set(Supplier.getProduceSupplier());
+          identifierEnum = ArticleConstants.PRODUCE;
+          break;
+        case ITEM_DEPOSIT:
+        case CONTAINER_DEPOSIT:
+          return getOrCreateRawPriceArticle(RawPrice.DEPOSIT);
+      }
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      Article article = new Article();
+      article.setName(rawPrice.getName());
+      article.setKbNumber(identifierEnum.getUniqueIdentifier());
+      article.setMetricUnits(MetricUnits.NONE);
+      article.setVat(vat);
+      article.setSupplier(supplier.get());
+      article.setSuppliersItemNumber(identifierEnum.getUniqueIdentifier());
+      Access.runWithAccessManager(
+              AccessManager.NO_ACCESS_CHECKING,
+              () -> article.setSurchargeGroup(supplier.get().getOrPersistDefaultSurchargeGroup(em)));
+      article.setShopRange(ShopRange.NOT_IN_RANGE);
+      em.persist(article);
+      em.flush();
+      et.commit();
+      return getOrCreateRawPriceArticle(rawPrice);
+    }
   }
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
@@ -282,19 +332,20 @@ public class Articles {
   }
 
   public static double calculateRetailPrice(
-      double netPrice, VAT vat, double surcharge, boolean preordered) {
+      double netPrice, VAT vat, double surcharge, double discount, boolean preordered) throws NullPointerException{
     return netPrice
         * (1 + vat.getValue())
-        * (1 + surcharge * (preordered ? getContainerSurchargeReduction() : 1.0));
+        * (1 + surcharge * (preordered ? getContainerSurchargeReduction() : 1.0)) * (1 - discount / 100.);
   }
 
-  public static double calculateArticleRetailPrice(Article article) {
+  public static double calculateArticleRetailPrice(Article article, double discount, boolean preordered) {
     return Tools.roundCurrency(
         calculateRetailPrice(
             article.getNetPrice(),
             article.getVat(),
             article.getSurchargeGroup().getSurcharge(),
-            false));
+            discount,
+            preordered));
   }
 
   public static Article createOfferArticle(
@@ -420,6 +471,31 @@ public class Articles {
         AccessManager.NO_ACCESS_CHECKING, () -> transformer.accept(article));
     em.persist(article);
     return article;
+  }
+
+  // for usage in
+  public static MetricUnits getMultiplierUnit(Article article) {
+    if (article.isWeighable()) {
+      return article.getMetricUnits();
+    } else {
+      return MetricUnits.PIECE;
+    }
+  }
+
+  public static MetricUnits getContainerUnits(Article article) {
+    MetricUnits unit = article.getMetricUnits();
+    if (!article.isWeighable() && unit != MetricUnits.NONE) {
+      return MetricUnits.PIECE;
+    }
+    return unit;
+  }
+
+  public static MetricUnits getPriceUnit(Article article) {
+    if (article.isWeighable()) {
+      return article.getMetricUnits().getDisplayUnit();
+    } else {
+      return MetricUnits.PIECE;
+    }
   }
 
   public static String getContentAmount(Article article) {

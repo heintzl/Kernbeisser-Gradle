@@ -342,19 +342,15 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
 
     if (type == ArticleType.PRODUCE || type == ArticleType.BAKED_GOODS) {
-      if (type == ArticleType.PRODUCE) {
-        loadItemStats(Objects.requireNonNull(ShoppingItem.createProduce(0.0, isPreordered)));
-        this.articleName.setText("Obst & Gemüse");
-      } else {
-        loadItemStats(Objects.requireNonNull(ShoppingItem.createBakeryProduct(0.0, isPreordered)));
-        this.articleName.setText("Backwaren");
-      }
+      RawPrice rawPrice = type == ArticleType.PRODUCE ? RawPrice.PRODUCE : RawPrice.BAKERY;
+      loadArticleStats(Articles.getOrCreateRawPriceArticle(rawPrice));
+      this.articleName.setText(rawPrice.getName());
       if (isPreordered) {
         netPrice.requestFocusInWindow();
         netPrice.selectAll();
       } else {
-        price.requestFocusInWindow();
-        price.selectAll();
+        retailPrice.requestFocusInWindow();
+        retailPrice.selectAll();
       }
     } else if (type == ArticleType.DEPOSIT) {
       this.articleName.setText("Pfand-Behälter");
