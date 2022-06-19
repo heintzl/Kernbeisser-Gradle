@@ -198,7 +198,6 @@ public class ShoppingItem implements Serializable {
   public ShoppingItem(Article article, int articleRev, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
     this.amount = article.getAmount();
-    this.itemNetPrice = article.getNetPrice();
     this.specialOffer = article.isOffer();
     this.name = (specialOffer ? getOfferPrefix() : "") + article.getName();
     this.metricUnits = article.getMetricUnits();
@@ -223,9 +222,7 @@ public class ShoppingItem implements Serializable {
     this.containerSize = article.getContainerSize();
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
-    if (hasContainerDiscount && this.weighAble) {
-      this.itemNetPrice *= this.amount * this.metricUnits.getBaseFactor();
-    }
+    this.itemNetPrice = Articles.calculateUnroundedArticleNetPrice(article, hasContainerDiscount);
     setItemRetailPriceFromNetPrice();
     this.articleId = article.getId();
     this.articleRev = articleRev;
@@ -247,29 +244,20 @@ public class ShoppingItem implements Serializable {
 
   public static ShoppingItem createRawPriceProduct(
       RawPrice rawPrice, double price, boolean hasContainerDiscount) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      @Cleanup(value = "commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      ShoppingItem out =
-          new ShoppingItem(
-              ObjectState.currentState(Articles.getOrCreateRawPriceArticle(rawPrice)),
-              0,
-              hasContainerDiscount);
-      if (hasContainerDiscount) {
-        out.setItemNetPrice(0.01);
-        out.setItemRetailPrice(0.01 * out.calculatePreciseRetailPrice(1.0));
-      } else {
-        out.setItemRetailPrice(0.01);
-        out.setItemNetPrice(0.01 / out.calculatePreciseRetailPrice(1.0));
-      }
-      out.setItemMultiplier((int) Math.round(price * 100.0));
-      return out;
-    } catch (UnsupportedOperationException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      return null;
+    ShoppingItem out =
+        new ShoppingItem(
+            ObjectState.currentState(Articles.getOrCreateRawPriceArticle(rawPrice)),
+            0,
+            hasContainerDiscount);
+    if (hasContainerDiscount) {
+      out.setItemNetPrice(0.01);
+      out.setItemRetailPrice(0.01 * out.calculatePreciseRetailPrice(1.0));
+    } else {
+      out.setItemRetailPrice(0.01);
+      out.setItemNetPrice(0.01 / out.calculatePreciseRetailPrice(1.0));
     }
+    out.setItemMultiplier((int) Math.round(price * 100.0));
+    return out;
   }
 
   public static ShoppingItem createProduce(double price, boolean hasContainerDiscount) {

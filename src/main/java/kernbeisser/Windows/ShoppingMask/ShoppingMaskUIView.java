@@ -414,11 +414,10 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
     setVat(article.getVat());
     try {
-      double unitNetPrice =
-          article.getNetPrice() * (isPreordered && !isWeighable ? article.getContainerSize() : 1.0);
-      netPrice.setText(AccessCheckingField.UNSIGNED_CURRENCY_FORMER.toString(unitNetPrice));
+      netPrice.setText(formattedPrice(controller.getUnitNetPrice(article, isPreordered)));
       retailPrice.setText(
-          formattedPrice(controller.recalculatePrice(article, getDiscount(), isPreordered, false)));
+          formattedPrice(
+              controller.recalculateRetailPrice(article, getDiscount(), isPreordered, false)));
     } catch (NullPointerException e) {
       netPrice.setText("");
       retailPrice.setText("");
@@ -453,7 +452,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
       Article article = controller.extractArticleFromUI();
       try {
         double retailPrice =
-            controller.recalculatePrice(article, getDiscount(), isPreordered(), overWriteNetPrice);
+            controller.recalculateRetailPrice(
+                article, getDiscount(), isPreordered(), overWriteNetPrice);
         if (retailPrice <= 0) {
           throw new NullPointerException();
         }
