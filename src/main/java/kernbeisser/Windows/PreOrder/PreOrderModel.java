@@ -108,13 +108,13 @@ public class PreOrderModel implements IModel<PreOrderController> {
         .getResultList();
   }
 
-  static double containerNetPrice(Article article) {
-    return ShoppingItem.displayOnlyShoppingItem(article, 0, true).getItemNetPrice()
+  static double containerNetPrice(Article article) throws NullPointerException {
+    return Articles.calculateArticleNetPrice(article, true)
         * (article.isWeighable() ? 1 : article.getContainerSize());
   }
 
-  static double containerRetailPrice(Article article) {
-    return ShoppingItem.displayOnlyShoppingItem(article, 0, true).getItemRetailPrice()
+  static double containerRetailPrice(Article article) throws NullPointerException {
+    return Articles.calculateArticleRetailPrice(article, 0, true)
         * (article.isWeighable() ? 1 : article.getContainerSize());
   }
 

@@ -339,11 +339,22 @@ public class Articles {
         * (1 - discount / 100.);
   }
 
+  public static double calculateUnroundedArticleNetPrice(Article article, boolean preordered) {
+    return article.getNetPrice()
+        * (preordered && article.isWeighable()
+            ? article.getAmount() * article.getMetricUnits().getBaseFactor()
+            : 1.0);
+  }
+
+  public static double calculateArticleNetPrice(Article article, boolean preordered) {
+    return Tools.roundCurrency(calculateUnroundedArticleNetPrice(article, preordered));
+  }
+
   public static double calculateArticleRetailPrice(
       Article article, double discount, boolean preordered) {
     return Tools.roundCurrency(
         calculateRetailPrice(
-            article.getNetPrice(),
+            calculateUnroundedArticleNetPrice(article, preordered),
             article.getVat(),
             article.getSurchargeGroup().getSurcharge(),
             discount,

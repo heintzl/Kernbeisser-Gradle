@@ -186,7 +186,12 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
     }
   }
 
-  public Double recalculatePrice(
+  public double getUnitNetPrice(Article article, boolean preordered) throws NullPointerException {
+    return Articles.calculateArticleNetPrice(article, preordered)
+        * (preordered && !article.isWeighable() ? article.getContainerSize() : 1.0);
+  }
+
+  public Double recalculateRetailPrice(
       Article article, double discount, boolean preordered, boolean overwriteNetPrice)
       throws NullPointerException {
     if (overwriteNetPrice) {
