@@ -164,18 +164,23 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void pasteDataInView(Article articleKornkraft, boolean isByShopNumber) {
+    selectedArticle = articleKornkraft;
     var view = getView();
     view.setContainerSize(Articles.getContentAmount(articleKornkraft));
-    view.setNetPrice(PreOrderModel.containerNetPrice(articleKornkraft));
-    view.setSellingPrice(
-        String.format("%.2f€", PreOrderModel.containerRetailPrice(articleKornkraft)));
     view.setItemName(articleKornkraft.getName());
     if (isByShopNumber && Articles.isKkArticle(articleKornkraft)) {
       view.setKkNumber(articleKornkraft.getSuppliersItemNumber());
     } else {
       view.setShopNumber(articleKornkraft.getKbNumber());
     }
-    selectedArticle = articleKornkraft;
+    try {
+      view.setNetPrice(PreOrderModel.containerNetPrice(articleKornkraft));
+      view.setSellingPrice(
+          String.format("%.2f€", PreOrderModel.containerRetailPrice(articleKornkraft)));
+    } catch (NullPointerException e) {
+      view.setNetPrice(0.00);
+      view.setSellingPrice("0.00");
+    }
   }
 
   private PreOrder obtainFromView() throws InvalidValue, NoResultException {
