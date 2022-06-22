@@ -1,0 +1,82 @@
+Index: src/main/java/kernbeisser/Windows/AccountingReports/AccountingReportsView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package kernbeisser.Windows.AccountingReports;\r\n\r\nimport com.github.lgooddatepicker.components.DatePicker;\r\nimport com.github.lgooddatepicker.components.DatePickerSettings;\r\nimport java.time.Instant;\r\nimport java.time.LocalDate;\r\nimport java.time.ZoneId;\r\nimport java.util.*;\r\nimport javax.swing.*;\r\nimport kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;\r\nimport kernbeisser.DBEntities.Purchase;\r\nimport kernbeisser.DBEntities.Transaction;\r\nimport kernbeisser.DBEntities.User;\r\nimport kernbeisser.Enums.ExportTypes;\r\nimport kernbeisser.Enums.StatementType;\r\nimport kernbeisser.Exeptions.NoTransactionsFoundException;\r\nimport kernbeisser.Useful.Date;\r\nimport kernbeisser.Windows.MVC.IView;\r\nimport kernbeisser.Windows.MVC.Linked;\r\nimport lombok.Getter;\r\nimport lombok.var;\r\nimport org.jetbrains.annotations.NotNull;\r\n\r\npublic class AccountingReportsView extends JDialog implements IView<AccountingReportsController> {\r\n\r\n  private JButton cancel;\r\n  @Getter private JComboBox<ExportTypes> exportType;\r\n  private JButton submit;\r\n  private DatePicker tillRollStartDate;\r\n  private DatePicker tillRollEndDate;\r\n  private JPanel main;\r\n  private JRadioButton optTillRoll;\r\n  @Getter private JRadioButton optAccountingReport;\r\n  private AdvancedComboBox<Purchase> startBon;\r\n  private AdvancedComboBox<Purchase> endBon;\r\n  private JRadioButton optUserBalance;\r\n  private JCheckBox userBalanceWithNames;\r\n  private JCheckBox accountingReportWithNames;\r\n  private JRadioButton optKeyUserList;\r\n  private JComboBox<String> userKeySortOrder;\r\n  private JRadioButton optTransactionStatement;\r\n  private AdvancedComboBox<User> user;\r\n  private JComboBox<StatementType> transactionStatementType;\r\n  private JRadioButton optLast;\r\n  private JRadioButton optCurrent;\r\n  private JRadioButton optPermissionHolders;\r\n  private JCheckBox permissionHoldersWithKeys;\r\n  private JComboBox<String> accountingReportNo;\r\n  private Map<JComponent, JRadioButton> optionalComponents;\r\n\r\n  @Linked private AccountingReportsController controller;\r\n\r\n  Instant getDateValue(DatePicker comp) {\r\n    return Instant.from(comp.getDate().atStartOfDay(ZoneId.systemDefault()));\r\n  }\r\n\r\n  ExportTypes getExportType() {\r\n    return (ExportTypes) exportType.getSelectedItem();\r\n  }\r\n\r\n  void submit(AccountingReportsController controller) {\r\n    if (optTillRoll.isSelected()) {\r\n      controller.exportTillroll(getDateValue(tillRollStartDate), getDateValue(tillRollEndDate));\r\n    } else if (optAccountingReport.isSelected()) {\r\n      controller.exportAccountingReport(\r\n          Integer.parseInt(((String) accountingReportNo.getSelectedItem()).replace(\" (neu)\", \"\")),\r\n          accountingReportWithNames.isSelected());\r\n    } else if (optUserBalance.isSelected()) {\r\n      controller.exportUserBalance(userBalanceWithNames.isSelected());\r\n    } else if (optKeyUserList.isSelected()) {\r\n      controller.exportKeyUserList(userKeySortOrder.getSelectedItem().toString());\r\n    } else if (optTransactionStatement.isSelected()) {\r\n      controller.exportTransactionStatement(\r\n          user.getSelected().orElse(null),\r\n          (StatementType) transactionStatementType.getSelectedItem(),\r\n          optCurrent.isSelected());\r\n    } else if (optPermissionHolders.isSelected()) {\r\n      controller.exportPermissionHolders(permissionHoldersWithKeys.isSelected());\r\n    }\r\n  }\r\n\r\n  public void setUser(Collection<User> allUser) {\r\n    user.removeAllItems();\r\n    allUser.forEach(user::addItem);\r\n  }\r\n\r\n  private void enableComponents() {\r\n    optionalComponents.forEach((c, opt) -> c.setEnabled(opt.isSelected()));\r\n  }\r\n\r\n  @Override\r\n  public void initialize(AccountingReportsController controller) {\r\n    optionalComponents = new HashMap<>();\r\n    optionalComponents.put(accountingReportNo, optAccountingReport);\r\n    optionalComponents.put(accountingReportWithNames, optAccountingReport);\r\n    optionalComponents.put(tillRollStartDate, optTillRoll);\r\n    optionalComponents.put(tillRollEndDate, optTillRoll);\r\n    optionalComponents.put(userBalanceWithNames, optUserBalance);\r\n    optionalComponents.put(user, optTransactionStatement);\r\n    optionalComponents.put(optLast, optTransactionStatement);\r\n    optionalComponents.put(optCurrent, optTransactionStatement);\r\n    optionalComponents.put(transactionStatementType, optTransactionStatement);\r\n    optionalComponents.put(userKeySortOrder, optKeyUserList);\r\n    optionalComponents.put(permissionHoldersWithKeys, optPermissionHolders);\r\n\r\n    cancel.addActionListener(e -> back());\r\n    submit.addActionListener(e -> submit(controller));\r\n    ExportTypes[] exportTypes = controller.getExportTypes();\r\n    for (ExportTypes t : exportTypes) {\r\n      exportType.addItem(t);\r\n    }\r\n    for (String s : controller.getUserKeySortOrders()) {\r\n      userKeySortOrder.addItem(s);\r\n    }\r\n    optCurrent.setSelected(true);\r\n\r\n    var now = LocalDate.now(ZoneId.systemDefault());\r\n    tillRollStartDate.setDate(now);\r\n    tillRollEndDate.setDate(now);\r\n\r\n    int maxReportNo = (int) Transaction.getLastReportNo();\r\n    for (int i = 1; i <= maxReportNo; i++) {\r\n      accountingReportNo.addItem(Integer.toString(i));\r\n    }\r\n    accountingReportNo.setSelectedIndex(maxReportNo - 1);\r\n    try {\r\n      Transaction.getUnreportedTransactions();\r\n      accountingReportNo.addItem((maxReportNo + 1) + \" (neu)\");\r\n    } catch (NoTransactionsFoundException ignored) {\r\n    }\r\n\r\n    transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));\r\n    optionalComponents.values().stream()\r\n        .distinct()\r\n        .forEach(c -> c.addActionListener(e -> enableComponents()));\r\n    enableComponents();\r\n  }\r\n\r\n  @Override\r\n  public @NotNull JComponent getContent() {\r\n    return main;\r\n  }\r\n\r\n  public void messageNoItems(String title) {\r\n    JOptionPane.showMessageDialog(\r\n        getContent(),\r\n        \"Im angegebenen Zeitraum liegen keine Umsätze vor.\",\r\n        title,\r\n        JOptionPane.INFORMATION_MESSAGE);\r\n  }\r\n\r\n  public void messageEmptyReportNo(long reportNo) {\r\n    JOptionPane.showMessageDialog(\r\n        getContent(),\r\n        \"Zur Berichtsnummer \" + reportNo + \" liegen keine Umsätze vor.\",\r\n        \"Umsatzbericht\",\r\n        JOptionPane.INFORMATION_MESSAGE);\r\n  }\r\n\r\n  public void messageNoAccountingReport(boolean b) {\r\n    JOptionPane.showMessageDialog(\r\n        getContent(),\r\n        \"Der Bericht wurde \" + (b ? \"\" : \"nicht\") + \" erfolgreich erstellt\",\r\n        \"Umsatzbericht\",\r\n        JOptionPane.INFORMATION_MESSAGE);\r\n  }\r\n\r\n  public void messageNotImplemented(ExportTypes exportType) {\r\n    JOptionPane.showMessageDialog(\r\n        getContent(),\r\n        exportType.getName() + \": Diese Methode ist noch nicht verfügbar!\",\r\n        \"Ausgabefehler\",\r\n        JOptionPane.WARNING_MESSAGE);\r\n  }\r\n\r\n  @Override\r\n  public String getTitle() {\r\n    return \"Buchhaltungsberichte\";\r\n  }\r\n\r\n  private String BonNoAndDate(Purchase p) {\r\n    return p.getId() + \" (\" + Date.INSTANT_DATE.format(p.getCreateDate()) + \")\";\r\n  }\r\n\r\n  private void createUIComponents() {\r\n    user = new AdvancedComboBox<>(User::getFullName);\r\n    tillRollStartDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));\r\n    tillRollEndDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));\r\n  }\r\n\r\n  public void messageDateValues() {\r\n    JOptionPane.showMessageDialog(\r\n        getContent(),\r\n        \"Das Startdatum muss vor dem Enddatum liegen!\",\r\n        \"Ungütlige Eingabe\",\r\n        JOptionPane.WARNING_MESSAGE);\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/kernbeisser/Windows/AccountingReports/AccountingReportsView.java b/src/main/java/kernbeisser/Windows/AccountingReports/AccountingReportsView.java
+--- a/src/main/java/kernbeisser/Windows/AccountingReports/AccountingReportsView.java	(revision c503879f0d686b5b656088372daca740eb0070c9)
++++ b/src/main/java/kernbeisser/Windows/AccountingReports/AccountingReportsView.java	(date 1647197694000)
+@@ -31,8 +31,6 @@
+   private JPanel main;
+   private JRadioButton optTillRoll;
+   @Getter private JRadioButton optAccountingReport;
+-  private AdvancedComboBox<Purchase> startBon;
+-  private AdvancedComboBox<Purchase> endBon;
+   private JRadioButton optUserBalance;
+   private JCheckBox userBalanceWithNames;
+   private JCheckBox accountingReportWithNames;
+@@ -46,7 +44,8 @@
+   private JRadioButton optPermissionHolders;
+   private JCheckBox permissionHoldersWithKeys;
+   private JComboBox<String> accountingReportNo;
+-  private Map<JComponent, JRadioButton> optionalComponents;
++    private JComboBox<String> userBalanceReportNo;
++    private Map<JComponent, JRadioButton> optionalComponents;
+ 
+   @Linked private AccountingReportsController controller;
+ 
+@@ -63,10 +62,17 @@
+       controller.exportTillroll(getDateValue(tillRollStartDate), getDateValue(tillRollEndDate));
+     } else if (optAccountingReport.isSelected()) {
+       controller.exportAccountingReport(
+-          Integer.parseInt(((String) accountingReportNo.getSelectedItem()).replace(" (neu)", "")),
++          Long.parseLong(((String) accountingReportNo.getSelectedItem()).replace(" (neu)", "")),
+           accountingReportWithNames.isSelected());
+     } else if (optUserBalance.isSelected()) {
+-      controller.exportUserBalance(userBalanceWithNames.isSelected());
++      String selectedReport = (String) userBalanceReportNo.getSelectedItem();
++      long reportNo;
++      if (selectedReport.contains("(aktuell)")) {
++        reportNo = -1;
++      } else {
++        reportNo = Long.parseLong(selectedReport);
++      }
++      controller.exportUserBalance(reportNo, userBalanceWithNames.isSelected());
+     } else if (optKeyUserList.isSelected()) {
+       controller.exportKeyUserList(userKeySortOrder.getSelectedItem().toString());
+     } else if (optTransactionStatement.isSelected()) {
+@@ -96,6 +102,7 @@
+     optionalComponents.put(tillRollStartDate, optTillRoll);
+     optionalComponents.put(tillRollEndDate, optTillRoll);
+     optionalComponents.put(userBalanceWithNames, optUserBalance);
++    optionalComponents.put(userBalanceReportNo, optUserBalance);
+     optionalComponents.put(user, optTransactionStatement);
+     optionalComponents.put(optLast, optTransactionStatement);
+     optionalComponents.put(optCurrent, optTransactionStatement);
+@@ -119,15 +126,21 @@
+     tillRollEndDate.setDate(now);
+ 
+     int maxReportNo = (int) Transaction.getLastReportNo();
+-    for (int i = 1; i <= maxReportNo; i++) {
++    for (int i = 1; i <= maxReportNo - 1; i++) {
+       accountingReportNo.addItem(Integer.toString(i));
++      userBalanceReportNo.addItem(Integer.toString(i));
+     }
+-    accountingReportNo.setSelectedIndex(maxReportNo - 1);
++    accountingReportNo.addItem(Integer.toString(maxReportNo));
+     try {
+       Transaction.getUnreportedTransactions();
+       accountingReportNo.addItem((maxReportNo + 1) + " (neu)");
+-    } catch (NoTransactionsFoundException ignored) {
++      userBalanceReportNo.addItem(Integer.toString(maxReportNo));
++      userBalanceReportNo.addItem("(aktuell)");
++    } catch (NoTransactionsFoundException e) {
++      userBalanceReportNo.addItem(maxReportNo + " (aktuell)");
+     }
++    accountingReportNo.setSelectedIndex(maxReportNo - 1);
++    userBalanceReportNo.setSelectedIndex(maxReportNo - 1);
+ 
+     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));
+     optionalComponents.values().stream()

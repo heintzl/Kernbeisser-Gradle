@@ -140,11 +140,14 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   private void supplierChange() {
+    if (getSupplier() == null) {
+      return;
+    }
     updateAllControls(currentArticleType);
     if (getArticleType() == ArticleType.CUSTOM_PRODUCT) {
       String savedPrice = isPreordered ? netPrice.getText() : retailPrice.getText();
       loadArticleStats(controller.createCustomArticle(getSupplier()));
-      if (isPreordered) {
+      if (isPreordered && !savedPrice.isEmpty()) {
         netPrice.setText(savedPrice);
         recalculateRetailPrice(false);
       } else {
@@ -173,7 +176,6 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   }
 
   private void priceEntered(int keyCode) {
-    recalculateRetailPrice(true);
     updateItemMultiplierControl(currentArticleType, isPreordered);
     if (itemMultiplier.isEnabled()) {
       itemMultiplier.selectAll();
@@ -820,8 +822,8 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
         new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            if (netPrice.isEnabled()) {
-              recalculateRetailPrice(false);
+            if (netPrice.isEnabled() && getNetPrice() > 0.0) {
+              recalculateRetailPrice(true);
             }
             priceEntered(e.getKeyCode());
           }

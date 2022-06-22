@@ -195,7 +195,9 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
       Article article, double discount, boolean preordered, boolean overwriteNetPrice)
       throws NullPointerException {
     if (overwriteNetPrice) {
-      article.setNetPrice(view.getNetPrice());
+      article.setNetPrice(
+          view.getNetPrice()
+              / (Articles.getSafeAmount(article) * article.getMetricUnits().getBaseFactor()));
     }
     return Articles.calculateArticleRetailPrice(article, discount, preordered)
         * (preordered && !article.isWeighable() && !overwriteNetPrice
@@ -225,6 +227,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
       article.setSupplier(supplier);
       article.setSurchargeGroup(
           Objects.requireNonNull(supplier).getOrPersistDefaultSurchargeGroup());
+      article.setMetricUnits(MetricUnits.PIECE);
     }
     return article;
   }
