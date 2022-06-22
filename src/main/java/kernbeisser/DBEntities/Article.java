@@ -160,8 +160,8 @@ public final class Article {
 
   @JoinColumn(nullable = false)
   @ManyToOne
-  @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_READ)})
-  @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SUPPLIER_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SURCHARGE_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SURCHARGE_WRITE)})
   private SurchargeGroup surchargeGroup;
 
   @Column(nullable = false)
