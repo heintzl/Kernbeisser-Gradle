@@ -333,16 +333,13 @@ public class Articles {
   public static double calculateRetailPrice(
       double netPrice, VAT vat, double surcharge, double discount, boolean preordered)
       throws NullPointerException {
-    return netPrice
-        * (1 + vat.getValue())
-        * (1 + surcharge * (preordered ? getContainerSurchargeReduction() : 1.0))
-        * (1 - discount / 100.);
+    return netPrice * (1 + vat.getValue()) * (1 + surcharge) * (1 - discount / 100.);
   }
 
   public static double calculateUnroundedArticleNetPrice(Article article, boolean preordered) {
     return article.getNetPrice()
         * (preordered && article.isWeighable()
-            ? article.getAmount() * article.getMetricUnits().getBaseFactor()
+            ? getSafeAmount(article) * article.getMetricUnits().getBaseFactor()
             : 1.0);
   }
 
@@ -356,7 +353,8 @@ public class Articles {
         calculateRetailPrice(
             calculateUnroundedArticleNetPrice(article, preordered),
             article.getVat(),
-            article.getSurchargeGroup().getSurcharge(),
+            article.getSurchargeGroup().getSurcharge()
+                * (preordered ? getContainerSurchargeReduction() : 1.0),
             discount,
             preordered));
   }
@@ -486,7 +484,14 @@ public class Articles {
     return article;
   }
 
-  // for usage in
+  public static int getSafeAmount(Article article) {
+    int amount = article.getAmount();
+    if (amount == 0) {
+      return 1;
+    }
+    return Math.abs(amount);
+  }
+
   public static MetricUnits getMultiplierUnit(Article article) {
     if (article.isWeighable()) {
       return article.getMetricUnits();

@@ -197,7 +197,7 @@ public class ShoppingItem implements Serializable {
    */
   public ShoppingItem(Article article, int articleRev, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
-    this.amount = article.getAmount();
+    this.amount = Articles.getSafeAmount(article);
     this.specialOffer = article.isOffer();
     this.name = (specialOffer ? getOfferPrefix() : "") + article.getName();
     this.metricUnits = article.getMetricUnits();
