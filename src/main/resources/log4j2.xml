@@ -6,20 +6,28 @@
     <Console name="Console-Appender" target="SYSTEM_OUT">
       <PatternLayout>
         <pattern>
-          [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+          [%-5level] %d{HH:mm:ss.SSS} [%t] %c{1} - %msg%n
         </pattern>>
       </PatternLayout>
     </Console>
+    <RollingRandomAccessFile name="RollingFile-Appender" fileName="logs/log.log"
+      filePattern="logs/oldLog-%i.log">
+      <PatternLayout>
+        <pattern>
+          [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+        </pattern>>
+      </PatternLayout>
+      <RegexFilter regex=".*(User with user id|ERROR|Exception).*"  onMatch="ACCEPT" onMismatch="DENY"/>
+      <Policies>
+        <OnStartupTriggeringPolicy minSize="100000" />
+      </Policies>
+      <DefaultRolloverStrategy max="30"/>
+    </RollingRandomAccessFile>
   </Appenders>
   <Loggers>
-    <Logger name="org.hibernate.SQL" level="info" additivity="false">
-      <AppenderRef ref="Console-Appender"/>
-    </Logger>
-    <Logger name="org.hibernate.type.descriptor.sql" level="debug" additivity="false">
-      <AppenderRef ref="Console-Appender"/>
-    </Logger>
     <Root level="info">
       <AppenderRef ref="Console-Appender"/>
+      <AppenderRef ref="RollingFile-Appender"/>
     </Root>
   </Loggers>
 </Configuration>

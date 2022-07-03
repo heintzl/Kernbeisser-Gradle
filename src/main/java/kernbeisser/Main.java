@@ -39,7 +39,12 @@ public class Main {
    * sets the Look and Feel to Windows standard, sets the Image path, checks all needed Tables and
    * PriceLists and as least shows the LogIn Window
    */
+  private static void logUncaughtException(Thread t, Throwable e) {
+    logger.error(e.toString(), e);
+  }
+
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
+    Thread.setDefaultUncaughtExceptionHandler(Main::logUncaughtException);
     Config.safeFile();
     Locale.setDefault(Locale.GERMAN);
     logger.info("Free memory at start " + Runtime.getRuntime().freeMemory() / 1048576 + "MB");
