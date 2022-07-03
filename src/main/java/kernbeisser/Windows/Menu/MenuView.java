@@ -81,6 +81,7 @@ public class MenuView implements IView<MenuController> {
   private JButton grantCashierRole;
   private JButton beginnInventory;
   private JPanel menugroupMyAccount;
+  private ControllerButton internalTransaction;
 
   @Override
   public void initialize(MenuController controller) {
@@ -248,6 +249,12 @@ public class MenuView implements IView<MenuController> {
             () ->
                 new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
             TransactionController.class);
+    internalTransaction =
+        new ControllerButton(
+            controller::getInternalTransactionController,
+            TransactionController.class,
+            Controller::openTab,
+            false);
     permissionAssignment =
         new ControllerButton(
             PermissionAssignmentController::new, PermissionAssignmentController.class);
