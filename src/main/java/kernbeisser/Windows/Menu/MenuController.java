@@ -60,6 +60,11 @@ public class MenuController extends Controller<MenuView, MenuModel> {
     return new TransactionController(LogInModel.getLoggedIn(), TransactionType.PAYIN);
   }
 
+  @Key(PermissionKey.ACTION_TRANSACTION_FROM_OTHER)
+  public TransactionController getInternalTransactionController() {
+    return new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED);
+  }
+
   @Key(PermissionKey.ACTION_OPEN_DB_LOG_IN)
   public DBLogInController getDBLoginController() {
     return new DBLogInController();

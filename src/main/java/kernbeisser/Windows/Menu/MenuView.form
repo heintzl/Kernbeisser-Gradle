@@ -96,9 +96,9 @@
                     </constraints>
                     <properties>
                       <font/>
-                      <label value="Guthaben überweisen"/>
+                      <label value="Guthaben an Andere übertragen"/>
                       <requestFocusEnabled value="false"/>
-                      <text value="Guthaben überweisen"/>
+                      <text value="Guthaben an Andere übertragen"/>
                     </properties>
                   </component>
                   <component id="326da" class="kernbeisser.CustomComponents.ControllerButton" binding="changePassword" custom-create="true">
@@ -113,7 +113,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="85225" layout-manager="GridLayoutManager" row-count="12" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="85225" layout-manager="GridLayoutManager" row-count="13" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="10" left="10" bottom="10" right="10"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -195,7 +195,7 @@
                   </component>
                   <vspacer id="6d71b">
                     <constraints>
-                      <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
                   <component id="32155" class="kernbeisser.CustomComponents.ControllerButton" binding="offerManagement" custom-create="true">
@@ -291,7 +291,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="df58a" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="df58a" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="10" left="10" bottom="10" right="10"/>
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -313,7 +313,7 @@
                   </component>
                   <vspacer id="94752">
                     <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
                   <component id="b9e3c" class="kernbeisser.CustomComponents.ControllerButton" binding="doTransactionPayIn" custom-create="true">
@@ -340,11 +340,22 @@
                   </component>
                   <component id="3bdcd" class="kernbeisser.CustomComponents.ControllerButton" binding="editJobs" custom-create="true" default-binding="true">
                     <constraints>
-                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font/>
                       <text value="Jobs bearbeiten"/>
+                    </properties>
+                  </component>
+                  <component id="6c420" class="kernbeisser.CustomComponents.ControllerButton" binding="internalTransaction" custom-create="true">
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <label value="Sonderzahlungen und interne Überweisungen"/>
+                      <requestFocusEnabled value="false"/>
+                      <text value="Sonderzahlungen und interne Überweisungen"/>
                     </properties>
                   </component>
                 </children>
