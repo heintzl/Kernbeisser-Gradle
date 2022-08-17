@@ -3,9 +3,7 @@ package kernbeisser.Reports;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -33,15 +31,19 @@ public class UserBalanceReport extends Report {
 
   private List<UserGroup> getUserGroups() {
     List<UserGroup> userGroups;
+    final Map<UserGroup, Double> historicUserGroupValues =
+        reportNo == -1
+            ? new HashMap<>()
+            : UserGroup.getValueMapAtTransactionId(Transaction.getLastIdOfReportNo(reportNo), true);
+    ;
     if (reportNo == -1) {
       userGroups = UserGroup.getActiveUserGroups();
     } else {
-      userGroups =
-          UserGroup.getUserGroupsAtTransactionId(Transaction.getLastIdOfReportNo(reportNo));
+      userGroups = new ArrayList<>(historicUserGroupValues.keySet());
     }
     return userGroups.stream()
         .filter(e -> !(e.getValue() == 0.0 && e.getMembers().stream().allMatch(User::isUnreadable)))
-        .map(ug -> ug.withMembersAsStyledString(this.withNames))
+        .map(ug -> ug.withMembersAsStyledString(this.withNames, historicUserGroupValues))
         .sorted((u1, u2) -> u1.getMembersAsString().compareToIgnoreCase(u2.getMembersAsString()))
         .collect(Collectors.toList());
   }
