@@ -102,7 +102,8 @@ public class UserGroup implements UserRelated {
         .getResultList();
   }
 
-  public UserGroup withMembersAsStyledString(boolean withNames) {
+  public UserGroup withMembersAsStyledString(
+      boolean withNames, Map<UserGroup, Double> overrideValues) {
     UserGroup result = new UserGroup();
     result.membersAsString =
         getMembers().stream()
@@ -113,7 +114,7 @@ public class UserGroup implements UserRelated {
                         m.isFullMember() ? "" : "i"))
             .collect(Collectors.joining(", "));
     result.id = getId();
-    result.value = getValue();
+    result.value = overrideValues.getOrDefault(this, getValue());
     return result;
   }
 
@@ -172,12 +173,8 @@ public class UserGroup implements UserRelated {
     return sb.toString();
   }
 
-  private static UserGroup historicGroup(UserGroup ug, Double historicValue) {
-    ug.setValue(historicValue);
-    return ug;
-  }
-
-  private static List<UserGroup> getValuesAtTransactionId(Long tId, boolean withUnreadables) {
+  public static Map<UserGroup, Double> getValueMapAtTransactionId(
+      Long tId, boolean withUnreadables) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -193,8 +190,7 @@ public class UserGroup implements UserRelated {
         .setParameter("tid", tId)
         .setParameter("all", withUnreadables)
         .getResultStream()
-        .map(t -> historicGroup((UserGroup) t.get("ug"), (Double) t.get("tSum")))
-        .collect(Collectors.toList());
+        .collect(Collectors.toMap(t -> (UserGroup) t.get("ug"), t -> (Double) t.get("tSum")));
   }
 
   private static Map<Integer, Double> getInvalidUserGroupTransactionSums() {
@@ -219,7 +215,6 @@ public class UserGroup implements UserRelated {
     if (!getInvalidUserGroupTransactionSums().isEmpty()) {
       throw new InconsistentUserGroupValueException();
     }
-    ;
     for (UserGroup ug : UserGroup.getAll(null)) {
       User.validateGroupMemberships(
           ug.getMembers(),
@@ -248,19 +243,15 @@ public class UserGroup implements UserRelated {
     return getValueAggregatesAtTransactionId(Long.MAX_VALUE, false);
   }
 
-  public static List<UserGroup> getUserGroupsAtTransactionId(long transactionId) {
-    return getValuesAtTransactionId(transactionId, true);
-  }
-
   private static Map<String, Object> getValueAggregatesAtTransactionId(
       Long tId, boolean withUnreadables) {
     Map<String, Object> params = new HashMap<>();
     double sum = 0;
     double sum_negative = 0;
     double sum_positive = 0;
-    var historicGroups = getValuesAtTransactionId(tId, withUnreadables);
-    for (UserGroup ug : historicGroups) {
-      double value = ug.getValue();
+    var historicGroups = getValueMapAtTransactionId(tId, withUnreadables);
+    for (UserGroup ug : historicGroups.keySet()) {
+      double value = historicGroups.get(ug);
       sum += value;
       if (value < 0) {
         sum_negative += value;
