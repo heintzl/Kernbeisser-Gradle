@@ -43,7 +43,7 @@ dependencies {
     implementation 'org.hibernate:hibernate-agroal:'+hibernateVersion
     implementation "org.hibernate:hibernate-envers:"+hibernateVersion
     implementation files("${rootDir}/libs/forms_rt.jar")
-    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
     implementation 'at.favre.lib:bcrypt:0.9.0'
     implementation "com.github.jiconfont:jiconfont-font_awesome:4.7.0.1"
     implementation "com.github.jiconfont:jiconfont-swing:1.0.0"
@@ -54,7 +54,7 @@ dependencies {
     implementation 'org.jfree:jfreechart:1.5.0'
     implementation 'com.formdev:flatlaf:2.4'
     implementation 'org.json:json:20190722'
-    implementation 'org.jetbrains:annotations:15.0'
+    implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'com.google.code.gson:gson:2.8.6'
 
 

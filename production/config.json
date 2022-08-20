@@ -9,7 +9,7 @@
     "path": "USB:\\bnn"
   },
   "dbAccess": {
-    "url": "jdbc:mysql://localhost/kernbeisser",
+    "url": "jdbc:mariadb://localhost/kernbeisser",
     "username": "Application",
     "password": "",
     "encoding": ""
