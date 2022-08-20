@@ -11,13 +11,13 @@ import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 
 public class SoloShoppingMaskController
     extends Controller<SoloShoppingMaskView, SoloShoppingMaskModel> {
 
-  @Linked private final ShoppingMaskUIController shoppingMaskUIController;
+  @Linked private final ShoppingMaskController shoppingMaskController;
 
   @Key(PermissionKey.ACTION_OPEN_SOLO_SHOPPING_MASK)
   public SoloShoppingMaskController() throws NotEnoughCreditException, MissingFullMemberException {
@@ -36,17 +36,17 @@ public class SoloShoppingMaskController
             + "-Mitglied sind.");
     saleSession.setCustomer(user);
     saleSession.setSeller(user);
-    this.shoppingMaskUIController = new ShoppingMaskUIController(saleSession);
+    this.shoppingMaskController = new ShoppingMaskController(saleSession);
   }
 
   public void processBarcode(String barcode) {
-    shoppingMaskUIController.processBarcode(barcode);
+    shoppingMaskController.processBarcode(barcode);
   }
 
   @Override
   public void fillView(SoloShoppingMaskView soloShoppingMaskView) {}
 
-  public ShoppingMaskUIView getShoppingMaskView() {
-    return shoppingMaskUIController.getView();
+  public ShoppingMaskView getShoppingMaskView() {
+    return shoppingMaskController.getView();
   }
 }
