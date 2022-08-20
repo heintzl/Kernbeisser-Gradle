@@ -49,8 +49,8 @@ dependencies {
     implementation "com.github.jiconfont:jiconfont-swing:1.0.0"
     implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
-    implementation 'net.sf.jasperreports:jasperreports:6.15.0'
-    implementation 'net.sf.jasperreports:jasperreports-fonts:6.15.0'
+    implementation 'net.sf.jasperreports:jasperreports:6.20.0'
+    implementation 'net.sf.jasperreports:jasperreports-fonts:6.20.0'
     implementation 'org.jfree:jfreechart:1.5.0'
     implementation 'com.formdev:flatlaf:2.4'
     implementation 'org.json:json:20190722'
