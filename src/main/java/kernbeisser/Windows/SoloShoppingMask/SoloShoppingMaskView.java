@@ -7,8 +7,8 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIView;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,14 +18,14 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
 
   //    private BarcodeCapture barcodeCapture;
 
-  private ShoppingMaskUIView shoppingMaskUIView;
+  private ShoppingMaskView shoppingMaskView;
 
   @Linked private SoloShoppingMaskController controller;
 
-  @Linked private ShoppingMaskUIController shoppingMaskUIController;
+  @Linked private ShoppingMaskController shoppingMaskController;
 
   private void createUIComponents() {
-    shoppingMaskUIView = shoppingMaskUIController.getView();
+    shoppingMaskView = shoppingMaskController.getView();
   }
 
   @Override
@@ -51,7 +51,7 @@ public class SoloShoppingMaskView implements IView<SoloShoppingMaskController> {
 
   @Override
   public Component getFocusOnInitialize() {
-    var view = shoppingMaskUIController.getView();
+    var view = shoppingMaskController.getView();
     return view.getFocusOnInitialize();
   }
 

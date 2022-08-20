@@ -18,7 +18,7 @@ import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
-import kernbeisser.Windows.Trasaction.TransactionController;
+import kernbeisser.Windows.Transaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;

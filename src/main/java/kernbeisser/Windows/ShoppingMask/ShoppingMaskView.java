@@ -29,7 +29,7 @@ import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
+public class ShoppingMaskView implements IView<ShoppingMaskController> {
 
   static final String stornoMessageTitle = "Storno";
 
@@ -90,7 +90,7 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
-  @Linked private ShoppingMaskUIController controller;
+  @Linked private ShoppingMaskController controller;
   @Linked private ShoppingCartController cartController;
 
   private ArticleType currentArticleType;
@@ -736,12 +736,12 @@ public class ShoppingMaskUIView implements IView<ShoppingMaskUIController> {
     }
   }
 
-  public ShoppingMaskUIController getController() {
+  public ShoppingMaskController getController() {
     return controller;
   }
 
   @Override
-  public void initialize(ShoppingMaskUIController controller) {
+  public void initialize(ShoppingMaskController controller) {
     float fontSize =
         UserSetting.FONT_SCALE_FACTOR.getFloatValue(LogInModel.getLoggedIn()) * 8f + 4f;
     resizeFonts(ShoppingItemPanel, fontSize);

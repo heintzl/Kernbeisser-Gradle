@@ -19,7 +19,7 @@ import kernbeisser.Useful.Users;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
-import kernbeisser.Windows.ShoppingMask.ShoppingMaskUIController;
+import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
@@ -90,11 +90,9 @@ public class CashierShoppingMaskController
     }
     try {
       if (!allowMultiple) {
-        new ShoppingMaskUIController(saleSession)
-            .withCloseEvent(() -> setAllowOpen(true))
-            .openTab();
+        new ShoppingMaskController(saleSession).withCloseEvent(() -> setAllowOpen(true)).openTab();
         setAllowOpen(false);
-      } else new ShoppingMaskUIController(saleSession).openTab();
+      } else new ShoppingMaskController(saleSession).openTab();
     } catch (NotEnoughCreditException e) {
       getView().notEnoughCredit();
     }

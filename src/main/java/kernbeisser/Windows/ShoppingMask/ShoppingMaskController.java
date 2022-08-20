@@ -26,15 +26,15 @@ import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
-public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, ShoppingMaskModel> {
+public class ShoppingMaskController extends Controller<ShoppingMaskView, ShoppingMaskModel> {
   @Linked private final ShoppingCartController shoppingCartController;
 
   private BarcodeCapture barcodeCapture;
   private KeyCapture keyCapture;
 
-  private final ShoppingMaskUIView view;
+  private final ShoppingMaskView view;
 
-  public ShoppingMaskUIController(SaleSession saleSession) throws NotEnoughCreditException {
+  public ShoppingMaskController(SaleSession saleSession) throws NotEnoughCreditException {
     super(new ShoppingMaskModel(saleSession));
     this.shoppingCartController =
         new ShoppingCartController(
@@ -338,8 +338,8 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   }
 
   @Override
-  public void fillView(ShoppingMaskUIView shoppingMaskUIView) {
-    ShoppingMaskUIView view = getView();
+  public void fillView(ShoppingMaskView shoppingMaskView) {
+    ShoppingMaskView view = getView();
     view.loadUserInfo(model.getSaleSession());
     view.setFocusOnKBNumber();
     shoppingCartController
@@ -423,7 +423,7 @@ public class ShoppingMaskUIController extends Controller<ShoppingMaskUIView, Sho
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    ShoppingMaskUIController that = (ShoppingMaskUIController) o;
+    ShoppingMaskController that = (ShoppingMaskController) o;
     return Objects.equals(
         model.getSaleSession().getCustomer(), that.model.getSaleSession().getCustomer());
   }

@@ -12,7 +12,7 @@ import kernbeisser.Windows.MVC.IModel;
 import lombok.Data;
 
 @Data
-public class ShoppingMaskModel implements IModel<ShoppingMaskUIController> {
+public class ShoppingMaskModel implements IModel<ShoppingMaskController> {
   private Article selected = null;
   private double value;
   private SaleSession saleSession;
