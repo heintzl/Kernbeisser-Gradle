@@ -148,16 +148,22 @@ public class Articles {
 
   public static Article getOrCreateRawPriceArticle(RawPrice rawPrice) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+    List<Integer> rawPriceIdentifiers =
+        Arrays.stream(ArticleConstants.class.getEnumConstants())
+            .filter(e -> e != ArticleConstants.CUSTOM_PRODUCT)
+            .map(ArticleConstants::getUniqueIdentifier)
+            .collect(Collectors.toList());
     try {
       @Cleanup(value = "commit")
       EntityTransaction et = em.getTransaction();
       et.begin();
-      return em.createQuery("select  i from Article i where name = :n", Article.class)
+      return em.createQuery(
+              "select  i from Article i where name = :n and kbNumber IN (:c)", Article.class)
           .setParameter("n", rawPrice.getName())
+          .setParameter("c", rawPriceIdentifiers)
           .getSingleResult();
     } catch (NoResultException e) {
       ArticleConstants identifierEnum = ArticleConstants.CUSTOM_PRODUCT;
-      ;
       AtomicReference<Supplier> supplier = new AtomicReference<>();
       VAT vat = VAT.LOW;
       switch (rawPrice) {
@@ -199,6 +205,9 @@ public class Articles {
       em.flush();
       et.commit();
       return getOrCreateRawPriceArticle(rawPrice);
+    } catch (Exception o) {
+      Tools.showUnexpectedErrorWarning(o);
+      return null;
     }
   }
 
