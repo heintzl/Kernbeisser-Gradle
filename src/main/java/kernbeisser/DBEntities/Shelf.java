@@ -15,7 +15,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"location"})})
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Shelf {
   @GeneratedValue
@@ -49,6 +49,14 @@ public class Shelf {
   private Set<Article> articles = new HashSet<>();
 
   @CreationTimestamp @Getter private Instant createDate;
+
+  public static List<Shelf> getAll() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select s from Shelf s", Shelf.class).getResultList();
+  }
 
   public Collection<Article> getAllArticles() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
