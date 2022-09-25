@@ -1,17 +1,22 @@
 package kernbeisser.Windows.PreOrder;
 
 import java.awt.event.KeyEvent;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
+import kernbeisser.CustomComponents.Dialogs.DateSelectorDialog;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
@@ -301,7 +306,15 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   public void printChecklist() {
     var view = getView();
-    LocalDate deliveryDate = view.inputDeliveryDate();
+    LocalDate defaultDate =
+        LocalDate.now()
+            .minusDays(2)
+            .with(
+                TemporalAdjusters.next(Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)))
+            .plus(1, ChronoUnit.DAYS);
+    LocalDate deliveryDate =
+        DateSelectorDialog.getDate(
+            view.getContent(), "Abhakplan", "Bitte das Lieferdatum auswählen:", defaultDate);
     if (deliveryDate != null) {
       model.printCheckList(deliveryDate, view.getDuplexPrint());
       view.repaintTable();
