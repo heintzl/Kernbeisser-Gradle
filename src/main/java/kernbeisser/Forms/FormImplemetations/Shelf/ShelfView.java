@@ -12,6 +12,7 @@ import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Components.DataListener;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.IView;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -56,14 +57,17 @@ public class ShelfView implements IView<ShelfController> {
                 Shelf::getPriceLists,
                 PriceList.onlyWithContent(),
                 Columns.create("Name", PriceList::getName))
-            .withCloseEvent(this::refreshTable);
+            .withCloseEvent(this::refreshTable)
+            .withSearchbox(CollectionView.BOTH);
     extraArticles =
         new AccessCheckingCollectionEditor<>(
-            Shelf::getArticles,
-            Source.of(Article.class),
-            Columns.create("Artikelname", Article::getName),
-            Columns.create("Artikelnummer", Article::getKbNumber),
-            Columns.create("Artikelpreisliste", Article::getPriceList));
+                Shelf::getArticles,
+                Source.of(Article.class),
+                Columns.create("Artikelname", Article::getName),
+                Columns.create("Artikelnummer", Article::getKbNumber),
+                Columns.create("Artikelpreisliste", Article::getPriceList))
+            .withCloseEvent(this::refreshTable)
+            .withSearchbox(CollectionView.BOTH);
     shelfComment =
         new AccessCheckingField<>(Shelf::getComment, Shelf::setComment, AccessCheckingField.NONE);
     shelfLocation =
