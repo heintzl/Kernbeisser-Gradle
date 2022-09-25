@@ -58,6 +58,21 @@ public class InventoryView implements IView<InventoryController> {
     }
   }
 
+  public boolean printSelectionOnly(int count) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Soll"
+                + (count == 1 ? "" : "en")
+                + " nur die "
+                + count
+                + (count == 1 ? " ausgewählte Liste" : " ausgewählten Listen")
+                + " gedruckt werden?\n"
+                + "Ansonsten werden alle Listen gedruckt!",
+            "Zähllisten Drucken",
+            JOptionPane.YES_NO_OPTION)
+        != JOptionPane.NO_OPTION;
+  }
+
   @Override
   public @NotNull JComponent getContent() {
     return main;
