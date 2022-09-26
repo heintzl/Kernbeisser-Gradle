@@ -10,7 +10,6 @@ import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Components.DataListener;
-import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.IView;
@@ -20,11 +19,11 @@ import org.jetbrains.annotations.NotNull;
 public class ShelfView implements IView<ShelfController> {
   private JPanel main;
   private ObjectTable<PriceList> shelfPriceLists;
+  private ObjectTable<Article> shelfExtraArticles;
   private AccessCheckingField<Shelf, String> shelfLocation;
   private AccessCheckingField<Shelf, String> shelfComment;
   private AccessCheckingCollectionEditor<Shelf, Set<PriceList>, PriceList> editShelfPriceLists;
   private AccessCheckingCollectionEditor<Shelf, Set<Article>, Article> extraArticles;
-
   @Getter private ObjectForm<Shelf> objectForm;
 
   private ObjectForm<Shelf> createObjectForm() {
@@ -33,7 +32,8 @@ public class ShelfView implements IView<ShelfController> {
         shelfComment,
         editShelfPriceLists,
         extraArticles,
-        new DataListener<>(Shelf::getPriceLists, shelfPriceLists::setObjects));
+        new DataListener<>(Shelf::getPriceLists, shelfPriceLists::setObjects),
+        new DataListener<>(Shelf::getArticles, shelfExtraArticles::setObjects));
   }
 
   @Override
@@ -46,8 +46,12 @@ public class ShelfView implements IView<ShelfController> {
     return main;
   }
 
-  private void refreshTable() {
+  private void refreshPriceListTable() {
     shelfPriceLists.setObjects(editShelfPriceLists.getData());
+  }
+
+  private void refreshExtraArticleTable() {
+    shelfExtraArticles.setObjects(extraArticles.getData());
   }
 
   private void createUIComponents() {
@@ -57,16 +61,21 @@ public class ShelfView implements IView<ShelfController> {
                 Shelf::getPriceLists,
                 PriceList.onlyWithContent(),
                 Columns.create("Name", PriceList::getName))
-            .withCloseEvent(this::refreshTable)
+            .withCloseEvent(this::refreshPriceListTable)
             .withSearchbox(CollectionView.BOTH);
+    shelfExtraArticles =
+        new ObjectTable<>(
+            Columns.create("Artikelname", Article::getName),
+            Columns.create("Artikelnummer", Article::getKbNumber),
+            Columns.create("Artikelpreisliste", Article::getPriceList));
     extraArticles =
         new AccessCheckingCollectionEditor<>(
                 Shelf::getArticles,
-                Source.of(Article.class),
+                ShelfController.articlesNotInPriceLists(() -> editShelfPriceLists.getData()),
                 Columns.create("Artikelname", Article::getName),
                 Columns.create("Artikelnummer", Article::getKbNumber),
                 Columns.create("Artikelpreisliste", Article::getPriceList))
-            .withCloseEvent(this::refreshTable)
+            .withCloseEvent(this::refreshExtraArticleTable)
             .withSearchbox(CollectionView.BOTH);
     shelfComment =
         new AccessCheckingField<>(Shelf::getComment, Shelf::setComment, AccessCheckingField.NONE);
