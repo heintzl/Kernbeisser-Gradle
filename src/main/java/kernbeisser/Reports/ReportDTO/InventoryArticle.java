@@ -13,15 +13,17 @@ public class InventoryArticle {
   private final String name;
   private final double netPrice;
   private final int kbNumber;
-  private final String containerInfo;
+  private final String amount;
   private final int count;
+  private final boolean weighable;
 
   public InventoryArticle(Shelf shelf, Article article, int count) {
     this.shelf = shelf;
     this.name = article.getName();
     this.netPrice = article.getNetPrice();
     this.kbNumber = article.getKbNumber();
-    this.containerInfo = Articles.getContentAmount(article);
+    this.amount = Articles.getPieceAmount(article);
+    this.weighable = article.isWeighable();
     this.count = count;
   }
 
