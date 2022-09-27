@@ -2,6 +2,7 @@ package kernbeisser.Forms.FormImplemetations.Shelf;
 
 import java.util.Collection;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -22,14 +23,17 @@ public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf
 
   public static Source<Article> articlesNotInPriceLists(
       Supplier<Collection<PriceList>> priceListSupplier) {
+
+    Collection<PriceList> ignoredPriceLists = priceListSupplier.get();
     return () -> {
       @Cleanup EntityManager em = DBConnection.getEntityManager();
       @Cleanup("commit")
       EntityTransaction et = em.getTransaction();
       et.begin();
-      return em.createQuery("select a from Article a where a.priceList not in (:pl)", Article.class)
-          .setParameter("pl", priceListSupplier.get())
-          .getResultList();
+      return em.createQuery("select a from Article a", Article.class)
+          .getResultStream()
+          .filter(a -> ignoredPriceLists == null || !ignoredPriceLists.contains(a.getPriceList()))
+          .collect(Collectors.toList());
     };
   }
 
