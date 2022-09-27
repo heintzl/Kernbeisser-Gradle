@@ -24,11 +24,13 @@ public class ShelfView implements IView<ShelfController> {
   private AccessCheckingField<Shelf, String> shelfComment;
   private AccessCheckingCollectionEditor<Shelf, Set<PriceList>, PriceList> editShelfPriceLists;
   private AccessCheckingCollectionEditor<Shelf, Set<Article>, Article> extraArticles;
+  private AccessCheckingField<Shelf, Integer> shelfNo;
   @Getter private ObjectForm<Shelf> objectForm;
 
   private ObjectForm<Shelf> createObjectForm() {
     return new ObjectForm<>(
         shelfLocation,
+        shelfNo,
         shelfComment,
         editShelfPriceLists,
         extraArticles,
@@ -81,5 +83,8 @@ public class ShelfView implements IView<ShelfController> {
         new AccessCheckingField<>(Shelf::getComment, Shelf::setComment, AccessCheckingField.NONE);
     shelfLocation =
         new AccessCheckingField<>(Shelf::getLocation, Shelf::setLocation, AccessCheckingField.NONE);
+    shelfNo =
+        new AccessCheckingField<>(
+            Shelf::getShelfNo, Shelf::setShelfNo, AccessCheckingField.UNSIGNED_INT_FORMER);
   }
 }

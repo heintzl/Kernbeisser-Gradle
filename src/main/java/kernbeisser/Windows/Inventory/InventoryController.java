@@ -1,11 +1,14 @@
 package kernbeisser.Windows.Inventory;
 
+import static javax.swing.SwingConstants.RIGHT;
+
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.Dialogs.DateSelectorDialog;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
@@ -34,15 +37,30 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
             new ShelfController(),
             getModel()::searchShelf,
             false,
-            Columns.create("Regalposition", Shelf::getLocation),
-            Columns.create("Regalkommentar", Shelf::getComment),
+            Columns.create("Regal-Nr.", Shelf::getShelfNo)
+                .withHorizontalAlignment(RIGHT)
+                .withSorter(Column.NUMBER_SORTER)
+                .withColumnAdjustor(
+                    column -> {
+                      column.setMaxWidth(100);
+                      column.setPreferredWidth(100);
+                    }),
+            Columns.create("Beschreibung", Shelf::getLocation),
+            Columns.create("Kommentar", Shelf::getComment),
             Columns.create(
                 "Regal Preislisten",
                 e ->
                     e.getPriceLists().stream()
                         .map(PriceList::toString)
                         .collect(Collectors.joining(", "))),
-            Columns.create("Summe", shelf -> String.format("%.2f", shelf.calculateTotal())));
+            Columns.<Shelf>create("Summe", shelf -> String.format("%.2f", shelf.calculateTotal()))
+                .withHorizontalAlignment(RIGHT)
+                .withSorter(Column.NUMBER_SORTER)
+                .withColumnAdjustor(
+                    column -> {
+                      column.setMaxWidth(120);
+                      column.setPreferredWidth(120);
+                    }));
   }
 
   @Override

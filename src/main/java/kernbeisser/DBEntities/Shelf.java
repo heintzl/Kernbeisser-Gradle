@@ -15,7 +15,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"location"})})
+@Table
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Shelf {
   @GeneratedValue
@@ -24,7 +24,12 @@ public class Shelf {
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ID_WRITE)})
   private int id;
 
-  @Column
+  @Column(unique = true)
+  @Getter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_WRITE)})
+  private int shelfNo;
+
+  @Column(unique = true)
   @Getter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_WRITE)})
   private String location;
@@ -75,6 +80,12 @@ public class Shelf {
             articles.stream())
         .distinct()
         .collect(Collectors.toList());
+  }
+
+  public static int createShelfNo() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery("select max(s.shelfNo) from Shelf s", Integer.class).getSingleResult()
+        + 1;
   }
 
   public Stream<ArticleStock> getAllArticleStocks(EntityManager em) {

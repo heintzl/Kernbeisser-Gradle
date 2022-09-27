@@ -52,6 +52,10 @@ public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf
 
   @Override
   public Supplier<Shelf> defaultFactory() {
-    return Shelf::new;
+    return () -> {
+      Shelf shelf = new Shelf();
+      shelf.setShelfNo(Shelf.createShelfNo());
+      return shelf;
+    };
   }
 }
