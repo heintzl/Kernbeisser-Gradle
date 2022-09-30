@@ -1,5 +1,7 @@
 package kernbeisser.Windows.Setting;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
@@ -78,6 +80,15 @@ public class SettingController extends Controller<SettingView, SettingModel> {
           break;
         } else {
           if (!view.commitType("Boolean wert(ja = true, nein = false)")) {
+            return;
+          }
+        }
+        break;
+      case "LocalDate":
+        try {
+          LocalDate.parse(view.getValue());
+        } catch (DateTimeParseException e) {
+          if (!getView().commitType("gültiges Datum im Format YYYY-MM-DD")) {
             return;
           }
         }
