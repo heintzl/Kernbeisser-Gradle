@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Reports.ReportDTO.InventoryArticle;
 
-public class InventoryCountingList extends Report {
+public class InventoryCountingLists extends Report {
 
   private final Collection<Shelf> shelves;
   private final LocalDate inventoryDate;
 
-  public InventoryCountingList(Collection<Shelf> shelves, LocalDate inventoryDate) {
+  public InventoryCountingLists(Collection<Shelf> shelves, LocalDate inventoryDate) {
     super("inventoryCountingList", "Zählliste_" + inventoryDate.toString());
     this.inventoryDate = inventoryDate;
     setDuplexPrint(false);
