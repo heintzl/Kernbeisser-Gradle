@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public class InventoryView implements IView<InventoryController> {
   private JPanel main;
   private ObjectViewView<Shelf> shelfView;
+  private final int printIconColor = 0x0033AF;
 
   @Linked private ObjectViewController<Shelf> shelfViewController;
   @Linked private InventoryController controller;
@@ -41,15 +42,15 @@ public class InventoryView implements IView<InventoryController> {
     JButton exportShelves = new JButton("Regale exportieren");
     exportShelves.addActionListener(this::exportShelves);
     exportShelves.setIcon(Icons.defaultIcon(FontAwesome.DOWNLOAD, new Color(0x00A201)));
-    JButton shelfCounting = new JButton("Zähllisten eingeben");
+    JButton shelfCounting = new JButton("Zählergebnisse eingeben");
     shelfCounting.addActionListener(controller::openCountingWindow);
     shelfCounting.setIcon(Icons.defaultIcon(FontAwesome.LIST, new Color(0x01FF78)));
     JButton print = new JButton("Listen und Ergebnisse drucken");
     print.addActionListener(e -> print());
-    print.setIcon(Icons.defaultIcon(FontAwesome.PRINT, new Color(0x02277E)));
+    print.setIcon(Icons.defaultIcon(FontAwesome.PRINT, new Color(printIconColor)));
     shelfViewController.addButton(shelfCounting);
-    shelfViewController.addButton(exportShelves);
     shelfViewController.addButton(print);
+    shelfViewController.addButton(exportShelves);
     shelfViewController.setForceExtraButtonState(false);
     shelfViewController.setExtraButtonsAvailable(true);
   }
@@ -97,7 +98,7 @@ public class InventoryView implements IView<InventoryController> {
             "Ausdruck starten",
             JOptionPane.OK_CANCEL_OPTION,
             JOptionPane.PLAIN_MESSAGE,
-            IconFontSwing.buildIcon(FontAwesome.PRINT, 40, new Color(0x02277E)))
+            IconFontSwing.buildIcon(FontAwesome.PRINT, 40, new Color(printIconColor)))
         == JOptionPane.OK_OPTION) {
       controller.print(
           (InventoryReports) report.getSelectedItem(),
