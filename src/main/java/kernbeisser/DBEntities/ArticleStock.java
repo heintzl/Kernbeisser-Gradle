@@ -4,8 +4,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import javax.persistence.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -39,6 +41,10 @@ public class ArticleStock {
   }
 
   public static ArticleStock newFromArticle(Article e) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     ArticleStock stock = new ArticleStock();
     stock.setArticle(e);
     stock.setCounted(0.0);

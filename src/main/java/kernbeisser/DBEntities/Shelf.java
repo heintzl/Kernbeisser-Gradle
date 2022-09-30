@@ -96,6 +96,20 @@ public class Shelf {
         .filter(ArticleStock::isNotExpired);
   }
 
+  public Collection<ArticleStock> getArticleStocks() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return this.getAllArticles(em).stream()
+        .map(
+            e ->
+                ArticleStock.ofArticle(em, e)
+                    .filter(ArticleStock::isNotExpired)
+                    .orElse(ArticleStock.newFromArticle(e)))
+        .collect(Collectors.toList());
+  }
+
   public double calculateTotal() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")

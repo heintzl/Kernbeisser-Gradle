@@ -22,7 +22,7 @@ public class CountingController extends Controller<CountingView, CountingModel> 
   }
 
   public void loadShelf(Shelf shelf) {
-    getView().setArticleStocks(model.getArticleStocks(shelf));
+    getView().setArticleStocks(shelf.getArticleStocks());
     getView().selectFirst();
   }
 

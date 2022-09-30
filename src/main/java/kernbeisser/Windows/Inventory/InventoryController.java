@@ -16,10 +16,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Shelf.ShelfController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
-import kernbeisser.Reports.InventoryCountingLists;
-import kernbeisser.Reports.InventoryShelfDetails;
-import kernbeisser.Reports.InventoryShelfOverview;
-import kernbeisser.Reports.Report;
+import kernbeisser.Reports.*;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.CSV;
 import kernbeisser.Useful.Tools;
@@ -94,6 +91,7 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
       case INVENTORYRESULT:
         break;
       case INVENTORYSHELFRESULTS:
+        report = new InventoryStocks(shelves, inventoryDate);
         break;
     }
     if (report == null) {

@@ -6,15 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.Reports.ReportDTO.InventoryArticle;
+import kernbeisser.Reports.ReportDTO.InventoryArticleStock;
 
-public class InventoryCountingLists extends Report {
+public class InventoryStocks extends Report {
 
   private final Collection<Shelf> shelves;
   private final LocalDate inventoryDate;
 
-  public InventoryCountingLists(Collection<Shelf> shelves, LocalDate inventoryDate) {
-    super("inventoryCountingLists", "Zähllisten_" + inventoryDate.toString());
+  public InventoryStocks(Collection<Shelf> shelves, LocalDate inventoryDate) {
+    super("inventoryStock", "InventurBestände_" + inventoryDate.toString());
     this.inventoryDate = inventoryDate;
     setDuplexPrint(false);
     this.shelves = shelves;
@@ -30,7 +30,7 @@ public class InventoryCountingLists extends Report {
   @Override
   Collection<?> getDetailCollection() {
     return shelves.stream()
-        .flatMap(InventoryArticle::articleStreamOfShelf)
+        .flatMap(InventoryArticleStock::stockStreamOfShelf)
         .collect(Collectors.toList());
   }
 }
