@@ -44,7 +44,7 @@ public class InventoryView implements IView<InventoryController> {
     JButton shelfCounting = new JButton("Zähllisten eingeben");
     shelfCounting.addActionListener(controller::openCountingWindow);
     shelfCounting.setIcon(Icons.defaultIcon(FontAwesome.LIST, new Color(0x01FF78)));
-    JButton print = new JButton("Inventur Ergebnisse drucken");
+    JButton print = new JButton("Listen und Ergebnisse drucken");
     print.addActionListener(e -> print());
     print.setIcon(Icons.defaultIcon(FontAwesome.PRINT, new Color(0x02277E)));
     shelfViewController.addButton(shelfCounting);

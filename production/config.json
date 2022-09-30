@@ -36,7 +36,8 @@
       "invoiceFileName": "Kerni_Rechnung.jrxml",
       "priceList": "Preisliste.jrxml",
       "inventoryCountingList": "Inventur_Zaehlliste.jrxml",
-      "inventoryShelfOverview": "Inventur_Regaluebersicht.jrxml"
+      "inventoryShelfOverview": "Inventur_Regaluebersicht.jrxml",
+      "inventoryShelfDetails": "Inventur_Regaldetails.jrxml"
     }
   },
   "preorders": {

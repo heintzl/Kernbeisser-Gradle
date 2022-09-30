@@ -17,6 +17,7 @@ import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Shelf.ShelfController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Reports.InventoryCountingList;
+import kernbeisser.Reports.InventoryShelfDetails;
 import kernbeisser.Reports.InventoryShelfOverview;
 import kernbeisser.Reports.Report;
 import kernbeisser.Security.Key;
@@ -85,6 +86,7 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
         report = new InventoryShelfOverview(shelves, inventoryDate);
         break;
       case SHELFDETAILS:
+        report = new InventoryShelfDetails(shelves, inventoryDate);
         break;
       case COUNTINGLISTS:
         report = new InventoryCountingList(shelves, inventoryDate);
