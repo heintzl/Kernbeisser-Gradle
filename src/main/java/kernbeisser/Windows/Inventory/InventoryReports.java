@@ -1,9 +1,8 @@
 package kernbeisser.Windows.Inventory;
 
 import com.google.common.collect.Sets;
-import kernbeisser.Useful.Named;
-
 import java.util.Set;
+import kernbeisser.Useful.Named;
 
 public enum InventoryReports implements Named {
   SHELFOVERVIEW("Regalübersicht"),
@@ -17,6 +16,7 @@ public enum InventoryReports implements Named {
   public static Set<InventoryReports> shelfSelectionAllowed() {
     return Sets.newHashSet(COUNTINGLISTS, INVENTORYSHELFRESULTS);
   }
+
   InventoryReports(String name) {
     this.name = name;
   }

@@ -1,14 +1,18 @@
 package kernbeisser.Windows.Inventory;
 
+import com.github.lgooddatepicker.components.DatePicker;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.Instant;
+import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
@@ -27,22 +31,25 @@ public class InventoryView implements IView<InventoryController> {
 
   @Override
   public void initialize(InventoryController controller) {
-    JButton printPriceListCountingList = new JButton("Zähllisten drucken");
-    printPriceListCountingList.addActionListener(controller::printCountingLists);
-    printPriceListCountingList.setIcon(Icons.defaultIcon(FontAwesome.PRINT, new Color(0x068DE1)));
+    JLabel dateLabel = new JLabel("Inventurdatum:");
+    DatePicker datePicker = new DatePicker();
+    datePicker.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+    datePicker.setDate(Setting.INVENTORY_SCHEDULED_DATE.getDateValue());
+    datePicker.addDateChangeListener(e -> controller.changeInventoryDate(datePicker.getDate()));
+    shelfViewController.addComponents(dateLabel, datePicker);
+
     JButton exportShelves = new JButton("Regale exportieren");
     exportShelves.addActionListener(this::exportShelves);
     exportShelves.setIcon(Icons.defaultIcon(FontAwesome.DOWNLOAD, new Color(0x00A201)));
     JButton shelfCounting = new JButton("Zähllisten eingeben");
     shelfCounting.addActionListener(controller::openCountingWindow);
     shelfCounting.setIcon(Icons.defaultIcon(FontAwesome.LIST, new Color(0x01FF78)));
-    JButton printResults = new JButton("Inventur Ergebnisse drucken");
-    printResults.addActionListener(controller::calculateInventory);
-    printResults.setIcon(Icons.defaultIcon(FontAwesome.CALCULATOR, new Color(0xC71BC5)));
-    shelfViewController.addButton(exportShelves);
-    shelfViewController.addButton(printPriceListCountingList);
+    JButton print = new JButton("Inventur Ergebnisse drucken");
+    print.addActionListener(e -> print());
+    print.setIcon(Icons.defaultIcon(FontAwesome.PRINT, new Color(0x02277E)));
     shelfViewController.addButton(shelfCounting);
-    shelfViewController.addButton(printResults);
+    shelfViewController.addButton(exportShelves);
+    shelfViewController.addButton(print);
     shelfViewController.setForceExtraButtonState(false);
     shelfViewController.setExtraButtonsAvailable(true);
   }
@@ -58,19 +65,45 @@ public class InventoryView implements IView<InventoryController> {
     }
   }
 
-  public boolean printSelectionOnly(int count) {
-    return JOptionPane.showConfirmDialog(
+  private void print() {
+    boolean selectedShelves =
+        controller.getShelfViewController().getSearchBoxController().getSelectedObjects().size()
+            > 0;
+    JPanel printOptions = new JPanel();
+    printOptions.setLayout(new GridLayout(0, 1));
+    JCheckBox confirmSelected = new JCheckBox("Ausdruck auf die ausgewählten Listen beschränken");
+    confirmSelected.setVisible(selectedShelves);
+    JComboBox<InventoryReports> report = new JComboBox<>(InventoryReports.values());
+    Supplier<Boolean> shelfSelectionCurrentlyAllowed =
+        (() ->
+            InventoryReports.shelfSelectionAllowed()
+                .contains((InventoryReports) report.getSelectedItem()));
+    report.addActionListener(
+        e -> confirmSelected.setEnabled(selectedShelves && shelfSelectionCurrentlyAllowed.get()));
+    JLabel reportLabel = new JLabel("Ausdruck auswählen:");
+    reportLabel.setLabelFor(report);
+    JCheckBox outputAsPdf = new JCheckBox("PDF als Vorschau erstellen");
+    confirmSelected.setEnabled(shelfSelectionCurrentlyAllowed.get());
+
+    printOptions.add(reportLabel);
+    printOptions.add(report);
+    printOptions.add(outputAsPdf);
+    printOptions.add(confirmSelected);
+    printOptions.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    if (JOptionPane.showConfirmDialog(
             getContent(),
-            "Soll"
-                + (count == 1 ? "" : "en")
-                + " nur die "
-                + count
-                + (count == 1 ? " ausgewählte Liste" : " ausgewählten Listen")
-                + " gedruckt werden?\n"
-                + "Ansonsten werden alle Listen gedruckt!",
-            "Zähllisten Drucken",
-            JOptionPane.YES_NO_OPTION)
-        != JOptionPane.NO_OPTION;
+            printOptions,
+            "Ausdruck starten",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE,
+            IconFontSwing.buildIcon(FontAwesome.PRINT, 40, new Color(0x02277E)))
+        == JOptionPane.OK_OPTION) {
+      controller.print(
+          (InventoryReports) report.getSelectedItem(),
+          confirmSelected.isSelected(),
+          outputAsPdf.isSelected());
+    }
   }
 
   @Override
