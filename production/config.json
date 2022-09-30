@@ -35,7 +35,8 @@
       "keyUserListFileName": "BenutzerSchluessel.jrxml",
       "invoiceFileName": "Kerni_Rechnung.jrxml",
       "priceList": "Preisliste.jrxml",
-      "inventoryCountingList": "Inventur_Zaehlliste.jrxml"
+      "inventoryCountingList": "Inventur_Zaehlliste.jrxml",
+      "inventoryShelfOverview": "Inventur_Regaluebersicht.jrxml"
     }
   },
   "preorders": {
