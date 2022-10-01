@@ -24,8 +24,8 @@ public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf
   public static Source<Article> articlesNotInPriceLists(
       Supplier<Collection<PriceList>> priceListSupplier) {
 
-    Collection<PriceList> ignoredPriceLists = priceListSupplier.get();
     return () -> {
+      Collection<PriceList> ignoredPriceLists = priceListSupplier.get();
       @Cleanup EntityManager em = DBConnection.getEntityManager();
       @Cleanup("commit")
       EntityTransaction et = em.getTransaction();

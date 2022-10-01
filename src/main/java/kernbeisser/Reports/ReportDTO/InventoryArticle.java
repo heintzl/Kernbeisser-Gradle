@@ -1,5 +1,6 @@
 package kernbeisser.Reports.ReportDTO;
 
+import java.util.Collection;
 import java.util.stream.Stream;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
@@ -28,7 +29,8 @@ public class InventoryArticle {
   }
 
   public static Stream<InventoryArticle> articleStreamOfShelf(Shelf shelf) {
-    int count = shelf.getAllArticles().size();
-    return shelf.getAllArticles().stream().map(a -> new InventoryArticle(shelf, a, count));
+    Collection<Article> articles = shelf.getAllArticles();
+    int count = articles.size();
+    return articles.stream().map(a -> new InventoryArticle(shelf, a, count));
   }
 }

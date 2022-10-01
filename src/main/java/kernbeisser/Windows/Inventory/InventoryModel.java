@@ -26,7 +26,7 @@ public class InventoryModel implements IModel<InventoryController> {
     }
     et.begin();
     return em.createQuery(
-            "select s from Shelf s where upper(s.location) like :s or upper(s.comment) like :s or shelfNo = :i",
+            "select s from Shelf s where upper(s.location) like :s or upper(s.comment) like :s or shelfNo = :i order by shelfNo",
             Shelf.class)
         .setParameter("s", "%" + search.toUpperCase(Locale.ROOT))
         .setParameter("i", searchInt)

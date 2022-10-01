@@ -5,7 +5,9 @@ import static javax.swing.SwingConstants.RIGHT;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.LocalDate;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -33,7 +35,7 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
   public InventoryController() throws PermissionKeyRequiredException {
     super(new InventoryModel());
     this.shelfViewController =
-        new ObjectViewController<>(
+        new ObjectViewController<Shelf>(
             "Regale",
             new ShelfController(),
             getModel()::searchShelf,
@@ -54,6 +56,14 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
                     e.getPriceLists().stream()
                         .map(PriceList::toString)
                         .collect(Collectors.joining(", "))),
+            Columns.<Shelf>create("Extra-Artikel", e -> e.getArticles().size())
+                .withHorizontalAlignment(RIGHT)
+                .withSorter(Column.NUMBER_SORTER)
+                .withColumnAdjustor(
+                    column -> {
+                      column.setMaxWidth(140);
+                      column.setPreferredWidth(140);
+                    }),
             Columns.<Shelf>create("Summe", shelf -> String.format("%.2f", shelf.calculateTotal()))
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER)
@@ -71,14 +81,19 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
     new CountingController().openTab();
   }
 
-  public void print(InventoryReports selectedItem, boolean selected, boolean outputAsPdf) {
-    Collection<Shelf> shelves = Shelf.getAll();
-    if (selected && InventoryReports.shelfSelectionAllowed().contains(selectedItem)) {
-      shelves = getShelfViewController().getSearchBoxController().getSelectedObjects();
+  public void print(InventoryReports selectedReport, boolean selected, boolean outputAsPdf) {
+    List<Shelf> shelves;
+    if (selected && InventoryReports.shelfSelectionAllowed().contains(selectedReport)) {
+      shelves =
+          new ArrayList<Shelf>(
+              getShelfViewController().getSearchBoxController().getSelectedObjects());
+    } else {
+      shelves = Shelf.getAll();
     }
+    shelves.sort(Comparator.comparingInt(Shelf::getShelfNo));
     Report report = null;
     LocalDate inventoryDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
-    switch (selectedItem) {
+    switch (selectedReport) {
       case SHELFOVERVIEW:
         report = new InventoryShelfOverview(shelves, inventoryDate);
         break;

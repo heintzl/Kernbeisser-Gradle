@@ -10,6 +10,7 @@
 	<field name="kbNumber" class="java.lang.Integer"/>
 	<field name="netPrice" class="java.lang.Double"/>
 	<field name="amount" class="java.lang.String"/>
+	<field name="shelf.shelfNo" class="java.lang.Integer"/>
 	<field name="shelf.location" class="java.lang.String"/>
 	<field name="shelf.comment" class="java.lang.String"/>
 	<field name="count" class="java.lang.Integer"/>
@@ -58,7 +59,7 @@
 					<textElement textAlignment="Left" markup="html">
 						<font fontName="DejaVu Sans Condensed" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Liste " + $F{shelf.location}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Liste " + $F{shelf.shelfNo} + ": " + $F{shelf.location}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd.MM.yyyy">
 					<reportElement x="0" y="0" width="130" height="15" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722"/>
@@ -89,7 +90,7 @@
 						<pen lineWidth="1.0" lineStyle="Dotted"/>
 					</graphicElement>
 				</line>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="17" width="420" height="15" uuid="2228d17f-db80-4885-83a0-0e3038110b66"/>
 					<textElement>
 						<font size="11"/>

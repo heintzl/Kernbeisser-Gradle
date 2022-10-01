@@ -66,28 +66,41 @@ public class InventoryView implements IView<InventoryController> {
     }
   }
 
+  private void setCheckboxState(JCheckBox checkBox, boolean enable) {
+    checkBox.setEnabled(enable);
+    if (!enable) {
+      checkBox.setSelected(false);
+    }
+  }
+
   private void print() {
     boolean selectedShelves =
         controller.getShelfViewController().getSearchBoxController().getSelectedObjects().size()
             > 0;
     JPanel printOptions = new JPanel();
     printOptions.setLayout(new GridLayout(0, 1));
-    JCheckBox confirmSelected = new JCheckBox("Ausdruck auf die ausgewählten Listen beschränken");
-    confirmSelected.setVisible(selectedShelves);
-    JComboBox<InventoryReports> report = new JComboBox<>(InventoryReports.values());
+    JCheckBox confirmSelected = new JCheckBox("Ausdruck auf die ausgewählten Regale beschränken");
+    if (selectedShelves) {
+      setCheckboxState(confirmSelected, true);
+    } else {
+      confirmSelected.setVisible(false);
+    }
+    JComboBox<InventoryReports> reportSelector = new JComboBox<>(InventoryReports.values());
     Supplier<Boolean> shelfSelectionCurrentlyAllowed =
         (() ->
             InventoryReports.shelfSelectionAllowed()
-                .contains((InventoryReports) report.getSelectedItem()));
-    report.addActionListener(
-        e -> confirmSelected.setEnabled(selectedShelves && shelfSelectionCurrentlyAllowed.get()));
+                .contains((InventoryReports) reportSelector.getSelectedItem()));
+    reportSelector.addActionListener(
+        e ->
+            setCheckboxState(
+                confirmSelected, selectedShelves && shelfSelectionCurrentlyAllowed.get()));
     JLabel reportLabel = new JLabel("Ausdruck auswählen:");
-    reportLabel.setLabelFor(report);
+    reportLabel.setLabelFor(reportSelector);
     JCheckBox outputAsPdf = new JCheckBox("PDF als Vorschau erstellen");
     confirmSelected.setEnabled(shelfSelectionCurrentlyAllowed.get());
 
     printOptions.add(reportLabel);
-    printOptions.add(report);
+    printOptions.add(reportSelector);
     printOptions.add(outputAsPdf);
     printOptions.add(confirmSelected);
     printOptions.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -101,7 +114,7 @@ public class InventoryView implements IView<InventoryController> {
             IconFontSwing.buildIcon(FontAwesome.PRINT, 40, new Color(printIconColor)))
         == JOptionPane.OK_OPTION) {
       controller.print(
-          (InventoryReports) report.getSelectedItem(),
+          (InventoryReports) reportSelector.getSelectedItem(),
           confirmSelected.isSelected(),
           outputAsPdf.isSelected());
     }
