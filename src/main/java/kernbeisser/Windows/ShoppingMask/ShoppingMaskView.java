@@ -870,16 +870,6 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           enablePreordered();
         });
     rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für Folgeartikel merken");
-    pricePreordered.addChangeListener(
-        e -> {
-          if (pricePreordered.isSelected()) {
-            rememberReductionSetting.setToolTipText("Nicht verfügbar für Vorbestellungsrabatt");
-            rememberReductionSetting.setSelected(false);
-          } else {
-            rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für Folgeartikel merken");
-          }
-          rememberReductionSetting.setEnabled(!pricePreordered.isSelected());
-        });
     priceVariablePercentage.addItemListener(
         e -> {
           variablePercentage.setEnabled(true);
