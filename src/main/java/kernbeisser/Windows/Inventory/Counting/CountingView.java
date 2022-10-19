@@ -61,10 +61,11 @@ public class CountingView implements IView<CountingController> {
   private void createUIComponents() {
     articleStocks =
         new ObjectTable<>(
-            Columns.create("Artikelnummer", e -> e.getArticle().getKbNumber()),
+            Columns.<ArticleStock>create("Artikelnummer", e -> e.getArticle().getKbNumber())
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Artikelname", e -> e.getArticle().getName()),
             Columns.create("Gezählte Menge", ArticleStock::getCounted));
-    shelf = new AdvancedComboBox<>(Shelf::getLocation);
+    shelf = new AdvancedComboBox<>(e -> e.getShelfNo() + " - " + e.getLocation());
   }
 
   void applyAmount() {
@@ -84,7 +85,7 @@ public class CountingView implements IView<CountingController> {
     articleNumber.setText(String.valueOf(stock.getArticle().getKbNumber()));
     amount.requestFocus();
     amount.setSelectionStart(0);
-    amount.setSelectionEnd(amount.getText().length() - 1);
+    amount.setSelectionEnd(amount.getText().length());
   }
 
   public void setShelves(Collection<Shelf> allShelves) {

@@ -16,7 +16,9 @@ public class CountingController extends Controller<CountingView, CountingModel> 
   }
 
   public CountingController withShelf(Shelf shelf) {
-    if (shelf != null) {getView().setSelectedShelf(shelf);}
+    if (shelf != null) {
+      getView().setSelectedShelf(shelf);
+    }
     return this;
   }
 

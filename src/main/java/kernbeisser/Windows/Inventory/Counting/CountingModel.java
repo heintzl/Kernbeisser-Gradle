@@ -1,6 +1,8 @@
 package kernbeisser.Windows.Inventory.Counting;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -14,7 +16,7 @@ import lombok.Cleanup;
 public class CountingModel implements IModel<CountingController> {
 
   public List<Shelf> getAllShelves() {
-    List<Shelf> shelves  = new ArrayList<>(Tools.getAll(Shelf.class, null));
+    List<Shelf> shelves = new ArrayList<>(Tools.getAll(Shelf.class, null));
     shelves.sort(Comparator.comparingInt(Shelf::getShelfNo));
     return shelves;
   }
