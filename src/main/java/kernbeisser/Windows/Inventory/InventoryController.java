@@ -77,8 +77,8 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
   @Override
   public void fillView(InventoryView inventoryView) {}
 
-  public void openCountingWindow(ActionEvent actionEvent) {
-    new CountingController().openTab();
+  public void openCountingWindow(Shelf selectedShelf) {
+    new CountingController().withShelf(selectedShelf).openTab();
   }
 
   public void print(InventoryReports selectedReport, boolean selected, boolean outputAsPdf) {

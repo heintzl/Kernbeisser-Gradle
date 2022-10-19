@@ -7,6 +7,7 @@ import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.ArticleStock;
@@ -42,6 +43,10 @@ public class CountingView implements IView<CountingController> {
 
   Optional<Shelf> getSelectedShelf() {
     return shelf.getSelected();
+  }
+
+  void setSelectedShelf(Shelf shelf) {
+    this.shelf.setSelectedItem(shelf);
   }
 
   void setArticleStocks(Collection<ArticleStock> articleStocks) {

@@ -13,8 +13,10 @@ import lombok.Cleanup;
 
 public class CountingModel implements IModel<CountingController> {
 
-  public Collection<Shelf> getAllShelves() {
-    return Tools.getAll(Shelf.class, null);
+  public List<Shelf> getAllShelves() {
+    List<Shelf> shelves  = new ArrayList<>(Tools.getAll(Shelf.class, null));
+    shelves.sort(Comparator.comparingInt(Shelf::getShelfNo));
+    return shelves;
   }
 
   public void addArticleToShelf(Shelf shelf, Article article) {

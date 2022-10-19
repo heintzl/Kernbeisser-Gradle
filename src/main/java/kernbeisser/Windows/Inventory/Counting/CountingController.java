@@ -15,6 +15,11 @@ public class CountingController extends Controller<CountingView, CountingModel> 
     super(new CountingModel());
   }
 
+  public CountingController withShelf(Shelf shelf) {
+    if (shelf != null) {getView().setSelectedShelf(shelf);}
+    return this;
+  }
+
   @Override
   public void fillView(CountingView countingView) {
     countingView.setShelves(model.getAllShelves());
