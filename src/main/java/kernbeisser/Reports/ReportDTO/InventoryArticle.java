@@ -1,6 +1,7 @@
 package kernbeisser.Reports.ReportDTO;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
@@ -15,6 +16,7 @@ public class InventoryArticle {
   private final double netPrice;
   private final int kbNumber;
   private final String amount;
+  private final String barcode4;
   private final int count;
   private final boolean weighable;
 
@@ -26,6 +28,11 @@ public class InventoryArticle {
     this.amount = Articles.getPieceAmount(article);
     this.weighable = article.isWeighable();
     this.count = count;
+    this.barcode4 =
+        Optional.ofNullable(article.getBarcode())
+            .map(Object::toString)
+            .map(e -> e.substring(e.length() - 4))
+            .orElse("");
   }
 
   public static Stream<InventoryArticle> articleStreamOfShelf(Shelf shelf) {
