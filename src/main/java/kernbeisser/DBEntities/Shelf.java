@@ -90,10 +90,9 @@ public class Shelf {
 
   public Stream<ArticleStock> getAllArticleStocks(EntityManager em) {
     return getAllArticles().stream()
-        .map(e -> ArticleStock.ofArticle(em, e))
+        .map(e -> ArticleStock.ofArticle(em, e, this))
         .filter(Optional::isPresent)
-        .map(Optional::get)
-        .filter(ArticleStock::isNotExpired);
+        .map(Optional::get);
   }
 
   public Collection<ArticleStock> getArticleStocks() {
@@ -102,11 +101,7 @@ public class Shelf {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return this.getAllArticles(em).stream()
-        .map(
-            e ->
-                ArticleStock.ofArticle(em, e)
-                    .filter(ArticleStock::isNotExpired)
-                    .orElse(ArticleStock.newFromArticle(e)))
+        .map(e -> ArticleStock.ofArticle(em, e, this).orElse(ArticleStock.newFromArticle(e, this)))
         .collect(Collectors.toList());
   }
 
