@@ -2,6 +2,7 @@ package kernbeisser.Forms.FormImplemetations.Shelf;
 
 import java.util.Set;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
@@ -64,21 +65,22 @@ public class ShelfView implements IView<ShelfController> {
                 PriceList.onlyWithContent(),
                 Columns.create("Name", PriceList::getName))
             .withCloseEvent(this::refreshPriceListTable)
-            .withSearchbox(CollectionView.BOTH);
+            .withSearchbox(CollectionView.AVAILABLE);
     shelfExtraArticles =
         new ObjectTable<>(
             Columns.create("Artikelname", Article::getName),
-            Columns.create("Artikelnummer", Article::getKbNumber),
+            Columns.create("Artikelnummer", Article::getKbNumber).withSorter(Column.NUMBER_SORTER),
             Columns.create("Artikelpreisliste", Article::getPriceList));
     extraArticles =
         new AccessCheckingCollectionEditor<>(
                 Shelf::getArticles,
-                ShelfController.articlesNotInPriceLists(() -> editShelfPriceLists.getData()),
+                ShelfController.articlesNotInPriceLists(() -> null),
                 Columns.create("Artikelname", Article::getName),
-                Columns.create("Artikelnummer", Article::getKbNumber),
+                Columns.create("Artikelnummer", Article::getKbNumber)
+                    .withSorter(Column.NUMBER_SORTER),
                 Columns.create("Artikelpreisliste", Article::getPriceList))
             .withCloseEvent(this::refreshExtraArticleTable)
-            .withSearchbox(CollectionView.BOTH);
+            .withSearchbox(CollectionView.AVAILABLE);
     shelfComment =
         new AccessCheckingField<>(Shelf::getComment, Shelf::setComment, AccessCheckingField.NONE);
     shelfLocation =

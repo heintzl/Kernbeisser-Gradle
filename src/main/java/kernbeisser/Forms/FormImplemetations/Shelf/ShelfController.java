@@ -30,7 +30,7 @@ public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf
       @Cleanup("commit")
       EntityTransaction et = em.getTransaction();
       et.begin();
-      return em.createQuery("select a from Article a", Article.class)
+      return em.createQuery("select a from Article a order by a.name", Article.class)
           .getResultStream()
           .filter(a -> ignoredPriceLists == null || !ignoredPriceLists.contains(a.getPriceList()))
           .collect(Collectors.toList());

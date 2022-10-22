@@ -211,7 +211,7 @@ public class PriceList implements Serializable {
       EntityTransaction et = em.getTransaction();
       et.begin();
       return em.createQuery(
-              "select p from PriceList p where p in (select a.priceList from Article a)",
+              "select p from PriceList p where exists (select a from Article a where a.priceList = p) order by name",
               PriceList.class)
           .getResultList();
     };
