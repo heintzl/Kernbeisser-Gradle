@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -81,6 +82,7 @@ public class Supply {
         .map(SupplierFile::getContents)
         .flatMap(Collection::stream)
         .peek(e -> e.getStatus(em))
+        .sorted(Comparator.comparingInt(LineContent::getKkNumber))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
