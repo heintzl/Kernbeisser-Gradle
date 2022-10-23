@@ -279,10 +279,12 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     Article article = new Article();
     article.setSupplier(kkSupplier);
     article.setName(content.getName());
-    article.setNetPrice(content.getPrice() / content.getContainerSize());
+    article.setNetPrice(
+        content.getPrice()); // TODO I don't believe in / content.getContainerSize());
     article.setMetricUnits(content.getUnit());
     article.setAmount(content.getAmount());
-    article.setWeighable(content.getContainerSize() == 1);
+    article.setWeighable(
+        content.isWeighable()); // TODO I don't believe in content.getContainerSize() == 1);
     article.setContainerSize(content.getContainerSize());
     article.setShopRange(ShopRange.NOT_IN_RANGE);
     article.setSurchargeGroup(pattern.getSurchargeGroup());
