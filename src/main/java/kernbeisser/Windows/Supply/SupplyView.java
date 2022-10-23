@@ -178,7 +178,9 @@ public class SupplyView implements IView<SupplyController> {
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Gebindegröße", ShoppingItem::getContainerSize)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.createIconColumn("Auswiegware", e -> (e.isWeighAble() ? selected : unselected)),
+            Columns.<ShoppingItem>createIconColumn(
+                    "Auswiegware", e -> (e.isWeighAble() ? selected : unselected))
+                .withHorizontalAlignment(SwingConstants.CENTER),
             Columns.<ShoppingItem>create(
                     "Gebinde-Preis",
                     e -> String.format("%.2f", e.getItemNetPrice() * e.getContainerSize()))
