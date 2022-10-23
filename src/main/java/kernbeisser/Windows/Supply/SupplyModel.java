@@ -1,6 +1,7 @@
 package kernbeisser.Windows.Supply;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -95,13 +96,35 @@ public class SupplyModel implements IModel<SupplyController> {
         .orElseThrow(NoSuchElementException::new);
   }
 
+  private static Collection<Integer> userOnlyPreorderedArticles() {
+    Collection<PreOrder> preOrders =
+        PreOrder.getAll(null).stream()
+            .filter(
+                e ->
+                    e.getArticle().getSupplier().equals(Supplier.getKKSupplier())
+                        && !e.isDelivered())
+            .collect(Collectors.toList());
+    Collection<Integer> userPreorders =
+        preOrders.stream()
+            .filter(u -> !u.isShopOrder())
+            .map(e -> e.getArticle().getSuppliersItemNumber())
+            .collect(Collectors.toList());
+    userPreorders.removeAll(
+        preOrders.stream()
+            .filter(e -> e.isShopOrder())
+            .map(e -> e.getArticle().getSuppliersItemNumber())
+            .collect(Collectors.toList()));
+    return userPreorders;
+  }
+
+  private static final Collection<Integer> userPreorderSupplierItemNumbers =
+      userOnlyPreorderedArticles();
+
   public static Integer getPrintNumberFromItem(ShoppingItem item) {
     if (item.getSuppliersItemNumber() < 1000 && item.getSupplier().equals(Supplier.getKKSupplier()))
       return 0;
-    int number = -(int) Math.round(item.getContainerCount());
-    if (item.isWeighAble() || number < 1) return 1;
-    if (number > 10) return 10;
-    return number;
+    if (userPreorderSupplierItemNumbers.contains(item.getSuppliersItemNumber())) return 0;
+    return 1;
   }
 
   public void addShoppingItem(ShoppingItem item) {
