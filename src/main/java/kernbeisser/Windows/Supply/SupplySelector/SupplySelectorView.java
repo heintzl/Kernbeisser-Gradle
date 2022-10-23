@@ -20,6 +20,7 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplySelectorView implements IView<SupplySelectorController> {
@@ -35,6 +36,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private JProgressBar progressBar1;
   private JPanel loadingIndicator;
   private JButton viewOrders;
+  @Linked private SupplySelectorController controller;
 
   @Override
   public void initialize(SupplySelectorController controller) {
@@ -50,11 +52,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                       .orElse(true));
         });
     filter.getModel().setAllowNullSelection(true);
-    filter
-        .getRenderer()
-        .setNoSelectionIcon(
-            IconFontSwing.buildIcon(
-                FontAwesome.QUESTION, Tools.scaleWithLabelScalingFactor(15), Color.RED));
+    filter.getRenderer().setNoSelectionIcon(noFilterIcon);
     filter.getRenderer().setNoSelectionText("Alle Artikel");
     deleteSupply.addActionListener(controller::deleteCurrentSupply);
     export.addActionListener(e -> controller.exportShoppingItems());
@@ -77,7 +75,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
         .ifPresent(
             e -> {
               message(e.toString());
-              e.verify();
+              e.verify(true);
             });
     lineContents.getModel().fireTableDataChanged();
     verifyArticle(actionEvent);
@@ -98,6 +96,9 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   }
 
   private void createUIComponents() {
+    Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE_O, 18, new Color(0x3D3D3D));
+    Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE_O, 18, new Color(0x313131));
+
     supplySelector =
         new ObjectTable<Supply>(
             Columns.create(
@@ -109,26 +110,45 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.create("Anzahl Artikel", Supply::getArticleCount)
                 .withRightClickConsumer(this::listSupplyFiles),
             Columns.create("Summe", e -> String.format("%.2f€", e.getContentSum())));
+
     lineContents =
-        new ObjectTable<LineContent>(
-            Columns.create("Artikelnr.", LineContent::getKkNumber),
-            Columns.create("Artikelname", LineContent::getName),
-            Columns.create("Geb.preis", LineContent::getPrice),
-            Columns.create("Geb.größe", LineContent::getContainerSize),
-            Columns.create(
-                "Packung",
-                e -> e.getAmount() + (e.getUnit() == null ? "" : e.getUnit().getShortName())),
-            Columns.create("Kommentar", LineContent::getMessage),
-            Columns.create(
-                "Preis",
-                e -> String.format("%.2f€", e.getTotalPrice()),
-                SwingUtilities.RIGHT,
-                Column.NUMBER_SORTER),
+        new ObjectTable<>(
             Columns.<LineContent>createIconColumn("S", e -> getIcon(e.getStatus()))
                 .withColumnAdjustor(
                     column -> column.setMaxWidth(Tools.scaleWithLabelScalingFactor(20))),
+            Columns.create("Anz.", LineContent::getContainerMultiplier)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(50),
+            Columns.create("Artikelnr.", LineContent::getKkNumber)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(100),
+            Columns.create("Artikelname", LineContent::getName).withPreferredWidth(250),
+            Columns.<LineContent>create("E.preis", e -> String.format("%.2f€", e.getPrice()))
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(120),
+            Columns.<LineContent>create("Geb.größe", e -> Math.round(e.getContainerSize()))
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(80),
+            Columns.<LineContent>create(
+                    "Packung",
+                    e -> e.getAmount() + (e.getUnit() == null ? "" : e.getUnit().getShortName()))
+                .withPreferredWidth(120),
+            Columns.create("Kommentar", LineContent::getMessage).withPreferredWidth(150),
+            Columns.<LineContent>create("Preis", e -> String.format("%.2f€", e.getTotalPrice()))
+                .withSorter(Column.NUMBER_SORTER),
             Columns.<LineContent>createIconColumn(
-                "", e -> e.isVerified() ? verified : notVerified));
+                    "Ausw.", e -> e.isWeighable() ? selected : unselected)
+                .withPreferredWidth(60)
+                .withHorizontalAlignment(SwingConstants.CENTER),
+            Columns.<LineContent>createIconColumn(
+                    "geprüft", e -> e.isVerified() ? verified : notVerified)
+                .withLeftClickConsumer(this::verifyLine));
+    lineContents.addDoubleClickListener(controller::editArticle);
+  }
+
+  public void verifyLine(LineContent lineContent) {
+    lineContent.verify(!lineContent.isVerified());
+    lineContents.getModel().fireTableDataChanged();
   }
 
   private void listSupplyFiles(Supply supply) {
@@ -142,9 +162,10 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private static final Icon addedIcon = createIcon(FontAwesome.PLUS, new Color(0xB648BA));
   private static final Icon ignoreIcon = createIcon(FontAwesome.EXCLAMATION_CIRCLE, Color.ORANGE);
   private static final Icon produceIcon = createIcon(FontAwesome.LEAF, new Color(0x0D5C0A));
+  private static final Icon noFilterIcon = createIcon(FontAwesome.QUESTION, Color.RED);
 
   private static final Icon verified = okIcon;
-  private static final Icon notVerified = ignoreIcon;
+  private static final Icon notVerified = noFilterIcon;
 
   private static Icon createIcon(FontAwesome icon, Color color) {
     return IconFontSwing.buildIcon(icon, Tools.scaleWithLabelScalingFactor(15), color);

@@ -180,8 +180,8 @@ public class LineContent {
     return resolveStatus;
   }
 
-  public void verify() {
-    verified = true;
+  public void verify(boolean v) {
+    verified = v;
   }
 
   public String toString() {

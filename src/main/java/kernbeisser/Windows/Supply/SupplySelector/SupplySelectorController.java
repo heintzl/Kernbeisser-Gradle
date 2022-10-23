@@ -10,10 +10,16 @@ import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Forms.FormEditor.FormEditorController;
+import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Reports.PriceListReport;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Useful.Date;
@@ -39,6 +45,20 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   public void fillView(SupplySelectorView supplySelectorView) {
     getView().setFilterOptions(Arrays.asList(ResolveStatus.values()));
     loadDefaultDir();
+  }
+
+  public void editArticle(LineContent lineContent) {
+    if (lineContent.getStatus() == ResolveStatus.OK)
+      try {
+        Article article =
+            Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), lineContent.getKkNumber())
+                .get();
+        FormEditorController.create(article, new ArticleController(), Mode.EDIT)
+            .withCloseEvent(() -> getView().verifyLine(lineContent))
+            .openIn(new SubWindow(getView().traceViewContainer()));
+      } catch (NoSuchElementException e) {
+        Tools.showUnexpectedErrorWarning(e);
+      }
   }
 
   public void loadDefaultDir() {
