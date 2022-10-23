@@ -200,6 +200,7 @@ public class SupplyView implements IView<SupplyController> {
                 .withLeftClickConsumer(controller::editPrintPool)
                 .withRightClickConsumer(controller::increaseItemPrintNumber)
                 .withSorter(Column.NUMBER_SORTER));
+//    shoppingItems.addDoubleClickListener(controller::editArticle); TODO activate, when refresh logic is done
   }
 
   public void invalidInput() {

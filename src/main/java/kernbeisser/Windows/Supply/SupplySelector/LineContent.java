@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
@@ -178,6 +179,16 @@ public class LineContent {
             .map(e -> ResolveStatus.OK)
             .orElse(ResolveStatus.ADDED);
     return resolveStatus;
+  }
+
+  public void refreshFromArticle(Article article) { // TODO check logic!
+    this.setName(article.getName());
+    this.setPrice(article.getNetPrice()); // different to article generation
+    this.setUnit(article.getMetricUnits());
+    this.setAmount(article.getAmount());
+    this.setWeighable(article.isWeighable()); // different to article generation
+    this.setContainerSize(article.getContainerSize());
+    this.setKkNumber(article.getSuppliersItemNumber());
   }
 
   public void verify(boolean v) {
