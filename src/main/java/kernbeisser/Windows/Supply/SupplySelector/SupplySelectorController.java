@@ -26,6 +26,7 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.Supply.SupplyController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.SneakyThrows;
 import lombok.var;
@@ -48,17 +49,32 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   }
 
   public void editArticle(LineContent lineContent) {
-    if (lineContent.getStatus() == ResolveStatus.OK)
-      try {
-        Article article =
-            Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), lineContent.getKkNumber())
-                .get();
-        FormEditorController.create(article, new ArticleController(), Mode.EDIT)
-            .withCloseEvent(() -> getView().verifyLine(lineContent))
-            .openIn(new SubWindow(getView().traceViewContainer()));
-      } catch (NoSuchElementException e) {
-        Tools.showUnexpectedErrorWarning(e);
-      }
+    Supplier kkSupplier = Supplier.getKKSupplier();
+    switch (lineContent.getStatus()) {
+      case OK:
+      case ADDED:
+        try {
+          Article article = SupplyController.findOrCreateArticle(kkSupplier, lineContent);
+          FormEditorController.create(article, new ArticleController(), Mode.EDIT)
+              .withCloseEvent(
+                  () ->
+                      refreshLineContent(
+                          lineContent,
+                          Articles.getBySuppliersItemNumber(
+                                  kkSupplier, article.getSuppliersItemNumber())
+                              .get()))
+              .openIn(new SubWindow(getView().traceViewContainer()));
+        } catch (NoSuchElementException e) {
+          Tools.showUnexpectedErrorWarning(e);
+        }
+        break;
+      default:
+    }
+  }
+
+  private void refreshLineContent(LineContent lineContent, Article article) {
+    lineContent.refreshFromArticle(article);
+    getView().verifyLine(lineContent);
   }
 
   public void loadDefaultDir() {
