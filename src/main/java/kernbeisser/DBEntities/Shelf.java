@@ -84,7 +84,8 @@ public class Shelf {
 
   public static int createShelfNo() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return em.createQuery("select max(s.shelfNo) from Shelf s", Integer.class).getSingleResult()
+    return em.createQuery("select coalesce (max(s.shelfNo), 0) from Shelf s", Integer.class)
+            .getSingleResult()
         + 1;
   }
 
