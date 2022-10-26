@@ -39,6 +39,10 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     return getView().getSelectedObject().map(this::tryToRefresh);
   }
 
+  public Collection<T> getSelectedObjects() {
+    return getView().getObjectTable().getSelectedObjects();
+  }
+
   public void invokeSearch() {
     getView().setObjects(model.getSearchResults(getView().getSearch()));
     runLostSelectionListener();

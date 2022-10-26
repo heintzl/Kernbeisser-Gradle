@@ -34,7 +34,11 @@
       "trialMemberReportFileName": "Probemitglieder.jrxml",
       "keyUserListFileName": "BenutzerSchluessel.jrxml",
       "invoiceFileName": "Kerni_Rechnung.jrxml",
-      "priceList": "Preisliste.jrxml"
+      "priceList": "Preisliste.jrxml",
+      "inventoryCountingLists": "Inventur_Zaehlliste.jrxml",
+      "inventoryShelfOverview": "Inventur_Regaluebersicht.jrxml",
+      "inventoryShelfDetails": "Inventur_Regaldetails.jrxml",
+      "inventoryStock": "Inventur_Bestaende.jrxml"
     }
   },
   "preorders": {

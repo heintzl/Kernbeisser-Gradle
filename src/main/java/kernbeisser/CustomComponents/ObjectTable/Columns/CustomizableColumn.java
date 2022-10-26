@@ -1,5 +1,7 @@
 package kernbeisser.CustomComponents.ObjectTable.Columns;
 
+import static javax.swing.SwingConstants.RIGHT;
+
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +52,9 @@ public class CustomizableColumn<T> extends DefaultColumn<T> {
 
   public CustomizableColumn<T> withSorter(@NotNull Comparator<Object> sorter) {
     this.sorter = sorter;
+    if (sorter.equals(Column.NUMBER_SORTER)) {
+      return this.withHorizontalAlignment(RIGHT);
+    }
     return this;
   }
 

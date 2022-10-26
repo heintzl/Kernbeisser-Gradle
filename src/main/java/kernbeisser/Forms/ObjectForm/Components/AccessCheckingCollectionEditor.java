@@ -30,6 +30,10 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
 
   private CloseEvent closeEvent;
 
+  private CollectionController<V> collectionController;
+
+  private int searchBoxScope = 0;
+
   @SafeVarargs
   public AccessCheckingCollectionEditor(
       Getter<P, C> getter, Source<V> values, Column<V>... columns) {
@@ -40,15 +44,26 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
   }
 
   void trigger(ActionEvent event) {
-    CollectionController<V> controller = new CollectionController<>(data, values, columns);
+    collectionController = new CollectionController<>(data, values, columns);
     if (closeEvent != null) {
-      controller.addCloseEvent(closeEvent);
+      this.collectionController.getView().addSearchbox(searchBoxScope);
+      collectionController.addCloseEvent(closeEvent);
     }
-    controller.openIn(new SubWindow(IView.traceViewContainer(getParent())));
+    collectionController.openIn(new SubWindow(IView.traceViewContainer(getParent())));
   }
 
   public AccessCheckingCollectionEditor<P, C, V> withCloseEvent(CloseEvent closeEvent) {
     this.closeEvent = closeEvent;
+    return this;
+  }
+
+  public AccessCheckingCollectionEditor<P, C, V> withSearchbox(int scope) {
+    try {
+      collectionController.getView().addSearchbox(scope);
+      collectionController.getView().clearSearchBox();
+    } catch (NullPointerException e) {
+      searchBoxScope = scope;
+    }
     return this;
   }
 

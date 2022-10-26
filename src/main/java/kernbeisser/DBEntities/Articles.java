@@ -525,6 +525,10 @@ public class Articles {
     }
   }
 
+  public static String getPieceAmount(Article article) {
+    return String.format("%,1d", getSafeAmount(article)) + article.getMetricUnits().getShortName();
+  }
+
   public static String getContentAmount(Article article) {
     String containerInfo = new DecimalFormat("0.###").format(article.getContainerSize());
     if (article.isWeighable()) {
