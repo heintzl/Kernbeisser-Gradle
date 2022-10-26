@@ -12,6 +12,7 @@ import kernbeisser.Forms.ObjectForm.Components.AccessCheckingCollectionEditor;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Components.DataListener;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.IView;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class ShelfView implements IView<ShelfController> {
   private AccessCheckingCollectionEditor<Shelf, Set<PriceList>, PriceList> editShelfPriceLists;
   private AccessCheckingCollectionEditor<Shelf, Set<Article>, Article> extraArticles;
   private AccessCheckingField<Shelf, Integer> shelfNo;
+  private JLabel extraArticleLabel;
   @Getter private ObjectForm<Shelf> objectForm;
 
   private ObjectForm<Shelf> createObjectForm() {
@@ -53,7 +55,7 @@ public class ShelfView implements IView<ShelfController> {
     shelfPriceLists.setObjects(editShelfPriceLists.getData());
   }
 
-  private void refreshExtraArticleTable() {
+  public void refreshExtraArticleTable() {
     shelfExtraArticles.setObjects(extraArticles.getData());
   }
 
@@ -88,5 +90,7 @@ public class ShelfView implements IView<ShelfController> {
     shelfNo =
         new AccessCheckingField<>(
             Shelf::getShelfNo, Shelf::setShelfNo, AccessCheckingField.UNSIGNED_INT_FORMER);
+    extraArticleLabel = new JLabel("Extra Artikel");
+    extraArticleLabel.setIcon(Icons.barcodeIcon());
   }
 }
