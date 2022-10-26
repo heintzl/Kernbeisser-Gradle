@@ -79,6 +79,7 @@ public class Shelf {
                 .sorted(Comparator.comparingInt(Article::getKbNumber)),
             articles.stream())
         .distinct()
+        .sorted(Comparator.comparingInt(Article::getKbNumber))
         .collect(Collectors.toList());
   }
 
