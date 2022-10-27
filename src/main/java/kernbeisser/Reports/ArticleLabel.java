@@ -2,11 +2,13 @@ package kernbeisser.Reports;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Useful.Date;
 
 public class ArticleLabel extends Report {
@@ -26,6 +28,11 @@ public class ArticleLabel extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    return articles.stream().map(ShoppingItem::createReportItem).collect(Collectors.toList());
+    return articles.stream()
+        .map(ShoppingItem::createReportItem)
+        .sorted(
+            Comparator.comparing(PriceListReportArticle::getSuppliersShortName)
+                .thenComparingInt(PriceListReportArticle::getSuppliersItemNumber))
+        .collect(Collectors.toList());
   }
 }
