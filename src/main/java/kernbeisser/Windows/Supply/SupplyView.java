@@ -111,8 +111,12 @@ public class SupplyView implements IView<SupplyController> {
     return amount.getSafeValue();
   }
 
-  int getSuppliersItemNumber() {
-    return suppliersNumber.getSafeValue();
+  Integer getSuppliersItemNumber() throws CannotParseException {
+    try {
+      return suppliersNumber.getSafeValue();
+    } catch (RuntimeException e) {
+      throw new CannotParseException();
+    }
   }
 
   @Override
