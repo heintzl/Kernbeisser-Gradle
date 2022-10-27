@@ -89,7 +89,8 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
         .schedule(() -> setLabelPrintText(launchButton), 1000, TimeUnit.MILLISECONDS);
   }
 
-  public static JButton getLaunchButton(ViewContainer targetComponent) {
+  public static JButton getLaunchButton(
+      ViewContainer targetComponent, Runnable preparePrintAction) {
     JButton launchButton =
         new JButton() {
           @Override
@@ -101,11 +102,17 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     setLabelPrintText(launchButton);
     launchButton.setToolTipText("Öffnet das Fenster für den Etikettendruck");
     launchButton.addActionListener(
-        e ->
-            new PrintLabelsController()
-                .withCloseEvent(() -> refreshLaunchButton(launchButton))
-                .openIn(new SubWindow(targetComponent)));
+        e -> {
+          preparePrintAction.run();
+          new PrintLabelsController()
+              .withCloseEvent(() -> refreshLaunchButton(launchButton))
+              .openIn(new SubWindow(targetComponent));
+        });
     return launchButton;
+  }
+
+  public static JButton getLaunchButton(ViewContainer targetComponent) {
+    return getLaunchButton(targetComponent, () -> {});
   }
 
   public void refreshPrintButton() {

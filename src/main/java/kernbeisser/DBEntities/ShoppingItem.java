@@ -232,7 +232,7 @@ public class ShoppingItem implements Serializable {
     ShoppingItem item = new ShoppingItem(article, /*not used in this case*/ 0, 0, false);
     try {
       String barcode = Long.toString(article.getBarcode());
-      item.shortBarcode = barcode.substring(barcode.length() - 4);
+      item.shortBarcode = barcode.substring(Math.max(barcode.length() - 4, 0));
     } catch (NullPointerException ignored) {
     }
     try {
