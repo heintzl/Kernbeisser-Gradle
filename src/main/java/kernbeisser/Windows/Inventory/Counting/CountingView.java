@@ -39,6 +39,7 @@ public class CountingView implements IView<CountingController> {
     addArticle.addActionListener(e -> controller.addArticleStock());
     articleStocks.addSelectionListener(this::loadArticleStock);
     articleStocks.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    commit.addActionListener(e -> back());
   }
 
   Optional<Shelf> getSelectedShelf() {
