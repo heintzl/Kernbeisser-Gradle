@@ -31,6 +31,7 @@ public class InventoryStocks extends Report {
   Collection<?> getDetailCollection() {
     return shelves.stream()
         .flatMap(InventoryArticleStock::stockStreamOfShelf)
+        .filter(s -> s.getCount() != 0.0)
         .collect(Collectors.toList());
   }
 }
