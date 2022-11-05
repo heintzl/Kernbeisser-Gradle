@@ -44,6 +44,7 @@ public class ShelfView implements IView<ShelfController> {
   @Override
   public void initialize(ShelfController controller) {
     objectForm = createObjectForm();
+    objectForm.setObjectDistinction("Das Regal");
   }
 
   @Override

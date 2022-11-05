@@ -64,7 +64,15 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
                       column.setMaxWidth(140);
                       column.setPreferredWidth(140);
                     }),
-            Columns.<Shelf>create("Summe", shelf -> String.format("%.2f", shelf.calculateTotal()))
+            Columns.<Shelf>create("Summe", shelf -> String.format("%.2f€", shelf.getTotalNet()))
+                .withHorizontalAlignment(RIGHT)
+                .withSorter(Column.NUMBER_SORTER)
+                .withColumnAdjustor(
+                    column -> {
+                      column.setMaxWidth(120);
+                      column.setPreferredWidth(120);
+                    }),
+            Columns.<Shelf>create("Pfand", shelf -> String.format("%.2f€", shelf.getTotalDeposit()))
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER)
                 .withColumnAdjustor(
@@ -104,9 +112,10 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
         report = new InventoryCountingLists(shelves, inventoryDate);
         break;
       case INVENTORYRESULT:
+        report = new InventoryStocks(inventoryDate);
         break;
       case INVENTORYSHELFRESULTS:
-        report = new InventoryStocks(shelves, inventoryDate);
+        report = new InventoryShelfStocks(shelves, inventoryDate);
         break;
     }
     if (report == null) {

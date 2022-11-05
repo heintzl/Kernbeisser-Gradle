@@ -35,20 +35,22 @@ public class CountingController extends Controller<CountingView, CountingModel> 
 
   public void setStock(ArticleStock articleStock, double safeValue) {
     model.setStock(articleStock, safeValue);
-    getView().getSelectedShelf().ifPresent(this::loadShelf);
+    articleStock.setCounted(safeValue);
+    getView().refreshArticleStock(articleStock);
   }
 
   public void addArticleStock() {
+    CountingView view = getView();
     new ArticleSelectorController(
             e ->
-                getView()
-                    .getSelectedShelf()
+                view.getSelectedShelf()
                     .ifPresent(
                         shelf -> {
                           model.addArticleToShelf(shelf, e);
                           loadShelf(shelf);
+                          view.selectArticle(e);
                         }))
-        .openIn(new SubWindow(getView().traceViewContainer()));
+        .openIn(new SubWindow(view.traceViewContainer()));
   }
 
   private final BarcodeCapture capture =

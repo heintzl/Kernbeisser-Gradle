@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.Instant;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -28,6 +27,8 @@ public class InventoryView implements IView<InventoryController> {
   private ObjectViewView<Shelf> shelfView;
   private final int printIconColor = 0x0033AF;
   private InventoryReports selectedReport;
+  private boolean pdfOutput = false;
+  private boolean printOnlySelected = false;
 
   @Linked private ObjectViewController<Shelf> shelfViewController;
   @Linked private InventoryController controller;
@@ -72,11 +73,9 @@ public class InventoryView implements IView<InventoryController> {
     }
   }
 
-  private void setCheckboxState(JCheckBox checkBox, boolean enable) {
+  private void setConfirmCheckboxState(JCheckBox checkBox, boolean enable) {
     checkBox.setEnabled(enable);
-    if (!enable) {
-      checkBox.setSelected(false);
-    }
+    checkBox.setSelected(enable && printOnlySelected);
   }
 
   private void print() {
@@ -89,15 +88,16 @@ public class InventoryView implements IView<InventoryController> {
     if (!selectedShelves) {
       confirmSelected.setVisible(false);
     }
-    AtomicReference<InventoryReports> reportSelector = new AtomicReference<>();
     Supplier<Boolean> shelfSelectionCurrentlyAllowed =
-        (() ->
-            InventoryReports.shelfSelectionAllowed()
-                .contains((InventoryReports) reportSelector.get()));
+        (() -> InventoryReports.shelfSelectionAllowed().contains(selectedReport));
     ButtonGroup optReports = new ButtonGroup();
     JLabel reportLabel = new JLabel("Ausdruck auswählen:");
     JCheckBox outputAsPdf = new JCheckBox("PDF als Vorschau erstellen");
-    confirmSelected.setEnabled(shelfSelectionCurrentlyAllowed.get());
+    outputAsPdf.setSelected(pdfOutput);
+    outputAsPdf.addActionListener(e -> pdfOutput = outputAsPdf.isSelected());
+    setConfirmCheckboxState(
+        confirmSelected, selectedShelves && shelfSelectionCurrentlyAllowed.get());
+    confirmSelected.addActionListener(e -> printOnlySelected = confirmSelected.isSelected());
 
     printOptions.add(reportLabel);
     for (InventoryReports report : InventoryReports.values()) {
@@ -105,8 +105,8 @@ public class InventoryView implements IView<InventoryController> {
       button.setSelected(report.equals(selectedReport));
       button.addActionListener(
           e -> {
-            reportSelector.set(report);
-            setCheckboxState(
+            selectedReport = report;
+            setConfirmCheckboxState(
                 confirmSelected, selectedShelves && shelfSelectionCurrentlyAllowed.get());
           });
       printOptions.add(button);
@@ -125,7 +125,6 @@ public class InventoryView implements IView<InventoryController> {
             JOptionPane.PLAIN_MESSAGE,
             IconFontSwing.buildIcon(FontAwesome.PRINT, 40, new Color(printIconColor)))
         == JOptionPane.OK_OPTION) {
-      selectedReport = reportSelector.get();
       controller.print(selectedReport, confirmSelected.isSelected(), outputAsPdf.isSelected());
     }
   }
