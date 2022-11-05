@@ -107,15 +107,27 @@ public class Shelf {
         .collect(Collectors.toList());
   }
 
-  public double calculateTotal() {
+  public double getTotalNet() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return calculateTotal(em);
+    return getTotalNet(em);
   }
 
-  public double calculateTotal(EntityManager em) {
+  public double getTotalNet(EntityManager em) {
     return getAllArticleStocks(em).mapToDouble(ArticleStock::calculateNetPrice).sum();
+  }
+
+  public double getTotalDeposit() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return getTotalDeposit(em);
+  }
+
+  public double getTotalDeposit(EntityManager em) {
+    return getAllArticleStocks(em).mapToDouble(ArticleStock::calculateDeposit).sum();
   }
 }
