@@ -1,6 +1,5 @@
 package kernbeisser.Windows.Inventory.Counting;
 
-import java.awt.*;
 import java.util.Collection;
 import java.util.Optional;
 import javax.swing.*;
@@ -10,6 +9,7 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
@@ -28,6 +28,7 @@ public class CountingView implements IView<CountingController> {
   private AdvancedComboBox<Shelf> shelf;
   private JLabel articleNumber;
   private JButton addArticle;
+  private ArticleStock stockBefore;
 
   @Linked private CountingController controller;
 
@@ -37,9 +38,9 @@ public class CountingView implements IView<CountingController> {
     apply.addActionListener(e -> applyAmount());
     amount.addActionListener(e -> applyAmount());
     addArticle.addActionListener(e -> controller.addArticleStock());
-    articleStocks.addSelectionListener(this::loadArticleStock);
+    articleStocks.addSelectionListener(this::stockSelectionChanged);
     articleStocks.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    commit.addActionListener(e -> back());
+    commit.addActionListener(e -> close());
   }
 
   Optional<Shelf> getSelectedShelf() {
@@ -65,7 +66,9 @@ public class CountingView implements IView<CountingController> {
             Columns.<ArticleStock>create("Artikelnummer", e -> e.getArticle().getKbNumber())
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Artikelname", e -> e.getArticle().getName()),
-            Columns.create("Gezählte Menge", ArticleStock::getCounted));
+            Columns.<ArticleStock>create(
+                    "Gezählte Menge", (e -> String.format("%.1f", e.getCounted())))
+                .withSorter(Column.NUMBER_SORTER));
     shelf = new AdvancedComboBox<>(e -> e.getShelfNo() + " - " + e.getLocation());
   }
 
@@ -80,7 +83,20 @@ public class CountingView implements IView<CountingController> {
     articleStocks.getSelectedObject().ifPresent(this::loadArticleStock);
   }
 
+  private void saveStockBefore() {
+    double count = amount.getSafeValue();
+    if (stockBefore != null && stockBefore.getCounted() != count) {
+      controller.setStock(stockBefore, count);
+    }
+  }
+
+  void stockSelectionChanged(ArticleStock stock) {
+    saveStockBefore();
+    loadArticleStock(stock);
+  }
+
   void loadArticleStock(ArticleStock stock) {
+    stockBefore = stock;
     amount.setText(String.valueOf(stock.getCounted()));
     articleName.setText(stock.getArticle().getName());
     articleNumber.setText(String.valueOf(stock.getArticle().getKbNumber()));
@@ -95,8 +111,31 @@ public class CountingView implements IView<CountingController> {
 
   public void selectFirst() {
     if (!articleStocks.getObjects().isEmpty()) {
-      articleStocks.getSelectionModel().setSelectionInterval(0, 0);
+      articleStocks.selectRow(0);
+      ArticleStock stock = articleStocks.getSelectedObject().orElse(null);
+      loadArticleStock(stock);
     }
+  }
+
+  public void selectArticle(Article article) {
+    int rowIndex = 0;
+    for (ArticleStock stock : articleStocks.getObjects()) {
+      if (stock.getArticle().equals(article)) {
+        loadArticleStock(stock);
+        break;
+      }
+      rowIndex++;
+    }
+    articleStocks.selectRow(rowIndex);
+  }
+
+  public void refreshArticleStock(ArticleStock articleStock) {
+    articleStocks.replace(articleStock, articleStock);
+  }
+
+  private void close() {
+    saveStockBefore();
+    back();
   }
 
   @Override
