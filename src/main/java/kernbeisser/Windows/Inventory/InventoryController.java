@@ -64,7 +64,7 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
                       column.setMaxWidth(140);
                       column.setPreferredWidth(140);
                     }),
-            Columns.<Shelf>create("Summe", shelf -> String.format("%.2f", shelf.calculateTotal()))
+            Columns.<Shelf>create("Summe", shelf -> String.format("%.2f€", shelf.calculateTotal()))
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER)
                 .withColumnAdjustor(

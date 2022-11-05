@@ -56,6 +56,12 @@ public class ArticleStock {
   }
 
   public double calculateNetPrice() {
-    return article.getNetPrice() * counted;
+    return article.getNetPrice()
+        * counted
+        * (article.isWeighable() ? article.getMetricUnits().getBaseFactor() : 1.0);
+  }
+
+  public double calculateDeposit() {
+    return article.getSingleDeposit() * counted;
   }
 }

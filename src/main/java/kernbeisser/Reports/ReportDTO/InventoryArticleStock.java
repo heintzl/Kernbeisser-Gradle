@@ -46,8 +46,7 @@ public class InventoryArticleStock {
       this.unit = "Stk";
     }
     this.count = stock.getCounted();
-    this.netSum =
-        count * article.getNetPrice() * (article.isWeighable() ? unit.getBaseFactor() : 1.0);
+    this.netSum = stock.calculateNetPrice();
     this.depositSum = count * article.getSingleDeposit();
   }
 
