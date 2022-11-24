@@ -24,12 +24,12 @@ public class Shelf {
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ID_WRITE)})
   private int id;
 
-  @Column(unique = true)
+  @Column(unique = true, nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_WRITE)})
   private int shelfNo;
 
-  @Column(unique = true)
+  @Column(unique = true, nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_WRITE)})
   private String location;

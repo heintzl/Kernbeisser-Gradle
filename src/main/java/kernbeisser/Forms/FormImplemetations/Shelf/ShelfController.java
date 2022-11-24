@@ -71,6 +71,14 @@ public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf
     getView().refreshExtraArticleTable();
   }
 
+  public boolean isShelfNoUniqe(int shelNo) {
+    return model.shelfNoExists(shelNo);
+  }
+
+  public boolean isLocationUniqe(String location) {
+    return model.locationExists(location);
+  }
+
   @Override
   public void addPermission() {}
 

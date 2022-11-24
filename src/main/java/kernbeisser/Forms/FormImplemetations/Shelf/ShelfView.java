@@ -45,6 +45,8 @@ public class ShelfView implements IView<ShelfController> {
   public void initialize(ShelfController controller) {
     objectForm = createObjectForm();
     objectForm.setObjectDistinction("Das Regal");
+    objectForm.registerUniqueCheck(shelfNo, controller::isShelfNoUniqe);
+    objectForm.registerUniqueCheck(shelfLocation, controller::isLocationUniqe);
   }
 
   @Override
