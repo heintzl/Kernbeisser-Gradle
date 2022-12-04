@@ -14,6 +14,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
+import kernbeisser.Reports.UserNameObfuscation;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
@@ -105,17 +106,27 @@ public class Transaction implements UserRelated {
     return Tools.getAll(Transaction.class, condition);
   }
 
-  public Transaction withUserIdentifications(boolean withNames) {
+  public Transaction withUserIdentifications(UserNameObfuscation withNames) {
 
     Transaction out = this;
     User from = fromUser;
     User to = toUser;
-    if (withNames) {
-      out.fromIdentification = from.getFullName();
-      out.toIdentification = to.getFullName();
-    } else {
-      out.fromIdentification = Integer.toString(from.getId());
-      out.toIdentification = Integer.toString(to.getId());
+    switch (withNames) {
+      case NONE:
+        out.fromIdentification = from.getFullName();
+        out.toIdentification = to.getFullName();
+        break;
+      case WITHOUTPAYIN:
+        out.fromIdentification = Integer.toString(from.getId());
+        if (out.transactionType == TransactionType.PAYIN) {
+          out.toIdentification = to.getFullName();
+        } else {
+          out.toIdentification = Integer.toString(from.getId());
+        }
+        break;
+      default:
+        out.fromIdentification = Integer.toString(from.getId());
+        out.toIdentification = Integer.toString(to.getId());
     }
     return out;
   }

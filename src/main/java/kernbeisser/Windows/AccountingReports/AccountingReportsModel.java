@@ -15,6 +15,7 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
 
   @Getter private final ExportTypes[] exportTypes = ExportTypes.values();
   @Getter private final List<String> userKeySortOrders = Arrays.asList("Id", "Name");
+  @Getter private final UserNameObfuscation[] userNameObfuscations = UserNameObfuscation.values();
 
   public AccountingReportsModel() {}
 
@@ -38,12 +39,12 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
   }
 
   public static boolean exportAccountingReports(
-      List<Transaction> transactions, long no, boolean withNames, boolean duplexPrint) {
+      List<Transaction> transactions, long no, UserNameObfuscation withNames, boolean duplexPrint) {
     AtomicBoolean success = new AtomicBoolean(true);
     boolean printValueSums = true;
     Report report;
     if (transactions.stream().anyMatch(Transaction::isPurchase)) {
-      report = new AccountingReport(no, transactions, withNames);
+      report = new AccountingReport(no, transactions, withNames == UserNameObfuscation.NONE);
       report.setDuplexPrint(duplexPrint);
       report.sendToPrinter(
           "Ladendienst wird gedruckt",
