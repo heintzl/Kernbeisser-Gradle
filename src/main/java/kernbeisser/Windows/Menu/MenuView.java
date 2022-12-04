@@ -126,7 +126,9 @@ public class MenuView implements IView<MenuController> {
     infoPanel = new InfoPanelController().getView();
     openCashierShoppingMask =
         new ControllerButton(
-            CashierShoppingMaskController::new, CashierShoppingMaskController.class);
+            CashierShoppingMaskController::new,
+            CashierShoppingMaskController.class,
+            "Willst Du mit dem Ladendienst beginnen?");
     editPriceList =
         new ControllerButton(
             ManagePriceListsController::new, ManagePriceListsController.class, Controller::openTab);
