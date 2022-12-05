@@ -30,6 +30,10 @@ public class AccountingReportsController
     return model.getExportTypes();
   }
 
+  UserNameObfuscation[] getUserNameObfuscations() {
+    return model.getUserNameObfuscations();
+  }
+
   Collection<String> getUserKeySortOrders() {
     return model.getUserKeySortOrders();
   }
@@ -74,7 +78,7 @@ public class AccountingReportsController
         new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Bonrolle wird erstellt");
   }
 
-  public void exportAccountingReport(long reportNo, boolean withNames) {
+  public void exportAccountingReport(long reportNo, UserNameObfuscation withNames) {
     var view = getView();
     if (reportNo == Transaction.getLastReportNo() + 1) {
       try {

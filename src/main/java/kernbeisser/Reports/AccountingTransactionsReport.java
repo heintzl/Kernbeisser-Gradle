@@ -11,11 +11,14 @@ public class AccountingTransactionsReport extends Report {
 
   private final long reportNo;
   private final List<Transaction> transactions;
-  private final boolean withNames;
+  private final UserNameObfuscation withNames;
   private final boolean printValueSums;
 
   public AccountingTransactionsReport(
-      long reportNo, List<Transaction> transactions, boolean withNames, boolean printValueSums)
+      long reportNo,
+      List<Transaction> transactions,
+      UserNameObfuscation withNames,
+      boolean printValueSums)
       throws NoTransactionsFoundException {
     super(
         "accountingTransactionReportFileName",

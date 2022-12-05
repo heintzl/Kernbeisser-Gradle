@@ -3,3 +3,5 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# RunConfiguration ignored files
+/runConfigurations/Main_Unprotected_.xml

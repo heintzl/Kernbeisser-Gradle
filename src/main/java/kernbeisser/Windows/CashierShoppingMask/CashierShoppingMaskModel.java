@@ -10,6 +10,7 @@ import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Reports.UserBalanceReport;
+import kernbeisser.Reports.UserNameObfuscation;
 import kernbeisser.Windows.AccountingReports.AccountingReportsModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Data;
@@ -25,7 +26,8 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
   public static void printAccountingReports(
       List<Transaction> reportTransactions, Consumer<Boolean> resultConsumer) {
     long no = Transaction.getLastReportNo() + 1;
-    if (AccountingReportsModel.exportAccountingReports(reportTransactions, no, false, true)) {
+    if (AccountingReportsModel.exportAccountingReports(
+        reportTransactions, no, UserNameObfuscation.WITHOUTPAYIN, true)) {
       Transaction.writeAccountingReportNo(reportTransactions, no);
     } else {
       resultConsumer.accept(false);
