@@ -16,4 +16,12 @@ public class Icons {
     return IconFontSwing.buildIcon(
         FontAwesome.BARCODE, Tools.scaleWithLabelScalingFactor(16), Color.BLACK);
   }
+
+  public static Icon booleanIcon(boolean b) {
+    return (b
+        ? IconFontSwing.buildIcon(
+            FontAwesome.CHECK_SQUARE_O, Tools.scaleWithLabelScalingFactor(16), Color.BLACK)
+        : IconFontSwing.buildIcon(
+            FontAwesome.SQUARE_O, Tools.scaleWithLabelScalingFactor(16), Color.BLACK));
+  }
 }

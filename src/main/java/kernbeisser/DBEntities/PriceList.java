@@ -88,8 +88,8 @@ public class PriceList implements Serializable {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-            "select p from PriceList p where name like '" + name + "'", PriceList.class)
+    return em.createQuery("select p from PriceList p where name = :n", PriceList.class)
+        .setParameter("n", name)
         .getSingleResult();
   }
 

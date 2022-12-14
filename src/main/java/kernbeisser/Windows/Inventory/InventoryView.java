@@ -5,12 +5,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.Instant;
+import java.util.Set;
 import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
@@ -54,7 +59,11 @@ public class InventoryView implements IView<InventoryController> {
     JButton print = new JButton("Listen und Ergebnisse drucken");
     print.addActionListener(e -> print());
     print.setIcon(Icons.defaultIcon(FontAwesome.PRINT, new Color(printIconColor)));
+    JButton shelfLessPriceLists = new JButton("Preislisten ohne Regal");
+    shelfLessPriceLists.addActionListener(e -> controller.showPriceListsWithoutShelf());
+    shelfLessPriceLists.setIcon(Icons.defaultIcon(FontAwesome.BARS, new Color(0xDC7E00)));
     shelfViewController.addButton(shelfCounting);
+    shelfViewController.addButton(shelfLessPriceLists);
     shelfViewController.addButton(print);
     shelfViewController.addButton(exportShelves);
     shelfViewController.setForceExtraButtonState(false);
@@ -127,6 +136,27 @@ public class InventoryView implements IView<InventoryController> {
         == JOptionPane.OK_OPTION) {
       controller.print(selectedReport, confirmSelected.isSelected(), outputAsPdf.isSelected());
     }
+  }
+
+  public void showPriceListsWithoutShelf(Set<PriceList> priceLists) {
+    ObjectTable<PriceList> priceListTable =
+        new ObjectTable(
+            Columns.create("Preisliste", PriceList::getName)
+                .withColumnAdjustor(column -> column.setPreferredWidth(550)),
+            Columns.<PriceList>create(
+                    "Artikel", p -> String.format("%d", p.getAllArticles().size()))
+                .withSorter(Column.NUMBER_SORTER));
+    JPanel tablePanel = new JPanel(new FlowLayout());
+    tablePanel.setSize(700, 1000);
+    JScrollPane scrollPane =
+        new JScrollPane(
+            priceListTable,
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    tablePanel.add(scrollPane);
+    priceListTable.setObjects(priceLists);
+    JOptionPane.showMessageDialog(
+        getContent(), tablePanel, "Nicht zugeordnete Preislisten", JOptionPane.PLAIN_MESSAGE);
   }
 
   @Override
