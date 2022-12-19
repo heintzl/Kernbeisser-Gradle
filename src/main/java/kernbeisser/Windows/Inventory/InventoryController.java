@@ -128,6 +128,10 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
     }
   }
 
+  public void showPriceListsWithoutShelf() {
+    getView().showPriceListsWithoutShelf(InventoryModel.priceListsWithoutShelf());
+  }
+
   public void calculateInventory(ActionEvent actionEvent) {}
 
   @SneakyThrows
