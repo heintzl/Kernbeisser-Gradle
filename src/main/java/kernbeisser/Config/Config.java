@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.stream.Collectors;
+import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 @Data
 public final class Config {
 
-  private static final Path CONFIG_PATH = Paths.get("config.json");
+  private static Path CONFIG_PATH = Paths.get("config.json");
 
   @Getter(AccessLevel.NONE)
   private static final Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
@@ -38,6 +39,18 @@ public final class Config {
   private static final Config config = loadJSON();
 
   public static void safeFile() {
+    safeInFile(getConfig());
+  }
+
+  public static void safeFile(String[] args) {
+    for (String arg : args) {
+      if (arg.startsWith("-configFile:")) {
+        String configFile = arg.split(":")[1];
+        CONFIG_PATH = Paths.get(configFile);
+        Main.logger.info("Using custom configuration from " + configFile);
+        break;
+      }
+    }
     safeInFile(getConfig());
   }
 

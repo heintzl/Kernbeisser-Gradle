@@ -45,7 +45,7 @@ public class Main {
 
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
     Thread.setDefaultUncaughtExceptionHandler(Main::logUncaughtException);
-    Config.safeFile();
+    Config.safeFile(args);
     Locale.setDefault(Locale.GERMAN);
     logger.info("Free memory at start " + Runtime.getRuntime().freeMemory() / 1048576 + "MB");
     // Runs the jar with more memory if not enough is reserved
