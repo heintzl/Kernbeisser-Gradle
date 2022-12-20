@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 @Data
 public final class Config {
 
-  private static Path CONFIG_PATH = Paths.get("config.json");
+  private static Path configPath = Paths.get("config.json");
 
   @Getter(AccessLevel.NONE)
   private static final Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
@@ -46,7 +46,7 @@ public final class Config {
     for (String arg : args) {
       if (arg.startsWith("-configFile:")) {
         String configFile = arg.split(":")[1];
-        CONFIG_PATH = Paths.get(configFile);
+        configPath = Paths.get(configFile);
         Main.logger.info("Using custom configuration from " + configFile);
         break;
       }
@@ -56,7 +56,7 @@ public final class Config {
 
   public static void safeInFile(@NotNull Config config) {
     try {
-      Files.write(CONFIG_PATH, Collections.singleton(gson.toJson(config)));
+      Files.write(configPath, Collections.singleton(gson.toJson(config)));
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -65,12 +65,12 @@ public final class Config {
   @SneakyThrows
   private static Config loadJSON() {
     try {
-      if (CONFIG_PATH.toFile().createNewFile()) {
+      if (configPath.toFile().createNewFile()) {
         Config config = new Config();
         safeInFile(config);
         return config;
       }
-      return gson.fromJson(Files.lines(CONFIG_PATH).collect(Collectors.joining()), Config.class);
+      return gson.fromJson(Files.lines(configPath).collect(Collectors.joining()), Config.class);
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
       throw e;
