@@ -1,9 +1,7 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
@@ -12,7 +10,6 @@ import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
-import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -34,7 +31,6 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private ObjectTable<LineContent> lineContents;
   private AdvancedComboBox<ResolveStatus> filter;
   private JButton printProduce;
-  private JButton verifyArticlesButton;
   private JProgressBar progressBar1;
   private JPanel loadingIndicator;
   private JButton viewOrders;
@@ -59,28 +55,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     deleteSupply.addActionListener(controller::deleteCurrentSupply);
     export.addActionListener(e -> controller.exportShoppingItems());
     printProduce.addActionListener(e -> controller.printProduce());
-    verifyArticlesButton.addActionListener(this::verifyArticle);
     viewOrders.addActionListener(controller::viewOrders);
-  }
-
-  private void verifyArticle(ActionEvent actionEvent) {
-    String artNrStr = JOptionPane.showInputDialog("Artikel:");
-    if (artNrStr == null) return;
-    int artNr = Integer.parseInt(artNrStr);
-    Collection<LineContent> found = new ArrayList<>();
-    for (LineContent content : lineContents) {
-      if (content.getKkNumber() == artNr) {
-        found.add(content);
-      }
-    }
-    SelectionDialog.select(getTopComponent(), "Artikel:", found)
-        .ifPresent(
-            e -> {
-              message(e.toString());
-              e.verify(true);
-            });
-    lineContents.getModel().fireTableDataChanged();
-    verifyArticle(actionEvent);
   }
 
   public void setFilterOptions(Collection<ResolveStatus> filters) {
