@@ -16,6 +16,8 @@ import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
@@ -118,28 +120,53 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 .withPreferredWidth(50),
             Columns.create("Artikelnr.", LineContent::getKkNumber)
                 .withSorter(Column.NUMBER_SORTER)
-                .withPreferredWidth(100),
+                .withPreferredWidth(80),
             Columns.create("Artikelname", LineContent::getName).withPreferredWidth(250),
             Columns.<LineContent>create("E.preis", e -> String.format("%.2f€", e.getPrice()))
                 .withSorter(Column.NUMBER_SORTER)
-                .withPreferredWidth(120),
-            Columns.<LineContent>create("Geb.größe", e -> Math.round(e.getContainerSize()))
+                .withPreferredWidth(100),
+            Columns.<LineContent>create("Geb.", e -> Math.round(e.getContainerSize()))
                 .withSorter(Column.NUMBER_SORTER)
-                .withPreferredWidth(80),
+                .withPreferredWidth(40),
             Columns.<LineContent>create(
                     "Packung",
                     e -> e.getAmount() + (e.getUnit() == null ? "" : e.getUnit().getShortName()))
-                .withPreferredWidth(120)
+                .withPreferredWidth(100)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create("Kommentar", LineContent::getMessage).withPreferredWidth(150),
+            Columns.create("Kommentar", LineContent::getMessage).withPreferredWidth(100),
+            Columns.<LineContent>create("Preisliste", LineContent::getEstimatedPriceList)
+                .withPreferredWidth(150),
+            Columns.<LineContent>create(
+                    "Aufschlaggr.", e -> e.getEstimatedSurchargeGroup().getNameWithSurcharge())
+                .withPreferredWidth(150),
             Columns.<LineContent>create("Preis", e -> String.format("%.2f€", e.getTotalPrice()))
                 .withSorter(Column.NUMBER_SORTER),
+            Columns.<LineContent>create("Diff.", this::getPriceDifference)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(40),
             Columns.<LineContent>create("Ausw.", e -> e.isWeighable() ? "ja" : "nein")
-                .withPreferredWidth(60),
+                .withPreferredWidth(50)
+                .withLeftClickConsumer(this::toggleWeighable),
             Columns.<LineContent>createIconColumn(
-                    "geprüft", e -> e.isVerified() ? verified : notVerified)
+                    "OK", e -> e.isVerified() ? verified : notVerified)
+                .withPreferredWidth(30)
                 .withLeftClickConsumer(this::verifyLine));
     lineContents.addDoubleClickListener(controller::editArticle);
+  }
+
+  private String getPriceDifference(LineContent lineContent) {
+    double price = lineContent.getPrice();
+    return Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), lineContent.getKkNumber())
+        .map(a -> String.format("%.0f%%", 100 * (price - a.getNetPrice()) / price))
+        .orElse("");
+  }
+
+  private void toggleWeighable(LineContent lineContent) {
+    if (lineContent.getStatus() != ResolveStatus.ADDED) {
+      return;
+    }
+    lineContent.setWeighable(!lineContent.isWeighable());
+    lineContents.getModel().fireTableDataChanged();
   }
 
   public void verifyLine(LineContent lineContent) {

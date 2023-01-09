@@ -88,7 +88,8 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Preisliste", Article::getPriceList, LEFT)
                 .withColumnAdjustor(e -> e.setPreferredWidth(200)),
-            Columns.create("Zuschlaggruppe", this::formatArticleSurcharge, LEFT)
+            Columns.<Article>create(
+                    "Zuschlaggruppe", e -> e.getSurchargeGroup().getNameWithSurcharge(), LEFT)
                 .withDefaultFilter(),
             Columns.create("Barcode", Article::getBarcode, RIGHT));
     this.capture =
