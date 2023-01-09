@@ -96,9 +96,6 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   }
 
   private void createUIComponents() {
-    Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE_O, 18, new Color(0x3D3D3D));
-    Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE_O, 18, new Color(0x313131));
-
     supplySelector =
         new ObjectTable<Supply>(
             Columns.create(
@@ -132,14 +129,13 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.<LineContent>create(
                     "Packung",
                     e -> e.getAmount() + (e.getUnit() == null ? "" : e.getUnit().getShortName()))
-                .withPreferredWidth(120),
+                .withPreferredWidth(120)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Kommentar", LineContent::getMessage).withPreferredWidth(150),
             Columns.<LineContent>create("Preis", e -> String.format("%.2f€", e.getTotalPrice()))
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.<LineContent>createIconColumn(
-                    "Ausw.", e -> e.isWeighable() ? selected : unselected)
-                .withPreferredWidth(60)
-                .withHorizontalAlignment(SwingConstants.CENTER),
+            Columns.<LineContent>create("Ausw.", e -> e.isWeighable() ? "ja" : "nein")
+                .withPreferredWidth(60),
             Columns.<LineContent>createIconColumn(
                     "geprüft", e -> e.isVerified() ? verified : notVerified)
                 .withLeftClickConsumer(this::verifyLine));

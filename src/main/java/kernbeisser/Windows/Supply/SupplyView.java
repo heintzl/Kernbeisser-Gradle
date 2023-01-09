@@ -6,8 +6,6 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import javax.persistence.NoResultException;
 import javax.swing.*;
-import jiconfont.icons.font_awesome.FontAwesome;
-import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -160,8 +158,6 @@ public class SupplyView implements IView<SupplyController> {
             Article::getContainerSize,
             Article::setContainerSize,
             AccessCheckingField.DOUBLE_FORMER);
-    Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE_O, 18, new Color(0x3D3D3D));
-    Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE_O, 18, new Color(0x313131));
     shoppingItems =
         new ObjectTable<>(
             Columns.create("Lieferant", ShoppingItem::getSupplier)
@@ -178,9 +174,7 @@ public class SupplyView implements IView<SupplyController> {
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Gebindegröße", ShoppingItem::getContainerSize)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.<ShoppingItem>createIconColumn(
-                    "Auswiegware", e -> (e.isWeighAble() ? selected : unselected))
-                .withHorizontalAlignment(SwingConstants.CENTER),
+            Columns.<ShoppingItem>create("Auswiegware", e -> (e.isWeighAble() ? "ja" : "nein")),
             Columns.<ShoppingItem>create(
                     "Gebinde-Preis",
                     e -> String.format("%.2f", e.getItemNetPrice() * e.getContainerSize()))
@@ -200,7 +194,8 @@ public class SupplyView implements IView<SupplyController> {
                 .withLeftClickConsumer(controller::editPrintPool)
                 .withRightClickConsumer(controller::increaseItemPrintNumber)
                 .withSorter(Column.NUMBER_SORTER));
-//    shoppingItems.addDoubleClickListener(controller::editArticle); TODO activate, when refresh logic is done
+    //    shoppingItems.addDoubleClickListener(controller::editArticle); TODO activate, when refresh
+    // logic is done
   }
 
   public void invalidInput() {
