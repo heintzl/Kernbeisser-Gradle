@@ -6,9 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
-import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Tasks.Catalog.Catalog;
@@ -20,7 +18,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.Range;
 
 @Data
-@Setter(AccessLevel.PRIVATE)
+@Setter(AccessLevel.PUBLIC)
 public class LineContent {
   private ResolveStatus resolveStatus;
   private String message;
@@ -41,6 +39,8 @@ public class LineContent {
   private double price; // 3
   private double discount;
   private boolean verified;
+  private PriceList estimatedPriceList;
+  private SurchargeGroup estimatedSurchargeGroup;
 
   public static List<LineContent> parseContents(List<String> lines, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
@@ -123,12 +123,17 @@ public class LineContent {
     }
   }
 
+  // unitString.startsWith("x") might be an indicator for non-weighable, but thats not safe.
+  // therefore all amounts are imported as non-weighables
   private void parseAmount(double containerSizeOrAmount, String unitString) {
-    if (unitString.startsWith("x")) setNonWeighableAmount(containerSizeOrAmount, unitString);
-    else setWeighableAmount(containerSizeOrAmount, unitString);
+    setNonWeighableAmount(containerSizeOrAmount, unitString);
   }
 
   private static LineContent singleLine(String line) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     LineContent content = new LineContent();
     content.kkNumber = Integer.parseInt(line.substring(0, 13).replace(" ", ""));
     content.plusSign = line.charAt(13) == '+';
@@ -142,6 +147,9 @@ public class LineContent {
     content.qualitySign = line.substring(77, 80).replace(" ", "");
     content.price = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
     content.discount = Integer.parseInt(line.substring(133, 136)) / 10000.;
+    Article pattern = Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
+    content.estimatedPriceList = pattern.getPriceList();
+    content.estimatedSurchargeGroup = pattern.getSurchargeGroup();
     return content;
   }
 
