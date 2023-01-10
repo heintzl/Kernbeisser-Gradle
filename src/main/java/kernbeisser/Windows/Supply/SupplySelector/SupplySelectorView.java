@@ -130,7 +130,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.create("Diff.", this::getPriceDifference)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(40),
-            Columns.<LineContent>create("Ausw.", e -> e.isWeighable() ? "ja" : "nein")
+            Columns.<LineContent>create("Ausw.", e -> e.isWeighableKb() ? "ja" : "nein")
                 .withPreferredWidth(50)
                 .withLeftClickConsumer(this::toggleWeighable),
             Columns.<LineContent>createIconColumn(
@@ -160,7 +160,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     if (lineContent.getStatus() != ResolveStatus.ADDED) {
       return;
     }
-    lineContent.setWeighable(!lineContent.isWeighable());
+    lineContent.setWeighableKb(!lineContent.isWeighableKb());
     lineContents.getModel().fireTableDataChanged();
   }
 

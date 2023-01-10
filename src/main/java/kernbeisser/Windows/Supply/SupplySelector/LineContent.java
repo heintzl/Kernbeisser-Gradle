@@ -3,6 +3,7 @@ package kernbeisser.Windows.Supply.SupplySelector;
 import com.sun.istack.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -31,8 +32,8 @@ public class LineContent {
   private MetricUnits unit; // 12
   private String producer; // 3
   private String origin; // 2
-  private boolean weighable;
-  // 2 white space
+  private boolean weighableKk; // 2 white space
+  private boolean weighableKb; // 2 white space
   private String qualitySign; // 2
   // 1 white space
   // placeholder Nr. 1234567890123
@@ -113,7 +114,7 @@ public class LineContent {
 
   private void setWeighableAmount(double amount, String unitString) {
     setContainerSize(1);
-    weighable = true;
+    weighableKk = true;
     MetricUnits unit = Catalog.extractUnit(unitString);
     if (isExactEnough(amount)) {
       setUnit(unit);
@@ -123,10 +124,9 @@ public class LineContent {
     }
   }
 
-  // unitString.startsWith("x") might be an indicator for non-weighable, but thats not safe.
-  // therefore all amounts are imported as non-weighables
   private void parseAmount(double containerSizeOrAmount, String unitString) {
-    setNonWeighableAmount(containerSizeOrAmount, unitString);
+    if (unitString.startsWith("x")) setNonWeighableAmount(containerSizeOrAmount, unitString);
+    else setWeighableAmount(containerSizeOrAmount, unitString);
   }
 
   private static LineContent singleLine(String line) {
@@ -145,9 +145,12 @@ public class LineContent {
     content.producer = line.substring(70, 73).replace(" ", "");
     content.origin = line.substring(73, 77).replace(" ", "");
     content.qualitySign = line.substring(77, 80).replace(" ", "");
-    content.price = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
     content.discount = Integer.parseInt(line.substring(133, 136)) / 10000.;
-    Article pattern = Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
+    Optional<Article> article = Articles.getByKkItemNumber(content.kkNumber);
+    content.weighableKb = article.map(Article::isWeighable).orElse(false);
+    content.price = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
+    Article pattern =
+        article.orElse(Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier()));
     content.estimatedPriceList = pattern.getPriceList();
     content.estimatedSurchargeGroup = pattern.getSurchargeGroup();
     return content;
@@ -162,7 +165,7 @@ public class LineContent {
   }
 
   public double getTotalPrice() {
-    if (weighable) return containerMultiplier * unit.getBaseFactor() * amount * price;
+    if (weighableKk) return containerMultiplier * unit.getBaseFactor() * amount * price;
     else return containerSize * containerMultiplier * price;
   }
 
@@ -194,7 +197,7 @@ public class LineContent {
     this.setPrice(article.getNetPrice()); // different to article generation
     this.setUnit(article.getMetricUnits());
     this.setAmount(article.getAmount());
-    this.setWeighable(article.isWeighable()); // different to article generation
+    this.setWeighableKb(article.isWeighable()); // different to article generation
     this.setContainerSize(article.getContainerSize());
     this.setKkNumber(article.getSuppliersItemNumber());
   }
