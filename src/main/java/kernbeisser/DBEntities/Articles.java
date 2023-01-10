@@ -115,6 +115,10 @@ public class Articles {
     return getBySuppliersItemNumber(supplier, suppliersNumber, em);
   }
 
+  public static Optional<Article> getByKkItemNumber(int suppliersNumber) {
+    return getBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersNumber);
+  }
+
   public static Optional<Article> getBySuppliersItemNumber(
       Supplier supplier, int suppliersNumber, EntityManager em) {
     try {

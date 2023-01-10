@@ -48,22 +48,29 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
     loadDefaultDir();
   }
 
+  private void openArticleWindow(LineContent lineContent, Article article, boolean confirmMerge) {
+    FormEditorController.create(article, new ArticleController(), Mode.EDIT)
+        .withCloseEvent(
+            () -> {
+              refreshLineContent(
+                  lineContent,
+                  Articles.getByKkItemNumber(article.getSuppliersItemNumber()).get(),
+                  confirmMerge);
+            })
+        .openIn(new SubWindow(getView().traceViewContainer()));
+  }
+
   public void editArticle(LineContent lineContent) {
     Supplier kkSupplier = Supplier.getKKSupplier();
     switch (lineContent.getStatus()) {
       case OK:
+        if (!getView().messageConfirmLineMerge()) {
+          return;
+        }
       case ADDED:
         try {
           Article article = SupplyController.findOrCreateArticle(kkSupplier, lineContent);
-          FormEditorController.create(article, new ArticleController(), Mode.EDIT)
-              .withCloseEvent(
-                  () ->
-                      refreshLineContent(
-                          lineContent,
-                          Articles.getBySuppliersItemNumber(
-                                  kkSupplier, article.getSuppliersItemNumber())
-                              .get()))
-              .openIn(new SubWindow(getView().traceViewContainer()));
+          openArticleWindow(lineContent, article, false);
         } catch (NoSuchElementException e) {
           Tools.showUnexpectedErrorWarning(e);
         }
@@ -72,7 +79,22 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
     }
   }
 
-  private void refreshLineContent(LineContent lineContent, Article article) {
+  public void openArticle(LineContent lineContent) {
+    if (lineContent.getStatus() != ResolveStatus.OK) {
+      return;
+    }
+    try {
+      Article article = Articles.getByKkItemNumber(lineContent.getKkNumber()).get();
+      openArticleWindow(lineContent, article, true);
+    } catch (NoSuchElementException e) {
+      Tools.showUnexpectedErrorWarning(e);
+    }
+  }
+
+  private void refreshLineContent(LineContent lineContent, Article article, Boolean confirmMerge) {
+    if (confirmMerge && !getView().messageConfirmArticleMerge()) {
+      return;
+    }
     lineContent.refreshFromArticle(article);
     getView().verifyLine(lineContent);
   }
@@ -132,7 +154,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         .getSelectedSupply()
         .ifPresent(
             e -> {
-              getView().messageCommitDelete();
+              getView().messageConfirmDelete();
               for (SupplierFile supplierFile : e.getSupplierFiles()) {
                 supplierFile.getOrigin().delete();
               }

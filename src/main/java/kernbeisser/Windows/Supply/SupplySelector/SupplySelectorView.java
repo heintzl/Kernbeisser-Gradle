@@ -34,6 +34,8 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private JProgressBar progressBar1;
   private JPanel loadingIndicator;
   private JButton viewOrders;
+  private JButton openArticle;
+  private JButton mergeArticle;
   @Linked private SupplySelectorController controller;
 
   @Override
@@ -56,6 +58,8 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     export.addActionListener(e -> controller.exportShoppingItems());
     printProduce.addActionListener(e -> controller.printProduce());
     viewOrders.addActionListener(controller::viewOrders);
+    openArticle.addActionListener(e -> editArticle());
+    mergeArticle.addActionListener(e -> mergeArticle());
   }
 
   public void setFilterOptions(Collection<ResolveStatus> filters) {
@@ -109,14 +113,14 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 .withPreferredWidth(100)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Kommentar", LineContent::getMessage).withPreferredWidth(100),
-            Columns.<LineContent>create("Preisliste", LineContent::getEstimatedPriceList)
+            Columns.create("Preisliste", LineContent::getEstimatedPriceList)
                 .withPreferredWidth(150),
             Columns.<LineContent>create(
                     "Aufschlaggr.", e -> e.getEstimatedSurchargeGroup().getNameWithSurcharge())
                 .withPreferredWidth(150),
             Columns.<LineContent>create("Preis", e -> String.format("%.2f€", e.getTotalPrice()))
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.<LineContent>create("Diff.", this::getPriceDifference)
+            Columns.create("Diff.", this::getPriceDifference)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(40),
             Columns.<LineContent>create("Ausw.", e -> e.isWeighable() ? "ja" : "nein")
@@ -126,7 +130,6 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                     "OK", e -> e.isVerified() ? verified : notVerified)
                 .withPreferredWidth(30)
                 .withLeftClickConsumer(this::verifyLine));
-    lineContents.addDoubleClickListener(controller::editArticle);
   }
 
   private String getPriceDifference(LineContent lineContent) {
@@ -184,19 +187,55 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     }
   }
 
+  private void editArticle() {
+    Optional<LineContent> selectedLine = lineContents.getSelectedObject();
+    if (!selectedLine.isPresent()) {
+      return;
+    }
+    ;
+    controller.openArticle(selectedLine.get());
+  }
+
+  private void mergeArticle() {
+    Optional<LineContent> selectedLine = lineContents.getSelectedObject();
+    if (!selectedLine.isPresent()) {
+      return;
+    }
+    ;
+    controller.editArticle(selectedLine.get());
+  }
+
   public Optional<Supply> getSelectedSupply() {
     return supplySelector.getSelectedObject();
   }
 
-  public void messageCommitDelete() {
+  public void messageConfirmDelete() {
     if (JOptionPane.showConfirmDialog(
             getContent(),
-            "Willst du diese wirklich Lieferung löschen? Dieser Vorgang kann nicht rückgänging gemacht werden!",
-            "Potezieller Datenverlusst",
+            "Willst du diese Lieferung wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden!",
+            "Potenzieller Datenverlust",
             JOptionPane.YES_NO_OPTION)
-        != 0) {
+        != JOptionPane.YES_OPTION) {
       throw new CancellationException();
     }
+  }
+
+  public boolean messageConfirmLineMerge() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Willst du wirklich alle Daten dieser Zeile inden Artikelstamm übernehmen?",
+            "Artikeldaten überschreiben",
+            JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
+  }
+
+  public boolean messageConfirmArticleMerge() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Willst du die Artikeldaten in den Lieferschein übernehmen?",
+            "Lieferschein überschreiben",
+            JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
   }
 
   public void setLoadingIndicatorVisible(boolean b) {
