@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Supply;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,10 +13,7 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
-import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Enums.ShopRange;
+import kernbeisser.Enums.*;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
@@ -187,6 +185,11 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public void openImportSupplyFile() {
+    Dimension viewSize = getView().getSize();
+    Dimension size =
+        new Dimension(
+            (int) viewSize.getWidth(),
+            (int) (viewSize.getHeight() * Setting.SUBWINDOW_SIZE_FACTOR.getFloatValue()));
     new SupplySelectorController(
             (supply, shoppingItems) -> {
               for (ShoppingItem item : shoppingItems) {
@@ -202,7 +205,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
                           .sum());
               recalculateTotal();
             })
-        .openIn(new SubWindow(getView().traceViewContainer()));
+        .openIn(new SubWindow(getView().traceViewContainer()).withSize(size));
   }
 
   public static boolean shouldBecomeShoppingItem(LineContent content) {
