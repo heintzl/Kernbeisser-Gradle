@@ -13,6 +13,7 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Useful.Date;
@@ -54,11 +55,17 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     filter.getModel().setAllowNullSelection(true);
     filter.getRenderer().setNoSelectionIcon(noFilterIcon);
     filter.getRenderer().setNoSelectionText("Alle Artikel");
+    deleteSupply.setIcon(createIcon(FontAwesome.TRASH, new Color(0x5D1E01)));
     deleteSupply.addActionListener(controller::deleteCurrentSupply);
+    export.setIcon(createIcon(FontAwesome.DOWNLOAD, new Color(0xDC7E00)));
     export.addActionListener(e -> controller.exportShoppingItems());
+    printProduce.setIcon(produceIcon);
     printProduce.addActionListener(e -> controller.printProduce());
+    viewOrders.setIcon(createIcon(FontAwesome.INFO_CIRCLE, new Color(0x3F2964)));
     viewOrders.addActionListener(controller::viewOrders);
+    openArticle.setIcon(createIcon(FontAwesome.EYE, new Color(0x1A3186)));
     openArticle.addActionListener(e -> editArticle());
+    mergeArticle.setIcon(createIcon(FontAwesome.FLOPPY_O, new Color(0x850010)));
     mergeArticle.addActionListener(e -> mergeArticle());
   }
 
@@ -133,10 +140,20 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   }
 
   private String getPriceDifference(LineContent lineContent) {
+    if (lineContent.getStatus() != ResolveStatus.OK) {
+      return "";
+    }
+    Optional<Double> articlePrice =
+        Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), lineContent.getKkNumber())
+            .map(Article::getNetPrice);
+    if (!articlePrice.isPresent()) {
+      return "";
+    }
     double price = lineContent.getPrice();
-    return Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), lineContent.getKkNumber())
-        .map(a -> String.format("%.0f%%", 100 * (price - a.getNetPrice()) / price))
-        .orElse("");
+    if (price == 0.0d) {
+      return articlePrice.get() == 0.0d ? "" : "!";
+    }
+    return String.format("%.0f%%", 100 * (price - articlePrice.get()) / price);
   }
 
   private void toggleWeighable(LineContent lineContent) {
