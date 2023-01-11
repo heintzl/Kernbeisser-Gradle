@@ -24,11 +24,9 @@ public class PriceListReportArticle {
     priceListArticle.itemRetailPrice = item.getItemRetailPrice();
     priceListArticle.kbNumber = item.getKbNumber();
     priceListArticle.suppliersShortName = item.getSuppliersShortName();
-    priceListArticle.shortBarcode = item.getShortBarcode();
     priceListArticle.suppliersItemNumber = item.getSuppliersItemNumber();
     priceListArticle.metricUnits = item.getMetricUnits().getName();
     priceListArticle.weighAble = item.isWeighAble();
-    priceListArticle.lastDeliveryMonth = item.getLastDeliveryMonth();
     priceListArticle.containerSize = item.getContainerSize();
     priceListArticle.unitAmount = item.getPriceInfoAmount();
     return priceListArticle;

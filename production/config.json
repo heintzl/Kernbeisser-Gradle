@@ -23,18 +23,23 @@
     },
     "reports": {
       "userBalanceFileName": "GuthabenUebersicht.jrxml",
+      "inventoryStock": "Inventur_Bestaende.jrxml",
+      "preOrderChecklist": "Abhakplan.jrxml",
+      "trialMemberReportFileName": "Probemitglieder.jrxml",
+      "accountingTransactionReportFileName": "BuchhaltungGuthabenAenderungen.jrxml",
+      "inventoryShelfOverview": "Inventur_Regaluebersicht.jrxml",
+      "inventoryCountingLists": "Inventur_Zaehlliste.jrxml",
+      "priceList": "Preisliste.jrxml",
       "articleLabel": "Etiketten.jrxml",
       "transactionStatement": "Kontoauszug.jrxml",
+      "inventoryShelfStocks": "Inventur_Regal_Bestaende.jrxml",
       "tillrollFileName": "Bonrolle.jrxml",
       "loginInfo": "LoginInformation.jrxml",
-      "preOrderChecklist": "Abhakplan.jrxml",
+      "inventoryShelfDetails": "Inventur_Regaldetails.jrxml",
       "permissionHolders": "RollenInhaber.jrxml",
       "accountingReportFileName": "BuchhaltungBonUebersicht.jrxml",
-      "accountingTransactionReportFileName": "BuchhaltungGuthabenAenderungen.jrxml",
-      "trialMemberReportFileName": "Probemitglieder.jrxml",
       "keyUserListFileName": "BenutzerSchluessel.jrxml",
-      "invoiceFileName": "Kerni_Rechnung.jrxml",
-      "priceList": "Preisliste.jrxml"
+      "invoiceFileName": "Kerni_Rechnung.jrxml"
     }
   },
   "preorders": {

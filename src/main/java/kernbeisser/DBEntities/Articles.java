@@ -372,6 +372,15 @@ public class Articles {
             preordered));
   }
 
+  public static String getShortBarcode(Article article) {
+    Long barcode = article.getBarcode();
+    if (barcode == null) {
+      return "";
+    }
+    String barcodeString = Long.toString(barcode);
+    return barcodeString.substring(Math.max(barcodeString.length() - 4, 0));
+  }
+
   public static Article createOfferArticle(
       Article base, double specialNetPrice, Instant from, Instant to) {
     if (base.isOffer()) throw new IllegalArgumentException("article is already a offer");
@@ -527,6 +536,10 @@ public class Articles {
     } else {
       return MetricUnits.PIECE;
     }
+  }
+
+  public static String getPieceAmount(Article article) {
+    return String.format("%,1d", getSafeAmount(article)) + article.getMetricUnits().getShortName();
   }
 
   public static String getContentAmount(Article article) {

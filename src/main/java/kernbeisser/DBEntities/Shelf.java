@@ -24,7 +24,12 @@ public class Shelf {
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ID_WRITE)})
   private int id;
 
-  @Column
+  @Column(unique = true, nullable = false)
+  @Getter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_WRITE)})
+  private int shelfNo;
+
+  @Column(unique = true, nullable = false)
   @Getter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_LOCATION_WRITE)})
   private String location;
@@ -50,6 +55,14 @@ public class Shelf {
 
   @CreationTimestamp @Getter private Instant createDate;
 
+  public static List<Shelf> getAll() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select s from Shelf s", Shelf.class).getResultList();
+  }
+
   public Collection<Article> getAllArticles() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
@@ -66,26 +79,55 @@ public class Shelf {
                 .sorted(Comparator.comparingInt(Article::getKbNumber)),
             articles.stream())
         .distinct()
+        .sorted(Comparator.comparingInt(Article::getKbNumber))
         .collect(Collectors.toList());
+  }
+
+  public static int createShelfNo() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return em.createQuery("select coalesce (max(s.shelfNo), 0) from Shelf s", Integer.class)
+            .getSingleResult()
+        + 1;
   }
 
   public Stream<ArticleStock> getAllArticleStocks(EntityManager em) {
     return getAllArticles().stream()
-        .map(e -> ArticleStock.ofArticle(em, e))
+        .map(e -> ArticleStock.ofArticle(em, e, this))
         .filter(Optional::isPresent)
-        .map(Optional::get)
-        .filter(ArticleStock::isNotExpired);
+        .map(Optional::get);
   }
 
-  public double calculateTotal() {
+  public Collection<ArticleStock> getArticleStocks() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return calculateTotal(em);
+    return this.getAllArticles(em).stream()
+        .map(e -> ArticleStock.ofArticle(em, e, this).orElse(ArticleStock.newFromArticle(e, this)))
+        .collect(Collectors.toList());
   }
 
-  public double calculateTotal(EntityManager em) {
+  public double getTotalNet() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return getTotalNet(em);
+  }
+
+  public double getTotalNet(EntityManager em) {
     return getAllArticleStocks(em).mapToDouble(ArticleStock::calculateNetPrice).sum();
+  }
+
+  public double getTotalDeposit() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return getTotalDeposit(em);
+  }
+
+  public double getTotalDeposit(EntityManager em) {
+    return getAllArticleStocks(em).mapToDouble(ArticleStock::calculateDeposit).sum();
   }
 }

@@ -2,8 +2,6 @@ package kernbeisser.Windows.Supply;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -66,19 +64,17 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     getView().refreshRow(item);
   }
 
+  private void preparePrint() {
+    model.print();
+    getView().repaintTable();
+  }
+
   @Override
   public void fillView(SupplyView supplyView) {
     var view = getView();
     view.setSuppliers(model.getAllSuppliers());
-    JButton printButton = PrintLabelsController.getLaunchButton(view.traceViewContainer());
-    printButton.addMouseListener(
-        new MouseAdapter() {
-          @Override
-          public void mousePressed(MouseEvent e) {
-            model.print();
-            getView().repaintTable();
-          }
-        });
+    JButton printButton =
+        PrintLabelsController.getLaunchButton(view.traceViewContainer(), this::preparePrint);
     view.getPrintButtonPanel().add(printButton);
     keyCapture.addF2ToF8NumberActions(getView()::setAmount);
   }
@@ -108,13 +104,13 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     }
   }
 
-  private void checkInput() throws CannotParseException {
+  private void checkInput() throws NoResultException, CannotParseException {
     if (!model.articleExists(getView().getSelected(), getView().getSuppliersItemNumber())) {
       throw new NoResultException();
     }
   }
 
-  public void addItem(double amount) throws CannotParseException {
+  public void addItem(double amount) throws CannotParseException, NoResultException {
     checkInput();
     Article article = getView().getObjectForm().getData(null);
     if (!article.equals(getView().getObjectForm().getOriginal())) {

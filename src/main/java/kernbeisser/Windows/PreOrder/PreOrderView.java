@@ -1,6 +1,5 @@
 package kernbeisser.Windows.PreOrder;
 
-import com.github.lgooddatepicker.components.DatePicker;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -8,7 +7,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import javax.persistence.NoResultException;
@@ -536,28 +534,6 @@ public class PreOrderView implements IView<PreOrderController> {
     return JOptionPane.showConfirmDialog(
             getContent(), message, "Vorbestellung schließen", JOptionPane.OK_CANCEL_OPTION)
         == JOptionPane.OK_OPTION;
-  }
-
-  public LocalDate inputDeliveryDate() {
-    JPanel datePickerPanel = new JPanel();
-    datePickerPanel.setLayout(new BoxLayout(datePickerPanel, BoxLayout.Y_AXIS));
-    JLabel infoText = new JLabel("Bitte das Lieferdatum auswählen:");
-    DatePicker datePicker = new DatePicker();
-    datePicker.setDate(
-        LocalDate.now()
-            .minusDays(2)
-            .with(
-                TemporalAdjusters.next(Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)))
-            .plus(1, ChronoUnit.DAYS));
-    datePickerPanel.add(infoText);
-    datePickerPanel.add(datePicker);
-
-    if (JOptionPane.showConfirmDialog(
-            getContent(), datePickerPanel, "Abhakplan", JOptionPane.OK_CANCEL_OPTION)
-        == JOptionPane.CANCEL_OPTION) {
-      return null;
-    }
-    return datePicker.getDate();
   }
 
   private void warningEditDelivered() {

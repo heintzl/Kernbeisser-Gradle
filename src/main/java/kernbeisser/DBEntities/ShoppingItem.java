@@ -162,10 +162,6 @@ public class ShoppingItem implements Serializable {
   @Getter @Transient private boolean depositItem = false;
 
   @Getter @Transient private boolean specialOffer;
-  // required for article labels and pricelists
-  @Getter @Transient private String shortBarcode = "";
-
-  @Getter @Transient private String lastDeliveryMonth = "";
 
   /**
    * @param discount percentage of netprice reduction
@@ -230,16 +226,14 @@ public class ShoppingItem implements Serializable {
 
   public static PriceListReportArticle createReportItem(Article article) {
     ShoppingItem item = new ShoppingItem(article, /*not used in this case*/ 0, 0, false);
+    PriceListReportArticle reportArticle = PriceListReportArticle.ofShoppingItem(item);
     try {
-      String barcode = Long.toString(article.getBarcode());
-      item.shortBarcode = barcode.substring(barcode.length() - 4);
+      reportArticle.setLastDeliveryMonth(
+          Date.INSTANT_MONTH_YEAR.format(Articles.getLastDelivery(article)));
     } catch (NullPointerException ignored) {
     }
-    try {
-      item.lastDeliveryMonth = Date.INSTANT_MONTH_YEAR.format(Articles.getLastDelivery(article));
-    } catch (NullPointerException ignored) {
-    }
-    return PriceListReportArticle.ofShoppingItem(item);
+    reportArticle.setShortBarcode(Articles.getShortBarcode(article));
+    return reportArticle;
   }
 
   public static ShoppingItem createRawPriceProduct(

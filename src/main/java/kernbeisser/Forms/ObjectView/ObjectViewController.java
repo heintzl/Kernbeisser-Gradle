@@ -1,7 +1,9 @@
 package kernbeisser.Forms.ObjectView;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -119,6 +121,12 @@ public class ObjectViewController<T> extends Controller<ObjectViewView<T>, Objec
 
   public void addComponents(Collection<JComponent> components) {
     searchBoxController.addExtraComponents(components);
+  }
+
+  public void addComponents(JComponent... components) {
+    Collection<JComponent> cCollection = new ArrayList<>();
+    Collections.addAll(cCollection, components);
+    searchBoxController.addExtraComponents(cCollection);
   }
 
   void add() {

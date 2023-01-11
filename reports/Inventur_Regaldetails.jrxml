@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Zaehlliste" pageWidth="595" pageHeight="842" columnWidth="511" leftMargin="48" rightMargin="36" topMargin="20" bottomMargin="20" uuid="4bbac286-dab4-4299-9984-7be3c020703c">
+	<parameter name="inventoryDate" class="java.time.LocalDate" isForPrompting="false"/>
+	<parameter name="reportFooter" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="shelf.location" class="java.lang.String"/>
+	<field name="shelf.shelfNo" class="java.lang.Integer"/>
+	<field name="shelf.comment" class="java.lang.String"/>
+	<field name="priceList.name" class="java.lang.String"/>
+	<field name="extraArticles" class="java.lang.Integer"/>
+	<group name="Shelf">
+		<groupExpression><![CDATA[$F{shelf.shelfNo}]]></groupExpression>
+		<groupHeader>
+			<band height="37">
+				<textField>
+					<reportElement x="0" y="3" width="40" height="17" uuid="3f2edc89-2e08-41c5-b244-a93a4db585bb"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Condensed" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{shelf.shelfNo}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="ScaleFont">
+					<reportElement x="70" y="3" width="441" height="17" uuid="1689e4db-d9da-4d5e-9364-fd3457f425f0">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1117e53b-5fa5-43eb-a9b2-2b0992c17add"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Condensed" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{shelf.location}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="ScaleFont" isBlankWhenNull="false">
+					<reportElement x="81" y="20" width="430" height="17" isRemoveLineWhenBlank="true" uuid="468e6e3c-1b9f-4c92-996c-39f599b10a85">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1117e53b-5fa5-43eb-a9b2-2b0992c17add"/>
+						<printWhenExpression><![CDATA[$F{shelf.comment} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Condensed" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Anmerkung: " + $F{shelf.comment}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<printWhenExpression><![CDATA[$F{extraArticles} > 0]]></printWhenExpression>
+				<textField textAdjust="ScaleFont">
+					<reportElement x="81" y="1" width="430" height="17" uuid="6eac1cdc-4eb7-483a-bc98-ca5bc82bf11c">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1117e53b-5fa5-43eb-a9b2-2b0992c17add"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Condensed" size="12" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["→ " +$F{extraArticles} + " zusätzliche" + ($F{extraArticles} == 1 ? "r" : "") +" Artikel"]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="8">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="58" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="10" y="40" width="60" height="18" uuid="b807eccd-37c2-4275-833a-829353351db3"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Condensed" size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Rg.-Nr.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="40" width="439" height="18" uuid="1f7713d1-ddba-46e2-b05f-b6846da71e8f"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Condensed" size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Zähllisten-Beschreibung mit zugeordneten Preislisten]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="140" y="-10" width="369" height="25" uuid="a8c26c51-05e4-47c7-8491-4822adcf8bf6"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Zähllistenübersicht mit zugeordneten Preislisten"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd.MM.yyyy">
+				<reportElement x="0" y="-10" width="140" height="25" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722"/>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Inventur " + $P{inventoryDate}.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy"))]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="465" y="17" width="46" height="15" uuid="bff3d117-bfb3-4391-bd24-a4d90b3f96a5"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed" size="11" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["von " +$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="17" width="59" height="15" uuid="9f8d79bf-416c-4245-ae9d-c4d018dceca5"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans Condensed" size="11" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="14" width="511" height="1" uuid="0936518e-3ceb-4b78-9080-f9cc9d25f3b1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="1" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField textAdjust="ScaleFont">
+				<reportElement x="81" y="1" width="430" height="17" uuid="53569701-bbdf-4f3c-b484-704c780f6555">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1117e53b-5fa5-43eb-a9b2-2b0992c17add"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Condensed" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["→ " + $F{priceList.name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="5" width="509" height="10" uuid="9cbfe7aa-5260-44f0-bc80-0c22eba39d22"/>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed" size="7"/>
+					<paragraph lineSpacingSize="1.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{reportFooter}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

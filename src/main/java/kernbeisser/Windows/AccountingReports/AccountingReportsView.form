@@ -269,14 +269,12 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="d0f97" class="javax.swing.JCheckBox" binding="accountingReportWithNames">
+              <component id="a6ded" class="javax.swing.JComboBox" binding="accountingReportWithNames">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
                 </constraints>
-                <properties>
-                  <text value="Klarnamen ausgeben"/>
-                </properties>
+                <properties/>
               </component>
               <component id="31ac9" class="javax.swing.JCheckBox" binding="userBalanceWithNames" default-binding="true">
                 <constraints>

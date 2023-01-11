@@ -3,6 +3,7 @@ package kernbeisser.Enums;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Map;
 import javax.swing.*;
 import kernbeisser.DBEntities.SettingValue;
@@ -86,6 +87,8 @@ public enum Setting {
   INVENTORY_COUNTING_EXPIRE_HOURS("48"),
   INVENTORY_INACTIVE_ARTICLE("365"),
   INVENTORY_LOOK_FOR_ARTICLE_USAGE("true"),
+
+  INVENTORY_SCHEDULED_DATE("2022-12-30"),
   SUPPLY_DAY_DIFFERENCE_THRESHOLD("1");
 
   // defines the type like in java style
@@ -222,6 +225,10 @@ public enum Setting {
     }
   }
 
+  public LocalDate getDateValue() {
+    return LocalDate.parse(getValue());
+  }
+
   public int getKeyEventValue() {
     int vKey = 0;
     try {
@@ -279,6 +286,9 @@ public enum Setting {
     }
     if (setting.getDefaultValue().equals("false") || setting.getDefaultValue().equals("true")) {
       return Boolean.class;
+    }
+    if (setting.getDefaultValue().matches("\\d{4}-\\d{2}-\\d{2}")) {
+      return LocalDate.class;
     }
     return String.class;
   }

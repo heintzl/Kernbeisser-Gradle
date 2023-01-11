@@ -41,7 +41,15 @@ public class ControllerButton extends JButton {
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
       ControllerButton(AccessSupplier<C> controller, Class<C> clazz, boolean preInit) {
-    this(controller, clazz, Controller::openTab, preInit);
+    this(controller, clazz, Controller::openTab, preInit, "");
+  }
+
+  public <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>,
+          C extends Controller<V, M>>
+      ControllerButton(AccessSupplier<C> controller, Class<C> clazz, String confirmMessage) {
+    this(controller, clazz, Controller::openTab, false, confirmMessage);
   }
 
   public <
@@ -57,10 +65,20 @@ public class ControllerButton extends JButton {
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
       ControllerButton(
+          AccessSupplier<C> controller, Class<C> clazz, Consumer<C> action, boolean preInit) {
+    this(controller, clazz, action, preInit, "");
+  }
+
+  public <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>,
+          C extends Controller<V, M>>
+      ControllerButton(
           AccessSupplier<C> controllerInitializer,
           Class<C> clazz,
           Consumer<C> action,
-          boolean preInit) {
+          boolean preInit,
+          String confirmMessage) {
     Class<V> vClass = Controller.getViewClass(clazz);
     IView<?> iView = StaticMethodTransformer.createStaticInterface(IView.class, vClass);
     setIcon(Icons.defaultIcon(iView.getTabIcon(), new Color(0xFF00CCFF)));
@@ -97,6 +115,17 @@ public class ControllerButton extends JButton {
 
               return;
             }
+            if (!confirmMessage.isEmpty()) {
+              if (JOptionPane.showConfirmDialog(
+                      null,
+                      confirmMessage,
+                      "Öffnen",
+                      JOptionPane.OK_CANCEL_OPTION,
+                      JOptionPane.QUESTION_MESSAGE)
+                  != JOptionPane.OK_OPTION) {
+                return;
+              }
+            }
             C controller = controllerRef.get().get();
             if (controller == null) {
               try {
@@ -130,6 +159,7 @@ public class ControllerButton extends JButton {
         () -> new ComponentController(new JPanel()),
         ComponentController.class,
         Controller::openTab,
-        false);
+        false,
+        "");
   }
 }

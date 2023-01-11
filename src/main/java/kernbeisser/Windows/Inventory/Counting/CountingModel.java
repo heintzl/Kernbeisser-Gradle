@@ -1,7 +1,8 @@
 package kernbeisser.Windows.Inventory.Counting;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -14,22 +15,10 @@ import lombok.Cleanup;
 
 public class CountingModel implements IModel<CountingController> {
 
-  Collection<ArticleStock> getArticleStocks(Shelf shelf) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return shelf.getAllArticles(em).stream()
-        .map(
-            e ->
-                ArticleStock.ofArticle(em, e)
-                    .filter(ArticleStock::isNotExpired)
-                    .orElse(ArticleStock.newFromArticle(e)))
-        .collect(Collectors.toList());
-  }
-
-  public Collection<Shelf> getAllShelves() {
-    return Tools.getAll(Shelf.class, null);
+  public List<Shelf> getAllShelves() {
+    List<Shelf> shelves = new ArrayList<>(Tools.getAll(Shelf.class, null));
+    shelves.sort(Comparator.comparingInt(Shelf::getShelfNo));
+    return shelves;
   }
 
   public void addArticleToShelf(Shelf shelf, Article article) {
