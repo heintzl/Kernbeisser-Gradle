@@ -1,9 +1,7 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
@@ -12,7 +10,6 @@ import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
-import kernbeisser.CustomComponents.Dialogs.SelectionDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -20,6 +17,7 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.IView;
+import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplySelectorView implements IView<SupplySelectorController> {
@@ -31,10 +29,12 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private ObjectTable<LineContent> lineContents;
   private AdvancedComboBox<ResolveStatus> filter;
   private JButton printProduce;
-  private JButton verifyArticlesButton;
   private JProgressBar progressBar1;
   private JPanel loadingIndicator;
   private JButton viewOrders;
+  private JButton openArticle;
+  private JButton mergeArticle;
+  @Linked private SupplySelectorController controller;
 
   @Override
   public void initialize(SupplySelectorController controller) {
@@ -50,37 +50,20 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                       .orElse(true));
         });
     filter.getModel().setAllowNullSelection(true);
-    filter
-        .getRenderer()
-        .setNoSelectionIcon(
-            IconFontSwing.buildIcon(
-                FontAwesome.QUESTION, Tools.scaleWithLabelScalingFactor(15), Color.RED));
+    filter.getRenderer().setNoSelectionIcon(noFilterIcon);
     filter.getRenderer().setNoSelectionText("Alle Artikel");
+    deleteSupply.setIcon(createIcon(FontAwesome.TRASH, new Color(0x5D1E01)));
     deleteSupply.addActionListener(controller::deleteCurrentSupply);
+    export.setIcon(createIcon(FontAwesome.DOWNLOAD, new Color(0xDC7E00)));
     export.addActionListener(e -> controller.exportShoppingItems());
+    printProduce.setIcon(produceIcon);
     printProduce.addActionListener(e -> controller.printProduce());
-    verifyArticlesButton.addActionListener(this::verifyArticle);
+    viewOrders.setIcon(createIcon(FontAwesome.INFO_CIRCLE, new Color(0x3F2964)));
     viewOrders.addActionListener(controller::viewOrders);
-  }
-
-  private void verifyArticle(ActionEvent actionEvent) {
-    String artNrStr = JOptionPane.showInputDialog("Artikel:");
-    if (artNrStr == null) return;
-    int artNr = Integer.parseInt(artNrStr);
-    Collection<LineContent> found = new ArrayList<>();
-    for (LineContent content : lineContents) {
-      if (content.getKkNumber() == artNr) {
-        found.add(content);
-      }
-    }
-    SelectionDialog.select(getTopComponent(), "Artikel:", found)
-        .ifPresent(
-            e -> {
-              message(e.toString());
-              e.verify();
-            });
-    lineContents.getModel().fireTableDataChanged();
-    verifyArticle(actionEvent);
+    openArticle.setIcon(createIcon(FontAwesome.EYE, new Color(0x1A3186)));
+    openArticle.addActionListener(e -> editArticle());
+    mergeArticle.setIcon(createIcon(FontAwesome.FLOPPY_O, new Color(0x850010)));
+    mergeArticle.addActionListener(e -> mergeArticle());
   }
 
   public void setFilterOptions(Collection<ResolveStatus> filters) {
@@ -109,26 +92,75 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.create("Anzahl Artikel", Supply::getArticleCount)
                 .withRightClickConsumer(this::listSupplyFiles),
             Columns.create("Summe", e -> String.format("%.2f€", e.getContentSum())));
+
     lineContents =
-        new ObjectTable<LineContent>(
-            Columns.create("Artikelnr.", LineContent::getKkNumber),
-            Columns.create("Artikelname", LineContent::getName),
-            Columns.create("Geb.preis", LineContent::getPrice),
-            Columns.create("Geb.größe", LineContent::getContainerSize),
-            Columns.create(
-                "Packung",
-                e -> e.getAmount() + (e.getUnit() == null ? "" : e.getUnit().getShortName())),
-            Columns.create("Kommentar", LineContent::getMessage),
-            Columns.create(
-                "Preis",
-                e -> String.format("%.2f€", e.getTotalPrice()),
-                SwingUtilities.RIGHT,
-                Column.NUMBER_SORTER),
+        new ObjectTable<>(
             Columns.<LineContent>createIconColumn("S", e -> getIcon(e.getStatus()))
                 .withColumnAdjustor(
                     column -> column.setMaxWidth(Tools.scaleWithLabelScalingFactor(20))),
+            Columns.create("Anz.", LineContent::getContainerMultiplier)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(50),
+            Columns.create("Artikelnr.", LineContent::getKkNumber)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(80),
+            Columns.create("Artikelname", LineContent::getName).withPreferredWidth(250),
+            Columns.<LineContent>create("E.preis", e -> String.format("%.2f€", e.getPrice()))
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(100),
+            Columns.<LineContent>create("Geb.", e -> Math.round(e.getContainerSize()))
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(40),
+            Columns.<LineContent>create(
+                    "Packung",
+                    e -> e.getAmount() + (e.getUnit() == null ? "" : e.getUnit().getShortName()))
+                .withPreferredWidth(100)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Kommentar", LineContent::getMessage).withPreferredWidth(100),
+            Columns.create("Preisliste", LineContent::getEstimatedPriceList)
+                .withPreferredWidth(150),
+            Columns.<LineContent>create(
+                    "Aufschlaggr.", e -> e.getEstimatedSurchargeGroup().getNameWithSurcharge())
+                .withPreferredWidth(150),
+            Columns.<LineContent>create("Preis", e -> String.format("%.2f€", e.getTotalPrice()))
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Diff.", LineContent::getPriceDifference)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(40),
+            Columns.<LineContent>create("Ausw.", e -> e.isWeighableKb() ? "ja" : "nein")
+                .withPreferredWidth(50)
+                .withLeftClickConsumer(this::toggleWeighable),
             Columns.<LineContent>createIconColumn(
-                "", e -> e.isVerified() ? verified : notVerified));
+                    "OK", e -> e.isVerified() ? verified : notVerified)
+                .withPreferredWidth(30)
+                .withLeftClickConsumer(this::verifyLine));
+  }
+
+  private void toggleWeighable(LineContent lineContent) {
+    if (lineContent.getStatus() != ResolveStatus.ADDED) {
+      return;
+    }
+    lineContent.setWeighableKb(!lineContent.isWeighableKb());
+    try {
+      lineContents.getModel().fireTableDataChanged();
+    } catch (IllegalArgumentException ignored) {
+    }
+  }
+
+  public void refreshTable() {
+    int selectedRow = lineContents.getEditingRow();
+    try {
+      lineContents.getModel().fireTableDataChanged();
+    } catch (IllegalArgumentException ignored) {
+    }
+    if (selectedRow > -1) {
+      lineContents.selectRow(selectedRow);
+    }
+    lineContents.getSelectionModel().setSelectionInterval(selectedRow, selectedRow);
+  }
+
+  public void verifyLine(LineContent lineContent) {
+    lineContent.verify(!lineContent.isVerified());
   }
 
   private void listSupplyFiles(Supply supply) {
@@ -142,9 +174,10 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private static final Icon addedIcon = createIcon(FontAwesome.PLUS, new Color(0xB648BA));
   private static final Icon ignoreIcon = createIcon(FontAwesome.EXCLAMATION_CIRCLE, Color.ORANGE);
   private static final Icon produceIcon = createIcon(FontAwesome.LEAF, new Color(0x0D5C0A));
+  private static final Icon noFilterIcon = createIcon(FontAwesome.QUESTION, Color.RED);
 
   private static final Icon verified = okIcon;
-  private static final Icon notVerified = ignoreIcon;
+  private static final Icon notVerified = noFilterIcon;
 
   private static Icon createIcon(FontAwesome icon, Color color) {
     return IconFontSwing.buildIcon(icon, Tools.scaleWithLabelScalingFactor(15), color);
@@ -165,19 +198,59 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     }
   }
 
+  private void editArticle() {
+    Optional<LineContent> selectedLine = lineContents.getSelectedObject();
+    if (!selectedLine.isPresent()) {
+      return;
+    }
+    ;
+    controller.openArticle(selectedLine.get());
+  }
+
+  private void mergeArticle() {
+    Optional<LineContent> selectedLine = lineContents.getSelectedObject();
+    if (!selectedLine.isPresent()) {
+      return;
+    }
+    ;
+    controller.editArticle(selectedLine.get());
+  }
+
   public Optional<Supply> getSelectedSupply() {
     return supplySelector.getSelectedObject();
   }
 
-  public void messageCommitDelete() {
+  public Optional<LineContent> getSelectedLineContent() {
+    return lineContents.getSelectedObject();
+  }
+
+  public void messageConfirmDelete() {
     if (JOptionPane.showConfirmDialog(
             getContent(),
-            "Willst du diese wirklich Lieferung löschen? Dieser Vorgang kann nicht rückgänging gemacht werden!",
-            "Potezieller Datenverlusst",
+            "Willst du diese Lieferung wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden!",
+            "Potenzieller Datenverlust",
             JOptionPane.YES_NO_OPTION)
-        != 0) {
+        != JOptionPane.YES_OPTION) {
       throw new CancellationException();
     }
+  }
+
+  public boolean messageConfirmLineMerge() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Willst du die Daten dieser Zeile wirklich in den Artikelstamm übernehmen?",
+            "Artikeldaten überschreiben",
+            JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
+  }
+
+  public boolean messageConfirmArticleMerge() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Willst du die Artikeldaten in den Lieferschein übernehmen?",
+            "Lieferschein überschreiben",
+            JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
   }
 
   public void setLoadingIndicatorVisible(boolean b) {
@@ -192,5 +265,27 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     message(
         "Das Standardverzeichnis konnte nicht gefunden werden!\nIst der USB-Stick eingesteckt?",
         "Standardverzeichnis nicht gefunden");
+  }
+
+  public boolean messageConfirmBarcode(LineContent lineContent, String barcode) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Soll der Barcode \""
+                + barcode
+                + "\" für den Artikel \""
+                + lineContent.getName()
+                + "\" übernommen werden?",
+            "Barcode übernehmen",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            createIcon(FontAwesome.BARCODE, new Color(0)))
+        == JOptionPane.YES_OPTION;
+  }
+
+  public void messageInvalidBarcode(String barcode) {
+    message(
+        "\"" + barcode + "\" ist kein gültiger Barcode.",
+        "Ungültiger Barcode",
+        JOptionPane.ERROR_MESSAGE);
   }
 }

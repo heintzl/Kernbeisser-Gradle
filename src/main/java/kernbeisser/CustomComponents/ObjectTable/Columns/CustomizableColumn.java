@@ -18,6 +18,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Renderer.AdjustableTableCellRenderer;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Utils.Getter;
+import kernbeisser.Useful.Tools;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,6 +85,12 @@ public class CustomizableColumn<T> extends DefaultColumn<T> {
   public CustomizableColumn<T> withHorizontalAlignment(@MagicConstant int horizontalAlignment) {
     withCellAdjustor(
         (SimpleCellAdjustor<T>) (comp, t) -> comp.setHorizontalAlignment(horizontalAlignment));
+    return this;
+  }
+
+  public CustomizableColumn<T> withPreferredWidth(int preferredWidth) {
+    withColumnAdjustor(
+        column -> column.setPreferredWidth(Tools.scaleWithLabelScalingFactor(preferredWidth)));
     return this;
   }
 

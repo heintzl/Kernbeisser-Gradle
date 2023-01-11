@@ -3,11 +3,11 @@ package kernbeisser.Windows.Supply.SupplySelector;
 import com.sun.istack.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Articles;
-import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Tasks.Catalog.Catalog;
@@ -19,7 +19,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.Range;
 
 @Data
-@Setter(AccessLevel.PRIVATE)
+@Setter(AccessLevel.PUBLIC)
 public class LineContent {
   private ResolveStatus resolveStatus;
   private String message;
@@ -32,14 +32,18 @@ public class LineContent {
   private MetricUnits unit; // 12
   private String producer; // 3
   private String origin; // 2
-  private boolean weighable;
-  // 2 white space
+  private boolean weighableKk; // 2 white space
+  private boolean weighableKb; // 2 white space
   private String qualitySign; // 2
   // 1 white space
   // placeholder Nr. 1234567890123
   private double price; // 3
   private double discount;
   private boolean verified;
+  private Article article;
+  private PriceList estimatedPriceList;
+  private SurchargeGroup estimatedSurchargeGroup;
+  private Long barcode = null;
 
   public static List<LineContent> parseContents(List<String> lines, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
@@ -79,6 +83,18 @@ public class LineContent {
     }
   }
 
+  public String getPriceDifference() {
+    if (getStatus() != ResolveStatus.OK || article == null) {
+      return "";
+    }
+    double price = getPrice();
+    double articlePrice = article.getNetPrice();
+    if (price == 0.0d) {
+      return articlePrice == 0.0d ? "" : "!";
+    }
+    return String.format("%.0f%%", 100 * (price - articlePrice) / price);
+  }
+
   private void trySplit(@NotNull MetricUnits currentUnit, double amount) {
     double newAmount;
     MetricUnits newUnit;
@@ -112,7 +128,7 @@ public class LineContent {
 
   private void setWeighableAmount(double amount, String unitString) {
     setContainerSize(1);
-    weighable = true;
+    weighableKk = true;
     MetricUnits unit = Catalog.extractUnit(unitString);
     if (isExactEnough(amount)) {
       setUnit(unit);
@@ -128,6 +144,10 @@ public class LineContent {
   }
 
   private static LineContent singleLine(String line) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
     LineContent content = new LineContent();
     content.kkNumber = Integer.parseInt(line.substring(0, 13).replace(" ", ""));
     content.plusSign = line.charAt(13) == '+';
@@ -139,8 +159,20 @@ public class LineContent {
     content.producer = line.substring(70, 73).replace(" ", "");
     content.origin = line.substring(73, 77).replace(" ", "");
     content.qualitySign = line.substring(77, 80).replace(" ", "");
-    content.price = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
     content.discount = Integer.parseInt(line.substring(133, 136)) / 10000.;
+    content.price = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
+    Optional<Article> matchedArticle = Articles.getByKkItemNumber(content.kkNumber);
+    Article pattern;
+    if (matchedArticle.isPresent()) {
+      content.article = matchedArticle.get();
+      pattern = content.article;
+      content.weighableKb = content.article.isWeighable();
+    } else {
+      pattern = Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
+      content.weighableKb = false;
+    }
+    content.estimatedPriceList = pattern.getPriceList();
+    content.estimatedSurchargeGroup = pattern.getSurchargeGroup();
     return content;
   }
 
@@ -153,7 +185,7 @@ public class LineContent {
   }
 
   public double getTotalPrice() {
-    if (weighable) return containerMultiplier * unit.getBaseFactor() * amount * price;
+    if (weighableKk) return containerMultiplier * unit.getBaseFactor() * amount * price;
     else return containerSize * containerMultiplier * price;
   }
 
@@ -180,8 +212,18 @@ public class LineContent {
     return resolveStatus;
   }
 
-  public void verify() {
-    verified = true;
+  public void refreshFromArticle(Article article) {
+    this.setPrice(article.getNetPrice()); // different to article generation
+    this.setUnit(article.getMetricUnits());
+    this.setAmount(article.getAmount());
+    this.setContainerSize(article.getContainerSize());
+    this.setWeighableKb(article.isWeighable());
+    this.setEstimatedPriceList(article.getPriceList());
+    this.setEstimatedSurchargeGroup(article.getSurchargeGroup());
+  }
+
+  public void verify(boolean v) {
+    verified = v;
   }
 
   public String toString() {

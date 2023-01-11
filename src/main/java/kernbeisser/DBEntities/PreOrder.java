@@ -124,4 +124,8 @@ public class PreOrder implements Serializable, UserRelated {
     }
     return this.user.equals(user);
   }
+
+  public boolean isDelivered() {
+    return delivery != null;
+  }
 }

@@ -1,6 +1,7 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.time.DayOfWeek;
 import java.util.*;
@@ -8,18 +9,26 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.Config.Config;
+import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Forms.FormEditor.FormEditorController;
+import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Reports.PriceListReport;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.Supply.SupplyController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.SneakyThrows;
 import lombok.var;
@@ -29,9 +38,12 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
 
   private final Object LOAD_LOCK = new Object();
 
+  private final BarcodeCapture capture;
+
   public SupplySelectorController(BiConsumer<Supply, Collection<ShoppingItem>> consumer)
       throws PermissionKeyRequiredException {
     super(new SupplySelectorModel(consumer));
+    this.capture = new BarcodeCapture(e -> processBarcode(e));
   }
 
   @SneakyThrows
@@ -39,6 +51,53 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   public void fillView(SupplySelectorView supplySelectorView) {
     getView().setFilterOptions(Arrays.asList(ResolveStatus.values()));
     loadDefaultDir();
+  }
+
+  private void openArticleWindow(LineContent lineContent, Article article, boolean confirmMerge) {
+    FormEditorController.create(article, new ArticleController(), Mode.EDIT)
+        .withCloseEvent(
+            () -> {
+              refreshLineContent(
+                  lineContent,
+                  Articles.getByKkItemNumber(article.getSuppliersItemNumber()).get(),
+                  confirmMerge);
+            })
+        .openIn(new SubWindow(getView().traceViewContainer()));
+  }
+
+  public void editArticle(LineContent lineContent) {
+    Supplier kkSupplier = Supplier.getKKSupplier();
+    switch (lineContent.getStatus()) {
+      case OK:
+        if (!getView().messageConfirmLineMerge()) {
+          return;
+        }
+      case ADDED:
+        try {
+          Article article = SupplyController.findOrCreateArticle(kkSupplier, lineContent);
+          openArticleWindow(lineContent, article, false);
+        } catch (NoSuchElementException e) {
+          Tools.showUnexpectedErrorWarning(e);
+        }
+        break;
+      default:
+    }
+  }
+
+  public void openArticle(LineContent lineContent) {
+    Article article = lineContent.getArticle();
+    if (article == null) {
+      return;
+    }
+    openArticleWindow(lineContent, article, true);
+  }
+
+  private void refreshLineContent(LineContent lineContent, Article article, Boolean confirmMerge) {
+    if (confirmMerge && !getView().messageConfirmArticleMerge()) {
+      return;
+    }
+    lineContent.refreshFromArticle(article);
+    getView().refreshTable();
   }
 
   public void loadDefaultDir() {
@@ -91,12 +150,32 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
     fileChooser.showOpenDialog(getView().getContent());
   }
 
+  private void processBarcode(String barcode) {
+    SupplySelectorView view = getView();
+    Optional<LineContent> selectedLineContent = view.getSelectedLineContent();
+    if (!selectedLineContent.isPresent()) {
+      return;
+    }
+    LineContent lineContent = selectedLineContent.get();
+    if (lineContent.getStatus() != ResolveStatus.ADDED) {
+      return;
+    }
+    try {
+      long longBarcode = Long.parseLong(barcode);
+      if (view.messageConfirmBarcode(lineContent, barcode)) {
+        lineContent.setBarcode(longBarcode);
+      }
+    } catch (NumberFormatException e) {
+      view.messageInvalidBarcode(barcode);
+    }
+  }
+
   public void deleteCurrentSupply(ActionEvent actionEvent) {
     getView()
         .getSelectedSupply()
         .ifPresent(
             e -> {
-              getView().messageCommitDelete();
+              getView().messageConfirmDelete();
               for (SupplierFile supplierFile : e.getSupplierFiles()) {
                 supplierFile.getOrigin().delete();
               }
@@ -185,5 +264,10 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
                   "Aufträge der Lierung vom " + Date.INSTANT_DATE.format(supply.getDeliveryDate()));
               cc.openIn(sw);
             });
+  }
+
+  @Override
+  protected boolean processKeyboardInput(KeyEvent e) {
+    return capture.processKeyEvent(e);
   }
 }

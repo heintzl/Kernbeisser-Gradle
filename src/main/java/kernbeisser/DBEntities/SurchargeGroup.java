@@ -79,6 +79,10 @@ public class SurchargeGroup implements Serializable, Cloneable {
     } else return surcharge;
   }
 
+  public String getNameWithSurcharge() {
+    return getName() + String.format(" (%.0f%%)", getSurcharge() * 100);
+  }
+
   public boolean isSurchargeExtracted() {
     return surcharge == null;
   }
