@@ -44,7 +44,6 @@ public class LineContent {
   private PriceList estimatedPriceList;
   private SurchargeGroup estimatedSurchargeGroup;
   private Long barcode = null;
-  private double priceDeviation;
 
   public static List<LineContent> parseContents(List<String> lines, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
@@ -82,6 +81,18 @@ public class LineContent {
     } else {
       trySplit(unit, product);
     }
+  }
+
+  public String getPriceDifference() {
+    if (getStatus() != ResolveStatus.OK || article == null) {
+      return "";
+    }
+    double price = getPrice();
+    double articlePrice = article.getNetPrice();
+    if (price == 0.0d) {
+      return articlePrice == 0.0d ? "" : "!";
+    }
+    return String.format("%.0f%%", 100 * (price - articlePrice) / price);
   }
 
   private void trySplit(@NotNull MetricUnits currentUnit, double amount) {
@@ -202,12 +213,13 @@ public class LineContent {
   }
 
   public void refreshFromArticle(Article article) {
-    this.setName(article.getName());
     this.setPrice(article.getNetPrice()); // different to article generation
     this.setUnit(article.getMetricUnits());
     this.setAmount(article.getAmount());
     this.setContainerSize(article.getContainerSize());
-    this.setKkNumber(article.getSuppliersItemNumber());
+    this.setWeighableKb(article.isWeighable());
+    this.setEstimatedPriceList(article.getPriceList());
+    this.setEstimatedSurchargeGroup(article.getSurchargeGroup());
   }
 
   public void verify(boolean v) {

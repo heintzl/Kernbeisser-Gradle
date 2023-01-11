@@ -13,9 +13,6 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
-import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
@@ -127,7 +124,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 .withPreferredWidth(150),
             Columns.<LineContent>create("Preis", e -> String.format("%.2f€", e.getTotalPrice()))
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create("Diff.", this::getPriceDifference)
+            Columns.create("Diff.", LineContent::getPriceDifference)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(40),
             Columns.<LineContent>create("Ausw.", e -> e.isWeighableKb() ? "ja" : "nein")
@@ -139,34 +136,31 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 .withLeftClickConsumer(this::verifyLine));
   }
 
-  private String getPriceDifference(LineContent lineContent) {
-    if (lineContent.getStatus() != ResolveStatus.OK) {
-      return "";
-    }
-    Optional<Double> articlePrice =
-        Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), lineContent.getKkNumber())
-            .map(Article::getNetPrice);
-    if (!articlePrice.isPresent()) {
-      return "";
-    }
-    double price = lineContent.getPrice();
-    if (price == 0.0d) {
-      return articlePrice.get() == 0.0d ? "" : "!";
-    }
-    return String.format("%.0f%%", 100 * (price - articlePrice.get()) / price);
-  }
-
   private void toggleWeighable(LineContent lineContent) {
     if (lineContent.getStatus() != ResolveStatus.ADDED) {
       return;
     }
     lineContent.setWeighableKb(!lineContent.isWeighableKb());
-    lineContents.getModel().fireTableDataChanged();
+    try {
+      lineContents.getModel().fireTableDataChanged();
+    } catch (IllegalArgumentException ignored) {
+    }
+  }
+
+  public void refreshTable() {
+    int selectedRow = lineContents.getEditingRow();
+    try {
+      lineContents.getModel().fireTableDataChanged();
+    } catch (IllegalArgumentException ignored) {
+    }
+    if (selectedRow > -1) {
+      lineContents.selectRow(selectedRow);
+    }
+    lineContents.getSelectionModel().setSelectionInterval(selectedRow, selectedRow);
   }
 
   public void verifyLine(LineContent lineContent) {
     lineContent.verify(!lineContent.isVerified());
-    lineContents.getModel().fireTableDataChanged();
   }
 
   private void listSupplyFiles(Supply supply) {
@@ -227,7 +221,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   }
 
   public Optional<LineContent> getSelectedLineContent() {
-      return lineContents.getSelectedObject();
+    return lineContents.getSelectedObject();
   }
 
   public void messageConfirmDelete() {
@@ -244,7 +238,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   public boolean messageConfirmLineMerge() {
     return JOptionPane.showConfirmDialog(
             getContent(),
-            "Willst du wirklich alle Daten dieser Zeile in den Artikelstamm übernehmen?",
+            "Willst du die Daten dieser Zeile wirklich in den Artikelstamm übernehmen?",
             "Artikeldaten überschreiben",
             JOptionPane.YES_NO_OPTION)
         == JOptionPane.YES_OPTION;
@@ -276,16 +270,22 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   public boolean messageConfirmBarcode(LineContent lineContent, String barcode) {
     return JOptionPane.showConfirmDialog(
             getContent(),
-            "Soll der Barcode \"" + barcode +
-                    "\" für den Artikel \"" + lineContent.getName() + "\" übernommen werden?",
+            "Soll der Barcode \""
+                + barcode
+                + "\" für den Artikel \""
+                + lineContent.getName()
+                + "\" übernommen werden?",
             "Barcode übernehmen",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE,
-            createIcon(FontAwesome.BARCODE, new Color(0))
-    ) == JOptionPane.YES_OPTION;
+            createIcon(FontAwesome.BARCODE, new Color(0)))
+        == JOptionPane.YES_OPTION;
   }
 
   public void messageInvalidBarcode(String barcode) {
-    message("\"" + barcode + "\" ist kein gültiger Barcode.", "Ungültiger Barcode", JOptionPane.ERROR_MESSAGE);
+    message(
+        "\"" + barcode + "\" ist kein gültiger Barcode.",
+        "Ungültiger Barcode",
+        JOptionPane.ERROR_MESSAGE);
   }
 }

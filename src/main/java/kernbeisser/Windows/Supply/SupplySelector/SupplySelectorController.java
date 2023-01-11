@@ -85,15 +85,11 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   }
 
   public void openArticle(LineContent lineContent) {
-    if (lineContent.getStatus() != ResolveStatus.OK) {
+    Article article = lineContent.getArticle();
+    if (article == null) {
       return;
     }
-    try {
-      Article article = Articles.getByKkItemNumber(lineContent.getKkNumber()).get();
-      openArticleWindow(lineContent, article, true);
-    } catch (NoSuchElementException e) {
-      Tools.showUnexpectedErrorWarning(e);
-    }
+    openArticleWindow(lineContent, article, true);
   }
 
   private void refreshLineContent(LineContent lineContent, Article article, Boolean confirmMerge) {
@@ -101,7 +97,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
       return;
     }
     lineContent.refreshFromArticle(article);
-    getView().verifyLine(lineContent);
+    getView().refreshTable();
   }
 
   public void loadDefaultDir() {
