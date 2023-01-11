@@ -40,8 +40,11 @@ public class LineContent {
   private double price; // 3
   private double discount;
   private boolean verified;
+  private Article article;
   private PriceList estimatedPriceList;
   private SurchargeGroup estimatedSurchargeGroup;
+  private Long barcode = null;
+  private double priceDeviation;
 
   public static List<LineContent> parseContents(List<String> lines, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
@@ -146,11 +149,17 @@ public class LineContent {
     content.origin = line.substring(73, 77).replace(" ", "");
     content.qualitySign = line.substring(77, 80).replace(" ", "");
     content.discount = Integer.parseInt(line.substring(133, 136)) / 10000.;
-    Optional<Article> article = Articles.getByKkItemNumber(content.kkNumber);
-    content.weighableKb = article.map(Article::isWeighable).orElse(false);
     content.price = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
-    Article pattern =
-        article.orElse(Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier()));
+    Optional<Article> matchedArticle = Articles.getByKkItemNumber(content.kkNumber);
+    Article pattern;
+    if (matchedArticle.isPresent()) {
+      content.article = matchedArticle.get();
+      pattern = content.article;
+      content.weighableKb = content.article.isWeighable();
+    } else {
+      pattern = Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
+      content.weighableKb = false;
+    }
     content.estimatedPriceList = pattern.getPriceList();
     content.estimatedSurchargeGroup = pattern.getSurchargeGroup();
     return content;
@@ -192,12 +201,11 @@ public class LineContent {
     return resolveStatus;
   }
 
-  public void refreshFromArticle(Article article) { // TODO check logic!
+  public void refreshFromArticle(Article article) {
     this.setName(article.getName());
     this.setPrice(article.getNetPrice()); // different to article generation
     this.setUnit(article.getMetricUnits());
     this.setAmount(article.getAmount());
-    this.setWeighableKb(article.isWeighable()); // different to article generation
     this.setContainerSize(article.getContainerSize());
     this.setKkNumber(article.getSuppliersItemNumber());
   }

@@ -1,6 +1,7 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.time.DayOfWeek;
 import java.util.*;
@@ -8,6 +9,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.Config.Config;
+import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
@@ -36,9 +38,12 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
 
   private final Object LOAD_LOCK = new Object();
 
+  private final BarcodeCapture capture;
+
   public SupplySelectorController(BiConsumer<Supply, Collection<ShoppingItem>> consumer)
       throws PermissionKeyRequiredException {
     super(new SupplySelectorModel(consumer));
+    this.capture = new BarcodeCapture(e -> processBarcode(e));
   }
 
   @SneakyThrows
@@ -149,6 +154,26 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
     fileChooser.showOpenDialog(getView().getContent());
   }
 
+  private void processBarcode(String barcode) {
+    SupplySelectorView view = getView();
+    Optional<LineContent> selectedLineContent = view.getSelectedLineContent();
+    if (!selectedLineContent.isPresent()) {
+      return;
+    }
+    LineContent lineContent = selectedLineContent.get();
+    if (lineContent.getStatus() != ResolveStatus.ADDED) {
+      return;
+    }
+    try {
+      long longBarcode = Long.parseLong(barcode);
+      if (view.messageConfirmBarcode(lineContent, barcode)) {
+        lineContent.setBarcode(longBarcode);
+      }
+    } catch (NumberFormatException e) {
+      view.messageInvalidBarcode(barcode);
+    }
+  }
+
   public void deleteCurrentSupply(ActionEvent actionEvent) {
     getView()
         .getSelectedSupply()
@@ -243,5 +268,10 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
                   "Aufträge der Lierung vom " + Date.INSTANT_DATE.format(supply.getDeliveryDate()));
               cc.openIn(sw);
             });
+  }
+
+  @Override
+  protected boolean processKeyboardInput(KeyEvent e) {
+    return capture.processKeyEvent(e);
   }
 }

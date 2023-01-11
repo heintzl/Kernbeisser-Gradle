@@ -226,6 +226,10 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     return supplySelector.getSelectedObject();
   }
 
+  public Optional<LineContent> getSelectedLineContent() {
+      return lineContents.getSelectedObject();
+  }
+
   public void messageConfirmDelete() {
     if (JOptionPane.showConfirmDialog(
             getContent(),
@@ -240,7 +244,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   public boolean messageConfirmLineMerge() {
     return JOptionPane.showConfirmDialog(
             getContent(),
-            "Willst du wirklich alle Daten dieser Zeile inden Artikelstamm übernehmen?",
+            "Willst du wirklich alle Daten dieser Zeile in den Artikelstamm übernehmen?",
             "Artikeldaten überschreiben",
             JOptionPane.YES_NO_OPTION)
         == JOptionPane.YES_OPTION;
@@ -267,5 +271,21 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     message(
         "Das Standardverzeichnis konnte nicht gefunden werden!\nIst der USB-Stick eingesteckt?",
         "Standardverzeichnis nicht gefunden");
+  }
+
+  public boolean messageConfirmBarcode(LineContent lineContent, String barcode) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Soll der Barcode \"" + barcode +
+                    "\" für den Artikel \"" + lineContent.getName() + "\" übernommen werden?",
+            "Barcode übernehmen",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            createIcon(FontAwesome.BARCODE, new Color(0))
+    ) == JOptionPane.YES_OPTION;
+  }
+
+  public void messageInvalidBarcode(String barcode) {
+    message("\"" + barcode + "\" ist kein gültiger Barcode.", "Ungültiger Barcode", JOptionPane.ERROR_MESSAGE);
   }
 }
