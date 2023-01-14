@@ -2,6 +2,9 @@ package kernbeisser.CustomComponents.ObjectTable;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -39,6 +42,29 @@ public interface Column<T> {
           return Double.compare(a, b);
         }
       };
+
+  static Comparator<Object> DATE_SORTER(DateTimeFormatter formatter) {
+    return new Comparator<Object>() {
+
+      @Override
+      public int compare(Object o1, Object o2) {
+        LocalDate a;
+        LocalDate b;
+
+        try {
+          a = LocalDate.parse((CharSequence) o1, formatter);
+        } catch (DateTimeParseException e) {
+          return -1;
+        }
+        try {
+          b = LocalDate.parse((CharSequence) o2, formatter);
+        } catch (DateTimeParseException e) {
+          return 1;
+        }
+        return a.compareTo(b);
+      }
+    };
+  }
 
   String getName();
 

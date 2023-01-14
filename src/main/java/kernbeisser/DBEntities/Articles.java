@@ -8,10 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -337,6 +334,19 @@ public class Articles {
         .findFirst()
         .orElseGet(ShoppingItem::new)
         .getCreateDate();
+  }
+
+  public static Map<Integer, Instant> getLastDeliveries() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Map<Integer, Instant> result = new HashMap<>();
+    em.createQuery(
+                    "select kbNumber, max(createDate) from ShoppingItem i where purchase_id is null group by i.kbNumber order by kbNumber",
+                    Tuple.class)
+            .getResultStream().forEach(t -> result.put(t.get(0, Integer.class), t.get(1, Instant.class)));
+    return result;
   }
 
   public static double getContainerSurchargeReduction() {
