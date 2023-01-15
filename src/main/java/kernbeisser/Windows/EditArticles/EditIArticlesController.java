@@ -5,7 +5,6 @@ import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.event.KeyEvent;
 import javax.persistence.NoResultException;
-import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -19,6 +18,7 @@ import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
@@ -28,7 +28,7 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
-public class EditItemsController extends Controller<EditItemsView, EditItemsModel> {
+public class EditIArticlesController extends Controller<EditArticlesView, EditArticlesModel> {
 
   private final ObjectViewController<Article> objectViewController;
 
@@ -44,8 +44,9 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
   }
 
   @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
-  public EditItemsController() {
-    super(new EditItemsModel());
+  public EditIArticlesController() {
+    super(new EditArticlesModel());
+    var lastDeliveries = Articles.getLastDeliveries();
     objectViewController =
         new ObjectViewController<>(
             "Artikel bearbeiten",
@@ -54,7 +55,7 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             true,
             new CustomizableColumn<>("Name", Article::getName)
                 .withDefaultFilter()
-                .withColumnAdjustor(column -> column.setPreferredWidth(400))
+                .withColumnAdjustor(column -> column.setPreferredWidth(350))
                 .withHorizontalAlignment(LEFT),
             new CustomizableColumn<Article>(
                     "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName())
@@ -91,7 +92,12 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
             Columns.<Article>create(
                     "Zuschlaggruppe", e -> e.getSurchargeGroup().getNameWithSurcharge(), LEFT)
                 .withDefaultFilter(),
-            Columns.create("Barcode", Article::getBarcode, RIGHT));
+            Columns.create("Barcode", Article::getBarcode, RIGHT),
+            Columns.<Article>create(
+                    "Letzte Lief.",
+                    a ->
+                        Date.safeDateFormat(lastDeliveries.get(a.getKbNumber()), Date.INSTANT_DATE))
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
     this.capture =
         new BarcodeCapture(
             e ->
@@ -113,12 +119,12 @@ public class EditItemsController extends Controller<EditItemsView, EditItemsMode
 
   @NotNull
   @Override
-  public EditItemsModel getModel() {
+  public EditArticlesModel getModel() {
     return model;
   }
 
   @Override
-  public void fillView(EditItemsView editItemsView) {
+  public void fillView(EditArticlesView editArticlesView) {
     objectViewController.setSearch("");
     if (Tools.canInvoke(PrintLabelsController::new)) {
       objectViewController.addButton(

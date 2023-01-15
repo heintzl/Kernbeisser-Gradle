@@ -18,12 +18,10 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Reports.PriceListReport;
-import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
@@ -217,28 +215,16 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         .sendToPrinter("Drucke Obst und Gemüse Verkaufspreise", Tools::showUnexpectedErrorWarning);
   }
 
-  public static PriceListReportArticle wrapToPrint(LineContent content) {
-    PriceListReportArticle article = new PriceListReportArticle();
+  public static Article wrapToPrint(LineContent content) {
+    Article article = new Article();
     article.setSuppliersItemNumber(content.getKkNumber());
-    article.setMetricUnits(content.getUnit().getName());
-    article.setSuppliersShortName("KK");
-    article.setShortBarcode("");
-    article.setWeighAble(true);
+    article.setMetricUnits(content.getUnit());
+    article.setSupplier(Supplier.getKKSupplier());
+    article.setWeighable(true);
     article.setName(content.getName());
     article.setKbNumber(0);
-    article.setItemRetailPrice(calcPrice(content.getPrice()));
+    article.setNetPrice(content.getPrice());
     return article;
-  }
-
-  public static double calcPrice(double priceBefore) {
-    double calcPrice =
-        priceBefore * (Setting.SURCHARGE_PRODUCE.getDoubleValue() + 1) * (VAT.LOW.getValue() + 1);
-    return roundForCents(calcPrice, calcPrice < 2 ? 0.05 : calcPrice < 5 ? 0.1 : 0.2);
-  }
-
-  private static double roundForCents(double price, double cent) {
-    double dis = price % cent;
-    return dis < cent / 2. ? price - dis : price + (cent - dis);
   }
 
   public void viewOrders(ActionEvent actionEvent) {

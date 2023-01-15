@@ -1,6 +1,10 @@
 package kernbeisser.Reports.ReportDTO;
 
-import kernbeisser.DBEntities.ShoppingItem;
+import java.time.Instant;
+import java.util.Map;
+import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
+import kernbeisser.Useful.Date;
 import lombok.Data;
 
 @Data
@@ -18,17 +22,20 @@ public class PriceListReportArticle {
   private double containerSize;
   private String unitAmount;
 
-  public static PriceListReportArticle ofShoppingItem(ShoppingItem item) {
+  public static PriceListReportArticle ofArticle(
+      Article article, Map<Integer, Instant> lastDeliveries) {
     PriceListReportArticle priceListArticle = new PriceListReportArticle();
-    priceListArticle.name = item.getName();
-    priceListArticle.itemRetailPrice = item.getItemRetailPrice();
-    priceListArticle.kbNumber = item.getKbNumber();
-    priceListArticle.suppliersShortName = item.getSuppliersShortName();
-    priceListArticle.suppliersItemNumber = item.getSuppliersItemNumber();
-    priceListArticle.metricUnits = item.getMetricUnits().getName();
-    priceListArticle.weighAble = item.isWeighAble();
-    priceListArticle.containerSize = item.getContainerSize();
-    priceListArticle.unitAmount = item.getPriceInfoAmount();
+    priceListArticle.name = article.getName();
+    priceListArticle.itemRetailPrice = Articles.calculateArticleRetailPrice(article, 0, false);
+    priceListArticle.kbNumber = article.getKbNumber();
+    priceListArticle.suppliersShortName = article.getSupplier().getShortName();
+    priceListArticle.suppliersItemNumber = article.getSuppliersItemNumber();
+    priceListArticle.metricUnits = article.getMetricUnits().getName();
+    priceListArticle.weighAble = article.isWeighable();
+    priceListArticle.containerSize = article.getContainerSize();
+    priceListArticle.unitAmount = Articles.getContentAmount(article);
+    priceListArticle.lastDeliveryMonth =
+        Date.INSTANT_MONTH_YEAR.format(lastDeliveries.get(article.getKbNumber()));
     return priceListArticle;
   }
 }

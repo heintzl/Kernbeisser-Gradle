@@ -11,9 +11,7 @@ import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
-import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Security.Key;
-import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -222,18 +220,6 @@ public class ShoppingItem implements Serializable {
     setItemRetailPriceFromNetPrice();
     this.articleId = article.getId();
     this.articleRev = articleRev;
-  }
-
-  public static PriceListReportArticle createReportItem(Article article) {
-    ShoppingItem item = new ShoppingItem(article, /*not used in this case*/ 0, 0, false);
-    PriceListReportArticle reportArticle = PriceListReportArticle.ofShoppingItem(item);
-    try {
-      reportArticle.setLastDeliveryMonth(
-          Date.INSTANT_MONTH_YEAR.format(Articles.getLastDelivery(article)));
-    } catch (NullPointerException ignored) {
-    }
-    reportArticle.setShortBarcode(Articles.getShortBarcode(article));
-    return reportArticle;
   }
 
   public static ShoppingItem createRawPriceProduct(

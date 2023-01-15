@@ -20,7 +20,6 @@ import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Useful.DocumentChangeListener;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplyView implements IView<SupplyController> {
@@ -37,7 +36,6 @@ public class SupplyView implements IView<SupplyController> {
   private JButton commit;
   private JButton cancel;
   private JButton importSupplyFile;
-  @Getter private JPanel printButtonPanel;
   private JLabel total;
   private JLabel produce;
 

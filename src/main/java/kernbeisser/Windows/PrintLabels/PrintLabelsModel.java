@@ -14,11 +14,13 @@ import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Reports.ArticleLabel;
 import kernbeisser.Reports.Report;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
+import lombok.var;
 
 public class PrintLabelsModel implements IModel<PrintLabelsController> {
 
@@ -26,6 +28,7 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
   @Getter private Map<Article, Integer> printPoolMap;
 
   public static CollectionController<Article> getArticleSource() {
+    var lastDeliveries = Articles.getLastDeliveries();
     return new CollectionController<>(
         new ArrayList<>(),
         Source.empty(),
@@ -37,6 +40,11 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
             .withDefaultFilter(),
         Columns.create("Lieferantennummer", Article::getSuppliersItemNumber)
             .withSorter(Column.NUMBER_SORTER)
+            .withDefaultFilter(),
+        Columns.<Article>create(
+                "Letzte Lieferung",
+                e -> Date.safeDateFormat(lastDeliveries.get(e.getKbNumber()), Date.INSTANT_DATE))
+            .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE))
             .withDefaultFilter());
   }
 

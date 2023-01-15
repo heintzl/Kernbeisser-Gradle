@@ -73,9 +73,6 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   public void fillView(SupplyView supplyView) {
     var view = getView();
     view.setSuppliers(model.getAllSuppliers());
-    JButton printButton =
-        PrintLabelsController.getLaunchButton(view.traceViewContainer(), this::preparePrint);
-    view.getPrintButtonPanel().add(printButton);
     keyCapture.addF2ToF8NumberActions(getView()::setAmount);
   }
 
@@ -132,6 +129,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   void commit() {
     model.commit();
+    if (model.getShoppingItems().size() > 0) {
+      model.print();
+      new PrintLabelsController().openIn(new SubWindow(getView().traceViewContainer()));
+    }
     model.clearShoppingItems();
     recalculateTotal();
     getView().back();

@@ -21,6 +21,13 @@ public class Date {
           .withLocale(Locale.GERMANY)
           .withZone(ZoneId.systemDefault());
 
+  public static String safeDateFormat(Instant instant, DateTimeFormatter formatter) {
+    if (instant == null) {
+      return "";
+    }
+    return formatter.format(instant);
+  }
+
   public static Instant atStartOrEndOfDay(LocalDate localDate, boolean atStart) {
     return (atStart
             ? localDate.atStartOfDay(ZoneId.systemDefault())

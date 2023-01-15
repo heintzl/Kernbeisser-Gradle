@@ -18,7 +18,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
-import kernbeisser.Windows.EditArticles.EditItemsController;
+import kernbeisser.Windows.EditArticles.EditIArticlesController;
 import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSuppliers.EditSuppliers;
 import kernbeisser.Windows.EditSurchargeGroups.EditSurchargeGroupController;
@@ -134,7 +134,7 @@ public class MenuView implements IView<MenuController> {
             ManagePriceListsController::new, ManagePriceListsController.class, Controller::openTab);
     editArticles =
         new ControllerButton(
-            EditItemsController::new, EditItemsController.class, Controller::openTab);
+            EditIArticlesController::new, EditIArticlesController.class, Controller::openTab);
     editSurchargeTables =
         new ControllerButton(EditSurchargeGroupController::new, EditSurchargeGroupController.class);
     changePassword =
