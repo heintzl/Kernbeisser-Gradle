@@ -18,6 +18,7 @@ import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
@@ -45,6 +46,7 @@ public class EditIArticlesController extends Controller<EditArticlesView, EditAr
   @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
   public EditIArticlesController() {
     super(new EditArticlesModel());
+    var lastDeliveries = Articles.getLastDeliveries();
     objectViewController =
         new ObjectViewController<>(
             "Artikel bearbeiten",
@@ -53,7 +55,7 @@ public class EditIArticlesController extends Controller<EditArticlesView, EditAr
             true,
             new CustomizableColumn<>("Name", Article::getName)
                 .withDefaultFilter()
-                .withColumnAdjustor(column -> column.setPreferredWidth(400))
+                .withColumnAdjustor(column -> column.setPreferredWidth(350))
                 .withHorizontalAlignment(LEFT),
             new CustomizableColumn<Article>(
                     "Packungsgröße", e -> e.getAmount() + e.getMetricUnits().getShortName())
@@ -90,7 +92,12 @@ public class EditIArticlesController extends Controller<EditArticlesView, EditAr
             Columns.<Article>create(
                     "Zuschlaggruppe", e -> e.getSurchargeGroup().getNameWithSurcharge(), LEFT)
                 .withDefaultFilter(),
-            Columns.create("Barcode", Article::getBarcode, RIGHT));
+            Columns.create("Barcode", Article::getBarcode, RIGHT),
+            Columns.<Article>create(
+                    "Letzte Lief.",
+                    a ->
+                        Date.safeDateFormat(lastDeliveries.get(a.getKbNumber()), Date.INSTANT_DATE))
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
     this.capture =
         new BarcodeCapture(
             e ->
