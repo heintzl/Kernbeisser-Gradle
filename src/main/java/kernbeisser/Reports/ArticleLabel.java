@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Useful.Date;
 
@@ -28,8 +28,9 @@ public class ArticleLabel extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
+    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
     return articles.stream()
-        .map(ShoppingItem::createReportItem)
+        .map(a -> PriceListReportArticle.ofArticle(a, lastDeliveries))
         .sorted(
             Comparator.comparing(PriceListReportArticle::getSuppliersShortName)
                 .thenComparingInt(PriceListReportArticle::getSuppliersItemNumber))

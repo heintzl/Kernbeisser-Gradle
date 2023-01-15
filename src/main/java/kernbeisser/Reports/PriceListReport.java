@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
+import lombok.var;
 
 public class PriceListReport extends Report {
 
@@ -14,18 +16,17 @@ public class PriceListReport extends Report {
   private final String priceListName;
 
   public PriceListReport(PriceList priceList) {
-    this(
-        priceList.getAllArticles().stream()
-            .map(ShoppingItem::createReportItem)
-            .collect(Collectors.toList()),
-        priceList.getName());
+    this(priceList.getAllArticles(), priceList.getName());
   }
 
-  public PriceListReport(
-      Collection<PriceListReportArticle> priceListReportArticles, String priceListName) {
+  public PriceListReport(Collection<Article> articles, String priceListName) {
     super("priceList", "Preisliste " + priceListName);
     setDuplexPrint(false);
-    this.priceListReportArticles = priceListReportArticles;
+    var lastDeliveries = Articles.getLastDeliveries();
+    this.priceListReportArticles =
+        articles.stream()
+            .map(a -> PriceListReportArticle.ofArticle(a, lastDeliveries))
+            .collect(Collectors.toList());
     this.priceListName = priceListName;
   }
 

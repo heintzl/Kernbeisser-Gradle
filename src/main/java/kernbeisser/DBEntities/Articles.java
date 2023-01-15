@@ -321,21 +321,6 @@ public class Articles {
         .findAny();
   }
 
-  public static Instant getLastDelivery(Article article) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select i from ShoppingItem i where purchase.id is null and suppliersItemNumber = :k order by i.createDate desc",
-            ShoppingItem.class)
-        .setParameter("k", article.getSuppliersItemNumber())
-        .getResultStream()
-        .findFirst()
-        .orElseGet(ShoppingItem::new)
-        .getCreateDate();
-  }
-
   public static Map<Integer, Instant> getLastDeliveries() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -343,9 +328,10 @@ public class Articles {
     et.begin();
     Map<Integer, Instant> result = new HashMap<>();
     em.createQuery(
-                    "select kbNumber, max(createDate) from ShoppingItem i where purchase_id is null group by i.kbNumber order by kbNumber",
-                    Tuple.class)
-            .getResultStream().forEach(t -> result.put(t.get(0, Integer.class), t.get(1, Instant.class)));
+            "select kbNumber, max(createDate) from ShoppingItem i where purchase_id is null group by i.kbNumber order by kbNumber",
+            Tuple.class)
+        .getResultStream()
+        .forEach(t -> result.put(t.get(0, Integer.class), t.get(1, Instant.class)));
     return result;
   }
 
