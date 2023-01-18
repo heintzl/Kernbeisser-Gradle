@@ -109,7 +109,10 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
         report = new InventoryShelfDetails(shelves, inventoryDate);
         break;
       case COUNTINGLISTS:
-        report = new InventoryCountingLists(shelves, inventoryDate);
+        // abfrage ob Datum der Zählliste in Vergangenheit
+        if (getView().confirmPrint()) {
+          report = new InventoryCountingLists(shelves, inventoryDate);
+        }
         break;
       case INVENTORYRESULT:
         report = new InventoryStocks(inventoryDate);
