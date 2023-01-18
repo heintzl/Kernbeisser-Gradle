@@ -1,16 +1,23 @@
 package kernbeisser.Windows.Inventory.Counting;
 
 import java.awt.event.KeyEvent;
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
+
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 
 public class CountingController extends Controller<CountingView, CountingModel> {
+  private static final boolean WITH_WARNING = true;
+
   public CountingController() throws PermissionKeyRequiredException {
     super(new CountingModel());
   }
@@ -26,6 +33,16 @@ public class CountingController extends Controller<CountingView, CountingModel> 
   public void fillView(CountingView countingView) {
     countingView.setShelves(model.getAllShelves());
     countingView.getSelectedShelf().ifPresent(this::loadShelf);
+    setInventoryDateWarning(countingView);
+  }
+
+  private static void setInventoryDateWarning(CountingView countingView) {
+    LocalDate inventoryDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
+    if (inventoryDate.isBefore(ChronoLocalDate.from(LocalDate.now().atStartOfDay()))) {
+      countingView.setInventoryDate("achtung " + Date.INSTANT_DATE.format(inventoryDate), WITH_WARNING);
+    } else {
+      countingView.setInventoryDate("inventur datum:  " + Date.INSTANT_DATE.format(inventoryDate), false);
+    }
   }
 
   public void loadShelf(Shelf shelf) {

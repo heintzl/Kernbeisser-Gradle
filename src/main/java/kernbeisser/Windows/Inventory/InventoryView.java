@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.swing.*;
@@ -160,7 +161,9 @@ public class InventoryView implements IView<InventoryController> {
   }
 
   public boolean confirmPrint() {
-    return JOptionPane.showConfirmDialog(getContent(), "wirklich", "Abfrage", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+    return JOptionPane.showConfirmDialog(
+            getContent(), "wirklich", "Abfrage", JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
   }
 
   @Override

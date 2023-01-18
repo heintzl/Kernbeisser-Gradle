@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Inventory.Counting;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.Optional;
 import javax.swing.*;
@@ -28,7 +29,15 @@ public class CountingView implements IView<CountingController> {
   private AdvancedComboBox<Shelf> shelf;
   private JLabel articleNumber;
   private JButton addArticle;
-  private ArticleStock stockBefore;
+    private JLabel inventoryDate;
+    private ArticleStock stockBefore;
+
+  public void setInventoryDate(String dateString, boolean withWarning) {
+    if (withWarning ) {
+      this.inventoryDate.setForeground(Color.RED);
+    }
+    this.inventoryDate.setText(dateString);
+  }
 
   @Linked private CountingController controller;
 

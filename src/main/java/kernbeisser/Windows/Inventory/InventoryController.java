@@ -5,6 +5,7 @@ import static javax.swing.SwingConstants.RIGHT;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -110,9 +111,11 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
         break;
       case COUNTINGLISTS:
         // abfrage ob Datum der Zählliste in Vergangenheit
-        if (getView().confirmPrint()) {
-          report = new InventoryCountingLists(shelves, inventoryDate);
+        if (inventoryDate.isBefore(ChronoLocalDate.from(LocalDate.now().atStartOfDay())) &&
+                !getView().confirmPrint()) {
+          return;
         }
+        report = new InventoryCountingLists(shelves, inventoryDate);
         break;
       case INVENTORYRESULT:
         report = new InventoryStocks(inventoryDate);
