@@ -1,6 +1,7 @@
 package kernbeisser.Reports.ReportDTO;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Map;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
@@ -33,7 +34,7 @@ public class PriceListReportArticle {
     priceListArticle.metricUnits = article.getMetricUnits().getName();
     priceListArticle.weighAble = article.isWeighable();
     priceListArticle.containerSize = article.getContainerSize();
-    priceListArticle.unitAmount = Articles.getContentAmount(article);
+    priceListArticle.unitAmount = getPriceInfoAmount(article);
     priceListArticle.lastDeliveryMonth =
         Date.INSTANT_MONTH_YEAR.format(lastDeliveries.get(article.getKbNumber()));
     return priceListArticle;

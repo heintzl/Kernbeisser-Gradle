@@ -16,6 +16,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Enums.ArticleConstants;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -216,13 +217,11 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   }
 
   public static Article wrapToPrint(LineContent content) {
-    Article article = new Article();
+    Article article = Articles.getByKbNumber(ArticleConstants.PRODUCE.getUniqueIdentifier(), false).map(e -> e.getValue()).orElse(new Article());
     article.setSuppliersItemNumber(content.getKkNumber());
     article.setMetricUnits(content.getUnit());
-    article.setSupplier(Supplier.getKKSupplier());
     article.setWeighable(true);
     article.setName(content.getName());
-    article.setKbNumber(0);
     article.setNetPrice(content.getPrice());
     return article;
   }
