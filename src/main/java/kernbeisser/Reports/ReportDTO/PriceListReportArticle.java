@@ -33,9 +33,19 @@ public class PriceListReportArticle {
     priceListArticle.metricUnits = article.getMetricUnits().getName();
     priceListArticle.weighAble = article.isWeighable();
     priceListArticle.containerSize = article.getContainerSize();
-    priceListArticle.unitAmount = Articles.getContentAmount(article);
+    priceListArticle.unitAmount = getPriceInfoAmount(article);
+    priceListArticle.shortBarcode = Articles.getShortBarcode(article);
     priceListArticle.lastDeliveryMonth =
-        Date.INSTANT_MONTH_YEAR.format(lastDeliveries.get(article.getKbNumber()));
+        Date.INSTANT_MONTH_YEAR.format(
+            lastDeliveries.getOrDefault(article.getKbNumber(), Instant.now()));
     return priceListArticle;
+  }
+
+  public static String getPriceInfoAmount(Article a) {
+    if (a.isWeighable()) {
+      return "pro " + a.getMetricUnits().getDisplayUnit().getShortName();
+    } else {
+      return Articles.getPieceAmount(a);
+    }
   }
 }
