@@ -222,6 +222,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
             .map(e -> e.getValue())
             .orElse(new Article());
     article.setSuppliersItemNumber(content.getKkNumber());
+    article.setSupplier(Supplier.getKKSupplier());
     article.setMetricUnits(content.getUnit());
     article.setWeighable(true);
     article.setName(content.getName());

@@ -34,6 +34,7 @@ public class PriceListReportArticle {
     priceListArticle.weighAble = article.isWeighable();
     priceListArticle.containerSize = article.getContainerSize();
     priceListArticle.unitAmount = getPriceInfoAmount(article);
+    priceListArticle.shortBarcode = Articles.getShortBarcode(article);
     priceListArticle.lastDeliveryMonth =
         Date.INSTANT_MONTH_YEAR.format(
             lastDeliveries.getOrDefault(article.getKbNumber(), Instant.now()));
