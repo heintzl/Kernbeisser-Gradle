@@ -217,7 +217,10 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   }
 
   public static Article wrapToPrint(LineContent content) {
-    Article article = Articles.getByKbNumber(ArticleConstants.PRODUCE.getUniqueIdentifier(), false).map(e -> e.getValue()).orElse(new Article());
+    Article article =
+        Articles.getByKbNumber(ArticleConstants.PRODUCE.getUniqueIdentifier(), false)
+            .map(e -> e.getValue())
+            .orElse(new Article());
     article.setSuppliersItemNumber(content.getKkNumber());
     article.setMetricUnits(content.getUnit());
     article.setWeighable(true);

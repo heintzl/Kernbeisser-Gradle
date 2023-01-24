@@ -1,7 +1,6 @@
 package kernbeisser.Reports.ReportDTO;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Map;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
@@ -36,7 +35,16 @@ public class PriceListReportArticle {
     priceListArticle.containerSize = article.getContainerSize();
     priceListArticle.unitAmount = getPriceInfoAmount(article);
     priceListArticle.lastDeliveryMonth =
-        Date.INSTANT_MONTH_YEAR.format(lastDeliveries.get(article.getKbNumber()));
+        Date.INSTANT_MONTH_YEAR.format(
+            lastDeliveries.getOrDefault(article.getKbNumber(), Instant.now()));
     return priceListArticle;
+  }
+
+  public static String getPriceInfoAmount(Article a) {
+    if (a.isWeighable()) {
+      return "pro " + a.getMetricUnits().getDisplayUnit().getShortName();
+    } else {
+      return Articles.getPieceAmount(a);
+    }
   }
 }
