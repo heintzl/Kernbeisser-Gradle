@@ -1,5 +1,11 @@
 package kernbeisser.Windows.Inventory.Counting;
 
+import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -15,13 +21,6 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.font.TextAttribute;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
-
 public class CountingView implements IView<CountingController> {
   private JPanel main;
   private JButton commit;
@@ -35,8 +34,7 @@ public class CountingView implements IView<CountingController> {
   private ArticleStock stockBefore;
   JLabel inventoryDate;
 
-  @Linked
-  private CountingController controller;
+  @Linked private CountingController controller;
 
   @Override
   public void initialize(CountingController controller) {
@@ -161,17 +159,21 @@ public class CountingView implements IView<CountingController> {
 
   public void formatInventoryDateAsWarning() {
     this.inventoryDate.setForeground(Color.RED);
-    Font font = this.inventoryDate.getFont().deriveFont(
-            Collections.singletonMap(
-                    TextAttribute.WEIGHT, TextAttribute.WEIGHT_EXTRABOLD));
+    Font font =
+        this.inventoryDate
+            .getFont()
+            .deriveFont(
+                Collections.singletonMap(TextAttribute.WEIGHT, TextAttribute.WEIGHT_EXTRABOLD));
     this.inventoryDate.setFont(font);
   }
 
   public void formatInventoryDateAsMessage() {
     this.inventoryDate.setForeground(Color.BLACK);
-    Font font = this.inventoryDate.getFont().deriveFont(
-            Collections.singletonMap(
-                    TextAttribute.WEIGHT, TextAttribute.WEIGHT_SEMIBOLD));
+    Font font =
+        this.inventoryDate
+            .getFont()
+            .deriveFont(
+                Collections.singletonMap(TextAttribute.WEIGHT, TextAttribute.WEIGHT_SEMIBOLD));
     this.inventoryDate.setFont(font);
   }
 }

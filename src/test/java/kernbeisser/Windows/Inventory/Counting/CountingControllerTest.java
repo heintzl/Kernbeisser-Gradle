@@ -1,5 +1,8 @@
 package kernbeisser.Windows.Inventory.Counting;
 
+import static org.mockito.Mockito.*;
+
+import java.time.LocalDate;
 import kernbeisser.Enums.Setting;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,64 +14,58 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 class CountingControllerTest {
-    @Mock
-    private Setting inventoryScheduledDate;
+  @Mock private Setting inventoryScheduledDate;
 
-    @Mock
-    private CountingView view;
-    @InjectMocks
-    @Spy
-    private CountingController controller;
+  @Mock private CountingView view;
+  @InjectMocks @Spy private CountingController controller;
 
-    @ParameterizedTest
-    @CsvSource({"true", "false"})
-    void setInventoryDateWarning(boolean inThePast) {
-        // arrange
-        when(inventoryScheduledDate.getDateValue()).thenReturn(inThePast ? LocalDate.parse("0868-05-11") : LocalDate.now());
+  @ParameterizedTest
+  @CsvSource({"true", "false"})
+  void setInventoryDateWarning(boolean inThePast) {
+    // arrange
+    when(inventoryScheduledDate.getDateValue())
+        .thenReturn(inThePast ? LocalDate.parse("0868-05-11") : LocalDate.now());
 
-        // act
-        controller.setInventoryDateMessage(view);
+    // act
+    controller.setInventoryDateMessage(view);
 
-        // assert
-        verify(controller).createInventoryDateString(inThePast);
-        verify(view).setInventoryDate(anyString());
+    // assert
+    verify(controller).createInventoryDateString(inThePast);
+    verify(view).setInventoryDate(anyString());
 
-        if (inThePast) {
-            verify(view).formatInventoryDateAsWarning();
-            verify(view, never()).formatInventoryDateAsMessage();
-        } else {
-            verify(view, never()).formatInventoryDateAsWarning();
-            verify(view).formatInventoryDateAsMessage();
-        }
+    if (inThePast) {
+      verify(view).formatInventoryDateAsWarning();
+      verify(view, never()).formatInventoryDateAsMessage();
+    } else {
+      verify(view, never()).formatInventoryDateAsWarning();
+      verify(view).formatInventoryDateAsMessage();
     }
+  }
 
-    @Test
-    void createInventoryDateString_in_the_past() {
-        // arrange
-        when(inventoryScheduledDate.getDateValue()).thenReturn(LocalDate.parse("1234-12-27"));
+  @Test
+  void createInventoryDateString_in_the_past() {
+    // arrange
+    when(inventoryScheduledDate.getDateValue()).thenReturn(LocalDate.parse("1234-12-27"));
 
-        // act
-        String result = controller.createInventoryDateString(true);
+    // act
+    String result = controller.createInventoryDateString(true);
 
-        // assert
-        Assertions.assertEquals("Achtung: Das Inventur-Datum '27.12.1234' liegt in der Vergangenheit!", result);
-    }
+    // assert
+    Assertions.assertEquals(
+        "Achtung: Das Inventur-Datum '27.12.1234' liegt in der Vergangenheit!", result);
+  }
 
-    @Test
-    void createInventoryDateString() {
-        // arrange
-        when(inventoryScheduledDate.getDateValue()).thenReturn(LocalDate.parse("1234-12-27"));
+  @Test
+  void createInventoryDateString() {
+    // arrange
+    when(inventoryScheduledDate.getDateValue()).thenReturn(LocalDate.parse("1234-12-27"));
 
-        // act
-        String result = controller.createInventoryDateString(false);
+    // act
+    String result = controller.createInventoryDateString(false);
 
-        // assert
-        Assertions.assertEquals("Inventur-Datum: 27.12.1234", result);
-    }
+    // assert
+    Assertions.assertEquals("Inventur-Datum: 27.12.1234", result);
+  }
 }
