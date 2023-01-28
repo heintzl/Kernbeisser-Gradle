@@ -206,7 +206,7 @@ public class ShoppingItem implements Serializable {
                 // is unsafe call
                 ? Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup().getSurcharge()
                 : article.getSurchargeGroup().getSurcharge())
-            * (hasContainerDiscount ? Articles.getContainerSurchargeReduction() : 1);
+            * (hasContainerDiscount ? getContainerSurchargeReduction() : 1);
     if (supplier != null) {
       this.suppliersShortName = article.getSupplier().getShortName();
     }
@@ -220,6 +220,10 @@ public class ShoppingItem implements Serializable {
     setItemRetailPriceFromNetPrice();
     this.articleId = article.getId();
     this.articleRev = articleRev;
+  }
+
+  static double getContainerSurchargeReduction() {
+    return Articles.getContainerSurchargeReduction();
   }
 
   public static ShoppingItem createRawPriceProduct(

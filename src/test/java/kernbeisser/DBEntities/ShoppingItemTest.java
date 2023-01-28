@@ -1,9 +1,7 @@
 package kernbeisser.DBEntities;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 import java.time.Instant;
 import kernbeisser.Enums.MetricUnits;
@@ -80,7 +78,7 @@ class ShoppingItemTest {
       double expected) {
     try (var staticMock = mockStatic(ShoppingItem.class)) {
       staticMock
-          .when(Articles::getContainerSurchargeReduction)
+          .when(ShoppingItem::getContainerSurchargeReduction)
           .thenReturn(containerDiscountReduction);
       staticMock.when(ShoppingItem::getOfferPrefix).thenReturn("AK");
     }
