@@ -1,9 +1,5 @@
 package kernbeisser.Windows.Inventory.Counting;
 
-import java.awt.*;
-import java.util.Collection;
-import java.util.Optional;
-import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
@@ -19,6 +15,13 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+
 public class CountingView implements IView<CountingController> {
   private JPanel main;
   private JButton commit;
@@ -29,17 +32,11 @@ public class CountingView implements IView<CountingController> {
   private AdvancedComboBox<Shelf> shelf;
   private JLabel articleNumber;
   private JButton addArticle;
-    private JLabel inventoryDate;
-    private ArticleStock stockBefore;
+  private ArticleStock stockBefore;
+  JLabel inventoryDate;
 
-  public void setInventoryDate(String dateString, boolean withWarning) {
-    if (withWarning ) {
-      this.inventoryDate.setForeground(Color.RED);
-    }
-    this.inventoryDate.setText(dateString);
-  }
-
-  @Linked private CountingController controller;
+  @Linked
+  private CountingController controller;
 
   @Override
   public void initialize(CountingController controller) {
@@ -156,5 +153,25 @@ public class CountingView implements IView<CountingController> {
   @StaticAccessPoint
   public String getTitle() {
     return "Zähl Ergebnisse eingeben";
+  }
+
+  public void setInventoryDate(String dateString) {
+    this.inventoryDate.setText(dateString);
+  }
+
+  public void formatInventoryDateAsWarning() {
+    this.inventoryDate.setForeground(Color.RED);
+    Font font = this.inventoryDate.getFont().deriveFont(
+            Collections.singletonMap(
+                    TextAttribute.WEIGHT, TextAttribute.WEIGHT_EXTRABOLD));
+    this.inventoryDate.setFont(font);
+  }
+
+  public void formatInventoryDateAsMessage() {
+    this.inventoryDate.setForeground(Color.BLACK);
+    Font font = this.inventoryDate.getFont().deriveFont(
+            Collections.singletonMap(
+                    TextAttribute.WEIGHT, TextAttribute.WEIGHT_SEMIBOLD));
+    this.inventoryDate.setFont(font);
   }
 }

@@ -1,15 +1,6 @@
 package kernbeisser.Windows.Inventory;
 
 import com.github.lgooddatepicker.components.DatePicker;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Set;
-import java.util.function.Supplier;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -27,6 +18,15 @@ import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.time.Instant;
+import java.util.Set;
+import java.util.function.Supplier;
 
 public class InventoryView implements IView<InventoryController> {
   private JPanel main;
@@ -150,20 +150,23 @@ public class InventoryView implements IView<InventoryController> {
     JPanel tablePanel = new JPanel(new FlowLayout());
     tablePanel.setSize(700, 1000);
     JScrollPane scrollPane =
-        new JScrollPane(
-            priceListTable,
-            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            new JScrollPane(
+                    priceListTable,
+                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     tablePanel.add(scrollPane);
     priceListTable.setObjects(priceLists);
     JOptionPane.showMessageDialog(
-        getContent(), tablePanel, "Nicht zugeordnete Preislisten", JOptionPane.PLAIN_MESSAGE);
+            getContent(), tablePanel, "Nicht zugeordnete Preislisten", JOptionPane.PLAIN_MESSAGE);
   }
 
-  public boolean confirmPrint() {
-    return JOptionPane.showConfirmDialog(
-            getContent(), "wirklich", "Abfrage", JOptionPane.YES_NO_OPTION)
-        == JOptionPane.YES_OPTION;
+  public boolean confirmPrint(String confirmMessage) {
+    Object[] buttonTexts = {
+            UIManager.get("OptionPane.yesButtonText"),
+            UIManager.get("OptionPane.noButtonText")};
+    int value = JOptionPane.showOptionDialog(getContent(), confirmMessage, "Achtung!", JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE, null, buttonTexts, buttonTexts[1]);
+    return value == JOptionPane.YES_OPTION;
   }
 
   @Override
