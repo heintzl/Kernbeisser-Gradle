@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
+import java.util.function.Predicate;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -40,15 +41,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   public void initialize(SupplySelectorController controller) {
     supplySelector.addSelectionListener(e -> lineContents.setObjects(e.getAllLineContents()));
     filter.getRenderer().setIconFunction(this::getIcon);
-    filter.addActionListener(
-        e -> {
-          lineContents.setRowFilter(
-              lineContent ->
-                  filter
-                      .getSelected()
-                      .map(status -> status == lineContent.getStatus())
-                      .orElse(true));
-        });
+    filter.addActionListener(e -> controller.applyFilter(filter.getSelected().orElse(null)));
     filter.getModel().setAllowNullSelection(true);
     filter.getRenderer().setNoSelectionIcon(noFilterIcon);
     filter.getRenderer().setNoSelectionText("Alle Artikel");
@@ -64,6 +57,23 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     openArticle.addActionListener(e -> editArticle());
     mergeArticle.setIcon(createIcon(FontAwesome.FLOPPY_O, new Color(0x850010)));
     mergeArticle.addActionListener(e -> mergeArticle());
+  }
+
+  public void setLineContentFilter(Predicate<LineContent> filter) {
+    lineContents.setRowFilter(filter::test);
+  }
+
+  private void filter() {
+    lineContents.setRowFilter(
+        lineContent ->
+            filter
+                .getSelected()
+                .map(
+                    status ->
+                        status == ResolveStatus.NO_PRODUCE
+                            ? !(ResolveStatus.PRODUCE == lineContent.getStatus())
+                            : status == lineContent.getStatus())
+                .orElse(true));
   }
 
   public void setFilterOptions(Collection<ResolveStatus> filters) {
@@ -170,11 +180,13 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     new ComponentController(supplierFiles).openTab();
   }
 
-  private static final Icon okIcon = createIcon(FontAwesome.CHECK_CIRCLE, new Color(0x238678));
+  private static final Icon okIcon = createIcon(FontAwesome.CHECK_CIRCLE, new Color(0x239696));
   private static final Icon addedIcon = createIcon(FontAwesome.PLUS, new Color(0xB648BA));
-  private static final Icon ignoreIcon = createIcon(FontAwesome.EXCLAMATION_CIRCLE, Color.ORANGE);
-  private static final Icon produceIcon = createIcon(FontAwesome.LEAF, new Color(0x0D5C0A));
-  private static final Icon noFilterIcon = createIcon(FontAwesome.QUESTION, Color.RED);
+  private static final Icon ignoreIcon =
+      createIcon(FontAwesome.EXCLAMATION_CIRCLE, new Color(0xFF0000));
+  private static final Icon produceIcon = createIcon(FontAwesome.LEAF, new Color(0x00BD1D));
+  private static final Icon noProduceIcon = createIcon(FontAwesome.STAR, new Color(0xFFB700));
+  private static final Icon noFilterIcon = createIcon(FontAwesome.QUESTION, Color.GRAY);
 
   private static final Icon verified = okIcon;
   private static final Icon notVerified = noFilterIcon;
@@ -193,6 +205,8 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
         return ignoreIcon;
       case PRODUCE:
         return produceIcon;
+      case NO_PRODUCE:
+        return noProduceIcon;
       default:
         throw new IllegalArgumentException("Status has no icon: " + status);
     }

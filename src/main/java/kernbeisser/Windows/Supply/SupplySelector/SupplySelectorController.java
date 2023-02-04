@@ -91,6 +91,16 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
     openArticleWindow(lineContent, article, true);
   }
 
+  public void applyFilter(ResolveStatus status) {
+    if (status == null) {
+      getView().setLineContentFilter(l -> true);
+    } else if (status == ResolveStatus.NO_PRODUCE) {
+      getView().setLineContentFilter(l -> l.getStatus() != ResolveStatus.PRODUCE);
+    } else {
+      getView().setLineContentFilter(l -> l.getStatus() == status);
+    }
+  }
+
   private void refreshLineContent(LineContent lineContent, Article article, Boolean confirmMerge) {
     if (confirmMerge && !getView().messageConfirmArticleMerge()) {
       return;
