@@ -111,10 +111,11 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
         break;
       case COUNTINGLISTS:
         // Abfrage beim User, wenn Datum der Zaehlliste in Vergangenheit
-        String confirmMessage = createConfirmMessage(inventoryDate);
-        if (inventoryDate.isBefore(ChronoLocalDate.from(LocalDate.now().atStartOfDay()))
-            && !getView().confirmPrint(confirmMessage)) {
-          return;
+        if (inventoryDate.isBefore(ChronoLocalDate.from(LocalDate.now().atStartOfDay()))) {
+          String confirmMessage = createConfirmMessage(inventoryDate);
+          if (!getView().confirmPrint(confirmMessage)) {
+            return;
+          }
         }
         report = new InventoryCountingLists(shelves, inventoryDate);
         break;
