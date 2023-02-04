@@ -159,6 +159,23 @@ public class InventoryView implements IView<InventoryController> {
         getContent(), tablePanel, "Nicht zugeordnete Preislisten", JOptionPane.PLAIN_MESSAGE);
   }
 
+  public boolean confirmPrint(String confirmMessage) {
+    Object[] buttonTexts = {
+      UIManager.get("OptionPane.yesButtonText"), UIManager.get("OptionPane.noButtonText")
+    };
+    int value =
+        JOptionPane.showOptionDialog(
+            getContent(),
+            confirmMessage,
+            "Achtung!",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE,
+            null,
+            buttonTexts,
+            buttonTexts[1]);
+    return value == JOptionPane.YES_OPTION;
+  }
+
   @Override
   public @NotNull JComponent getContent() {
     return main;

@@ -1,6 +1,9 @@
 package kernbeisser.Windows.Inventory.Counting;
 
+import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import javax.swing.*;
 import jiconfont.IconCode;
@@ -29,6 +32,7 @@ public class CountingView implements IView<CountingController> {
   private JLabel articleNumber;
   private JButton addArticle;
   private ArticleStock stockBefore;
+  JLabel inventoryDate;
 
   @Linked private CountingController controller;
 
@@ -147,5 +151,29 @@ public class CountingView implements IView<CountingController> {
   @StaticAccessPoint
   public String getTitle() {
     return "Zähl Ergebnisse eingeben";
+  }
+
+  public void setInventoryDate(String dateString) {
+    this.inventoryDate.setText(dateString);
+  }
+
+  public void formatInventoryDateAsWarning() {
+    this.inventoryDate.setForeground(Color.RED);
+    Font font =
+        this.inventoryDate
+            .getFont()
+            .deriveFont(
+                Collections.singletonMap(TextAttribute.WEIGHT, TextAttribute.WEIGHT_EXTRABOLD));
+    this.inventoryDate.setFont(font);
+  }
+
+  public void formatInventoryDateAsMessage() {
+    this.inventoryDate.setForeground(Color.BLACK);
+    Font font =
+        this.inventoryDate
+            .getFont()
+            .deriveFont(
+                Collections.singletonMap(TextAttribute.WEIGHT, TextAttribute.WEIGHT_SEMIBOLD));
+    this.inventoryDate.setFont(font);
   }
 }

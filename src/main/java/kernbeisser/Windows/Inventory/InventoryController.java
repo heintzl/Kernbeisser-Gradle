@@ -2,9 +2,9 @@ package kernbeisser.Windows.Inventory;
 
 import static javax.swing.SwingConstants.RIGHT;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,6 +21,7 @@ import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Reports.*;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.CSV;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Inventory.Counting.CountingController;
 import kernbeisser.Windows.MVC.Controller;
@@ -30,12 +31,13 @@ import lombok.SneakyThrows;
 
 public class InventoryController extends Controller<InventoryView, InventoryModel> {
   @Linked @Getter private final ObjectViewController<Shelf> shelfViewController;
+  Setting inventoryScheduledDate = Setting.INVENTORY_SCHEDULED_DATE;
 
   @Key(PermissionKey.ACTION_OPEN_INVENTORY)
   public InventoryController() throws PermissionKeyRequiredException {
     super(new InventoryModel());
     this.shelfViewController =
-        new ObjectViewController<Shelf>(
+        new ObjectViewController<>(
             "Regale",
             new ShelfController(),
             getModel()::searchShelf,
@@ -93,14 +95,13 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
     List<Shelf> shelves;
     if (selected && InventoryReports.shelfSelectionAllowed().contains(selectedReport)) {
       shelves =
-          new ArrayList<Shelf>(
-              getShelfViewController().getSearchBoxController().getSelectedObjects());
+          new ArrayList<>(getShelfViewController().getSearchBoxController().getSelectedObjects());
     } else {
       shelves = Shelf.getAll();
     }
     shelves.sort(Comparator.comparingInt(Shelf::getShelfNo));
     Report report = null;
-    LocalDate inventoryDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
+    LocalDate inventoryDate = inventoryScheduledDate.getDateValue();
     switch (selectedReport) {
       case SHELFOVERVIEW:
         report = new InventoryShelfOverview(shelves, inventoryDate);
@@ -109,6 +110,13 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
         report = new InventoryShelfDetails(shelves, inventoryDate);
         break;
       case COUNTINGLISTS:
+        // Abfrage beim User, wenn Datum der Zaehlliste in Vergangenheit
+        if (inventoryDate.isBefore(ChronoLocalDate.from(LocalDate.now().atStartOfDay()))) {
+          String confirmMessage = createConfirmMessage(inventoryDate);
+          if (!getView().confirmPrint(confirmMessage)) {
+            return;
+          }
+        }
         report = new InventoryCountingLists(shelves, inventoryDate);
         break;
       case INVENTORYRESULT:
@@ -128,11 +136,15 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
     }
   }
 
+  String createConfirmMessage(LocalDate inventoryDate) {
+    return String.format(
+        "Das Inventur-Datum '%s' liegt in der Vergangenheit. Wirklich drucken?",
+        Date.INSTANT_DATE.format(inventoryDate));
+  }
+
   public void showPriceListsWithoutShelf() {
     getView().showPriceListsWithoutShelf(InventoryModel.priceListsWithoutShelf());
   }
-
-  public void calculateInventory(ActionEvent actionEvent) {}
 
   @SneakyThrows
   public void exportShelves(File file) {
@@ -140,6 +152,6 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
   }
 
   public void changeInventoryDate(LocalDate date) {
-    Setting.INVENTORY_SCHEDULED_DATE.changeValue(date);
+    inventoryScheduledDate.changeValue(date);
   }
 }
