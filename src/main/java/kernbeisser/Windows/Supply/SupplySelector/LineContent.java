@@ -37,7 +37,8 @@ public class LineContent {
   private String qualitySign; // 2
   // 1 white space
   // placeholder Nr. 1234567890123
-  private double price; // 3
+  private double priceKk; // 3
+  private double priceKb;
   private double discount;
   private boolean verified;
   private Article article;
@@ -87,7 +88,7 @@ public class LineContent {
     if (getStatus() != ResolveStatus.OK || article == null) {
       return "";
     }
-    double price = getPrice();
+    double price = getPriceKb();
     double articlePrice = article.getNetPrice();
     if (price == 0.0d) {
       return articlePrice == 0.0d ? "" : "!";
@@ -160,13 +161,14 @@ public class LineContent {
     content.origin = line.substring(73, 77).replace(" ", "");
     content.qualitySign = line.substring(77, 80).replace(" ", "");
     content.discount = Integer.parseInt(line.substring(133, 136)) / 10000.;
-    content.price = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
+    content.priceKk = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
     Optional<Article> matchedArticle = Articles.getByKkItemNumber(content.kkNumber);
     Article pattern;
     if (matchedArticle.isPresent()) {
       content.article = matchedArticle.get();
       pattern = content.article;
       content.weighableKb = content.article.isWeighable();
+      content.calculatePriceKb();
     } else {
       pattern = Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
       content.weighableKb = false;
@@ -174,6 +176,14 @@ public class LineContent {
     content.estimatedPriceList = pattern.getPriceList();
     content.estimatedSurchargeGroup = pattern.getSurchargeGroup();
     return content;
+  }
+
+  public void calculatePriceKb() {
+    if (weighableKb == weighableKk || amount == 0) {
+      priceKb = priceKk;
+    } else { // handle difference in priceunit if weighability is not the same
+      priceKb = priceKk * (weighableKk ? (amount) : 1000.0 / amount);
+    }
   }
 
   private static boolean isComment(String line) {
@@ -185,8 +195,8 @@ public class LineContent {
   }
 
   public double getTotalPrice() {
-    if (weighableKk) return containerMultiplier * unit.getBaseFactor() * amount * price;
-    else return containerSize * containerMultiplier * price;
+    if (weighableKk) return containerMultiplier * unit.getBaseFactor() * amount * priceKk;
+    else return containerSize * containerMultiplier * priceKk;
   }
 
   public ResolveStatus getStatus() {
@@ -213,11 +223,13 @@ public class LineContent {
   }
 
   public void refreshFromArticle(Article article) {
-    this.setPrice(article.getNetPrice()); // different to article generation
+    this.setPriceKb(article.getNetPrice()); // different to article generation
+    this.setPriceKk(article.getNetPrice()); // different to article generation
     this.setUnit(article.getMetricUnits());
     this.setAmount(article.getAmount());
     this.setContainerSize(article.getContainerSize());
     this.setWeighableKb(article.isWeighable());
+    this.setWeighableKk(article.isWeighable());
     this.setEstimatedPriceList(article.getPriceList());
     this.setEstimatedSurchargeGroup(article.getSurchargeGroup());
   }
