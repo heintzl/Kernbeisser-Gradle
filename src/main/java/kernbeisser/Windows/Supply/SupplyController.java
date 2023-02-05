@@ -215,23 +215,33 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
         Articles.getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
     if (articleInDb.isPresent()) {
       Article article = articleInDb.get();
-      if (article.getNetPrice() != content.getPrice()) {
-        article.setNetPrice(content.getPrice());
+      double newPrice = content.getPriceKb();
+      boolean newWeighable = content.isWeighableKb();
+      if (article.getNetPrice() != newPrice || article.isWeighable() != newWeighable) {
+        article.setNetPrice(newPrice);
+        article.setWeighable(newWeighable);
         logger.info(
             "Article price change ["
                 + article.getSuppliersItemNumber()
                 + "]: "
                 + article.getNetPrice()
-                + " -> "
-                + content.getPrice());
-        changePrice(kkSupplier, article.getSuppliersItemNumber(), content.getPrice());
+                + "(weighable: "
+                + article.isWeighable()
+                + ") -> "
+                + newPrice
+                + "(weighable: "
+                + newWeighable
+                + ")");
+        changePriceAndWeighable(
+            kkSupplier, article.getSuppliersItemNumber(), newPrice, newWeighable);
       }
     }
 
     return articleInDb.orElseGet(() -> createArticle(content));
   }
 
-  public static void changePrice(Supplier supplier, int suppliersItemNumber, double newPrice) {
+  public static void changePriceAndWeighable(
+      Supplier supplier, int suppliersItemNumber, double newPrice, boolean newWeighable) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
@@ -244,6 +254,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             .setParameter("sn", suppliersItemNumber)
             .getSingleResult();
     article.setNetPrice(newPrice);
+    article.setWeighable(newWeighable);
     em.persist(article);
     em.flush();
   }
@@ -279,7 +290,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     Article article = new Article();
     article.setSupplier(kkSupplier);
     article.setName(content.getName());
-    article.setNetPrice(content.getPrice());
+    article.setNetPrice(content.getPriceKb());
     article.setMetricUnits(content.getUnit());
     article.setAmount(content.getAmount());
     article.setBarcode(content.getBarcode());

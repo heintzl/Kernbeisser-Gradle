@@ -115,7 +115,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(80),
             Columns.create("Artikelname", LineContent::getName).withPreferredWidth(250),
-            Columns.<LineContent>create("E.preis", e -> String.format("%.2f€", e.getPrice()))
+            Columns.create("E.preis", SupplySelectorController::formatDisplayPrice)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(100),
             Columns.<LineContent>create("Geb.", e -> Math.round(e.getContainerSize()))
@@ -145,10 +145,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   }
 
   private void toggleWeighable(LineContent lineContent) {
-    if (lineContent.getStatus() != ResolveStatus.ADDED) {
-      return;
-    }
-    lineContent.setWeighableKb(!lineContent.isWeighableKb());
+    controller.toggleWeighable(lineContent);
     try {
       lineContents.getModel().fireTableDataChanged();
     } catch (IllegalArgumentException ignored) {
