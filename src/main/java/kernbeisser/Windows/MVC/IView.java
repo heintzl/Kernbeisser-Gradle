@@ -70,6 +70,11 @@ public interface IView<
     }
   }
 
+  default boolean confirmDialog(String message, String title) {
+    return JOptionPane.showConfirmDialog(getContent(), message, title, JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
+  }
+
   @StaticAccessPoint
   default String getTitle() {
     return "";
