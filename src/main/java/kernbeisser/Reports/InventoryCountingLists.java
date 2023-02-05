@@ -9,15 +9,19 @@ import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Reports.ReportDTO.InventoryArticle;
 
 public class InventoryCountingLists extends Report {
-
   private final Collection<Shelf> shelves;
   private final LocalDate inventoryDate;
 
   public InventoryCountingLists(Collection<Shelf> shelves, LocalDate inventoryDate) {
-    super("inventoryCountingLists", "Zähllisten_" + inventoryDate.toString());
+    super(ReportFileNames.INVENTORY_COUNTING_LISTS_REPORT_FILENAME);
     this.inventoryDate = inventoryDate;
     setDuplexPrint(false);
     this.shelves = shelves;
+  }
+
+  @Override
+  String createOutFileName() {
+    return "Zähllisten_" + inventoryDate.toString();
   }
 
   @Override

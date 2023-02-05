@@ -11,7 +11,7 @@ public class PermissionHolders extends Report {
   private final Collection<Permission> permissions;
 
   public PermissionHolders(boolean withKeys) {
-    super("permissionHolders", "RollenInhaber" + LocalDate.now().toString());
+    super(ReportFileNames.PERMISSION_HOLDERS_REPORT_FILENAME);
     permissions =
         DBConnection.getEntityManager()
             .createQuery(
@@ -20,6 +20,11 @@ public class PermissionHolders extends Report {
                     + ")",
                 Permission.class)
             .getResultList();
+  }
+
+  @Override
+  String createOutFileName() {
+    return "RollenInhaber" + LocalDate.now();
   }
 
   @Override

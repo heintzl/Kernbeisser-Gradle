@@ -14,10 +14,15 @@ public class InventoryShelfStocks extends Report {
   private final LocalDate inventoryDate;
 
   public InventoryShelfStocks(Collection<Shelf> shelves, LocalDate inventoryDate) {
-    super("inventoryShelfStocks", "InventurRegalBestände_" + inventoryDate.toString());
+    super(ReportFileNames.INVENTORY_SHELF_STOCKS);
     this.inventoryDate = inventoryDate;
     setDuplexPrint(false);
     this.shelves = shelves;
+  }
+
+  @Override
+  String createOutFileName() {
+    return "InventurRegalBestände_" + inventoryDate.toString();
   }
 
   @Override

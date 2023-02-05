@@ -17,7 +17,6 @@ import kernbeisser.Enums.StatementType;
 import lombok.Cleanup;
 
 public class TransactionStatement extends Report {
-
   private final UserGroup userGroup;
   private final User user;
   private final StatementType statementType;
@@ -32,9 +31,7 @@ public class TransactionStatement extends Report {
 
   public TransactionStatement(
       UserGroup userGroup, User user, StatementType statementType, boolean current) {
-    super(
-        "transactionStatement",
-        "Kontoauszug_" + (user == null ? String.valueOf(userGroup.getId()) : user.toString()));
+    super(ReportFileNames.TRANSACTION_STATEMENT_REPORT_FILENAME);
     this.userGroup = userGroup;
     this.user = user;
     this.statementType = statementType;
@@ -78,6 +75,11 @@ public class TransactionStatement extends Report {
                 Transaction.class)
             .setParameter("ug", userGroup.getId())
             .getResultList();
+  }
+
+  @Override
+  String createOutFileName() {
+    return "Kontoauszug_" + (user == null ? String.valueOf(userGroup.getId()) : user.toString());
   }
 
   @Override

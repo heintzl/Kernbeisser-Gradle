@@ -16,17 +16,20 @@ public class UserBalanceReport extends Report {
   private final long reportNo;
 
   public UserBalanceReport(long reportNo, boolean withNames) {
-    super(
-        "userBalanceFileName",
-        String.format(
-            "KernbeisserGuthabenstände_%s",
-            (reportNo == -1
-                ? Timestamp.from(Instant.now().truncatedTo(ChronoUnit.MINUTES)).toString()
-                : reportNo)));
+    super(ReportFileNames.USER_BALANCE_REPORT_FILENAME);
     this.reportNo = reportNo;
     this.withNames = withNames;
     this.timeStamp = Timestamp.from(Instant.now().truncatedTo(ChronoUnit.MINUTES));
     this.userGroups = getUserGroups();
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format(
+        "KernbeisserGuthabenstände_%s",
+        (reportNo == -1
+            ? Timestamp.from(Instant.now().truncatedTo(ChronoUnit.MINUTES)).toString()
+            : reportNo));
   }
 
   private List<UserGroup> getUserGroups() {
@@ -35,7 +38,6 @@ public class UserBalanceReport extends Report {
         reportNo == -1
             ? new HashMap<>()
             : UserGroup.getValueMapAtTransactionId(Transaction.getLastIdOfReportNo(reportNo), true);
-    ;
     if (reportNo == -1) {
       userGroups = UserGroup.getActiveUserGroups();
     } else {

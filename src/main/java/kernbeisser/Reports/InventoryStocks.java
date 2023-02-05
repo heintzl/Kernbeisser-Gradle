@@ -12,9 +12,14 @@ public class InventoryStocks extends Report {
   private final LocalDate inventoryDate;
 
   public InventoryStocks(LocalDate inventoryDate) {
-    super("inventoryStock", "InventurBestände_" + inventoryDate.toString());
+    super(ReportFileNames.INVENTORY_STOCKS);
     this.inventoryDate = inventoryDate;
     setDuplexPrint(false);
+  }
+
+  @Override
+  String createOutFileName() {
+    return "InventurBestände_" + inventoryDate.toString();
   }
 
   @Override

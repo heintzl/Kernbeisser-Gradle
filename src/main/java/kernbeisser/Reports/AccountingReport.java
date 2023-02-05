@@ -1,6 +1,9 @@
 package kernbeisser.Reports;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -16,7 +19,6 @@ import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
 
 public class AccountingReport extends Report {
-
   private final long reportNo;
   private final List<Transaction> transactions;
   private final List<Purchase> purchases;
@@ -24,13 +26,16 @@ public class AccountingReport extends Report {
 
   public AccountingReport(long reportNo, List<Transaction> transactions, boolean withNames)
       throws NoTransactionsFoundException {
-    super(
-        "accountingReportFileName",
-        String.format("KernbeisserBuchhaltungBonUebersicht_%d", reportNo));
+    super(ReportFileNames.ACCOUNTING_REPORT_FILENAME);
     this.reportNo = reportNo;
     this.transactions = transactions;
     this.purchases = getPurchases();
     this.withNames = withNames;
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format("KernbeisserBuchhaltungBonUebersicht_%d", reportNo);
   }
 
   private List<Purchase> getPurchases() throws NoResultException {

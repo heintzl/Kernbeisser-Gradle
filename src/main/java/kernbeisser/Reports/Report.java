@@ -25,6 +25,7 @@ import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 import lombok.var;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -37,14 +38,13 @@ import net.sf.jasperreports.export.SimplePrintServiceExporterConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 
+@Log4j2
 public abstract class Report {
 
   @Getter(lazy = true)
   private final JasperPrint jspPrint = lazyGetJspPrint();
 
-  private final String reportDefinition;
-
-  private final String outFileName;
+  private final String reportFileName;
 
   private static Path getReportsFolder() {
     return Config.getConfig().getReports().getReportDirectory().toPath();
@@ -52,21 +52,20 @@ public abstract class Report {
 
   @Setter private boolean duplexPrint = true;
 
-  protected Report(String reportDefinition, String outFileName) {
-    this.outFileName = outFileName;
-    this.reportDefinition = reportDefinition;
+  protected Report(String reportFileName) {
+    this.reportFileName = reportFileName;
   }
 
-  private JasperPrint lazyGetJspPrint() {
+  abstract String createOutFileName();
+
+  JasperPrint lazyGetJspPrint() {
     Map<String, Object> params = new HashMap<>();
     var reportParams = getReportParams();
     if (reportParams != null) params.putAll(reportParams);
     params.put("reportFooter", Setting.REPORT_FOOTLINE.getStringValue());
     try {
       return JasperFillManager.fillReport(
-          getJasperReport(reportDefinition),
-          params,
-          new JRBeanCollectionDataSource(getDetailCollection()));
+          getJasperReport(), params, new JRBeanCollectionDataSource(getDetailCollection()));
     } catch (JRException e) {
       if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
         Tools.showPrintAbortedWarning(e, true);
@@ -77,17 +76,13 @@ public abstract class Report {
     }
   }
 
-  private static File getReportFile(String key) {
-    String value = Config.getConfig().getReports().getReports().get(key);
-    if (value == null) {
-      throw new UnsupportedOperationException(
-          "cannot find JRE file path in config reports map for [" + key + "]");
-    }
-    return getReportsFolder().resolve(value).toAbsolutePath().toFile();
+  private File getReportFile() {
+    log.debug("returning report file: {}", reportFileName);
+    return getReportsFolder().resolve(reportFileName).toAbsolutePath().toFile();
   }
 
-  private static JasperReport getJasperReport(String key) throws JRException {
-    JasperDesign jspDesign = JRXmlLoader.load(getReportFile(key));
+  private JasperReport getJasperReport() throws JRException {
+    JasperDesign jspDesign = JRXmlLoader.load(getReportFile());
     return JasperCompileManager.compileReport(jspDesign);
   }
 
@@ -256,7 +251,7 @@ public abstract class Report {
 
   @NotNull
   private String getSafeOutFileName() {
-    return outFileName.replaceAll("[\\\\/:*?\"<>|]", "_");
+    return createOutFileName().replaceAll("[\\\\/:*?\"<>|]", "_");
   }
 
   abstract Map<String, Object> getReportParams();

@@ -1,6 +1,8 @@
 package kernbeisser.Reports;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -8,7 +10,6 @@ import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 
 public class AccountingTransactionsReport extends Report {
-
   private final long reportNo;
   private final List<Transaction> transactions;
   private final UserNameObfuscation withNames;
@@ -20,13 +21,16 @@ public class AccountingTransactionsReport extends Report {
       UserNameObfuscation withNames,
       boolean printValueSums)
       throws NoTransactionsFoundException {
-    super(
-        "accountingTransactionReportFileName",
-        String.format("KernbeisserBuchhaltungEinSonderzahlungen_%d", reportNo));
+    super(ReportFileNames.ACCOUNTING_TRANSACTION_REPORT_FILENAME);
     this.reportNo = reportNo;
     this.transactions = transactions;
     this.withNames = withNames;
     this.printValueSums = printValueSums;
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format("KernbeisserBuchhaltungEinSonderzahlungen_%d", reportNo);
   }
 
   @Override

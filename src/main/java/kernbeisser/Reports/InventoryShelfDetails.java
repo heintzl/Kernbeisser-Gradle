@@ -9,14 +9,18 @@ import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Reports.ReportDTO.InventoryShelfDetail;
 
 public class InventoryShelfDetails extends Report {
-
   private final Collection<Shelf> shelves;
   private final LocalDate inventoryDate;
 
   public InventoryShelfDetails(Collection<Shelf> shelves, LocalDate inventoryDate) {
-    super("inventoryShelfDetails", "Regaldetails_" + inventoryDate.toString());
+    super(ReportFileNames.INVENTORY_SHELF_DETAILS_REPORT_FILENAME);
     this.inventoryDate = inventoryDate;
     this.shelves = shelves;
+  }
+
+  @Override
+  String createOutFileName() {
+    return "Regaldetails_" + inventoryDate.toString();
   }
 
   @Override

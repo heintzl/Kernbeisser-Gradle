@@ -7,14 +7,18 @@ import java.util.Map;
 import kernbeisser.DBEntities.User;
 
 public class LoginInfo extends Report {
-
   private final User user;
   private final String newPassword;
 
   public LoginInfo(User user, String newPassword) {
-    super("loginInfo", "loginInfo_" + user.getUsername());
+    super(ReportFileNames.LOGININFO_REPORT_FILENAME);
     this.user = user;
     this.newPassword = newPassword;
+  }
+
+  @Override
+  String createOutFileName() {
+    return "loginInfo_" + user.getUsername();
   }
 
   @Override

@@ -15,16 +15,18 @@ import kernbeisser.DBEntities.User;
 import lombok.Cleanup;
 
 public class KeyUserList extends Report {
+
   private final String sortOrder;
 
   public KeyUserList(String sortOrder) {
-    super(
-        "keyUserListFileName",
-        String.format(
-            "Ladenbenutzerschlüssel_%s",
-            Timestamp.from(Instant.now().truncatedTo(ChronoUnit.MINUTES))));
-
+    super(ReportFileNames.KEY_USER_LIST_REPORT_FILENAME);
     this.sortOrder = sortOrder;
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format(
+        "Ladenbenutzerschlüssel_%s", Timestamp.from(Instant.now().truncatedTo(ChronoUnit.MINUTES)));
   }
 
   @Override

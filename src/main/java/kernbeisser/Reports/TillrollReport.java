@@ -13,18 +13,19 @@ import kernbeisser.DBEntities.ShoppingItem;
 import lombok.Cleanup;
 
 public class TillrollReport extends Report {
-
   private final Instant start;
   private final Instant endExclusive;
 
   public TillrollReport(Instant start, Instant endExclusive) {
-    super(
-        "tillrollFileName",
-        String.format(
-            "KernbeisserBonrolle_%s_%s",
-            Timestamp.from(start).toString(), Timestamp.from(endExclusive).toString()));
+    super(ReportFileNames.TILLROLL_REPORT_FILENAME);
     this.start = start;
     this.endExclusive = endExclusive;
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format(
+        "KernbeisserBonrolle_%s_%s", Timestamp.from(start), Timestamp.from(endExclusive));
   }
 
   @Override

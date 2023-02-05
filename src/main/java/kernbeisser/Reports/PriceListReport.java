@@ -11,7 +11,6 @@ import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import lombok.var;
 
 public class PriceListReport extends Report {
-
   private final Collection<PriceListReportArticle> priceListReportArticles;
   private final String priceListName;
 
@@ -20,7 +19,7 @@ public class PriceListReport extends Report {
   }
 
   public PriceListReport(Collection<Article> articles, String priceListName) {
-    super("priceList", "Preisliste " + priceListName);
+    super(ReportFileNames.PRICELIST_REPORT_FILENAME);
     setDuplexPrint(false);
     var lastDeliveries = Articles.getLastDeliveries();
     this.priceListReportArticles =
@@ -28,6 +27,11 @@ public class PriceListReport extends Report {
             .map(a -> PriceListReportArticle.ofArticle(a, lastDeliveries))
             .collect(Collectors.toList());
     this.priceListName = priceListName;
+  }
+
+  @Override
+  String createOutFileName() {
+    return "Preisliste " + priceListName;
   }
 
   @Override

@@ -9,11 +9,13 @@ import kernbeisser.Reports.ReportDTO.TrialMemberReportEntry;
 import kernbeisser.Useful.Date;
 
 public class TrialMemberReport extends Report {
-
   public TrialMemberReport() {
-    super(
-        "trialMemberReportFileName",
-        String.format("Probemitlieder_%s", Date.INSTANT_DATE.format(Instant.now())));
+    super(ReportFileNames.TRIAL_MEMBER_REPORT_FILENAME);
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format("Probemitlieder_%s", Date.INSTANT_DATE.format(Instant.now()));
   }
 
   @Override

@@ -11,20 +11,22 @@ import kernbeisser.Enums.ShoppingItemSum;
 import kernbeisser.Enums.VAT;
 
 public class InvoiceReport extends Report {
-
   private final Purchase purchase;
   private Instant at;
 
   public InvoiceReport(Purchase purchase) {
-    super(
-        "invoiceFileName",
-        String.format(
-            "%d_%s_%s_%s",
-            purchase.getId(),
-            purchase.getSession().getCustomer().getFirstName(),
-            purchase.getSession().getCustomer().getSurname(),
-            purchase.getCreateDate().toString()));
+    super(ReportFileNames.INVOICE_REPORT_FILENAME);
     this.purchase = purchase;
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format(
+        "%d_%s_%s_%s",
+        purchase.getId(),
+        purchase.getSession().getCustomer().getFirstName(),
+        purchase.getSession().getCustomer().getSurname(),
+        purchase.getCreateDate().toString());
   }
 
   public InvoiceReport atPurchaseTime() {
