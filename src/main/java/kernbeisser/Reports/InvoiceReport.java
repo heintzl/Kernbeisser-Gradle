@@ -1,30 +1,32 @@
 package kernbeisser.Reports;
 
-import java.time.Instant;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShoppingItemSum;
 import kernbeisser.Enums.VAT;
 
-public class InvoiceReport extends Report {
+import java.time.Instant;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
+public class InvoiceReport extends Report {
   private final Purchase purchase;
   private Instant at;
 
   public InvoiceReport(Purchase purchase) {
-    super(
-        "invoiceFileName",
-        String.format(
-            "%d_%s_%s_%s",
+    super(ReportFileNames.INVOICE_REPORT_FILENAME);
+    this.purchase = purchase;
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format("%d_%s_%s_%s",
             purchase.getId(),
             purchase.getSession().getCustomer().getFirstName(),
             purchase.getSession().getCustomer().getSurname(),
-            purchase.getCreateDate().toString()));
-    this.purchase = purchase;
+            purchase.getCreateDate().toString());
   }
 
   public InvoiceReport atPurchaseTime() {

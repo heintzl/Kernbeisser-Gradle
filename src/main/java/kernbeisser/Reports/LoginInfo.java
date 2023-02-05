@@ -1,20 +1,25 @@
 package kernbeisser.Reports;
 
+import kernbeisser.DBEntities.User;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import kernbeisser.DBEntities.User;
 
 public class LoginInfo extends Report {
-
   private final User user;
   private final String newPassword;
 
   public LoginInfo(User user, String newPassword) {
-    super("loginInfo", "loginInfo_" + user.getUsername());
+    super(ReportFileNames.LOGININFO_REPORT_FILENAME);
     this.user = user;
     this.newPassword = newPassword;
+  }
+
+  @Override
+  String createOutFileName() {
+    return "loginInfo_" + user.getUsername();
   }
 
   @Override

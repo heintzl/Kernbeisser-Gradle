@@ -1,10 +1,11 @@
 package kernbeisser.Reports;
 
+import kernbeisser.DBEntities.Shelf;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import kernbeisser.DBEntities.Shelf;
 
 public class InventoryShelfOverview extends Report {
 
@@ -12,9 +13,14 @@ public class InventoryShelfOverview extends Report {
   private final LocalDate inventoryDate;
 
   public InventoryShelfOverview(Collection<Shelf> shelves, LocalDate inventoryDate) {
-    super("inventoryShelfOverview", "Regalübersicht_" + inventoryDate.toString());
+    super(ReportFileNames.INVENTORY_SHELF_OVERVIEW_REPORT_FILENAME);
     this.inventoryDate = inventoryDate;
     this.shelves = shelves;
+  }
+
+  @Override
+  String createOutFileName() {
+    return "Regalübersicht_" + inventoryDate.toString();
   }
 
   @Override

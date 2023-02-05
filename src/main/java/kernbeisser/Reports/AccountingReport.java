@@ -1,11 +1,5 @@
 package kernbeisser.Reports;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.VAT;
@@ -15,22 +9,34 @@ import kernbeisser.Useful.Date;
 import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
 
-public class AccountingReport extends Report {
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.swing.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+public class AccountingReport extends Report {
   private final long reportNo;
   private final List<Transaction> transactions;
   private final List<Purchase> purchases;
   private final boolean withNames;
 
   public AccountingReport(long reportNo, List<Transaction> transactions, boolean withNames)
-      throws NoTransactionsFoundException {
-    super(
-        "accountingReportFileName",
-        String.format("KernbeisserBuchhaltungBonUebersicht_%d", reportNo));
+          throws NoTransactionsFoundException {
+    super(ReportFileNames.ACCOUNTING_REPORT_FILENAME);
     this.reportNo = reportNo;
     this.transactions = transactions;
     this.purchases = getPurchases();
     this.withNames = withNames;
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format("KernbeisserBuchhaltungBonUebersicht_%d", reportNo);
   }
 
   private List<Purchase> getPurchases() throws NoResultException {
@@ -39,11 +45,11 @@ public class AccountingReport extends Report {
     EntityTransaction et = em.getTransaction();
     et.begin();
     List<Purchase> purchases =
-        em.createQuery(
-                "select p from Purchase p where p.session in (select s from SaleSession s where s.transaction in (:transactions))",
-                Purchase.class)
-            .setParameter("transactions", transactions)
-            .getResultList();
+            em.createQuery(
+                            "select p from Purchase p where p.session in (select s from SaleSession s where s.transaction in (:transactions))",
+                            Purchase.class)
+                    .setParameter("transactions", transactions)
+                    .getResultList();
     if (purchases.isEmpty()) {
       throw new NoTransactionsFoundException();
     }
@@ -184,7 +190,7 @@ public class AccountingReport extends Report {
     }
     long lastTransactionId = transactions.stream().mapToLong(Transaction::getId).max().getAsLong();
     Map<String, Object> reportParams =
-        UserGroup.getValueAggregatesAtTransactionId(lastTransactionId);
+            UserGroup.getValueAggregatesAtTransactionId(lastTransactionId);
     reportParams.put("transactionSaldo", transactionSaldo);
     reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
     reportParams.put("transactionSpecialPayments", transactionSpecialPayments);

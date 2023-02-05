@@ -1,30 +1,31 @@
 package kernbeisser.Reports;
 
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.ShoppingItem;
+import lombok.Cleanup;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.ShoppingItem;
-import lombok.Cleanup;
 
 public class TillrollReport extends Report {
-
   private final Instant start;
   private final Instant endExclusive;
 
   public TillrollReport(Instant start, Instant endExclusive) {
-    super(
-        "tillrollFileName",
-        String.format(
-            "KernbeisserBonrolle_%s_%s",
-            Timestamp.from(start).toString(), Timestamp.from(endExclusive).toString()));
+    super(ReportFileNames.TILLROLL_REPORT_FILENAME);
     this.start = start;
     this.endExclusive = endExclusive;
+  }
+
+  @Override
+  String createOutFileName() {
+    return String.format("KernbeisserBonrolle_%s_%s", Timestamp.from(start), Timestamp.from(endExclusive));
   }
 
   @Override

@@ -1,20 +1,26 @@
 package kernbeisser.Reports;
 
+import kernbeisser.DBEntities.ArticleStock;
+import kernbeisser.DBEntities.Shelf;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import kernbeisser.DBEntities.ArticleStock;
-import kernbeisser.DBEntities.Shelf;
 
 public class InventoryStocks extends Report {
 
   private final LocalDate inventoryDate;
 
   public InventoryStocks(LocalDate inventoryDate) {
-    super("inventoryStock", "InventurBestände_" + inventoryDate.toString());
+    super(ReportFileNames.INVENTORY_STOCKS);
     this.inventoryDate = inventoryDate;
     setDuplexPrint(false);
+  }
+
+  @Override
+  String createOutFileName() {
+    return "InventurBestände_" + inventoryDate.toString();
   }
 
   @Override
