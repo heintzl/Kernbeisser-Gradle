@@ -1,11 +1,10 @@
 package kernbeisser.Reports;
 
-import kernbeisser.DBEntities.User;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import kernbeisser.DBEntities.User;
 
 public class LoginInfo extends Report {
   private final User user;

@@ -1,11 +1,5 @@
 package kernbeisser.Reports;
 
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.User;
-import lombok.Cleanup;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -14,6 +8,11 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.User;
+import lombok.Cleanup;
 
 public class KeyUserList extends Report {
 
@@ -27,8 +26,7 @@ public class KeyUserList extends Report {
   @Override
   String createOutFileName() {
     return String.format(
-            "Ladenbenutzerschlüssel_%s",
-            Timestamp.from(Instant.now().truncatedTo(ChronoUnit.MINUTES)));
+        "Ladenbenutzerschlüssel_%s", Timestamp.from(Instant.now().truncatedTo(ChronoUnit.MINUTES)));
   }
 
   @Override

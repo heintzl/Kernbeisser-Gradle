@@ -1,14 +1,5 @@
 package kernbeisser.Reports;
 
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.UserGroup;
-import kernbeisser.Enums.StatementType;
-import lombok.Cleanup;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -16,6 +7,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.Enums.StatementType;
+import lombok.Cleanup;
 
 public class TransactionStatement extends Report {
   private final UserGroup userGroup;
@@ -71,11 +70,11 @@ public class TransactionStatement extends Report {
     EntityTransaction et = em.getTransaction();
     et.begin();
     userTransactions =
-            em.createQuery(
-                            "select t from Transaction t where :ug IN (fromUserGroup.id, toUserGroup.id)",
-                            Transaction.class)
-                    .setParameter("ug", userGroup.getId())
-                    .getResultList();
+        em.createQuery(
+                "select t from Transaction t where :ug IN (fromUserGroup.id, toUserGroup.id)",
+                Transaction.class)
+            .setParameter("ug", userGroup.getId())
+            .getResultList();
   }
 
   @Override
@@ -87,32 +86,32 @@ public class TransactionStatement extends Report {
   Map<String, Object> getReportParams() {
     Map<String, Object> params = new HashMap<>();
     double startValue =
-            userTransactions.stream()
-                    .filter(t -> t.getDate().isBefore(startDate.toInstant()))
-                    .mapToDouble(t -> (t.getFromUserGroup().equals(userGroup) ? -1.0 : 1.0) * t.getValue())
-                    .reduce(Double::sum)
-                    .orElse(0.0);
+        userTransactions.stream()
+            .filter(t -> t.getDate().isBefore(startDate.toInstant()))
+            .mapToDouble(t -> (t.getFromUserGroup().equals(userGroup) ? -1.0 : 1.0) * t.getValue())
+            .reduce(Double::sum)
+            .orElse(0.0);
     double endValue =
-            userTransactions.stream()
-                    .filter(t -> !t.getDate().isAfter(endDate.toInstant()))
-                    .mapToDouble(t -> (t.getFromUserGroup().equals(userGroup) ? -1.0 : 1.0) * t.getValue())
-                    .reduce(Double::sum)
-                    .orElse(0.0);
+        userTransactions.stream()
+            .filter(t -> !t.getDate().isAfter(endDate.toInstant()))
+            .mapToDouble(t -> (t.getFromUserGroup().equals(userGroup) ? -1.0 : 1.0) * t.getValue())
+            .reduce(Double::sum)
+            .orElse(0.0);
     params.put(
-            "userName",
-            user == null
-                    ? userGroup.getMembersAsString() + "(" + userGroup.getId() + ")"
-                    : user.getFullName());
+        "userName",
+        user == null
+            ? userGroup.getMembersAsString() + "(" + userGroup.getId() + ")"
+            : user.getFullName());
     params.put("userGroup", userGroup);
     params.put("startValue", startValue);
     params.put("endValue", endValue);
     String stType = statementType.toString();
     params.put(
-            "statementType",
-            (!current && statementType != StatementType.FULL
-                    ? "Vor" + stType.substring(0, 1).toLowerCase()
-                    : stType.substring(0, 1))
-                    + stType.substring(1));
+        "statementType",
+        (!current && statementType != StatementType.FULL
+                ? "Vor" + stType.substring(0, 1).toLowerCase()
+                : stType.substring(0, 1))
+            + stType.substring(1));
     return params;
   }
 

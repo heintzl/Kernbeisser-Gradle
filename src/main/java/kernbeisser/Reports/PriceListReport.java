@@ -1,15 +1,14 @@
 package kernbeisser.Reports;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import lombok.var;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class PriceListReport extends Report {
   private final Collection<PriceListReportArticle> priceListReportArticles;
@@ -24,9 +23,9 @@ public class PriceListReport extends Report {
     setDuplexPrint(false);
     var lastDeliveries = Articles.getLastDeliveries();
     this.priceListReportArticles =
-            articles.stream()
-                    .map(a -> PriceListReportArticle.ofArticle(a, lastDeliveries))
-                    .collect(Collectors.toList());
+        articles.stream()
+            .map(a -> PriceListReportArticle.ofArticle(a, lastDeliveries))
+            .collect(Collectors.toList());
     this.priceListName = priceListName;
   }
 

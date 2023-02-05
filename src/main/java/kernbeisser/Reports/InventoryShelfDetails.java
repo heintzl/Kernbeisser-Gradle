@@ -1,13 +1,12 @@
 package kernbeisser.Reports;
 
-import kernbeisser.DBEntities.Shelf;
-import kernbeisser.Reports.ReportDTO.InventoryShelfDetail;
-
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import kernbeisser.DBEntities.Shelf;
+import kernbeisser.Reports.ReportDTO.InventoryShelfDetail;
 
 public class InventoryShelfDetails extends Report {
   private final Collection<Shelf> shelves;
@@ -34,7 +33,7 @@ public class InventoryShelfDetails extends Report {
   @Override
   Collection<InventoryShelfDetail> getDetailCollection() {
     return shelves.stream()
-            .flatMap(InventoryShelfDetail::detailsOfShelf)
+        .flatMap(InventoryShelfDetail::detailsOfShelf)
         .collect(Collectors.toList());
   }
 }
