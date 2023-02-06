@@ -22,7 +22,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
-import kernbeisser.Reports.PriceListReport;
+import kernbeisser.Reports.ProducePriceList;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
@@ -207,11 +207,8 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
       return;
     }
     Supply supply = selection.get();
-    new PriceListReport(
-            supply.getAllLineContents().stream()
-                .filter(e -> e.getStatus() == ResolveStatus.PRODUCE)
-                .map(SupplySelectorController::wrapToPrint)
-                .collect(Collectors.toList()),
+    new ProducePriceList(
+            supply.getAllLineContents(),
             "Kornkraft Obst und Gemüse Verkaufspreise vom " + supply.getDeliveryDate())
         .sendToPrinter("Drucke Obst und Gemüse Verkaufspreise", Tools::showUnexpectedErrorWarning);
   }
