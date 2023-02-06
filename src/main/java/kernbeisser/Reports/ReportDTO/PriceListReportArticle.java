@@ -1,11 +1,15 @@
 package kernbeisser.Reports.ReportDTO;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.Map;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.Useful.Date;
+import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import lombok.Data;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 
 @Data
 public class PriceListReportArticle {
@@ -21,6 +25,9 @@ public class PriceListReportArticle {
   private String lastDeliveryMonth;
   private double containerSize;
   private String unitAmount;
+  private String containerDescription;
+  private String producer;
+  private String countryOfOrigin;
 
   public static PriceListReportArticle ofArticle(
       Article article, Map<Integer, Instant> lastDeliveries) {
@@ -39,6 +46,26 @@ public class PriceListReportArticle {
         Date.INSTANT_MONTH_YEAR.format(
             lastDeliveries.getOrDefault(article.getKbNumber(), Instant.now()));
     return priceListArticle;
+  }
+
+  public static PriceListReportArticle ofProduceLineContent(LineContent lineContent)
+      throws InvalidInputException {
+    DecimalFormat containerFormat = new DecimalFormat("#0.# x ");
+    containerFormat.setRoundingMode(RoundingMode.HALF_UP);
+    double multiplier = lineContent.getContainerMultiplier() * lineContent.getContainerSize();
+    PriceListReportArticle priceListLineContent = new PriceListReportArticle();
+    priceListLineContent.suppliersItemNumber = lineContent.getKkNumber();
+    priceListLineContent.name = lineContent.getName();
+    priceListLineContent.itemRetailPrice = lineContent.getProduceRetailPrice();
+    String containerDescription = "";
+    if (multiplier != 1.0) {
+      containerDescription += containerFormat.format(multiplier);
+    }
+    containerDescription += lineContent.getContainerDescription();
+    priceListLineContent.containerDescription = containerDescription;
+    priceListLineContent.producer = lineContent.getProducer();
+    priceListLineContent.countryOfOrigin = lineContent.getOrigin();
+    return priceListLineContent;
   }
 
   public static String getPriceInfoAmount(Article a) {
