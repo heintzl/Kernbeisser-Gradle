@@ -3,7 +3,6 @@ package kernbeisser.Windows.Supply.SupplySelector;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.time.DayOfWeek;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -117,8 +116,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
               Supply.extractSupplies(
                   Objects.requireNonNull(dir.listFiles()),
                   Setting.KK_SUPPLY_FROM_TIME.getIntValue(),
-                  Setting.KK_SUPPLY_TO_TIME.getIntValue(),
-                  Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)));
+                  Setting.KK_SUPPLY_TO_TIME.getIntValue()));
     }
   }
 

@@ -45,8 +45,7 @@ public class Supply {
     return supply;
   }
 
-  public static Collection<Supply> extractSupplies(
-      File[] files, int hFrom, int hTo, DayOfWeek dayOfTheWeek) {
+  public static Collection<Supply> extractSupplies(File[] files, int hFrom, int hTo) {
     ArrayList<Supply> supplies = new ArrayList<>();
     int maxSecDiff = Setting.KK_SUPPLY_MAX_FILE_TRANSFER_DURATION.getIntValue();
     for (File file : files) {
@@ -56,11 +55,7 @@ public class Supply {
       int h = dateTime.getHour();
       DayOfWeek d = dateTime.getDayOfWeek();
       int dayDifferenceThreshold = Setting.SUPPLY_DAY_DIFFERENCE_THRESHOLD.getIntValue();
-      if (h >= hFrom
-          && h <= hTo
-          && (d.equals(dayOfTheWeek)
-              || d.equals(dayOfTheWeek.minus(dayDifferenceThreshold))
-              || d.equals(dayOfTheWeek.plus(dayDifferenceThreshold)))) {
+      if (h >= hFrom && h <= hTo) {
         SupplierFile supplierFile = SupplierFile.parse(file);
         if (supplierFile.getHeader().getOrderType() == 8)
           findOrCreate(supplies, date, maxSecDiff).supplierFiles.add(supplierFile);
