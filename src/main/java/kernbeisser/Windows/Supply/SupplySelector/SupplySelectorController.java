@@ -95,7 +95,9 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
     if (status == null) {
       getView().setLineContentFilter(l -> true);
     } else if (status == ResolveStatus.NO_PRODUCE) {
-      getView().setLineContentFilter(l -> l.getStatus() != ResolveStatus.PRODUCE);
+      getView()
+          .setLineContentFilter(
+              l -> l.getStatus() != ResolveStatus.PRODUCE && l.getStatus() != ResolveStatus.IGNORE);
     } else {
       getView().setLineContentFilter(l -> l.getStatus() == status);
     }
