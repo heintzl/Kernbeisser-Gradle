@@ -63,19 +63,6 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     lineContents.setRowFilter(filter::test);
   }
 
-  private void filter() {
-    lineContents.setRowFilter(
-        lineContent ->
-            filter
-                .getSelected()
-                .map(
-                    status ->
-                        status == ResolveStatus.NO_PRODUCE
-                            ? !(ResolveStatus.PRODUCE == lineContent.getStatus())
-                            : status == lineContent.getStatus())
-                .orElse(true));
-  }
-
   public void setFilterOptions(Collection<ResolveStatus> filters) {
     this.filter.setItems(filters);
     filter.setSelectedItem(null);
