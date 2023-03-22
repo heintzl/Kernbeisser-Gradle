@@ -246,7 +246,7 @@ public class LineContent {
     }
     double retailPrice =
         Articles.calculateRetailPrice(
-            price, VAT.LOW, Supplier.getProduceSupplier().getDefaultSurcharge(), 0, false);
+            priceKk, VAT.LOW, Supplier.getProduceSupplier().getDefaultSurcharge(), 0, false);
     return Math.round(retailPrice * 10) * 0.1;
   }
 
