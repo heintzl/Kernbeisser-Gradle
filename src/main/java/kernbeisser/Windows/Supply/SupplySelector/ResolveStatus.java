@@ -4,7 +4,9 @@ public enum ResolveStatus {
   PRODUCE("Obst & Gemüse"),
   IGNORE("Konnten nicht geliefert werden"),
   ADDED("Artikel die neu aufgenommen werden"),
-  OK("Artikel die bereits in Ladenbestand sind");
+  OK("Artikel die bereits in Ladenbestand sind"),
+  // for filtering only
+  NO_PRODUCE("Alles Gelieferte, außer Obst & Gemüse");
   final String name;
 
   ResolveStatus(String name) {

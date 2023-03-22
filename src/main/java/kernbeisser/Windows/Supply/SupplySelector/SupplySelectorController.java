@@ -91,6 +91,18 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
     openArticleWindow(lineContent, article, true);
   }
 
+  public void applyFilter(ResolveStatus status) {
+    if (status == null) {
+      getView().setLineContentFilter(l -> true);
+    } else if (status == ResolveStatus.NO_PRODUCE) {
+      getView()
+          .setLineContentFilter(
+              l -> l.getStatus() != ResolveStatus.PRODUCE && l.getStatus() != ResolveStatus.IGNORE);
+    } else {
+      getView().setLineContentFilter(l -> l.getStatus() == status);
+    }
+  }
+
   private void refreshLineContent(LineContent lineContent, Article article, Boolean confirmMerge) {
     if (confirmMerge && !getView().messageConfirmArticleMerge()) {
       return;
@@ -226,7 +238,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
     article.setMetricUnits(content.getUnit());
     article.setWeighable(true);
     article.setName(content.getName());
-    article.setNetPrice(content.getPrice());
+    article.setNetPrice(content.getPriceKk());
     return article;
   }
 
@@ -253,6 +265,32 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
                   "Aufträge der Lierung vom " + Date.INSTANT_DATE.format(supply.getDeliveryDate()));
               cc.openIn(sw);
             });
+  }
+
+  public static String formatDisplayPrice(LineContent lineContent) {
+    double priceKk = lineContent.getPriceKk();
+    ResolveStatus status = lineContent.getStatus();
+    String displayPrice = String.format("%.2f€", priceKk);
+    if (status == ResolveStatus.OK || status == ResolveStatus.ADDED) {
+      double priceKb = lineContent.getPriceKb();
+      if (priceKk != priceKb) {
+        displayPrice += String.format(" (%.2f€)", priceKb);
+      }
+    }
+    return displayPrice;
+  }
+
+  public void toggleWeighable(LineContent lineContent) {
+    ResolveStatus status = lineContent.getStatus();
+    if ((status != ResolveStatus.ADDED && status != ResolveStatus.OK)
+        || !getView()
+            .confirmDialog(
+                "Soll der Auswiegestatus des Artikels wirklich geändert werden?",
+                "Auswiegestatus ändern")) {
+      return;
+    }
+    lineContent.setWeighableKb(!lineContent.isWeighableKb());
+    lineContent.calculatePriceKb();
   }
 
   @Override
