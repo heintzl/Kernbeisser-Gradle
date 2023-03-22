@@ -10,6 +10,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.VAT;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Useful.Tools;
 import lombok.AccessLevel;
@@ -17,6 +18,7 @@ import lombok.Cleanup;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang3.Range;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 
 @Data
 @Setter(AccessLevel.PUBLIC)
@@ -199,6 +201,10 @@ public class LineContent {
     else return containerSize * containerMultiplier * priceKk;
   }
 
+  public String getContainerDescription() {
+    return getAmount() + (getUnit() == null ? "" : getUnit().getShortName());
+  }
+
   public ResolveStatus getStatus() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
@@ -232,6 +238,16 @@ public class LineContent {
     this.setWeighableKk(article.isWeighable());
     this.setEstimatedPriceList(article.getPriceList());
     this.setEstimatedSurchargeGroup(article.getSurchargeGroup());
+  }
+
+  public double getProduceRetailPrice() throws InvalidInputException {
+    if (this.getStatus() != ResolveStatus.PRODUCE) {
+      throw new InvalidInputException("expected PRODUCE, got " + getStatus().name());
+    }
+    double retailPrice =
+        Articles.calculateRetailPrice(
+            priceKk, VAT.LOW, Supplier.getProduceSupplier().getDefaultSurcharge(), 0, false);
+    return Math.round(retailPrice * 10) * 0.1;
   }
 
   public void verify(boolean v) {
