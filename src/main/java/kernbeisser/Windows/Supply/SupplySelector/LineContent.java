@@ -174,6 +174,7 @@ public class LineContent {
     } else {
       pattern = Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
       content.weighableKb = false;
+      content.priceKb = content.priceKk;
     }
     content.estimatedPriceList = pattern.getPriceList();
     content.estimatedSurchargeGroup = pattern.getSurchargeGroup();
