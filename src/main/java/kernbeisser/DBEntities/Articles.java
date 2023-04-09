@@ -305,6 +305,21 @@ public class Articles {
         .orElse(null);
   }
 
+  public static Article nextArticleTo(
+      EntityManager em, int suppliersItemNumber, Supplier supplier, PriceList excludedPriceList) {
+    return em.createQuery(
+            "select a from Article a where supplier = :s and priceList != :pl "
+                + "order by abs(a.suppliersItemNumber - :sn) asc",
+            Article.class)
+        .setParameter("s", supplier)
+        .setParameter("sn", suppliersItemNumber)
+        .setParameter("pl", excludedPriceList)
+        .setMaxResults(1)
+        .getResultStream()
+        .findAny()
+        .orElse(null);
+  }
+
   public static boolean articleIsActiveOffer(Article article) {
     return article.isOffer() && findOfferOn(article).isPresent();
   }
@@ -553,5 +568,13 @@ public class Articles {
           + " "
           + article.getMetricUnits().getShortName();
     }
+  }
+
+  public static PriceList getValidPriceList(Article article) {
+    PriceList priceList = article.getPriceList();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    if (!priceList.getName().equals("Verdeckte Aufnahme")) return priceList;
+    return nextArticleTo(em, article.getSuppliersItemNumber(), article.getSupplier(), priceList)
+        .getPriceList();
   }
 }
