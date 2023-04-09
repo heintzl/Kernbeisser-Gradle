@@ -36,7 +36,7 @@ public class LineContent {
   private String origin; // 2
   private boolean weighableKk; // 2 white space
   private boolean weighableKb; // 2 white space
-  private String qualitySign; // 2
+  private String identification; // 2
   // 1 white space
   // placeholder Nr. 1234567890123
   private double priceKk; // 3
@@ -160,8 +160,8 @@ public class LineContent {
         Integer.parseInt(line.substring(51, 58).replace(" ", "")) / 1000.,
         line.substring(58, 70).replace(" ", ""));
     content.producer = line.substring(70, 73).replace(" ", "");
-    content.origin = line.substring(73, 77).replace(" ", "");
-    content.qualitySign = line.substring(77, 80).replace(" ", "");
+    content.identification = line.substring(73, 77).replace(" ", "");
+    content.origin = line.substring(77, 80).replace(" ", "");
     content.discount = Integer.parseInt(line.substring(133, 136)) / 10000.;
     content.priceKk = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
     Optional<Article> matchedArticle = Articles.getByKkItemNumber(content.kkNumber);
