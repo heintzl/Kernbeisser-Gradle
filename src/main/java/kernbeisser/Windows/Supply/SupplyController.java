@@ -296,13 +296,14 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     article.setBarcode(content.getBarcode());
     article.setWeighable(content.isWeighableKb());
     article.setContainerSize(content.getContainerSize());
-    article.setShopRange(ShopRange.NOT_IN_RANGE);
+    article.setShopRange(ShopRange.PERMANENT_RANGE);
     article.setSurchargeGroup(pattern.getSurchargeGroup());
-    article.setVat(pattern.getVat());
-    article.setPriceList(pattern.getPriceList());
+    article.setVat(pattern.getVat()); // TODO get from BNN
+    article.setPriceList(Articles.getValidPriceList(pattern));
     article.setVerified(false);
     article.setKbNumber(Articles.nextFreeKBNumber(em));
     article.setSuppliersItemNumber(content.getKkNumber());
+    // TODO get barcode and deposits from BNN
     em.persist(article);
     em.flush();
     return article;
