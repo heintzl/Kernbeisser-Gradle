@@ -18,6 +18,7 @@
 	<field name="suppliersItemNumber" class="java.lang.Integer"/>
 	<field name="producer" class="java.lang.String"/>
 	<field name="countryOfOrigin" class="java.lang.String"/>
+	<field name="identification" class="java.lang.String"/>
 	<sortField name="name"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -70,7 +71,7 @@
 				<text><![CDATA[Artikel]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="300" y="0" width="41" height="15" uuid="3face081-a671-474c-a1af-278476b08ce7">
+				<reportElement x="300" y="0" width="38" height="15" uuid="3face081-a671-474c-a1af-278476b08ce7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2c9f6621-4a86-4a68-9868-ed59877b405a"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -79,7 +80,7 @@
 				<text><![CDATA[Preis]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="443" y="0" width="67" height="15" uuid="b7c3a8e6-ccc0-469e-bd01-577721c3ce5a">
+				<reportElement x="404" y="0" width="67" height="15" uuid="b7c3a8e6-ccc0-469e-bd01-577721c3ce5a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9a9a859-4177-493b-94d4-5279303b60e1"/>
 				</reportElement>
 				<textElement>
@@ -88,7 +89,7 @@
 				<text><![CDATA[Produzent]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="341" y="0" width="74" height="15" uuid="68ec3b86-b7d4-4528-9e62-d5ea43e8fa1a">
+				<reportElement x="341" y="0" width="59" height="15" uuid="68ec3b86-b7d4-4528-9e62-d5ea43e8fa1a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="738ad2b1-fbdd-4b85-952b-cae631a0572a"/>
 				</reportElement>
 				<box topPadding="0" leftPadding="6" bottomPadding="0" rightPadding="0"/>
@@ -107,13 +108,22 @@
 				<text><![CDATA[Menge]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="510" y="0" width="45" height="15" uuid="30fd34b4-f809-446e-8db9-413a523c87d1">
+				<reportElement x="475" y="0" width="39" height="15" uuid="30fd34b4-f809-446e-8db9-413a523c87d1">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9a9a859-4177-493b-94d4-5279303b60e1"/>
 				</reportElement>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Land *]]></text>
+				<text><![CDATA[Land]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="518" y="0" width="36" height="15" uuid="d98ca1bc-04d7-4dcf-a27c-c98c3a0c7901">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9a9a859-4177-493b-94d4-5279303b60e1"/>
+				</reportElement>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IK *]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -138,7 +148,7 @@
 				<textFieldExpression><![CDATA[$F{itemRetailPrice}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="alternate" x="443" y="0" width="67" height="14" uuid="7e2ba724-6bfc-4232-b45c-85d5df782c30">
+				<reportElement style="alternate" x="404" y="0" width="71" height="14" uuid="7e2ba724-6bfc-4232-b45c-85d5df782c30">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9a9a859-4177-493b-94d4-5279303b60e1"/>
 				</reportElement>
 				<textElement>
@@ -147,7 +157,7 @@
 				<textFieldExpression><![CDATA[$F{producer}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="alternate" x="341" y="0" width="102" height="14" uuid="1980adfb-d43f-4b46-a805-cdb772c2f538">
+				<reportElement style="alternate" x="341" y="0" width="63" height="14" uuid="1980adfb-d43f-4b46-a805-cdb772c2f538">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="738ad2b1-fbdd-4b85-952b-cae631a0572a"/>
 				</reportElement>
 				<box leftPadding="6"/>
@@ -166,13 +176,22 @@
 				<textFieldExpression><![CDATA[$F{containerDescription}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="alternate" x="510" y="0" width="45" height="14" uuid="aa00bf45-c6a3-4eab-84d6-dd7007024f70">
+				<reportElement style="alternate" x="475" y="0" width="43" height="14" uuid="aa00bf45-c6a3-4eab-84d6-dd7007024f70">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9a9a859-4177-493b-94d4-5279303b60e1"/>
 				</reportElement>
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{countryOfOrigin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="alternate" x="518" y="0" width="36" height="14" uuid="199bde72-d88b-432f-b451-629bb39e78b6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9a9a859-4177-493b-94d4-5279303b60e1"/>
+				</reportElement>
+				<textElement>
+					<font fontName="DejaVu Sans Condensed" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{identification}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -182,8 +201,8 @@
 	<pageFooter>
 		<band height="54" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="10" width="590" height="30" uuid="f07b5c0c-5ca1-4bd0-8f61-bc2fd70ad37e"/>
-				<text><![CDATA[* Kürzelerklärung (Stand 02/2023) hier: 
+				<reportElement x="0" y="10" width="555" height="30" uuid="f07b5c0c-5ca1-4bd0-8f61-bc2fd70ad37e"/>
+				<text><![CDATA[* Identitäst-Kürzel, Erklärung (Stand 02/2023) hier: 
 https://shop.kornkraft.com/files/cms_download/BNN-IK_Liste_Sep_2021_20211004.pdf]]></text>
 			</staticText>
 		</band>
