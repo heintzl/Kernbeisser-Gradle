@@ -299,7 +299,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     article.setShopRange(ShopRange.PERMANENT_RANGE);
     article.setSurchargeGroup(pattern.getSurchargeGroup());
     article.setVat(pattern.getVat()); // TODO get from BNN
-    article.setPriceList(Articles.getValidPriceList(pattern));
+    article.setPriceList(Articles.getValidPriceList(em, pattern));
     article.setVerified(false);
     article.setKbNumber(Articles.nextFreeKBNumber(em));
     article.setSuppliersItemNumber(content.getKkNumber());
