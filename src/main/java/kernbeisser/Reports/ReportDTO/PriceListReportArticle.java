@@ -28,6 +28,7 @@ public class PriceListReportArticle {
   private String containerDescription;
   private String producer;
   private String countryOfOrigin;
+  private String identification;
 
   public static PriceListReportArticle ofArticle(
       Article article, Map<Integer, Instant> lastDeliveries) {
@@ -65,6 +66,7 @@ public class PriceListReportArticle {
     priceListLineContent.containerDescription = containerDescription;
     priceListLineContent.producer = lineContent.getProducer();
     priceListLineContent.countryOfOrigin = lineContent.getOrigin();
+    priceListLineContent.identification = lineContent.getIdentification();
     return priceListLineContent;
   }
 

@@ -88,7 +88,8 @@ public class EditIArticlesController extends Controller<EditArticlesView, EditAr
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Preisliste", Article::getPriceList, LEFT)
-                .withColumnAdjustor(e -> e.setPreferredWidth(200)),
+                .withColumnAdjustor(e -> e.setPreferredWidth(200))
+                .withDefaultFilter(),
             Columns.<Article>create(
                     "Zuschlaggruppe", e -> e.getSurchargeGroup().getNameWithSurcharge(), LEFT)
                 .withDefaultFilter(),
