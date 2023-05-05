@@ -176,7 +176,7 @@ public class LineContent {
       content.weighableKb = false;
       content.priceKb = content.priceKk;
     }
-    content.estimatedPriceList = pattern.getPriceList();
+    content.estimatedPriceList = Articles.getValidPriceList(em, pattern);
     content.estimatedSurchargeGroup = pattern.getSurchargeGroup();
     return content;
   }
