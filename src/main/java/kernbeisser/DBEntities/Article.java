@@ -174,6 +174,21 @@ public final class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_OFFER_WRITE)})
   private boolean offer;
 
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_CATALOGPRICEFACTOR_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_CATALOGPRICEFACTOR_WRITE)})
+  private double catalogPriceFactor;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LABELCOUNT_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LABELCOUNT_WRITE)})
+  private int labelCount;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LABELPERUNIT_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LABELPERUNIT_WRITE)})
+  private boolean labelPerUnit;
+
   @Getter @Setter private Double obsoleteSurcharge;
 
   @Override
