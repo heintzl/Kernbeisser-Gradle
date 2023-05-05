@@ -32,7 +32,6 @@ import org.hibernate.envers.Audited;
     })
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
 @Audited
 public final class Article {
@@ -190,6 +189,13 @@ public final class Article {
   private boolean labelPerUnit;
 
   @Getter @Setter private Double obsoleteSurcharge;
+
+  // provide default values
+  public Article() {
+    catalogPriceFactor = 1;
+    labelCount = 1;
+    labelPerUnit = false;
+  }
 
   @Override
   public String toString() {
