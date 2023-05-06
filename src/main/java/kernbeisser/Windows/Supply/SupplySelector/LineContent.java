@@ -90,12 +90,11 @@ public class LineContent {
     if (getStatus() != ResolveStatus.OK || article == null) {
       return "";
     }
-    double price = getPriceKb();
     double articlePrice = article.getNetPrice();
-    if (price == 0.0d) {
+    if (priceKb == 0.0d) {
       return articlePrice == 0.0d ? "" : "!";
     }
-    return String.format("%.0f%%", 100 * (price - articlePrice) / price);
+    return String.format("%.0f%%", 100 * (priceKb - articlePrice) / priceKb);
   }
 
   private void trySplit(@NotNull MetricUnits currentUnit, double amount) {
@@ -170,7 +169,7 @@ public class LineContent {
       content.article = matchedArticle.get();
       pattern = content.article;
       content.weighableKb = content.article.isWeighable();
-      content.calculatePriceKb();
+      content.priceKb = content.calculatePriceKb();
     } else {
       pattern = Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
       content.weighableKb = false;
@@ -181,12 +180,9 @@ public class LineContent {
     return content;
   }
 
-  public void calculatePriceKb() {
-    if (weighableKb == weighableKk || amount == 0) {
-      priceKb = priceKk;
-    } else { // handle difference in priceunit if weighability is not the same
-      priceKb = priceKk * (weighableKk ? (amount) : 1000.0 / amount);
-    }
+  public double calculatePriceKb() {
+    double priceKb = priceKk * article.getCatalogPriceFactor();
+    return priceKb;
   }
 
   private static boolean isComment(String line) {

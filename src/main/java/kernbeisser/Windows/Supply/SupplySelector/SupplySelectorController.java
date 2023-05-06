@@ -287,7 +287,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
       return;
     }
     lineContent.setWeighableKb(!lineContent.isWeighableKb());
-    lineContent.calculatePriceKb();
+    lineContent.setPriceKb(lineContent.calculatePriceKb());
   }
 
   @Override
