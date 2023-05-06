@@ -293,6 +293,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     article.setNetPrice(content.getPriceKb());
     article.setMetricUnits(content.getUnit());
     article.setAmount(content.getAmount());
+    article.setProducer(content.getProducer());
     article.setBarcode(content.getBarcode());
     article.setWeighable(content.isWeighableKb());
     article.setContainerSize(content.getContainerSize());
