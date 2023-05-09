@@ -1,7 +1,6 @@
 package kernbeisser.Windows.Supply;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
@@ -96,35 +95,36 @@ public class SupplyModel implements IModel<SupplyController> {
         .orElseThrow(NoSuchElementException::new);
   }
 
-  private static Collection<Integer> userOnlyPreorderedArticles() {
-    Collection<PreOrder> preOrders =
-        PreOrder.getAll(null).stream()
-            .filter(
-                e ->
-                    e.getArticle().getSupplier().equals(Supplier.getKKSupplier())
-                        && !e.isDelivered())
-            .collect(Collectors.toList());
-    Collection<Integer> userPreorders =
-        preOrders.stream()
-            .filter(u -> !u.isShopOrder())
-            .map(e -> e.getArticle().getSuppliersItemNumber())
-            .collect(Collectors.toList());
-    userPreorders.removeAll(
-        preOrders.stream()
-            .filter(e -> e.isShopOrder())
-            .map(e -> e.getArticle().getSuppliersItemNumber())
-            .collect(Collectors.toList()));
-    return userPreorders;
+  private static int getUserPreorderCount(Article article) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    long userPreorders =
+        em.createQuery(
+                "SELECT COALESCE (sum(amount),0) FROM PreOrder p "
+                    + "WHERE p.delivery IS NULL AND p.user != :kbUser AND p.article = :a",
+                Long.class)
+            .setParameter("kbUser", User.getKernbeisserUser())
+            .setParameter("a", article)
+            .getSingleResult();
+    return (int) userPreorders;
   }
-
-  private static final Collection<Integer> userPreorderSupplierItemNumbers =
-      userOnlyPreorderedArticles();
 
   public static Integer getPrintNumberFromItem(ShoppingItem item) {
     if (item.getSuppliersItemNumber() < 1000 && item.getSupplier().equals(Supplier.getKKSupplier()))
       return 0;
-    if (userPreorderSupplierItemNumbers.contains(item.getSuppliersItemNumber())) return 0;
-    return 1;
+    if (item.getItemNetPrice() == 0.0) return 0;
+    Article itemArticle = item.getArticleAtBuyState();
+    int orderedShopItems =
+        -(int) Math.round((item.getContainerCount())) - getUserPreorderCount(itemArticle);
+    if (itemArticle.isLabelPerUnit()) {
+      return orderedShopItems;
+    }
+    if (orderedShopItems <= 0) {
+      return 0;
+    }
+    return itemArticle.getLabelCount();
   }
 
   public void addShoppingItem(ShoppingItem item) {
