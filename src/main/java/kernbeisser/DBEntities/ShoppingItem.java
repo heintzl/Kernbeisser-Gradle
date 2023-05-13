@@ -22,7 +22,8 @@ import org.hibernate.envers.AuditReaderFactory;
     indexes = {
       @Index(name = "IX_item_name", columnList = "name"),
       @Index(name = "IX_item_kbNumber", columnList = "kbNumber"),
-      @Index(name = "IX_item_suppliersItemNumber", columnList = "suppliersItemNumber")
+      @Index(name = "IX_item_suppliersItemNumber", columnList = "suppliersItemNumber"),
+      @Index(name = "IX_item_Article", columnList = "articleId")
     })
 @NoArgsConstructor
 // @EqualsAndHashCode(doNotUseGetters = true)

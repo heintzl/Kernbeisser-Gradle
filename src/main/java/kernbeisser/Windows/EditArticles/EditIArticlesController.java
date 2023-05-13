@@ -66,6 +66,9 @@ public class EditIArticlesController extends Controller<EditArticlesView, EditAr
             Columns.create("Lieferant", Article::getSupplier, LEFT)
                 .withDefaultFilter()
                 .withColumnAdjustor(e -> e.setPreferredWidth(150)),
+            Columns.create("Hersteller", Article::getProducer, LEFT)
+                .withDefaultFilter()
+                .withColumnAdjustor(e -> e.setPreferredWidth(100)),
             Columns.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             new CustomizableColumn<Article>("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein")

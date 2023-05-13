@@ -23,6 +23,7 @@ public class ArticleSelectorController
         new SearchBoxController<>(
             articleFilter::searchable,
             Columns.create("Name", Article::getName),
+            Columns.create("Hersteller", Article::getProducer),
             Columns.create("Barcode", Article::getBarcode),
             Columns.create("KB-Nummer", Article::getKbNumber),
             Columns.create(

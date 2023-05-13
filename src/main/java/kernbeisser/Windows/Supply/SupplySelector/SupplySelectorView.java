@@ -102,6 +102,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(80),
             Columns.create("Artikelname", LineContent::getName).withPreferredWidth(250),
+            Columns.create("Hersteller", LineContent::getProducer).withPreferredWidth(100),
             Columns.create("E.preis", SupplySelectorController::formatDisplayPrice)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(100),

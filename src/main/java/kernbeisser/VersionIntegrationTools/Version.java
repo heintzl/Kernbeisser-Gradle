@@ -14,7 +14,9 @@ public enum Version {
   REFACTOR_DB_VERSIONING(RemoveDeprectatedSettings.class),
   TRIAL_MEMBERSHIP(BeginnerPermissionKeyChange.class),
   SAVE_TRANSACTIONREPORT_NO(AddTransactionReportNo.class),
-  TEST_USERS(FillTestUserFlag.class);
+  TEST_USERS(FillTestUserFlag.class),
+  NEW_ARTICLE_PROPERTIES(AddArticleSupplyPermissions.class);
+
   public static final Logger logger = LogManager.getLogger(Version.class);
   private final Class<? extends VersionUpdatingTool> updatingToolClass;
 

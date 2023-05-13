@@ -202,7 +202,7 @@
 		<band height="54" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="10" width="555" height="30" uuid="f07b5c0c-5ca1-4bd0-8f61-bc2fd70ad37e"/>
-				<text><![CDATA[* Identitäst-Kürzel, Erklärung (Stand 02/2023) hier: 
+				<text><![CDATA[* Identitäts-Kürzel, Erklärung (Stand 02/2023) hier: 
 https://shop.kornkraft.com/files/cms_download/BNN-IK_Liste_Sep_2021_20211004.pdf]]></text>
 			</staticText>
 		</band>

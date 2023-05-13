@@ -50,6 +50,10 @@ public class ArticleView implements IView<ArticleController> {
   private AccessCheckingComboBox<Article, SurchargeGroup> surchargeGroup;
   private AccessCheckingComboBox<Article, ShopRange> shopRange;
   private PermissionButton searchSurchargeGroup;
+  private AccessCheckingField<Article, Double> catalogPriceFactor;
+  private AccessCheckingField<Article, Integer> labelCount;
+  private AccessCheckBox<Article> labelPerUnit;
+  private AccessCheckingField<Article, String> producer;
 
   private ObjectForm<Article> articleObjectForm;
 
@@ -115,6 +119,20 @@ public class ArticleView implements IView<ArticleController> {
             Article::getShopRange, Article::setShopRange, controller::getAllShopRages);
     extraInfo =
         new AccessCheckingField<>(Article::getInfo, Article::setInfo, AccessCheckingField.NONE);
+    catalogPriceFactor =
+        new AccessCheckingField<>(
+            Article::getCatalogPriceFactor,
+            Article::setCatalogPriceFactor,
+            AccessCheckingField.UNSIGNED_DOUBLE_FORMER);
+    labelCount =
+        new AccessCheckingField<>(
+            Article::getLabelCount,
+            Article::setLabelCount,
+            AccessCheckingField.UNSIGNED_INT_FORMER);
+    labelPerUnit = new AccessCheckBox<>(Article::isLabelPerUnit, Article::setLabelPerUnit);
+    producer =
+        new AccessCheckingField<>(
+            Article::getProducer, Article::setProducer, AccessCheckingField.NONE);
   }
 
   void setUnits(MetricUnits[] metricUnits) {
@@ -188,7 +206,11 @@ public class ArticleView implements IView<ArticleController> {
             shopRange,
             vat,
             amount,
-            extraInfo);
+            extraInfo,
+            catalogPriceFactor,
+            labelCount,
+            labelPerUnit,
+            producer);
     articleObjectForm.setObjectDistinction("Der Artikel");
     articleObjectForm.registerUniqueCheck(
         barcode, controller::barcodeExists, this::barcodeAlreadyExists);

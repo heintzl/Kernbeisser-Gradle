@@ -23,22 +23,25 @@ public interface Column<T> {
 
         @Override
         public int compare(Object o1, Object o2) {
-          double a;
+          double a = 0;
           double b;
+          boolean aNaN = false;
           try {
             a =
                 Double.parseDouble(
                     numberFilter.matcher(o1.toString()).replaceAll("").replace(",", "."));
           } catch (NumberFormatException e) {
-            return -1;
+            aNaN = true;
           }
           try {
             b =
                 Double.parseDouble(
                     numberFilter.matcher(o2.toString()).replaceAll("").replace(",", "."));
           } catch (NumberFormatException e) {
-            return 1;
+            if (aNaN) return 0;
+            else return 1;
           }
+          if (aNaN) return -1;
           return Double.compare(a, b);
         }
       };
@@ -48,19 +51,22 @@ public interface Column<T> {
 
       @Override
       public int compare(Object o1, Object o2) {
-        LocalDate a;
+        LocalDate a = LocalDate.MIN;
         LocalDate b;
+        boolean aNaD = false;
 
         try {
           a = LocalDate.parse((CharSequence) o1, formatter);
         } catch (DateTimeParseException e) {
-          return -1;
+          aNaD = true;
         }
         try {
           b = LocalDate.parse((CharSequence) o2, formatter);
         } catch (DateTimeParseException e) {
-          return 1;
+          if (aNaD) return 0;
+          else return 1;
         }
+        if (aNaD) return -1;
         return a.compareTo(b);
       }
     };

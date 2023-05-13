@@ -87,6 +87,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   private JButton emptyShoppingCart;
   private JComboBox<VAT> vat;
   private JLabel solidarity;
+  private JTextField producer;
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
@@ -367,6 +368,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
       } else {
         supplier.requestFocusInWindow();
       }
+      this.producer.setText("");
     }
     updateAllControls(type);
   }
@@ -413,6 +415,9 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (article.getName() != null) {
       articleName.setText(shorten(article.getName(), 40));
       articleName.setCaretPosition(0);
+    }
+    if (article.getProducer() != null) {
+      producer.setText(article.getProducer());
     }
     setVat(article.getVat());
     try {
