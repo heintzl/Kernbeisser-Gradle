@@ -89,6 +89,8 @@ public enum Setting {
   INVENTORY_LOOK_FOR_ARTICLE_USAGE("true"),
 
   INVENTORY_SCHEDULED_DATE("2022-12-30"),
+
+  @Deprecated
   SUPPLY_DAY_DIFFERENCE_THRESHOLD("1");
 
   // defines the type like in java style

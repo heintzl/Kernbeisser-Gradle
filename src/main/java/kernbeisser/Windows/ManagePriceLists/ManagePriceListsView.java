@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.Node;
@@ -70,7 +71,15 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     articles =
         new ObjectTable<>(
             Columns.create("Name", Article::getName, SwingConstants.LEFT),
-            Columns.create("Lieferant", Article::getSupplier, SwingConstants.LEFT));
+            Columns.create("Lieferant", Article::getSupplier, SwingConstants.LEFT),
+            Columns.create("Lieferanten Nr.", Article::getSuppliersItemNumber)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create(
+                "Aufschlagsgruppe",
+                (Article e) ->
+                    String.format(
+                        "%s(%.2f%%)",
+                        e.getSurchargeGroup().getName(), e.getSurchargeGroup().getSurcharge())));
   }
 
   private Optional<Article> getSelectedArticle() {
