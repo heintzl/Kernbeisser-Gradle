@@ -347,21 +347,19 @@ public class PreOrderView implements IView<PreOrderController> {
   private void startEditPreOrder() {
     try {
       PreOrder editableOrder = preOrders.getSelectedObject().orElseThrow(NoResultException::new);
-      if (controller.isDelivered(editableOrder)) {
-        warningEditDelivered();
-        return;
-      }
-      if (editableOrder.getOrderedOn() != null && !confirmEditOrdered()) {
-        return;
-      }
-      setMode(Mode.EDIT);
-      user.getModel().setSelectedItem(editableOrder.getUser());
-      setShopNumber(editableOrder.getArticle().getKbNumber());
-      controller.pasteDataInView(editableOrder.getArticle(), true);
-      enableControls(true);
+      controller.startEditPreOrder(editableOrder);
     } catch (NoResultException e) {
       noPreOrderSelected();
     }
+  }
+
+  void populatePreOrderEditor(PreOrder preOrder) {
+    setMode(Mode.EDIT);
+    user.getModel().setSelectedItem(preOrder.getUser());
+    setShopNumber(preOrder.getArticle().getKbNumber());
+    setAmount(Integer.toString(preOrder.getAmount()));
+    controller.pasteDataInView(preOrder.getArticle(), true);
+    enableControls(true);
   }
 
   private void cancelEditPreOrder() {
@@ -536,7 +534,7 @@ public class PreOrderView implements IView<PreOrderController> {
         == JOptionPane.OK_OPTION;
   }
 
-  private void warningEditDelivered() {
+  void warningEditDelivered() {
     JOptionPane.showMessageDialog(
         getContent(),
         "Diese Vorbestellung ist als ausgeliefert gekennzeichnet.\n"
@@ -545,7 +543,7 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
-  private boolean confirmEditOrdered() {
+  boolean confirmEditOrdered() {
     return JOptionPane.showConfirmDialog(
             getContent(),
             "Achtung, diese Vorbestellung ist bereits für Kornkraft exportiert worden.\n"

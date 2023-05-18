@@ -360,4 +360,16 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     model.setAmount(preOrder, newValue);
     getView().refreshPreOrder(preOrder);
   }
+
+  public void startEditPreOrder(PreOrder preOrder) {
+    PreOrderView view = getView();
+    if (isDelivered(preOrder)) {
+      view.warningEditDelivered();
+      return;
+    }
+    if (preOrder.getOrderedOn() != null && !view.confirmEditOrdered()) {
+      return;
+    }
+    view.populatePreOrderEditor(preOrder);
+  }
 }
