@@ -294,7 +294,7 @@ public class PreOrderView implements IView<PreOrderController> {
             }
           }
         });
-    preOrders.addSelectionListener(e -> editPreOrder.setEnabled(true));
+    preOrders.addSelectionListener(e -> enableEditPreorder());
     preOrders.addFocusListener(
         new FocusListener() {
           @Override
@@ -302,11 +302,11 @@ public class PreOrderView implements IView<PreOrderController> {
 
           @Override
           public void focusLost(FocusEvent e) {
-            editPreOrder.setEnabled(preOrders.getSelectedRow() > -1);
+            enableEditPreorder();
           }
         });
 
-    amount.addActionListener(e -> controller.add());
+    amount.addActionListener(e -> submitAction());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
     searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
@@ -348,6 +348,7 @@ public class PreOrderView implements IView<PreOrderController> {
     try {
       PreOrder editableOrder = preOrders.getSelectedObject().orElseThrow(NoResultException::new);
       controller.startEditPreOrder(editableOrder);
+      enableEditPreorder();
     } catch (NoResultException e) {
       noPreOrderSelected();
     }
@@ -356,6 +357,7 @@ public class PreOrderView implements IView<PreOrderController> {
   void populatePreOrderEditor(PreOrder preOrder) {
     setMode(Mode.EDIT);
     user.getModel().setSelectedItem(preOrder.getUser());
+    user.repaint();
     setShopNumber(preOrder.getArticle().getKbNumber());
     setAmount(Integer.toString(preOrder.getAmount()));
     controller.pasteDataInView(preOrder.getArticle(), true);
@@ -377,6 +379,7 @@ public class PreOrderView implements IView<PreOrderController> {
         break;
       case EDIT:
         controller.edit(preOrders.getSelectedObject().get());
+        user.setSelectedItem(null);
         break;
       default:
     }
@@ -390,7 +393,6 @@ public class PreOrderView implements IView<PreOrderController> {
   void refreshUIMode() {
     boolean addMode = mode == Mode.ADD;
     boolean restrictToLoggedIn = controller.isRestrictToLoggedIn();
-    user.setEnabled(addMode);
     if (addMode) {
       user.getModel().setSelectedItem(addModeUser);
       enableControls(addModeUser != null);
@@ -402,7 +404,7 @@ public class PreOrderView implements IView<PreOrderController> {
     bestellungExportierenButton.setEnabled(!restrictToLoggedIn && addMode);
     abhakplanButton.setEnabled(!restrictToLoggedIn && addMode);
     close.setEnabled(addMode);
-    editPreOrder.setEnabled(!restrictToLoggedIn && addMode && preOrders.getSelectedRow() > -1);
+    enableEditPreorder();
     duplexPrint.setEnabled(addMode);
     defaultSortOrder.setEnabled(addMode);
     preOrders.setEnabled(addMode);
@@ -411,6 +413,11 @@ public class PreOrderView implements IView<PreOrderController> {
     cancelEdit.setEnabled(!addMode);
     cancelEdit.setVisible(!addMode);
     submit.setText(addMode ? "Hinzufügen" : "Übernehmen");
+  }
+
+  private void enableEditPreorder() {
+    editPreOrder.setEnabled(
+        !controller.isRestrictToLoggedIn() && mode == Mode.ADD && preOrders.getSelectedRow() > -1);
   }
 
   public User getUser() {
@@ -496,14 +503,14 @@ public class PreOrderView implements IView<PreOrderController> {
         getContent(),
         "Die Vorbestellung kann nicht aufgenommen werden,"
             + "\nda der Nutzer noch nicht ausgewählt wurde."
-            + "\nBitte wählen sie zunächst einen Benutzer aus,"
+            + "\nBitte wähle zuerst einen Benutzer aus,"
             + "\nauf dessen Namen die Vorbestellung ausgeführt werden soll.",
         "Kein Benutzer ausgewählt",
         JOptionPane.WARNING_MESSAGE);
   }
 
   public boolean confirmDelivery(long numDelivered, long numOverdue) {
-    if (numDelivered == 0 && numOverdue == 0) {
+    if (controller.isRestrictToLoggedIn() || (numDelivered == 0 && numOverdue == 0)) {
       return true;
     }
     Tools.beep();

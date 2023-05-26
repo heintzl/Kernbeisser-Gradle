@@ -59,6 +59,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     PreOrder p = em.find(PreOrder.class, preOrder.getId());
     p.setAmount(newPreOrder.getAmount());
     p.setArticle(newPreOrder.getArticle());
+    p.setUser(newPreOrder.getUser());
     p.setInfo(newPreOrder.getInfo());
     if (preOrder.getUser().equals(User.getKernbeisserUser())) {
       Article a = em.find(Article.class, newPreOrder.getArticle().getId());
@@ -133,13 +134,11 @@ public class PreOrderModel implements IModel<PreOrderController> {
             em.merge(p);
           }
         });
-    em.flush();
     et.commit();
     em.close();
   }
 
   private void saveData() {
-    em.flush();
     et.commit();
     et = em.getTransaction();
     et.begin();

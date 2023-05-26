@@ -109,11 +109,12 @@ public class Access {
   }
 
   public static boolean expectHasActionPermission(Serializable serializable) {
-    if (defaultManager instanceof PermissionKeyBasedAccessManager)
-      return ((PermissionKeyBasedAccessManager) defaultManager)
-          .hasPermission(
-              peekPermissions(serializable)
-                  .operator(PermissionKey.getAllActionPermissions(), (a, b) -> a & b));
+    if (defaultManager instanceof PermissionKeyBasedAccessManager) {
+      PermissionSet requiredPermissions =
+          peekPermissions(serializable)
+              .operator(PermissionKey.getAllActionPermissions(), (a, b) -> a & b);
+      return ((PermissionKeyBasedAccessManager) defaultManager).hasPermission(requiredPermissions);
+    }
     throw new UnsupportedOperationException("Default access manager is not peek able");
   }
 

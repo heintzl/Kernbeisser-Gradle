@@ -362,6 +362,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   public void startEditPreOrder(PreOrder preOrder) {
+    if (isRestrictToLoggedIn()) return;
     PreOrderView view = getView();
     if (isDelivered(preOrder)) {
       view.warningEditDelivered();
