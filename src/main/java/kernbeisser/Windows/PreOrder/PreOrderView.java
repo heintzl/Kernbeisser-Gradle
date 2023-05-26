@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PreOrderView implements IView<PreOrderController> {
 
-  private PermissionButton add;
+  private PermissionButton submit;
   private ObjectTable<PreOrder> preOrders;
   private IntegerParseField amount;
   private JLabel name;
@@ -256,7 +256,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchKK()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                addAction();
+                submitAction();
               }
             }
           }
@@ -268,7 +268,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchShopNo()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                addAction();
+                submitAction();
               }
             }
           }
@@ -284,7 +284,7 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
     user.addActionListener(e -> userAction(false));
-    add.addActionListener(e -> addAction());
+    submit.addActionListener(e -> submitAction());
     preOrders.addKeyListener(
         new KeyAdapter() {
           @Override
@@ -294,7 +294,7 @@ public class PreOrderView implements IView<PreOrderController> {
             }
           }
         });
-    preOrders.addSelectionListener(e -> editPreOrder.setEnabled(true));
+    preOrders.addSelectionListener(e -> enableEditPreorder());
     preOrders.addFocusListener(
         new FocusListener() {
           @Override
@@ -302,11 +302,11 @@ public class PreOrderView implements IView<PreOrderController> {
 
           @Override
           public void focusLost(FocusEvent e) {
-            editPreOrder.setEnabled(preOrders.getSelectedRow() > -1);
+            enableEditPreorder();
           }
         });
 
-    amount.addActionListener(e -> controller.add());
+    amount.addActionListener(e -> submitAction());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
     searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
@@ -341,27 +341,27 @@ public class PreOrderView implements IView<PreOrderController> {
     kkNumber.setEnabled(enabled);
     shopNumber.setEnabled(enabled);
     amount.setEnabled(enabled);
-    add.setEnabled(enabled);
+    submit.setEnabled(enabled);
   }
 
   private void startEditPreOrder() {
     try {
       PreOrder editableOrder = preOrders.getSelectedObject().orElseThrow(NoResultException::new);
-      if (controller.isDelivered(editableOrder)) {
-        warningEditDelivered();
-        return;
-      }
-      if (editableOrder.getOrderedOn() != null && !confirmEditOrdered()) {
-        return;
-      }
-      setMode(Mode.EDIT);
-      user.getModel().setSelectedItem(editableOrder.getUser());
-      setShopNumber(editableOrder.getArticle().getKbNumber());
-      controller.pasteDataInView(editableOrder.getArticle(), true);
-      enableControls(true);
+      controller.startEditPreOrder(editableOrder);
+      enableEditPreorder();
     } catch (NoResultException e) {
       noPreOrderSelected();
     }
+  }
+
+  void populatePreOrderEditor(PreOrder preOrder) {
+    setMode(Mode.EDIT);
+    user.getModel().setSelectedItem(preOrder.getUser());
+    user.repaint();
+    setShopNumber(preOrder.getArticle().getKbNumber());
+    setAmount(Integer.toString(preOrder.getAmount()));
+    controller.pasteDataInView(preOrder.getArticle(), true);
+    enableControls(true);
   }
 
   private void cancelEditPreOrder() {
@@ -372,13 +372,14 @@ public class PreOrderView implements IView<PreOrderController> {
     controller.forceDelete(preOrders.getSelectedObject().get());
   }
 
-  void addAction() {
+  void submitAction() {
     switch (mode) {
       case ADD:
         controller.add();
         break;
       case EDIT:
         controller.edit(preOrders.getSelectedObject().get());
+        user.setSelectedItem(null);
         break;
       default:
     }
@@ -392,7 +393,6 @@ public class PreOrderView implements IView<PreOrderController> {
   void refreshUIMode() {
     boolean addMode = mode == Mode.ADD;
     boolean restrictToLoggedIn = controller.isRestrictToLoggedIn();
-    user.setEnabled(addMode);
     if (addMode) {
       user.getModel().setSelectedItem(addModeUser);
       enableControls(addModeUser != null);
@@ -404,7 +404,7 @@ public class PreOrderView implements IView<PreOrderController> {
     bestellungExportierenButton.setEnabled(!restrictToLoggedIn && addMode);
     abhakplanButton.setEnabled(!restrictToLoggedIn && addMode);
     close.setEnabled(addMode);
-    editPreOrder.setEnabled(!restrictToLoggedIn && addMode && preOrders.getSelectedRow() > -1);
+    enableEditPreorder();
     duplexPrint.setEnabled(addMode);
     defaultSortOrder.setEnabled(addMode);
     preOrders.setEnabled(addMode);
@@ -412,7 +412,12 @@ public class PreOrderView implements IView<PreOrderController> {
     deletePreOrder.setVisible(!addMode);
     cancelEdit.setEnabled(!addMode);
     cancelEdit.setVisible(!addMode);
-    add.setText(addMode ? "Hinzufügen" : "Übernehmen");
+    submit.setText(addMode ? "Hinzufügen" : "Übernehmen");
+  }
+
+  private void enableEditPreorder() {
+    editPreOrder.setEnabled(
+        !controller.isRestrictToLoggedIn() && mode == Mode.ADD && preOrders.getSelectedRow() > -1);
   }
 
   public User getUser() {
@@ -498,14 +503,14 @@ public class PreOrderView implements IView<PreOrderController> {
         getContent(),
         "Die Vorbestellung kann nicht aufgenommen werden,"
             + "\nda der Nutzer noch nicht ausgewählt wurde."
-            + "\nBitte wählen sie zunächst einen Benutzer aus,"
+            + "\nBitte wähle zuerst einen Benutzer aus,"
             + "\nauf dessen Namen die Vorbestellung ausgeführt werden soll.",
         "Kein Benutzer ausgewählt",
         JOptionPane.WARNING_MESSAGE);
   }
 
   public boolean confirmDelivery(long numDelivered, long numOverdue) {
-    if (numDelivered == 0 && numOverdue == 0) {
+    if (controller.isRestrictToLoggedIn() || (numDelivered == 0 && numOverdue == 0)) {
       return true;
     }
     Tools.beep();
@@ -536,7 +541,7 @@ public class PreOrderView implements IView<PreOrderController> {
         == JOptionPane.OK_OPTION;
   }
 
-  private void warningEditDelivered() {
+  void warningEditDelivered() {
     JOptionPane.showMessageDialog(
         getContent(),
         "Diese Vorbestellung ist als ausgeliefert gekennzeichnet.\n"
@@ -545,7 +550,7 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
-  private boolean confirmEditOrdered() {
+  boolean confirmEditOrdered() {
     return JOptionPane.showConfirmDialog(
             getContent(),
             "Achtung, diese Vorbestellung ist bereits für Kornkraft exportiert worden.\n"

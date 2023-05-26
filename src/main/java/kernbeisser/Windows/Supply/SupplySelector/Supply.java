@@ -54,7 +54,6 @@ public class Supply {
       var dateTime = date.atZone(ZoneId.systemDefault());
       int h = dateTime.getHour();
       DayOfWeek d = dateTime.getDayOfWeek();
-      int dayDifferenceThreshold = Setting.SUPPLY_DAY_DIFFERENCE_THRESHOLD.getIntValue();
       if (h >= hFrom && h <= hTo) {
         SupplierFile supplierFile = SupplierFile.parse(file);
         if (supplierFile.getHeader().getOrderType() == 8)
