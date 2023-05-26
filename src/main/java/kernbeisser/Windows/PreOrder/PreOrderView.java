@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PreOrderView implements IView<PreOrderController> {
 
-  private PermissionButton add;
+  private PermissionButton submit;
   private ObjectTable<PreOrder> preOrders;
   private IntegerParseField amount;
   private JLabel name;
@@ -256,7 +256,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchKK()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                addAction();
+                submitAction();
               }
             }
           }
@@ -268,7 +268,7 @@ public class PreOrderView implements IView<PreOrderController> {
           public void keyReleased(KeyEvent e) {
             if (controller.searchShopNo()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                addAction();
+                submitAction();
               }
             }
           }
@@ -284,7 +284,7 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
     user.addActionListener(e -> userAction(false));
-    add.addActionListener(e -> addAction());
+    submit.addActionListener(e -> submitAction());
     preOrders.addKeyListener(
         new KeyAdapter() {
           @Override
@@ -341,7 +341,7 @@ public class PreOrderView implements IView<PreOrderController> {
     kkNumber.setEnabled(enabled);
     shopNumber.setEnabled(enabled);
     amount.setEnabled(enabled);
-    add.setEnabled(enabled);
+    submit.setEnabled(enabled);
   }
 
   private void startEditPreOrder() {
@@ -370,7 +370,7 @@ public class PreOrderView implements IView<PreOrderController> {
     controller.forceDelete(preOrders.getSelectedObject().get());
   }
 
-  void addAction() {
+  void submitAction() {
     switch (mode) {
       case ADD:
         controller.add();
@@ -410,7 +410,7 @@ public class PreOrderView implements IView<PreOrderController> {
     deletePreOrder.setVisible(!addMode);
     cancelEdit.setEnabled(!addMode);
     cancelEdit.setVisible(!addMode);
-    add.setText(addMode ? "Hinzufügen" : "Übernehmen");
+    submit.setText(addMode ? "Hinzufügen" : "Übernehmen");
   }
 
   public User getUser() {
