@@ -161,14 +161,16 @@ public class PreOrderView implements IView<PreOrderController> {
                 .withRightClickConsumer(controller::editAmount)
                 .withHorizontalAlignment(SwingConstants.CENTER)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create(
-                "eingegeben am",
-                e -> Date.INSTANT_DATE.format(e.getCreateDate()),
-                SwingConstants.RIGHT),
-            Columns.create(
-                "exportiert am",
-                e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
-                SwingConstants.RIGHT),
+            Columns.<PreOrder>create(
+                    "eingegeben am",
+                    e -> Date.INSTANT_DATE.format(e.getCreateDate()),
+                    SwingConstants.RIGHT)
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
+            Columns.<PreOrder>create(
+                    "exportiert am",
+                    e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
+                    SwingConstants.RIGHT)
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
             Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
     Column<PreOrder> sortColumn = Columns.create("Id", PreOrder::getId);
     if (!controller.isRestrictToLoggedIn())

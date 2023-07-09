@@ -71,7 +71,9 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
                 SwingConstants.RIGHT));
         columns.add(generateAfterValueChangeColumn());
         columns.add(Columns.create("Info", Transaction::getInfo));
-        columns.add(Columns.create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate())));
+        columns.add(
+            Columns.<Transaction>create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate()))
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)));
         view.setValueHistoryColumns(columns);
         view.setValueHistory(model.getUser().getAllValueChanges());
     }

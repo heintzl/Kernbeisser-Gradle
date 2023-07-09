@@ -1,9 +1,7 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
 import java.awt.Color;
-import java.time.Instant;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.function.Predicate;
@@ -80,12 +78,11 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
   private void createUIComponents() {
     supplySelector =
         new ObjectTable<Supply>(
-            Columns.create(
-                "Datum",
-                e -> Date.INSTANT_DATE_TIME.format(e.getDeliveryDate()),
-                SwingConstants.LEFT,
-                Comparator.comparing(
-                    ((Object s) -> Instant.from(Date.INSTANT_DATE_TIME.parse((String) s))))),
+            Columns.<Supply>create(
+                    "Datum",
+                    e -> Date.INSTANT_DATE_TIME.format(e.getDeliveryDate()),
+                    SwingConstants.LEFT)
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)),
             Columns.create("Anzahl Artikel", Supply::getArticleCount)
                 .withRightClickConsumer(this::listSupplyFiles),
             Columns.create("Summe", e -> String.format("%.2f€", e.getContentSum())));
