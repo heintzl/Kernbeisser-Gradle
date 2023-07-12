@@ -203,7 +203,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   void setDefaultSortOrder() {
-    preOrders.setSortKeys(new RowSorter.SortKey(0, SortOrder.DESCENDING));
+    preOrders.setSortKeys(new RowSorter.SortKey(8, SortOrder.DESCENDING));
     preOrders.sort();
   }
 
