@@ -101,7 +101,7 @@ public class CatalogMergeSession {
         new UniqueValidator<>(
             UniqueValidator.forbidNull(CatalogDataSource::getArtikelNr),
             UniqueValidator.allowNull(
-                CatalogDataSource::getEANladen,
+                CatalogDataSource::getEanLadenEinheit,
                 em.createQuery(
                         "select a.barcode from Article a where a.supplier <> :s and a.barcode is not null",
                         Long.class)

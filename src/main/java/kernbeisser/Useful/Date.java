@@ -2,6 +2,7 @@ package kernbeisser.Useful;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -20,6 +21,14 @@ public class Date {
       DateTimeFormatter.ofPattern("MMMuu")
           .withLocale(Locale.GERMANY)
           .withZone(ZoneId.systemDefault());
+  public static DateTimeFormatter INSTANT_CATALOG_DATE =
+      DateTimeFormatter.ofPattern("uuuuMMdd")
+          .withLocale(Locale.GERMANY)
+          .withZone(ZoneId.systemDefault());
+  public static DateTimeFormatter INSTANT_CATALOG_TIME =
+      DateTimeFormatter.ofPattern("HHmm")
+          .withLocale(Locale.GERMANY)
+          .withZone(ZoneId.systemDefault());
 
   public static String safeDateFormat(Instant instant, DateTimeFormatter formatter) {
     if (instant == null) {
@@ -33,5 +42,12 @@ public class Date {
             ? localDate.atStartOfDay(ZoneId.systemDefault())
             : localDate.plusDays(1).atStartOfDay(ZoneId.systemDefault()).minusNanos(1))
         .toInstant();
+  }
+
+  public static Instant parseInstant(String s, DateTimeFormatter format) {
+    if (s.replace(" ", "").isEmpty()) {
+      return null;
+    }
+    return LocalDateTime.parse(s, format).atZone(ZoneId.systemDefault()).toInstant();
   }
 }
