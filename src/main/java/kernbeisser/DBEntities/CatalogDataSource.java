@@ -1,18 +1,11 @@
 package kernbeisser.DBEntities;
 
-import java.lang.reflect.Field;
 import java.time.Instant;
-import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.function.Function;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Exeptions.InvalidValue;
-import kernbeisser.Main;
-import kernbeisser.Useful.Date;
-import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
@@ -125,121 +118,8 @@ public class CatalogDataSource {
 
   public CatalogDataSource() {}
 
-  private static Instant parseInstant(Field field, String s) throws DateTimeParseException {
-    if (field.getName().equals("aenderungsZeit")) {
-      return Date.parseInstantTime(s, Date.INSTANT_CATALOG_TIME);
-    }
-    return Date.parseInstantDate(s, Date.INSTANT_CATALOG_DATE);
-  }
-
-  private static MetricUnits parseUnit(String s) throws InvalidValue {
-    switch (s) {
-      case "kg":
-        return MetricUnits.KILOGRAM;
-      case "l":
-        return MetricUnits.LITER;
-      case "":
-        return null;
-      default:
-        throw new InvalidValue("falsch codierte Einheit");
-    }
-  }
-
-  private static VAT parseVAT(String s) throws InvalidValue {
-    switch (s) {
-      case "1":
-        return VAT.LOW;
-      case "2":
-        return VAT.HIGH;
-      case "3":
-        throw new InvalidValue("Pauschale MWSt Sätze werden zurzeit nicht unterstützt!");
-      default:
-        throw new InvalidValue("falsch codierte Mehrwertsteuer");
-    }
-  }
-
-  private static void parseField(CatalogDataSource out, Field declaredField, String part)
-      throws NumberFormatException, IllegalAccessException, DateTimeParseException, InvalidValue {
-    declaredField.setAccessible(true);
-    Class<?> type = declaredField.getType();
-    if (type.equals(String.class)) {
-      declaredField.set(out, part);
-      if (declaredField.getName().equals("aenderungskennung") && !"A;X;N;R;V;W".contains(part)) {
-        throw new InvalidValue("ungültige Änderungskennung: " + part);
-      }
-    } else if (type.equals(VAT.class)) declaredField.set(out, parseVAT(part));
-    else {
-      if (!part.replace(" ", "").equals("")) {
-        if (type.equals(Double.class))
-          declaredField.set(
-              out, tryParse(part.replace(",", ".").replace(" ", ""), Double::parseDouble));
-        else if (type.equals(Integer.class))
-          declaredField.set(out, tryParse(part.replace(" ", ""), Integer::parseInt));
-        else if (type.equals(Long.class))
-          declaredField.set(out, tryParse(part.replace(" ", ""), Long::parseLong));
-        else if (type.equals(Boolean.class)) declaredField.set(out, part.equals("J"));
-        else if (type.equals(Instant.class))
-          declaredField.set(out, tryParse(part, e -> parseInstant(declaredField, e)));
-        else if (type.equals(MetricUnits.class)) declaredField.set(out, parseUnit(part));
-      }
-    }
-  }
-
-  public static CatalogDataSource parseRowWithLog(String[] parts, List<Exception> errorLog) {
-    CatalogDataSource out = new CatalogDataSource();
-    Field[] declaredFields = CatalogDataSource.class.getDeclaredFields();
-    for (int i = 0; i < declaredFields.length; i++) {
-      try {
-        parseField(out, declaredFields[i], parts[i]);
-      } catch (NumberFormatException
-          | IllegalAccessException
-          | DateTimeParseException
-          | InvalidValue e) {
-        errorLog.add(
-            new Exception(
-                "Fehler beim Schreiben des Wertes \""
-                    + parts[i]
-                    + "\" in das Feld "
-                    + declaredFields[i].getName(),
-                e));
-      } catch (ArrayIndexOutOfBoundsException e) {
-        return out;
-      }
-    }
-    return out;
-  }
-
-  public static CatalogDataSource parseRow(String[] parts) {
-    CatalogDataSource out = new CatalogDataSource();
-    Field[] declaredFields = CatalogDataSource.class.getDeclaredFields();
-    for (int i = 0; i < declaredFields.length; i++) {
-      try {
-        parseField(out, declaredFields[i], parts[i]);
-      } catch (NumberFormatException
-          | IllegalAccessException
-          | DateTimeParseException
-          | InvalidValue e) {
-        Main.logger.error(
-            "Catalog error: cannot parse value \""
-                + parts[i]
-                + "\" into field "
-                + declaredFields[i].getName(),
-            e);
-        Tools.showUnexpectedErrorWarning(e);
-      } catch (ArrayIndexOutOfBoundsException e) {
-        return out;
-      }
-    }
-    return out;
-  }
-
   public int getArtikelNrInt() throws NumberFormatException {
     return Integer.parseInt(artikelNr);
-  }
-
-  private static <T> T tryParse(String in, Function<String, T> function)
-      throws NumberFormatException, DateTimeParseException {
-    return function.apply(in);
   }
 
   public static List<CatalogDataSource> getCatalog() {

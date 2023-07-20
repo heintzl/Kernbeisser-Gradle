@@ -24,6 +24,7 @@ import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.ShopRange;
+import kernbeisser.Tasks.Catalog.CatalogImporter;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import org.hibernate.Session;
@@ -91,7 +92,7 @@ public class CatalogMergeSession {
         .skip(1)
         .map(e -> e.split(";"))
         .filter(e -> e.length >= 42)
-        .map(CatalogDataSource::parseRow);
+        .map(CatalogImporter::parseRow);
   }
 
   private Collection<ArticleMerge> loadSource(Collection<String> source) {
