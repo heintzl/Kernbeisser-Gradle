@@ -23,7 +23,7 @@ public class Catalog {
       Map<Integer, Double> deposit,
       Supplier kkSupplier,
       CatalogDataSource catalogDataSource) {
-    base.setSuppliersItemNumber(catalogDataSource.getArtikelNr());
+    base.setSuppliersItemNumber(catalogDataSource.getArtikelNrInt());
     base.setName(catalogDataSource.getBezeichnung());
     base.setWeighable(catalogDataSource.getGewichtsartikel());
     base.setSingleDeposit(

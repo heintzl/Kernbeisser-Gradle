@@ -1,15 +1,19 @@
 package kernbeisser.Windows.CatalogImport;
 
+import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.Config;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Tasks.Catalog.CatalogImportError;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +30,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
   public void initialize(CatalogImportController controller) {
     close.addActionListener(e -> back());
     readFile.addActionListener(e -> controller.readFile(filePath.getText()));
+    applyChanges.addActionListener(e -> controller.applyChanges());
     fileChooser.addActionListener(e -> openFileExplorer());
   }
 
@@ -35,7 +40,15 @@ public class CatalogImportView implements IView<CatalogImportController> {
             Columns.create("Zeile", CatalogImportError::getLineNumber)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(100),
-            Columns.create("Fehlerbeschreibung", CatalogImportError::getE));
+            Columns.create("Fehlerbeschreibung", CatalogImportError::getE).withPreferredWidth(1200),
+            Columns.createIconColumn(
+                "Details",
+                e -> IconFontSwing.buildIcon(FontAwesome.INFO_CIRCLE, 15, Color.BLUE),
+                e -> Tools.showUnexpectedErrorWarning(e.getE().getCause()),
+                e -> {
+                  return;
+                },
+                70));
   }
 
   public void setReadErrors(List<CatalogImportError> errors) {

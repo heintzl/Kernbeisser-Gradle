@@ -6,18 +6,15 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.function.Function;
 import javax.persistence.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Main;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
-import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Table
@@ -25,9 +22,6 @@ import org.hibernate.annotations.GenericGenerator;
 @Setter(AccessLevel.NONE)
 @Getter(AccessLevel.PUBLIC)
 public class CatalogDataSource {
-  @Id
-  @GeneratedValue
-  @GenericGenerator(name = "increment", strategy = "increment")
   private String artikelNr;
 
   // CatalogChange.identifier
@@ -123,6 +117,10 @@ public class CatalogDataSource {
   private Integer artikelVariant;
   private String markenId;
   private String herstellerId;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Setter(AccessLevel.PUBLIC)
   private long id;
 
   public CatalogDataSource() {}
@@ -164,8 +162,12 @@ public class CatalogDataSource {
       throws NumberFormatException, IllegalAccessException, DateTimeParseException, InvalidValue {
     declaredField.setAccessible(true);
     Class<?> type = declaredField.getType();
-    if (type.equals(String.class)) declaredField.set(out, part);
-    else if (type.equals(VAT.class)) declaredField.set(out, parseVAT(part));
+    if (type.equals(String.class)) {
+      declaredField.set(out, part);
+      if (declaredField.getName().equals("aenderungskennung") && !"A;X;N;R;V;W".contains(part)) {
+        throw new InvalidValue("ungültige Änderungskennung: " + part);
+      }
+    } else if (type.equals(VAT.class)) declaredField.set(out, parseVAT(part));
     else {
       if (!part.replace(" ", "").equals("")) {
         if (type.equals(Double.class))
@@ -195,9 +197,9 @@ public class CatalogDataSource {
           | InvalidValue e) {
         errorLog.add(
             new Exception(
-                "Catalog error: cannot parse value \""
+                "Fehler beim Schreiben des Wertes \""
                     + parts[i]
-                    + "\" into field "
+                    + "\" in das Feld "
                     + declaredFields[i].getName(),
                 e));
       } catch (ArrayIndexOutOfBoundsException e) {
@@ -231,12 +233,21 @@ public class CatalogDataSource {
     return out;
   }
 
-  public int getArtikelNr() throws NumberFormatException {
+  public int getArtikelNrInt() throws NumberFormatException {
     return Integer.parseInt(artikelNr);
   }
 
   private static <T> T tryParse(String in, Function<String, T> function)
       throws NumberFormatException, DateTimeParseException {
     return function.apply(in);
+  }
+
+  public static List<CatalogDataSource> getCatalog() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("SELECT c FROM CatalogDataSource c", CatalogDataSource.class)
+        .getResultList();
   }
 }
