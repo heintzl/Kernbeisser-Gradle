@@ -343,16 +343,19 @@ public class Tools {
 
   public static void showUnexpectedErrorWarning(Throwable e) throws RuntimeException {
     Main.logger.error(e.getMessage(), e);
-    JOptionPane.showMessageDialog(
-        null,
+    JTextArea textArea = new JTextArea();
+    textArea.append(
         "Ein unerwarteter Fehler ist aufgetreten.\n"
             + "Bitte melde den Fehler beim Entwicklerteam\n"
             + "oder auf Github:\n"
             + "https://github.com/julikiller98/Kernbeisser-Gradle/\n"
             + "Fehler:\n"
-            + e.toString(),
-        "Es ist ein unerwarteter Fehler aufgetreten",
-        JOptionPane.ERROR_MESSAGE);
+            + e.toString());
+    textArea.setEditable(false);
+    JScrollPane messagePane = new JScrollPane(textArea);
+    messagePane.setPreferredSize(new Dimension(480, 300));
+    JOptionPane.showMessageDialog(
+        null, messagePane, "Es ist ein unerwarteter Fehler aufgetreten", JOptionPane.ERROR_MESSAGE);
     throw new RuntimeException(e);
   }
 
