@@ -2,9 +2,6 @@ package kernbeisser.DBEntities;
 
 import java.lang.reflect.Field;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.function.Function;
@@ -31,8 +28,6 @@ public class CatalogDataSource {
   @Id
   @GeneratedValue
   @GenericGenerator(name = "increment", strategy = "increment")
-  private long id;
-
   private String artikelNr;
 
   // CatalogChange.identifier
@@ -46,7 +41,7 @@ public class CatalogDataSource {
   private String bezeichnung3;
 
   // roman Number
-  private Integer handelsklasse;
+  private String handelsklasse;
 
   // BNN-Markenkürzel
   @Required private String marke;
@@ -128,15 +123,15 @@ public class CatalogDataSource {
   private Integer artikelVariant;
   private String markenId;
   private String herstellerId;
+  private long id;
 
   public CatalogDataSource() {}
 
   private static Instant parseInstant(Field field, String s) throws DateTimeParseException {
-    DateTimeFormatter formatter =
-        field.getName().equals("aenderungsZeit")
-            ? Date.INSTANT_CATALOG_TIME
-            : Date.INSTANT_CATALOG_DATE;
-    return LocalDateTime.parse(s, formatter).atZone(ZoneId.systemDefault()).toInstant();
+    if (field.getName().equals("aenderungsZeit")) {
+      return Date.parseInstantTime(s, Date.INSTANT_CATALOG_TIME);
+    }
+    return Date.parseInstantDate(s, Date.INSTANT_CATALOG_DATE);
   }
 
   private static MetricUnits parseUnit(String s) throws InvalidValue {

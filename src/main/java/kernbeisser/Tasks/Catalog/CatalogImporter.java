@@ -64,11 +64,10 @@ public class CatalogImporter {
     if (!currency.equals("EUR")) {
       throw new UnknownFileFormatException("Währung " + currency);
     }
-    ;
-    validFrom = Date.parseInstant(parts[7], dateFormatter);
-    validTo = Date.parseInstant(parts[8], dateFormatter);
-    createdDate = Date.parseInstant(parts[9], dateFormatter);
-    createdTime = Date.parseInstant(parts[10], timeFormatter);
+    validFrom = Date.parseInstantDate(parts[7], dateFormatter);
+    validTo = Date.parseInstantDate(parts[8], dateFormatter);
+    createdDate = Date.parseInstantDate(parts[9], dateFormatter);
+    createdTime = Date.parseInstantTime(parts[10], timeFormatter);
     fileSeqNo = Integer.parseInt(parts[11]);
   }
 

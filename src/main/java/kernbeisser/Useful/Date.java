@@ -1,9 +1,6 @@
 package kernbeisser.Useful;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
@@ -44,10 +41,17 @@ public class Date {
         .toInstant();
   }
 
-  public static Instant parseInstant(String s, DateTimeFormatter format) {
+  public static Instant parseInstantDate(String s, DateTimeFormatter format) {
     if (s.replace(" ", "").isEmpty()) {
       return null;
     }
-    return LocalDateTime.parse(s, format).atZone(ZoneId.systemDefault()).toInstant();
+    return LocalDate.parse(s, format).atStartOfDay().toInstant(ZoneOffset.UTC);
+  }
+
+  public static Instant parseInstantTime(String s, DateTimeFormatter format) {
+    if (s.replace(" ", "").isEmpty()) {
+      return null;
+    }
+    return LocalTime.parse(s, format).atDate(LocalDate.MIN).toInstant(ZoneOffset.UTC);
   }
 }
