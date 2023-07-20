@@ -113,7 +113,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="85225" layout-manager="GridLayoutManager" row-count="13" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="85225" layout-manager="GridLayoutManager" row-count="14" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="10" left="10" bottom="10" right="10"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -186,7 +186,7 @@
                   </component>
                   <component id="bbc72" class="kernbeisser.CustomComponents.ControllerButton" binding="synchoniseCatalog" custom-create="true">
                     <constraints>
-                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font/>
@@ -195,7 +195,7 @@
                   </component>
                   <vspacer id="6d71b">
                     <constraints>
-                      <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
                   <component id="32155" class="kernbeisser.CustomComponents.ControllerButton" binding="offerManagement" custom-create="true">
@@ -212,7 +212,7 @@
                   </component>
                   <component id="97114" class="kernbeisser.CustomComponents.ControllerButton" binding="supply" custom-create="true">
                     <constraints>
-                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font/>
@@ -221,7 +221,7 @@
                   </component>
                   <component id="71f7f" class="javax.swing.JButton" binding="grantCashierRole" custom-create="true">
                     <constraints>
-                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Ladendienst-Mitglieder verwalten"/>
@@ -229,10 +229,19 @@
                   </component>
                   <component id="d17bf" class="javax.swing.JButton" binding="beginnInventory" custom-create="true">
                     <constraints>
-                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Inventur beginnen"/>
+                    </properties>
+                  </component>
+                  <component id="2cfa3" class="kernbeisser.CustomComponents.ControllerButton" binding="importCatalog" custom-create="true">
+                    <constraints>
+                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <text value="Kornkraft-Katalog einlesen"/>
                     </properties>
                   </component>
                 </children>

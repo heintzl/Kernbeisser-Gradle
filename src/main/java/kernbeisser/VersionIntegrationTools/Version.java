@@ -15,7 +15,8 @@ public enum Version {
   TRIAL_MEMBERSHIP(BeginnerPermissionKeyChange.class),
   SAVE_TRANSACTIONREPORT_NO(AddTransactionReportNo.class),
   TEST_USERS(FillTestUserFlag.class),
-  NEW_ARTICLE_PROPERTIES(AddArticleSupplyPermissions.class);
+  NEW_ARTICLE_PROPERTIES(AddArticleSupplyPermissions.class),
+  CATALOG_IMPORT(AddCatalogImportPermission.class);
 
   public static final Logger logger = LogManager.getLogger(Version.class);
   private final Class<? extends VersionUpdatingTool> updatingToolClass;
