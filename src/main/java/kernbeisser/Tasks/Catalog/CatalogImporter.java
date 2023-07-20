@@ -1,13 +1,11 @@
 package kernbeisser.Tasks.Catalog;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import kernbeisser.DBEntities.CatalogDataSource;
 import kernbeisser.Exeptions.UnknownFileFormatException;
@@ -30,8 +28,8 @@ public class CatalogImporter {
   private int followUpSeqNo;
 
   private static final String DELIMITER = ";";
-  private HashMap<Integer, List<Exception>> readErrors = new HashMap<>();
-  private List<CatalogDataSource> catalog = new ArrayList<>();
+  @Getter private List<CatalogImportError> readErrors = new ArrayList<>();
+  @Getter private List<CatalogDataSource> catalog = new ArrayList<>();
 
   private CatalogDataSource readCatalogEntry(String line, List<Exception> rowLog) {
     CatalogDataSource out = CatalogDataSource.parseRowWithLog(line.split(DELIMITER), rowLog);
@@ -44,7 +42,8 @@ public class CatalogImporter {
     String fileFormat = parts[0];
     String formatVersion = parts[1];
     if (!(fileFormat.equals("BNN") && formatVersion.equals("3"))) {
-      throw new UnknownFileFormatException(fileFormat + " V. " + formatVersion);
+      throw new UnknownFileFormatException(
+          "Unbekanntes Format oder Version: " + fileFormat + " V. " + formatVersion);
     }
     String encoding = parts[2];
     switch (encoding) {
@@ -55,14 +54,14 @@ public class CatalogImporter {
         charset = Charset.forName("CP1252");
         break;
       default:
-        throw new UnknownFileFormatException("Enc. " + encoding);
+        throw new UnknownFileFormatException("Unbenkannte Kodierung: " + encoding);
     }
     address = parts[3];
     scope = parts[4];
     description = parts[5];
     currency = parts[6];
     if (!currency.equals("EUR")) {
-      throw new UnknownFileFormatException("Währung " + currency);
+      throw new UnknownFileFormatException("Falsche Währung: " + currency);
     }
     validFrom = Date.parseInstantDate(parts[7], dateFormatter);
     validTo = Date.parseInstantDate(parts[8], dateFormatter);
@@ -76,18 +75,19 @@ public class CatalogImporter {
       List<String> catalogSource = Files.readAllLines(bnnFile, Catalog.DEFAULT_ENCODING);
       String[] headerParts = catalogSource.get(0).split(DELIMITER);
       parseHeader(headerParts);
-      followUpSeqNo = Integer.parseInt(catalogSource.get(catalogSource.size()).split(DELIMITER)[2]);
+      followUpSeqNo =
+          Integer.parseInt(catalogSource.get(catalogSource.size() - 1).split(DELIMITER)[2]);
       if (fileSeqNo != 1 || followUpSeqNo != 99) {
         throw new UnknownFileFormatException("Kann keine mehrteiligen Katalogdateien verarbeiten!");
       }
       for (int i = 1; i < catalogSource.size() - 1; i++) {
         List<Exception> rowLog = new ArrayList<>();
         catalog.add(readCatalogEntry(catalogSource.get(i), rowLog));
-        if (!rowLog.isEmpty()) {
-          readErrors.put(i, rowLog);
+        for (Exception e : rowLog) {
+          readErrors.add(new CatalogImportError(i, e));
         }
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       Tools.showUnexpectedErrorWarning(e);
     }
   }
