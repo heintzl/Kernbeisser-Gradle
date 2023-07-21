@@ -127,7 +127,7 @@ public class CatalogMergeSession {
     return catalogDataSourceStream.map(
         catalogDataSource -> {
           Optional<Article> revisionSearch =
-              Optional.ofNullable(currentState.get(catalogDataSource.getArtikelNr()));
+              Optional.ofNullable(currentState.get(catalogDataSource.getArtikelNrInt()));
           Article newVersion =
               parseArticle(
                   revisionSearch

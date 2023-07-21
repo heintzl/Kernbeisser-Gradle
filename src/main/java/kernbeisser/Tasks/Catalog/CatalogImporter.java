@@ -40,7 +40,7 @@ public class CatalogImporter {
 
   private static Instant parseInstant(Field field, String s) throws DateTimeParseException {
     if (field.getName().equals("aenderungsZeit")) {
-      return Date.parseInstantTime(s, Date.INSTANT_CATALOG_TIME);
+      return Date.parseInstantTime(s, date, Date.INSTANT_CATALOG_TIME);
     }
     return Date.parseInstantDate(s, Date.INSTANT_CATALOG_DATE);
   }
@@ -92,7 +92,7 @@ public class CatalogImporter {
           declaredField.set(out, tryParse(part.replace(" ", ""), Long::parseLong));
         else if (type.equals(Boolean.class)) declaredField.set(out, part.equals("J"));
         else if (type.equals(Instant.class))
-          declaredField.set(out, tryParse(part, e -> parseInstant(declaredField, e)));
+          declaredField.set(out, tryParse(part, e -> parseInstant(declaredField, out.getAenderungsDatum(), e)));
         else if (type.equals(MetricUnits.class)) declaredField.set(out, parseUnit(part));
       }
     }
@@ -186,7 +186,7 @@ public class CatalogImporter {
     validFrom = Date.parseInstantDate(parts[7], dateFormatter);
     validTo = Date.parseInstantDate(parts[8], dateFormatter);
     createdDate = Date.parseInstantDate(parts[9], dateFormatter);
-    createdTime = Date.parseInstantTime(parts[10], timeFormatter);
+    createdTime = Date.parseInstantTime(parts[10], createdDate, timeFormatter);
     fileSeqNo = Integer.parseInt(parts[11]);
   }
 
