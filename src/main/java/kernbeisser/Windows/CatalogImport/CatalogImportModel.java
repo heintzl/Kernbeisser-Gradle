@@ -25,13 +25,13 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
 
   public void applyChanges() {
     Map<String, Long> existingCatalog = new HashMap<>();
-    CatalogDataSource.getCatalog().forEach(e -> existingCatalog.put(e.getArtikelNr(), e.getId()));
+    CatalogDataSource.getCatalog().forEach(e -> existingCatalog.put(e.getUX(), e.getId()));
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     for (CatalogDataSource source : catalogImporter.getCatalog()) {
-      Long id = existingCatalog.get(source.getArtikelNr());
+      Long id = existingCatalog.get(source.getUX());
       if (id != null) {
         source.setId(id);
       }

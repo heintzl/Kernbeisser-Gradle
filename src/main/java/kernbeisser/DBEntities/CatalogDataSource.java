@@ -10,7 +10,12 @@ import kernbeisser.Tasks.Catalog.BoolValues;
 import lombok.*;
 
 @Data
-@Table
+@Table(
+    uniqueConstraints = {
+      @UniqueConstraint(
+          name = "UX_artikelNr_aktionspreis",
+          columnNames = {"artikelNr", "aktionspreis"})
+    })
 @Entity
 @Setter(AccessLevel.NONE)
 @Getter(AccessLevel.PUBLIC)
@@ -156,6 +161,10 @@ public class CatalogDataSource {
 
   public int getArtikelNrInt() throws NumberFormatException {
     return Integer.parseInt(artikelNr);
+  }
+
+  public String getUX() {
+    return artikelNr + (aktionspreis ? "A" : "");
   }
 
   public static List<CatalogDataSource> getCatalog() {
