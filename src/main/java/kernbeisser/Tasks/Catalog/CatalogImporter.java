@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import kernbeisser.DBEntities.CatalogDataSource;
 import kernbeisser.Enums.MetricUnits;
@@ -22,23 +23,21 @@ import lombok.Getter;
 
 public class CatalogImporter {
 
-  private Charset charset;
   @Getter private String address;
-  private String scope; // V - complete list, T - partial list, S - special list
+  @Getter private String scope; // V - complete list, T - partial list, S - special list
   @Getter private String description;
-  private String currency;
   @Getter private Instant validFrom;
   @Getter private Instant validTo;
   @Getter private Instant createdDate;
   @Getter private Instant createdTime;
+  @Getter private String infoLine;
   private int fileSeqNo;
-  private int followUpSeqNo;
 
-  private static final String DELIMITER = ";";
+  public static final String DELIMITER = ";";
   @Getter private final List<CatalogImportError> readErrors = new ArrayList<>();
   @Getter private final List<CatalogDataSource> catalog = new ArrayList<>();
 
-  public String getScope() {
+  public String getScopeDescription() {
     switch (scope) {
       case "V":
         return "vollständige Liste";
@@ -107,7 +106,10 @@ public class CatalogImporter {
       if (declaredField.getName().equals("aenderungskennung") && !"A;X;N;R;V;W".contains(part)) {
         throw new InvalidValue("ungültige Änderungskennung: " + part);
       }
-    } else if (type.equals(VAT.class)) declaredField.set(out, parseVAT(part));
+    } else if (type.equals(VAT.class)) {
+      declaredField.set(out, parseVAT(part));
+    } else if (type.equals(Boolean.class))
+      declaredField.set(out, parseBoolean(part, declaredField));
     else {
       if (!part.replace(" ", "").equals("")) {
         if (type.equals(Double.class))
@@ -117,8 +119,6 @@ public class CatalogImporter {
           declaredField.set(out, tryParse(part.replace(" ", ""), Integer::parseInt));
         else if (type.equals(Long.class))
           declaredField.set(out, tryParse(part.replace(" ", ""), Long::parseLong));
-        else if (type.equals(Boolean.class))
-          declaredField.set(out, parseBoolean(part, declaredField));
         else if (type.equals(Instant.class))
           declaredField.set(
               out, tryParse(part, e -> parseInstant(declaredField, out.getAenderungsDatum(), e)));
@@ -127,23 +127,18 @@ public class CatalogImporter {
     }
   }
 
-  public static CatalogDataSource parseRowWithLog(String[] parts, List<Exception> errorLog) {
+  public static CatalogDataSource parseRowCore(
+      String[] parts, BiConsumer<Exception, String[]> FormatExceptionHandler) {
     CatalogDataSource out = new CatalogDataSource();
     Field[] declaredFields = CatalogDataSource.class.getDeclaredFields();
     for (int i = 0; i < declaredFields.length; i++) {
       try {
-        parseField(out, declaredFields[i], parts[i]);
+        parseField(out, declaredFields[i], parts[i].trim());
       } catch (NumberFormatException
           | IllegalAccessException
           | DateTimeParseException
           | InvalidValue e) {
-        errorLog.add(
-            new Exception(
-                "Fehler beim Schreiben des Wertes \""
-                    + parts[i]
-                    + "\" in das Feld "
-                    + declaredFields[i].getName(),
-                e));
+        FormatExceptionHandler.accept(e, new String[] {parts[i], declaredFields[i].getName()});
       } catch (ArrayIndexOutOfBoundsException e) {
         return out;
       }
@@ -151,28 +146,32 @@ public class CatalogImporter {
     return out;
   }
 
+  public static CatalogDataSource parseRowWithLog(String[] parts, List<Exception> errorLog) {
+    return parseRowCore(
+        parts,
+        (e, value_field) -> {
+          errorLog.add(
+              new Exception(
+                  "Fehler beim Schreiben des Wertes \""
+                      + value_field[0]
+                      + "\" in das Feld "
+                      + value_field[1],
+                  e));
+        });
+  }
+
   public static CatalogDataSource parseRow(String[] parts) {
-    CatalogDataSource out = new CatalogDataSource();
-    Field[] declaredFields = CatalogDataSource.class.getDeclaredFields();
-    for (int i = 0; i < declaredFields.length; i++) {
-      try {
-        parseField(out, declaredFields[i], parts[i]);
-      } catch (NumberFormatException
-          | IllegalAccessException
-          | DateTimeParseException
-          | InvalidValue e) {
-        Main.logger.error(
-            "Catalog error: cannot parse value \""
-                + parts[i]
-                + "\" into field "
-                + declaredFields[i].getName(),
-            e);
-        Tools.showUnexpectedErrorWarning(e);
-      } catch (ArrayIndexOutOfBoundsException e) {
-        return out;
-      }
-    }
-    return out;
+    return parseRowCore(
+        parts,
+        (e, value_field) -> {
+          Main.logger.error(
+              "Catalog error: cannot parse value \""
+                  + value_field[0]
+                  + "\" into field "
+                  + value_field[1],
+              e);
+          Tools.showUnexpectedErrorWarning(e);
+        });
   }
 
   private static <T> T tryParse(String in, Function<String, T> function)
@@ -180,12 +179,7 @@ public class CatalogImporter {
     return function.apply(in);
   }
 
-  private CatalogDataSource readCatalogEntry(String line, List<Exception> rowLog) {
-    CatalogDataSource out = parseRowWithLog(line.split(DELIMITER), rowLog);
-    return out;
-  }
-
-  private void parseHeader(String[] parts) throws UnknownFileFormatException {
+  public void parseHeader(String[] parts) throws UnknownFileFormatException {
     DateTimeFormatter dateFormatter = Date.INSTANT_CATALOG_DATE;
     DateTimeFormatter timeFormatter = Date.INSTANT_CATALOG_TIME;
     String fileFormat = parts[0];
@@ -197,7 +191,7 @@ public class CatalogImporter {
     String encoding = parts[2];
     switch (encoding) {
       case "0":
-        charset = Charset.forName("CP850");
+        Charset charset = Charset.forName("CP850");
         break;
       case "1":
         charset = Charset.forName("CP1252");
@@ -208,7 +202,7 @@ public class CatalogImporter {
     address = parts[3];
     scope = parts[4];
     description = parts[5];
-    currency = parts[6];
+    String currency = parts[6];
     if (!currency.equals("EUR")) {
       throw new UnknownFileFormatException("Falsche Währung: " + currency);
     }
@@ -222,16 +216,16 @@ public class CatalogImporter {
   public CatalogImporter(Path bnnFile) {
     try {
       List<String> catalogSource = Files.readAllLines(bnnFile, Catalog.DEFAULT_ENCODING);
-      String[] headerParts = catalogSource.get(0).split(DELIMITER);
-      parseHeader(headerParts);
-      followUpSeqNo =
+      infoLine = catalogSource.get(0);
+      parseHeader(infoLine.split(DELIMITER));
+      int followUpSeqNo =
           Integer.parseInt(catalogSource.get(catalogSource.size() - 1).split(DELIMITER)[2]);
       if (fileSeqNo != 1 || followUpSeqNo != 99) {
         throw new UnknownFileFormatException("Kann keine mehrteiligen Katalogdateien verarbeiten!");
       }
       for (int i = 1; i < catalogSource.size() - 1; i++) {
         List<Exception> rowLog = new ArrayList<>();
-        catalog.add(readCatalogEntry(catalogSource.get(i), rowLog));
+        catalog.add(parseRowWithLog(catalogSource.get(i).split(DELIMITER), rowLog));
         for (Exception e : rowLog) {
           readErrors.add(new CatalogImportError(i, e));
         }
