@@ -3,6 +3,7 @@ package kernbeisser.Windows.CatalogImport;
 import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -13,6 +14,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Tasks.Catalog.CatalogImportError;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
@@ -20,30 +22,71 @@ import org.jetbrains.annotations.NotNull;
 public class CatalogImportView implements IView<CatalogImportController> {
   private JTextField filePath;
   private JButton fileChooser;
-  private ObjectTable readErrors;
+  private ObjectTable protocol;
   private JButton close;
-  private JButton readFile;
   private JButton applyChanges;
+
   private JPanel main;
+  private JTextField scope;
+  private JTextField description;
+  private JTextField validFrom;
+  private JTextField validTo;
+  private JTextField createdDate;
+  private JTextField createdTime;
+  private JPanel infoPanel;
+  private JScrollPane protocolPane;
+  private JLabel protocolCaption;
+  private CatalogImportController controller;
 
   @Override
   public void initialize(CatalogImportController controller) {
+    this.controller = controller;
     close.addActionListener(e -> back());
-    readFile.addActionListener(e -> controller.readFile(filePath.getText()));
+    // readFile.addActionListener(e -> controller.readFile(filePath.getText()));
+    filePath.addActionListener(e -> controller.readFile(filePath.getText()));
     applyChanges.addActionListener(e -> controller.applyChanges());
     fileChooser.addActionListener(e -> openFileExplorer());
+    fileChooser.setIcon(IconFontSwing.buildIcon(FontAwesome.FOLDER, 20, new Color(255, 192, 3)));
+    applyChanges.setIcon(IconFontSwing.buildIcon(FontAwesome.DOWNLOAD, 20, new Color(26, 49, 134)));
+    close.setIcon(IconFontSwing.buildIcon(FontAwesome.WINDOW_CLOSE, 20, new Color(133, 0, 16)));
+  }
+
+  public void setScope(String t) {
+    scope.setText(t);
+  }
+
+  public void setDescription(String t) {
+    description.setText(t);
+  }
+
+  public void setCreatedDate(Instant date) {
+    createdDate.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
+  }
+
+  public void setCreatedTime(Instant time) {
+    createdTime.setText(Date.safeDateFormat(time, Date.INSTANT_TIME));
+  }
+
+  public void setValidFrom(Instant date) {
+    validFrom.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
+  }
+
+  public void setValidTo(Instant date) {
+    validTo.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
   }
 
   private void createUIComponents() {
-    readErrors =
+    protocol =
         new ObjectTable<CatalogImportError>(
             Columns.create("Zeile", CatalogImportError::getLineNumber)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(100),
-            Columns.create("Fehlerbeschreibung", CatalogImportError::getE).withPreferredWidth(1200),
+            Columns.<CatalogImportError>create(
+                    "Fehlerbeschreibung", e -> e.getE().getLocalizedMessage())
+                .withPreferredWidth(1200),
             Columns.createIconColumn(
                 "Details",
-                e -> IconFontSwing.buildIcon(FontAwesome.INFO_CIRCLE, 15, Color.BLUE),
+                e -> IconFontSwing.buildIcon(FontAwesome.INFO_CIRCLE, 18, Color.DARK_GRAY),
                 e -> Tools.showUnexpectedErrorWarning(e.getE().getCause()),
                 e -> {
                   return;
@@ -52,8 +95,8 @@ public class CatalogImportView implements IView<CatalogImportController> {
   }
 
   public void setReadErrors(List<CatalogImportError> errors) {
-    readErrors.setObjects(errors);
-    readErrors.repaint();
+    protocol.setObjects(errors);
+    protocol.repaint();
   }
 
   @Override
@@ -91,7 +134,9 @@ public class CatalogImportView implements IView<CatalogImportController> {
           if (jFileChooser.getSelectedFile() == null) {
             return;
           }
-          filePath.setText(jFileChooser.getSelectedFile().getAbsolutePath());
+          String choosenFile = jFileChooser.getSelectedFile().getAbsolutePath();
+          filePath.setText(choosenFile);
+          controller.readFile(choosenFile);
         });
     jFileChooser.showOpenDialog(getContent());
   }

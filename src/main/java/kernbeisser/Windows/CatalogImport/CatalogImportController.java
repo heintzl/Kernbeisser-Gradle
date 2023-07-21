@@ -7,6 +7,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Exeptions.UnknownFileFormatException;
 import kernbeisser.Security.Key;
+import kernbeisser.Tasks.Catalog.CatalogImporter;
 import kernbeisser.Windows.MVC.Controller;
 
 public class CatalogImportController extends Controller<CatalogImportView, CatalogImportModel> {
@@ -28,6 +29,13 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
     }
     try {
       view.setReadErrors(model.readCatalog(filePath));
+      CatalogImporter catalogImporter = model.getCatalogImporter();
+      view.setScope(catalogImporter.getScope());
+      view.setDescription(catalogImporter.getDescription());
+      view.setCreatedDate(catalogImporter.getCreatedDate());
+      view.setCreatedTime(catalogImporter.getCreatedTime());
+      view.setValidFrom(catalogImporter.getValidFrom());
+      view.setValidTo(catalogImporter.getValidTo());
     } catch (UnknownFileFormatException e) {
       view.messageFormatError(e.getMessage());
     }

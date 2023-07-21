@@ -38,7 +38,21 @@ public class CatalogImporter {
   @Getter private final List<CatalogImportError> readErrors = new ArrayList<>();
   @Getter private final List<CatalogDataSource> catalog = new ArrayList<>();
 
-  private static Instant parseInstant(Field field, String s) throws DateTimeParseException {
+  public String getScope() {
+    switch (scope) {
+      case "V":
+        return "vollständige Liste";
+      case "T":
+        return "Teilliste";
+      case "S":
+        return "Sonderliste";
+      default:
+        return "unbekannt";
+    }
+  }
+
+  private static Instant parseInstant(Field field, Instant date, String s)
+      throws DateTimeParseException {
     if (field.getName().equals("aenderungsZeit")) {
       return Date.parseInstantTime(s, date, Date.INSTANT_CATALOG_TIME);
     }
@@ -92,7 +106,8 @@ public class CatalogImporter {
           declaredField.set(out, tryParse(part.replace(" ", ""), Long::parseLong));
         else if (type.equals(Boolean.class)) declaredField.set(out, part.equals("J"));
         else if (type.equals(Instant.class))
-          declaredField.set(out, tryParse(part, e -> parseInstant(declaredField, out.getAenderungsDatum(), e)));
+          declaredField.set(
+              out, tryParse(part, e -> parseInstant(declaredField, out.getAenderungsDatum(), e)));
         else if (type.equals(MetricUnits.class)) declaredField.set(out, parseUnit(part));
       }
     }

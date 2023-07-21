@@ -13,9 +13,10 @@ import kernbeisser.Tasks.Catalog.CatalogImportError;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+import lombok.Getter;
 
 public class CatalogImportModel implements IModel<CatalogImportController> {
-  CatalogImporter catalogImporter;
+  @Getter CatalogImporter catalogImporter;
 
   List<CatalogImportError> readCatalog(Path bnnFile) throws UnknownFileFormatException {
     catalogImporter = new CatalogImporter(bnnFile);
