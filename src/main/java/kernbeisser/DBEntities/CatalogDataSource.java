@@ -6,8 +6,8 @@ import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Tasks.Catalog.BoolValues;
 import lombok.*;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
 @Data
 @Table
@@ -18,12 +18,12 @@ public class CatalogDataSource {
   private String artikelNr;
 
   // CatalogChange.identifier
-  @Required private String aenderungskennung;
-  @Required private Instant aenderungsDatum;
+  private String aenderungskennung;
+  private Instant aenderungsDatum;
   private Instant aenderungsZeit;
   private Long eanLadenEinheit;
   private Long eanBestellEinheit;
-  @Required private String bezeichnung;
+  private String bezeichnung;
   private String bezeichnung2;
   private String bezeichnung3;
 
@@ -31,16 +31,16 @@ public class CatalogDataSource {
   private String handelsklasse;
 
   // BNN-Markenkürzel
-  @Required private String marke;
+  private String marke;
 
   // deprecated Herstellerkürzel
   private String hersteller;
 
   // car plate country code
-  @Required private String herkunft;
+  private String herkunft;
 
   // according to BNN-IK list
-  @Required private String qualitaet;
+  private String qualitaet;
   private String kontrollstelle;
 
   // days
@@ -54,56 +54,92 @@ public class CatalogDataSource {
   // is delivered if article is not on stock
   private String ersatzArtikelNr;
   private Double minBestellMenge;
-  @Required private String bestelleinheit;
-  @Required private Double bestelleinheitsMenge;
-  @Required private String ladeneinheit;
-  @Required private Double mengenfaktor;
+  private String bestelleinheit;
+  private Double bestelleinheitsMenge;
+  private String ladeneinheit;
+  private Double mengenfaktor;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean gewichtsartikel;
-  @Required private String pfandNrLadeneinheit;
+
+  private String pfandNrLadeneinheit;
   private String pfandNrBestelleinheit;
   private Double gewichtLadeneinheit;
-  @Required private Double gewichtBestelleinheit;
+  private Double gewichtBestelleinheit;
 
   // size in cm
   private Integer breite;
   private Integer hoehe;
   private Integer tiefe;
-  @Required private VAT mwstKennung;
+  private VAT mwstKennung;
   private Double vkFestpreis;
   private Double empfVk;
   private Double empfVkGH;
-  @Required private Double preis;
+  private Double preis;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean rabattfaehig;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean skontierfaehig;
+
   private Double staffelMenge1;
   private Double staffelPreis1;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean rabattfaehig1;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean skontierfaehig1;
+
   private Double staffelMenge2;
   private Double staffelPreis2;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean rabattfaehig2;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean skontierfaehig2;
+
   private Double staffelMenge3;
   private Double staffelPreis3;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean rabattfaehig3;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean skontierfaehig3;
+
   private Double staffelMenge4;
   private Double staffelPreis4;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean rabattfaehig4;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean skontierfaehig4;
+
   private Double staffelMenge5;
   private Double staffelPreis5;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean rabattfaehig5;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
   private Boolean skontierfaehig5;
+
   private String artikelart;
+
+  @BoolValues(trueValue = "A")
   private Boolean aktionspreis;
+
   private Instant aktionspreisGueltigAb;
   private Instant aktionspreisGueltigBis;
   private Double empfVkAktion;
 
-  // should be @Required but isn't in bnn
+  // should be but isn't in bnn
   private MetricUnits grundpreisEinheit;
-  @Required private Double grundpreisFaktor;
+  private Double grundpreisFaktor;
   private Instant lieferbarAb;
   private Instant lieferbarBis;
   private String artikelBioId;

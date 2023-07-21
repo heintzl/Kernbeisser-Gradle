@@ -85,6 +85,19 @@ public class CatalogImporter {
     }
   }
 
+  private static Boolean parseBoolean(String s, Field f) throws InvalidValue {
+    String trueValue = "true";
+    String falseValue = "false";
+    BoolValues boolValues = f.getAnnotation(BoolValues.class);
+    if (boolValues != null) {
+      trueValue = boolValues.trueValue();
+      falseValue = boolValues.falseValue();
+    }
+    if (trueValue.equals(s)) return true;
+    if (falseValue.equals(s)) return false;
+    return null;
+  }
+
   private static void parseField(CatalogDataSource out, Field declaredField, String part)
       throws NumberFormatException, IllegalAccessException, DateTimeParseException, InvalidValue {
     declaredField.setAccessible(true);
@@ -104,7 +117,8 @@ public class CatalogImporter {
           declaredField.set(out, tryParse(part.replace(" ", ""), Integer::parseInt));
         else if (type.equals(Long.class))
           declaredField.set(out, tryParse(part.replace(" ", ""), Long::parseLong));
-        else if (type.equals(Boolean.class)) declaredField.set(out, part.equals("J"));
+        else if (type.equals(Boolean.class))
+          declaredField.set(out, parseBoolean(part, declaredField));
         else if (type.equals(Instant.class))
           declaredField.set(
               out, tryParse(part, e -> parseInstant(declaredField, out.getAenderungsDatum(), e)));
