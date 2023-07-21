@@ -3,10 +3,13 @@ package kernbeisser.Windows.CatalogImport;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.List;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Exeptions.UnknownFileFormatException;
 import kernbeisser.Security.Key;
+import kernbeisser.Tasks.Catalog.CatalogImportError;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
 import kernbeisser.Windows.MVC.Controller;
 
@@ -18,7 +21,14 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
   }
 
   @Override
-  public void fillView(CatalogImportView catalogImportView) {}
+  public void fillView(CatalogImportView catalogImportView) {
+    setLastCatalogInfo();
+  }
+
+  public void setLastCatalogInfo() {
+    getView()
+        .setLastCatalogInfo(model.getLastCatalogCreationDate(), model.getLastCatalogValidDate());
+  }
 
   public void readFile(String path) {
     CatalogImportView view = getView();
@@ -28,9 +38,13 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
       return;
     }
     try {
-      view.setReadErrors(model.readCatalog(filePath));
+      List<CatalogImportError> readErrors = model.readCatalog(filePath);
+      if (readErrors.size() == 0) {
+        readErrors.add(new CatalogImportError(0, new Exception("Es gibt keine Fehlermeldungen")));
+      }
+      view.setReadErrors(readErrors);
       CatalogImporter catalogImporter = model.getCatalogImporter();
-      view.setScope(catalogImporter.getScope());
+      view.setScope(catalogImporter.getScopeDescription());
       view.setDescription(catalogImporter.getDescription());
       view.setCreatedDate(catalogImporter.getCreatedDate());
       view.setCreatedTime(catalogImporter.getCreatedTime());
@@ -42,6 +56,22 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
   }
 
   public void applyChanges() {
-    model.applyChanges();
+    CatalogImportView view = getView();
+    if (Instant.now().isAfter(model.getCatalogImporter().getValidTo())) {
+      if (!view.confirmImportInValidCatalog("Die Gültigkeit des Katalogs ist bereits abgelaufen."))
+        return;
+    }
+    if (!model.getLastCatalogCreationDate().isBefore(model.getCatalogImporter().getCreatedDate())) {
+      if (!view.confirmImportInValidCatalog("Der Katalog ist älter, als der bereits vorhandene."))
+        return;
+    }
+    List<CatalogImportError> importErrors = model.applyChanges();
+    if (importErrors.isEmpty()) {
+      importErrors.add(
+          new CatalogImportError(0, new Exception("Es gibt keine Fehler oder Warnungen")));
+    }
+    view.setReadErrors(importErrors);
+    model.refreshLastCatalogInfo();
+    setLastCatalogInfo();
   }
 }

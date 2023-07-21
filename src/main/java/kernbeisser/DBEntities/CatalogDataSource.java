@@ -163,8 +163,10 @@ public class CatalogDataSource {
     return Integer.parseInt(artikelNr);
   }
 
-  public String getUX() {
-    return artikelNr + (aktionspreis ? "A" : "");
+  public String getUXString() {
+    String result = artikelNr;
+    if (aktionspreis != null && aktionspreis) result += "A";
+    return result;
   }
 
   public static List<CatalogDataSource> getCatalog() {
@@ -174,5 +176,13 @@ public class CatalogDataSource {
     et.begin();
     return em.createQuery("SELECT c FROM CatalogDataSource c", CatalogDataSource.class)
         .getResultList();
+  }
+
+  public static void clearCatalog() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.createQuery("DELETE FROM CatalogDataSource").executeUpdate();
   }
 }

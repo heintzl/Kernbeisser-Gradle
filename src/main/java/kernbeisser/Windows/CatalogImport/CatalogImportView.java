@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public class CatalogImportView implements IView<CatalogImportController> {
   private JTextField filePath;
   private JButton fileChooser;
-  private ObjectTable protocol;
+  private ObjectTable<CatalogImportError> protocol;
   private JButton close;
   private JButton applyChanges;
 
@@ -36,6 +36,8 @@ public class CatalogImportView implements IView<CatalogImportController> {
   private JPanel infoPanel;
   private JScrollPane protocolPane;
   private JLabel protocolCaption;
+  private JTextField lastCatalogCreationDate;
+  private JTextField lastCatalogValidDate;
   private CatalogImportController controller;
 
   @Override
@@ -75,10 +77,15 @@ public class CatalogImportView implements IView<CatalogImportController> {
     validTo.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
   }
 
+  public void setLastCatalogInfo(Instant lastCreationDate, Instant lastValidDate) {
+    lastCatalogCreationDate.setText(Date.safeDateFormat(lastCreationDate, Date.INSTANT_DATE));
+    lastCatalogValidDate.setText(Date.safeDateFormat(lastValidDate, Date.INSTANT_DATE));
+  }
+
   private void createUIComponents() {
     protocol =
         new ObjectTable<CatalogImportError>(
-            Columns.create("Zeile", CatalogImportError::getLineNumber)
+            Columns.create("Zeile / Artikelnummer", CatalogImportError::getLineNumber)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(100),
             Columns.<CatalogImportError>create(
@@ -87,7 +94,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
             Columns.createIconColumn(
                 "Details",
                 e -> IconFontSwing.buildIcon(FontAwesome.INFO_CIRCLE, 18, Color.DARK_GRAY),
-                e -> Tools.showUnexpectedErrorWarning(e.getE().getCause()),
+                e -> Tools.showErrorWarning(e.getE(), "Import-Meldung:"),
                 e -> {
                   return;
                 },
@@ -139,5 +146,15 @@ public class CatalogImportView implements IView<CatalogImportController> {
           controller.readFile(choosenFile);
         });
     jFileChooser.showOpenDialog(getContent());
+  }
+
+  public boolean confirmImportInValidCatalog(String s) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            s + "\nSoll der Katalog wirklich eingelesen werden?",
+            "Katalog nicht aktuell",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE)
+        == JOptionPane.YES_OPTION;
   }
 }
