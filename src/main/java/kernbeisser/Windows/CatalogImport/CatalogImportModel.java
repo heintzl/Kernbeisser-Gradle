@@ -83,7 +83,7 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     if (sourceArticleNo == null) {
       throw new CatalogImportErrorException(
           String.format(
-              "Der Artikel wurde übersprungen, weil er keine Artikelnummer hat",
+              "Der Artikel \"%s\" wurde übersprungen, weil er keine Artikelnummer hat",
               sourceDesignation));
     }
     if (sourceArticleNo.length() == 6 && sourceArticleNo.startsWith("7")) {

@@ -8,13 +8,13 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class EditArticlesView implements IView<EditIArticlesController> {
+public class EditArticlesView implements IView<EditArticlesController> {
 
   private JPanel main;
   private JButton choosePriceList;
   private ObjectViewView<Article> objectView;
 
-  @Linked private EditIArticlesController controller;
+  @Linked private EditArticlesController controller;
 
   public void messageBarcodeNotFound(String s) {
     Tools.beep();
@@ -26,7 +26,7 @@ public class EditArticlesView implements IView<EditIArticlesController> {
   }
 
   @Override
-  public void initialize(EditIArticlesController controller) {
+  public void initialize(EditArticlesController controller) {
     choosePriceList.addActionListener(e -> controller.openPriceListSelection());
   }
 
