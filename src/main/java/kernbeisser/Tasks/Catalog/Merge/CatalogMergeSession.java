@@ -18,7 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.CatalogDataSource;
+import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.IgnoredDifference;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
@@ -87,7 +87,7 @@ public class CatalogMergeSession {
     return deposit;
   }
 
-  private Stream<CatalogDataSource> readSource(Collection<String> source) {
+  private Stream<CatalogEntry> readSource(Collection<String> source) {
     return source.stream()
         .skip(1)
         .map(e -> e.split(";"))
@@ -98,11 +98,11 @@ public class CatalogMergeSession {
   private Collection<ArticleMerge> loadSource(Collection<String> source) {
     Supplier kkSupplier = Supplier.getKKSupplier();
 
-    UniqueValidator<CatalogDataSource> uniqueValidator =
+    UniqueValidator<CatalogEntry> uniqueValidator =
         new UniqueValidator<>(
-            UniqueValidator.forbidNull(CatalogDataSource::getArtikelNr),
+            UniqueValidator.forbidNull(CatalogEntry::getArtikelNr),
             UniqueValidator.allowNull(
-                CatalogDataSource::getEanLadenEinheit,
+                CatalogEntry::getEanLadenEinheit,
                 em.createQuery(
                         "select a.barcode from Article a where a.supplier <> :s and a.barcode is not null",
                         Long.class)
@@ -117,7 +117,7 @@ public class CatalogMergeSession {
   }
 
   public Stream<ArticleMerge> mapToArticleMerge(
-      Stream<CatalogDataSource> catalogDataSourceStream,
+      Stream<CatalogEntry> catalogDataSourceStream,
       Map<Integer, Double> deposit,
       Supplier kkSupplier) {
     SurchargeGroup kkDefaultSurchargeGroup = kkSupplier.getOrPersistDefaultSurchargeGroup();

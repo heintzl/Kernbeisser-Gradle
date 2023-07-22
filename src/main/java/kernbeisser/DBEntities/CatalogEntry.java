@@ -19,7 +19,7 @@ import lombok.*;
 @Entity
 @Setter(AccessLevel.NONE)
 @Getter(AccessLevel.PUBLIC)
-public class CatalogDataSource {
+public class CatalogEntry {
   private String artikelNr;
 
   // CatalogChange.identifier
@@ -157,7 +157,7 @@ public class CatalogDataSource {
   @Setter(AccessLevel.PUBLIC)
   private long id;
 
-  public CatalogDataSource() {}
+  public CatalogEntry() {}
 
   public int getArtikelNrInt() throws NumberFormatException {
     return Integer.parseInt(artikelNr);
@@ -169,13 +169,12 @@ public class CatalogDataSource {
     return result;
   }
 
-  public static List<CatalogDataSource> getCatalog() {
+  public static List<CatalogEntry> getCatalog() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("SELECT c FROM CatalogDataSource c", CatalogDataSource.class)
-        .getResultList();
+    return em.createQuery("SELECT c FROM CatalogDataSource c", CatalogEntry.class).getResultList();
   }
 
   public static void clearCatalog() {
