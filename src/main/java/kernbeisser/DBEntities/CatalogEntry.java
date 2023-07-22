@@ -174,7 +174,7 @@ public class CatalogEntry {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("SELECT c FROM CatalogDataSource c", CatalogEntry.class).getResultList();
+    return em.createQuery("SELECT c FROM CatalogEntry c", CatalogEntry.class).getResultList();
   }
 
   public static void clearCatalog() {
@@ -182,6 +182,27 @@ public class CatalogEntry {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    em.createQuery("DELETE FROM CatalogDataSource").executeUpdate();
+    em.createQuery("DELETE FROM CatalogEntry").executeUpdate();
+  }
+
+  public static Collection<CatalogEntry> defaultSearch(String s, int max) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Long n;
+    try {
+      n = Long.parseLong(s);
+    } catch (NumberFormatException e) {
+      n = -9999999L;
+    }
+    return em.createQuery(
+            "select c from CatalogEntry c where c.bezeichnung like :sn or artikelNr like :s or eanLadenEinheit = :n",
+            CatalogEntry.class)
+        .setParameter("sn", "%" + s + "%")
+        .setParameter("s", s + "%")
+        .setParameter("n", n)
+        .setMaxResults(max)
+        .getResultList();
   }
 }

@@ -117,17 +117,15 @@ public class CatalogMergeSession {
   }
 
   public Stream<ArticleMerge> mapToArticleMerge(
-      Stream<CatalogEntry> catalogDataSourceStream,
-      Map<Integer, Double> deposit,
-      Supplier kkSupplier) {
+      Stream<CatalogEntry> catalogEntryStream, Map<Integer, Double> deposit, Supplier kkSupplier) {
     SurchargeGroup kkDefaultSurchargeGroup = kkSupplier.getOrPersistDefaultSurchargeGroup();
     PriceList coveredIntake = PriceList.getCoveredIntakePriceList();
     Map<Integer, Article> currentState = loadCurrentState();
     Map<Integer, Collection<IgnoredDifference>> currentIgnoredDifferences = loadIgnoreDifferences();
-    return catalogDataSourceStream.map(
-        catalogDataSource -> {
+    return catalogEntryStream.map(
+        catalogEntry -> {
           Optional<Article> revisionSearch =
-              Optional.ofNullable(currentState.get(catalogDataSource.getArtikelNrInt()));
+              Optional.ofNullable(currentState.get(catalogEntry.getArtikelNrInt()));
           Article newVersion =
               parseArticle(
                   revisionSearch
@@ -136,7 +134,7 @@ public class CatalogMergeSession {
                           () -> createNewBase(kkSupplier, coveredIntake, kkDefaultSurchargeGroup)),
                   deposit,
                   kkSupplier,
-                  catalogDataSource);
+                  catalogEntry);
           if (!revisionSearch.isPresent()) {
             return new ArticleMerge(
                     newVersion, newVersion, MergeStatus.ADDED, Collections.emptyList())
