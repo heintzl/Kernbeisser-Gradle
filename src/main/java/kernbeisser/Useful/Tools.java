@@ -22,6 +22,8 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SurchargeGroup;
@@ -341,19 +343,51 @@ public class Tools {
     return response;
   }
 
-  public static void showUnexpectedErrorWarning(Throwable e) throws RuntimeException {
-    Main.logger.error(e.getMessage(), e);
-    JOptionPane.showMessageDialog(
-        null,
+  private static void showStackTrace(Throwable error) {
+    JTextArea textArea = new JTextArea(error.getMessage() + "\n");
+    textArea.append(
+        Arrays.stream(error.getStackTrace())
+            .map(StackTraceElement::toString)
+            .collect(Collectors.joining("\n")));
+    textArea.setEditable(false);
+    textArea.setLineWrap(true);
+    textArea.setWrapStyleWord(true);
+    JScrollPane message = new JScrollPane(textArea);
+    message.setPreferredSize(new Dimension(480, 340));
+    JOptionPane.showMessageDialog(null, message, "Fehlerstapel", JOptionPane.ERROR_MESSAGE);
+  }
+
+  public static void showErrorWarning(Throwable error, String explainingMessage)
+      throws RuntimeException {
+    JTextArea textArea = new JTextArea();
+    textArea.setText(explainingMessage + "\n" + error.toString());
+    textArea.setEditable(false);
+    textArea.setLineWrap(true);
+    textArea.setWrapStyleWord(true);
+    JScrollPane errorMessagePane = new JScrollPane(textArea);
+    JPanel messagePanel = new JPanel(new BorderLayout());
+    Color buttonColor = new Color(133, 0, 16);
+    JButton stackTraceButton = new JButton("Fehlerstapel");
+    stackTraceButton.setIcon(IconFontSwing.buildIcon(FontAwesome.LIST, 20, buttonColor));
+    stackTraceButton.addActionListener(e -> showStackTrace(error));
+    // JPanel buttonPanel = new JPanel();
+    // buttonPanel.add(stackTraceButton);
+    messagePanel.add(errorMessagePane, BorderLayout.CENTER);
+    messagePanel.add(stackTraceButton, BorderLayout.SOUTH);
+    messagePanel.setPreferredSize(new Dimension(480, 380));
+    JOptionPane.showMessageDialog(null, messagePanel, "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
+  }
+
+  public static void showUnexpectedErrorWarning(Throwable error) throws RuntimeException {
+    Main.logger.error(error.getMessage(), error);
+    showErrorWarning(
+        error,
         "Ein unerwarteter Fehler ist aufgetreten.\n"
             + "Bitte melde den Fehler beim Entwicklerteam\n"
             + "oder auf Github:\n"
             + "https://github.com/julikiller98/Kernbeisser-Gradle/\n"
-            + "Fehler:\n"
-            + e.toString(),
-        "Es ist ein unerwarteter Fehler aufgetreten",
-        JOptionPane.ERROR_MESSAGE);
-    throw new RuntimeException(e);
+            + "Fehler:");
+    throw new RuntimeException(error);
   }
 
   public static void showPrintAbortedWarning(Exception e, boolean logEvent) {

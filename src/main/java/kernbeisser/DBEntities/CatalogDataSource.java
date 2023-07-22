@@ -1,129 +1,188 @@
 package kernbeisser.DBEntities;
 
-import java.lang.reflect.Field;
-import java.util.function.Function;
+import java.time.Instant;
+import java.util.List;
 import javax.persistence.*;
-import kernbeisser.Useful.Tools;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Enums.VAT;
+import kernbeisser.Tasks.Catalog.BoolValues;
+import lombok.*;
 
 @Data
-@Table
+@Table(
+    uniqueConstraints = {
+      @UniqueConstraint(
+          name = "UX_artikelNr_aktionspreis",
+          columnNames = {"artikelNr", "aktionspreis"})
+    })
 @Entity
 @Setter(AccessLevel.NONE)
+@Getter(AccessLevel.PUBLIC)
 public class CatalogDataSource {
-  private Integer artikelNr;
+  private String artikelNr;
+
+  // CatalogChange.identifier
   private String aenderungskennung;
-  private Integer aenderungsDatum;
-  private Integer aenderungsZeit;
-  private Long eANladen;
-  private Long eANbestell;
+  private Instant aenderungsDatum;
+  private Instant aenderungsZeit;
+  private Long eanLadenEinheit;
+  private Long eanBestellEinheit;
   private String bezeichnung;
   private String bezeichnung2;
   private String bezeichnung3;
+
+  // roman Number
   private String handelsklasse;
+
+  // BNN-Markenkürzel
+  private String marke;
+
+  // deprecated Herstellerkürzel
   private String hersteller;
-  private String hersteller2;
+
+  // car plate country code
   private String herkunft;
+
+  // according to BNN-IK list
   private String qualitaet;
   private String kontrollstelle;
+
+  // days
   private Integer mHDRestlaufzeit;
-  private Integer wGBNN;
-  private Integer wGIfH;
-  private Integer wGGH;
+
+  // wg* trade group properties
+  private Integer wgBnn;
+  private Integer wgIfh;
+  private Integer wgGh;
+
+  // is delivered if article is not on stock
   private String ersatzArtikelNr;
-  private Integer minBestellMenge;
+  private Double minBestellMenge;
   private String bestelleinheit;
   private Double bestelleinheitsMenge;
   private String ladeneinheit;
-  private Integer mengenfaktor;
-  private String gewichtsartikel;
+  private Double mengenfaktor;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean gewichtsartikel;
+
   private String pfandNrLadeneinheit;
   private String pfandNrBestelleinheit;
-  private Integer gewichtLadeneinheit;
-  private String gewichtBestelleinheit;
+  private Double gewichtLadeneinheit;
+  private Double gewichtBestelleinheit;
+
+  // size in cm
   private Integer breite;
   private Integer hoehe;
   private Integer tiefe;
-  private Integer mwstKennung;
+  private VAT mwstKennung;
   private Double vkFestpreis;
   private Double empfVk;
   private Double empfVkGH;
   private Double preis;
-  private String rabattfaehig;
-  private String skontierfaehig;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean rabattfaehig;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean skontierfaehig;
+
   private Double staffelMenge1;
   private Double staffelPreis1;
-  private String rabattfaehig1;
-  private String skontierfaehig1;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean rabattfaehig1;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean skontierfaehig1;
+
   private Double staffelMenge2;
   private Double staffelPreis2;
-  private String rabattfaehig2;
-  private String skontierfaehig2;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean rabattfaehig2;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean skontierfaehig2;
+
   private Double staffelMenge3;
   private Double staffelPreis3;
-  private String rabattfaehig3;
-  private String skontierfaehig3;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean rabattfaehig3;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean skontierfaehig3;
+
   private Double staffelMenge4;
   private Double staffelPreis4;
-  private String rabattfaehig4;
-  private String skontierfaehig4;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean rabattfaehig4;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean skontierfaehig4;
+
   private Double staffelMenge5;
   private Double staffelPreis5;
-  private String rabattfaehig5;
-  private String skontierfaehig5;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean rabattfaehig5;
+
+  @BoolValues(trueValue = "J", falseValue = "N")
+  private Boolean skontierfaehig5;
+
   private String artikelart;
-  private String aktionspreis;
-  private Integer aktionspreisGueltigAb;
-  private Integer aktionspreisGueltigBis;
+
+  @BoolValues(trueValue = "A")
+  private Boolean aktionspreis;
+
+  private Instant aktionspreisGueltigAb;
+  private Instant aktionspreisGueltigBis;
   private Double empfVkAktion;
-  private String grundpreisEinheit;
+
+  // should be but isn't in bnn
+  private MetricUnits grundpreisEinheit;
   private Double grundpreisFaktor;
-  private Integer lieferbarAb;
-  private Integer lieferbarBis;
+  private Instant lieferbarAb;
+  private Instant lieferbarBis;
+  private String artikelBioId;
+  private Integer artikelVariant;
+  private String markenId;
+  private String herstellerId;
 
   @Id
-  @GeneratedValue
-  @GenericGenerator(name = "increment", strategy = "increment")
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Setter(AccessLevel.PUBLIC)
   private long id;
 
   public CatalogDataSource() {}
 
-  public static CatalogDataSource parseRow(String[] parts) {
-    CatalogDataSource out = new CatalogDataSource();
-    Field[] declaredFields = CatalogDataSource.class.getDeclaredFields();
-    for (int i = 0; i < declaredFields.length; i++) {
-      try {
-        Field declaredField = declaredFields[i];
-        declaredField.setAccessible(true);
-        Class<?> type = declaredField.getType();
-        if (type.equals(String.class)) declaredField.set(out, parts[i]);
-        else {
-          if (!parts[i].replace(" ", "").equals("")) {
-            if (type.equals(Double.class))
-              declaredField.set(
-                  out, tryParse(parts[i].replace(",", ".".replace(" ", "")), Double::parseDouble));
-            else if (type.equals(Integer.class))
-              declaredField.set(out, tryParse(parts[i].replace(" ", ""), Integer::parseInt));
-            else if (type.equals(Long.class))
-              declaredField.set(out, tryParse(parts[i].replace(" ", ""), Long::parseLong));
-          }
-        }
-      } catch (NumberFormatException | IllegalAccessException e) {
-        System.err.println(i);
-        System.err.println(declaredFields[i]);
-        Tools.showUnexpectedErrorWarning(e);
-      } catch (ArrayIndexOutOfBoundsException e) {
-        return out;
-      }
-    }
-    return out;
+  public int getArtikelNrInt() throws NumberFormatException {
+    return Integer.parseInt(artikelNr);
   }
 
-  private static <T> T tryParse(String in, Function<String, T> function)
-      throws NumberFormatException {
-    return function.apply(in);
+  public String getUXString() {
+    String result = artikelNr;
+    if (aktionspreis != null && aktionspreis) result += "A";
+    return result;
+  }
+
+  public static List<CatalogDataSource> getCatalog() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("SELECT c FROM CatalogDataSource c", CatalogDataSource.class)
+        .getResultList();
+  }
+
+  public static void clearCatalog() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.createQuery("DELETE FROM CatalogDataSource").executeUpdate();
   }
 }

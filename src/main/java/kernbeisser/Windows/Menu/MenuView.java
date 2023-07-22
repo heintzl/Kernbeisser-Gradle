@@ -17,6 +17,7 @@ import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
+import kernbeisser.Windows.CatalogImport.CatalogImportController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.EditArticles.EditIArticlesController;
 import kernbeisser.Windows.EditJobs.EditJobs;
@@ -82,6 +83,7 @@ public class MenuView implements IView<MenuController> {
   private JButton beginnInventory;
   private JPanel menugroupMyAccount;
   private ControllerButton internalTransaction;
+  private ControllerButton importCatalog;
 
   @Override
   public void initialize(MenuController controller) {
@@ -239,6 +241,9 @@ public class MenuView implements IView<MenuController> {
             () -> new EditUserGroupController(LogInModel.getLoggedIn()),
             EditUserGroupController.class,
             Controller::openTab);
+    importCatalog =
+        new ControllerButton(
+            CatalogImportController::new, CatalogImportController.class, Controller::openTab);
     synchoniseCatalog =
         new ControllerButton(
             SynchronizeArticleController::new,

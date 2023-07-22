@@ -8,7 +8,6 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogDataSource;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
 
 public class Catalog {
@@ -24,9 +23,9 @@ public class Catalog {
       Map<Integer, Double> deposit,
       Supplier kkSupplier,
       CatalogDataSource catalogDataSource) {
-    base.setSuppliersItemNumber(catalogDataSource.getArtikelNr());
+    base.setSuppliersItemNumber(catalogDataSource.getArtikelNrInt());
     base.setName(catalogDataSource.getBezeichnung());
-    base.setWeighable(catalogDataSource.getGewichtsartikel().equals("J"));
+    base.setWeighable(catalogDataSource.getGewichtsartikel());
     base.setSingleDeposit(
         !catalogDataSource.getPfandNrLadeneinheit().equals("")
             ? deposit.get(Integer.parseInt(catalogDataSource.getPfandNrLadeneinheit()))
@@ -35,12 +34,12 @@ public class Catalog {
         !catalogDataSource.getPfandNrBestelleinheit().equals("")
             ? deposit.get(Integer.parseInt(catalogDataSource.getPfandNrBestelleinheit()))
             : 0);
-    base.setBarcode(catalogDataSource.getEANladen());
+    base.setBarcode(catalogDataSource.getEanLadenEinheit());
     base.setProducer(catalogDataSource.getHersteller());
     base.setVerified(false);
     base.setInfo(catalogDataSource.getBezeichnung2() + "\n" + catalogDataSource.getBezeichnung3());
     base.setContainerSize(catalogDataSource.getBestelleinheitsMenge());
-    base.setVat(catalogDataSource.getMwstKennung() == 2 ? VAT.HIGH : VAT.LOW);
+    base.setVat(catalogDataSource.getMwstKennung());
     base.setSupplier(kkSupplier);
     base.setMetricUnits(extractUnit(catalogDataSource.getLadeneinheit()));
     base.setNetPrice(catalogDataSource.getPreis());

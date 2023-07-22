@@ -24,6 +24,7 @@ import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.ShopRange;
+import kernbeisser.Tasks.Catalog.CatalogImporter;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import org.hibernate.Session;
@@ -91,7 +92,7 @@ public class CatalogMergeSession {
         .skip(1)
         .map(e -> e.split(";"))
         .filter(e -> e.length >= 42)
-        .map(CatalogDataSource::parseRow);
+        .map(CatalogImporter::parseRow);
   }
 
   private Collection<ArticleMerge> loadSource(Collection<String> source) {
@@ -101,7 +102,7 @@ public class CatalogMergeSession {
         new UniqueValidator<>(
             UniqueValidator.forbidNull(CatalogDataSource::getArtikelNr),
             UniqueValidator.allowNull(
-                CatalogDataSource::getEANladen,
+                CatalogDataSource::getEanLadenEinheit,
                 em.createQuery(
                         "select a.barcode from Article a where a.supplier <> :s and a.barcode is not null",
                         Long.class)
@@ -126,7 +127,7 @@ public class CatalogMergeSession {
     return catalogDataSourceStream.map(
         catalogDataSource -> {
           Optional<Article> revisionSearch =
-              Optional.ofNullable(currentState.get(catalogDataSource.getArtikelNr()));
+              Optional.ofNullable(currentState.get(catalogDataSource.getArtikelNrInt()));
           Article newVersion =
               parseArticle(
                   revisionSearch

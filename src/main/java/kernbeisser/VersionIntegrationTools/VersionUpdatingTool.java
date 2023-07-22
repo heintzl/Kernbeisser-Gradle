@@ -9,4 +9,8 @@ public interface VersionUpdatingTool {
       "INSERT INTO Permission_keySet (Permission_id, keySet) "
           + "SELECT Permission_id, REPLACE(keySet, :template, :new) "
           + "FROM Permission_keySet WHERE keySet LIKE CONCAT(:template, '_%')";
+  String insertSimpleKeySetQuery =
+      "INSERT INTO Permission_keySet (Permission_id, keySet) "
+          + "SELECT Permission_id, :new "
+          + "FROM Permission_keySet WHERE keySet = :template";
 }

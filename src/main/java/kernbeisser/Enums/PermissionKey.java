@@ -40,6 +40,7 @@ public enum PermissionKey {
   ACTION_OPEN_EDIT_USER_GROUP(ActionPermission.class),
   ACTION_OPEN_EDIT_USER_SETTING(ActionPermission.class),
   ACTION_OPEN_EDIT_USERS(ActionPermission.class),
+  ACTION_OPEN_CATALOG_IMPORT(ActionPermission.class),
   ACTION_OPEN_INVENTORY(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICE_LISTS(ActionPermission.class),
   ACTION_OPEN_PRE_ORDER(ActionPermission.class),
@@ -517,6 +518,8 @@ public enum PermissionKey {
             .put("ACTION_OPEN_ADMIN_TOOLS", "Benutzer administrieren")
             .put("ACTION_GRANT_CASHIER_PERMISSION", "Ladendienstrolle vergeben")
             .put("ACTION_OPEN_PRINT_LABELS", "Etiketten drucken")
+            .put("ACTION_OPEN_INVENTORY", "Inventur starten")
+            .put("ACTION_OPEN_CATALOG_IMPORT", "Kornkraft Katalog importieren")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }
