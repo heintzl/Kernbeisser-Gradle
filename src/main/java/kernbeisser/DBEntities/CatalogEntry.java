@@ -1,6 +1,7 @@
 package kernbeisser.DBEntities;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
@@ -169,6 +170,16 @@ public class CatalogEntry {
     return result;
   }
 
+  public List<CatalogEntry> getByArticleNo(String ArticleNo) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("SELECT c FROM CatalogEntry c WHERE ArtikelNr = :n", CatalogEntry.class)
+        .setParameter("n", ArticleNo)
+        .getResultList();
+  }
+
   public static List<CatalogEntry> getCatalog() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -186,6 +197,7 @@ public class CatalogEntry {
   }
 
   public static Collection<CatalogEntry> defaultSearch(String s, int max) {
+    max = Integer.MAX_VALUE;
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();

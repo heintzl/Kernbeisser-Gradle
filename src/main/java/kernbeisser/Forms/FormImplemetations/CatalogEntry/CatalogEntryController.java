@@ -2,10 +2,9 @@ package kernbeisser.Forms.FormImplemetations.CatalogEntry;
 
 import java.util.function.Supplier;
 import kernbeisser.DBEntities.CatalogEntry;
-import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
-import kernbeisser.Security.Key;
 import org.jetbrains.annotations.NotNull;
 
 public class CatalogEntryController
@@ -24,17 +23,21 @@ public class CatalogEntryController
   @Override
   public void fillView(CatalogEntryView catalogEntryView) {}
 
+  // currently read only!
   @Override
-  @Key(PermissionKey.ADD_JOB)
-  public void addPermission() {}
+  public void addPermission() {
+    throw new PermissionKeyRequiredException();
+  }
 
   @Override
-  @Key(PermissionKey.EDIT_JOB)
-  public void editPermission() {}
+  public void editPermission() {
+    throw new PermissionKeyRequiredException();
+  }
 
   @Override
-  @Key(PermissionKey.REMOVE_JOB)
-  public void removePermission() {}
+  public void removePermission() {
+    throw new PermissionKeyRequiredException();
+  }
 
   @Override
   public ObjectForm<CatalogEntry> getObjectContainer() {

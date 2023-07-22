@@ -20,6 +20,7 @@ import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.CatalogImport.CatalogImportController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
 import kernbeisser.Windows.EditArticles.EditArticlesController;
+import kernbeisser.Windows.EditCatalog.EditCatalogController;
 import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSuppliers.EditSuppliers;
 import kernbeisser.Windows.EditSurchargeGroups.EditSurchargeGroupController;
@@ -245,7 +246,9 @@ public class MenuView implements IView<MenuController> {
     importCatalog =
         new ControllerButton(
             CatalogImportController::new, CatalogImportController.class, Controller::openTab);
-    editCatalog = ControllerButton.empty();
+    editCatalog =
+        new ControllerButton(
+            EditCatalogController::new, EditCatalogController.class, Controller::openTab);
     synchoniseCatalog =
         new ControllerButton(
             SynchronizeArticleController::new,

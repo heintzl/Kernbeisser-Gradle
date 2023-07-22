@@ -94,6 +94,6 @@ public class ShelfView implements IView<ShelfController> {
         new AccessCheckingField<>(
             Shelf::getShelfNo, Shelf::setShelfNo, AccessCheckingField.UNSIGNED_INT_FORMER);
     extraArticleLabel = new JLabel("Extra Artikel");
-    extraArticleLabel.setIcon(Icons.barcodeIcon());
+    extraArticleLabel.setIcon(Icons.barcodeIcon);
   }
 }
