@@ -38,6 +38,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
   private JLabel protocolCaption;
   private JTextField lastCatalogCreationDate;
   private JTextField lastCatalogValidDate;
+  private JProgressBar loadingIndicator;
   private CatalogImportController controller;
 
   @Override
@@ -47,6 +48,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
     // readFile.addActionListener(e -> controller.readFile(filePath.getText()));
     filePath.addActionListener(e -> controller.readFile(filePath.getText()));
     applyChanges.addActionListener(e -> controller.applyChanges());
+    applyChanges.setEnabled(false);
     fileChooser.addActionListener(e -> openFileExplorer());
     fileChooser.setIcon(IconFontSwing.buildIcon(FontAwesome.FOLDER, 20, new Color(255, 192, 3)));
     applyChanges.setIcon(IconFontSwing.buildIcon(FontAwesome.DOWNLOAD, 20, new Color(26, 49, 134)));
@@ -80,6 +82,15 @@ public class CatalogImportView implements IView<CatalogImportController> {
   public void setLastCatalogInfo(Instant lastCreationDate, Instant lastValidDate) {
     lastCatalogCreationDate.setText(Date.safeDateFormat(lastCreationDate, Date.INSTANT_DATE));
     lastCatalogValidDate.setText(Date.safeDateFormat(lastValidDate, Date.INSTANT_DATE));
+  }
+
+  public void setApplyChangesEnabled(boolean b) {
+    applyChanges.setEnabled(b);
+  }
+
+  public void indicateLoading(boolean b) {
+    applyChanges.setEnabled(!b);
+    loadingIndicator.setVisible(b);
   }
 
   private void createUIComponents() {

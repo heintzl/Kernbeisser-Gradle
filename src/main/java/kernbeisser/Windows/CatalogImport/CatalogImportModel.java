@@ -25,6 +25,7 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
   @Getter private CatalogImporter catalogImporter;
   @Getter private Instant lastCatalogCreationDate;
   @Getter private Instant lastCatalogValidDate;
+
   public CatalogImportModel() {
     refreshLastCatalogInfo();
   }
@@ -68,7 +69,9 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
       }
       if (!sourceUpdateType.equals(targetUpdateType)) {
         throw new CatalogImportWarningException(
-            String.format("Der Artikel \"%1s\" ist %2s nicht mehr gelistet", sourceDesignation, (sourceUpdateType.equals("V") ? "vorübergehend " : "")));
+            String.format(
+                "Der Artikel \"%1s\" ist %2s nicht mehr gelistet",
+                sourceDesignation, (sourceUpdateType.equals("V") ? "vorübergehend " : "")));
       }
     }
     Instant sourceActionValidTo = source.getAktionspreisGueltigBis();
@@ -78,13 +81,20 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     }
     String sourceArticleNo = source.getArtikelNr();
     if (sourceArticleNo == null) {
-      throw  new CatalogImportErrorException(String.format("Der Artikel wurde übersprungen, weil er keine Artikelnummer hat", sourceDesignation));
+      throw new CatalogImportErrorException(
+          String.format(
+              "Der Artikel wurde übersprungen, weil er keine Artikelnummer hat",
+              sourceDesignation));
     }
     if (sourceArticleNo.length() == 6 && sourceArticleNo.startsWith("7")) {
-      throw  new CatalogImportErrorException(String.format("Der Artikel \"%1s\" wurde übersprungen, weil es sich um Frischware handelt",sourceDesignation));
+      throw new CatalogImportErrorException(
+          String.format(
+              "Der Artikel \"%1s\" wurde übersprungen, weil es sich um Frischware handelt",
+              sourceDesignation));
     }
     if (!targetUpdateDate.isBefore(sourceUpdateDate)) {
-      throw new CatalogImportErrorException("Der Artikel wurde übersprungen, weil er nicht aktueller ist, als der vorhandene");
+      throw new CatalogImportErrorException(
+          "Der Artikel wurde übersprungen, weil er nicht aktueller ist, als der vorhandene");
     }
     return true;
   }

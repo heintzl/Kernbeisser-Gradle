@@ -37,22 +37,32 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
       view.messagePathNotFound(path);
       return;
     }
-    try {
-      List<CatalogImportError> readErrors = model.readCatalog(filePath);
-      if (readErrors.size() == 0) {
-        readErrors.add(new CatalogImportError(0, new Exception("Es gibt keine Fehlermeldungen")));
-      }
-      view.setReadErrors(readErrors);
-      CatalogImporter catalogImporter = model.getCatalogImporter();
-      view.setScope(catalogImporter.getScopeDescription());
-      view.setDescription(catalogImporter.getDescription());
-      view.setCreatedDate(catalogImporter.getCreatedDate());
-      view.setCreatedTime(catalogImporter.getCreatedTime());
-      view.setValidFrom(catalogImporter.getValidFrom());
-      view.setValidTo(catalogImporter.getValidTo());
-    } catch (UnknownFileFormatException e) {
-      view.messageFormatError(e.getMessage());
-    }
+    view.indicateLoading(true);
+    new Thread(
+            () -> {
+              try {
+                List<CatalogImportError> readErrors = model.readCatalog(filePath);
+                if (readErrors.size() == 0) {
+                  readErrors.add(
+                      new CatalogImportError(0, new Exception("Es gibt keine Fehlermeldungen")));
+                }
+                view.setReadErrors(readErrors);
+                CatalogImporter catalogImporter = model.getCatalogImporter();
+                view.setScope(catalogImporter.getScopeDescription());
+                view.setDescription(catalogImporter.getDescription());
+                view.setCreatedDate(catalogImporter.getCreatedDate());
+                view.setCreatedTime(catalogImporter.getCreatedTime());
+                view.setValidFrom(catalogImporter.getValidFrom());
+                view.setValidTo(catalogImporter.getValidTo());
+                view.setApplyChangesEnabled(true);
+              } catch (UnknownFileFormatException e) {
+                view.messageFormatError(e.getMessage());
+                view.setApplyChangesEnabled(false);
+              } finally {
+                view.indicateLoading(false);
+              }
+            })
+        .start();
   }
 
   public void applyChanges() {
@@ -62,16 +72,23 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
         return;
     }
     if (!model.getLastCatalogCreationDate().isBefore(model.getCatalogImporter().getCreatedDate())) {
-      if (!view.confirmImportInValidCatalog("Der Katalog ist älter, als der bereits vorhandene."))
-        return;
+      if (!view.confirmImportInValidCatalog(
+          "Der Katalog ist nicht aktueller, als der bereits vorhandene.")) return;
     }
-    List<CatalogImportError> importErrors = model.applyChanges();
-    if (importErrors.isEmpty()) {
-      importErrors.add(
-          new CatalogImportError(0, new Exception("Es gibt keine Fehler oder Warnungen")));
-    }
-    view.setReadErrors(importErrors);
-    model.refreshLastCatalogInfo();
-    setLastCatalogInfo();
+    new Thread(
+            () -> {
+              view.indicateLoading(true);
+              List<CatalogImportError> importErrors = model.applyChanges();
+              if (importErrors.isEmpty()) {
+                importErrors.add(
+                    new CatalogImportError(
+                        0, new Exception("Es gibt keine Fehler oder Warnungen")));
+              }
+              view.setReadErrors(importErrors);
+              model.refreshLastCatalogInfo();
+              setLastCatalogInfo();
+              view.indicateLoading(false);
+            })
+        .start();
   }
 }
