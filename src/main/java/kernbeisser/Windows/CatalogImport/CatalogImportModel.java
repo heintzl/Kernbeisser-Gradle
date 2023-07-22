@@ -25,7 +25,6 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
   @Getter private CatalogImporter catalogImporter;
   @Getter private Instant lastCatalogCreationDate;
   @Getter private Instant lastCatalogValidDate;
-
   public CatalogImportModel() {
     refreshLastCatalogInfo();
   }
@@ -46,35 +45,46 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
   }
 
   private boolean checkImport(
-      CatalogDataSource source, CatalogDataSource existing, List<CatalogImportError> importErrors)
+      CatalogDataSource source, CatalogDataSource target, List<CatalogImportError> importErrors)
       throws CatalogImportErrorException, CatalogImportWarningException {
     boolean exists = true;
-    String updateTypeSource = source.getAenderungskennung();
-    String updateTypeExisting = "ZZ";
-    if (existing == null) {
-      exists = false;
-    } else {
-      if (source.equals(existing)) {
+    String sourceUpdateType = source.getAenderungskennung();
+    String targetUpdateType = "ZZ";
+    Instant sourceUpdateDate = source.getAenderungsDatum();
+    Instant targetUpdateDate = Instant.MIN;
+    String sourceDesignation = source.getBezeichnung();
+    exists = target != null;
+    if (exists) {
+      if (source.equals(target)) {
         return false;
       }
-      updateTypeExisting = existing.getAenderungskennung();
+      targetUpdateType = target.getAenderungskennung();
+      targetUpdateDate = target.getAenderungsDatum();
     }
-    if ("X;V".contains(updateTypeSource)) {
+    if ("X;V".contains(sourceUpdateType)) {
       if (!exists) {
         throw new CatalogImportErrorException(
             "Der Artikel wurde übersprungen, weil er nicht mehr gelistet ist");
       }
-      if (!updateTypeSource.equals(updateTypeExisting)) {
+      if (!sourceUpdateType.equals(targetUpdateType)) {
         throw new CatalogImportWarningException(
-            "Der Artikel ist "
-                + (updateTypeSource.equals("V") ? "vorübergehend " : "")
-                + "nicht mehr gelistet");
+            String.format("Der Artikel \"%1s\" ist %2s nicht mehr gelistet", sourceDesignation, (sourceUpdateType.equals("V") ? "vorübergehend " : "")));
       }
     }
-    Instant actionValidToSource = source.getAktionspreisGueltigBis();
-    if (actionValidToSource != null && actionValidToSource.isBefore(Instant.now())) {
+    Instant sourceActionValidTo = source.getAktionspreisGueltigBis();
+    if (sourceActionValidTo != null && sourceActionValidTo.isBefore(Instant.now())) {
       throw new CatalogImportErrorException(
           "\"Der Aktions-Artikel wurde übersprungen, weil das Angebot bereits abgelaufen ist");
+    }
+    String sourceArticleNo = source.getArtikelNr();
+    if (sourceArticleNo == null) {
+      throw  new CatalogImportErrorException(String.format("Der Artikel wurde übersprungen, weil er keine Artikelnummer hat", sourceDesignation));
+    }
+    if (sourceArticleNo.length() == 6 && sourceArticleNo.startsWith("7")) {
+      throw  new CatalogImportErrorException(String.format("Der Artikel \"%1s\" wurde übersprungen, weil es sich um Frischware handelt",sourceDesignation));
+    }
+    if (!targetUpdateDate.isBefore(sourceUpdateDate)) {
+      throw new CatalogImportErrorException("Der Artikel wurde übersprungen, weil er nicht aktueller ist, als der vorhandene");
     }
     return true;
   }
