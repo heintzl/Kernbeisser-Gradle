@@ -19,7 +19,7 @@ import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.CatalogImport.CatalogImportController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
-import kernbeisser.Windows.EditArticles.EditIArticlesController;
+import kernbeisser.Windows.EditArticles.EditArticlesController;
 import kernbeisser.Windows.EditJobs.EditJobs;
 import kernbeisser.Windows.EditSuppliers.EditSuppliers;
 import kernbeisser.Windows.EditSurchargeGroups.EditSurchargeGroupController;
@@ -84,6 +84,7 @@ public class MenuView implements IView<MenuController> {
   private JPanel menugroupMyAccount;
   private ControllerButton internalTransaction;
   private ControllerButton importCatalog;
+  private ControllerButton editCatalog;
 
   @Override
   public void initialize(MenuController controller) {
@@ -136,7 +137,7 @@ public class MenuView implements IView<MenuController> {
             ManagePriceListsController::new, ManagePriceListsController.class, Controller::openTab);
     editArticles =
         new ControllerButton(
-            EditIArticlesController::new, EditIArticlesController.class, Controller::openTab);
+            EditArticlesController::new, EditArticlesController.class, Controller::openTab);
     editSurchargeTables =
         new ControllerButton(EditSurchargeGroupController::new, EditSurchargeGroupController.class);
     changePassword =
@@ -244,6 +245,7 @@ public class MenuView implements IView<MenuController> {
     importCatalog =
         new ControllerButton(
             CatalogImportController::new, CatalogImportController.class, Controller::openTab);
+    editCatalog = ControllerButton.empty();
     synchoniseCatalog =
         new ControllerButton(
             SynchronizeArticleController::new,
