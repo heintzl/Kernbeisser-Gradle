@@ -108,7 +108,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                 objectViewController.openForm(
                     Articles.getByBarcode(Long.parseLong(e)).orElseThrow(NoResultException::new),
                     Mode.EDIT));
-    objectViewController.addComponents(articleFilter.createFilterCheckboxes());
+    objectViewController.addComponents(articleFilter.createFilterUIComponents());
     objectViewController.setForceExtraButtonState(false);
   }
 

@@ -34,7 +34,7 @@ public class ArticleSelectorController
                             ? " (" + e.getSuppliersItemNumber() + ")"
                             : "")));
     searchBoxController.addDoubleClickListener(e -> this.choose());
-    searchBoxController.addExtraComponents(articleFilter.createFilterCheckboxes());
+    searchBoxController.addExtraComponents(articleFilter.createFilterUIComponents());
   }
 
   void refreshSearch() {
