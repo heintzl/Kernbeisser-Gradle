@@ -75,6 +75,12 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
       if (!view.confirmImportInValidCatalog(
           "Der Katalog ist nicht aktueller, als der bereits vorhandene.")) return;
     }
+    if (model.isCompleteCatalog()) {
+      if (!view.confirmOverwriteCatalog()) {
+        model.clearCatalog();
+      }
+      ;
+    }
     new Thread(
             () -> {
               view.indicateLoading(true);

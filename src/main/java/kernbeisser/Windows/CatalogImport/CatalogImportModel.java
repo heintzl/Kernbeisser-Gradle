@@ -99,13 +99,20 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     return true;
   }
 
+  public void clearCatalog() {
+    CatalogEntry.clearCatalog();
+  }
+
+  public boolean isCompleteCatalog() {
+    return catalogImporter.getScope().equals("V");
+  }
+
   public List<CatalogImportError> applyChanges() {
     Map<String, CatalogEntry> existingCatalog = new HashMap<>();
-    if (catalogImporter.getScope().equals("V")) {
-      CatalogEntry.clearCatalog();
-    } else {
-      CatalogEntry.getCatalog().forEach(e -> existingCatalog.put(e.getUXString(), e));
+    for (CatalogEntry e : CatalogEntry.getCatalog()) {
+      existingCatalog.put(e.getUXString(), e);
     }
+    ;
     List<CatalogImportError> importErrors = new ArrayList<>();
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
