@@ -6,6 +6,7 @@ import java.util.List;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.SearchBox.Filters.CatalogFilter;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.CatalogEntry.CatalogEntryController;
@@ -22,6 +23,8 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
   private final ObjectViewController<CatalogEntry> objectViewController;
 
   private final BarcodeCapture capture;
+
+  private final CatalogFilter catalogFilter = new CatalogFilter(this::refreshList);
 
   private static final ImmutableMap<String, String> catalogEntryStates =
       ImmutableMap.<String, String>builder()
@@ -50,7 +53,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
         new ObjectViewController<>(
             "Katalog",
             new CatalogEntryController(),
-            CatalogEntry::defaultSearch,
+            catalogFilter::searchable,
             false,
             Columns.<CatalogEntry>create(
                     "Status", e -> catalogEntryStates.get(e.getAenderungskennung()))
@@ -120,7 +123,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
               refreshList();
             });
 
-    // objectViewController.addComponents(catalogFilter.createFilterCheckboxes());
+    objectViewController.addComponents(catalogFilter.createFilterUIComponents());
     // objectViewController.setForceExtraButtonState(false);
   }
 

@@ -1,8 +1,11 @@
 package kernbeisser.DBEntities;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
@@ -170,6 +173,20 @@ public class CatalogEntry {
     return result;
   }
 
+  public boolean isOutdatedAction() {
+    if (aktionspreisGueltigBis == null) {
+      return false;
+    }
+    return aktionspreisGueltigBis.isBefore(Instant.now());
+  }
+
+  public boolean isAction() {
+    if (aktionspreis == null) {
+      return false;
+    }
+    return aktionspreis;
+  }
+
   public List<CatalogEntry> getByArticleNo(String ArticleNo) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -196,8 +213,8 @@ public class CatalogEntry {
     em.createQuery("DELETE FROM CatalogEntry").executeUpdate();
   }
 
-  public static Collection<CatalogEntry> defaultSearch(String s, int max) {
-    max = Integer.MAX_VALUE;
+  public static Collection<CatalogEntry> defaultSearch(
+      String s, Predicate<CatalogEntry> catalogEntryPredicate, int max) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -214,7 +231,9 @@ public class CatalogEntry {
         .setParameter("sn", "%" + s + "%")
         .setParameter("s", s + "%")
         .setParameter("n", n)
-        .setMaxResults(max)
-        .getResultList();
+        .getResultStream()
+        .filter(catalogEntryPredicate)
+        .limit(max)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 }
