@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.CatalogDataSource;
+import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.CatalogImportErrorException;
 import kernbeisser.Exeptions.CatalogImportWarningException;
@@ -46,7 +46,7 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
   }
 
   private boolean checkImport(
-      CatalogDataSource source, CatalogDataSource target, List<CatalogImportError> importErrors)
+      CatalogEntry source, CatalogEntry target, List<CatalogImportError> importErrors)
       throws CatalogImportErrorException, CatalogImportWarningException {
     boolean exists = true;
     String sourceUpdateType = source.getAenderungskennung();
@@ -83,7 +83,7 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     if (sourceArticleNo == null) {
       throw new CatalogImportErrorException(
           String.format(
-              "Der Artikel wurde übersprungen, weil er keine Artikelnummer hat",
+              "Der Artikel \"%s\" wurde übersprungen, weil er keine Artikelnummer hat",
               sourceDesignation));
     }
     if (sourceArticleNo.length() == 6 && sourceArticleNo.startsWith("7")) {
@@ -99,20 +99,27 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     return true;
   }
 
+  public void clearCatalog() {
+    CatalogEntry.clearCatalog();
+  }
+
+  public boolean isCompleteCatalog() {
+    return catalogImporter.getScope().equals("V");
+  }
+
   public List<CatalogImportError> applyChanges() {
-    Map<String, CatalogDataSource> existingCatalog = new HashMap<>();
-    if (catalogImporter.getScope().equals("V")) {
-      CatalogDataSource.clearCatalog();
-    } else {
-      CatalogDataSource.getCatalog().forEach(e -> existingCatalog.put(e.getUXString(), e));
+    Map<String, CatalogEntry> existingCatalog = new HashMap<>();
+    for (CatalogEntry e : CatalogEntry.getCatalog()) {
+      existingCatalog.put(e.getUXString(), e);
     }
+    ;
     List<CatalogImportError> importErrors = new ArrayList<>();
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    for (CatalogDataSource source : catalogImporter.getCatalog()) {
-      CatalogDataSource existing = existingCatalog.get(source.getUXString());
+    for (CatalogEntry source : catalogImporter.getCatalog()) {
+      CatalogEntry existing = existingCatalog.get(source.getUXString());
       if (existing != null) {
         source.setId(existing.getId());
       }

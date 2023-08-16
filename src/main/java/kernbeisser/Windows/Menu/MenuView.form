@@ -15,7 +15,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="27dc6" binding="menuPanel" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="27dc6" binding="menuPanel" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="5" bottom="5" right="5"/>
             <constraints/>
             <properties/>
@@ -113,13 +113,13 @@
                   </component>
                 </children>
               </grid>
-              <grid id="85225" layout-manager="GridLayoutManager" row-count="14" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="85225" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="10" left="10" bottom="10" right="10"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
-                <border type="etched" title="Ladendienst">
+                <border type="etched" title="Warenumsatz">
                   <font size="18"/>
                 </border>
                 <children>
@@ -146,23 +146,12 @@
                   </component>
                   <component id="f8c5f" class="kernbeisser.CustomComponents.ControllerButton" binding="editPriceList" custom-create="true">
                     <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font/>
                       <requestFocusEnabled value="false"/>
                       <text value="Preislisten bearbeiten"/>
-                    </properties>
-                  </component>
-                  <component id="cddc8" class="kernbeisser.CustomComponents.ControllerButton" binding="editArticles" custom-create="true">
-                    <constraints>
-                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <actionCommand value="Artikel bearbeiten"/>
-                      <font/>
-                      <requestFocusEnabled value="false"/>
-                      <text value="Artikel bearbeiten"/>
                     </properties>
                   </component>
                   <component id="5fab4" class="kernbeisser.CustomComponents.ControllerButton" binding="editSurchargeTables" custom-create="true">
@@ -175,44 +164,14 @@
                       <text value="Zuschlagsgruppen bearbeiten"/>
                     </properties>
                   </component>
-                  <component id="b0a12" class="kernbeisser.CustomComponents.ControllerButton" binding="editSuppliers" custom-create="true">
-                    <constraints>
-                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <font/>
-                      <text value="Lieferanten beabeiten"/>
-                    </properties>
-                  </component>
-                  <component id="bbc72" class="kernbeisser.CustomComponents.ControllerButton" binding="synchoniseCatalog" custom-create="true">
-                    <constraints>
-                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <font/>
-                      <text value="Kornkraft-Katalog synchronisieren"/>
-                    </properties>
-                  </component>
                   <vspacer id="6d71b">
                     <constraints>
-                      <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
-                  <component id="32155" class="kernbeisser.CustomComponents.ControllerButton" binding="offerManagement" custom-create="true">
-                    <constraints>
-                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <actionCommand value="Artikel bearbeiten"/>
-                      <enabled value="false"/>
-                      <font/>
-                      <requestFocusEnabled value="false"/>
-                      <text value="Aktionsartikel bearbeiten"/>
-                    </properties>
-                  </component>
                   <component id="97114" class="kernbeisser.CustomComponents.ControllerButton" binding="supply" custom-create="true">
                     <constraints>
-                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font/>
@@ -221,7 +180,7 @@
                   </component>
                   <component id="71f7f" class="javax.swing.JButton" binding="grantCashierRole" custom-create="true">
                     <constraints>
-                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Ladendienst-Mitglieder verwalten"/>
@@ -229,19 +188,10 @@
                   </component>
                   <component id="d17bf" class="javax.swing.JButton" binding="beginnInventory" custom-create="true">
                     <constraints>
-                      <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Inventur beginnen"/>
-                    </properties>
-                  </component>
-                  <component id="2cfa3" class="kernbeisser.CustomComponents.ControllerButton" binding="importCatalog" custom-create="true">
-                    <constraints>
-                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <font/>
-                      <text value="Kornkraft-Katalog einlesen"/>
                     </properties>
                   </component>
                 </children>
@@ -300,10 +250,57 @@
                   </component>
                 </children>
               </grid>
+              <nested-form id="5e0fd" form-file="kernbeisser/Windows/InfoPanel/InfoPanelView.form" binding="infoPanel" custom-create="true">
+                <constraints>
+                  <grid row="0" column="2" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <minimum-size width="500" height="500"/>
+                    <preferred-size width="500" height="500"/>
+                  </grid>
+                </constraints>
+              </nested-form>
+              <grid id="cc6eb" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="10" left="10" bottom="10" right="10"/>
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none" title="Programmadministration">
+                  <font size="18"/>
+                </border>
+                <children>
+                  <component id="c40c0" class="kernbeisser.CustomComponents.ControllerButton" binding="changeDBConnection" custom-create="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <label value="Datenbankverbindung bearbeiten"/>
+                      <requestFocusEnabled value="false"/>
+                      <text value="Datenbankverbindung bearbeiten"/>
+                    </properties>
+                  </component>
+                  <vspacer id="db3d7">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
+                  <component id="7186b" class="kernbeisser.CustomComponents.ControllerButton" binding="editApplicationSettings" custom-create="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <label value="Programmeinstellungen bearbeiten"/>
+                      <requestFocusEnabled value="false"/>
+                      <text value="Programmeinstellungen bearbeiten"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
               <grid id="df58a" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="10" left="10" bottom="10" right="10"/>
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="etched" title="Benutzerverwaltung">
@@ -369,67 +366,84 @@
                   </component>
                 </children>
               </grid>
-              <grid id="9ee96" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="9ee96" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="10" left="10" bottom="10" right="10"/>
                 <constraints>
-                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
-                <properties/>
-                <border type="none"/>
-                <children/>
-              </grid>
-              <grid id="cc6eb" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="10" left="10" bottom="10" right="10"/>
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none" title="Programmadministration">
+                <properties>
+                  <enabled value="true"/>
+                </properties>
+                <border type="etched" title="Artikelstamm">
                   <font size="18"/>
                 </border>
                 <children>
-                  <component id="c40c0" class="kernbeisser.CustomComponents.ControllerButton" binding="changeDBConnection" custom-create="true">
+                  <vspacer id="e56d2">
+                    <constraints>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
+                  <component id="32155" class="kernbeisser.CustomComponents.ControllerButton" binding="offerManagement" custom-create="true">
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="Artikel bearbeiten"/>
+                      <enabled value="false"/>
+                      <font/>
+                      <requestFocusEnabled value="false"/>
+                      <text value="Aktionsartikel bearbeiten"/>
+                    </properties>
+                  </component>
+                  <component id="2cfa3" class="kernbeisser.CustomComponents.ControllerButton" binding="importCatalog" custom-create="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <text value="Kornkraft-Katalog einlesen"/>
+                    </properties>
+                  </component>
+                  <component id="b0a12" class="kernbeisser.CustomComponents.ControllerButton" binding="editSuppliers" custom-create="true">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <text value="Lieferanten beabeiten"/>
+                    </properties>
+                  </component>
+                  <component id="bbc72" class="kernbeisser.CustomComponents.ControllerButton" binding="synchoniseCatalog" custom-create="true">
+                    <constraints>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <text value="Kornkraft-Katalog synchronisieren"/>
+                    </properties>
+                  </component>
+                  <component id="c9d03" class="kernbeisser.CustomComponents.ControllerButton" binding="editCatalog" custom-create="true">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font/>
+                      <text value="Kornkraft-Katalog ansehen"/>
+                    </properties>
+                  </component>
+                  <component id="cddc8" class="kernbeisser.CustomComponents.ControllerButton" binding="editArticles" custom-create="true">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
+                      <actionCommand value="Artikel bearbeiten"/>
                       <font/>
-                      <label value="Datenbankverbindung bearbeiten"/>
                       <requestFocusEnabled value="false"/>
-                      <text value="Datenbankverbindung bearbeiten"/>
-                    </properties>
-                  </component>
-                  <vspacer id="db3d7">
-                    <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                  </vspacer>
-                  <component id="7186b" class="kernbeisser.CustomComponents.ControllerButton" binding="editApplicationSettings" custom-create="true">
-                    <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <font/>
-                      <label value="Programmeinstellungen bearbeiten"/>
-                      <requestFocusEnabled value="false"/>
-                      <text value="Programmeinstellungen bearbeiten"/>
+                      <text value="Artikel bearbeiten"/>
                     </properties>
                   </component>
                 </children>
               </grid>
-              <vspacer id="cc0d7">
-                <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </vspacer>
-              <nested-form id="5e0fd" form-file="kernbeisser/Windows/InfoPanel/InfoPanelView.form" binding="infoPanel" custom-create="true">
-                <constraints>
-                  <grid row="0" column="2" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <minimum-size width="500" height="500"/>
-                    <preferred-size width="500" height="500"/>
-                  </grid>
-                </constraints>
-              </nested-form>
             </children>
           </grid>
         </children>

@@ -28,7 +28,7 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
-public class EditIArticlesController extends Controller<EditArticlesView, EditArticlesModel> {
+public class EditArticlesController extends Controller<EditArticlesView, EditArticlesModel> {
 
   private final ObjectViewController<Article> objectViewController;
 
@@ -44,7 +44,7 @@ public class EditIArticlesController extends Controller<EditArticlesView, EditAr
   }
 
   @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
-  public EditIArticlesController() {
+  public EditArticlesController() {
     super(new EditArticlesModel());
     var lastDeliveries = Articles.getLastDeliveries();
     objectViewController =
@@ -108,7 +108,7 @@ public class EditIArticlesController extends Controller<EditArticlesView, EditAr
                 objectViewController.openForm(
                     Articles.getByBarcode(Long.parseLong(e)).orElseThrow(NoResultException::new),
                     Mode.EDIT));
-    objectViewController.addComponents(articleFilter.createFilterCheckboxes());
+    objectViewController.addComponents(articleFilter.createFilterUIComponents());
     objectViewController.setForceExtraButtonState(false);
   }
 

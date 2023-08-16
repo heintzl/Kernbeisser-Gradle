@@ -9,7 +9,7 @@ import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Supplier;
 import lombok.Setter;
 
-public class ArticleFilter {
+public class ArticleFilter implements SearchBoxFilter<Article> {
 
   @Setter private boolean filterNoBarcode = false;
   @Setter private boolean filterShowInShop = false;
@@ -34,7 +34,7 @@ public class ArticleFilter {
         10000);
   }
 
-  public List<JComponent> createFilterCheckboxes() {
+  public List<JComponent> createFilterUIComponents() {
     List<JComponent> checkBoxes = new ArrayList<>();
     final JCheckBox noBarcode = new JCheckBox("nur ohne Barcode");
     noBarcode.addActionListener(

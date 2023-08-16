@@ -1,34 +1,33 @@
-package kernbeisser.Windows.EditArticles;
+package kernbeisser.Windows.EditCatalog;
 
 import javax.swing.*;
-import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class EditArticlesView implements IView<EditArticlesController> {
+public class EditCatalogView implements IView<EditCatalogController> {
 
   private JPanel main;
-  private JButton choosePriceList;
-  private ObjectViewView<Article> objectView;
+  private ObjectViewView<CatalogEntry> objectView;
 
-  @Linked private EditArticlesController controller;
+  @Linked private EditCatalogController controller;
 
   public void messageBarcodeNotFound(String s) {
     Tools.beep();
     JOptionPane.showMessageDialog(
         getContent(),
-        "Konnte keinen Artikel mit Barcode \"" + s + "\" finden",
-        "Artikel nicht gefunden",
+        "Konnte keinen Katalog-Artikel mit Barcode \"" + s + "\" finden",
+        "Eintrag nicht gefunden",
         JOptionPane.INFORMATION_MESSAGE);
   }
 
+  public void pasteInSearchBox(String s) {}
+
   @Override
-  public void initialize(EditArticlesController controller) {
-    choosePriceList.addActionListener(e -> controller.openPriceListSelection());
-  }
+  public void initialize(EditCatalogController controller) {}
 
   @Override
   public @NotNull JComponent getContent() {
@@ -37,7 +36,7 @@ public class EditArticlesView implements IView<EditArticlesController> {
 
   @Override
   public String getTitle() {
-    return "Artikel bearbeiten";
+    return "Großhandels-Katalog";
   }
 
   private void createUIComponents() {

@@ -1,7 +1,11 @@
 package kernbeisser.DBEntities;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
@@ -19,7 +23,7 @@ import lombok.*;
 @Entity
 @Setter(AccessLevel.NONE)
 @Getter(AccessLevel.PUBLIC)
-public class CatalogDataSource {
+public class CatalogEntry {
   private String artikelNr;
 
   // CatalogChange.identifier
@@ -157,7 +161,7 @@ public class CatalogDataSource {
   @Setter(AccessLevel.PUBLIC)
   private long id;
 
-  public CatalogDataSource() {}
+  public CatalogEntry() {}
 
   public int getArtikelNrInt() throws NumberFormatException {
     return Integer.parseInt(artikelNr);
@@ -169,13 +173,36 @@ public class CatalogDataSource {
     return result;
   }
 
-  public static List<CatalogDataSource> getCatalog() {
+  public boolean isOutdatedAction() {
+    if (aktionspreisGueltigBis == null) {
+      return false;
+    }
+    return aktionspreisGueltigBis.isBefore(Instant.now());
+  }
+
+  public boolean isAction() {
+    if (aktionspreis == null) {
+      return false;
+    }
+    return aktionspreis;
+  }
+
+  public List<CatalogEntry> getByArticleNo(String ArticleNo) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("SELECT c FROM CatalogDataSource c", CatalogDataSource.class)
+    return em.createQuery("SELECT c FROM CatalogEntry c WHERE ArtikelNr = :n", CatalogEntry.class)
+        .setParameter("n", ArticleNo)
         .getResultList();
+  }
+
+  public static List<CatalogEntry> getCatalog() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("SELECT c FROM CatalogEntry c", CatalogEntry.class).getResultList();
   }
 
   public static void clearCatalog() {
@@ -183,6 +210,30 @@ public class CatalogDataSource {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    em.createQuery("DELETE FROM CatalogDataSource").executeUpdate();
+    em.createQuery("DELETE FROM CatalogEntry").executeUpdate();
+  }
+
+  public static Collection<CatalogEntry> defaultSearch(
+      String s, Predicate<CatalogEntry> catalogEntryPredicate, int max) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Long n;
+    try {
+      n = Long.parseLong(s);
+    } catch (NumberFormatException e) {
+      n = -9999999L;
+    }
+    return em.createQuery(
+            "select c from CatalogEntry c where c.bezeichnung like :sn or artikelNr like :s or eanLadenEinheit = :n",
+            CatalogEntry.class)
+        .setParameter("sn", "%" + s + "%")
+        .setParameter("s", s + "%")
+        .setParameter("n", n)
+        .getResultStream()
+        .filter(catalogEntryPredicate)
+        .limit(max)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 }

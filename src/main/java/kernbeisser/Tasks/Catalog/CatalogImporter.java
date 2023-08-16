@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import kernbeisser.DBEntities.CatalogDataSource;
+import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidValue;
@@ -35,7 +35,7 @@ public class CatalogImporter {
 
   public static final String DELIMITER = ";";
   @Getter private final List<CatalogImportError> readErrors = new ArrayList<>();
-  @Getter private final List<CatalogDataSource> catalog = new ArrayList<>();
+  @Getter private final List<CatalogEntry> catalog = new ArrayList<>();
 
   public String getScopeDescription() {
     switch (scope) {
@@ -97,7 +97,7 @@ public class CatalogImporter {
     return null;
   }
 
-  private static void parseField(CatalogDataSource out, Field declaredField, String part)
+  private static void parseField(CatalogEntry out, Field declaredField, String part)
       throws NumberFormatException, IllegalAccessException, DateTimeParseException, InvalidValue {
     declaredField.setAccessible(true);
     Class<?> type = declaredField.getType();
@@ -127,10 +127,10 @@ public class CatalogImporter {
     }
   }
 
-  public static CatalogDataSource parseRowCore(
+  public static CatalogEntry parseRowCore(
       String[] parts, BiConsumer<Exception, String[]> FormatExceptionHandler) {
-    CatalogDataSource out = new CatalogDataSource();
-    Field[] declaredFields = CatalogDataSource.class.getDeclaredFields();
+    CatalogEntry out = new CatalogEntry();
+    Field[] declaredFields = CatalogEntry.class.getDeclaredFields();
     for (int i = 0; i < declaredFields.length; i++) {
       try {
         parseField(out, declaredFields[i], parts[i].trim());
@@ -146,7 +146,7 @@ public class CatalogImporter {
     return out;
   }
 
-  public static CatalogDataSource parseRowWithLog(String[] parts, List<Exception> errorLog) {
+  public static CatalogEntry parseRowWithLog(String[] parts, List<Exception> errorLog) {
     return parseRowCore(
         parts,
         (e, value_field) -> {
@@ -160,7 +160,7 @@ public class CatalogImporter {
         });
   }
 
-  public static CatalogDataSource parseRow(String[] parts) {
+  public static CatalogEntry parseRow(String[] parts) {
     return parseRowCore(
         parts,
         (e, value_field) -> {

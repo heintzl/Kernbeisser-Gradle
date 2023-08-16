@@ -41,7 +41,7 @@ public class EditUsers extends ObjectViewController<User> {
         Columns.create("Benutzername", User::getUsername),
         Columns.create("Dienste", User::getJobsAsString).withDefaultFilter(),
         Columns.create("Berechtigungen", this::formatPermissions).withDefaultFilter());
-    addComponents(userFilter.createFilterOptionButtons());
+    addComponents(userFilter.createFilterUIComponents());
   }
 
   @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)

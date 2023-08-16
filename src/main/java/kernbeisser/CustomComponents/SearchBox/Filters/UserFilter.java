@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 
-public class UserFilter {
+public class UserFilter implements SearchBoxFilter<User> {
 
   public static final int FILTER_ALL = 0;
   public static final int FILTER_ACTIVE = 1;
@@ -52,7 +52,7 @@ public class UserFilter {
     callback.run();
   }
 
-  public List<JComponent> createFilterOptionButtons() {
+  public List<JComponent> createFilterUIComponents() {
     ButtonGroup filterGroup = new ButtonGroup();
     List<JComponent> filterButtons = new ArrayList<>();
     JRadioButton filterButton = new JRadioButton("nur Aktive");

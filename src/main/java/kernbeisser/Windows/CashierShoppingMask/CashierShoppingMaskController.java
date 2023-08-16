@@ -51,7 +51,7 @@ public class CashierShoppingMaskController
     searchBoxController.addLostSelectionListener(() -> selectUser(null));
     searchBoxController.addSelectionListener(this::selectUser);
     searchBoxController.addDoubleClickListener(e -> openMaskWindow());
-    searchBoxController.addExtraComponents(userFilter.createFilterOptionButtons());
+    searchBoxController.addExtraComponents(userFilter.createFilterUIComponents());
   }
 
   public void changeFilter() {
