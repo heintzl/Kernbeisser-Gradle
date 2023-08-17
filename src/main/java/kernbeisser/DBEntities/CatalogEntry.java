@@ -155,6 +155,7 @@ public class CatalogEntry {
   private Integer artikelVariant;
   private String markenId;
   private String herstellerId;
+  @Setter private Instant katalogGueltigBis;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
