@@ -1,11 +1,8 @@
 package kernbeisser.DBEntities;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.Objects;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
@@ -214,27 +211,9 @@ public class CatalogEntry {
     em.createQuery("DELETE FROM CatalogEntry").executeUpdate();
   }
 
-  public static Collection<CatalogEntry> defaultSearch(
-      String s, Predicate<CatalogEntry> catalogEntryPredicate, int max) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Long n;
-    try {
-      n = Long.parseLong(s);
-    } catch (NumberFormatException e) {
-      n = -9999999L;
-    }
-    return em.createQuery(
-            "select c from CatalogEntry c where c.bezeichnung like :sn or artikelNr like :s or eanLadenEinheit = :n",
-            CatalogEntry.class)
-        .setParameter("sn", "%" + s + "%")
-        .setParameter("s", s + "%")
-        .setParameter("n", n)
-        .getResultStream()
-        .filter(catalogEntryPredicate)
-        .limit(max)
-        .collect(Collectors.toCollection(ArrayList::new));
+  public boolean matches(String s) {
+    return bezeichnung.contains(s)
+        || artikelNr.startsWith(s)
+        || Objects.toString(eanLadenEinheit).endsWith(s);
   }
 }

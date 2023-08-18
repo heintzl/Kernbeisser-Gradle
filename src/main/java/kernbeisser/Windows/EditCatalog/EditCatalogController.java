@@ -53,7 +53,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
         new ObjectViewController<>(
             "Katalog",
             new CatalogEntryController(),
-            catalogFilter::searchable,
+            (String s, int max) -> model.searchable(s, max, catalogFilter::matches),
             false,
             Columns.<CatalogEntry>create(
                     "Status", e -> catalogEntryStates.get(e.getAenderungskennung()))
