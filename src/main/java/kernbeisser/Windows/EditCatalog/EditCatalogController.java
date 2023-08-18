@@ -53,7 +53,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
         new ObjectViewController<>(
             "Katalog",
             new CatalogEntryController(),
-            catalogFilter::searchable,
+            (String s, int max) -> model.searchable(s, max, catalogFilter::matches),
             false,
             Columns.<CatalogEntry>create(
                     "Status", e -> catalogEntryStates.get(e.getAenderungskennung()))
@@ -114,7 +114,12 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                     "AuswW", e -> Icons.booleanIcon(e.getGewichtsartikel()))
                 .withPreferredWidth(50),
             Columns.<CatalogEntry>create("MWSt.", e -> e.getMwstKennung().getName())
-                .withPreferredWidth(80));
+                .withPreferredWidth(80),
+            Columns.<CatalogEntry>create(
+                    "Gültig bis",
+                    e -> Date.safeDateFormat(e.getKatalogGueltigBis(), Date.INSTANT_DATE))
+                .withPreferredWidth(80)
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
 
     this.capture =
         new BarcodeCapture(

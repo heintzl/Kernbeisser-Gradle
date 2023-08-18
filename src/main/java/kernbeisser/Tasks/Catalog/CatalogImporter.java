@@ -131,7 +131,7 @@ public class CatalogImporter {
       String[] parts, BiConsumer<Exception, String[]> FormatExceptionHandler) {
     CatalogEntry out = new CatalogEntry();
     Field[] declaredFields = CatalogEntry.class.getDeclaredFields();
-    for (int i = 0; i < declaredFields.length; i++) {
+    for (int i = 0; i < Math.min(declaredFields.length, parts.length); i++) {
       try {
         parseField(out, declaredFields[i], parts[i].trim());
       } catch (NumberFormatException
@@ -225,7 +225,11 @@ public class CatalogImporter {
       }
       for (int i = 1; i < catalogSource.size() - 1; i++) {
         List<Exception> rowLog = new ArrayList<>();
-        catalog.add(parseRowWithLog(catalogSource.get(i).split(DELIMITER), rowLog));
+        CatalogEntry catalogEntry = parseRowWithLog(catalogSource.get(i).split(DELIMITER), rowLog);
+        if (validTo != null) {
+          catalogEntry.setKatalogGueltigBis(validTo);
+        }
+        catalog.add(catalogEntry);
         for (Exception e : rowLog) {
           readErrors.add(new CatalogImportError(i, e));
         }

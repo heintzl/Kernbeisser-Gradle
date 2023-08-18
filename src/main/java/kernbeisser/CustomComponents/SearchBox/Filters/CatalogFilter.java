@@ -1,13 +1,12 @@
 package kernbeisser.CustomComponents.SearchBox.Filters;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.swing.*;
 import kernbeisser.DBEntities.CatalogEntry;
 import lombok.Setter;
 
-public class CatalogFilter implements SearchBoxFilter<CatalogEntry> {
+public class CatalogFilter {
 
   @Setter private boolean filterShowInactive = false;
   @Setter private boolean filterShowOutdatedActions = false;
@@ -18,13 +17,9 @@ public class CatalogFilter implements SearchBoxFilter<CatalogEntry> {
     callback = refreshMethod;
   }
 
-  public Collection<CatalogEntry> searchable(String query, int max) {
-    return CatalogEntry.defaultSearch(
-        query,
-        e ->
-            (filterShowInactive || !"|X|V|".contains(e.getAenderungskennung()))
-                && (filterShowOutdatedActions || !e.isAction() || !e.isOutdatedAction()),
-        Integer.MAX_VALUE);
+  public boolean matches(CatalogEntry e) {
+    return (filterShowInactive || !"|X|V|".contains(e.getAenderungskennung()))
+        && (filterShowOutdatedActions || !e.isAction() || !e.isOutdatedAction());
   }
 
   public List<JComponent> createFilterUIComponents() {
