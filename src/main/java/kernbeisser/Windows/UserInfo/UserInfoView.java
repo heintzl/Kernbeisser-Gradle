@@ -113,7 +113,32 @@ public class UserInfoView implements IView<UserInfoController> {
   }
 
   public void createUIComponents() {
-    valueHistory = new ObjectTable<Transaction>();
+    valueHistory =
+        new ObjectTable<Transaction>(
+            Columns.create("Art", Transaction::getTransactionType),
+            Columns.create("Von", t -> t.getFromUser().getFullName()),
+            Columns.create("An", t -> t.getToUser().getFullName()),
+            Columns.<Transaction>create(
+                    "Eingang",
+                    e ->
+                        controller.getModel().incoming(e)
+                            ? String.format("%.2f€", e.getValue())
+                            : "")
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.<Transaction>create(
+                    "Ausgang",
+                    e ->
+                        controller.getModel().incoming(e)
+                            ? ""
+                            : String.format("%.2f€", e.getValue()))
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.<Transaction>create(
+                    "Verbleibend", t -> String.format("%.2f€", controller.getTransactionSum(t)))
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Info", Transaction::getInfo),
+            Columns.<Transaction>create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate()))
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)));
+
     permissions = new ObjectTable<>(Columns.create("Name", Permission::getNeatName));
     userGroup =
         new ObjectTable<User>(
@@ -121,10 +146,12 @@ public class UserInfoView implements IView<UserInfoController> {
             Columns.create("Vorname", User::getFirstName),
             Columns.create("Nachname", User::getSurname),
             Columns.create("Mitgliedschaft", Users::getMembership));
+
     jobs =
         new ObjectTable<Job>(
             Columns.create("Name", Job::getName),
             Columns.create("Beschreibung", Job::getDescription));
+
     shoppingHistory =
         new ObjectTable<Purchase>(
             Columns.<Purchase>create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()))
@@ -132,6 +159,7 @@ public class UserInfoView implements IView<UserInfoController> {
             Columns.create("Verkäufer", e -> e.getSession().getSeller()),
             Columns.create("Käufer", e -> e.getSession().getCustomer()),
             Columns.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT));
+
     phoneNumber1 = new AccessCheckingLabel<>(User::getPhoneNumber1);
     username = new AccessCheckingLabel<>(User::getUsername);
     firstName = new AccessCheckingLabel<>(User::getFirstName);
