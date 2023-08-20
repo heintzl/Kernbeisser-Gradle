@@ -1,20 +1,38 @@
 package kernbeisser.Windows.UserInfo;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+import lombok.Getter;
 
 public class UserInfoModel implements IModel<UserInfoController> {
 
   private final int userId;
+  @Getter private final Collection<Transaction> userTransactions;
+  @Getter private final Map<Long, Double> transactionSums = new HashMap<>();
 
   public UserInfoModel(User user) {
     this.userId = user.getId();
+    userTransactions = user.getAllValueChanges();
+    collectTranscationSums(user);
+  }
+
+  private void collectTranscationSums(User user) {
+
+    UserGroup userGroup = user.getUserGroup();
+    double sum = 0.0;
+    for (Transaction t : userTransactions) {
+      double v = t.getValue();
+      sum += getSignedTransactionValue(t);
+      transactionSums.put(t.getId(), sum);
+    }
   }
 
   public User getUser() {
@@ -33,27 +51,5 @@ public class UserInfoModel implements IModel<UserInfoController> {
     } else {
       return -transaction.getValue();
     }
-  }
-
-  public double getValueAfterTransaction(Transaction transaction, UserGroup user) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Double outgoing =
-        em.createQuery(
-                "select sum(t.value) from Transaction t where t.date <= :cd and fromUserGroup = :u",
-                Double.class)
-            .setParameter("cd", transaction.getDate())
-            .setParameter("u", user)
-            .getSingleResult();
-    Double incoming =
-        em.createQuery(
-                "select sum(t.value) from Transaction t where t.date <= :cd and toUserGroup = :u",
-                Double.class)
-            .setParameter("cd", transaction.getDate())
-            .setParameter("u", user)
-            .getSingleResult();
-    return (incoming == null ? 0 : incoming) - (outgoing == null ? 0 : outgoing);
   }
 }

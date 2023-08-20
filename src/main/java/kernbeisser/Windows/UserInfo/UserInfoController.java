@@ -2,15 +2,8 @@ package kernbeisser.Windows.UserInfo;
 
 import static kernbeisser.Useful.Tools.optional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import kernbeisser.CustomComponents.ObjectTable.Adjustors.StripedCellAdjustor;
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
-import kernbeisser.CustomComponents.ObjectTable.Renderer.AdjustableTableCellRenderer;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
@@ -21,7 +14,6 @@ import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Reports.TransactionStatement;
 import kernbeisser.Security.Key;
-import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
@@ -55,52 +47,12 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
         optional(model.getUser()::getAllPurchases).ifPresent(view::setShoppingHistory);
         return;
       case 2:
-        Collection<Column<Transaction>> columns = new ArrayList<>();
-        columns.add(Columns.create("Art", Transaction::getTransactionType));
-        columns.add(Columns.create("Von", t -> t.getFromUser().getFullName()));
-        columns.add(Columns.create("An", t -> t.getToUser().getFullName()));
-        columns.add(
-            Columns.create(
-                "Eingang",
-                e -> model.incoming(e) ? String.format("%.2f€", e.getValue()) : "",
-                SwingConstants.RIGHT));
-        columns.add(
-            Columns.create(
-                "Ausgang",
-                e -> model.incoming(e) ? "" : String.format("%.2f€", e.getValue()),
-                SwingConstants.RIGHT));
-        columns.add(generateAfterValueChangeColumn());
-        columns.add(Columns.create("Info", Transaction::getInfo));
-        columns.add(
-            Columns.<Transaction>create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate()))
-                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)));
-        view.setValueHistoryColumns(columns);
-        view.setValueHistory(model.getUser().getAllValueChanges());
+        view.setValueHistory(model.getUserTransactions());
     }
   }
 
-  public Column<Transaction> generateAfterValueChangeColumn() {
-    return new Column<Transaction>() {
-
-      @Override
-      public TableCellRenderer getRenderer() {
-        AdjustableTableCellRenderer<Transaction> renderer = new AdjustableTableCellRenderer<>();
-        renderer.addTableCellAdjustor(new StripedCellAdjustor<>());
-        renderer.setHorizontalAlignment(SwingConstants.RIGHT);
-        return renderer;
-      }
-
-      @Override
-      public String getName() {
-        return "Verbleibend";
-      }
-
-      @Override
-      public Object getValue(Transaction valueChange) {
-        return String.format(
-            "%.2f€", model.getValueAfterTransaction(valueChange, model.getUser().getUserGroup()));
-      }
-    };
+  public Double getTransactionSum(Transaction t) {
+    return model.getTransactionSums().get(t.getId());
   }
 
   public void openPurchase() {
