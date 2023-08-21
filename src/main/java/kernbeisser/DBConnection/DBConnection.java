@@ -1,10 +1,10 @@
 package kernbeisser.DBConnection;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
@@ -143,11 +143,25 @@ public class DBConnection {
     return cb.createQuery(clazz);
   }
 
-  public static <T> List<T> getAll(Class<T> clazz) {
+  public static <T, C> List<T> getConditioned(
+      Class<T> clazz, String conditionFieldName, Collection<C> conditionValues) {
     @Cleanup EntityManager em = getEntityManager();
     CriteriaQuery<T> cr = getCriteriaQuery(em, clazz);
-    cr.select(cr.from(clazz));
-    List<T> resultList = em.createQuery(cr).getResultList();
+    Root<T> root = cr.from(clazz);
+    cr.select(root);
+    List<T> resultList;
+    if (conditionFieldName.isEmpty()) {
+      resultList = em.createQuery(cr).getResultList();
+    } else {
+      resultList =
+          em.createQuery(cr.where(root.get(conditionFieldName).in(conditionValues)))
+              .getResultList();
+    }
     return resultList;
+  }
+
+  public static <T> List<T> getAll(Class<T> clazz) {
+    List<Object> emptyCondition = new ArrayList<>();
+    return getConditioned(clazz, "", emptyCondition);
   }
 }
