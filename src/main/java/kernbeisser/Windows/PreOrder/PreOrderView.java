@@ -11,12 +11,12 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import javax.persistence.NoResultException;
 import javax.swing.*;
-import javax.swing.table.TableColumn;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.PermissionButton;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
@@ -138,6 +138,15 @@ public class PreOrderView implements IView<PreOrderController> {
       popupSelectionColumn.add(popupSelectAll);
       popupSelectionColumn.add(popupDeselectAll);
     }
+    CustomizableColumn<PreOrder> hiddenSortColumn =
+        Columns.create("", PreOrder::getId)
+            .withSorter(Column.NUMBER_SORTER)
+            .withColumnAdjustor(
+                e -> {
+                  e.setMinWidth(0);
+                  e.setMaxWidth(0);
+                  e.setPreferredWidth(0);
+                });
     preOrders =
         new ObjectTable<>(
             Columns.<PreOrder>create("Benutzer", e -> e.getUser().getFullName(true))
@@ -189,12 +198,9 @@ public class PreOrderView implements IView<PreOrderController> {
               controller::delete,
               e -> e.getOrderedOn() == null));
     }
-    preOrders.addColumnAtIndex(0, sortColumn);
-    TableColumn hiddenColumn = preOrders.getColumnModel().getColumn(0);
-    hiddenColumn.setMinWidth(0);
-    hiddenColumn.setMaxWidth(0);
-    setDefaultSortOrder();
     user = new AdvancedComboBox<>(e -> e.getFullName(true));
+    preOrders.addColumnAtIndex(0, hiddenSortColumn);
+    setDefaultSortOrder();
   }
 
   private void showSelectionPopup() {
@@ -203,7 +209,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   void setDefaultSortOrder() {
-    preOrders.setSortKeys(new RowSorter.SortKey(8, SortOrder.DESCENDING));
+    preOrders.setSortKeys(new RowSorter.SortKey(0, SortOrder.DESCENDING));
     preOrders.sort();
   }
 

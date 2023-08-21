@@ -545,7 +545,7 @@ public class User implements Serializable, UserRelated {
     et.begin();
     List<User> result =
         em.createQuery(
-                "select u from User u where not "
+                "select u from User u where  u.unreadable = false and not "
                     + GENERIC_USERS_CONDITION
                     + " order by "
                     + (orderSurname ? "surName, firstname" : "firstname, surName")
