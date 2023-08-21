@@ -7,13 +7,13 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Exeptions.CatalogImportErrorException;
 import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.UnknownFileFormatException;
 import kernbeisser.Main;
@@ -223,6 +223,7 @@ public class CatalogImporter {
       if (fileSeqNo != 1 || followUpSeqNo != 99) {
         throw new UnknownFileFormatException("Kann keine mehrteiligen Katalogdateien verarbeiten!");
       }
+      Map<String, Double> depositEntries = new HashMap<>();
       for (int i = 1; i < catalogSource.size() - 1; i++) {
         List<Exception> rowLog = new ArrayList<>();
         CatalogEntry catalogEntry = parseRowWithLog(catalogSource.get(i).split(DELIMITER), rowLog);
@@ -230,10 +231,52 @@ public class CatalogImporter {
           catalogEntry.setKatalogGueltigBis(validTo);
         }
         catalog.add(catalogEntry);
+        String singleDepositNo = catalogEntry.getPfandNrLadeneinheit();
+        if (!singleDepositNo.trim().isEmpty()) {
+          depositEntries.put(singleDepositNo, 0.0);
+        }
+        String containerDepositNo = catalogEntry.getPfandNrBestelleinheit();
+        if (!containerDepositNo.trim().isEmpty()) {
+          depositEntries.put(containerDepositNo, 0.0);
+        }
         for (Exception e : rowLog) {
           readErrors.add(new CatalogImportError(i, e));
         }
       }
+      for (String depositKKNumber : depositEntries.keySet()) {
+        List<CatalogEntry> depositArticle = new ArrayList<>();
+        boolean found = false;
+        for (CatalogEntry catalogRow : catalog) {
+          if (catalogRow.getArtikelNr().equals(depositKKNumber)) {
+            found = true;
+            depositArticle.add(catalogRow);
+            break;
+          }
+        }
+        if (!found) {
+          depositArticle = CatalogEntry.getByArticleNo(depositKKNumber);
+        }
+        if (depositArticle.size() > 0) {
+          depositEntries.put(depositKKNumber, depositArticle.get(0).getPreis());
+        } else {
+          readErrors.add(
+              new CatalogImportError(
+                  -1,
+                  new CatalogImportErrorException(
+                      "Der Pfandartikel "
+                          + depositKKNumber
+                          + " ist nicht im Katalog enthalten. Es kann kein Pfand berechnet werden für Artikel, die diesen Pfandartikel referenzieren!")));
+        }
+      }
+      for (CatalogEntry catalogRow : catalog) {
+        if (!catalogRow.getPfandNrLadeneinheit().trim().isEmpty()) {
+          catalogRow.setEinzelPfand(depositEntries.get(catalogRow.getPfandNrLadeneinheit()));
+        }
+        if (!catalogRow.getPfandNrBestelleinheit().trim().isEmpty()) {
+          catalogRow.setGebindePfand(depositEntries.get(catalogRow.getPfandNrBestelleinheit()));
+        }
+      }
+
     } catch (Exception e) {
       Tools.showUnexpectedErrorWarning(e);
     }
