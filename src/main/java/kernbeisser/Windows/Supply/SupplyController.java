@@ -299,12 +299,17 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     article.setContainerSize(content.getContainerSize());
     article.setShopRange(ShopRange.PERMANENT_RANGE);
     article.setSurchargeGroup(pattern.getSurchargeGroup());
-    article.setVat(pattern.getVat()); // TODO get from BNN
+    VAT vat = content.getVat();
+    if (vat == null) {
+      vat = pattern.getVat();
+    }
+    article.setVat(vat);
     article.setPriceList(Articles.getValidPriceList(em, pattern));
     article.setVerified(false);
     article.setKbNumber(Articles.nextFreeKBNumber(em));
     article.setSuppliersItemNumber(content.getKkNumber());
-    // TODO get barcode and deposits from BNN
+    article.setSingleDeposit(content.getSingleDeposit());
+    article.setContainerDeposit(content.getContainerDeposit());
     em.persist(article);
     em.flush();
     return article;
