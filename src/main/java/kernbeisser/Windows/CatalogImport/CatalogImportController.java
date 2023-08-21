@@ -76,7 +76,7 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
           "Der Katalog ist nicht aktueller, als der bereits vorhandene.")) return;
     }
     if (model.isCompleteCatalog()) {
-      if (!view.confirmOverwriteCatalog()) {
+      if (!view.confirmMergeCatalog()) {
         model.clearCatalog();
       }
       ;

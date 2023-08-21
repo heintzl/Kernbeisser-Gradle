@@ -169,13 +169,13 @@ public class CatalogImportView implements IView<CatalogImportController> {
         == JOptionPane.YES_OPTION;
   }
 
-  public boolean confirmOverwriteCatalog() {
+  public boolean confirmMergeCatalog() {
     return JOptionPane.showConfirmDialog(
             getContent(),
             "Der Katalog ist als \"Vollständig\" gekennzeichnet."
-                + "\nSoll der bestehende Katalog komplett ersetzt werden?"
-                + "\nAnsonsten werden alte Einträge beibehalten, die in diesem Katalog nicht enthalten sind.",
-            "Bestehenden Katalog ersetzen",
+                + "\nSollen alte Einträge beibehalten werden, die in diesem Katalog nicht enthalten sind?"
+                + "\nMit \"Nein\" wird der Katalog vollständig ersetzt.",
+            "Katalog zusammenführen",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE)
         == JOptionPane.YES_OPTION;

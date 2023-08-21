@@ -135,9 +135,13 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   public void loadDirAsync(@NotNull File dir) {
     new Thread(
             () -> {
-              getView().setLoadingIndicatorVisible(true);
-              loadDir(dir);
-              getView().setLoadingIndicatorVisible(false);
+              try {
+                getView().setLoadingIndicatorVisible(true);
+                loadDir(dir);
+                getView().setLoadingIndicatorVisible(false);
+              } catch (Exception e) {
+                Tools.showUnexpectedErrorWarning(e);
+              }
             })
         .start();
   }

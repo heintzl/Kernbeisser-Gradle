@@ -1,10 +1,10 @@
 package kernbeisser.DBConnection;
 
 import java.util.HashMap;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import java.util.List;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
@@ -18,6 +18,7 @@ import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
 import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.ViewContainers.JFrameWindow;
+import lombok.Cleanup;
 import org.hibernate.service.spi.ServiceException;
 
 public class DBConnection {
@@ -135,5 +136,18 @@ public class DBConnection {
 
   public static boolean isInitialized() {
     return entityManagerFactory != null;
+  }
+
+  public static <T> CriteriaQuery<T> getCriteriaQuery(EntityManager em, Class<T> clazz) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    return cb.createQuery(clazz);
+  }
+
+  public static <T> List<T> getAll(Class<T> clazz) {
+    @Cleanup EntityManager em = getEntityManager();
+    CriteriaQuery<T> cr = getCriteriaQuery(em, clazz);
+    cr.select(cr.from(clazz));
+    List<T> resultList = em.createQuery(cr).getResultList();
+    return resultList;
   }
 }

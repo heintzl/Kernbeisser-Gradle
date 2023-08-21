@@ -153,6 +153,8 @@ public class CatalogEntry {
   private String markenId;
   private String herstellerId;
   @Setter private Instant katalogGueltigBis;
+  @Setter private double einzelPfand = 0.0;
+  @Setter private double gebindePfand = 0.0;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -185,7 +187,7 @@ public class CatalogEntry {
     return aktionspreis;
   }
 
-  public List<CatalogEntry> getByArticleNo(String ArticleNo) {
+  public static List<CatalogEntry> getByArticleNo(String ArticleNo) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();

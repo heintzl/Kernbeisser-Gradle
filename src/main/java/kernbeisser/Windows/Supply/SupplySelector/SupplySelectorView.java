@@ -120,6 +120,12 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.create("Diff.", LineContent::getPriceDifference)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(40),
+            Columns.<LineContent>create(
+                    "Pfand",
+                    e ->
+                        String.format(
+                            "%.2f€ / %.2f€", e.getSingleDeposit(), e.getContainerDeposit()))
+                .withPreferredWidth(70),
             Columns.<LineContent>create("Ausw.", e -> e.isWeighableKb() ? "ja" : "nein")
                 .withPreferredWidth(50)
                 .withLeftClickConsumer(this::toggleWeighable),

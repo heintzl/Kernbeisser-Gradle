@@ -2,7 +2,6 @@ package kernbeisser.Windows.EditCatalog;
 
 import com.google.common.collect.ImmutableMap;
 import java.awt.event.KeyEvent;
-import java.util.List;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -35,15 +34,6 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
           .put("W", "Eiedergelistet")
           .put("X", "Ausgelistet")
           .build();
-
-  private Double getDepositPrice(List<CatalogEntry> c) {
-    if (c.isEmpty()) {
-      return 0.0;
-    }
-    ;
-    CatalogEntry c0 = c.get(0);
-    return c0.getPreis();
-  }
 
   @Key(PermissionKey.ACTION_LOGIN) // TODO add more restrictions, if required
   public EditCatalogController() {
@@ -87,19 +77,11 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                     e -> Date.safeDateFormat(e.getAktionspreisGueltigBis(), Date.INSTANT_DATE))
                 .withPreferredWidth(80)
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
-            Columns.<CatalogEntry>create(
-                    "E-Pfand",
-                    e ->
-                        String.format(
-                            "%.2f€", getDepositPrice(e.getByArticleNo(e.getPfandNrLadeneinheit()))))
+            Columns.<CatalogEntry>create("E-Pfand", e -> String.format("%.2f€", e.getEinzelPfand()))
                 .withPreferredWidth(80)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.<CatalogEntry>create(
-                    "G-Pfand",
-                    e ->
-                        String.format(
-                            "%.2f€",
-                            getDepositPrice(e.getByArticleNo(e.getPfandNrBestelleinheit()))))
+                    "G-Pfand", e -> String.format("%.2f€", e.getGebindePfand()))
                 .withPreferredWidth(80)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.<CatalogEntry>create(
