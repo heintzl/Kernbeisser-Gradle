@@ -1,11 +1,13 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
 import com.sun.istack.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
@@ -47,9 +49,13 @@ public class LineContent {
   private PriceList estimatedPriceList;
   private SurchargeGroup estimatedSurchargeGroup;
   private Long barcode = null;
+  private double singleDeposit = 0.0;
+  private double containerDeposit = 0.0;
+  private VAT vat;
 
   public static List<LineContent> parseContents(List<String> lines, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
+    List<String> kkNumbers = new ArrayList<>(lines.size() - offset);
     for (int i = offset; i < lines.size(); i++) {
       String currentLine = lines.get(i);
       if (isComment(currentLine)) {
@@ -60,9 +66,27 @@ public class LineContent {
       }
       LineContent content = singleLine(currentLine);
       contents.add(content);
+      kkNumbers.add(Objects.toString(content.getKkNumber()));
     }
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<CatalogEntry> cr = cb.createQuery(CatalogEntry.class);
+    Root<CatalogEntry> root = cr.from(CatalogEntry.class);
+    Map<String, CatalogEntry> catalogEntries =
+        em.createQuery(cr.select(root).where(root.get("artikelNr").in(kkNumbers)))
+            .getResultStream()
+            .filter(c -> !c.getAktionspreis())
+            .collect(Collectors.toMap(CatalogEntry::getArtikelNr, e -> e));
+
     for (LineContent content : contents) {
+      CatalogEntry matchingEntry = catalogEntries.get(Objects.toString(content.kkNumber));
       if (content.containerMultiplier == 0) content.resolveStatus = ResolveStatus.IGNORE;
+      if (matchingEntry != null) {
+        content.barcode = matchingEntry.getEanLadenEinheit();
+        content.singleDeposit = matchingEntry.getEinzelPfand();
+        content.containerDeposit = matchingEntry.getGebindePfand();
+        content.vat = matchingEntry.getMwstKennung();
+      }
     }
     return contents;
   }
