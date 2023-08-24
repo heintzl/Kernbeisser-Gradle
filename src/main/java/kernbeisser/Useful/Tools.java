@@ -1070,4 +1070,12 @@ public class Tools {
     if (markup.isEmpty()) return text;
     return "<" + markup + ">" + text + "</" + markup + ">";
   }
+
+  public static <T> T ifNull(T value, T defaultValue) {
+    if (value != null) {
+      return value;
+    } else {
+      return defaultValue;
+    }
+  }
 }

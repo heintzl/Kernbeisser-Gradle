@@ -433,9 +433,9 @@ public class Articles {
     HashMap<Long, Integer> amountMapper = new HashMap<>();
     for (Object[] objects : out) {
       long articleId = (long) objects[0];
-      int amount = objects[1] == null ? 0 : (int) objects[1];
+      int amount = (int) Tools.ifNull(objects[1], 0);
       Integer before = amountMapper.get(articleId);
-      amountMapper.put(articleId, before == null ? amount : before + amount);
+      amountMapper.put(articleId, Tools.ifNull(before, 0) + amount);
     }
     return amountMapper;
   }
@@ -451,7 +451,7 @@ public class Articles {
                 Long.class)
             .setParameter("aid", (long) article.getId())
             .getSingleResult();
-    return result == null ? 0 : -result;
+    return -Tools.ifNull(result, 0L);
   }
 
   public static Collection<Article> getPrintPool() {
@@ -473,7 +473,7 @@ public class Articles {
     Long result =
         em.createQuery("select sum (number) from ArticlePrintPool ap", Long.class)
             .getSingleResult();
-    return result == null ? 0 : result;
+    return Tools.ifNull(result, 0L);
   }
 
   public static Collection<Article> getAllActiveArticlesFromPriceList(

@@ -36,12 +36,16 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
   }
 
   public void refreshLastCatalogInfo() {
+    Instant defaultDate = Instant.parse("2000-01-01T00:00:00Z");
     String[] lastCataloginfo =
         Setting.INFO_LINE_LAST_CATALOG.getStringValue().split(CatalogImporter.DELIMITER);
     if (lastCataloginfo.length > 8) {
       lastCatalogCreationDate =
           Date.parseInstantDate(lastCataloginfo[9], Date.INSTANT_CATALOG_DATE);
       lastCatalogValidDate = Date.parseInstantDate(lastCataloginfo[8], Date.INSTANT_CATALOG_DATE);
+    } else {
+      lastCatalogCreationDate = defaultDate;
+      lastCatalogValidDate = defaultDate;
     }
   }
 

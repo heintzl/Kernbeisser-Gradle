@@ -8,8 +8,9 @@ import lombok.Setter;
 
 public class CatalogFilter {
 
-  @Setter private boolean filterShowInactive = false;
-  @Setter private boolean filterShowOutdatedActions = false;
+  @Setter private boolean filterInactive = false;
+  @Setter private boolean filterOutdatedActions = false;
+  @Setter private boolean filterOnlyActions = false;
 
   Runnable callback;
 
@@ -18,27 +19,37 @@ public class CatalogFilter {
   }
 
   public boolean matches(CatalogEntry e) {
-    return (filterShowInactive || !"|X|V|".contains(e.getAenderungskennung()))
-        && (filterShowOutdatedActions || !e.isAction() || !e.isOutdatedAction());
+    return (filterInactive || !"|X|V|".contains(e.getAenderungskennung()))
+        && (filterOutdatedActions || !e.isAction() || !e.isOutdatedAction())
+        && (!filterOnlyActions || e.isAction());
   }
 
   public List<JComponent> createFilterUIComponents() {
     List<JComponent> checkBoxes = new ArrayList<>();
-    final JCheckBox showInactive = new JCheckBox("mit ausgelisteten");
-    showInactive.addActionListener(
+    final JCheckBox showOnlyActions = new JCheckBox("nur Aktionen");
+    showOnlyActions.addActionListener(
         e -> {
-          filterShowInactive = showInactive.isSelected();
+          filterOnlyActions = showOnlyActions.isSelected();
           callback.run();
         });
-    showInactive.setSelected(filterShowInactive);
+    checkBoxes.add(showOnlyActions);
+    final JCheckBox showInactive = new JCheckBox("mit ausgelisteten");
+    showInactive.setSelected(filterInactive);
+    checkBoxes.add(showInactive);
+    showInactive.addActionListener(
+        e -> {
+          filterInactive = showInactive.isSelected();
+          callback.run();
+        });
+    showInactive.setSelected(filterInactive);
     checkBoxes.add(showInactive);
     final JCheckBox showOutdatedActions = new JCheckBox("mit abgelaufenen Aktionen");
     showOutdatedActions.addActionListener(
         e -> {
-          filterShowOutdatedActions = showOutdatedActions.isSelected();
+          filterOutdatedActions = showOutdatedActions.isSelected();
           callback.run();
         });
-    showOutdatedActions.setSelected(filterShowOutdatedActions);
+    showOutdatedActions.setSelected(filterOutdatedActions);
     checkBoxes.add(showOutdatedActions);
     return checkBoxes;
   }

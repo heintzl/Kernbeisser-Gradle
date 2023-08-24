@@ -63,8 +63,10 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
         List<String> fileLines = Files.readAllLines(file.toPath());
         username.setText(fileLines.get(0));
         password.setText(fileLines.get(1));
-        if (fileLines.get(2).equals("!AutoLogin")) {
-          controller.logIn();
+        if (fileLines.size() > 2) {
+          if (fileLines.get(2).equals("!AutoLogin")) {
+            controller.logIn();
+          }
         }
       } catch (IOException e) {
         Tools.showUnexpectedErrorWarning(e);
