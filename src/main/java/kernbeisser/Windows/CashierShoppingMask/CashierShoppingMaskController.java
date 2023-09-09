@@ -112,13 +112,9 @@ public class CashierShoppingMaskController
   }
 
   public void close() {
-    PostContext context = PostContext.ON_SALE_SESSION_CLOSE;
     CashierShoppingMaskView view = getView();
-    Post closePost = Post.getByContext(context);
-    if (closePost.getActive() || closePost.isWriteable()) {
-      new PostPanelController(context)
-          .openIn(new SubWindow(view.traceViewContainer()));
-    }
+    new PostPanelController(PostContext.ON_SALE_SESSION_CLOSE)
+        .openIn(new SubWindow(view.traceViewContainer()));
     view.back();
   }
 

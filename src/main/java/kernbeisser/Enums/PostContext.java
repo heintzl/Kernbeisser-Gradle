@@ -18,7 +18,9 @@ public enum PostContext {
   }
 
   public boolean isWriteable() {
-    return Access.runWithAccessManager(AccessManager.NO_ACCESS_CHECKING, () -> UserRelatedAccessManager.ofUser(LogInModel.getLoggedIn())
-        .contains(writePermissionKey));
+    return Access.runWithAccessManager(
+        AccessManager.NO_ACCESS_CHECKING,
+        () ->
+            UserRelatedAccessManager.ofUser(LogInModel.getLoggedIn()).contains(writePermissionKey));
   }
 }

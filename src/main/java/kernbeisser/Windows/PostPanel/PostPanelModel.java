@@ -20,7 +20,9 @@ public class PostPanelModel implements IModel<PostPanelController> {
     return post.getHtmlContent();
   }
 
-  public boolean getActive() {return post.getActive();}
+  public boolean getActive() {
+    return post.getActive();
+  }
 
   public String getTitle() {
     return post.getTitle();

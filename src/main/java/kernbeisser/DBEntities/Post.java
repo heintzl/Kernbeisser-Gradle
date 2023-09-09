@@ -28,9 +28,7 @@ public class Post {
   @Getter
   private String htmlContent;
 
-  @Column
-  @Getter
-  private Boolean active = false;
+  @Column @Getter private Boolean active = false;
 
   private Post(PostContext context) {
     this.context = context;
@@ -50,7 +48,7 @@ public class Post {
     em.merge(post);
   }
 
-  public void setActive(boolean active)  throws PermissionKeyRequiredException {
+  public void setActive(boolean active) throws PermissionKeyRequiredException {
     if (!context.isWriteable()) {
       throw new PermissionKeyRequiredException("missing Permission for " + context);
     }
@@ -62,7 +60,6 @@ public class Post {
     et.begin();
     post.active = active;
     em.merge(post);
-
   }
 
   public static Post getByContext(PostContext postContext) {
