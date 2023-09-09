@@ -19,6 +19,7 @@ import kernbeisser.Useful.Users;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.PostPanel.PostPanelController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -107,6 +108,13 @@ public class CashierShoppingMaskController
   private void setAllowOpen(boolean v) {
     model.setOpenLock(!v);
     getView().setOpenShoppingMaskEnabled(v);
+  }
+
+  public void close() {
+    CashierShoppingMaskView view = getView();
+    new PostPanelController(PostContext.ON_SALE_SESSION_CLOSE)
+        .openIn(new SubWindow(view.traceViewContainer()));
+    view.back();
   }
 
   @Override

@@ -64,7 +64,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
             messageSelectUserFirst();
           }
         });
-    close.addActionListener(e -> back());
+    close.addActionListener(e -> controller.close());
   }
 
   @Override
