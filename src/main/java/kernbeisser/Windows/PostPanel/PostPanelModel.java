@@ -20,8 +20,14 @@ public class PostPanelModel implements IModel<PostPanelController> {
     return post.getHtmlContent();
   }
 
+  public boolean getActive() {return post.getActive();}
+
   public String getTitle() {
     return post.getTitle();
+  }
+
+  public void setPostActive(boolean active) {
+    post.setActive(active);
   }
 
   public void saveContent(String htmlContent) {

@@ -3,32 +3,53 @@
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="675" height="693"/>
+      <xy x="20" y="20" width="1134" height="693"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <component id="83240" class="javax.swing.JTextPane" binding="contentText">
+      <splitpane id="93977" binding="splitter">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <clientProperties>
-          <charset class="java.lang.String" value=""/>
-        </clientProperties>
-      </component>
+        <border type="none"/>
+        <children>
+          <component id="83240" class="javax.swing.JTextPane" binding="displayPane">
+            <constraints>
+              <splitpane position="right"/>
+            </constraints>
+            <properties>
+              <minimumSize width="200" height="23"/>
+              <preferredSize width="-1" height="-1"/>
+            </properties>
+            <clientProperties>
+              <charset class="java.lang.String" value=""/>
+            </clientProperties>
+          </component>
+          <component id="9ea50" class="javax.swing.JEditorPane" binding="editorPane">
+            <constraints>
+              <splitpane position="left"/>
+            </constraints>
+            <properties>
+              <maximumSize width="500" height="2147483647"/>
+              <minimumSize width="200" height="23"/>
+              <preferredSize width="-1" height="-1"/>
+              <text value=""/>
+            </properties>
+          </component>
+        </children>
+      </splitpane>
       <grid id="13dda" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="4" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="7" anchor="4" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
           <component id="e4863" class="javax.swing.JButton" binding="edit">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -38,7 +59,7 @@
           </component>
           <component id="d5697" class="javax.swing.JButton" binding="back">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -47,17 +68,35 @@
           </component>
           <hspacer id="67dc7">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
           </hspacer>
-          <component id="f845c" class="javax.swing.JButton" binding="cancel">
+          <component id="3e2bd" class="javax.swing.JButton" binding="preview">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <text value="Abbrechen"/>
+              <text value="Vorschau"/>
+            </properties>
+          </component>
+          <component id="2f0b2" class="javax.swing.JCheckBox" binding="active">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Aktiv"/>
+            </properties>
+          </component>
+          <component id="f845c" class="javax.swing.JButton" binding="cancel">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Zurücksetzen"/>
             </properties>
           </component>
         </children>

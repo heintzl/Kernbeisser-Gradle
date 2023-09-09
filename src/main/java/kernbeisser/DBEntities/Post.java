@@ -28,6 +28,10 @@ public class Post {
   @Getter
   private String htmlContent;
 
+  @Column
+  @Getter
+  private Boolean active = false;
+
   private Post(PostContext context) {
     this.context = context;
   }
@@ -44,6 +48,21 @@ public class Post {
     et.begin();
     post.htmlContent = content;
     em.merge(post);
+  }
+
+  public void setActive(boolean active)  throws PermissionKeyRequiredException {
+    if (!context.isWriteable()) {
+      throw new PermissionKeyRequiredException("missing Permission for " + context);
+    }
+    ;
+    Post post = Tools.ifNull(get(), new Post(context));
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    post.active = active;
+    em.merge(post);
+
   }
 
   public static Post getByContext(PostContext postContext) {

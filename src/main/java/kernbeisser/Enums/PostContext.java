@@ -1,5 +1,7 @@
 package kernbeisser.Enums;
 
+import kernbeisser.Security.Access.Access;
+import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Access.UserRelatedAccessManager;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Getter;
@@ -16,7 +18,7 @@ public enum PostContext {
   }
 
   public boolean isWriteable() {
-    return (!UserRelatedAccessManager.ofUser(LogInModel.getLoggedIn())
+    return Access.runWithAccessManager(AccessManager.NO_ACCESS_CHECKING, () -> UserRelatedAccessManager.ofUser(LogInModel.getLoggedIn())
         .contains(writePermissionKey));
   }
 }

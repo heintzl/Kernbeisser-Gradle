@@ -7,6 +7,7 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
+import kernbeisser.DBEntities.Post;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -111,9 +112,13 @@ public class CashierShoppingMaskController
   }
 
   public void close() {
+    PostContext context = PostContext.ON_SALE_SESSION_CLOSE;
     CashierShoppingMaskView view = getView();
-    new PostPanelController(PostContext.ON_SALE_SESSION_CLOSE)
-        .openIn(new SubWindow(view.traceViewContainer()));
+    Post closePost = Post.getByContext(context);
+    if (closePost.getActive() || closePost.isWriteable()) {
+      new PostPanelController(context)
+          .openIn(new SubWindow(view.traceViewContainer()));
+    }
     view.back();
   }
 
