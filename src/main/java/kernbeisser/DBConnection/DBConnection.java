@@ -1,5 +1,6 @@
 package kernbeisser.DBConnection;
 
+import com.google.common.collect.Lists;
 import java.util.*;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -158,6 +159,11 @@ public class DBConnection {
               .getResultList();
     }
     return resultList;
+  }
+
+  public static <T, C> List<T> getConditioned(
+      Class<T> clazz, String conditionFieldName, C conditionValue) {
+    return getConditioned(clazz, conditionFieldName, Lists.newArrayList(conditionValue));
   }
 
   public static <T> List<T> getAll(Class<T> clazz) {

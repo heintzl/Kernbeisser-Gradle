@@ -31,6 +31,7 @@
         <class>kernbeisser.DBEntities.Shelf</class>
         <class>kernbeisser.DBEntities.IgnoredDialog</class>
         <class>kernbeisser.DBEntities.ArticlePrintPool</class>
+        <class>kernbeisser.DBEntities.Post</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="update"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>

@@ -59,7 +59,7 @@ public enum PermissionKey {
   ACTION_ORDER_CONTAINER(ActionPermission.class),
   ACTION_ORDER_OWN_CONTAINER(ActionPermission.class),
   ACTION_GRANT_CASHIER_PERMISSION(ActionPermission.class),
-
+  POST_ON_SALE_SESSION_CLOSE(ActionPermission.class),
   ADD_ARTICLE(Article.class),
   REMOVE_ARTICLE(Article.class),
   EDIT_ARTICLE(Article.class),
@@ -190,6 +190,12 @@ public enum PermissionKey {
   PERMISSION_NAME_WRITE(Permission.class),
   PERMISSION_KEY_SET_READ(Permission.class),
   PERMISSION_KEY_SET_WRITE(Permission.class),
+  POST_ID_READ(Post.class),
+  POST_ID_WRITE(Post.class),
+  POST_CONTENT_READ(Post.class),
+  POST_CONTENT_WRITE(Post.class),
+  POST_CONTEXT_READ(Post.class),
+  POST_CONTEXT_WRITE(Post.class),
   PRICE_LIST_ID_READ(PriceList.class),
   PRICE_LIST_ID_WRITE(PriceList.class),
   PRICE_LIST_NAME_READ(PriceList.class),
@@ -520,6 +526,7 @@ public enum PermissionKey {
             .put("ACTION_OPEN_PRINT_LABELS", "Etiketten drucken")
             .put("ACTION_OPEN_INVENTORY", "Inventur starten")
             .put("ACTION_OPEN_CATALOG_IMPORT", "Kornkraft Katalog importieren")
+            .put("POST_ON_SALE_SESSION_CLOSE", "Nachricht bei LD-Abschluss bearbeiten")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }
