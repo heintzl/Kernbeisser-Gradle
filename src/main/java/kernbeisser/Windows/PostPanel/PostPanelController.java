@@ -19,11 +19,15 @@ public class PostPanelController extends Controller<PostPanelView, PostPanelMode
 
   @Override
   public void fillView(PostPanelView postPanelView) {
-    postPanelView.setHtmlContent(model.getHtmlContent());
+    resetContent();
     postPanelView.setActive(model.getActive());
     boolean userMayEdit = model.isEditable();
     postPanelView.setEditable(userMayEdit);
     postPanelView.setActiveVisible(userMayEdit);
+  }
+
+  public void resetContent() {
+    getView().setHtmlContent(model.getHtmlContent());
   }
 
   public void setActive(boolean active) {

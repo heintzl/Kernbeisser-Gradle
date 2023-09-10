@@ -34,11 +34,10 @@ public class Post {
     this.context = context;
   }
 
-  public void setContent(String content) throws PermissionKeyRequiredException {
+  public Post setContent(String content) throws PermissionKeyRequiredException {
     if (!context.isWriteable()) {
       throw new PermissionKeyRequiredException("missing Permission for " + context);
     }
-    ;
     Post post = Tools.ifNull(get(), new Post(context));
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -46,9 +45,10 @@ public class Post {
     et.begin();
     post.htmlContent = content;
     em.merge(post);
+    return post;
   }
 
-  public void setActive(boolean active) throws PermissionKeyRequiredException {
+  public Post setActive(boolean active) throws PermissionKeyRequiredException {
     if (!context.isWriteable()) {
       throw new PermissionKeyRequiredException("missing Permission for " + context);
     }
@@ -60,6 +60,7 @@ public class Post {
     et.begin();
     post.active = active;
     em.merge(post);
+    return post;
   }
 
   public static Post getByContext(PostContext postContext) {

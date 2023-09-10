@@ -34,6 +34,8 @@ public class CashierShoppingMaskController
   private final UserFilter userFilter =
       new UserFilter(this::changeFilter, UserFilter.FILTER_ACTIVE);
 
+  private final PostContext POST_ON_CLOSE = PostContext.ON_SALE_SESSION_CLOSE;
+
   private List<User> searchable(String s, int max) {
     return userFilter.searchable(s, max).stream()
         .filter(u -> !u.isTestOnly())
@@ -113,8 +115,9 @@ public class CashierShoppingMaskController
 
   public void close() {
     CashierShoppingMaskView view = getView();
-    new PostPanelController(PostContext.ON_SALE_SESSION_CLOSE)
-        .openIn(new SubWindow(view.traceViewContainer()));
+    if (Post.getByContext(POST_ON_CLOSE).getActive()) {
+      openPostOnClose();
+    }
     view.back();
   }
 
@@ -141,6 +144,10 @@ public class CashierShoppingMaskController
     }
   }
 
+  public void openPostOnClose() {
+    new PostPanelController(POST_ON_CLOSE).openIn(new SubWindow(getView().traceViewContainer()));
+  }
+
   public SearchBoxView<User> getSearchBoxView() {
     return searchBoxController.getView();
   }
@@ -153,5 +160,6 @@ public class CashierShoppingMaskController
   @Override
   public void fillView(CashierShoppingMaskView cashierShoppingMaskView) {
     cashierShoppingMaskView.setAllSecondarySellers(User.getAllUserFullNames(false, false));
+    cashierShoppingMaskView.setEditPostVisible(Post.getByContext(POST_ON_CLOSE).isWriteable());
   }
 }

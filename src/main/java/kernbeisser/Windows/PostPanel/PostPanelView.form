@@ -90,7 +90,7 @@
               <text value="Aktiv"/>
             </properties>
           </component>
-          <component id="f845c" class="javax.swing.JButton" binding="cancel">
+          <component id="f845c" class="javax.swing.JButton" binding="reset">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>

@@ -6,7 +6,7 @@ import kernbeisser.Windows.MVC.IModel;
 
 public class PostPanelModel implements IModel<PostPanelController> {
 
-  private final Post post;
+  private Post post;
 
   public PostPanelModel(PostContext postContext) {
     this.post = Post.getByContext(postContext);
@@ -29,10 +29,10 @@ public class PostPanelModel implements IModel<PostPanelController> {
   }
 
   public void setPostActive(boolean active) {
-    post.setActive(active);
+    post = post.setActive(active);
   }
 
   public void saveContent(String htmlContent) {
-    post.setContent(htmlContent);
+    post = post.setContent(htmlContent);
   }
 }

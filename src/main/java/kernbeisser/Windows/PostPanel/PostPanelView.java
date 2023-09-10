@@ -15,7 +15,7 @@ public class PostPanelView implements IView<PostPanelController> {
   private JEditorPane editorPane;
   private JButton back;
   private JButton edit;
-  private JButton cancel;
+  private JButton reset;
   private JButton preview;
   private JCheckBox active;
 
@@ -28,11 +28,11 @@ public class PostPanelView implements IView<PostPanelController> {
     displayPane.setEditable(false);
     back.addActionListener(e -> back());
     edit.addActionListener(e -> controller.toggleEditing());
-    cancel.addActionListener(e -> cancelEdit());
+    reset.addActionListener(e -> reset());
     preview.setVisible(false);
     preview.addActionListener(e -> previewText());
     active.addActionListener(e -> controller.setActive(active.isSelected()));
-    cancel.setVisible(false);
+    reset.setVisible(false);
   }
 
   public void setHtmlContent(String htmlContent) {
@@ -54,10 +54,11 @@ public class PostPanelView implements IView<PostPanelController> {
     splitter.setDividerLocation(0.3);
     edit.setText("Speichern");
     preview.setVisible(true);
-    cancel.setVisible(true);
+    reset.setVisible(true);
   }
 
-  public void cancelEdit() {
+  public void reset() {
+    controller.resetContent();
     editorPane.setText(displayPane.getText());
   }
 
@@ -67,7 +68,7 @@ public class PostPanelView implements IView<PostPanelController> {
     editorPane.setVisible(false);
     edit.setText("Bearbeiten");
     preview.setVisible(false);
-    cancel.setVisible(false);
+    reset.setVisible(false);
   }
 
   public void setActiveVisible(boolean visible) {

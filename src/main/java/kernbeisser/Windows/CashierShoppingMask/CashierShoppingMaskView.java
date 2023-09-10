@@ -25,6 +25,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   private PermissionComboBox<User> secondSellerUsername;
   private JButton userInfo;
   private JButton close;
+  private JButton editPost;
 
   @Linked private CashierShoppingMaskController controller;
 
@@ -65,6 +66,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
           }
         });
     close.addActionListener(e -> controller.close());
+    editPost.addActionListener(e -> controller.openPostOnClose());
   }
 
   @Override
@@ -108,6 +110,10 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
             "Ladendienst beenden",
             JOptionPane.YES_NO_OPTION)
         == 0;
+  }
+
+  public void setEditPostVisible(boolean visible) {
+    editPost.setVisible(visible);
   }
 
   public void messageSelectUserFirst() {
