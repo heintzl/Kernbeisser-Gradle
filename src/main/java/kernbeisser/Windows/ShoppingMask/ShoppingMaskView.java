@@ -316,7 +316,9 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     addNetPrice.setVisible(isPreordered && articleTypesWithSettablePrice.contains(type));
     addDeposit.setVisible(depositArticleTypes.contains(type));
 
-    setSupplier(null);
+    if (!isPreordered) {
+      setSupplier(null);
+    }
     setSuppliersItemNumber("");
 
     setKbNumber("");
@@ -852,12 +854,14 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
         e -> {
           variablePercentage.setEnabled(false);
           disablePreordered();
+          rememberReductionSetting.setSelected(false);
         });
 
     price50Percent.addItemListener(
         e -> {
           variablePercentage.setEnabled(false);
           disablePreordered();
+          rememberReductionSetting.setSelected(false);
         });
     price50Percent.addKeyListener(
         new KeyAdapter() {
@@ -873,6 +877,8 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
         e -> {
           variablePercentage.setEnabled(false);
           enablePreordered();
+          setSupplier(Supplier.getKKSupplier());
+          rememberReductionSetting.setSelected(true);
         });
     rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für Folgeartikel merken");
     priceVariablePercentage.addItemListener(
@@ -880,6 +886,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           variablePercentage.setEnabled(true);
           variablePercentage.requestFocusInWindow();
           disablePreordered();
+          rememberReductionSetting.setSelected(false);
         });
     variablePercentage.addKeyListener(
         new KeyAdapter() {
