@@ -7,6 +7,7 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
+import kernbeisser.DBEntities.Post;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -19,6 +20,7 @@ import kernbeisser.Useful.Users;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
+import kernbeisser.Windows.PostPanel.PostPanelController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -31,6 +33,8 @@ public class CashierShoppingMaskController
   @Linked private final SearchBoxController<User> searchBoxController;
   private final UserFilter userFilter =
       new UserFilter(this::changeFilter, UserFilter.FILTER_ACTIVE);
+
+  private final PostContext POST_ON_CLOSE = PostContext.ON_SALE_SESSION_CLOSE;
 
   private List<User> searchable(String s, int max) {
     return userFilter.searchable(s, max).stream()
@@ -109,6 +113,14 @@ public class CashierShoppingMaskController
     getView().setOpenShoppingMaskEnabled(v);
   }
 
+  public void close() {
+    CashierShoppingMaskView view = getView();
+    if (Post.getByContext(POST_ON_CLOSE).getActive()) {
+      openPostOnClose();
+    }
+    view.back();
+  }
+
   @Override
   protected boolean commitClose() {
     try {
@@ -132,6 +144,10 @@ public class CashierShoppingMaskController
     }
   }
 
+  public void openPostOnClose() {
+    new PostPanelController(POST_ON_CLOSE).openIn(new SubWindow(getView().traceViewContainer()));
+  }
+
   public SearchBoxView<User> getSearchBoxView() {
     return searchBoxController.getView();
   }
@@ -144,5 +160,6 @@ public class CashierShoppingMaskController
   @Override
   public void fillView(CashierShoppingMaskView cashierShoppingMaskView) {
     cashierShoppingMaskView.setAllSecondarySellers(User.getAllUserFullNames(false, false));
+    cashierShoppingMaskView.setEditPostVisible(Post.getByContext(POST_ON_CLOSE).isWriteable());
   }
 }
