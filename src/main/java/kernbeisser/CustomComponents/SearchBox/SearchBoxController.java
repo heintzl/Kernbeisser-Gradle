@@ -43,6 +43,10 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
     return getView().getObjectTable().getSelectedObjects();
   }
 
+  public Collection<T> getFilteredObjects() {
+    return getView().getObjectTable().getFilteredObjects();
+  }
+
   public void invokeSearch() {
     getView().setObjects(model.getSearchResults(getView().getSearch()));
     runLostSelectionListener();

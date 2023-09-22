@@ -3,8 +3,13 @@ package kernbeisser.Windows.EditArticles;
 import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.List;
 import javax.persistence.NoResultException;
+import javax.swing.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -14,10 +19,12 @@ import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Security.Key;
+import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
@@ -35,6 +42,8 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   private final BarcodeCapture capture;
 
   private final ArticleFilter articleFilter = new ArticleFilter(this::refreshList);
+
+  private boolean hasAdminTools = false;
 
   private String formatArticleSurcharge(Article article) {
     return article.getSurchargeGroup().getName()
@@ -135,6 +144,10 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
           PrintLabelsController.getLaunchButton(getView().traceViewContainer()));
     }
     refreshList();
+    try {
+      addAdministrationTools();
+    } catch (PermissionKeyRequiredException ignored) {
+    }
   }
 
   public ObjectViewView<Article> getObjectView() {
@@ -152,5 +165,34 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
         });
     new ComponentController(priceListObjectTree, "Preisliste auswählen:")
         .openIn(new SubWindow(view.traceViewContainer()));
+  }
+
+  @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)
+  private void addAdministrationTools() {
+    if (hasAdminTools) return;
+    JButton previewCatalog = new JButton("Pfand und Barcode aus Katalog anzeigen");
+    previewCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.BARCODE, 20, Color.DARK_GRAY));
+    previewCatalog.setToolTipText("Zeigt Unterschiede zwischen Katalog und Artikel an");
+    objectViewController.addButton(previewCatalog, e -> previewCatalog());
+    JButton mergeCatalog = new JButton("Übertrage Pfand und Barcode aus Katalog");
+    mergeCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.BARCODE, 20, Color.DARK_GRAY));
+    mergeCatalog.setToolTipText(
+        "Übernimmt für ausgewählte Artikel Pfand und Barcode aus dem Katalog.");
+    objectViewController.addButton(
+        mergeCatalog,
+        e ->
+            getModel()
+                .mergeCatalog(objectViewController.getSearchBoxController().getSelectedObjects()));
+    hasAdminTools = true;
+  }
+
+  private void previewCatalog() {
+    EditArticlesView view = getView();
+    List<ArticleComparedToCatalogEntry> differences =
+        model.previewCatalog(objectViewController.getSearchBoxController().getFilteredObjects());
+    if (differences.size() == 0) {
+    } else {
+      int x = 5;
+    }
   }
 }
