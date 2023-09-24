@@ -48,7 +48,7 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
   }
 
   public void invokeSearch() {
-    getView().setObjects(model.getSearchResults(getView().getSearch()));
+    getView().setObjectTable(model.getSearchResults(getView().getSearch()));
     runLostSelectionListener();
   }
 

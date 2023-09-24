@@ -21,18 +21,18 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
 
   private JButton search;
   private JTextField searchInput;
-  private ObjectTable<T> objects;
+  private ObjectTable<T> objectTable;
   private JPanel main;
   @Getter private JPanel extraOptionsPanel;
 
   @Linked private SearchBoxController<T> controller;
 
-  void setObjects(Collection<T> objects) {
-    this.objects.setObjects(objects);
+  void setObjectTable(Collection<T> objectTable) {
+    this.objectTable.setObjects(objectTable);
   }
 
   void setColumns(Collection<Column<T>> columns) {
-    objects.setColumns(columns);
+    objectTable.setColumns(columns);
   }
 
   String getSearch() {
@@ -40,11 +40,11 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   }
 
   public Optional<T> getSelectedObject() {
-    return objects.getSelectedObject();
+    return objectTable.getSelectedObject();
   }
 
   private void createUIComponents() {
-    objects = new ObjectTable<>();
+    objectTable = new ObjectTable<>();
   }
 
   @Override
@@ -61,11 +61,11 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   }
 
   void addSelectionListener(ObjectSelectionListener<T> selectionListener) {
-    objects.addSelectionListener(selectionListener);
+    objectTable.addSelectionListener(selectionListener);
   }
 
   void addDoubleClickListener(ObjectSelectionListener<T> doubleSelectionListener) {
-    objects.addDoubleClickListener(doubleSelectionListener);
+    objectTable.addDoubleClickListener(doubleSelectionListener);
   }
 
   @Override
@@ -88,10 +88,10 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   }
 
   public void setRowFilter(RowFilter<T> rowFilter) {
-    objects.setRowFilter(rowFilter);
+    objectTable.setRowFilter(rowFilter);
   }
 
   public ObjectTable<T> getObjectTable() {
-    return objects;
+    return objectTable;
   }
 }
