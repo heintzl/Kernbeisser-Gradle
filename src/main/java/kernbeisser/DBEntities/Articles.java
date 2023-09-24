@@ -17,13 +17,21 @@ import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
+import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.EditArticles.EditArticlesModel;
 import lombok.Cleanup;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.query.AuditEntity;
 
 public class Articles {
+
+  private static final Logger logger = LogManager.getLogger(EditArticlesModel.class);
+
+  public static final Supplier KK_SUPPLIER = Supplier.getKKSupplier();
 
   private Articles() {}
 
@@ -64,7 +72,7 @@ public class Articles {
 
   public static boolean isKkArticle(Article article) {
     Supplier supplier = article.getSupplier();
-    return (supplier != null && supplier.equals(Supplier.getKKSupplier()));
+    return (supplier != null && supplier.equals(KK_SUPPLIER));
   }
 
   public static Optional<ObjectState<Article>> getByKbNumber(
@@ -113,7 +121,7 @@ public class Articles {
   }
 
   public static Optional<Article> getByKkItemNumber(int suppliersNumber) {
-    return getBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersNumber);
+    return getBySuppliersItemNumber(KK_SUPPLIER, suppliersNumber);
   }
 
   public static Optional<Article> getBySuppliersItemNumber(
@@ -575,5 +583,115 @@ public class Articles {
     if (!priceList.getName().equals("Verdeckte Aufnahme")) return priceList;
     return nextArticleTo(em, article.getSuppliersItemNumber(), article.getSupplier(), priceList)
         .getPriceList();
+  }
+
+  private static Map<String, CatalogEntry> getArticleCatalogMap(Collection<Article> articles) {
+
+    Collection<Integer> articleNos = new ArrayList<>();
+    articles.stream()
+        .filter(e -> e.getSupplier().equals(KK_SUPPLIER))
+        .mapToInt(Article::getSuppliersItemNumber)
+        .forEach(articleNos::add);
+
+    return DBConnection.getConditioned(CatalogEntry.class, "artikelNr", articleNos).stream()
+        .filter(
+            e ->
+                Boolean.FALSE == e.getAktionspreis()
+                    && (e.getEanLadenEinheit() != null
+                        || e.getGebindePfand() != 0.0
+                        || e.getEinzelPfand() != 0.0))
+        .collect(Collectors.toMap(CatalogEntry::getArtikelNr, c -> c));
+  }
+
+  public static List<ArticleComparedToCatalogEntry> compareArticleToCatalog(
+      Collection<Article> articles) {
+    List<ArticleComparedToCatalogEntry> differences = new ArrayList<>();
+    Map<String, CatalogEntry> catalogMap = getArticleCatalogMap(articles);
+    for (Article article : articles) {
+      if (!article.getSupplier().equals(KK_SUPPLIER)) {
+        continue;
+      }
+      CatalogEntry correspondingCatalogEntry =
+          catalogMap.get(Integer.toString(article.getSuppliersItemNumber()));
+      if (correspondingCatalogEntry == null) {
+        continue;
+      }
+      ArticleComparedToCatalogEntry compared =
+          new ArticleComparedToCatalogEntry(article, correspondingCatalogEntry);
+      List<String> fieldDifferences = compared.getFieldDifferences();
+      if (fieldDifferences.size() > 0) {
+        compared.setDescription(String.join(", ", fieldDifferences));
+        differences.add(compared);
+      }
+    }
+    return differences;
+  }
+
+  public static List<String> mergeCatalog(
+      Collection<Article> articles, List<ArticleComparedToCatalogEntry> differences) {
+    List<String> mergeLog = new ArrayList<>();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    try {
+      for (Article article : articles) {
+        String log = "";
+        Optional<ArticleComparedToCatalogEntry> optCatalogEntry =
+            differences.stream().filter(a -> a.getArticle().equals(article)).findFirst();
+        if (!optCatalogEntry.isPresent()) {
+          continue;
+        }
+        CatalogEntry catalogEntry = optCatalogEntry.get().getCatalogEntry();
+        log += "Artikel " + article.getSuppliersItemNumber() + ":";
+        long barcode = Tools.ifNull(catalogEntry.getEanLadenEinheit(), 0L);
+        double singleDeposit = catalogEntry.getEinzelPfand();
+        double containerDeposit = catalogEntry.getGebindePfand();
+        boolean changed = false;
+        Article persistedArticle = em.find(Article.class, article.getId());
+        if (barcode > 1E10) {
+          Optional<Article> sameBarcode = Articles.getByBarcode(barcode);
+          if (sameBarcode.isPresent()) {
+            if (!sameBarcode.get().equals(article)) {
+              logger.warn(
+                  log
+                      + String.format(
+                          " hat den selben Barcode, wie der Artikel mit der KB-Artikelnummer %d und wird daher übersprungen",
+                          sameBarcode.get().getKbNumber()));
+            }
+          } else {
+            log += String.format(" bc %s -> %s |", article.getBarcode(), barcode);
+            persistedArticle.setBarcode(barcode);
+            changed = true;
+          }
+        }
+        if (singleDeposit > 0.0) {
+          log += String.format(" E.-Pf. %.2f -> %.2f |", article.getSingleDeposit(), singleDeposit);
+          persistedArticle.setSingleDeposit(singleDeposit);
+          changed = true;
+        }
+        if (containerDeposit > 0.0) {
+          log +=
+              String.format(
+                  " G.-Pf. %.2f -> %.2f |", article.getContainerDeposit(), containerDeposit);
+          persistedArticle.setContainerDeposit(containerDeposit);
+          changed = true;
+        }
+        if (changed) {
+          em.merge(persistedArticle);
+        }
+        logger.info(log);
+        mergeLog.add(log);
+      }
+      em.flush();
+      et.commit();
+      return mergeLog;
+    } catch (Exception e) {
+      Tools.showUnexpectedErrorWarning(e);
+      et.rollback();
+      logger.error("Rolled back changes due to an exception");
+      mergeLog.add(
+          "Übernahme wurde mit Fehlern abgebrochen. Alle Änderungen wurden Rückgängig gemacht");
+      return mergeLog;
+    }
   }
 }
