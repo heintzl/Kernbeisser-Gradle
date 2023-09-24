@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.NoResultException;
@@ -206,7 +207,9 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
       view.messageNoSelection();
       return;
     }
-    getModel().mergeCatalog(articlesToMerge);
+    List<String> mergeLog = model.mergeCatalog(articlesToMerge);
+    previewCatalog();
+    view.showLog(mergeLog);
   }
 
   private void previewCatalog() {

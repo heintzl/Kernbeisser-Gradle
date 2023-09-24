@@ -1,6 +1,10 @@
 package kernbeisser.Windows.EditArticles;
 
+import java.awt.*;
+import java.util.List;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Useful.Tools;
@@ -54,5 +58,15 @@ public class EditArticlesView implements IView<EditArticlesController> {
 
   private void createUIComponents() {
     objectView = controller.getObjectView();
+  }
+
+  public void showLog(List<String> mergeLog) {
+    ObjectTable<String> log = new ObjectTable<>(mergeLog, Columns.create("Meldung", e -> e));
+    JScrollPane logPanel = new JScrollPane(log);
+    Dimension thisSize = getSize();
+    logPanel.setPreferredSize(
+        new Dimension((int) (thisSize.getWidth() * 0.7), (int) (thisSize.getHeight() * 0.7)));
+    JOptionPane.showMessageDialog(
+        getContent(), logPanel, "Katalog-Übernahme-Ergebnis", JOptionPane.INFORMATION_MESSAGE);
   }
 }
