@@ -13,14 +13,18 @@ import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class EditArticlesModel implements IModel<EditArticlesController> {
+
+  private static final Supplier kkSupplier = Supplier.getKKSupplier();
   private final Logger logger = LogManager.getLogger(EditArticlesModel.class);
+  @Getter private List<ArticleComparedToCatalogEntry> differences;
 
   private Map<String, CatalogEntry> getCatalogMap(Collection<Article> articles) {
-    Supplier kkSupplier = Supplier.getKKSupplier();
+
     Collection<Integer> articleNos = new ArrayList<>();
     articles.stream()
         .filter(e -> e.getSupplier().equals(kkSupplier))
@@ -37,10 +41,13 @@ public class EditArticlesModel implements IModel<EditArticlesController> {
         .collect(Collectors.toMap(CatalogEntry::getArtikelNr, c -> c));
   }
 
-  public List<ArticleComparedToCatalogEntry> previewCatalog(Collection<Article> articles) {
-    List<ArticleComparedToCatalogEntry> differences = new ArrayList<>();
+  public void previewCatalog(Collection<Article> articles) {
+    differences = new ArrayList<>();
     Map<String, CatalogEntry> catalogMap = getCatalogMap(articles);
     for (Article article : articles) {
+      if (!article.getSupplier().equals(kkSupplier)) {
+        continue;
+      }
       CatalogEntry correspondingCatalogEntry =
           catalogMap.get(Integer.toString(article.getSuppliersItemNumber()));
       if (correspondingCatalogEntry == null) {
@@ -54,57 +61,62 @@ public class EditArticlesModel implements IModel<EditArticlesController> {
         differences.add(compared);
       }
     }
-    return differences;
   }
 
   public void mergeCatalog(Collection<Article> articles) {
-    Map<String, CatalogEntry> catalogMap = getCatalogMap(articles);
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     try {
       for (Article article : articles) {
         String log = "";
-        CatalogEntry catalogEntry =
-            catalogMap.get(Integer.toString(article.getSuppliersItemNumber()));
-        if (catalogEntry == null) {
+        Optional<ArticleComparedToCatalogEntry> optCatalogEntry =
+            differences.stream().filter(a -> a.getArticle().equals(article)).findFirst();
+        if (!optCatalogEntry.isPresent()) {
           continue;
         }
+        CatalogEntry catalogEntry = optCatalogEntry.get().getCatalogEntry();
         log += "Artikel " + article.getSuppliersItemNumber() + ":";
         long barcode = Tools.ifNull(catalogEntry.getEanLadenEinheit(), 0L);
         double singleDeposit = catalogEntry.getEinzelPfand();
         double containerDeposit = catalogEntry.getGebindePfand();
+        boolean changed = false;
         Article persistedArticle = em.find(Article.class, article.getId());
         if (barcode > 1E10) {
           Optional<Article> sameBarcode = Articles.getByBarcode(barcode);
           if (sameBarcode.isPresent()) {
-            if (sameBarcode.get().equals(article)) {
-              continue;
+            if (!sameBarcode.get().equals(article)) {
+              logger.warn(
+                  log
+                      + String.format(
+                          " hat den selben Barcode, wie der Artikel mit der KB-Artikelnummer %d und wird daher übersprungen",
+                          sameBarcode.get().getKbNumber()));
             }
-            logger.warn(
-                log
-                    + String.format(
-                        " hat den selben Barcode, wie der Artikel mit der KB-Artikelnummer %d und wird daher übersprungen",
-                        sameBarcode.get().getKbNumber()));
-            continue;
+          } else {
+            log += String.format(" bc %s -> %s |", article.getBarcode(), barcode);
+            persistedArticle.setBarcode(barcode);
+            changed = true;
           }
-          log += String.format(" bc %s -> %s |", article.getBarcode(), barcode);
-          persistedArticle.setBarcode(barcode);
         }
         if (singleDeposit > 0.0) {
           log += String.format(" E.-Pf. %.2f -> %.2f |", article.getSingleDeposit(), singleDeposit);
           persistedArticle.setSingleDeposit(singleDeposit);
+          changed = true;
         }
         if (containerDeposit > 0.0) {
           log +=
               String.format(
                   " G.-Pf. %.2f -> %.2f |", article.getContainerDeposit(), containerDeposit);
           persistedArticle.setContainerDeposit(containerDeposit);
+          changed = true;
         }
-        em.merge(persistedArticle);
+        if (changed) {
+          em.merge(persistedArticle);
+        }
         logger.info(log);
       }
+      em.flush();
+      et.commit();
     } catch (Exception e) {
       Tools.showUnexpectedErrorWarning(e);
       et.rollback();

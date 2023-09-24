@@ -5,7 +5,10 @@ import static javax.swing.SwingConstants.RIGHT;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.NoResultException;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -44,6 +47,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   private final ArticleFilter articleFilter = new ArticleFilter(this::refreshList);
 
   private boolean hasAdminTools = false;
+  private JButton mergeCatalog;
 
   private String formatArticleSurcharge(Article article) {
     return article.getSurchargeGroup().getName()
@@ -51,6 +55,8 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
         + Math.round(article.getSurchargeGroup().getSurcharge() * 100)
         + "%)";
   }
+
+  private Map<Article, String> differences = new HashMap<>();
 
   @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
   public EditArticlesController() {
@@ -111,6 +117,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                     a ->
                         Date.safeDateFormat(lastDeliveries.get(a.getKbNumber()), Date.INSTANT_DATE))
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
+
     this.capture =
         new BarcodeCapture(
             e ->
@@ -119,6 +126,10 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                     Mode.EDIT));
     objectViewController.addComponents(articleFilter.createFilterUIComponents());
     objectViewController.setForceExtraButtonState(false);
+  }
+
+  String displayDifference(Article article) {
+    return Tools.ifNull(differences.get(article), "");
   }
 
   void refreshList() {
@@ -170,29 +181,51 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)
   private void addAdministrationTools() {
     if (hasAdminTools) return;
-    JButton previewCatalog = new JButton("Pfand und Barcode aus Katalog anzeigen");
+    JButton previewCatalog = new JButton("Katalog-Abweichungen anzeigen");
     previewCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.BARCODE, 20, Color.DARK_GRAY));
     previewCatalog.setToolTipText("Zeigt Unterschiede zwischen Katalog und Artikel an");
     objectViewController.addButton(previewCatalog, e -> previewCatalog());
-    JButton mergeCatalog = new JButton("Übertrage Pfand und Barcode aus Katalog");
+    mergeCatalog = new JButton("Übertrage Pfand und Barcode aus Katalog");
     mergeCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.BARCODE, 20, Color.DARK_GRAY));
     mergeCatalog.setToolTipText(
         "Übernimmt für ausgewählte Artikel Pfand und Barcode aus dem Katalog.");
-    objectViewController.addButton(
-        mergeCatalog,
-        e ->
-            getModel()
-                .mergeCatalog(objectViewController.getSearchBoxController().getSelectedObjects()));
+    mergeCatalog.setEnabled(false);
+    objectViewController.addButton(mergeCatalog, e -> mergeCatalog());
     hasAdminTools = true;
+  }
+
+  private void mergeCatalog() {
+    EditArticlesView view = getView();
+    if (differences.isEmpty()) {
+      view.messageNoDifferences();
+      return;
+    }
+    Collection<Article> articlesToMerge =
+        objectViewController.getSearchBoxController().getSelectedObjects();
+    if (articlesToMerge.isEmpty()) {
+      view.messageNoSelection();
+      return;
+    }
+    getModel().mergeCatalog(articlesToMerge);
   }
 
   private void previewCatalog() {
     EditArticlesView view = getView();
-    List<ArticleComparedToCatalogEntry> differences =
-        model.previewCatalog(objectViewController.getSearchBoxController().getFilteredObjects());
-    if (differences.size() == 0) {
+    model.previewCatalog(objectViewController.getSearchBoxController().getFilteredObjects());
+    if (model.getDifferences().isEmpty()) {
+      getView().message("Es gibt keine Differenzen.", "Keine Differenz-Daten");
     } else {
-      int x = 5;
+      CustomizableColumn<Article> catalogDifference =
+          new CustomizableColumn<Article>("Katalog-Abweichungen", this::displayDifference)
+              .withDefaultFilter();
+      this.differences =
+          model.getDifferences().stream()
+              .collect(
+                  Collectors.toMap(
+                      ArticleComparedToCatalogEntry::getArticle,
+                      ArticleComparedToCatalogEntry::getDescription));
+      objectViewController.getSearchBoxView().getObjectTable().addColumn(catalogDifference);
+      mergeCatalog.setEnabled(true);
     }
   }
 }
