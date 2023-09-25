@@ -649,16 +649,23 @@ public class Articles {
         boolean changed = false;
         Article persistedArticle = em.find(Article.class, article.getId());
         if (barcode > 1E10) {
+          boolean articleHasBarcode = article.getBarcode() != null;
+          if (articleHasBarcode && barcode != article.getBarcode()) {
+            log +=
+                " Neuer Barcode. Möglicherweise ist die Lieferanten-Artikelnummer neu vergeben worden?";
+          }
           Optional<Article> sameBarcode = Articles.getByBarcode(barcode);
           if (sameBarcode.isPresent()) {
-            if (!sameBarcode.get().equals(article)) {
+            Article sameBarcodeArticle = sameBarcode.get();
+            if (!sameBarcodeArticle.equals(article)) {
               logger.warn(
-                  log
-                      + String.format(
-                          " hat den selben Barcode, wie der Artikel mit der KB-Artikelnummer %d und wird daher übersprungen",
-                          sameBarcode.get().getKbNumber()));
+                  log +=
+                      String.format(
+                          " Derselbe Barcode,ist bereits bei dem %s-Artikel mit der KB-Artikelnummer %d vergeben.",
+                          sameBarcodeArticle.getSupplier().getShortName(),
+                          sameBarcodeArticle.getKbNumber()));
             }
-          } else {
+          } else if (!articleHasBarcode) {
             log += String.format(" bc %s -> %s |", article.getBarcode(), barcode);
             persistedArticle.setBarcode(barcode);
             changed = true;
