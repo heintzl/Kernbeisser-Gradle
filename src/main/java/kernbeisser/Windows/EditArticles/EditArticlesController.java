@@ -18,6 +18,7 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.*;
@@ -213,10 +214,9 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   }
 
   private void previewCatalog() {
-    EditArticlesView view = getView();
     model.previewCatalog(objectViewController.getSearchBoxController().getFilteredObjects());
     if (model.getDifferences().isEmpty()) {
-      getView().message("Es gibt keine Differenzen.", "Keine Differenz-Daten");
+      getView().messageNoDifferences();
     } else {
       CustomizableColumn<Article> catalogDifference =
           new CustomizableColumn<Article>("Katalog-Abweichungen", this::displayDifference)
@@ -227,7 +227,12 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                   Collectors.toMap(
                       ArticleComparedToCatalogEntry::getArticle,
                       ArticleComparedToCatalogEntry::getDescription));
-      objectViewController.getSearchBoxView().getObjectTable().addColumn(catalogDifference);
+      ObjectTable<Article> table = objectViewController.getSearchBoxView().getObjectTable();
+      if (table.getColumns().stream()
+          .noneMatch(c -> c.getName().equals(catalogDifference.getName()))) {
+        table.addColumn(catalogDifference);
+      }
+      objectViewController.search();
       mergeCatalog.setEnabled(true);
     }
   }

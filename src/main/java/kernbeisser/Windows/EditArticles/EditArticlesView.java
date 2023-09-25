@@ -31,7 +31,7 @@ public class EditArticlesView implements IView<EditArticlesController> {
 
   public void messageNoDifferences() {
     message(
-        "Es gibt keine bekannten Differenzen. Du musst erst welche angezeigen, bevor sie übernommen werden können.",
+        "Es gibt keine bekannten Differenzen. Du musst erst welche anzeigen, bevor sie übernommen werden können.",
         "Fehlende Differenz-Daten");
   }
 
