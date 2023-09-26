@@ -1,10 +1,8 @@
 package kernbeisser.Tasks;
 
-import com.google.common.collect.ImmutableMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiPredicate;
+import java.util.*;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
@@ -15,37 +13,54 @@ public class ArticleComparedToCatalogEntry {
 
   @Getter @NotNull private final CatalogEntry catalogEntry;
   @Getter @NotNull private final Article article;
-  @Getter private final List<String> fieldDifferences;
+  @Getter private final Set<String> fieldDifferences = new HashSet<>();
+  @Getter private int resultType;
+  @Getter private Article conflictingArticle;
   @Getter @Setter private String description;
-  private static final ImmutableMap<String, BiPredicate<Article, CatalogEntry>> comparators =
-      buildComparators();
+  public static final int EQUAL = 0;
+  public static final int DIFFERENT = 1;
+  public static final int BARCODE_CHANGED = 2;
+  public static final int BARCODE_CONFLICT_SAME_SUPPLIER = 3;
+  public static final int BARCODE_CONFLICT_OTHER_SUPPLIER = 4;
 
-  public ArticleComparedToCatalogEntry(Article article, CatalogEntry catalogEntry) {
+  public ArticleComparedToCatalogEntry(
+      @NotNull Article article, @NotNull CatalogEntry catalogEntry) {
     this.catalogEntry = catalogEntry;
     this.article = article;
-    this.fieldDifferences = analyzeDifferences();
+    analyzeDifferences();
   }
 
-  private static ImmutableMap<String, BiPredicate<Article, CatalogEntry>> buildComparators() {
-    return ImmutableMap.<String, BiPredicate<Article, CatalogEntry>>builder()
-        .put(
-            "Barcode",
-            (a, c) ->
-                Tools.ifNull(a.getBarcode(), -999L)
-                    .equals(Tools.ifNull(c.getEanLadenEinheit(), -999L)))
-        .put("Einzel-Pfand", (a, c) -> a.getSingleDeposit() == (c.getEinzelPfand()))
-        .put("Gebinde-Pfand", (a, c) -> a.getContainerDeposit() == (c.getGebindePfand()))
-        .build();
+  private void analyzeOtherDifferences() {
+    if (article.getSingleDeposit() != catalogEntry.getEinzelPfand())
+      fieldDifferences.add("Einzel-Pfand");
+    if (article.getContainerDeposit() != catalogEntry.getGebindePfand())
+      fieldDifferences.add("Gebinde-Pfand");
+    resultType = fieldDifferences.isEmpty() ? EQUAL : DIFFERENT;
   }
 
-  private List<String> analyzeDifferences() {
-    List<String> result = new ArrayList<>();
-    comparators.forEach(
-        (name, comparator) -> {
-          if (!comparator.test(article, catalogEntry)) {
-            result.add(name);
-          }
-        });
-    return result;
+  private void analyzeDifferences() {
+
+    Long bc_article = Tools.ifNull(article.getBarcode(), -999L);
+    Long bc_catalog = Tools.ifNull(catalogEntry.getEanLadenEinheit(), -999L);
+    if (!Articles.validateBarcode(bc_catalog) || bc_catalog.equals(bc_article)) {
+      analyzeOtherDifferences();
+      return;
+    }
+    fieldDifferences.add("Barcode");
+    Optional<Article> conflictingArticle = Articles.getByBarcode(bc_catalog);
+    if (conflictingArticle.isPresent()) {
+      this.conflictingArticle = conflictingArticle.get();
+      if (article.getSupplier().equals(this.conflictingArticle.getSupplier())) {
+        resultType = BARCODE_CONFLICT_SAME_SUPPLIER;
+      } else {
+        resultType = BARCODE_CONFLICT_OTHER_SUPPLIER;
+      }
+      return;
+    }
+    if (!Articles.validateBarcode(bc_article)) {
+      analyzeOtherDifferences();
+      return;
+    }
+    resultType = BARCODE_CHANGED;
   }
 }

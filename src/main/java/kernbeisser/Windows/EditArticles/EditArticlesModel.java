@@ -12,7 +12,7 @@ public class EditArticlesModel implements IModel<EditArticlesController> {
   @Getter private List<ArticleComparedToCatalogEntry> differences;
 
   public void previewCatalog(Collection<Article> articles) {
-    differences = Articles.compareArticleToCatalog(articles);
+    differences = Articles.compareArticlesToCatalog(articles, Articles.KK_SUPPLIER);
   }
 
   public List<String> mergeCatalog(Collection<Article> articles) {

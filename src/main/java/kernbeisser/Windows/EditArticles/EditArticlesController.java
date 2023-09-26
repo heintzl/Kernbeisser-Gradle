@@ -220,7 +220,8 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
     } else {
       CustomizableColumn<Article> catalogDifference =
           new CustomizableColumn<Article>("Katalog-Abweichungen", this::displayDifference)
-              .withDefaultFilter();
+              .withDefaultFilter()
+              .withPreferredWidth(200);
       this.differences =
           model.getDifferences().stream()
               .collect(

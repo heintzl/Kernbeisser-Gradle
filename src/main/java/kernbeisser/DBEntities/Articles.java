@@ -585,11 +585,16 @@ public class Articles {
         .getPriceList();
   }
 
-  private static Map<String, CatalogEntry> getArticleCatalogMap(Collection<Article> articles) {
+  public static boolean validateBarcode(Long barcode) {
+    return barcode > 1E9;
+  }
+
+  public static Map<String, CatalogEntry> getArticleCatalogMap(
+      Collection<Article> articles, Supplier supplier) {
 
     Collection<Integer> articleNos = new ArrayList<>();
     articles.stream()
-        .filter(e -> e.getSupplier().equals(KK_SUPPLIER))
+        .filter(e -> e.getSupplier().equals(supplier))
         .mapToInt(Article::getSuppliersItemNumber)
         .forEach(articleNos::add);
 
@@ -603,12 +608,12 @@ public class Articles {
         .collect(Collectors.toMap(CatalogEntry::getArtikelNr, c -> c));
   }
 
-  public static List<ArticleComparedToCatalogEntry> compareArticleToCatalog(
-      Collection<Article> articles) {
+  public static List<ArticleComparedToCatalogEntry> compareArticlesToCatalog(
+      Collection<Article> articles, Supplier supplier) {
     List<ArticleComparedToCatalogEntry> differences = new ArrayList<>();
-    Map<String, CatalogEntry> catalogMap = getArticleCatalogMap(articles);
+    Map<String, CatalogEntry> catalogMap = getArticleCatalogMap(articles, supplier);
     for (Article article : articles) {
-      if (!article.getSupplier().equals(KK_SUPPLIER)) {
+      if (!article.getSupplier().equals(supplier)) {
         continue;
       }
       CatalogEntry correspondingCatalogEntry =
@@ -618,11 +623,25 @@ public class Articles {
       }
       ArticleComparedToCatalogEntry compared =
           new ArticleComparedToCatalogEntry(article, correspondingCatalogEntry);
-      List<String> fieldDifferences = compared.getFieldDifferences();
-      if (fieldDifferences.size() > 0) {
-        compared.setDescription(String.join(", ", fieldDifferences));
-        differences.add(compared);
+      String description = "";
+      switch (compared.getResultType()) {
+        case ArticleComparedToCatalogEntry.BARCODE_CHANGED:
+          description = "Barcode geändert";
+          break;
+        case ArticleComparedToCatalogEntry.BARCODE_CONFLICT_SAME_SUPPLIER:
+          description = "Barcode veraltet";
+          break;
+        case ArticleComparedToCatalogEntry.BARCODE_CONFLICT_OTHER_SUPPLIER:
+          description = "Barcode (Lieferanten-Konflikt)";
+          break;
       }
+      Set<String> fieldDifferences = compared.getFieldDifferences();
+      if (!description.isEmpty()) {
+        fieldDifferences.remove("Barcode");
+        description += ", ";
+      }
+      compared.setDescription(description + String.join(", ", fieldDifferences));
+      differences.add(compared);
     }
     return differences;
   }
@@ -633,65 +652,81 @@ public class Articles {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
+
     try {
-      for (Article article : articles) {
-        String log = "";
-        Optional<ArticleComparedToCatalogEntry> optCatalogEntry =
-            differences.stream().filter(a -> a.getArticle().equals(article)).findFirst();
-        if (!optCatalogEntry.isPresent()) {
+      String log;
+      for (ArticleComparedToCatalogEntry difference : differences) {
+        log = "";
+        Article article = difference.getArticle();
+        if (!articles.contains(article)) {
           continue;
         }
-        CatalogEntry catalogEntry = optCatalogEntry.get().getCatalogEntry();
+
+        CatalogEntry catalogEntry = difference.getCatalogEntry();
+        int resultType = difference.getResultType();
+
         log += "Artikel " + article.getSuppliersItemNumber() + ":";
-        long barcode = Tools.ifNull(catalogEntry.getEanLadenEinheit(), 0L);
+        long a_barcode = Tools.ifNull(article.getBarcode(), -999L);
+        long c_barcode = Tools.ifNull(catalogEntry.getEanLadenEinheit(), -999L);
         double singleDeposit = catalogEntry.getEinzelPfand();
         double containerDeposit = catalogEntry.getGebindePfand();
         boolean changed = false;
-        Article persistedArticle = em.find(Article.class, article.getId());
-        if (barcode > 1E10) {
-          boolean articleHasBarcode = article.getBarcode() != null;
-          if (articleHasBarcode && barcode != article.getBarcode()) {
+
+        switch (resultType) {
+          case ArticleComparedToCatalogEntry.EQUAL:
+            break;
+          case ArticleComparedToCatalogEntry.DIFFERENT:
+            if (singleDeposit > 0.0) {
+              log +=
+                  String.format(
+                      " E.-Pf. %.2f -> %.2f |", article.getSingleDeposit(), singleDeposit);
+              article.setSingleDeposit(singleDeposit);
+              changed = true;
+            }
+            if (containerDeposit > 0.0) {
+              log +=
+                  String.format(
+                      " G.-Pf. %.2f -> %.2f |", article.getContainerDeposit(), containerDeposit);
+              article.setContainerDeposit(containerDeposit);
+              changed = true;
+            }
+            if (validateBarcode(c_barcode) && c_barcode != a_barcode) {
+              log += String.format(" bc %s -> %s |", article.getBarcode(), c_barcode);
+              article.setBarcode(c_barcode);
+              changed = true;
+            }
+            break;
+          case ArticleComparedToCatalogEntry.BARCODE_CHANGED:
             log +=
                 " Neuer Barcode. Möglicherweise ist die Lieferanten-Artikelnummer neu vergeben worden?";
-          }
-          Optional<Article> sameBarcode = Articles.getByBarcode(barcode);
-          if (sameBarcode.isPresent()) {
-            Article sameBarcodeArticle = sameBarcode.get();
-            if (!sameBarcodeArticle.equals(article)) {
-              logger.warn(
-                  log +=
-                      String.format(
-                          " Derselbe Barcode,ist bereits bei dem %s-Artikel mit der KB-Artikelnummer %d vergeben.",
-                          sameBarcodeArticle.getSupplier().getShortName(),
-                          sameBarcodeArticle.getKbNumber()));
-            }
-          } else if (!articleHasBarcode) {
-            log += String.format(" bc %s -> %s |", article.getBarcode(), barcode);
-            persistedArticle.setBarcode(barcode);
-            changed = true;
-          }
-        }
-        if (singleDeposit > 0.0) {
-          log += String.format(" E.-Pf. %.2f -> %.2f |", article.getSingleDeposit(), singleDeposit);
-          persistedArticle.setSingleDeposit(singleDeposit);
-          changed = true;
-        }
-        if (containerDeposit > 0.0) {
-          log +=
-              String.format(
-                  " G.-Pf. %.2f -> %.2f |", article.getContainerDeposit(), containerDeposit);
-          persistedArticle.setContainerDeposit(containerDeposit);
-          changed = true;
+            break;
+          case ArticleComparedToCatalogEntry.BARCODE_CONFLICT_SAME_SUPPLIER:
+            Article conflictingArticle = difference.getConflictingArticle();
+            log +=
+                String.format(
+                    " Derselbe Barcode,ist bereits bei dem %s-Artikel mit der KB-Artikelnummer %d vergeben. Ist einer der Artikel veraltet?",
+                    conflictingArticle.getSupplier().getShortName(),
+                    conflictingArticle.getKbNumber());
+            break;
+          case ArticleComparedToCatalogEntry.BARCODE_CONFLICT_OTHER_SUPPLIER:
+            conflictingArticle = difference.getConflictingArticle();
+            log +=
+                String.format(
+                    " Derselbe Barcode,ist bereits bei dem %s-Artikel mit der KB-Artikelnummer %d vergeben. Der Barcode sollte nur bei einem Lieferanten vergeben sein.",
+                    conflictingArticle.getSupplier().getShortName(),
+                    conflictingArticle.getKbNumber());
         }
         if (changed) {
-          em.merge(persistedArticle);
+          em.merge(article);
         }
         logger.info(log);
         mergeLog.add(log);
       }
+
       em.flush();
       et.commit();
       return mergeLog;
+
     } catch (Exception e) {
       Tools.showUnexpectedErrorWarning(e);
       et.rollback();
