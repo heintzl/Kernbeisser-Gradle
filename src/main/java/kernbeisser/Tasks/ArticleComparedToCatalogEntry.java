@@ -4,6 +4,7 @@ import java.util.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.CatalogEntry;
+import kernbeisser.Enums.ArticleCatalogState;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,14 +15,9 @@ public class ArticleComparedToCatalogEntry {
   @Getter @NotNull private final CatalogEntry catalogEntry;
   @Getter @NotNull private final Article article;
   @Getter private final Set<String> fieldDifferences = new HashSet<>();
-  @Getter private int resultType;
+  @Getter private ArticleCatalogState resultType;
   @Getter private Article conflictingArticle;
   @Getter @Setter private String description;
-  public static final int EQUAL = 0;
-  public static final int DIFFERENT = 1;
-  public static final int BARCODE_CHANGED = 2;
-  public static final int BARCODE_CONFLICT_SAME_SUPPLIER = 3;
-  public static final int BARCODE_CONFLICT_OTHER_SUPPLIER = 4;
 
   public ArticleComparedToCatalogEntry(
       @NotNull Article article, @NotNull CatalogEntry catalogEntry) {
@@ -35,7 +31,8 @@ public class ArticleComparedToCatalogEntry {
       fieldDifferences.add("Einzel-Pfand");
     if (article.getContainerDeposit() != catalogEntry.getGebindePfand())
       fieldDifferences.add("Gebinde-Pfand");
-    resultType = fieldDifferences.isEmpty() ? EQUAL : DIFFERENT;
+    resultType =
+        fieldDifferences.isEmpty() ? ArticleCatalogState.EQUAL : ArticleCatalogState.DIFFERENT;
   }
 
   private void analyzeDifferences() {
@@ -51,9 +48,9 @@ public class ArticleComparedToCatalogEntry {
     if (conflictingArticle.isPresent()) {
       this.conflictingArticle = conflictingArticle.get();
       if (article.getSupplier().equals(this.conflictingArticle.getSupplier())) {
-        resultType = BARCODE_CONFLICT_SAME_SUPPLIER;
+        resultType = ArticleCatalogState.BARCODE_CONFLICT_SAME_SUPPLIER;
       } else {
-        resultType = BARCODE_CONFLICT_OTHER_SUPPLIER;
+        resultType = ArticleCatalogState.BARCODE_CONFLICT_OTHER_SUPPLIER;
       }
       return;
     }
@@ -61,6 +58,6 @@ public class ArticleComparedToCatalogEntry {
       analyzeOtherDifferences();
       return;
     }
-    resultType = BARCODE_CHANGED;
+    resultType = ArticleCatalogState.BARCODE_CHANGED;
   }
 }

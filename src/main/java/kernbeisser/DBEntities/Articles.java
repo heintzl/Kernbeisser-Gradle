@@ -625,13 +625,13 @@ public class Articles {
           new ArticleComparedToCatalogEntry(article, correspondingCatalogEntry);
       String description = "";
       switch (compared.getResultType()) {
-        case ArticleComparedToCatalogEntry.BARCODE_CHANGED:
+        case BARCODE_CHANGED:
           description = "Barcode geändert";
           break;
-        case ArticleComparedToCatalogEntry.BARCODE_CONFLICT_SAME_SUPPLIER:
+        case BARCODE_CONFLICT_SAME_SUPPLIER:
           description = "Barcode veraltet";
           break;
-        case ArticleComparedToCatalogEntry.BARCODE_CONFLICT_OTHER_SUPPLIER:
+        case BARCODE_CONFLICT_OTHER_SUPPLIER:
           description = "Barcode (Lieferanten-Konflikt)";
           break;
       }
@@ -663,7 +663,7 @@ public class Articles {
         }
 
         CatalogEntry catalogEntry = difference.getCatalogEntry();
-        int resultType = difference.getResultType();
+        ArticleCatalogState resultType = difference.getResultType();
 
         log += "Artikel " + article.getSuppliersItemNumber() + ":";
         long a_barcode = Tools.ifNull(article.getBarcode(), -999L);
@@ -673,9 +673,9 @@ public class Articles {
         boolean changed = false;
 
         switch (resultType) {
-          case ArticleComparedToCatalogEntry.EQUAL:
+          case EQUAL:
             break;
-          case ArticleComparedToCatalogEntry.DIFFERENT:
+          case DIFFERENT:
             if (singleDeposit > 0.0) {
               log +=
                   String.format(
@@ -696,11 +696,11 @@ public class Articles {
               changed = true;
             }
             break;
-          case ArticleComparedToCatalogEntry.BARCODE_CHANGED:
+          case BARCODE_CHANGED:
             log +=
                 " Neuer Barcode. Möglicherweise ist die Lieferanten-Artikelnummer neu vergeben worden?";
             break;
-          case ArticleComparedToCatalogEntry.BARCODE_CONFLICT_SAME_SUPPLIER:
+          case BARCODE_CONFLICT_SAME_SUPPLIER:
             Article conflictingArticle = difference.getConflictingArticle();
             log +=
                 String.format(
@@ -708,7 +708,7 @@ public class Articles {
                     conflictingArticle.getSupplier().getShortName(),
                     conflictingArticle.getKbNumber());
             break;
-          case ArticleComparedToCatalogEntry.BARCODE_CONFLICT_OTHER_SUPPLIER:
+          case BARCODE_CONFLICT_OTHER_SUPPLIER:
             conflictingArticle = difference.getConflictingArticle();
             log +=
                 String.format(
