@@ -206,11 +206,13 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public static boolean shouldBecomeShoppingItem(LineContent content) {
+
     return !(content.getStatus() == ResolveStatus.IGNORE
         || content.getStatus() == ResolveStatus.PRODUCE);
   }
 
-  public static Article findOrCreateArticle(Supplier kkSupplier, LineContent content) {
+  public static Article findOrCreateArticle(
+      Supplier kkSupplier, LineContent content, boolean noBarcode) {
     Optional<Article> articleInDb =
         Articles.getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
     if (articleInDb.isPresent()) {
@@ -237,7 +239,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       }
     }
 
-    return articleInDb.orElseGet(() -> createArticle(content));
+    return articleInDb.orElseGet(() -> createArticle(content, noBarcode));
   }
 
   public static void changePriceAndWeighable(
@@ -259,9 +261,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     em.flush();
   }
 
-  public static ShoppingItem createShoppingItem(Supplier kkSupplier, LineContent content) {
+  public static ShoppingItem createShoppingItem(
+      Supplier kkSupplier, LineContent content, boolean ignoreBarcode) {
     ShoppingItem shoppingItem =
-        new ShoppingItem(findOrCreateArticle(kkSupplier, content), 0, false);
+        new ShoppingItem(findOrCreateArticle(kkSupplier, content, ignoreBarcode), 0, false);
     double rawItemMultiplier =
         (shoppingItem.isWeighAble()
                 ? getAsItemMultiplierAmount(content)
@@ -280,7 +283,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             content.getContainerMultiplier() * content.getContainerSize() * content.getAmount());
   }
 
-  private static @NotNull Article createArticle(LineContent content) {
+  private static @NotNull Article createArticle(LineContent content, boolean ignoreBarcode) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
@@ -294,7 +297,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     article.setMetricUnits(content.getUnit());
     article.setAmount(content.getAmount());
     article.setProducer(content.getProducer());
-    article.setBarcode(content.getBarcode());
+    if (!ignoreBarcode) article.setBarcode(content.getBarcode());
     article.setWeighable(content.isWeighableKb());
     article.setContainerSize(content.getContainerSize());
     article.setShopRange(ShopRange.PERMANENT_RANGE);

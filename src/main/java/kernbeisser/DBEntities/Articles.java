@@ -17,13 +17,21 @@ import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
+import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.EditArticles.EditArticlesModel;
 import lombok.Cleanup;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.query.AuditEntity;
 
 public class Articles {
+
+  private static final Logger logger = LogManager.getLogger(EditArticlesModel.class);
+
+  public static final Supplier KK_SUPPLIER = Supplier.getKKSupplier();
 
   private Articles() {}
 
@@ -64,7 +72,7 @@ public class Articles {
 
   public static boolean isKkArticle(Article article) {
     Supplier supplier = article.getSupplier();
-    return (supplier != null && supplier.equals(Supplier.getKKSupplier()));
+    return (supplier != null && supplier.equals(KK_SUPPLIER));
   }
 
   public static Optional<ObjectState<Article>> getByKbNumber(
@@ -113,7 +121,7 @@ public class Articles {
   }
 
   public static Optional<Article> getByKkItemNumber(int suppliersNumber) {
-    return getBySuppliersItemNumber(Supplier.getKKSupplier(), suppliersNumber);
+    return getBySuppliersItemNumber(KK_SUPPLIER, suppliersNumber);
   }
 
   public static Optional<Article> getBySuppliersItemNumber(
@@ -575,5 +583,157 @@ public class Articles {
     if (!priceList.getName().equals("Verdeckte Aufnahme")) return priceList;
     return nextArticleTo(em, article.getSuppliersItemNumber(), article.getSupplier(), priceList)
         .getPriceList();
+  }
+
+  public static boolean validateBarcode(Long barcode) {
+    return barcode > 1E9;
+  }
+
+  public static Map<String, CatalogEntry> getArticleCatalogMap(
+      Collection<Article> articles, Supplier supplier) {
+
+    Collection<Integer> articleNos = new ArrayList<>();
+    articles.stream()
+        .filter(e -> e.getSupplier().equals(supplier))
+        .mapToInt(Article::getSuppliersItemNumber)
+        .forEach(articleNos::add);
+
+    return DBConnection.getConditioned(CatalogEntry.class, "artikelNr", articleNos).stream()
+        .filter(
+            e ->
+                Boolean.FALSE == e.getAktionspreis()
+                    && (e.getEanLadenEinheit() != null
+                        || e.getGebindePfand() != 0.0
+                        || e.getEinzelPfand() != 0.0))
+        .collect(Collectors.toMap(CatalogEntry::getArtikelNr, c -> c));
+  }
+
+  public static List<ArticleComparedToCatalogEntry> compareArticlesToCatalog(
+      Collection<Article> articles, Supplier supplier) {
+    List<ArticleComparedToCatalogEntry> differences = new ArrayList<>();
+    Map<String, CatalogEntry> catalogMap = getArticleCatalogMap(articles, supplier);
+    for (Article article : articles) {
+      if (!article.getSupplier().equals(supplier)) {
+        continue;
+      }
+      CatalogEntry correspondingCatalogEntry =
+          catalogMap.get(Integer.toString(article.getSuppliersItemNumber()));
+      if (correspondingCatalogEntry == null) {
+        continue;
+      }
+      ArticleComparedToCatalogEntry compared =
+          new ArticleComparedToCatalogEntry(article, correspondingCatalogEntry);
+      String description = "";
+      switch (compared.getResultType()) {
+        case BARCODE_CHANGED:
+          description = "Barcode geändert";
+          break;
+        case BARCODE_CONFLICT_SAME_SUPPLIER:
+          description = "Barcode veraltet";
+          break;
+        case BARCODE_CONFLICT_OTHER_SUPPLIER:
+          description = "Barcode (Lieferanten-Konflikt)";
+          break;
+      }
+      Set<String> fieldDifferences = compared.getFieldDifferences();
+      if (!description.isEmpty()) {
+        fieldDifferences.remove("Barcode");
+        description += ", ";
+      }
+      compared.setDescription(description + String.join(", ", fieldDifferences));
+      differences.add(compared);
+    }
+    return differences;
+  }
+
+  public static List<String> mergeCatalog(
+      Collection<Article> articles, List<ArticleComparedToCatalogEntry> differences) {
+    List<String> mergeLog = new ArrayList<>();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+
+    try {
+      String log;
+      for (ArticleComparedToCatalogEntry difference : differences) {
+        log = "";
+        Article article = difference.getArticle();
+        if (!articles.contains(article)) {
+          continue;
+        }
+
+        CatalogEntry catalogEntry = difference.getCatalogEntry();
+        ArticleCatalogState resultType = difference.getResultType();
+
+        log += "Artikel " + article.getSuppliersItemNumber() + ":";
+        long a_barcode = Tools.ifNull(article.getBarcode(), -999L);
+        long c_barcode = Tools.ifNull(catalogEntry.getEanLadenEinheit(), -999L);
+        double singleDeposit = catalogEntry.getEinzelPfand();
+        double containerDeposit = catalogEntry.getGebindePfand();
+        boolean changed = false;
+
+        switch (resultType) {
+          case EQUAL:
+            break;
+          case DIFFERENT:
+            if (singleDeposit > 0.0) {
+              log +=
+                  String.format(
+                      " E.-Pf. %.2f -> %.2f |", article.getSingleDeposit(), singleDeposit);
+              article.setSingleDeposit(singleDeposit);
+              changed = true;
+            }
+            if (containerDeposit > 0.0) {
+              log +=
+                  String.format(
+                      " G.-Pf. %.2f -> %.2f |", article.getContainerDeposit(), containerDeposit);
+              article.setContainerDeposit(containerDeposit);
+              changed = true;
+            }
+            if (validateBarcode(c_barcode) && c_barcode != a_barcode) {
+              log += String.format(" bc %s -> %s |", article.getBarcode(), c_barcode);
+              article.setBarcode(c_barcode);
+              changed = true;
+            }
+            break;
+          case BARCODE_CHANGED:
+            log +=
+                " Neuer Barcode. Möglicherweise ist die Lieferanten-Artikelnummer neu vergeben worden?";
+            break;
+          case BARCODE_CONFLICT_SAME_SUPPLIER:
+            Article conflictingArticle = difference.getConflictingArticle();
+            log +=
+                String.format(
+                    " Derselbe Barcode,ist bereits bei dem %s-Artikel mit der KB-Artikelnummer %d vergeben. Ist einer der Artikel veraltet?",
+                    conflictingArticle.getSupplier().getShortName(),
+                    conflictingArticle.getKbNumber());
+            break;
+          case BARCODE_CONFLICT_OTHER_SUPPLIER:
+            conflictingArticle = difference.getConflictingArticle();
+            log +=
+                String.format(
+                    " Derselbe Barcode,ist bereits bei dem %s-Artikel mit der KB-Artikelnummer %d vergeben. Der Barcode sollte nur bei einem Lieferanten vergeben sein.",
+                    conflictingArticle.getSupplier().getShortName(),
+                    conflictingArticle.getKbNumber());
+        }
+        if (changed) {
+          em.merge(article);
+        }
+        logger.info(log);
+        mergeLog.add(log);
+      }
+
+      em.flush();
+      et.commit();
+      return mergeLog;
+
+    } catch (Exception e) {
+      Tools.showUnexpectedErrorWarning(e);
+      et.rollback();
+      logger.error("Rolled back changes due to an exception");
+      mergeLog.add(
+          "Übernahme wurde mit Fehlern abgebrochen. Alle Änderungen wurden Rückgängig gemacht");
+      return mergeLog;
+    }
   }
 }

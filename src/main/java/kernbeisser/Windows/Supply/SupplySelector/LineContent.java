@@ -5,14 +5,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Useful.Tools;
 import lombok.AccessLevel;
@@ -52,6 +50,7 @@ public class LineContent {
   private double singleDeposit = 0.0;
   private double containerDeposit = 0.0;
   private VAT vat;
+  private ArticleComparedToCatalogEntry comparedToCatalog;
 
   public static List<LineContent> parseContents(List<String> lines, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
@@ -68,13 +67,8 @@ public class LineContent {
       contents.add(content);
       kkNumbers.add(Objects.toString(content.getKkNumber()));
     }
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    CriteriaBuilder cb = em.getCriteriaBuilder();
-    CriteriaQuery<CatalogEntry> cr = cb.createQuery(CatalogEntry.class);
-    Root<CatalogEntry> root = cr.from(CatalogEntry.class);
     Map<String, CatalogEntry> catalogEntries =
-        em.createQuery(cr.select(root).where(root.get("artikelNr").in(kkNumbers)))
-            .getResultStream()
+        DBConnection.getConditioned(CatalogEntry.class, "artikelNr", kkNumbers).stream()
             .filter(c -> !c.getAktionspreis())
             .collect(Collectors.toMap(CatalogEntry::getArtikelNr, e -> e));
 
@@ -86,6 +80,13 @@ public class LineContent {
         content.singleDeposit = matchingEntry.getEinzelPfand();
         content.containerDeposit = matchingEntry.getGebindePfand();
         content.vat = matchingEntry.getMwstKennung();
+        Article articleToCompare = content.article;
+        if (articleToCompare == null) {
+          articleToCompare = new Article();
+          articleToCompare.setSupplier(Articles.KK_SUPPLIER);
+        }
+        content.comparedToCatalog =
+            new ArticleComparedToCatalogEntry(articleToCompare, matchingEntry);
       }
     }
     return contents;

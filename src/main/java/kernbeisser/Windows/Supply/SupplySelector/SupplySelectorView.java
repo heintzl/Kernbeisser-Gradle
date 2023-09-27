@@ -12,6 +12,7 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
@@ -129,10 +130,35 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.<LineContent>create("Ausw.", e -> e.isWeighableKb() ? "ja" : "nein")
                 .withPreferredWidth(50)
                 .withLeftClickConsumer(this::toggleWeighable),
+            Columns.<LineContent>create(
+                    "Warnhinweis", e -> getWarningMessage(e.getComparedToCatalog()))
+                .withPreferredWidth(150),
             Columns.<LineContent>createIconColumn(
                     "OK", e -> e.isVerified() ? verified : notVerified)
                 .withPreferredWidth(30)
                 .withLeftClickConsumer(this::verifyLine));
+  }
+
+  private Object getWarningMessage(ArticleComparedToCatalogEntry compared) {
+    if (compared == null) {
+      return "";
+    }
+    String warning;
+    switch (compared.getResultType()) {
+      case BARCODE_CHANGED:
+        warning = "geänderter Barcode!";
+        break;
+      case BARCODE_CONFLICT_SAME_SUPPLIER:
+      case BARCODE_CONFLICT_OTHER_SUPPLIER:
+        warning =
+            String.format(
+                "Barcode vorhanden (%s)!",
+                compared.getConflictingArticle().getSupplier().getShortName());
+        break;
+      default:
+        warning = "";
+    }
+    return warning;
   }
 
   private void toggleWeighable(LineContent lineContent) {

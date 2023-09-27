@@ -15,7 +15,6 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.Enums.ArticleConstants;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -41,7 +40,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   public SupplySelectorController(BiConsumer<Supply, Collection<ShoppingItem>> consumer)
       throws PermissionKeyRequiredException {
     super(new SupplySelectorModel(consumer));
-    this.capture = new BarcodeCapture(e -> processBarcode(e));
+    this.capture = new BarcodeCapture(this::processBarcode);
   }
 
   @SneakyThrows
@@ -72,7 +71,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         }
       case ADDED:
         try {
-          Article article = SupplyController.findOrCreateArticle(kkSupplier, lineContent);
+          Article article = SupplyController.findOrCreateArticle(kkSupplier, lineContent, false);
           openArticleWindow(lineContent, article, false);
         } catch (NoSuchElementException e) {
           Tools.showUnexpectedErrorWarning(e);
@@ -208,7 +207,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         .accept(
             supply,
             supply.getSupplierFiles().stream()
-                .map(SupplierFile::collectShoppingItems)
+                .map(f -> f.collectShoppingItems(getView().getContent()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toCollection(ArrayList::new)));
     getView().back();
@@ -225,20 +224,6 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
             supply.getAllLineContents(),
             "Kornkraft Obst und Gemüse Verkaufspreise vom " + supply.getDeliveryDate())
         .sendToPrinter("Drucke Obst und Gemüse Verkaufspreise", Tools::showUnexpectedErrorWarning);
-  }
-
-  public static Article wrapToPrint(LineContent content) {
-    Article article =
-        Articles.getByKbNumber(ArticleConstants.PRODUCE.getUniqueIdentifier(), false)
-            .map(e -> e.getValue())
-            .orElse(new Article());
-    article.setSuppliersItemNumber(content.getKkNumber());
-    article.setSupplier(Supplier.getKKSupplier());
-    article.setMetricUnits(content.getUnit());
-    article.setWeighable(true);
-    article.setName(content.getName());
-    article.setNetPrice(content.getPriceKk());
-    return article;
   }
 
   public void viewOrders(ActionEvent actionEvent) {

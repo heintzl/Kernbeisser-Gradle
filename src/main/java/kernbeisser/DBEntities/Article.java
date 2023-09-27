@@ -65,8 +65,6 @@ public final class Article {
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_WEIGH_ABLE_WRITE)})
-  // maybe rename to splittable, because it describes if a article should not always become sold as
-  // one entire piece
   private boolean weighable;
 
   @Column
@@ -94,6 +92,7 @@ public final class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_NAME_WRITE)})
   private String name;
 
+  // Hersteller
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRODUCER_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_PRODUCER_WRITE)})
@@ -109,6 +108,7 @@ public final class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_METRIC_UNITS_WRITE)})
   private MetricUnits metricUnits;
 
+  // Lieferant
   @JoinColumn
   @ManyToOne
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SUPPLIER_READ)})
@@ -125,6 +125,7 @@ public final class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_VAT_WRITE)})
   private VAT vat;
 
+  // Packungsgröße
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_AMOUNT_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_AMOUNT_WRITE)})
@@ -135,21 +136,25 @@ public final class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_BARCODE_WRITE)})
   private Long barcode;
 
+  // Gebindegröße
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_SIZE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_SIZE_WRITE)})
   private double containerSize;
 
+  // Einzelpfand
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_SINGLE_DEPOSIT_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_SINGLE_DEPOSIT_WRITE)})
   private double singleDeposit;
 
+  // Gebindepfand
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_DEPOSIT_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_CONTAINER_DEPOSIT_WRITE)})
   private double containerDeposit;
 
+  // zusätzliche Bezeichnungen aus Katalog
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_INFO_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_INFO_WRITE)})
@@ -173,21 +178,26 @@ public final class Article {
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_OFFER_WRITE)})
   private boolean offer;
 
+  // Faktor für evtl. Umrechnungen, um Katalog-Einkaufspreise auf veränderte Ladeneinheiten
+  // abzubilden
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_CATALOGPRICEFACTOR_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_CATALOGPRICEFACTOR_WRITE)})
   private double catalogPriceFactor;
 
+  // Standard-Etikettenanzahl pro Lieferung
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LABELCOUNT_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LABELCOUNT_WRITE)})
   private int labelCount;
 
+  // Etikettenanzahl gilt pro Liefereinheit
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_LABELPERUNIT_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_LABELPERUNIT_WRITE)})
   private boolean labelPerUnit;
 
+  // Ladenaufschlag aus migrierten Daten - ersetzt durch surchargeGroup
   @Getter @Setter private Double obsoleteSurcharge;
 
   // provide default values

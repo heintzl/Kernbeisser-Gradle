@@ -15,7 +15,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="3283" class="kernbeisser.CustomComponents.ObjectTable.ObjectTable" binding="objects" custom-create="true">
+          <component id="3283" class="kernbeisser.CustomComponents.ObjectTable.ObjectTable" binding="objectTable" custom-create="true">
             <constraints/>
             <properties/>
           </component>

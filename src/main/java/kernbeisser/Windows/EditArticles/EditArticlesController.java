@@ -3,21 +3,33 @@ package kernbeisser.Windows.EditArticles;
 import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.NoResultException;
+import javax.swing.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Security.Key;
+import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
@@ -36,12 +48,17 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
 
   private final ArticleFilter articleFilter = new ArticleFilter(this::refreshList);
 
+  private boolean hasAdminTools = false;
+  private JButton mergeCatalog;
+
   private String formatArticleSurcharge(Article article) {
     return article.getSurchargeGroup().getName()
         + " ("
         + Math.round(article.getSurchargeGroup().getSurcharge() * 100)
         + "%)";
   }
+
+  private Map<Article, String> differences = new HashMap<>();
 
   @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
   public EditArticlesController() {
@@ -102,6 +119,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                     a ->
                         Date.safeDateFormat(lastDeliveries.get(a.getKbNumber()), Date.INSTANT_DATE))
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
+
     this.capture =
         new BarcodeCapture(
             e ->
@@ -110,6 +128,10 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                     Mode.EDIT));
     objectViewController.addComponents(articleFilter.createFilterUIComponents());
     objectViewController.setForceExtraButtonState(false);
+  }
+
+  String displayDifference(Article article) {
+    return Tools.ifNull(differences.get(article), "");
   }
 
   void refreshList() {
@@ -135,6 +157,10 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
           PrintLabelsController.getLaunchButton(getView().traceViewContainer()));
     }
     refreshList();
+    try {
+      addAdministrationTools();
+    } catch (PermissionKeyRequiredException ignored) {
+    }
   }
 
   public ObjectViewView<Article> getObjectView() {
@@ -152,5 +178,63 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
         });
     new ComponentController(priceListObjectTree, "Preisliste auswählen:")
         .openIn(new SubWindow(view.traceViewContainer()));
+  }
+
+  @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)
+  private void addAdministrationTools() {
+    if (hasAdminTools) return;
+    JButton previewCatalog = new JButton("Katalog-Abweichungen anzeigen");
+    previewCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.BARCODE, 20, Color.DARK_GRAY));
+    previewCatalog.setToolTipText("Zeigt Unterschiede zwischen Katalog und Artikel an");
+    objectViewController.addButton(previewCatalog, e -> previewCatalog());
+    mergeCatalog = new JButton("Übertrage Pfand und Barcode aus Katalog");
+    mergeCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.BARCODE, 20, Color.DARK_GRAY));
+    mergeCatalog.setToolTipText(
+        "Übernimmt für ausgewählte Artikel Pfand und Barcode aus dem Katalog.");
+    mergeCatalog.setEnabled(false);
+    objectViewController.addButton(mergeCatalog, e -> mergeCatalog());
+    hasAdminTools = true;
+  }
+
+  private void mergeCatalog() {
+    EditArticlesView view = getView();
+    if (differences.isEmpty()) {
+      view.messageNoDifferences();
+      return;
+    }
+    Collection<Article> articlesToMerge =
+        objectViewController.getSearchBoxController().getSelectedObjects();
+    if (articlesToMerge.isEmpty()) {
+      view.messageNoSelection();
+      return;
+    }
+    List<String> mergeLog = model.mergeCatalog(articlesToMerge);
+    previewCatalog();
+    view.showLog(mergeLog);
+  }
+
+  private void previewCatalog() {
+    model.previewCatalog(objectViewController.getSearchBoxController().getFilteredObjects());
+    if (model.getDifferences().isEmpty()) {
+      getView().messageNoDifferences();
+    } else {
+      CustomizableColumn<Article> catalogDifference =
+          new CustomizableColumn<Article>("Katalog-Abweichungen", this::displayDifference)
+              .withDefaultFilter()
+              .withPreferredWidth(200);
+      this.differences =
+          model.getDifferences().stream()
+              .collect(
+                  Collectors.toMap(
+                      ArticleComparedToCatalogEntry::getArticle,
+                      ArticleComparedToCatalogEntry::getDescription));
+      ObjectTable<Article> table = objectViewController.getSearchBoxView().getObjectTable();
+      if (table.getColumns().stream()
+          .noneMatch(c -> c.getName().equals(catalogDifference.getName()))) {
+        table.addColumn(catalogDifference);
+      }
+      objectViewController.search();
+      mergeCatalog.setEnabled(true);
+    }
   }
 }
