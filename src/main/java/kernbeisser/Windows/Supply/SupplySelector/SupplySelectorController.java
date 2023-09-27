@@ -40,7 +40,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   public SupplySelectorController(BiConsumer<Supply, Collection<ShoppingItem>> consumer)
       throws PermissionKeyRequiredException {
     super(new SupplySelectorModel(consumer));
-    this.capture = new BarcodeCapture(e -> processBarcode(e));
+    this.capture = new BarcodeCapture(this::processBarcode);
   }
 
   @SneakyThrows
@@ -71,7 +71,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         }
       case ADDED:
         try {
-          Article article = SupplyController.findOrCreateArticle(kkSupplier, lineContent);
+          Article article = SupplyController.findOrCreateArticle(kkSupplier, lineContent, false);
           openArticleWindow(lineContent, article, false);
         } catch (NoSuchElementException e) {
           Tools.showUnexpectedErrorWarning(e);
@@ -207,7 +207,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         .accept(
             supply,
             supply.getSupplierFiles().stream()
-                .map(SupplierFile::collectShoppingItems)
+                .map(f -> f.collectShoppingItems(getView().getContent()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toCollection(ArrayList::new)));
     getView().back();

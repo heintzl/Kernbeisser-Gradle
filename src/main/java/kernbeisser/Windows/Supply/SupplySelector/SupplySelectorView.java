@@ -130,7 +130,9 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.<LineContent>create("Ausw.", e -> e.isWeighableKb() ? "ja" : "nein")
                 .withPreferredWidth(50)
                 .withLeftClickConsumer(this::toggleWeighable),
-            Columns.create("Warnhinweis", e -> getWarningMessage(e.getComparedToCatalog())),
+            Columns.<LineContent>create(
+                    "Warnhinweis", e -> getWarningMessage(e.getComparedToCatalog()))
+                .withPreferredWidth(150),
             Columns.<LineContent>createIconColumn(
                     "OK", e -> e.isVerified() ? verified : notVerified)
                 .withPreferredWidth(30)
