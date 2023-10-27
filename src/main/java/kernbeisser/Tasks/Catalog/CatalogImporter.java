@@ -179,6 +179,15 @@ public class CatalogImporter {
     return function.apply(in);
   }
 
+  private Instant tryParseHeaderDate(String dateString) {
+    try {
+      return tryParse(dateString, s -> Date.parseInstantDate(s, Date.INSTANT_CATALOG_DATE));
+    } catch (DateTimeParseException e) {
+      readErrors.add(new CatalogImportError(0, e));
+    }
+    return null;
+  }
+
   public void parseHeader(String[] parts) throws UnknownFileFormatException {
     DateTimeFormatter dateFormatter = Date.INSTANT_CATALOG_DATE;
     DateTimeFormatter timeFormatter = Date.INSTANT_CATALOG_TIME;
@@ -206,9 +215,9 @@ public class CatalogImporter {
     if (!currency.equals("EUR")) {
       throw new UnknownFileFormatException("Falsche Währung: " + currency);
     }
-    validFrom = Date.parseInstantDate(parts[7], dateFormatter);
-    validTo = Date.parseInstantDate(parts[8], dateFormatter);
-    createdDate = Date.parseInstantDate(parts[9], dateFormatter);
+    validFrom = tryParseHeaderDate(parts[7]);
+    validTo = tryParseHeaderDate(parts[8]);
+    createdDate = tryParseHeaderDate(parts[9]);
     createdTime = Date.parseInstantTime(parts[10], createdDate, timeFormatter);
     fileSeqNo = Integer.parseInt(parts[11]);
   }
