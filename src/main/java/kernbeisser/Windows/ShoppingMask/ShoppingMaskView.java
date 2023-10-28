@@ -880,6 +880,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           setSupplier(Supplier.getKKSupplier());
           rememberReductionSetting.setSelected(true);
         });
+    rememberReductionSetting.addActionListener(e -> setDiscount());
     rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für Folgeartikel merken");
     priceVariablePercentage.addItemListener(
         e -> {
