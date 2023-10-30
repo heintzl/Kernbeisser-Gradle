@@ -11,6 +11,7 @@ import kernbeisser.Exeptions.UnknownFileFormatException;
 import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Catalog.CatalogImportError;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 
 public class CatalogImportController extends Controller<CatalogImportView, CatalogImportModel> {
@@ -67,19 +68,28 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
 
   public void applyChanges() {
     CatalogImportView view = getView();
-    if (Instant.now().isAfter(model.getCatalogImporter().getValidTo())) {
-      if (!view.confirmImportInValidCatalog("Die Gültigkeit des Katalogs ist bereits abgelaufen."))
-        return;
-    }
-    if (!model.getLastCatalogCreationDate().isBefore(model.getCatalogImporter().getCreatedDate())) {
+    Instant validTo = model.getCatalogImporter().getValidTo();
+    if (validTo == null) {
       if (!view.confirmImportInValidCatalog(
-          "Der Katalog ist nicht aktueller, als der bereits vorhandene.")) return;
+          "Der Katalog hat kein lesbares Gültigkeitsdatum. Deshalb kann keine Gültigkeitsangabe für die Katalogeinträge gesetzt werden."))
+        return;
+    } else {
+      if (Instant.now().isAfter(model.getCatalogImporter().getValidTo())) {
+        if (!view.confirmImportInValidCatalog(
+            "Die Gültigkeit des Katalogs ist bereits abgelaufen.")) return;
+      }
+    }
+    Instant createdDate = model.getCatalogImporter().getCreatedDate();
+    if (!model.getLastCatalogCreationDate().isBefore(Tools.ifNull(createdDate, Instant.MIN))) {
+      if (!view.confirmImportInValidCatalog(
+          "Der Katalog ist "
+              + (createdDate == null ? "evtl. " : "")
+              + "nicht aktueller, als der bereits vorhandene.")) return;
     }
     if (model.isCompleteCatalog()) {
       if (!view.confirmMergeCatalog()) {
         model.clearCatalog();
       }
-      ;
     }
     new Thread(
             () -> {

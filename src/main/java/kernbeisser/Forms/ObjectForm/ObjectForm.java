@@ -1,5 +1,6 @@
 package kernbeisser.Forms.ObjectForm;
 
+import com.google.common.collect.Iterables;
 import java.util.*;
 import java.util.function.Predicate;
 import javax.swing.*;
@@ -42,6 +43,15 @@ public class ObjectForm<P> {
     }
 
     this.components = boundedFields;
+  }
+
+  public ObjectForm(Collection<ObjectFormComponent<P>> boundedFields) {
+    for (ObjectFormComponent<P> boundedField : boundedFields) {
+      if (boundedField == null)
+        throw new NullPointerException("cannot create ObjectForm with null fields");
+    }
+
+    this.components = Iterables.toArray(boundedFields, ObjectFormComponent.class);
   }
 
   public void setSource(P data) {

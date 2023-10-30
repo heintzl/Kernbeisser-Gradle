@@ -3,6 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import static java.text.MessageFormat.format;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
@@ -361,7 +362,11 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
       deposit.requestFocusInWindow();
     } else if (type == ArticleType.ARTICLE_NUMBER) {
       this.articleName.setText("");
-      kbNumber.requestFocusInWindow();
+      if (pricePreordered.isSelected()) {
+        suppliersItemNumber.requestFocusInWindow();
+      } else {
+        kbNumber.requestFocusInWindow();
+      }
     } else if (type == ArticleType.CUSTOM_PRODUCT) {
       this.articleName.setText("");
       this.vat.setSelectedIndex(-1);
@@ -789,30 +794,20 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
             controller.searchByKbNumber();
           }
         });
-    kbNumber.addActionListener(
-        e -> {
-          if (isWeighable && !isPreordered) {
-            itemMultiplier.setText("");
-          } else {
-            if (itemMultiplier.getText().isEmpty()) {
-              itemMultiplier.setText("1");
-            }
-          }
-          itemMultiplier.selectAll();
-          itemMultiplier.requestFocusInWindow();
-        });
+    kbNumber.addActionListener(this::articleSelectedListener);
 
     Supplier.getAll(null).forEach(s -> supplier.addItem(s));
     supplier.addActionListener(e -> supplierChange());
 
-    suppliersItemNumber.addActionListener(e -> addToCart());
+    suppliersItemNumber.addActionListener(this::articleSelectedListener);
     suppliersItemNumber.addKeyListener(
         new KeyAdapter() {
           private String lastSearch = "";
 
           @Override
           public void keyReleased(KeyEvent e) {
-            if (suppliersItemNumber.getText().equals(lastSearch)) {
+            String number = suppliersItemNumber.getText();
+            if (number.isEmpty() || number.equals(lastSearch)) {
               return;
             }
             controller.searchBySupplierItemsNumber();
@@ -880,6 +875,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           setSupplier(Supplier.getKKSupplier());
           rememberReductionSetting.setSelected(true);
         });
+    rememberReductionSetting.addActionListener(e -> setDiscount());
     rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für Folgeartikel merken");
     priceVariablePercentage.addItemListener(
         e -> {
@@ -977,5 +973,17 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   @Override
   public String getTitle() {
     return "Einkauf für " + controller.getModel().getSaleSession().getCustomer().getFullName();
+  }
+
+  private void articleSelectedListener(ActionEvent e) {
+    if (isWeighable && !isPreordered) {
+      itemMultiplier.setText("");
+    } else {
+      if (itemMultiplier.getText().isEmpty()) {
+        itemMultiplier.setText("1");
+      }
+    }
+    itemMultiplier.selectAll();
+    itemMultiplier.requestFocusInWindow();
   }
 }

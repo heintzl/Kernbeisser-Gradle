@@ -78,18 +78,14 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
     return article.getSupplier().getName();
   }
 
-  void print(CollectionController<Article> articles, boolean pdf) {
+  void print(CollectionController<Article> articles) {
     List<Article> printPool =
         articles.getModel().getLoaded().stream()
             .flatMap(a -> Collections.nCopies(printPoolMap.get(a), a).stream())
             .collect(Collectors.toList());
     Report report = new ArticleLabel(printPool);
     String printMessage = "Drucke Ladenschilder";
-    if (pdf) {
-      report.exportPdf(printMessage, Tools::showUnexpectedErrorWarning);
-    } else {
-      report.sendToPrinter("Drucke Ladenschilder", Tools::showUnexpectedErrorWarning);
-    }
+    report.exportPdf(printMessage, Tools::showUnexpectedErrorWarning);
   }
 
   void setPrintPool(Article article, int numberOfLabels) {

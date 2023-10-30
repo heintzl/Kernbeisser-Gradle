@@ -2,6 +2,7 @@ package kernbeisser.Windows.CatalogImport;
 
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +36,21 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     return catalogImporter.getReadErrors();
   }
 
+  static Instant tryParseInstant(String s, Instant defaultDate) {
+    try {
+      return Date.parseInstantDate(s, Date.INSTANT_CATALOG_DATE);
+    } catch (DateTimeParseException e) {
+      return defaultDate;
+    }
+  }
+
   public void refreshLastCatalogInfo() {
     Instant defaultDate = Instant.parse("2000-01-01T00:00:00Z");
     String[] lastCataloginfo =
         Setting.INFO_LINE_LAST_CATALOG.getStringValue().split(CatalogImporter.DELIMITER);
     if (lastCataloginfo.length > 8) {
-      lastCatalogCreationDate =
-          Date.parseInstantDate(lastCataloginfo[9], Date.INSTANT_CATALOG_DATE);
-      lastCatalogValidDate = Date.parseInstantDate(lastCataloginfo[8], Date.INSTANT_CATALOG_DATE);
+      lastCatalogCreationDate = tryParseInstant(lastCataloginfo[9], defaultDate);
+      lastCatalogValidDate = tryParseInstant(lastCataloginfo[8], defaultDate);
     } else {
       lastCatalogCreationDate = defaultDate;
       lastCatalogValidDate = defaultDate;

@@ -33,7 +33,6 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   private final JButton printButton = new JButton();
 
-  private final JCheckBox pdfOption = new JCheckBox("PDF-Vorschau");
   private final JLabel printSheetInfo = new JLabel();
   private final BarcodeCapture barcodeCapture;
 
@@ -60,7 +59,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
         Columns.create("Lieferant", PrintLabelsModel::getArticleSupplierName).withDefaultFilter());
     available.addColumn(Columns.create("Barcode", Article::getBarcode).withDefaultFilter());
     available.addColumn(Columns.create("Preisliste", Article::getPriceList).withDefaultFilter());
-    articles.addControls(printButton, pdfOption, printSheetInfo);
+    articles.addControls(printButton, printSheetInfo);
     barcodeCapture = new BarcodeCapture(getView()::processBarcode);
   }
 
@@ -138,7 +137,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   }
 
   private void print() {
-    model.print(articles, pdfOption.isSelected());
+    model.print(articles);
     if (getView().confirmPrintSuccess()) {
       articles.selectAllChosen();
       persistPrintPoolIfNecessary(false);
