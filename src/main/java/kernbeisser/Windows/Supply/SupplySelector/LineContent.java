@@ -211,7 +211,10 @@ public class LineContent {
   }
 
   private static boolean isComment(String line) {
-    return line.length() < 13 || line.startsWith("        ", 13) || line.startsWith("1    ");
+    return line.length() < 13
+        || line.startsWith("        ", 13)
+        || line.startsWith("1    ")
+        || line.startsWith("A#");
   }
 
   private static String extractMessage(String line) {
