@@ -56,11 +56,9 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
         pasteDataInView(searchResult.get());
         return true;
       } else {
-        noEntryFound();
         return false;
       }
     } else {
-      noEntryFound();
       return false;
     }
   }
@@ -102,7 +100,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void delete(Collection<PreOrder> preOrders) {
-    if (preOrders.size() == 0) {
+    if (preOrders.isEmpty()) {
       getView().noPreOrderSelected();
       return;
     }

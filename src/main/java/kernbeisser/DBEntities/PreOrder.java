@@ -35,6 +35,12 @@ public class PreOrder implements Serializable, UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_WRITE)})
   private CatalogEntry catalogEntry;
 
+  // deprecated, do not use after migration
+  @ManyToOne
+  @JoinColumn
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_READ)})
+  private Article article;
+
   @ManyToOne
   @JoinColumn
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_USER_READ)})
