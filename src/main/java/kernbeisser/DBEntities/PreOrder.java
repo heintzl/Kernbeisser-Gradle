@@ -8,13 +8,11 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import javax.persistence.*;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
-import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,7 +33,7 @@ public class PreOrder implements Serializable, UserRelated {
   @JoinColumn
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_ITEM_WRITE)})
-  private Article article;
+  private CatalogEntry catalogEntry;
 
   @ManyToOne
   @JoinColumn
@@ -89,27 +87,12 @@ public class PreOrder implements Serializable, UserRelated {
     return getDueDate().plusDays(Setting.PREORDER_RETARD_THRESHOLD.getIntValue());
   }
 
-  public int getKBNumber() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select a.kbNumber from Article a where  suppliersItemNumber = :i and supplier = :s",
-            Integer.class)
-        .setParameter("i", article.getSuppliersItemNumber())
-        .setParameter("s", article.getSupplier())
-        .getResultStream()
-        .findFirst()
-        .orElse(-1);
-  }
-
   public boolean isShopOrder() {
     return user.equals(User.getKernbeisserUser());
   }
 
   public String getContainerInfo() {
-    return Articles.getContentAmount(getArticle());
+    return getCatalogEntry().getContentAmount();
   }
 
   @Override

@@ -47,10 +47,8 @@ public class PreOrderView implements IView<PreOrderController> {
   private JButton close;
   JButton abhakplanButton;
   JButton bestellungExportierenButton;
-  JButton searchArticle;
+  JButton searchCatalog;
   private JLabel caption;
-  private IntegerParseField shopNumber;
-
   private JCheckBox duplexPrint;
   private JButton defaultSortOrder;
   private JButton editPreOrder;
@@ -80,24 +78,12 @@ public class PreOrderView implements IView<PreOrderController> {
     return kkNumber.getSafeValue();
   }
 
-  void setKkNumber(int s) {
-    kkNumber.setText(String.valueOf(s));
+  void setKkNumber(String s) {
+    kkNumber.setText(s);
   }
 
   void focusOnAmount() {
     amount.requestFocusInWindow();
-  }
-
-  int getShopNumber() {
-    return shopNumber.getSafeValue();
-  }
-
-  void setShopNumber(int s) {
-    if (s == 0) {
-      shopNumber.setText("");
-    } else {
-      shopNumber.setText(String.valueOf(s));
-    }
   }
 
   void setNetPrice(double s) {
@@ -109,7 +95,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   private static String getDueDateAsString(PreOrder preOrder) {
-    boolean isSlow = preOrder.getArticle().getName().contains("*V*");
+    boolean isSlow = preOrder.getCatalogEntry().getBezeichnung().contains("*V*");
     String displayText = isSlow ? "ab " : "";
     if (preOrder.getDueDate().isAfter(LocalDate.now())) {
       displayText += Date.INSTANT_DATE.format(preOrder.getDueDate());
@@ -151,18 +137,16 @@ public class PreOrderView implements IView<PreOrderController> {
         new ObjectTable<>(
             Columns.<PreOrder>create("Benutzer", e -> e.getUser().getFullName(true))
                 .withColumnAdjustor(e -> e.setPreferredWidth(150)),
-            Columns.<PreOrder>create("Ladennummer", PreOrder::getKBNumber)
+            Columns.<PreOrder>create("Kornkraftnummer", e -> e.getCatalogEntry().getArtikelNr())
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.<PreOrder>create(
-                    "Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber())
-                .withHorizontalAlignment(SwingConstants.RIGHT)
-                .withSorter(Column.NUMBER_SORTER),
-            Columns.<PreOrder>create("Produktname", e -> e.getArticle().getName())
+            Columns.<PreOrder>create("Produktname", e -> e.getCatalogEntry().getBezeichnung())
                 .withColumnAdjustor(e -> e.setPreferredWidth(350)),
             Columns.<PreOrder>create(
                     "Netto-Preis",
-                    e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())))
+                    e ->
+                        String.format(
+                            "%.2f€", PreOrderModel.containerNetPrice(e.getCatalogEntry())))
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.<PreOrder>create("Anzahl", PreOrder::getAmount)
@@ -270,18 +254,6 @@ public class PreOrderView implements IView<PreOrderController> {
           }
         });
 
-    shopNumber.addKeyListener(
-        new KeyAdapter() {
-          @Override
-          public void keyReleased(KeyEvent e) {
-            if (controller.searchShopNo()) {
-              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                submitAction();
-              }
-            }
-          }
-        });
-
     user.addKeyListener(
         new KeyAdapter() {
           @Override
@@ -316,7 +288,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
     amount.addActionListener(e -> submitAction());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
-    searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
+    searchCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
     defaultSortOrder.addActionListener(e -> setDefaultSortOrder());
@@ -345,9 +317,8 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   void enableControls(boolean enabled) {
-    searchArticle.setEnabled(enabled);
+    searchCatalog.setEnabled(enabled);
     kkNumber.setEnabled(enabled);
-    shopNumber.setEnabled(enabled);
     amount.setEnabled(enabled);
     submit.setEnabled(enabled);
   }
@@ -366,9 +337,8 @@ public class PreOrderView implements IView<PreOrderController> {
     setMode(Mode.EDIT);
     user.getModel().setSelectedItem(preOrder.getUser());
     user.repaint();
-    setShopNumber(preOrder.getArticle().getKbNumber());
     setAmount(Integer.toString(preOrder.getAmount()));
-    controller.pasteDataInView(preOrder.getArticle(), true);
+    controller.pasteDataInView(preOrder.getCatalogEntry());
     enableControls(true);
   }
 
@@ -404,7 +374,7 @@ public class PreOrderView implements IView<PreOrderController> {
     if (addMode) {
       user.getModel().setSelectedItem(addModeUser);
       enableControls(addModeUser != null);
-      controller.noArticleFound(false);
+      controller.noEntryFound();
       resetArticleNr();
     } else {
       addModeUser = (User) user.getSelectedItem();

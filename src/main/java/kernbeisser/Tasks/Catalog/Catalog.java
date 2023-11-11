@@ -131,7 +131,7 @@ public class Catalog {
     return Double.parseDouble(CHARACTER_FILTER.matcher(s).replaceAll("").replace(",", "."));
   }
 
-  private static void extractAmount(Article base, double parsedAmount) {
+  public static void extractAmount(Article base, double parsedAmount) {
     switch (base.getMetricUnits()) {
       case KILOGRAM:
         base.setAmount(

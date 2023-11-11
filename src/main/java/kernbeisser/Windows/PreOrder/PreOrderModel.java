@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -14,9 +15,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
-import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.ShopRange;
 import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Reports.Report;
@@ -35,20 +34,23 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.begin();
   }
 
-  Optional<Article> getItemByKkNumber(int kkNumber) {
-    return Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber);
-  }
-
-  Optional<Article> getItemByShopNumber(int shopNumber) {
-    Optional<ObjectState<Article>> article = Articles.getByKbNumber(shopNumber, false);
-    return article.map(ObjectState::getValue);
+  Optional<CatalogEntry> getEntryByKkNumber(Integer kkNumber) {
+    List<CatalogEntry> entriesFound = CatalogEntry.getByArticleNo(kkNumber.toString());
+    switch (entriesFound.size()) {
+      case 1:
+        return Optional.of(entriesFound.get(0));
+      case 0:
+        return Optional.ofNullable(null);
+      default:
+        return entriesFound.stream().filter(CatalogEntry::getAktionspreis).findFirst();
+    }
   }
 
   public void add(PreOrder preOrder) {
     Objects.requireNonNull(preOrder.getUser());
     if (preOrder.getUser().equals(User.getKernbeisserUser())) {
-      Article a = em.find(Article.class, preOrder.getArticle().getId());
-      em.persist(a);
+      CatalogEntry e = em.find(CatalogEntry.class, preOrder.getCatalogEntry().getId());
+      em.persist(e);
     }
     em.persist(preOrder);
     em.flush();
@@ -58,12 +60,12 @@ public class PreOrderModel implements IModel<PreOrderController> {
     Objects.requireNonNull(newPreOrder.getUser());
     PreOrder p = em.find(PreOrder.class, preOrder.getId());
     p.setAmount(newPreOrder.getAmount());
-    p.setArticle(newPreOrder.getArticle());
+    p.setCatalogEntry(newPreOrder.getCatalogEntry());
     p.setUser(newPreOrder.getUser());
     p.setInfo(newPreOrder.getInfo());
     if (preOrder.getUser().equals(User.getKernbeisserUser())) {
-      Article a = em.find(Article.class, newPreOrder.getArticle().getId());
-      em.persist(a);
+      CatalogEntry e = em.find(CatalogEntry.class, newPreOrder.getCatalogEntry().getId());
+      em.persist(e);
     }
     em.merge(preOrder);
     em.flush();
@@ -83,20 +85,20 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return false;
   }
 
-  public Article getByBarcode(String s) throws NoResultException {
-    return Articles.getByBarcode(Long.parseLong(s)).orElseThrow(NoResultException::new);
+  public CatalogEntry getByBarcode(String s) throws NoResultException {
+    return CatalogEntry.getByBarcode(s).orElseThrow(NoResultException::new);
   }
 
   Collection<PreOrder> getAllPreOrders(boolean restricted) {
     if (restricted) {
       return em.createQuery(
-              "select p from PreOrder p where delivery IS NULL AND p.user = :u order by p.article.suppliersItemNumber",
+              "select p from PreOrder p where delivery IS NULL AND p.user = :u order by p.catalogEntry.artikelNr",
               PreOrder.class)
           .setParameter("u", LogInModel.getLoggedIn())
           .getResultList();
     } else {
       return em.createQuery(
-              "select p from PreOrder p where delivery IS NULL order by p.user.username, p.article.suppliersItemNumber",
+              "select p from PreOrder p where delivery IS NULL order by p.user.username, p.catalogEntry.artikelNr",
               PreOrder.class)
           .getResultList();
     }
@@ -104,25 +106,31 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   Collection<PreOrder> getUnorderedPreOrders() {
     return em.createQuery(
-            "select p from PreOrder p where delivery is null and orderedOn is null order by p.article.suppliersItemNumber",
+            "select p from PreOrder p where delivery is null and orderedOn is null order by p.catalogEntry.artikelNr",
             PreOrder.class)
         .getResultList();
   }
 
-  static double containerNetPrice(Article article) throws NullPointerException {
-    return Articles.calculateArticleNetPrice(article, true)
-        * (article.isWeighable() ? 1 : article.getContainerSize());
+  static double containerNetPrice(CatalogEntry entry) throws NullPointerException {
+    return entry.getPreis() * entry.getBestelleinheitsMenge();
   }
 
-  static double containerRetailPrice(Article article) throws NullPointerException {
-    return Articles.calculateArticleRetailPrice(article, 0, true)
-        * (article.isWeighable() ? 1 : article.getContainerSize());
+  static Double containerRetailPrice(CatalogEntry entry) throws NullPointerException {
+    Optional<Article> article = Articles.getByKkItemNumber(entry.getArtikelNrInt());
+    return article
+        .map(
+            a ->
+                Articles.calculateArticleRetailPrice(a, 0, true)
+                    * (a.isWeighable() ? 1 : a.getContainerSize()))
+        .orElse(null);
   }
 
   public void close() {
+    // TODO move to Supply
+    /*
     delivery.forEach(
         p -> {
-          Article article = p.getArticle();
+          Article article = p.getCatalogEntry();
           if (p.getUser().equals(User.getKernbeisserUser())) {
             removeLazy(p);
             if (!article.getShopRange().isVisible()) {
@@ -133,7 +141,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
             p.setDelivery(Instant.now());
             em.merge(p);
           }
-        });
+        });*/
     et.commit();
     em.close();
   }
