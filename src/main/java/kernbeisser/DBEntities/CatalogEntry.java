@@ -13,6 +13,7 @@ import kernbeisser.Tasks.Catalog.BoolValues;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Useful.Tools;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @Table(
@@ -223,7 +224,7 @@ public class CatalogEntry {
   }
 
   public boolean matches(String s) {
-    return bezeichnung.contains(s)
+    return StringUtils.containsIgnoreCase(bezeichnung, s)
         || artikelNr.startsWith(s)
         || Objects.toString(eanLadenEinheit).endsWith(s);
   }
