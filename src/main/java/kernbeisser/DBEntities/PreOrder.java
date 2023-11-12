@@ -97,8 +97,9 @@ public class PreOrder implements Serializable, UserRelated {
     return user.equals(User.getKernbeisserUser());
   }
 
+  // report property! don't remove
   public String getContainerInfo() {
-    return getCatalogEntry().getContentAmount();
+    return getCatalogEntry().getBestelleinheit();
   }
 
   @Override

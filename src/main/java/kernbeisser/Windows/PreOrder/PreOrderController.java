@@ -152,7 +152,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   void pasteDataInView(CatalogEntry entry) {
     selectedEntry = entry;
     var view = getView();
-    view.setContainerSize(entry.getContentAmount());
+    view.setContainerSize(entry.getBestelleinheit());
     view.setItemName(entry.getBezeichnung());
     view.setKkNumber(entry.getArtikelNr());
     try {

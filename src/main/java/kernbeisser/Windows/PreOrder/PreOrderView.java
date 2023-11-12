@@ -142,6 +142,8 @@ public class PreOrderView implements IView<PreOrderController> {
                 .withSorter(Column.NUMBER_SORTER),
             Columns.<PreOrder>create("Produktname", e -> e.getCatalogEntry().getBezeichnung())
                 .withColumnAdjustor(e -> e.setPreferredWidth(350)),
+            Columns.<PreOrder>create("Gebinde", e -> e.getCatalogEntry().getBestelleinheit())
+                .withColumnAdjustor(e -> e.setPreferredWidth(60)),
             Columns.<PreOrder>create(
                     "Netto-Preis",
                     e ->

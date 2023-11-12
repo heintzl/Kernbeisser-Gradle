@@ -1,7 +1,6 @@
 package kernbeisser.DBEntities;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,8 +9,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Tasks.Catalog.BoolValues;
-import kernbeisser.Tasks.Catalog.Catalog;
-import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -227,18 +224,6 @@ public class CatalogEntry {
     return StringUtils.containsIgnoreCase(bezeichnung, s)
         || artikelNr.startsWith(s)
         || Objects.toString(eanLadenEinheit).endsWith(s);
-  }
-
-  public String getContentAmount() {
-    if (ladeneinheit == null) return "";
-    Article article = new Article();
-    article.setWeighable(Tools.ifNull(gewichtsartikel, false));
-    article.setMetricUnits(Tools.ifNull(grundpreisEinheit, MetricUnits.NONE));
-    article.setContainerSize(Tools.ifNull(bestelleinheitsMenge, 0.0));
-    double parsedAmount =
-        Arrays.stream(Tools.allNumbers(getLadeneinheit())).reduce(1, (a, b) -> a * b);
-    Catalog.extractAmount(article, parsedAmount);
-    return Articles.getContentAmount(article);
   }
 
   public String getInfo() {
