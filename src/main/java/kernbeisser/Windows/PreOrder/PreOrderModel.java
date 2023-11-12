@@ -115,16 +115,6 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return entry.getPreis() * entry.getBestelleinheitsMenge();
   }
 
-  static Double containerRetailPrice(CatalogEntry entry) throws NullPointerException {
-    Optional<Article> article = Articles.getByKkItemNumber(entry.getArtikelNrInt());
-    return article
-        .map(
-            a ->
-                Articles.calculateArticleRetailPrice(a, 0, true)
-                    * (a.isWeighable() ? 1 : a.getContainerSize()))
-        .orElse(null);
-  }
-
   public void close() {
     // TODO move to Supply
     /*

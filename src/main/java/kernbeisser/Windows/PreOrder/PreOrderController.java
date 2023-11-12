@@ -157,10 +157,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     view.setKkNumber(entry.getArtikelNr());
     try {
       view.setNetPrice(PreOrderModel.containerNetPrice(entry));
-      view.setSellingPrice(String.format("%.2f€", PreOrderModel.containerRetailPrice(entry)));
     } catch (NullPointerException e) {
       view.setNetPrice(0.00);
-      view.setSellingPrice("0.00");
     }
   }
 

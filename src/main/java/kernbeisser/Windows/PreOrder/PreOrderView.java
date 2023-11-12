@@ -38,7 +38,6 @@ public class PreOrderView implements IView<PreOrderController> {
   private IntegerParseField amount;
   private JLabel name;
   private JLabel containerSize;
-  private JLabel sellingPrice;
   private JPanel main;
   private JPanel insertSection;
   private JLabel netPrice;
@@ -214,10 +213,6 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void setContainerSize(String s) {
     containerSize.setText(s);
-  }
-
-  void setSellingPrice(String s) {
-    sellingPrice.setText(s);
   }
 
   Collection<PreOrder> getSelectedOrders() {
