@@ -1,6 +1,7 @@
 package kernbeisser.Windows.EditCatalog;
 
-import com.google.common.collect.ImmutableMap;
+import static kernbeisser.DBEntities.CatalogEntry.CATALOG_ENTRY_STATES;
+
 import java.awt.event.KeyEvent;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -25,16 +26,6 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
 
   private final CatalogFilter catalogFilter = new CatalogFilter(this::refreshList);
 
-  private static final ImmutableMap<String, String> catalogEntryStates =
-      ImmutableMap.<String, String>builder()
-          .put("A", "Änderung")
-          .put("N", "Neu")
-          .put("R", "Restbestand")
-          .put("V", "Vorübergehend ausgelistet")
-          .put("W", "Eiedergelistet")
-          .put("X", "Ausgelistet")
-          .build();
-
   @Key(PermissionKey.ACTION_LOGIN) // TODO add more restrictions, if required
   public EditCatalogController() {
     super(new EditCatalogModel());
@@ -46,7 +37,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
             (String s, int max) -> model.searchable(s, max, catalogFilter::matches),
             false,
             Columns.<CatalogEntry>create(
-                    "Status", e -> catalogEntryStates.get(e.getAenderungskennung()))
+                    "Status", e -> CATALOG_ENTRY_STATES.get(e.getAenderungskennung()))
                 .withDefaultFilter()
                 .withPreferredWidth(80),
             Columns.create("Artikelnummer", CatalogEntry::getArtikelNr)
@@ -56,14 +47,16 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
             Columns.create("Bezeichnung", CatalogEntry::getBezeichnung)
                 .withDefaultFilter()
                 .withPreferredWidth(250),
+            Columns.create("Gebinde", CatalogEntry::getBestelleinheit).withPreferredWidth(80),
             Columns.create("Hersteller", CatalogEntry::getMarke)
                 .withDefaultFilter()
                 .withPreferredWidth(120),
             Columns.create("Herkunft", CatalogEntry::getHerkunft)
                 .withDefaultFilter()
                 .withPreferredWidth(80),
-            Columns.<CatalogEntry>create("Preis", e -> String.format("%.2f€", e.getPreis()))
-                .withPreferredWidth(60),
+            Columns.<CatalogEntry>create("Netto-Pr.", e -> String.format("%.2f€", e.getPreis()))
+                .withPreferredWidth(60)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.<CatalogEntry>createIconColumn(
                     "Aktion", e -> Icons.booleanIcon(e.getAktionspreis()))
                 .withPreferredWidth(50),

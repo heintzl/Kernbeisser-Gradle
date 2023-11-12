@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import com.google.common.collect.ImmutableMap;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -162,6 +163,16 @@ public class CatalogEntry {
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Setter(AccessLevel.PUBLIC)
   private long id;
+
+  public static final ImmutableMap<String, String> CATALOG_ENTRY_STATES =
+      ImmutableMap.<String, String>builder()
+          .put("A", "Änderung")
+          .put("N", "Neu")
+          .put("R", "Restbestand")
+          .put("V", "Vorübergehend ausgelistet")
+          .put("W", "Wiedergelistet")
+          .put("X", "Ausgelistet")
+          .build();
 
   public CatalogEntry() {}
 
