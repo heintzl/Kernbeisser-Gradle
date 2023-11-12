@@ -149,15 +149,15 @@ public class DBConnection {
     Root<T> root = cr.from(clazz);
     cr.select(root);
     List<T> resultList;
-    Predicate expression;
-    if (conditionValues == null) {
-      expression = root.get(conditionFieldName).isNull();
-    } else {
-      expression = root.get(conditionFieldName).in(conditionValues);
-    }
     if (conditionFieldName.isEmpty()) {
       resultList = em.createQuery(cr).getResultList();
     } else {
+      Predicate expression;
+      if (conditionValues == null) {
+        expression = root.get(conditionFieldName).isNull();
+      } else {
+        expression = root.get(conditionFieldName).in(conditionValues);
+      }
       resultList = em.createQuery(cr.where(expression)).getResultList();
     }
     return resultList;
