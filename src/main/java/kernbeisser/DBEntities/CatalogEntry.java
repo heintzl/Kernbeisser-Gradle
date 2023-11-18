@@ -176,6 +176,10 @@ public class CatalogEntry {
 
   public CatalogEntry() {}
 
+  public boolean isActive() {
+    return !"|X|V|".contains(aenderungskennung);
+  }
+
   public int getArtikelNrInt() throws NumberFormatException {
     return Integer.parseInt(artikelNr);
   }
@@ -200,14 +204,30 @@ public class CatalogEntry {
     return aktionspreis;
   }
 
-  public static List<CatalogEntry> getByArticleNo(String ArticleNo) {
+  public static List<CatalogEntry> getByArticleNo(
+      String ArticleNo, boolean withActions, boolean withInactive) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("SELECT c FROM CatalogEntry c WHERE ArtikelNr = :n", CatalogEntry.class)
+    String queryString = "SELECT c FROM CatalogEntry c WHERE ArtikelNr = :n";
+    if (!withInactive) {
+      queryString += " AND NOT aenderungskennung IN ('V', 'X')";
+    }
+    if (withActions) {
+      queryString +=
+          " AND (NOT aktionspreis = 1 OR :d BETWEEN aktionspreisGueltigAb AND aktionspreisGueltigBis)  ORDER BY aktionspreis DESC";
+    } else {
+      queryString += " AND NOT aktionspreis = 1";
+    }
+    return em.createQuery(queryString, CatalogEntry.class)
         .setParameter("n", ArticleNo)
+        .setParameter("d", Instant.now())
         .getResultList();
+  }
+
+  public static List<CatalogEntry> getByArticleNo(String ArticleNo) {
+    return getByArticleNo(ArticleNo, true, true);
   }
 
   public static Optional<CatalogEntry> getByBarcode(String barcode) {

@@ -25,6 +25,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Date;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -53,6 +54,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private JButton editPreOrder;
   private JButton deletePreOrder;
   private JButton cancelEdit;
+  private JButton findByShopNumber;
   private JPopupMenu popupSelectionColumn;
 
   @Setter private Mode mode;
@@ -150,6 +152,16 @@ public class PreOrderView implements IView<PreOrderController> {
                             "%.2f€", PreOrderModel.containerNetPrice(e.getCatalogEntry())))
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
+            Columns.<PreOrder>create(
+                    "Aktion bis",
+                    e ->
+                        e.getCatalogEntry().isAction()
+                            ? Date.INSTANT_DATE.format(
+                                e.getCatalogEntry().getAktionspreisGueltigBis())
+                            : "-")
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE))
+                .withPreferredWidth(60)
+                .withHorizontalAlignment(SwingConstants.RIGHT),
             Columns.<PreOrder>create("Anzahl", PreOrder::getAmount)
                 .withLeftClickConsumer(controller::editAmount)
                 .withRightClickConsumer(controller::editAmount)
@@ -285,7 +297,13 @@ public class PreOrderView implements IView<PreOrderController> {
 
     amount.addActionListener(e -> submitAction());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
+
     searchCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
+    searchCatalog.setToolTipText("Katalog durchsuchen");
+
+    findByShopNumber.addActionListener(e -> controller.findArtikelNrByShopNumber());
+    findByShopNumber.setToolTipText("Katalog-Eintrag über Ladennummer suchen");
+    findByShopNumber.setIcon(Icons.SHOP_ICON);
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
     defaultSortOrder.addActionListener(e -> setDefaultSortOrder());
@@ -315,6 +333,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void enableControls(boolean enabled) {
     searchCatalog.setEnabled(enabled);
+    findByShopNumber.setEnabled(enabled);
     kkNumber.setEnabled(enabled);
     amount.setEnabled(enabled);
     submit.setEnabled(enabled);
@@ -548,5 +567,25 @@ public class PreOrderView implements IView<PreOrderController> {
   @Override
   public String getTitle() {
     return (controller.isRestrictToLoggedIn() ? "Meine " : "") + "Vorbestellung";
+  }
+
+  public String inputShopNumber(boolean inputError) {
+    return JOptionPane.showInputDialog(
+        getContent(),
+        (inputError ? "Fehlerhafte Eingabe!\n" : "") + "Laden-Artikelnummer:",
+        "Suche nach Laden-Artikelnummer",
+        JOptionPane.QUESTION_MESSAGE);
+  }
+
+  public void messageArticleNotInCatalog(int shopNumber) {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Zur Ladennummer "
+            + shopNumber
+            + " existiert kein gültiger Katalogeintrag!\n"
+            + "Entweder ist die Nummer falsch, oder der Artikel steht\n"
+            + "nicht (mehr) im Kornkraft-Katalog.",
+        "Es wurde kein Katalog-Artikel gefunden",
+        JOptionPane.WARNING_MESSAGE);
   }
 }

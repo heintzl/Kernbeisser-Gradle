@@ -3,18 +3,15 @@ package kernbeisser.Windows.PreOrder;
 import java.awt.*;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
@@ -35,15 +32,8 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   Optional<CatalogEntry> getEntryByKkNumber(Integer kkNumber) {
-    List<CatalogEntry> entriesFound = CatalogEntry.getByArticleNo(kkNumber.toString());
-    switch (entriesFound.size()) {
-      case 1:
-        return Optional.of(entriesFound.get(0));
-      case 0:
-        return Optional.ofNullable(null);
-      default:
-        return entriesFound.stream().filter(CatalogEntry::getAktionspreis).findFirst();
-    }
+    List<CatalogEntry> entries = CatalogEntry.getByArticleNo(kkNumber.toString(), true, false);
+    return entries.stream().findFirst();
   }
 
   public void add(PreOrder preOrder) {
@@ -83,6 +73,17 @@ public class PreOrderModel implements IModel<PreOrderController> {
       return true;
     }
     return false;
+  }
+
+  public Optional<CatalogEntry> findEntriesByShopNumber(int shopNumber) {
+    Optional<Article> article =
+        Articles.getByKbNumber(shopNumber, false).map(ObjectState::getValue);
+    if (article.isPresent()) {
+      if (article.get().getSupplier().equals(Supplier.getKKSupplier())) {
+        return getEntryByKkNumber(article.get().getSuppliersItemNumber());
+      }
+    }
+    return Optional.empty();
   }
 
   public CatalogEntry getByBarcode(String s) throws NoResultException {

@@ -274,6 +274,38 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
+  public void findArtikelNrByShopNumber() {
+    PreOrderView view = getView();
+    boolean inputError = false;
+    boolean canceled = false;
+    int shopNumber = 0;
+    do {
+      String input = view.inputShopNumber(inputError);
+      try {
+        if (input.isEmpty()) {
+          canceled = true;
+        }
+        shopNumber = Integer.parseInt(input);
+        inputError = false;
+      } catch (NumberFormatException e) {
+        inputError = true;
+      }
+    } while (inputError && !canceled);
+    if (canceled) {
+      return;
+    }
+    Optional<CatalogEntry> optEntry = model.findEntriesByShopNumber(shopNumber);
+    if (optEntry.isPresent()) {
+      CatalogEntry entry = optEntry.get();
+      pasteDataInView(entry);
+      view.setKkNumber(entry.getArtikelNr());
+      view.focusOnAmount();
+    } else {
+      view.messageArticleNotInCatalog(shopNumber);
+      findArtikelNrByShopNumber();
+    }
+  }
+
   public void printChecklist() {
     var view = getView();
     LocalDate defaultDate =
