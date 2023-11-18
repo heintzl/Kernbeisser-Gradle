@@ -1,14 +1,17 @@
 package kernbeisser.DBEntities;
 
+import com.google.common.collect.ImmutableMap;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Tasks.Catalog.BoolValues;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @Table(
@@ -161,7 +164,21 @@ public class CatalogEntry {
   @Setter(AccessLevel.PUBLIC)
   private long id;
 
+  public static final ImmutableMap<String, String> CATALOG_ENTRY_STATES =
+      ImmutableMap.<String, String>builder()
+          .put("A", "Änderung")
+          .put("N", "Neu")
+          .put("R", "Restbestand")
+          .put("V", "Vorübergehend ausgelistet")
+          .put("W", "Wiedergelistet")
+          .put("X", "Ausgelistet")
+          .build();
+
   public CatalogEntry() {}
+
+  public boolean isActive() {
+    return !"|X|V|".contains(aenderungskennung);
+  }
 
   public int getArtikelNrInt() throws NumberFormatException {
     return Integer.parseInt(artikelNr);
@@ -187,14 +204,35 @@ public class CatalogEntry {
     return aktionspreis;
   }
 
-  public static List<CatalogEntry> getByArticleNo(String ArticleNo) {
+  public static List<CatalogEntry> getByArticleNo(
+      String ArticleNo, boolean withActions, boolean withInactive) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("SELECT c FROM CatalogEntry c WHERE ArtikelNr = :n", CatalogEntry.class)
+    String queryString = "SELECT c FROM CatalogEntry c WHERE ArtikelNr = :n";
+    if (!withInactive) {
+      queryString += " AND NOT aenderungskennung IN ('V', 'X')";
+    }
+    if (withActions) {
+      queryString +=
+          " AND (NOT aktionspreis = 1 OR :d BETWEEN aktionspreisGueltigAb AND aktionspreisGueltigBis)  ORDER BY aktionspreis DESC";
+    } else {
+      queryString += " AND NOT aktionspreis = 1";
+    }
+    return em.createQuery(queryString, CatalogEntry.class)
         .setParameter("n", ArticleNo)
+        .setParameter("d", Instant.now())
         .getResultList();
+  }
+
+  public static List<CatalogEntry> getByArticleNo(String ArticleNo) {
+    return getByArticleNo(ArticleNo, true, true);
+  }
+
+  public static Optional<CatalogEntry> getByBarcode(String barcode) {
+    return DBConnection.getConditioned(CatalogEntry.class, "EanLadenEinheit", barcode).stream()
+        .findFirst();
   }
 
   public static List<CatalogEntry> getCatalog() {
@@ -214,8 +252,12 @@ public class CatalogEntry {
   }
 
   public boolean matches(String s) {
-    return bezeichnung.contains(s)
+    return StringUtils.containsIgnoreCase(bezeichnung, s)
         || artikelNr.startsWith(s)
         || Objects.toString(eanLadenEinheit).endsWith(s);
+  }
+
+  public String getInfo() {
+    return String.join("\n", bezeichnung2, bezeichnung3);
   }
 }

@@ -71,7 +71,7 @@ public class PayModel implements IModel<PayController> {
     saleSession.setTransaction(transaction);
   }
 
-  private void persistShoppingCartAndRetifyIndexes(EntityManager em, Purchase purchase) {
+  private void persistShoppingCartAndRectifyIndexes(EntityManager em, Purchase purchase) {
     int i = 0;
     for (ShoppingItem item : shoppingCart) {
       item.setShoppingCartIndex(i++);
@@ -90,8 +90,8 @@ public class PayModel implements IModel<PayController> {
       Purchase purchase = new Purchase();
       purchase.setSession(saleSession);
       em.persist(saleSession);
-      persistShoppingCartAndRetifyIndexes(em, purchase);
       em.persist(purchase);
+      persistShoppingCartAndRectifyIndexes(em, purchase);
       et.commit();
       return purchase.getId();
     } finally {

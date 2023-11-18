@@ -25,6 +25,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Date;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -38,7 +39,6 @@ public class PreOrderView implements IView<PreOrderController> {
   private IntegerParseField amount;
   private JLabel name;
   private JLabel containerSize;
-  private JLabel sellingPrice;
   private JPanel main;
   private JPanel insertSection;
   private JLabel netPrice;
@@ -47,15 +47,14 @@ public class PreOrderView implements IView<PreOrderController> {
   private JButton close;
   JButton abhakplanButton;
   JButton bestellungExportierenButton;
-  JButton searchArticle;
+  JButton searchCatalog;
   private JLabel caption;
-  private IntegerParseField shopNumber;
-
   private JCheckBox duplexPrint;
   private JButton defaultSortOrder;
   private JButton editPreOrder;
   private JButton deletePreOrder;
   private JButton cancelEdit;
+  private JButton findByShopNumber;
   private JPopupMenu popupSelectionColumn;
 
   @Setter private Mode mode;
@@ -80,24 +79,12 @@ public class PreOrderView implements IView<PreOrderController> {
     return kkNumber.getSafeValue();
   }
 
-  void setKkNumber(int s) {
-    kkNumber.setText(String.valueOf(s));
+  void setKkNumber(String s) {
+    kkNumber.setText(s);
   }
 
   void focusOnAmount() {
     amount.requestFocusInWindow();
-  }
-
-  int getShopNumber() {
-    return shopNumber.getSafeValue();
-  }
-
-  void setShopNumber(int s) {
-    if (s == 0) {
-      shopNumber.setText("");
-    } else {
-      shopNumber.setText(String.valueOf(s));
-    }
   }
 
   void setNetPrice(double s) {
@@ -109,7 +96,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   private static String getDueDateAsString(PreOrder preOrder) {
-    boolean isSlow = preOrder.getArticle().getName().contains("*V*");
+    boolean isSlow = preOrder.getCatalogEntry().getBezeichnung().contains("*V*");
     String displayText = isSlow ? "ab " : "";
     if (preOrder.getDueDate().isAfter(LocalDate.now())) {
       displayText += Date.INSTANT_DATE.format(preOrder.getDueDate());
@@ -151,20 +138,30 @@ public class PreOrderView implements IView<PreOrderController> {
         new ObjectTable<>(
             Columns.<PreOrder>create("Benutzer", e -> e.getUser().getFullName(true))
                 .withColumnAdjustor(e -> e.setPreferredWidth(150)),
-            Columns.<PreOrder>create("Ladennummer", PreOrder::getKBNumber)
+            Columns.<PreOrder>create("Kornkraftnummer", e -> e.getCatalogEntry().getArtikelNr())
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.<PreOrder>create(
-                    "Kornkraftnummer", e -> e.getArticle().getSuppliersItemNumber())
-                .withHorizontalAlignment(SwingConstants.RIGHT)
-                .withSorter(Column.NUMBER_SORTER),
-            Columns.<PreOrder>create("Produktname", e -> e.getArticle().getName())
+            Columns.<PreOrder>create("Produktname", e -> e.getCatalogEntry().getBezeichnung())
                 .withColumnAdjustor(e -> e.setPreferredWidth(350)),
+            Columns.<PreOrder>create("Gebinde", e -> e.getCatalogEntry().getBestelleinheit())
+                .withColumnAdjustor(e -> e.setPreferredWidth(60)),
             Columns.<PreOrder>create(
                     "Netto-Preis",
-                    e -> String.format("%.2f€", PreOrderModel.containerNetPrice(e.getArticle())))
+                    e ->
+                        String.format(
+                            "%.2f€", PreOrderModel.containerNetPrice(e.getCatalogEntry())))
                 .withHorizontalAlignment(SwingConstants.RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
+            Columns.<PreOrder>create(
+                    "Aktion bis",
+                    e ->
+                        e.getCatalogEntry().isAction()
+                            ? Date.INSTANT_DATE.format(
+                                e.getCatalogEntry().getAktionspreisGueltigBis())
+                            : "-")
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE))
+                .withPreferredWidth(60)
+                .withHorizontalAlignment(SwingConstants.RIGHT),
             Columns.<PreOrder>create("Anzahl", PreOrder::getAmount)
                 .withLeftClickConsumer(controller::editAmount)
                 .withRightClickConsumer(controller::editAmount)
@@ -230,10 +227,6 @@ public class PreOrderView implements IView<PreOrderController> {
     containerSize.setText(s);
   }
 
-  void setSellingPrice(String s) {
-    sellingPrice.setText(s);
-  }
-
   Collection<PreOrder> getSelectedOrders() {
     return preOrders.getSelectedObjects();
   }
@@ -263,18 +256,6 @@ public class PreOrderView implements IView<PreOrderController> {
           @Override
           public void keyReleased(KeyEvent e) {
             if (controller.searchKK()) {
-              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                submitAction();
-              }
-            }
-          }
-        });
-
-    shopNumber.addKeyListener(
-        new KeyAdapter() {
-          @Override
-          public void keyReleased(KeyEvent e) {
-            if (controller.searchShopNo()) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 submitAction();
               }
@@ -316,7 +297,13 @@ public class PreOrderView implements IView<PreOrderController> {
 
     amount.addActionListener(e -> submitAction());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
-    searchArticle.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
+
+    searchCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
+    searchCatalog.setToolTipText("Katalog durchsuchen");
+
+    findByShopNumber.addActionListener(e -> controller.findArtikelNrByShopNumber());
+    findByShopNumber.setToolTipText("Katalog-Eintrag über Ladennummer suchen");
+    findByShopNumber.setIcon(Icons.SHOP_ICON);
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
     defaultSortOrder.addActionListener(e -> setDefaultSortOrder());
@@ -345,9 +332,9 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   void enableControls(boolean enabled) {
-    searchArticle.setEnabled(enabled);
+    searchCatalog.setEnabled(enabled);
+    findByShopNumber.setEnabled(enabled);
     kkNumber.setEnabled(enabled);
-    shopNumber.setEnabled(enabled);
     amount.setEnabled(enabled);
     submit.setEnabled(enabled);
   }
@@ -366,9 +353,8 @@ public class PreOrderView implements IView<PreOrderController> {
     setMode(Mode.EDIT);
     user.getModel().setSelectedItem(preOrder.getUser());
     user.repaint();
-    setShopNumber(preOrder.getArticle().getKbNumber());
     setAmount(Integer.toString(preOrder.getAmount()));
-    controller.pasteDataInView(preOrder.getArticle(), true);
+    controller.pasteDataInView(preOrder.getCatalogEntry());
     enableControls(true);
   }
 
@@ -404,7 +390,7 @@ public class PreOrderView implements IView<PreOrderController> {
     if (addMode) {
       user.getModel().setSelectedItem(addModeUser);
       enableControls(addModeUser != null);
-      controller.noArticleFound(false);
+      controller.noEntryFound();
       resetArticleNr();
     } else {
       addModeUser = (User) user.getSelectedItem();
@@ -581,5 +567,25 @@ public class PreOrderView implements IView<PreOrderController> {
   @Override
   public String getTitle() {
     return (controller.isRestrictToLoggedIn() ? "Meine " : "") + "Vorbestellung";
+  }
+
+  public String inputShopNumber(boolean inputError) {
+    return JOptionPane.showInputDialog(
+        getContent(),
+        (inputError ? "Fehlerhafte Eingabe!\n" : "") + "Laden-Artikelnummer:",
+        "Suche nach Laden-Artikelnummer",
+        JOptionPane.QUESTION_MESSAGE);
+  }
+
+  public void messageArticleNotInCatalog(int shopNumber) {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Zur Ladennummer "
+            + shopNumber
+            + " existiert kein gültiger Katalogeintrag!\n"
+            + "Entweder ist die Nummer falsch, oder der Artikel steht\n"
+            + "nicht (mehr) im Kornkraft-Katalog.",
+        "Es wurde kein Katalog-Artikel gefunden",
+        JOptionPane.WARNING_MESSAGE);
   }
 }

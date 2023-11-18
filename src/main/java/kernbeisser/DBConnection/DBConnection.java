@@ -3,9 +3,7 @@ package kernbeisser.DBConnection;
 import com.google.common.collect.Lists;
 import java.util.*;
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
@@ -154,16 +152,23 @@ public class DBConnection {
     if (conditionFieldName.isEmpty()) {
       resultList = em.createQuery(cr).getResultList();
     } else {
-      resultList =
-          em.createQuery(cr.where(root.get(conditionFieldName).in(conditionValues)))
-              .getResultList();
+      Predicate expression;
+      if (conditionValues == null) {
+        expression = root.get(conditionFieldName).isNull();
+      } else {
+        expression = root.get(conditionFieldName).in(conditionValues);
+      }
+      resultList = em.createQuery(cr.where(expression)).getResultList();
     }
     return resultList;
   }
 
   public static <T, C> List<T> getConditioned(
       Class<T> clazz, String conditionFieldName, C conditionValue) {
-    return getConditioned(clazz, conditionFieldName, Lists.newArrayList(conditionValue));
+    return getConditioned(
+        clazz,
+        conditionFieldName,
+        conditionValue == null ? null : Lists.newArrayList(conditionValue));
   }
 
   public static <T> List<T> getAll(Class<T> clazz) {

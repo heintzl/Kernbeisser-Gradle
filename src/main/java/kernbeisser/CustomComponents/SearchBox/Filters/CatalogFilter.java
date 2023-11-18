@@ -19,7 +19,7 @@ public class CatalogFilter {
   }
 
   public boolean matches(CatalogEntry e) {
-    return (filterInactive || !"|X|V|".contains(e.getAenderungskennung()))
+    return (filterInactive || e.isActive())
         && (filterOutdatedActions || !e.isAction() || !e.isOutdatedAction())
         && (!filterOnlyActions || e.isAction());
   }

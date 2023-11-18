@@ -23,7 +23,7 @@ import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
-import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
+import kernbeisser.Windows.PreOrder.CatalogSelector.CatalogSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Getter;
 import lombok.var;
@@ -33,7 +33,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   private final KeyCapture keyCapture;
   private final BarcodeCapture barcodeCapture;
-  private Article selectedArticle = null;
+  private CatalogEntry selectedEntry = null;
   @Getter private final boolean restrictToLoggedIn;
 
   public PreOrderController(boolean restrictToLoggedIn) {
@@ -51,33 +51,14 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   boolean searchKK() {
     PreOrderView view = getView();
     if (view.getKkNumber() != 0) {
-      Optional<Article> searchResult = model.getItemByKkNumber(view.getKkNumber());
+      Optional<CatalogEntry> searchResult = model.getEntryByKkNumber(view.getKkNumber());
       if (searchResult.isPresent()) {
-        pasteDataInView(searchResult.get(), false);
+        pasteDataInView(searchResult.get());
         return true;
       } else {
-        noArticleFound(false);
         return false;
       }
     } else {
-      noArticleFound(false);
-      return false;
-    }
-  }
-
-  boolean searchShopNo() {
-    PreOrderView view = getView();
-    if (view.getShopNumber() != 0) {
-      Optional<Article> searchResult = model.getItemByShopNumber(view.getShopNumber());
-      if (searchResult.isPresent()) {
-        pasteDataInView(searchResult.get(), true);
-        return true;
-      } else {
-        noArticleFound(true);
-        return false;
-      }
-    } else {
-      noArticleFound(true);
       return false;
     }
   }
@@ -88,7 +69,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       PreOrder order = obtainFromView();
       model.add(order);
       view.addPreOrder(order);
-      noArticleFound(false);
+      noEntryFound();
       view.resetArticleNr();
     } catch (NoResultException e) {
       view.noItemFound();
@@ -119,7 +100,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void delete(Collection<PreOrder> preOrders) {
-    if (preOrders.size() == 0) {
+    if (preOrders.isEmpty()) {
       getView().noPreOrderSelected();
       return;
     }
@@ -142,9 +123,9 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     view.setMode(Mode.ADD);
   }
 
-  void noArticleFound(boolean isByShopNumber) {
-    pasteDataInView(Articles.getEmptyArticle(), isByShopNumber);
-    selectedArticle = null;
+  void noEntryFound() {
+    pasteDataInView(new CatalogEntry());
+    selectedEntry = null;
   }
 
   @Override
@@ -168,40 +149,29 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     return true;
   }
 
-  void pasteDataInView(Article articleKornkraft, boolean isByShopNumber) {
-    selectedArticle = articleKornkraft;
+  void pasteDataInView(CatalogEntry entry) {
+    selectedEntry = entry;
     var view = getView();
-    view.setContainerSize(Articles.getContentAmount(articleKornkraft));
-    view.setItemName(articleKornkraft.getName());
-    if (isByShopNumber && Articles.isKkArticle(articleKornkraft)) {
-      view.setKkNumber(articleKornkraft.getSuppliersItemNumber());
-    } else {
-      view.setShopNumber(articleKornkraft.getKbNumber());
-    }
+    view.setContainerSize(entry.getBestelleinheit());
+    view.setItemName(entry.getBezeichnung());
+    view.setKkNumber(entry.getArtikelNr());
     try {
-      view.setNetPrice(PreOrderModel.containerNetPrice(articleKornkraft));
-      view.setSellingPrice(
-          String.format("%.2f€", PreOrderModel.containerRetailPrice(articleKornkraft)));
+      view.setNetPrice(PreOrderModel.containerNetPrice(entry));
     } catch (NullPointerException e) {
       view.setNetPrice(0.00);
-      view.setSellingPrice("0.00");
     }
   }
 
   private PreOrder obtainFromView() throws InvalidValue, NoResultException {
-    if (selectedArticle == null) {
+    if (selectedEntry == null) {
       throw new NoResultException();
     }
     PreOrder preOrder = new PreOrder();
     var view = getView();
     preOrder.setUser(view.getUser());
-    preOrder.setArticle(selectedArticle);
+    preOrder.setCatalogEntry(selectedEntry);
     preOrder.setAmount(view.getAmount());
-    preOrder.setInfo(selectedArticle.getInfo());
-    if (!Articles.isKkArticle(preOrder.getArticle())) {
-      view.messageIsNotKKArticle(preOrder.getUser().isKernbeisser());
-      throw new InvalidValue();
-    }
+    preOrder.setInfo(selectedEntry.getInfo());
     if (preOrder.getUser() == null) {
       view.notifyNoUserSelected();
       throw new InvalidValue();
@@ -209,8 +179,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     return preOrder;
   }
 
-  void insert(Article article) {
-    if (article == null) throw new NullPointerException("cannot insert null as PreOrder");
+  void insert(CatalogEntry entry) {
+    if (entry == null) throw new NullPointerException("cannot insert null as PreOrder");
     var view = getView();
     if (view.getUser() == null) {
       getView().notifyNoUserSelected();
@@ -218,22 +188,22 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
     PreOrder preOrder = new PreOrder();
     preOrder.setUser(view.getUser());
-    preOrder.setArticle(article);
+    preOrder.setCatalogEntry(entry);
     preOrder.setAmount(view.getAmount());
-    preOrder.setInfo(article.getInfo());
+    preOrder.setInfo(entry.getInfo());
 
     model.add(preOrder);
     getView().addPreOrder(preOrder);
   }
 
-  void articleSearch(Article a) {
-    pasteDataInView(a, false);
-    getView().setKkNumber(a.getSuppliersItemNumber());
+  void catalogSearch(CatalogEntry entry) {
+    pasteDataInView(entry);
+    getView().setKkNumber(entry.getArtikelNr());
     getView().focusOnAmount();
   }
 
   void openSearchWindow() {
-    var searchWindow = new ArticleSelectorController(this::articleSearch);
+    var searchWindow = new CatalogSelectorController(this::catalogSearch);
     searchWindow.modifyNamedComponent(
         "KKFilter",
         c -> {
@@ -267,10 +237,10 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
     view.setPreOrders(model.getAllPreOrders(restrictToLoggedIn));
     view.setAmount("1");
-    view.searchArticle.addActionListener(e -> openSearchWindow());
+    view.searchCatalog.addActionListener(e -> openSearchWindow());
     view.bestellungExportierenButton.setEnabled(!restrictToLoggedIn);
     view.abhakplanButton.setEnabled(!restrictToLoggedIn);
-    noArticleFound(false);
+    noEntryFound();
   }
 
   boolean userMayEdit() {
@@ -304,6 +274,38 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
+  public void findArtikelNrByShopNumber() {
+    PreOrderView view = getView();
+    boolean inputError = false;
+    boolean canceled = false;
+    int shopNumber = 0;
+    do {
+      String input = view.inputShopNumber(inputError);
+      try {
+        if (input.isEmpty()) {
+          canceled = true;
+        }
+        shopNumber = Integer.parseInt(input);
+        inputError = false;
+      } catch (NumberFormatException e) {
+        inputError = true;
+      }
+    } while (inputError && !canceled);
+    if (canceled) {
+      return;
+    }
+    Optional<CatalogEntry> optEntry = model.findEntriesByShopNumber(shopNumber);
+    if (optEntry.isPresent()) {
+      CatalogEntry entry = optEntry.get();
+      pasteDataInView(entry);
+      view.setKkNumber(entry.getArtikelNr());
+      view.focusOnAmount();
+    } else {
+      view.messageArticleNotInCatalog(shopNumber);
+      findArtikelNrByShopNumber();
+    }
+  }
+
   public void printChecklist() {
     var view = getView();
     LocalDate defaultDate =
@@ -323,7 +325,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   public void exportPreOrder() {
     PreOrderView view = getView();
-    if (model.getUnorderedPreOrders().size() == 0) {
+    if (model.getUnorderedPreOrders().isEmpty()) {
       getView().messageNothingToExport();
       return;
     }

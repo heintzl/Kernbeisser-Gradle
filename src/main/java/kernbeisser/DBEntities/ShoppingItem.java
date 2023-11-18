@@ -14,7 +14,6 @@ import kernbeisser.Enums.*;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.envers.AuditReaderFactory;
 
 @Entity
@@ -144,7 +143,8 @@ public class ShoppingItem implements Serializable {
 
   @Column private int articleRev;
 
-  @Column @Getter @Setter @CreationTimestamp private Instant createDate;
+  @Column(nullable = false)
+  private Instant createDate;
 
   @Getter @Transient private double singleDeposit;
 
@@ -162,6 +162,10 @@ public class ShoppingItem implements Serializable {
 
   @Getter @Transient private boolean specialOffer;
 
+  @PrePersist
+  private void setTimestamp() {
+    createDate = Instant.now();
+  }
   /**
    * @param discount percentage of netprice reduction
    * @param hasContainerDiscount if true reduced surcharge is applied

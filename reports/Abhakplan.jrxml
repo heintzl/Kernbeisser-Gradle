@@ -15,8 +15,8 @@
 		<![CDATA[]]>
 	</queryString>
 	<field name="user.reverseFullName" class="java.lang.String"/>
-	<field name="article.name" class="java.lang.String"/>
-	<field name="article.suppliersItemNumber" class="java.lang.Integer"/>
+	<field name="catalogEntry.bezeichnung" class="java.lang.String"/>
+	<field name="catalogEntry.artikelNr" class="java.lang.String"/>
 	<field name="amount" class="java.lang.Integer"/>
 	<field name="dueLimit" class="java.time.LocalDate"/>
 	<field name="containerInfo" class="java.lang.String"/>
@@ -157,7 +157,7 @@
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed" size="13"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{article.suppliersItemNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{catalogEntry.artikelNr}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="269" y="1" width="229" height="17" printWhenGroupChanges="User" uuid="a84b1c86-78ab-45bc-b4f7-a7d58769ed76">
@@ -167,7 +167,7 @@
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="13"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{catalogEntry.bezeichnung}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="269" y="1" width="170" height="17" uuid="d8b94b92-9719-45e0-8de1-770b61847fc7">
@@ -177,7 +177,7 @@
 				<textElement>
 					<font fontName="DejaVu Sans Condensed" size="13" isBold="false" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{catalogEntry.bezeichnung}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="440" y="2" width="58" height="16" uuid="b64642de-b9f6-4f24-9a95-6b26125d66f2">

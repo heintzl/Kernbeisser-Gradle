@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.DBEntities.PreOrder;
-import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.var;
@@ -44,8 +43,7 @@ public class CSVExport {
   private static List<String[]> getOrdersFileContent(Collection<PreOrder> preOrders) {
     Map<Integer, List<PreOrder>> orderMap =
         preOrders.stream()
-            .filter(p -> p.getArticle().getSupplier().equals(Supplier.getKKSupplier()))
-            .collect(Collectors.groupingBy(p -> p.getArticle().getSuppliersItemNumber()));
+            .collect(Collectors.groupingBy(p -> p.getCatalogEntry().getArtikelNrInt()));
     List<String[]> orders = new ArrayList<>();
     orderMap.forEach(
         (i, preOrderList) ->
