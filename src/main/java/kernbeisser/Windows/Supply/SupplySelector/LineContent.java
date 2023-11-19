@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
@@ -58,7 +59,7 @@ public class LineContent {
     for (int i = offset; i < lines.size(); i++) {
       String currentLine = lines.get(i);
       if (isComment(currentLine)) {
-        if (contents.size() == 0) continue;
+        if (contents.isEmpty()) continue;
         LineContent before = contents.get(contents.size() - 1);
         before.setMessage(extractMessage(currentLine));
         continue;
@@ -67,14 +68,15 @@ public class LineContent {
       contents.add(content);
       kkNumbers.add(Objects.toString(content.getKkNumber()));
     }
+    FieldCondition articleCondition = new FieldCondition("artikelNr", kkNumbers);
+    FieldCondition actionCondition = new FieldCondition("aktionspreis", 1).not();
     Map<String, CatalogEntry> catalogEntries =
-        DBConnection.getConditioned(CatalogEntry.class, "artikelNr", kkNumbers).stream()
-            .filter(c -> !c.getAktionspreis())
+        DBConnection.getConditioned(CatalogEntry.class, articleCondition, actionCondition).stream()
             .collect(Collectors.toMap(CatalogEntry::getArtikelNr, e -> e));
 
     for (LineContent content : contents) {
-      CatalogEntry matchingEntry = catalogEntries.get(Objects.toString(content.kkNumber));
       if (content.containerMultiplier == 0) content.resolveStatus = ResolveStatus.IGNORE;
+      CatalogEntry matchingEntry = catalogEntries.get(Objects.toString(content.kkNumber));
       if (matchingEntry != null) {
         content.barcode = matchingEntry.getEanLadenEinheit();
         content.singleDeposit = matchingEntry.getEinzelPfand();
