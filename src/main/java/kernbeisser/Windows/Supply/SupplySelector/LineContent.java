@@ -1,10 +1,17 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
 import com.sun.istack.NotNull;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.swing.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.*;
@@ -13,6 +20,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Tasks.Catalog.Catalog;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Supply.SupplyModel;
 import lombok.AccessLevel;
@@ -20,6 +28,8 @@ import lombok.Cleanup;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang3.Range;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.core.compiler.InvalidInputException;
 
 @Data
@@ -56,10 +66,12 @@ public class LineContent {
   private Integer userPreorderCount;
   private Integer labels;
   private String containerUnit;
+  private static final Logger logger = LogManager.getLogger(LineContent.class);
 
-  public static List<LineContent> parseContents(List<String> lines, int offset) {
+  public static List<LineContent> parseContents(List<String> lines, String fileName, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
     List<String> kkNumbers = new ArrayList<>(lines.size() - offset);
+    List<LineError> lineErrors = new ArrayList<>();
     for (int i = offset; i < lines.size(); i++) {
       String currentLine = lines.get(i);
       if (isComment(currentLine)) {
@@ -68,9 +80,35 @@ public class LineContent {
         before.setMessage(extractMessage(currentLine));
         continue;
       }
-      LineContent content = singleLine(currentLine);
-      contents.add(content);
-      kkNumbers.add(Objects.toString(content.getKkNumber()));
+      try {
+        LineContent content = singleLine(currentLine);
+        contents.add(content);
+        kkNumbers.add(Objects.toString(content.getKkNumber()));
+      } catch (Exception e) {
+        lineErrors.add(new LineError(i, currentLine, e));
+        e.printStackTrace();
+      }
+    }
+    if (!lineErrors.isEmpty()) {
+      ObjectTable<LineError> errorTable =
+          new ObjectTable<>(
+              Columns.create("Zeile", LineError::getLineNumber)
+                  .withSorter(Column.NUMBER_SORTER)
+                  .withPreferredWidth(40),
+              Columns.create("Inhalt", LineError::getLine).withPreferredWidth(700),
+              Columns.create("Fehler", LineError::getException).withPreferredWidth(200),
+              Columns.createIconColumn(
+                  Icons.defaultIcon(FontAwesome.BUG, Color.RED),
+                  e -> Tools.showErrorWarning(e.getException(), "Import-Fehler"),
+                  e -> true));
+      errorTable.addAll(lineErrors);
+      JScrollPane errorPane = new JScrollPane(errorTable);
+      errorPane.setPreferredSize(new Dimension(1000, Math.min(lineErrors.size() * 24 + 30, 800)));
+      JOptionPane.showMessageDialog(
+          null,
+          errorPane,
+          fileName + ": Fehlerhafte Zeilen wurden übersprungen:",
+          JOptionPane.WARNING_MESSAGE);
     }
     FieldCondition articleCondition = new FieldCondition("artikelNr", kkNumbers);
     FieldCondition actionCondition = new FieldCondition("aktionspreis", 1).not();

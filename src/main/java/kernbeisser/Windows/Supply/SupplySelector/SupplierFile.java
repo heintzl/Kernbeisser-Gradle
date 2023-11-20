@@ -43,7 +43,7 @@ public class SupplierFile {
     List<String> lines = Files.readAllLines(file.toPath(), Catalog.DEFAULT_ENCODING);
     return new SupplierFile(
         FileHeader.parseLine(lines.get(0)),
-        LineContent.parseContents(lines, 1),
+        LineContent.parseContents(lines, file.getName(), 1),
         Files.readAttributes(file.toPath(), BasicFileAttributes.class).creationTime().toInstant(),
         file);
   }
