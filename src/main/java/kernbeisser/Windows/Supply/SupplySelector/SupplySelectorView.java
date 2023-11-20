@@ -96,6 +96,9 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.create("Anz.", LineContent::getContainerMultiplier)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(50),
+            Columns.create("VB", LineContent::getUserPreorderCount)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(40),
             Columns.create("Artikelnr.", LineContent::getKkNumber)
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(80),
@@ -107,7 +110,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.<LineContent>create("Geb.", e -> Math.round(e.getContainerSize()))
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(40),
-            Columns.<LineContent>create("Packung", LineContent::getContainerDescription)
+            Columns.<LineContent>create("Packung", LineContent::getContainerUnit)
                 .withPreferredWidth(100)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Kommentar", LineContent::getMessage).withPreferredWidth(100),

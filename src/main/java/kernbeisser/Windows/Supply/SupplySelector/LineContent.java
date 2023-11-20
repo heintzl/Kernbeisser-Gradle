@@ -14,6 +14,7 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.Supply.SupplyModel;
 import lombok.AccessLevel;
 import lombok.Cleanup;
 import lombok.Data;
@@ -52,6 +53,9 @@ public class LineContent {
   private double containerDeposit = 0.0;
   private VAT vat;
   private ArticleComparedToCatalogEntry comparedToCatalog;
+  private Integer userPreorderCount;
+  private Integer labels;
+  private String containerUnit;
 
   public static List<LineContent> parseContents(List<String> lines, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
@@ -73,11 +77,12 @@ public class LineContent {
     Map<String, CatalogEntry> catalogEntries =
         DBConnection.getConditioned(CatalogEntry.class, articleCondition, actionCondition).stream()
             .collect(Collectors.toMap(CatalogEntry::getArtikelNr, e -> e));
+    Map<CatalogEntry, Integer> entryPreorders = SupplyModel.getUserPreorderEntryCount();
 
     for (LineContent content : contents) {
       if (content.containerMultiplier == 0) content.resolveStatus = ResolveStatus.IGNORE;
       CatalogEntry matchingEntry = catalogEntries.get(Objects.toString(content.kkNumber));
-      if (matchingEntry != null) {
+      if (content.getStatus() != ResolveStatus.PRODUCE && matchingEntry != null) {
         content.barcode = matchingEntry.getEanLadenEinheit();
         content.singleDeposit = matchingEntry.getEinzelPfand();
         content.containerDeposit = matchingEntry.getGebindePfand();
@@ -89,6 +94,11 @@ public class LineContent {
         }
         content.comparedToCatalog =
             new ArticleComparedToCatalogEntry(articleToCompare, matchingEntry);
+        content.userPreorderCount = Tools.ifNull(entryPreorders.get(matchingEntry), 0);
+        content.containerUnit = matchingEntry.getBestelleinheit();
+        content.labels = SupplyModel.getPrintNumberFromLineContent(content);
+      } else {
+        content.containerUnit = content.getContainerDescription();
       }
     }
     return contents;

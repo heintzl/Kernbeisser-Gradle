@@ -4,11 +4,13 @@ import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Main;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
+import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
@@ -95,36 +97,74 @@ public class SupplyModel implements IModel<SupplyController> {
         .orElseThrow(NoSuchElementException::new);
   }
 
+  public static Map<CatalogEntry, Integer> getUserPreorderEntryCount() {
+    List<PreOrder> userPreorders =
+        DBConnection.getConditioned(
+            PreOrder.class,
+            new FieldCondition("delivery", null),
+            new FieldCondition("user", User.getKernbeisserUser()).not());
+    Map<CatalogEntry, Integer> entryCounts = new HashMap<>();
+    for (PreOrder preorder : userPreorders) {
+      CatalogEntry entry = preorder.getCatalogEntry();
+      entryCounts.putIfAbsent(entry, 0);
+      entryCounts.replace(entry, entryCounts.get(entry), preorder.getAmount());
+    }
+    return entryCounts;
+  }
+
   private static int getUserPreorderCount(Article article) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    long userPreorders =
-        em.createQuery(
-                "SELECT COALESCE (sum(amount),0) FROM PreOrder p "
-                    + "WHERE p.delivery IS NULL AND p.user != :kbUser AND p.article = :a",
-                Long.class)
-            .setParameter("kbUser", User.getKernbeisserUser())
-            .setParameter("a", article)
-            .getSingleResult();
-    return (int) userPreorders;
+    if (!article.getSupplier().equals(Supplier.getKKSupplier())) {
+      return 0;
+    }
+    List<CatalogEntry> articleCatalogEntries =
+        CatalogEntry.getByArticleNo(Integer.toString(article.getSuppliersItemNumber()));
+    if (articleCatalogEntries.isEmpty()) {
+      return 0;
+    }
+    FieldCondition[] conditions = {
+      new FieldCondition("delivery", null),
+      new FieldCondition("user", User.getKernbeisserUser()).not(),
+      new FieldCondition("catalogEntry", articleCatalogEntries)
+    };
+    return DBConnection.getConditioned(PreOrder.class, conditions).stream()
+        .mapToInt(PreOrder::getAmount)
+        .sum();
+  }
+
+  public static Integer getLabelCount(
+      int kkNumber, double priceKk, Article article, double containerMultiplier, int preOrders) {
+    if (kkNumber < 1000) return 0;
+    if (priceKk == 0.0) return 0;
+    if (article == null) return 0;
+    float containersForShop = (float) containerMultiplier - preOrders;
+    if (article.isLabelPerUnit()) {
+      if (article.isWeighable()) {
+        return Math.round(containersForShop / (float) article.getContainerSize());
+      }
+      return (int) Math.ceil(containersForShop);
+    }
+    return article.getLabelCount();
+  }
+
+  public static Integer getPrintNumberFromLineContent(LineContent content) {
+    return getLabelCount(
+        content.getKkNumber(),
+        content.getPriceKk(),
+        content.getArticle(),
+        content.getContainerMultiplier(),
+        content.getUserPreorderCount());
   }
 
   public static Integer getPrintNumberFromItem(ShoppingItem item) {
-    if (item.getSuppliersItemNumber() < 1000 && item.getSupplier().equals(Supplier.getKKSupplier()))
-      return 0;
-    if (item.getItemNetPrice() == 0.0) return 0;
-    Article itemArticle = item.getArticleAtBuyState();
-    int orderedShopItems =
-        -(int) Math.round((item.getContainerCount())) - getUserPreorderCount(itemArticle);
-    if (itemArticle.isLabelPerUnit()) {
-      return orderedShopItems;
-    }
-    if (orderedShopItems <= 0) {
-      return 0;
-    }
-    return itemArticle.getLabelCount();
+    Article article = item.getArticleAtBuyState();
+    return getLabelCount(
+        (item.getSupplier().equals(Supplier.getKKSupplier())
+            ? item.getSuppliersItemNumber()
+            : 100000),
+        item.getItemNetPrice(),
+        article,
+        -item.getContainerCount(),
+        getUserPreorderCount(article));
   }
 
   public void addShoppingItem(ShoppingItem item) {
