@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
@@ -13,6 +14,7 @@ import kernbeisser.Enums.VAT;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.Supply.SupplyModel;
 import lombok.AccessLevel;
 import lombok.Cleanup;
 import lombok.Data;
@@ -51,6 +53,9 @@ public class LineContent {
   private double containerDeposit = 0.0;
   private VAT vat;
   private ArticleComparedToCatalogEntry comparedToCatalog;
+  private Integer userPreorderCount;
+  private Integer labels;
+  private String containerUnit;
 
   public static List<LineContent> parseContents(List<String> lines, int offset) {
     List<LineContent> contents = new ArrayList<>(lines.size() - offset);
@@ -58,7 +63,7 @@ public class LineContent {
     for (int i = offset; i < lines.size(); i++) {
       String currentLine = lines.get(i);
       if (isComment(currentLine)) {
-        if (contents.size() == 0) continue;
+        if (contents.isEmpty()) continue;
         LineContent before = contents.get(contents.size() - 1);
         before.setMessage(extractMessage(currentLine));
         continue;
@@ -67,15 +72,17 @@ public class LineContent {
       contents.add(content);
       kkNumbers.add(Objects.toString(content.getKkNumber()));
     }
+    FieldCondition articleCondition = new FieldCondition("artikelNr", kkNumbers);
+    FieldCondition actionCondition = new FieldCondition("aktionspreis", 1).not();
     Map<String, CatalogEntry> catalogEntries =
-        DBConnection.getConditioned(CatalogEntry.class, "artikelNr", kkNumbers).stream()
-            .filter(c -> !c.getAktionspreis())
+        DBConnection.getConditioned(CatalogEntry.class, articleCondition, actionCondition).stream()
             .collect(Collectors.toMap(CatalogEntry::getArtikelNr, e -> e));
+    Map<CatalogEntry, Integer> entryPreorders = SupplyModel.getUserPreorderEntryCount();
 
     for (LineContent content : contents) {
-      CatalogEntry matchingEntry = catalogEntries.get(Objects.toString(content.kkNumber));
       if (content.containerMultiplier == 0) content.resolveStatus = ResolveStatus.IGNORE;
-      if (matchingEntry != null) {
+      CatalogEntry matchingEntry = catalogEntries.get(Objects.toString(content.kkNumber));
+      if (content.getStatus() != ResolveStatus.PRODUCE && matchingEntry != null) {
         content.barcode = matchingEntry.getEanLadenEinheit();
         content.singleDeposit = matchingEntry.getEinzelPfand();
         content.containerDeposit = matchingEntry.getGebindePfand();
@@ -87,6 +94,11 @@ public class LineContent {
         }
         content.comparedToCatalog =
             new ArticleComparedToCatalogEntry(articleToCompare, matchingEntry);
+        content.userPreorderCount = Tools.ifNull(entryPreorders.get(matchingEntry), 0);
+        content.containerUnit = matchingEntry.getBestelleinheit();
+        content.labels = SupplyModel.getPrintNumberFromLineContent(content);
+      } else {
+        content.containerUnit = content.getContainerDescription();
       }
     }
     return contents;

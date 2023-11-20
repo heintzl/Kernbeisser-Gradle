@@ -1,6 +1,5 @@
 package kernbeisser.DBConnection;
 
-import com.google.common.collect.Lists;
 import java.util.*;
 import javax.persistence.*;
 import javax.persistence.criteria.*;
@@ -142,37 +141,28 @@ public class DBConnection {
     return cb.createQuery(clazz);
   }
 
-  public static <T, C> List<T> getConditioned(
-      Class<T> clazz, String conditionFieldName, Collection<C> conditionValues) {
+  public static <T> List<T> getConditioned(Class<T> clazz, FieldCondition... conditions) {
     @Cleanup EntityManager em = getEntityManager();
     CriteriaQuery<T> cr = getCriteriaQuery(em, clazz);
     Root<T> root = cr.from(clazz);
     cr.select(root);
-    List<T> resultList;
-    if (conditionFieldName.isEmpty()) {
-      resultList = em.createQuery(cr).getResultList();
-    } else {
-      Predicate expression;
-      if (conditionValues == null) {
-        expression = root.get(conditionFieldName).isNull();
-      } else {
-        expression = root.get(conditionFieldName).in(conditionValues);
-      }
-      resultList = em.createQuery(cr.where(expression)).getResultList();
+    if (conditions[0].equals(FieldCondition.ALL)) {
+      return em.createQuery(cr).getResultList();
     }
-    return resultList;
+    return em.createQuery(
+            cr.where(
+                Arrays.stream(conditions)
+                    .map(e -> e.buildPredicate(root))
+                    .toArray(Predicate[]::new)))
+        .getResultList();
   }
 
-  public static <T, C> List<T> getConditioned(
-      Class<T> clazz, String conditionFieldName, C conditionValue) {
-    return getConditioned(
-        clazz,
-        conditionFieldName,
-        conditionValue == null ? null : Lists.newArrayList(conditionValue));
+  public static <T> List<T> getConditioned(
+      Class<T> clazz, String conditionFieldName, Object... conditionValues) {
+    return getConditioned(clazz, new FieldCondition(conditionFieldName, conditionValues));
   }
 
   public static <T> List<T> getAll(Class<T> clazz) {
-    List<Object> emptyCondition = new ArrayList<>();
-    return getConditioned(clazz, "", emptyCondition);
+    return getConditioned(clazz, FieldCondition.ALL);
   }
 }
