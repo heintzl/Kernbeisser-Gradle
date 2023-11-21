@@ -216,30 +216,40 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     Optional<Article> articleInDb =
         Articles.getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
     if (articleInDb.isPresent()) {
-      Article article = articleInDb.get();
+      boolean dirty = false;
+      @Cleanup EntityManager em = DBConnection.getEntityManager();
+      @Cleanup("commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      Article article = em.find(Article.class, articleInDb.map(Article::getId).get());
       double newPrice = content.getPriceKb();
       boolean newWeighable = content.isWeighableKb();
-      if (article.getNetPrice() != newPrice || article.isWeighable() != newWeighable) {
-        article.setNetPrice(newPrice);
-        article.setWeighable(newWeighable);
-        logger.info(
-            "Article price change ["
-                + article.getSuppliersItemNumber()
-                + "]: "
-                + article.getNetPrice()
-                + "(weighable: "
-                + article.isWeighable()
-                + ") -> "
-                + newPrice
-                + "(weighable: "
-                + newWeighable
-                + ")");
-        changePriceAndWeighable(
-            kkSupplier, article.getSuppliersItemNumber(), newPrice, newWeighable);
-      }
-    }
 
-    return articleInDb.orElseGet(() -> createArticle(content, noBarcode));
+      String logInfo = "Article [" + article.getSuppliersItemNumber() + "]:";
+      if (!article.getShopRange().isVisible()
+          && content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0)
+              > 0) {
+        article.setShopRange(ShopRange.IN_RANGE);
+        dirty = true;
+        logInfo += " updated shop range -";
+      }
+      if (Math.abs(article.getNetPrice() - newPrice) >= 0.01) {
+        dirty = true;
+        logInfo += " price change [" + article.getNetPrice() + " -> " + newPrice + "] -";
+        article.setNetPrice(newPrice);
+      }
+      if (article.isWeighable() != newWeighable) {
+        dirty = true;
+        logInfo += " weighable change [" + article.isWeighable() + " -> " + newWeighable + "] -";
+        article.setWeighable(newWeighable);
+      }
+      if (dirty) {
+        em.merge(article);
+        logger.info(logInfo.substring(0, logInfo.length() - 2));
+      }
+      return article;
+    }
+    return createArticle(content, noBarcode);
   }
 
   public static void changePriceAndWeighable(

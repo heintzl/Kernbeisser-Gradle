@@ -117,22 +117,15 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public void close() {
-    // TODO move to Supply
-    /*
     delivery.forEach(
         p -> {
-          Article article = p.getCatalogEntry();
           if (p.getUser().equals(User.getKernbeisserUser())) {
             removeLazy(p);
-            if (!article.getShopRange().isVisible()) {
-              article.setShopRange(ShopRange.IN_RANGE);
-              em.merge(article);
-            }
           } else {
             p.setDelivery(Instant.now());
             em.merge(p);
           }
-        });*/
+        });
     et.commit();
     em.close();
   }
