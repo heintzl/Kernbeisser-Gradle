@@ -3,16 +3,16 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Zaehlliste" pageWidth="595" pageHeight="842" columnWidth="511" leftMargin="48" rightMargin="36" topMargin="20" bottomMargin="20" uuid="4bbac286-dab4-4299-9984-7be3c020703c">
 	<parameter name="inventoryDate" class="java.time.LocalDate" isForPrompting="false"/>
 	<parameter name="reportFooter" class="java.lang.String"/>
-	<parameter name="netSum" class="java.lang.Double"/>
-	<parameter name="depositSum" class="java.lang.Double"/>
-	<parameter name="sum" class="java.lang.Double"/>
+	<parameter name="netTotal" class="java.lang.Double"/>
+	<parameter name="depositTotal" class="java.lang.Double"/>
+	<parameter name="total" class="java.lang.Double"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="shelfNo" class="java.lang.Integer"/>
-	<field name="location" class="java.lang.String"/>
-	<field name="totalNet" class="java.lang.Double"/>
-	<field name="totalDeposit" class="java.lang.Double"/>
+	<field name="shelf.shelfNo" class="java.lang.Integer"/>
+	<field name="shelf.location" class="java.lang.String"/>
+	<field name="netSum" class="java.lang.Double"/>
+	<field name="depositSum" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -102,7 +102,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{location}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{shelf.location}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00€">
 				<reportElement x="361" y="0" width="65" height="13" uuid="d58682a6-f011-4619-a656-91f13a2160c3">
@@ -111,14 +111,14 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{totalNet}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{netSum}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###;(#,##0.###-)">
 				<reportElement x="0" y="0" width="40" height="12" uuid="3f2edc89-2e08-41c5-b244-a93a4db585bb"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{shelfNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{shelf.shelfNo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00€">
 				<reportElement x="440" y="0" width="69" height="13" uuid="2e6b36e4-d887-4e1e-8d63-728daea1f93f">
@@ -127,7 +127,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans Condensed" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{totalDeposit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{depositSum}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -156,7 +156,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans Condensed" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{netSum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{netTotal}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00€">
 				<reportElement x="441" y="4" width="69" height="13" uuid="ff18607b-3e63-4b10-8aa2-ee49088f6378">
@@ -165,7 +165,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans Condensed" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{depositSum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{depositTotal}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="35" width="160" height="20" uuid="660c1e13-76a9-4e24-a277-30c5696ec07f"/>
@@ -200,21 +200,21 @@
 				<textElement textAlignment="Right" markup="html">
 					<font fontName="DejaVu Sans Condensed" size="14" isBold="false" isItalic="true" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{depositSum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{depositTotal}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00€">
 				<reportElement x="201" y="111" width="159" height="20" uuid="c316b6a4-0d9a-4c23-9e12-12e24dd85c8d"/>
 				<textElement textAlignment="Right" markup="html">
 					<font fontName="DejaVu Sans Condensed" size="14" isBold="false" isItalic="true" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{sum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00€">
 				<reportElement x="201" y="65" width="159" height="20" uuid="473d284e-31e3-4921-9696-1c6ce984dccb"/>
 				<textElement textAlignment="Right" markup="html">
 					<font fontName="DejaVu Sans Condensed" size="14" isBold="false" isItalic="true" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{netSum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{netTotal}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement x="60" y="4" width="280" height="12" uuid="34bb9e5f-ef03-4cfe-a9d8-23cc2f05dc47">

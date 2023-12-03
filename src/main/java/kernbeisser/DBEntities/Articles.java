@@ -736,4 +736,13 @@ public class Articles {
       return mergeLog;
     }
   }
+
+  public static Article getArticleStateAtDate(Article article, Instant instant) {
+    Date date = Date.from(instant);
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return AuditReaderFactory.get(em).find(Article.class, article.getId(), date);
+  }
 }

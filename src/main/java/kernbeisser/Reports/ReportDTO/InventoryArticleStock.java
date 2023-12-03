@@ -1,15 +1,15 @@
 package kernbeisser.Reports.ReportDTO;
 
-import java.util.stream.Stream;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import java.util.List;
+import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.MetricUnits;
-import lombok.Cleanup;
+import kernbeisser.Enums.Setting;
 import lombok.Data;
 
 @Data
@@ -23,9 +23,9 @@ public class InventoryArticleStock {
   private final String unit;
   private final double count;
 
-  public InventoryArticleStock(Shelf shelf, ArticleStock stock) {
-    this.shelf = shelf;
-    this.article = stock.getArticle();
+  public InventoryArticleStock(ArticleStock stock) {
+    this.shelf = stock.getShelf();
+    this.article = stock.getArticleAtInventoryDate();
     this.amount = Articles.getPieceAmount(article);
     MetricUnits unit = article.getMetricUnits();
     if (article.isWeighable()) {
@@ -50,11 +50,13 @@ public class InventoryArticleStock {
     this.depositSum = count * article.getSingleDeposit();
   }
 
-  public static Stream<InventoryArticleStock> stockStreamOfShelf(Shelf shelf) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return shelf.getArticleStocks().stream().map(a -> new InventoryArticleStock(shelf, a));
+  public static List<InventoryArticleStock> getStocks() {
+    return DBConnection.getConditioned(
+            ArticleStock.class,
+            new FieldCondition("inventoryDate", Setting.INVENTORY_SCHEDULED_DATE.getDateValue()))
+        .stream()
+        .filter(s -> s.getCounted() != 0.0)
+        .map(InventoryArticleStock::new)
+        .collect(Collectors.toList());
   }
 }

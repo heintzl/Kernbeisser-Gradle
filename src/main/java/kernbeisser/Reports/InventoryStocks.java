@@ -1,19 +1,21 @@
 package kernbeisser.Reports;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import kernbeisser.DBEntities.ArticleStock;
+import java.util.*;
+import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.Reports.ReportDTO.InventoryArticleStock;
+import kernbeisser.Reports.ReportDTO.InventoryShelfStock;
 
 public class InventoryStocks extends Report {
 
   private final LocalDate inventoryDate;
+  private final List<InventoryArticleStock> stocks;
 
   public InventoryStocks(LocalDate inventoryDate) {
     super(ReportFileNames.INVENTORY_STOCKS);
     this.inventoryDate = inventoryDate;
+    stocks = InventoryArticleStock.getStocks();
     setDuplexPrint(false);
   }
 
@@ -28,18 +30,20 @@ public class InventoryStocks extends Report {
     params.put("inventoryDate", inventoryDate);
     double netSum = 0.0;
     double depositSum = 0.0;
-    for (ArticleStock s : ArticleStock.getAllCurrentStocks()) {
-      netSum += s.calculateNetPrice();
-      depositSum += s.calculateDeposit();
+    for (InventoryArticleStock s : stocks) {
+      netSum += s.getNetSum();
+      depositSum += s.getDepositSum();
     }
-    params.put("netSum", netSum);
-    params.put("depositSum", depositSum);
-    params.put("sum", netSum + depositSum);
+    params.put("netTotal", netSum);
+    params.put("depositTotal", depositSum);
+    params.put("total", netSum + depositSum);
     return params;
   }
 
   @Override
-  Collection<?> getDetailCollection() {
-    return Shelf.getAll();
+  Collection<InventoryShelfStock> getDetailCollection() {
+    return Shelf.getAll().stream()
+        .map(s -> new InventoryShelfStock(s, stocks))
+        .collect(Collectors.toList());
   }
 }

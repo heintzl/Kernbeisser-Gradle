@@ -110,10 +110,6 @@ public class PriceList implements Serializable {
     return getOrCreate("Verdeckte Aufnahme");
   }
 
-  public static List<PriceList> getAll(String condition) {
-    return Tools.getAll(PriceList.class, condition);
-  }
-
   public static Collection<PriceList> getAllHeadPriceLists() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")

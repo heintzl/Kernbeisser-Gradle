@@ -2,6 +2,7 @@ package kernbeisser.DBEntities;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.*;
@@ -68,13 +69,27 @@ public class ArticleStock {
         .getResultList();
   }
 
+  public Article getArticleAtInventoryDate() {
+    Instant date =
+        Setting.INVENTORY_SCHEDULED_DATE
+            .getDateValue()
+            .atStartOfDay()
+            .atZone(ZoneId.systemDefault())
+            .toInstant();
+    Article articleAtDate = Articles.getArticleStateAtDate(article, date);
+    if (articleAtDate == null) {
+      return article;
+    }
+    return articleAtDate;
+  }
+
   public double calculateNetPrice() {
-    return article.getNetPrice()
+    return getArticleAtInventoryDate().getNetPrice()
         * counted
         * (article.isWeighable() ? article.getMetricUnits().getBaseFactor() : 1.0);
   }
 
   public double calculateDeposit() {
-    return article.getSingleDeposit() * counted;
+    return getArticleAtInventoryDate().getSingleDeposit() * counted;
   }
 }

@@ -5,9 +5,7 @@ import static javax.swing.SwingConstants.RIGHT;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -66,7 +64,8 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
                       column.setMaxWidth(140);
                       column.setPreferredWidth(140);
                     }),
-            Columns.<Shelf>create("Summe", shelf -> String.format("%.2f€", shelf.getTotalNet()))
+            Columns.<Shelf>create(
+                    "Summe", shelf -> String.format("%.2f€", model.getShelfNetValue(shelf)))
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER)
                 .withColumnAdjustor(
@@ -74,7 +73,8 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
                       column.setMaxWidth(120);
                       column.setPreferredWidth(120);
                     }),
-            Columns.<Shelf>create("Pfand", shelf -> String.format("%.2f€", shelf.getTotalDeposit()))
+            Columns.<Shelf>create(
+                    "Pfand", shelf -> String.format("%.2f€", model.getShelfDepositValue(shelf)))
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER)
                 .withColumnAdjustor(
@@ -82,13 +82,25 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
                       column.setMaxWidth(120);
                       column.setPreferredWidth(120);
                     }));
+    updateValueMap();
+  }
+
+  public void updateValueMap() {
+    InventoryView view = getView();
+    view.indicateProgress(true);
+    new Thread(
+            () -> {
+              model.updateShelfValueMap();
+              view.indicateProgress(false);
+            })
+        .start();
   }
 
   @Override
   public void fillView(InventoryView inventoryView) {}
 
   public void openCountingWindow(Shelf selectedShelf) {
-    new CountingController().withShelf(selectedShelf).openTab();
+    new CountingController(this::updateValueMap).withShelf(selectedShelf).openTab();
   }
 
   public void print(InventoryReports selectedReport, boolean selected, boolean outputAsPdf) {
@@ -153,5 +165,6 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
 
   public void changeInventoryDate(LocalDate date) {
     inventoryScheduledDate.changeValue(date);
+    updateValueMap();
   }
 }
