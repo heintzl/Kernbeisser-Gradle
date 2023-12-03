@@ -146,9 +146,10 @@ public class SupplyModel implements IModel<SupplyController> {
     float containersForShop = (float) containerMultiplier - preOrders;
     if (article.isLabelPerUnit()) {
       if (article.isWeighable()) {
-        return Math.round(containersForShop / (float) article.getContainerSize());
+        return Math.round(containersForShop / (float) article.getContainerSize())
+            + article.getLabelCount();
       }
-      return (int) Math.ceil(containersForShop);
+      return (int) Math.ceil(containersForShop) + article.getLabelCount();
     }
     if (containersForShop > 0.0) return article.getLabelCount();
     return 0;
@@ -167,7 +168,7 @@ public class SupplyModel implements IModel<SupplyController> {
     Article article = item.getArticleAtBuyState();
     int preorders = 0;
     if (article.getSupplier().equals(Supplier.getKKSupplier())) {
-      preorders = Tools.ifNull(kkNumberPreorderCounts.get(article.getSuppliersItemNumber()),0);
+      preorders = Tools.ifNull(kkNumberPreorderCounts.get(article.getSuppliersItemNumber()), 0);
     }
     return getLabelCount(
         (item.getSupplier().equals(Supplier.getKKSupplier())
