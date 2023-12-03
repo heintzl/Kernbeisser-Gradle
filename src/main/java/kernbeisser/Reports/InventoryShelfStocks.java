@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Reports.ReportDTO.InventoryArticleStock;
 
@@ -33,10 +32,7 @@ public class InventoryShelfStocks extends Report {
   }
 
   @Override
-  Collection<?> getDetailCollection() {
-    return shelves.stream()
-        .flatMap(InventoryArticleStock::stockStreamOfShelf)
-        .filter(s -> s.getCount() != 0.0)
-        .collect(Collectors.toList());
+  Collection<InventoryArticleStock> getDetailCollection() {
+    return InventoryArticleStock.getStocks();
   }
 }
