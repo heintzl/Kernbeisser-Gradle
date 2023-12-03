@@ -146,7 +146,7 @@ public class DBConnection {
     CriteriaQuery<T> cr = getCriteriaQuery(em, clazz);
     Root<T> root = cr.from(clazz);
     cr.select(root);
-    if (conditions[0].equals(FieldCondition.ALL)) {
+    if (conditions.length == 0) {
       return em.createQuery(cr).getResultList();
     }
     return em.createQuery(
@@ -163,6 +163,6 @@ public class DBConnection {
   }
 
   public static <T> List<T> getAll(Class<T> clazz) {
-    return getConditioned(clazz, FieldCondition.ALL);
+    return getConditioned(clazz);
   }
 }

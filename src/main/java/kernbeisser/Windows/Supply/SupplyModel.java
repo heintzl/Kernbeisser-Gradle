@@ -119,25 +119,6 @@ public class SupplyModel implements IModel<SupplyController> {
     return entryCounts;
   }
 
-  private static int getUserPreorderCount(Article article) {
-    if (!article.getSupplier().equals(Supplier.getKKSupplier())) {
-      return 0;
-    }
-    List<CatalogEntry> articleCatalogEntries =
-        CatalogEntry.getByArticleNo(Integer.toString(article.getSuppliersItemNumber()));
-    if (articleCatalogEntries.isEmpty()) {
-      return 0;
-    }
-    FieldCondition[] conditions = {
-      new FieldCondition("delivery", null),
-      new FieldCondition("user", User.getKernbeisserUser()).not(),
-      new FieldCondition("catalogEntry", articleCatalogEntries)
-    };
-    return DBConnection.getConditioned(PreOrder.class, conditions).stream()
-        .mapToInt(PreOrder::getAmount)
-        .sum();
-  }
-
   public static Integer getLabelCount(
       int kkNumber, double priceKk, Article article, double containerMultiplier, int preOrders) {
     if (kkNumber < 1000) return 0;

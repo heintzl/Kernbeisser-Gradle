@@ -9,8 +9,6 @@ public class FieldCondition {
   private final Object[] values;
   private boolean not = false;
 
-  public static final FieldCondition ALL = new FieldCondition("", (Object) null);
-
   public FieldCondition(String fieldName, Object... values) {
     this.fieldName = fieldName;
     this.values = values;
