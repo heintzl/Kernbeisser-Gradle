@@ -118,22 +118,31 @@ public class LineContent {
     Map<CatalogEntry, Integer> entryPreorders = SupplyModel.getUserPreorderEntryCount();
 
     for (LineContent content : contents) {
-      if (content.containerMultiplier == 0) content.resolveStatus = ResolveStatus.IGNORE;
+      if (content.containerMultiplier == 0) {
+        content.resolveStatus = ResolveStatus.IGNORE;
+      }
       CatalogEntry matchingEntry = catalogEntries.get(Objects.toString(content.kkNumber));
-      if (content.getStatus() != ResolveStatus.PRODUCE && matchingEntry != null) {
-        content.barcode = matchingEntry.getEanLadenEinheit();
-        content.singleDeposit = matchingEntry.getEinzelPfand();
-        content.containerDeposit = matchingEntry.getGebindePfand();
-        content.vat = matchingEntry.getMwstKennung();
-        Article articleToCompare = content.article;
-        if (articleToCompare == null) {
-          articleToCompare = new Article();
-          articleToCompare.setSupplier(Articles.KK_SUPPLIER);
+      if (content.getStatus() != ResolveStatus.PRODUCE) {
+        if (matchingEntry == null) {
+          if (!content.weighableKk) {
+            content.comparedToCatalog = ArticleComparedToCatalogEntry.NO_CATALOG_ENTRY;
+          }
+          content.userPreorderCount = 0;
+        } else {
+          content.barcode = matchingEntry.getEanLadenEinheit();
+          content.singleDeposit = matchingEntry.getEinzelPfand();
+          content.containerDeposit = matchingEntry.getGebindePfand();
+          content.vat = matchingEntry.getMwstKennung();
+          Article articleToCompare = content.article;
+          if (articleToCompare == null) {
+            articleToCompare = new Article();
+            articleToCompare.setSupplier(Articles.KK_SUPPLIER);
+          }
+          content.comparedToCatalog =
+              new ArticleComparedToCatalogEntry(articleToCompare, matchingEntry);
+          content.userPreorderCount = Tools.ifNull(entryPreorders.get(matchingEntry), 0);
+          content.containerUnit = matchingEntry.getBestelleinheit();
         }
-        content.comparedToCatalog =
-            new ArticleComparedToCatalogEntry(articleToCompare, matchingEntry);
-        content.userPreorderCount = Tools.ifNull(entryPreorders.get(matchingEntry), 0);
-        content.containerUnit = matchingEntry.getBestelleinheit();
         content.labels = SupplyModel.getPrintNumberFromLineContent(content);
       } else {
         content.containerUnit = content.getContainerDescription();
