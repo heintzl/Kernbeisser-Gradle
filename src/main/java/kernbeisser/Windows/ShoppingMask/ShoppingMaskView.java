@@ -8,6 +8,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Vector;
 import javax.swing.*;
@@ -19,6 +20,7 @@ import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
@@ -796,7 +798,9 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
         });
     kbNumber.addActionListener(this::articleSelectedListener);
 
-    Supplier.getAll(null).forEach(s -> supplier.addItem(s));
+    DBConnection.getAll(Supplier.class).stream()
+        .sorted(Comparator.comparing(Supplier::getName))
+        .forEach(s -> supplier.addItem(s));
     supplier.addActionListener(e -> supplierChange());
 
     suppliersItemNumber.addActionListener(this::articleSelectedListener);
