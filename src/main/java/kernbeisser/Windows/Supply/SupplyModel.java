@@ -21,6 +21,13 @@ public class SupplyModel implements IModel<SupplyController> {
   private final Map<ShoppingItem, Integer> print = new HashMap<>();
   @Setter private Map<Article, Integer> printPoolBefore = new HashMap<>();
   private final List<ShoppingItem> shoppingItems = new ArrayList<>();
+  private final Map<Integer, Integer> kkNumberPreorderCounts = new HashMap<>();
+
+  public SupplyModel() {
+    for (Map.Entry<CatalogEntry, Integer> entry : getUserPreorderEntryCount().entrySet()) {
+      kkNumberPreorderCounts.put(entry.getKey().getArtikelNrInt(), entry.getValue());
+    }
+  }
 
   void commit() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -139,11 +146,13 @@ public class SupplyModel implements IModel<SupplyController> {
     float containersForShop = (float) containerMultiplier - preOrders;
     if (article.isLabelPerUnit()) {
       if (article.isWeighable()) {
-        return Math.round(containersForShop / (float) article.getContainerSize());
+        return Math.round(containersForShop / (float) article.getContainerSize())
+            + article.getLabelCount();
       }
-      return (int) Math.ceil(containersForShop);
+      return (int) Math.ceil(containersForShop) + article.getLabelCount();
     }
-    return article.getLabelCount();
+    if (containersForShop > 0.0) return article.getLabelCount();
+    return 0;
   }
 
   public static Integer getPrintNumberFromLineContent(LineContent content) {
@@ -155,8 +164,12 @@ public class SupplyModel implements IModel<SupplyController> {
         content.getUserPreorderCount());
   }
 
-  public static Integer getPrintNumberFromItem(ShoppingItem item) {
+  public Integer getPrintNumberFromItem(ShoppingItem item) {
     Article article = item.getArticleAtBuyState();
+    int preorders = 0;
+    if (article.getSupplier().equals(Supplier.getKKSupplier())) {
+      preorders = Tools.ifNull(kkNumberPreorderCounts.get(article.getSuppliersItemNumber()), 0);
+    }
     return getLabelCount(
         (item.getSupplier().equals(Supplier.getKKSupplier())
             ? item.getSuppliersItemNumber()
@@ -164,7 +177,7 @@ public class SupplyModel implements IModel<SupplyController> {
         item.getItemNetPrice(),
         article,
         -item.getContainerCount(),
-        getUserPreorderCount(article));
+        preorders);
   }
 
   public void addShoppingItem(ShoppingItem item) {
