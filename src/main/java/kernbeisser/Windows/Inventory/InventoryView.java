@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public class InventoryView implements IView<InventoryController> {
   private JPanel main;
   private ObjectViewView<Shelf> shelfView;
+  private JProgressBar progressIndicator;
   private final int printIconColor = 0x0033AF;
   private InventoryReports selectedReport;
   private boolean pdfOutput = false;
@@ -174,6 +175,10 @@ public class InventoryView implements IView<InventoryController> {
             buttonTexts,
             buttonTexts[1]);
     return value == JOptionPane.YES_OPTION;
+  }
+
+  public void indicateProgress(boolean b) {
+    progressIndicator.setVisible(b);
   }
 
   @Override

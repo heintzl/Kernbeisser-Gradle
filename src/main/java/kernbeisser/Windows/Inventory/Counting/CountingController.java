@@ -16,9 +16,11 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 
 public class CountingController extends Controller<CountingView, CountingModel> {
   Setting inventoryScheduledDate = Setting.INVENTORY_SCHEDULED_DATE;
+  private final Runnable runOnClose;
 
-  public CountingController() throws PermissionKeyRequiredException {
+  public CountingController(Runnable runOnClose) throws PermissionKeyRequiredException {
     super(new CountingModel());
+    this.runOnClose = runOnClose;
   }
 
   public CountingController withShelf(Shelf shelf) {
@@ -26,6 +28,10 @@ public class CountingController extends Controller<CountingView, CountingModel> 
       getView().setSelectedShelf(shelf);
     }
     return this;
+  }
+
+  public void runOnClose() {
+    runOnClose.run();
   }
 
   @Override

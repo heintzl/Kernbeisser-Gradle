@@ -139,6 +139,7 @@ public class CountingView implements IView<CountingController> {
 
   private void close() {
     saveStockBefore();
+    controller.runOnClose();
     back();
   }
 

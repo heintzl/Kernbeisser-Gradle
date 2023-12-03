@@ -56,11 +56,7 @@ public class Shelf {
   @CreationTimestamp @Getter private Instant createDate;
 
   public static List<Shelf> getAll() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select s from Shelf s", Shelf.class).getResultList();
+    return DBConnection.getAll(Shelf.class);
   }
 
   public Collection<Article> getAllArticles() {
@@ -105,29 +101,5 @@ public class Shelf {
     return this.getAllArticles(em).stream()
         .map(e -> ArticleStock.ofArticle(em, e, this).orElse(ArticleStock.newFromArticle(e, this)))
         .collect(Collectors.toList());
-  }
-
-  public double getTotalNet() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return getTotalNet(em);
-  }
-
-  public double getTotalNet(EntityManager em) {
-    return getAllArticleStocks(em).mapToDouble(ArticleStock::calculateNetPrice).sum();
-  }
-
-  public double getTotalDeposit() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return getTotalDeposit(em);
-  }
-
-  public double getTotalDeposit(EntityManager em) {
-    return getAllArticleStocks(em).mapToDouble(ArticleStock::calculateDeposit).sum();
   }
 }
