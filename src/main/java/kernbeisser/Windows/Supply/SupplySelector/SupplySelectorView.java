@@ -158,6 +158,9 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 "Barcode vorhanden (%s)!",
                 compared.getConflictingArticle().getSupplier().getShortName());
         break;
+      case NO_CATALOG_ENTRY:
+        warning = "Barcode fehlt!";
+        break;
       default:
         warning = "";
     }

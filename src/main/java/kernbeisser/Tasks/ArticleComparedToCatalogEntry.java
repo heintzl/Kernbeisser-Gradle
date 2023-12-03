@@ -12,18 +12,28 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArticleComparedToCatalogEntry {
 
-  @Getter @NotNull private final CatalogEntry catalogEntry;
-  @Getter @NotNull private final Article article;
+  @Getter private final CatalogEntry catalogEntry;
+  @Getter private final Article article;
   @Getter private final Set<String> fieldDifferences = new HashSet<>();
   @Getter private ArticleCatalogState resultType;
   @Getter private Article conflictingArticle;
   @Getter @Setter private String description;
+
+  public static final ArticleComparedToCatalogEntry NO_CATALOG_ENTRY =
+      new ArticleComparedToCatalogEntry(ArticleCatalogState.NO_CATALOG_ENTRY, "");
 
   public ArticleComparedToCatalogEntry(
       @NotNull Article article, @NotNull CatalogEntry catalogEntry) {
     this.catalogEntry = catalogEntry;
     this.article = article;
     analyzeDifferences();
+  }
+
+  private ArticleComparedToCatalogEntry(ArticleCatalogState resultType, String description) {
+    catalogEntry = null;
+    article = null;
+    this.resultType = resultType;
+    this.description = description;
   }
 
   private void analyzeOtherDifferences() {
