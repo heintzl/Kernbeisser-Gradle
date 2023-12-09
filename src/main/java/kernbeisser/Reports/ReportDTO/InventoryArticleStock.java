@@ -1,6 +1,11 @@
 package kernbeisser.Reports.ReportDTO;
 
+import com.google.common.collect.Maps;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.FieldCondition;
@@ -10,22 +15,23 @@ import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Useful.Tools;
 import lombok.Data;
 
 @Data
 public class InventoryArticleStock {
 
   private final Shelf shelf;
-  private final Article article;
+  private Article article;
   private final String amount;
-  private final double netSum;
-  private final double depositSum;
+  private double netSum;
+  private double depositSum;
   private final String unit;
   private final double count;
 
   public InventoryArticleStock(ArticleStock stock) {
     this.shelf = stock.getShelf();
-    this.article = stock.getArticleAtInventoryDate();
+    this.article = stock.getArticle();
     this.amount = Articles.getPieceAmount(article);
     MetricUnits unit = article.getMetricUnits();
     if (article.isWeighable()) {
@@ -46,17 +52,45 @@ public class InventoryArticleStock {
       this.unit = "Stk";
     }
     this.count = stock.getCounted();
-    this.netSum = stock.calculateNetPrice();
-    this.depositSum = count * article.getSingleDeposit();
+  }
+
+  private static List<InventoryArticleStock> getStocksAtDate(
+      LocalDate localDate, List<InventoryArticleStock> stocks) {
+    List<Integer> stockArticleIds =
+        stocks.stream().map(s -> s.getArticle().getId()).collect(Collectors.toList());
+    Date date = Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    Map<Integer, Article> indexedArticlesAtDate =
+        Maps.uniqueIndex(Articles.getArticlesStateAtDate(date, stockArticleIds), Article::getId);
+    return stocks.stream()
+        .map(
+            s ->
+                s.setHistoricalArticle(
+                    Tools.ifNull(
+                        indexedArticlesAtDate.get(s.getArticle().getId()), s.getArticle())))
+        .collect(Collectors.toList());
+  }
+
+  private InventoryArticleStock setHistoricalArticle(Article historicalArticle) {
+    this.article = historicalArticle;
+    this.netSum =
+        historicalArticle.getNetPrice()
+            * count
+            * (historicalArticle.isWeighable()
+                ? historicalArticle.getMetricUnits().getBaseFactor()
+                : 1.0);
+    this.depositSum = count * historicalArticle.getSingleDeposit();
+    return this;
   }
 
   public static List<InventoryArticleStock> getStocks() {
-    return DBConnection.getConditioned(
-            ArticleStock.class,
-            new FieldCondition("inventoryDate", Setting.INVENTORY_SCHEDULED_DATE.getDateValue()))
-        .stream()
-        .filter(s -> s.getCounted() != 0.0)
-        .map(InventoryArticleStock::new)
-        .collect(Collectors.toList());
+    LocalDate currentInventoryDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
+    List<InventoryArticleStock> stocksWithoutSums =
+        DBConnection.getConditioned(
+                ArticleStock.class, new FieldCondition("inventoryDate", currentInventoryDate))
+            .stream()
+            .filter(s -> s.getCounted() != 0.0)
+            .map(InventoryArticleStock::new)
+            .collect(Collectors.toList());
+    return getStocksAtDate(currentInventoryDate, stocksWithoutSums);
   }
 }

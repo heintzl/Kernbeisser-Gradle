@@ -86,13 +86,6 @@ public class Shelf {
         + 1;
   }
 
-  public Stream<ArticleStock> getAllArticleStocks(EntityManager em) {
-    return getAllArticles().stream()
-        .map(e -> ArticleStock.ofArticle(em, e, this))
-        .filter(Optional::isPresent)
-        .map(Optional::get);
-  }
-
   public Collection<ArticleStock> getArticleStocks() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")

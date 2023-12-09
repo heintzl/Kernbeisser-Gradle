@@ -3,7 +3,6 @@ package kernbeisser.DBEntities;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Optional;
 import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
@@ -57,18 +56,6 @@ public class ArticleStock {
     return stock;
   }
 
-  public static List<ArticleStock> getAllCurrentStocks() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select s from ArticleStock s inner join Article a on s.article = a where s.inventoryDate = :d order by a.kbNumber",
-            ArticleStock.class)
-        .setParameter("d", Setting.INVENTORY_SCHEDULED_DATE.getDateValue())
-        .getResultList();
-  }
-
   public Article getArticleAtInventoryDate() {
     Instant date =
         Setting.INVENTORY_SCHEDULED_DATE
@@ -81,15 +68,5 @@ public class ArticleStock {
       return article;
     }
     return articleAtDate;
-  }
-
-  public double calculateNetPrice() {
-    return getArticleAtInventoryDate().getNetPrice()
-        * counted
-        * (article.isWeighable() ? article.getMetricUnits().getBaseFactor() : 1.0);
-  }
-
-  public double calculateDeposit() {
-    return getArticleAtInventoryDate().getSingleDeposit() * counted;
   }
 }
