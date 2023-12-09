@@ -16,11 +16,19 @@ public class InventoryModel implements IModel<InventoryController> {
   Map<Shelf, InventoryShelf> shelfValueMap = new HashMap<>();
 
   public double getShelfNetValue(Shelf shelf) {
-    return shelfValueMap.get(shelf).getNetValue();
+    InventoryShelf inventoryShelf = shelfValueMap.get(shelf);
+    if (inventoryShelf == null) {
+      return 0.0;
+    }
+    return inventoryShelf.getNetValue();
   }
 
   public double getShelfDepositValue(Shelf shelf) {
-    return shelfValueMap.get(shelf).getDepositValue();
+    InventoryShelf inventoryShelf = shelfValueMap.get(shelf);
+    if (inventoryShelf == null) {
+      return 0.0;
+    }
+    return inventoryShelf.getDepositValue();
   }
 
   public void updateShelfValueMap() {
