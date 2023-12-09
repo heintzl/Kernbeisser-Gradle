@@ -27,6 +27,7 @@ import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.AuditQuery;
 
 public class Articles {
 
@@ -740,13 +741,18 @@ public class Articles {
 
   public static List<Article> getArticlesStateAtDate(Date date, List<Integer> articleIds) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
+
+    if (articleIds.isEmpty()) {
+      return Collections.emptyList();
+    }
     AuditReader reader = AuditReaderFactory.get(em);
     Number revision = reader.getRevisionNumberForDate(date);
-    return reader
-        .createQuery()
-        .forEntitiesAtRevision(Article.class, revision)
-        .add(AuditEntity.property("id").in(articleIds))
-        .getResultList();
+    AuditQuery query = reader.createQuery().forEntitiesAtRevision(Article.class, revision);
+    if (articleIds != null) {
+      query = query.add(AuditEntity.property("id").in(articleIds));
+    }
+
+    return query.getResultList();
   }
 
   public static Article getArticleStateAtDate(Article article, Instant instant) {
