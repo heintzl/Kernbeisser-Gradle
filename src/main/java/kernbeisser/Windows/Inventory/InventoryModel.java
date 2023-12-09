@@ -1,10 +1,13 @@
 package kernbeisser.Windows.Inventory;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Useful.Tools;
@@ -69,5 +72,29 @@ public class InventoryModel implements IModel<InventoryController> {
       result.removeAll(s.getPriceLists());
     }
     return result;
+  }
+
+  public void clearInventory(LocalDate inventoryDate) {
+    if (inventoryDate.isBefore(LocalDate.now())) {
+      return;
+    }
+    List<ArticleStock> stocksToRemove =
+        DBConnection.getConditioned(ArticleStock.class, "inventoryDate", inventoryDate).stream()
+            .filter(
+                s ->
+                    s.getCreateDate()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .isBefore(inventoryDate))
+            .collect(Collectors.toList());
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (ArticleStock stock : stocksToRemove) {
+      em.remove(em.find(ArticleStock.class, stock.getId()));
+    }
+    em.flush();
+    em.clear();
   }
 }

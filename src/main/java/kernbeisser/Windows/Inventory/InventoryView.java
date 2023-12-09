@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.swing.*;
@@ -31,6 +32,8 @@ public class InventoryView implements IView<InventoryController> {
   private JPanel main;
   private ObjectViewView<Shelf> shelfView;
   private JProgressBar progressIndicator;
+  private JButton clearInventory;
+
   private final int printIconColor = 0x0033AF;
   private InventoryReports selectedReport;
   private boolean pdfOutput = false;
@@ -41,12 +44,19 @@ public class InventoryView implements IView<InventoryController> {
 
   @Override
   public void initialize(InventoryController controller) {
+    LocalDate inventoryDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
     JLabel dateLabel = new JLabel("Inventurdatum:");
     DatePicker datePicker = new DatePicker();
     datePicker.setAlignmentX(JLabel.LEFT_ALIGNMENT);
-    datePicker.setDate(Setting.INVENTORY_SCHEDULED_DATE.getDateValue());
+    datePicker.setDate(inventoryDate);
     datePicker.addDateChangeListener(e -> controller.changeInventoryDate(datePicker.getDate()));
-    shelfViewController.addComponents(dateLabel, datePicker);
+    clearInventory = new JButton("Inventurergebnisse aus Testlauf löschen");
+    clearInventory.setToolTipText(
+        "Entfernt Inventurergebnisse, die vor dem eigentlichen Inventurtag "
+            + "erfasst wurden. \nGeht nur, wenn die Inventur nicht in der Vergangenheit liegt.");
+    clearInventory.setEnabled(!inventoryDate.isBefore(LocalDate.now()));
+    clearInventory.addActionListener(e -> controller.clearInventory(inventoryDate));
+    shelfViewController.addComponents(dateLabel, datePicker, clearInventory);
 
     JButton exportShelves = new JButton("Regale exportieren");
     exportShelves.addActionListener(this::exportShelves);
@@ -81,6 +91,10 @@ public class InventoryView implements IView<InventoryController> {
     if (fileChooser.showSaveDialog(getTopComponent()) == JFileChooser.APPROVE_OPTION) {
       controller.exportShelves(fileChooser.getSelectedFile());
     }
+  }
+
+  public void enableClearInventory(boolean enabled) {
+    clearInventory.setEnabled(enabled);
   }
 
   private void setConfirmCheckboxState(JCheckBox checkBox, boolean enable) {

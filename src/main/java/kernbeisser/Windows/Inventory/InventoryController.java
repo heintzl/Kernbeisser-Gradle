@@ -87,9 +87,10 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
 
   public void updateValueMap() {
     InventoryView view = getView();
-    view.indicateProgress(true);
+    view.enableClearInventory(!inventoryScheduledDate.getDateValue().isBefore(LocalDate.now()));
     new Thread(
             () -> {
+              view.indicateProgress(true);
               model.updateShelfValueMap();
               view.indicateProgress(false);
             })
@@ -165,6 +166,11 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
 
   public void changeInventoryDate(LocalDate date) {
     inventoryScheduledDate.changeValue(date);
+    updateValueMap();
+  }
+
+  public void clearInventory(LocalDate inventoryDate) {
+    model.clearInventory(inventoryDate);
     updateValueMap();
   }
 }
