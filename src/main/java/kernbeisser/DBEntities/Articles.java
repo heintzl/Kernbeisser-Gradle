@@ -23,6 +23,7 @@ import kernbeisser.Windows.EditArticles.EditArticlesModel;
 import lombok.Cleanup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.query.AuditEntity;
@@ -735,6 +736,17 @@ public class Articles {
           "Übernahme wurde mit Fehlern abgebrochen. Alle Änderungen wurden Rückgängig gemacht");
       return mergeLog;
     }
+  }
+
+  public static List<Article> getArticlesStateAtDate(Date date, List<Integer> articleIds) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    AuditReader reader = AuditReaderFactory.get(em);
+    Number revision = reader.getRevisionNumberForDate(date);
+    return reader
+        .createQuery()
+        .forEntitiesAtRevision(Article.class, revision)
+        .add(AuditEntity.property("id").in(articleIds))
+        .getResultList();
   }
 
   public static Article getArticleStateAtDate(Article article, Instant instant) {
