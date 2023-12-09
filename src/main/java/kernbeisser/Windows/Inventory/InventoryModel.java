@@ -7,7 +7,6 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.Tasks.Inventory.InventoryShelf;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -55,7 +54,7 @@ public class InventoryModel implements IModel<InventoryController> {
   public static Set<PriceList> priceListsWithoutShelf() {
     Set<PriceList> result =
         DBConnection.getAll(PriceList.class).stream()
-            .filter(p -> p.getAllArticles().size() > 0)
+            .filter(p -> p.getAllArticles().isEmpty())
             .sorted(Comparator.comparing(PriceList::getName))
             .collect(Collectors.toCollection(LinkedHashSet::new));
     for (Shelf s : Shelf.getAll()) {
