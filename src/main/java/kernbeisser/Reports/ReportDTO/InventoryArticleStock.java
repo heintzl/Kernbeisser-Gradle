@@ -3,6 +3,7 @@ package kernbeisser.Reports.ReportDTO;
 import com.google.common.collect.Maps;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,9 @@ public class InventoryArticleStock {
             .stream()
             .filter(s -> s.getCounted() != 0.0)
             .map(InventoryArticleStock::new)
+            .sorted(
+                Comparator.comparingInt(
+                    e -> e.getShelf().getShelfNo() * 1000000 + e.getArticle().getKbNumber()))
             .collect(Collectors.toList());
     return getStocksAtDate(currentInventoryDate, stocksWithoutSums);
   }
