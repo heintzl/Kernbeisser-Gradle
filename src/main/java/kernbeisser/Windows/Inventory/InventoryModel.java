@@ -10,6 +10,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -74,7 +75,8 @@ public class InventoryModel implements IModel<InventoryController> {
     return result;
   }
 
-  public void clearInventory(LocalDate inventoryDate) {
+  public void clearInventory() {
+    LocalDate inventoryDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
     if (inventoryDate.isBefore(LocalDate.now())) {
       return;
     }
@@ -94,7 +96,5 @@ public class InventoryModel implements IModel<InventoryController> {
     for (ArticleStock stock : stocksToRemove) {
       em.remove(em.find(ArticleStock.class, stock.getId()));
     }
-    em.flush();
-    em.clear();
   }
 }

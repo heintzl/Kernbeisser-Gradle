@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.PermissionKey;
@@ -104,13 +105,13 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
     new CountingController(this::updateValueMap).withShelf(selectedShelf).openTab();
   }
 
-  public void print(InventoryReports selectedReport, boolean selected, boolean outputAsPdf) {
+  public void print(InventoryReports selectedReport, boolean selectedOnly, boolean outputAsPdf) {
     List<Shelf> shelves;
-    if (selected && InventoryReports.shelfSelectionAllowed().contains(selectedReport)) {
+    if (selectedOnly && InventoryReports.shelfSelectionAllowed().contains(selectedReport)) {
       shelves =
           new ArrayList<>(getShelfViewController().getSearchBoxController().getSelectedObjects());
     } else {
-      shelves = Shelf.getAll();
+      shelves = DBConnection.getAll(Shelf.class);
     }
     shelves.sort(Comparator.comparingInt(Shelf::getShelfNo));
     Report report = null;
@@ -169,8 +170,15 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
     updateValueMap();
   }
 
-  public void clearInventory(LocalDate inventoryDate) {
-    model.clearInventory(inventoryDate);
-    updateValueMap();
+  public void clearInventory() {
+    InventoryView view = getView();
+    new Thread(
+            () -> {
+              view.indicateProgress(true);
+              model.clearInventory();
+              view.indicateProgress(false);
+              updateValueMap();
+            })
+        .start();
   }
 }

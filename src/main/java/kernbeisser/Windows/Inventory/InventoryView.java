@@ -55,7 +55,7 @@ public class InventoryView implements IView<InventoryController> {
         "Entfernt Inventurergebnisse, die vor dem eigentlichen Inventurtag "
             + "erfasst wurden. \nGeht nur, wenn die Inventur nicht in der Vergangenheit liegt.");
     clearInventory.setEnabled(!inventoryDate.isBefore(LocalDate.now()));
-    clearInventory.addActionListener(e -> controller.clearInventory(inventoryDate));
+    clearInventory.addActionListener(e -> controller.clearInventory());
     shelfViewController.addComponents(dateLabel, datePicker, clearInventory);
 
     JButton exportShelves = new JButton("Regale exportieren");
