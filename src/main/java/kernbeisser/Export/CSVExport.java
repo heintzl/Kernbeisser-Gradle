@@ -20,7 +20,8 @@ import lombok.var;
 
 public class CSVExport {
 
-  public static Optional<CSVWriter> chooseFile(Component parent, String defaultFilename) throws IOException {
+  public static Optional<CSVWriter> chooseFile(Component parent, String defaultFilename)
+      throws IOException {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setSelectedFile(new File(Tools.userDefaultPath() + defaultFilename));
     if (fileChooser.showSaveDialog(parent) != JFileChooser.APPROVE_OPTION) {
@@ -31,43 +32,43 @@ public class CSVExport {
 
   public static CSVWriter initWriter(String Filepath) throws IOException {
     return new CSVWriter(
-            new FileWriter(Filepath),
-            ';',
-            CSVWriter.NO_QUOTE_CHARACTER,
-            CSVWriter.NO_ESCAPE_CHARACTER,
-            CSVWriter.DEFAULT_LINE_END);
+        new FileWriter(Filepath),
+        ';',
+        CSVWriter.NO_QUOTE_CHARACTER,
+        CSVWriter.NO_ESCAPE_CHARACTER,
+        CSVWriter.DEFAULT_LINE_END);
   }
 
   private static List<String[]> getOrdersFileContent(Collection<PreOrder> preOrders) {
     Map<Integer, List<PreOrder>> orderMap =
-            preOrders.stream()
-                    .collect(Collectors.groupingBy(p -> p.getCatalogEntry().getArtikelNrInt()));
+        preOrders.stream()
+            .collect(Collectors.groupingBy(p -> p.getCatalogEntry().getArtikelNrInt()));
     List<String[]> orders = new ArrayList<>();
     orderMap.forEach(
-            (i, preOrderList) ->
-                    orders.add(
-                            new String[]{
-                                    Integer.toString(i),
-                                    Long.toString(
-                                            preOrderList.stream()
-                                                    .collect(Collectors.summarizingInt(PreOrder::getAmount))
-                                                    .getSum())
-                            }));
-    orders.add(0, new String[]{"artnr", "menge"});
+        (i, preOrderList) ->
+            orders.add(
+                new String[] {
+                  Integer.toString(i),
+                  Long.toString(
+                      preOrderList.stream()
+                          .collect(Collectors.summarizingInt(PreOrder::getAmount))
+                          .getSum())
+                }));
+    orders.add(0, new String[] {"artnr", "menge"});
     return orders;
   }
 
   public static boolean exportPreOrder(
-          Component parent, Collection<PreOrder> preOrders, String defaultFilename) {
+      Component parent, Collection<PreOrder> preOrders, String defaultFilename) {
     var fileContent = getOrdersFileContent(preOrders);
     try {
       Path exportPath = Config.getConfig().getPreorders().getExportDirectory().toPath();
       if (!Files.exists(exportPath)) {
-        handleInvalidFilePath(parent,preOrders,defaultFilename,fileContent);
+        handleInvalidFilePath(parent, preOrders, defaultFilename, fileContent);
       }
       @Cleanup
       CSVWriter csvWriter =
-              initWriter(exportPath + (exportPath.endsWith("/") ? "" : "/") + defaultFilename);
+          initWriter(exportPath + (exportPath.endsWith("/") ? "" : "/") + defaultFilename);
       csvWriter.writeAll(fileContent);
       return true;
     } catch (IOException | InvalidPathException e) {
@@ -75,37 +76,40 @@ public class CSVExport {
     }
   }
 
-  public static boolean handleInvalidFilePath(Component parent, Collection<PreOrder> preOrders, String defaultFilename, List<String[]> fileContent) {
+  public static boolean handleInvalidFilePath(
+      Component parent,
+      Collection<PreOrder> preOrders,
+      String defaultFilename,
+      List<String[]> fileContent) {
     boolean retryExportChoice =
-            JOptionPane.showConfirmDialog(
-                    parent,
-                    "Das Exportverzeichnis kann nicht gefunden werden.\n"
-                            + "Der USB-Stick fehlt anscheinend.\n"
-                            + "Soll der Export noch einmal versucht werden?",
-                    "Exportfehler",
-                    JOptionPane.YES_NO_OPTION)
-                    == JOptionPane.YES_OPTION;
+        JOptionPane.showConfirmDialog(
+                parent,
+                "Das Exportverzeichnis kann nicht gefunden werden.\n"
+                    + "Der USB-Stick fehlt anscheinend.\n"
+                    + "Soll der Export noch einmal versucht werden?",
+                "Exportfehler",
+                JOptionPane.YES_NO_OPTION)
+            == JOptionPane.YES_OPTION;
     if (retryExportChoice) {
       return exportPreOrder(parent, preOrders, defaultFilename);
     }
     boolean copyManuel =
-            JOptionPane.showConfirmDialog(
-                    parent,
-                    "Notfalls kann auch in ein anderes Verzeichnis exportiert werden.\n"
-                            + "ACHTUNG: In diesem Fall muss die Exportdatei manuell auf den\n"
-                            + "USB-Stick kopiert werden. Soll die Datei exportiert und die\n"
-                            + "Vorbestellungen als 'bestellt' gekennzeichnet werden?",
-                    "Exportfehler",
-                    JOptionPane.YES_NO_OPTION)
-                    == JOptionPane.YES_OPTION;
+        JOptionPane.showConfirmDialog(
+                parent,
+                "Notfalls kann auch in ein anderes Verzeichnis exportiert werden.\n"
+                    + "ACHTUNG: In diesem Fall muss die Exportdatei manuell auf den\n"
+                    + "USB-Stick kopiert werden. Soll die Datei exportiert und die\n"
+                    + "Vorbestellungen als 'bestellt' gekennzeichnet werden?",
+                "Exportfehler",
+                JOptionPane.YES_NO_OPTION)
+            == JOptionPane.YES_OPTION;
     if (!copyManuel) {
       return false;
     }
     try {
       Optional<CSVWriter> manualCsvWriterOpt = chooseFile(parent, defaultFilename);
       if (!manualCsvWriterOpt.isPresent()) return false;
-      @Cleanup
-      CSVWriter manualCsvWriter = manualCsvWriterOpt.get();
+      @Cleanup CSVWriter manualCsvWriter = manualCsvWriterOpt.get();
       manualCsvWriter.writeAll(fileContent);
       return true;
     } catch (IOException f) {
@@ -114,4 +118,3 @@ public class CSVExport {
     }
   }
 }
-
