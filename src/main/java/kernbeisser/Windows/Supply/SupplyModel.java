@@ -119,11 +119,16 @@ public class SupplyModel implements IModel<SupplyController> {
     return entryCounts;
   }
 
-  public static Integer getLabelCount(
-      int kkNumber, double priceKk, Article article, double containerMultiplier, int preOrders) {
-    if (kkNumber < 1000) return 0;
-    if (priceKk == 0.0) return 0;
+  public static int getLabelCount(
+      int suppliersItemNumber,
+      double priceKk,
+      Article article,
+      double containerMultiplier,
+      int preOrders) {
     if (article == null) return 0;
+    if (article.getSupplier().equals(Supplier.getKKSupplier()) && suppliersItemNumber < 1000)
+      return 0;
+    if (priceKk == 0.0) return 0;
     int containersForShop;
     if (article.isWeighable()) {
       containersForShop =
@@ -137,7 +142,7 @@ public class SupplyModel implements IModel<SupplyController> {
         : article.getLabelCount();
   }
 
-  public static Integer getPrintNumberFromLineContent(LineContent content) {
+  public static int getPrintNumberFromLineContent(LineContent content) {
     return getLabelCount(
         content.getKkNumber(),
         content.getPriceKk(),
@@ -146,20 +151,22 @@ public class SupplyModel implements IModel<SupplyController> {
         content.getUserPreorderCount());
   }
 
-  public Integer getPrintNumberFromItem(ShoppingItem item) {
+  public int calculatePrintNumberFromItem(ShoppingItem item) {
     Article article = item.getArticleAtBuyState();
     int preorders = 0;
     if (article.getSupplier().equals(Supplier.getKKSupplier())) {
-      preorders = Tools.ifNull(kkNumberPreorderCounts.get(article.getSuppliersItemNumber()), 0);
+      preorders = getPreorderCount(article.getSuppliersItemNumber());
     }
     return getLabelCount(
-        (item.getSupplier().equals(Supplier.getKKSupplier())
-            ? item.getSuppliersItemNumber()
-            : 100000),
+        item.getSuppliersItemNumber(),
         item.getItemNetPrice(),
         article,
         -item.getContainerCount(),
         preorders);
+  }
+
+  public int getPreorderCount(int suppliersItemNumber) {
+    return kkNumberPreorderCounts.getOrDefault(suppliersItemNumber, 0);
   }
 
   public void addShoppingItem(ShoppingItem item) {

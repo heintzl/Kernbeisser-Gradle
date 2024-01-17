@@ -169,6 +169,8 @@ public class SupplyView implements IView<SupplyController> {
             Columns.create("Anzahl", ShoppingItem::getDisplayContainerCount)
                 .withLeftClickConsumer(controller::editItemMultiplier)
                 .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Davon Vorbestellt", controller::getPreorderCount)
+                .withSorter(Column.NUMBER_SORTER),
             Columns.create("Name", ShoppingItem::getName)
                 .withColumnAdjustor(e -> e.setPreferredWidth(400)),
             Columns.<ShoppingItem>create(
