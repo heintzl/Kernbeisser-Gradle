@@ -1,11 +1,21 @@
 package kernbeisser.StartUp.LogIn;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import org.apache.commons.collections.KeyValue;
 import org.jetbrains.annotations.NotNull;
 
 public class DBLogInView implements IView<DBLogInController> {
@@ -17,8 +27,20 @@ public class DBLogInView implements IView<DBLogInController> {
   private JButton cancel;
   private JPanel main;
   private JTextField encoding;
+  private JButton cSVImport;
+  private JTextField filePath;
+  private JButton fileChooser;
+  private JScrollPane logPane;
+  private ObjectTable<KeyValue> logTable;
 
   @Linked private DBLogInController controller;
+
+  private void createUIComponents() {
+    logTable =
+        new ObjectTable<>(
+            Columns.<KeyValue>create("Level", e -> e.getKey().toString()).withPreferredWidth(80),
+            Columns.create("Meldungen", KeyValue::getValue));
+  }
 
   @Override
   public void initialize(DBLogInController controller) {
@@ -30,6 +52,15 @@ public class DBLogInView implements IView<DBLogInController> {
     password.addActionListener(e -> controller.logIn());
     password.setText(access.getPassword());
     cancel.addActionListener(e -> cancel());
+    fileChooser.addActionListener(e -> openFileExplorer());
+    fileChooser.setIcon(IconFontSwing.buildIcon(FontAwesome.FOLDER, 20, new Color(255, 192, 3)));
+    cSVImport.addActionListener(e -> controller.readFile(filePath.getText()));
+    logTable.addComponentListener(
+        new ComponentAdapter() {
+          public void componentResized(ComponentEvent e) {
+            logTable.scrollRectToVisible(logTable.getCellRect(logTable.getRowCount() - 1, 0, true));
+          }
+        });
   }
 
   private void cancel() {
@@ -50,10 +81,6 @@ public class DBLogInView implements IView<DBLogInController> {
     return "Datenbankverbindung";
   }
 
-  void connectionValid() {
-    JOptionPane.showMessageDialog(getTopComponent(), "Die Verbindung wurde erfolgreich erstellt!");
-  }
-
   void connectionRefused() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
@@ -65,17 +92,57 @@ public class DBLogInView implements IView<DBLogInController> {
         url.getText(), username.getText(), new String(password.getPassword()), encoding.getText());
   }
 
-  public void setConnectionValid(boolean serviceAvailable) {
-    username.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
-    password.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
-    url.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
-    encoding.setForeground(serviceAvailable ? Color.GREEN : Color.RED);
+  void openFileExplorer() {
+    Path importPath = Config.getConfig().getDefaultBnnInboxDir().toPath();
+    String chooserRoot = Files.exists(importPath) ? importPath.toString() : ".";
+    JFileChooser jFileChooser = new JFileChooser("");
+    jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    jFileChooser.setFileFilter(
+        new FileNameExtensionFilter("CSV-Datei", "ASC", "asc", "CSV", "csv", "TXT", "txt"));
+    jFileChooser.addActionListener(
+        e -> {
+          if (jFileChooser.getSelectedFile() == null) {
+            return;
+          }
+          String choosenFile = jFileChooser.getSelectedFile().getAbsolutePath();
+          filePath.setText(choosenFile);
+        });
+    jFileChooser.showOpenDialog(getContent());
   }
 
-  private void defaultColor() {
-    username.setForeground(Color.BLACK);
-    password.setForeground(Color.BLACK);
-    url.setForeground(Color.BLACK);
-    encoding.setForeground(Color.BLACK);
+  public void clearLogMessages() {
+    logTable.clear();
+    // logTable.repaint();
+  }
+
+  public void showLogMessage(KeyValue message) {
+
+    logPane.setVisible(true);
+    logTable.add(message);
+    // logTable.repaint();
+  }
+
+  public void messagePathNotFound(String path) {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Die Datei \"" + path + "\" konnte nicht gefunden werden.",
+        "Datei nicht gefunden",
+        JOptionPane.ERROR_MESSAGE);
+  }
+
+  public boolean confirmCSVImport() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Mit diesem Import-Werkzeug können große Datenmengen innerhalb von Sekunden \n"
+                + "geschrottet werden. Du solltest wirklich genau wissen, was du tust und \n"
+                + "sicherstellen, dass direkt vor dem Import ein Datenbank-Backup erstellt wurde.\n"
+                + "Schau dir genau das Importprotokoll an und prüfe anschließend das Importergebnis\n"
+                + "in den entsprechend Objektansichten, bevor wieder irgendwelche Daten erfasst \n"
+                + "oder geändert werden, denn diese gehen bei einem Rollback auf das Backup verloren!\n\n"
+                + "Willst du wirklich fortfahren?",
+            "Ich weiß genau, was ich tue!",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE)
+        == JOptionPane.YES_OPTION;
   }
 }

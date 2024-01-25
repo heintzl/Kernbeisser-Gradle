@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -19,32 +20,39 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.Getter;
+import org.apache.commons.collections.KeyValue;
+import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
 
 public class GenericCSVImport {
 
-  @Getter private static final Logger logger = LogManager.getLogger(GenericCSVImport.class);
+  private static final Logger logger = LogManager.getLogger(GenericCSVImport.class);
 
   @Getter private Set<String> allDBEntityNames = null;
-  private final Path filePath;
   private Class<?> clazz;
   private final List<ComplexGetter> identificationGetters = new ArrayList<>();
   private final List<ComplexSetter> setters = new ArrayList<>();
   private final List<String[]> data = new ArrayList<>();
+  private final Consumer<KeyValue> logConsumer;
 
-  public GenericCSVImport(Path filePath) {
-    this.filePath = filePath;
+  public GenericCSVImport(Path filePath, Consumer<KeyValue> logConsumer) {
+    this.logConsumer = logConsumer;
     try {
       allDBEntityNames =
           ClassPath.from(ClassLoader.getSystemClassLoader()).getTopLevelClasses().stream()
               .map(ClassPath.ClassInfo::getName)
               .filter(s -> s.contains("kernbeisser.DBEntities"))
               .collect(Collectors.toSet());
-      logger.error(readFile(filePath));
-
+      String result = readFile(filePath);
+      if (!result.isEmpty()) {
+        log(Level.ERROR, result);
+      } else {
+        log(Level.INFO, "Done");
+      }
     } catch (IOException e) {
       Tools.showUnexpectedErrorWarning(e);
     }
@@ -52,6 +60,15 @@ public class GenericCSVImport {
 
   private String capitalize1st(String s) {
     return (s.substring(0, 1).toUpperCase()) + s.substring(1);
+  }
+
+  public static void log(Consumer<KeyValue> logConsumer, Level level, String message) {
+    logConsumer.accept(new UnmodifiableMapEntry(level, message));
+    logger.log(level, message);
+  }
+
+  public void log(Level level, String message) {
+    log(logConsumer, level, message);
   }
 
   private String readFile(Path filePath) throws IOException {
@@ -70,6 +87,9 @@ public class GenericCSVImport {
         return "Fehlende Entity in der 2. Zeile";
       }
       entityName = infoContent[1];
+      if (entityName.equals("Transaction")) {
+        return "Transaktionen können nicht manipuliert werden";
+      }
       String finalEntityName = entityName;
       Optional<String> clazzCandidate =
           allDBEntityNames.stream().filter(e -> e.endsWith("." + finalEntityName)).findAny();
@@ -144,10 +164,10 @@ public class GenericCSVImport {
     String[] fieldParts = fieldName.split("\\.");
     ComplexSetter result = null;
     int chainLength = fieldParts.length;
-    String setterName = "set" + capitalize1st(fieldParts[0]);
+    String setterName = "set" + Tools.capitalize1st(fieldParts[0]);
     for (Method setter : allSetters(clazz)) {
       if (setter.getName().equals(setterName)) {
-        result = new ComplexSetter(setter);
+        result = new ComplexSetter(setter, logConsumer);
         clazz = setter.getParameterTypes()[0];
         break;
       }
@@ -179,6 +199,7 @@ public class GenericCSVImport {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
+    String message;
     for (String[] row : data) {
       List<?> targetObjects = clazzObjects;
       Object targetObject = null;
@@ -196,11 +217,12 @@ public class GenericCSVImport {
       }
       int num = targetObjects.size();
       if (num > 1) {
-        logger.warn("found more than one target object. Your data seems to be ambigious");
+        log(Level.ERROR, "found more than one target object. Your data seems to be ambigious");
         throw new NonUniqueResultException(num);
       }
       if (num == 0) {
-        logger.warn(
+        log(
+            Level.WARN,
             "skipped row ["
                 + rowToString(row)
                 + "] because no matching "
@@ -222,11 +244,9 @@ public class GenericCSVImport {
       }
       if (success) {
         em.merge(targetObject);
-        logger.info("updated " + clazz.getName() + " with row " + rowToString(row));
+        log(Level.TRACE, "updated " + clazz.getName() + " with row " + rowToString(row));
       }
     }
-    em.flush();
-    et.commit();
   }
 
   static String rowToString(String[] values) {

@@ -4,10 +4,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import kernbeisser.DBConnection.DBConnection;
+import org.apache.commons.collections.KeyValue;
+import org.apache.logging.log4j.Level;
 
 public class ComplexSetter {
 
@@ -15,10 +18,15 @@ public class ComplexSetter {
   private final ComplexGetter objectGetter = new ComplexGetter();
   private final Class clazz;
   private final List<?> allCandidates;
+  private final Consumer<KeyValue> logConsumer;
 
-  public ComplexSetter(Method setter) {
+  public ComplexSetter(Method setter, Consumer<KeyValue> logConsumer) {
     this.setter = setter;
+    // this looks extremely unsafe - what if a getter has more than 1 Parameter? That would be a bit
+    // aside the getter/setter pattern and anyway the module can currently pass only one value to
+    // each target field
     clazz = setter.getParameterTypes()[0];
+    this.logConsumer = logConsumer;
     allCandidates = Collections.unmodifiableList(DBConnection.getAll(clazz));
   }
 
@@ -55,15 +63,17 @@ public class ComplexSetter {
     List<?> candidates =
         allCandidates.stream().filter(o -> objectGetter.match(o, arg)).collect(Collectors.toList());
     if (candidates.size() > 1) {
-      GenericCSVImport.getLogger()
-          .warn(
-              "could not update object, because more than one value was found for "
-                  + clazz.getName());
+      GenericCSVImport.log(
+          logConsumer,
+          Level.WARN,
+          "could not update object, because more than one value was found for " + clazz.getName());
       throw new NonUniqueResultException();
     }
     if (candidates.isEmpty()) {
-      GenericCSVImport.getLogger()
-          .warn("could not update object, because no value was found for " + clazz.getName());
+      GenericCSVImport.log(
+          logConsumer,
+          Level.WARN,
+          "could not update object, because no value was found for " + clazz.getName());
       throw new NoResultException();
     }
     return candidates.get(0);
