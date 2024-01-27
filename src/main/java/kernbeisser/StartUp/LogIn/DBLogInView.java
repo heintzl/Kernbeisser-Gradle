@@ -115,10 +115,10 @@ public class DBLogInView implements IView<DBLogInController> {
     // logTable.repaint();
   }
 
-  public void showLogMessage(KeyValue message) {
+  public void showLogMessages(java.util.List<KeyValue> messages) {
 
     logPane.setVisible(true);
-    logTable.add(message);
+    logTable.addAll(messages);
     // logTable.repaint();
   }
 
