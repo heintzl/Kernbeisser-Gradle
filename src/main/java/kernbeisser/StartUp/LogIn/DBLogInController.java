@@ -3,9 +3,12 @@ package kernbeisser.StartUp.LogIn;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import javax.swing.*;
 import kernbeisser.DataImport.GenericCSVImport;
 import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Windows.MVC.Controller;
+import org.apache.commons.collections.KeyValue;
 import org.jetbrains.annotations.NotNull;
 
 public class DBLogInController extends Controller<DBLogInView, DBLogInModel> {
@@ -53,12 +56,22 @@ public class DBLogInController extends Controller<DBLogInView, DBLogInModel> {
       return;
     }
     if (view.confirmCSVImport()) {
-      new Thread(
-              () -> {
-                view.clearLogMessages();
-                new GenericCSVImport(filePath, view::showLogMessage);
-              })
-          .start();
+
+      view.clearLogMessages();
+      SwingWorker importWorker =
+          new SwingWorker<Void, KeyValue>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+              new GenericCSVImport(filePath, this::publish);
+              return null;
+            }
+
+            @Override
+            protected void process(List<KeyValue> logMessages) {
+              view.showLogMessages(logMessages);
+            }
+          };
+      importWorker.execute();
     }
   }
 }
