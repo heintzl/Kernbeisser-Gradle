@@ -61,7 +61,7 @@ public class Main {
     if (!Setting.DB_INITIALIZED.getBooleanValue()) {
       SwingUtilities.invokeLater(() -> new DataImportController().openTab());
     } else {
-      openLogIn();
+      SwingUtilities.invokeLater(() -> openLogIn());
     }
   }
 
