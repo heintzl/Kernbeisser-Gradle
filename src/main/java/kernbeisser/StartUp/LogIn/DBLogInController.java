@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.*;
 import kernbeisser.DataImport.GenericCSVImport;
 import kernbeisser.Exeptions.ClassIsSingletonException;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.apache.commons.collections.KeyValue;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +71,17 @@ public class DBLogInController extends Controller<DBLogInView, DBLogInModel> {
             protected void process(List<KeyValue> logMessages) {
               view.showLogMessages(logMessages);
             }
+
+            @Override
+            protected void done() {
+              try {
+                get();
+              } catch (Exception e) {
+                Tools.showUnexpectedErrorWarning(e.getCause());
+              }
+            }
           };
+
       importWorker.execute();
     }
   }

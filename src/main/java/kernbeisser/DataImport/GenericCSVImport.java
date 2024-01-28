@@ -1,5 +1,6 @@
 package kernbeisser.DataImport;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import com.opencsv.*;
 import com.opencsv.exceptions.CsvException;
@@ -19,7 +20,6 @@ import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
-import lombok.Getter;
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
 import org.apache.commons.lang3.StringUtils;
@@ -32,30 +32,42 @@ public class GenericCSVImport {
 
   private static final Logger logger = LogManager.getLogger(GenericCSVImport.class);
 
-  @Getter private Set<String> allDBEntityNames = null;
+  private static Set<String> ALL_DB_ENTITYNAMES;
   private Class<?> clazz;
   private final List<ComplexGetter> identificationGetters = new ArrayList<>();
   private final List<ComplexSetter> setters = new ArrayList<>();
   private final List<String[]> data = new ArrayList<>();
   private final Consumer<KeyValue> logConsumer;
 
-  public GenericCSVImport(Path filePath, Consumer<KeyValue> logConsumer) {
-    this.logConsumer = logConsumer;
-    try {
-      allDBEntityNames =
-          ClassPath.from(ClassLoader.getSystemClassLoader()).getTopLevelClasses().stream()
-              .map(ClassPath.ClassInfo::getName)
-              .filter(s -> s.contains("kernbeisser.DBEntities"))
-              .collect(Collectors.toSet());
-      String result = readFile(filePath);
-      if (!result.isEmpty()) {
-        log(Level.ERROR, result);
-      } else {
-        log(Level.INFO, "Done");
+  static {
+    if (ALL_DB_ENTITYNAMES == null) {
+      try {
+        ALL_DB_ENTITYNAMES =
+            ImmutableSet.copyOf(
+                ClassPath.from(ClassLoader.getSystemClassLoader()).getTopLevelClasses().stream()
+                    .map(ClassPath.ClassInfo::getName)
+                    .filter(s -> s.contains("kernbeisser.DBEntities"))
+                    .collect(Collectors.toSet()));
+      } catch (IOException e) {
+        ALL_DB_ENTITYNAMES = null;
+        Tools.showUnexpectedErrorWarning(e);
       }
-    } catch (IOException e) {
-      Tools.showUnexpectedErrorWarning(e);
     }
+  }
+
+  public GenericCSVImport(Path filePath, Consumer<KeyValue> logConsumer)
+      throws InvocationTargetException, IllegalAccessException, IOException {
+    this.logConsumer = logConsumer;
+    String result = readFile(filePath);
+    if (!result.isEmpty()) {
+      log(Level.ERROR, result);
+    } else {
+      log(Level.INFO, "Done");
+    }
+  }
+
+  public static boolean isDBEntity(Class clazz) {
+    return ALL_DB_ENTITYNAMES.stream().anyMatch(e -> e.equals(clazz.getName()));
   }
 
   private String capitalize1st(String s) {
@@ -71,7 +83,8 @@ public class GenericCSVImport {
     log(logConsumer, level, message);
   }
 
-  private String readFile(Path filePath) throws IOException {
+  private String readFile(Path filePath)
+      throws IOException, InvocationTargetException, IllegalAccessException {
     String entityName = "";
     String fieldName = "";
     try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
@@ -92,7 +105,7 @@ public class GenericCSVImport {
       }
       String finalEntityName = entityName;
       Optional<String> clazzCandidate =
-          allDBEntityNames.stream().filter(e -> e.endsWith("." + finalEntityName)).findAny();
+          ALL_DB_ENTITYNAMES.stream().filter(e -> e.endsWith("." + finalEntityName)).findAny();
       if (!clazzCandidate.isPresent()) {
         throw new ClassNotFoundException();
       }
@@ -106,7 +119,7 @@ public class GenericCSVImport {
       line = reader.readLine();
       infoContent = line.split(":");
       if (!infoContent[0].equals("#Data") || infoContent[1].isEmpty()) {
-        return "Fehlende Feldnamen in der 3. Zeile";
+        return "Fehlende Feldnamen in der 4. Zeile";
       }
       String[] targetFields = infoContent[1].split(separator);
       for (int i = 0; i < identityColumns; i++) {
@@ -131,9 +144,6 @@ public class GenericCSVImport {
       return "Ungültige Entity \"" + entityName + "\" in der 2. Zeile";
     } catch (CsvException e) {
       return "Lesefehler in CSV-Datei";
-    } catch (InvocationTargetException | IllegalAccessException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      return "Lesefehler";
     }
   }
 
@@ -203,7 +213,6 @@ public class GenericCSVImport {
     for (String[] row : data) {
       List<?> targetObjects = clazzObjects;
       Object targetObject = null;
-      int index = 0;
       targetObjects =
           clazzObjects.stream()
               .filter(o -> identificationGetters.get(0).match(o, row[0]))
@@ -235,12 +244,13 @@ public class GenericCSVImport {
         continue;
       }
       boolean success = true;
+      int index = identificationGetters.size();
       for (ComplexSetter setter : setters) {
-        index++;
         success = setter.invoke(targetObject, row[index]);
         if (!success) {
           break;
         }
+        index++;
       }
       if (success) {
         em.merge(targetObject);
