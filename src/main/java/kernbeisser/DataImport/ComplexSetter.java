@@ -27,20 +27,28 @@ public class ComplexSetter {
     // each target field
     clazz = setter.getParameterTypes()[0];
     this.logConsumer = logConsumer;
-    allCandidates = Collections.unmodifiableList(DBConnection.getAll(clazz));
+    if (GenericCSVImport.isDBEntity(clazz)) {
+      allCandidates = Collections.unmodifiableList(DBConnection.getAll(clazz));
+    } else {
+      allCandidates = null;
+    }
   }
 
   public void addGetterMethod(Method m) {
     objectGetter.addMethod(m);
   }
 
+  private void writeLog(Level level, String message) {
+    GenericCSVImport.log(logConsumer, level, message);
+  }
+
   private Object adjustArgType(String arg) throws NumberFormatException, ClassCastException {
-    String typeName = setter.getParameterTypes()[1].getName();
+    String typeName = clazz.getName();
     switch (typeName) {
       case "java.lang.String":
         return (String) arg;
       case "java.lang.Integer":
-      case "integer":
+      case "int":
         return Integer.parseInt(arg);
       case "java.lang.Double":
       case "double":
@@ -63,17 +71,14 @@ public class ComplexSetter {
     List<?> candidates =
         allCandidates.stream().filter(o -> objectGetter.match(o, arg)).collect(Collectors.toList());
     if (candidates.size() > 1) {
-      GenericCSVImport.log(
-          logConsumer,
+      writeLog(
           Level.WARN,
           "could not update object, because more than one value was found for " + clazz.getName());
       throw new NonUniqueResultException();
     }
     if (candidates.isEmpty()) {
-      GenericCSVImport.log(
-          logConsumer,
-          Level.WARN,
-          "could not update object, because no value was found for " + clazz.getName());
+      writeLog(
+          Level.WARN, "could not update object, because no value was found for " + clazz.getName());
       throw new NoResultException();
     }
     return candidates.get(0);
