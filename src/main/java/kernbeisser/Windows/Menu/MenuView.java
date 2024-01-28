@@ -19,6 +19,7 @@ import kernbeisser.Windows.AccountingReports.AccountingReportsController;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskController;
 import kernbeisser.Windows.CatalogImport.CatalogImportController;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
+import kernbeisser.Windows.DatabaseView.DatabaseViewController;
 import kernbeisser.Windows.EditArticles.EditArticlesController;
 import kernbeisser.Windows.EditCatalog.EditCatalogController;
 import kernbeisser.Windows.EditJobs.EditJobs;
@@ -86,6 +87,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton internalTransaction;
   private ControllerButton importCatalog;
   private ControllerButton editCatalog;
+  private ControllerButton databaseView;
 
   @Override
   public void initialize(MenuController controller) {
@@ -275,6 +277,9 @@ public class MenuView implements IView<MenuController> {
             PermissionAssignmentController::cashierPermissionController,
             PermissionAssignmentController.class);
     beginnInventory = new ControllerButton(InventoryController::new, InventoryController.class);
+    databaseView =
+        new ControllerButton(
+            controller::createDatabaseViewController, DatabaseViewController.class);
   }
 
   @Override

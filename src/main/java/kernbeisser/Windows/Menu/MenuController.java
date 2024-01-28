@@ -13,6 +13,7 @@ import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.UiTools;
+import kernbeisser.Windows.DatabaseView.DatabaseViewController;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.MVC.Controller;
@@ -68,6 +69,11 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   @Key(PermissionKey.ACTION_OPEN_DB_LOG_IN)
   public DBLogInController getDBLoginController() {
     return new DBLogInController();
+  }
+
+  @Key(PermissionKey.ACTION_OPEN_DB_LOG_IN)
+  public DatabaseViewController createDatabaseViewController() {
+    return new DatabaseViewController();
   }
 
   private boolean alreadyAsked = false;

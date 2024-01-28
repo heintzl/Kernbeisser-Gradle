@@ -6,11 +6,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.Config.Config;
@@ -21,14 +20,14 @@ import lombok.var;
 
 public class CSVExport {
 
-  public static CSVWriter chooseFile(Component parent, String defaultFilename) throws IOException {
+  public static Optional<CSVWriter> chooseFile(Component parent, String defaultFilename)
+      throws IOException {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setSelectedFile(new File(Tools.userDefaultPath() + defaultFilename));
-    if (fileChooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
-      return initWriter(fileChooser.getSelectedFile().getAbsolutePath());
-    } else {
-      return null;
+    if (fileChooser.showSaveDialog(parent) != JFileChooser.APPROVE_OPTION) {
+      return Optional.empty();
     }
+    return Optional.of(initWriter(fileChooser.getSelectedFile().getAbsolutePath()));
   }
 
   public static CSVWriter initWriter(String Filepath) throws IOException {
@@ -61,56 +60,61 @@ public class CSVExport {
 
   public static boolean exportPreOrder(
       Component parent, Collection<PreOrder> preOrders, String defaultFilename) {
-    Path exportPath = Config.getConfig().getPreorders().getExportDirectory().toPath();
     var fileContent = getOrdersFileContent(preOrders);
     try {
+      Path exportPath = Config.getConfig().getPreorders().getExportDirectory().toPath();
       if (!Files.exists(exportPath)) {
-        throw new IOException();
+        handleInvalidFilePath(parent, preOrders, defaultFilename, fileContent);
       }
       @Cleanup
       CSVWriter csvWriter =
           initWriter(exportPath + (exportPath.endsWith("/") ? "" : "/") + defaultFilename);
       csvWriter.writeAll(fileContent);
       return true;
-    } catch (IOException e) {
-      boolean choice =
-          JOptionPane.showConfirmDialog(
-                  parent,
-                  "Das Exportverzeichnis kann nicht gefunden werden.\n"
-                      + "Der USB-Stick fehlt anscheinend.\n"
-                      + "Soll der Export noch einmal versucht werden?",
-                  "Exportfehler",
-                  JOptionPane.YES_NO_OPTION)
-              == JOptionPane.YES_OPTION;
-      if (choice) {
-        return exportPreOrder(parent, preOrders, defaultFilename);
-      } else {
-        choice =
-            JOptionPane.showConfirmDialog(
-                    parent,
-                    "Notfalls kann auch in ein anderes Verzeichnis exportiert werden.\n"
-                        + "ACHTUNG: In diesem Fall muss die Exportdatei manuell auf den\n"
-                        + "USB-Stick kopiert werden. Soll die Datei exportiert und die\n"
-                        + "Vorbestellungen als 'bestellt' gekennzeichnet werden?",
-                    "Exportfehler",
-                    JOptionPane.YES_NO_OPTION)
-                == JOptionPane.YES_OPTION;
-        if (choice) {
-          try {
-            @Cleanup CSVWriter manualCsvWriter = chooseFile(parent, defaultFilename);
-            if (manualCsvWriter == null) {
-              return false;
-            } else {
-              manualCsvWriter.writeAll(fileContent);
-              return true;
-            }
-          } catch (IOException f) {
-            return false;
-          }
-        } else {
-          return false;
-        }
-      }
+    } catch (IOException | InvalidPathException e) {
+      return handleInvalidFilePath(parent, preOrders, defaultFilename, fileContent);
+    }
+  }
+
+  public static boolean handleInvalidFilePath(
+      Component parent,
+      Collection<PreOrder> preOrders,
+      String defaultFilename,
+      List<String[]> fileContent) {
+    boolean retryExportChoice =
+        JOptionPane.showConfirmDialog(
+                parent,
+                "Das Exportverzeichnis kann nicht gefunden werden.\n"
+                    + "Der USB-Stick fehlt anscheinend.\n"
+                    + "Soll der Export noch einmal versucht werden?",
+                "Exportfehler",
+                JOptionPane.YES_NO_OPTION)
+            == JOptionPane.YES_OPTION;
+    if (retryExportChoice) {
+      return exportPreOrder(parent, preOrders, defaultFilename);
+    }
+    boolean copyManuel =
+        JOptionPane.showConfirmDialog(
+                parent,
+                "Notfalls kann auch in ein anderes Verzeichnis exportiert werden.\n"
+                    + "ACHTUNG: In diesem Fall muss die Exportdatei manuell auf den\n"
+                    + "USB-Stick kopiert werden. Soll die Datei exportiert und die\n"
+                    + "Vorbestellungen als 'bestellt' gekennzeichnet werden?",
+                "Exportfehler",
+                JOptionPane.YES_NO_OPTION)
+            == JOptionPane.YES_OPTION;
+    if (!copyManuel) {
+      return false;
+    }
+    try {
+      Optional<CSVWriter> manualCsvWriterOpt = chooseFile(parent, defaultFilename);
+      if (!manualCsvWriterOpt.isPresent()) return false;
+      @Cleanup CSVWriter manualCsvWriter = manualCsvWriterOpt.get();
+      manualCsvWriter.writeAll(fileContent);
+      return true;
+    } catch (IOException f) {
+      Tools.showUnexpectedErrorWarning(f);
+      return false;
     }
   }
 }

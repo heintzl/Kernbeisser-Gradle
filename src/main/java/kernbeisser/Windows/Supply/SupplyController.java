@@ -6,7 +6,6 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
-import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBConnection.DBConnection;
@@ -60,7 +59,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       return;
     }
     model.setContainerMultiplier(item, newValue);
-    model.setPrintNumber(item, newValue);
+    model.setPrintNumber(item, model.calculatePrintNumberFromItem(item));
     getView().refreshRow(item);
   }
 
@@ -150,7 +149,6 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public void recalculateTotal() {
-
     double items =
         model.getShoppingItems().stream()
             .mapToDouble(
@@ -162,13 +160,12 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
                                 : e.getItemMultiplier())))
             .sum();
     double produce = model.getAppendedProducePrice();
-
     getView().setTotal(produce + items);
     getView().setProduce(produce);
   }
 
   public void setPrintNumber(ShoppingItem item) {
-    model.setPrintNumber(item, model.getPrintNumberFromItem(item));
+    model.setPrintNumber(item, model.calculatePrintNumberFromItem(item));
     getView().repaintTable();
   }
 
@@ -206,7 +203,6 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public static boolean shouldBecomeShoppingItem(LineContent content) {
-
     return !(content.getStatus() == ResolveStatus.IGNORE
         || content.getStatus() == ResolveStatus.PRODUCE);
   }
@@ -250,25 +246,6 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       return article;
     }
     return createArticle(content, noBarcode);
-  }
-
-  public static void changePriceAndWeighable(
-      Supplier supplier, int suppliersItemNumber, double newPrice, boolean newWeighable) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Article article =
-        em.createQuery(
-                "select a from Article a where a.supplier = :s and a.suppliersItemNumber = :sn",
-                Article.class)
-            .setParameter("s", supplier)
-            .setParameter("sn", suppliersItemNumber)
-            .getSingleResult();
-    article.setNetPrice(newPrice);
-    article.setWeighable(newWeighable);
-    em.persist(article);
-    em.flush();
   }
 
   public static ShoppingItem createShoppingItem(
@@ -331,5 +308,13 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {
     return keyCapture.processKeyEvent(e) || barcodeCapture.processKeyEvent(e);
+  }
+
+  public String getPreorderCount(ShoppingItem t) {
+    int preOrderCount = model.getPreorderCount(t.getSuppliersItemNumber());
+    if (t.isWeighAble()) {
+      return preOrderCount * Math.round(t.getContainerSize() * 1000) / 1000 + "KG";
+    }
+    return preOrderCount + " Gebinde";
   }
 }

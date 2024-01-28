@@ -44,6 +44,7 @@ import lombok.SneakyThrows;
 import lombok.var;
 import org.hibernate.envers.AuditReaderFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import sun.misc.Unsafe;
 
 public class Tools {
@@ -125,7 +126,7 @@ public class Tools {
     return out;
   }
 
-  public static <T> List<T> getAll(Class<T> c, String condition) {
+  public static <T> List<T> getAll(Class<T> c, @Nullable String condition) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();

@@ -110,33 +110,39 @@ public class SupplyModel implements IModel<SupplyController> {
             PreOrder.class,
             new FieldCondition("delivery", null),
             new FieldCondition("user", User.getKernbeisserUser()).not());
-    Map<CatalogEntry, Integer> entryCounts = new HashMap<>();
+    Map<CatalogEntry, Integer> entryCounts = new HashMap<>(userPreorders.size());
     for (PreOrder preorder : userPreorders) {
       CatalogEntry entry = preorder.getCatalogEntry();
-      entryCounts.putIfAbsent(entry, 0);
-      entryCounts.replace(entry, entryCounts.get(entry), preorder.getAmount());
+      Integer countEntry = entryCounts.getOrDefault(entry, 0);
+      entryCounts.put(entry, countEntry + preorder.getAmount());
     }
     return entryCounts;
   }
 
-  public static Integer getLabelCount(
-      int kkNumber, double priceKk, Article article, double containerMultiplier, int preOrders) {
-    if (kkNumber < 1000) return 0;
-    if (priceKk == 0.0) return 0;
+  public static int getLabelCount(
+      int suppliersItemNumber,
+      double priceKk,
+      Article article,
+      double containerMultiplier,
+      int preOrders) {
     if (article == null) return 0;
-    float containersForShop = (float) containerMultiplier - preOrders;
-    if (article.isLabelPerUnit()) {
-      if (article.isWeighable()) {
-        return Math.round(containersForShop / (float) article.getContainerSize())
-            + article.getLabelCount();
-      }
-      return (int) Math.ceil(containersForShop) + article.getLabelCount();
+    if (article.getSupplier().equals(Supplier.getKKSupplier()) && suppliersItemNumber < 1000)
+      return 0;
+    if (priceKk == 0.0) return 0;
+    int containersForShop;
+    if (article.isWeighable()) {
+      containersForShop =
+          Math.round((float) containerMultiplier / (float) article.getContainerSize()) - preOrders;
+    } else {
+      containersForShop = (int) Math.ceil(containerMultiplier) - preOrders;
     }
-    if (containersForShop > 0.0) return article.getLabelCount();
-    return 0;
+    if (containersForShop <= 0) return 0;
+    return article.isLabelPerUnit()
+        ? article.getLabelCount() + containersForShop
+        : article.getLabelCount();
   }
 
-  public static Integer getPrintNumberFromLineContent(LineContent content) {
+  public static int getPrintNumberFromLineContent(LineContent content) {
     return getLabelCount(
         content.getKkNumber(),
         content.getPriceKk(),
@@ -145,20 +151,22 @@ public class SupplyModel implements IModel<SupplyController> {
         content.getUserPreorderCount());
   }
 
-  public Integer getPrintNumberFromItem(ShoppingItem item) {
+  public int calculatePrintNumberFromItem(ShoppingItem item) {
     Article article = item.getArticleAtBuyState();
     int preorders = 0;
     if (article.getSupplier().equals(Supplier.getKKSupplier())) {
-      preorders = Tools.ifNull(kkNumberPreorderCounts.get(article.getSuppliersItemNumber()), 0);
+      preorders = getPreorderCount(article.getSuppliersItemNumber());
     }
     return getLabelCount(
-        (item.getSupplier().equals(Supplier.getKKSupplier())
-            ? item.getSuppliersItemNumber()
-            : 100000),
+        item.getSuppliersItemNumber(),
         item.getItemNetPrice(),
         article,
         -item.getContainerCount(),
         preorders);
+  }
+
+  public int getPreorderCount(int suppliersItemNumber) {
+    return kkNumberPreorderCounts.getOrDefault(suppliersItemNumber, 0);
   }
 
   public void addShoppingItem(ShoppingItem item) {
