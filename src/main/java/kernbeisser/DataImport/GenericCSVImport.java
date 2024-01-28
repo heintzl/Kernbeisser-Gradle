@@ -37,6 +37,7 @@ public class GenericCSVImport {
   private final List<ComplexGetter> identificationGetters = new ArrayList<>();
   private final List<ComplexSetter> setters = new ArrayList<>();
   private final List<String[]> data = new ArrayList<>();
+  private String stringDelimiter = "";
   private final Consumer<KeyValue> logConsumer;
 
   static {
@@ -88,16 +89,25 @@ public class GenericCSVImport {
     String entityName = "";
     String fieldName = "";
     try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-      String line = reader.readLine();
-      String[] infoContent = line.split(":");
+      int lineCount = 0;
+      String[] infoContent = reader.readLine().split(":");
+      lineCount++;
       if (!infoContent[0].equals("#Separator") || infoContent[1].isEmpty()) {
-        return "Fehlendes Trennzeichen in der 1. Zeile";
+        return String.format("Fehlendes Trennzeichen in der %d. Zeile", lineCount);
       }
       String separator = infoContent[1];
-      line = reader.readLine();
-      infoContent = line.split(":");
+      infoContent = reader.readLine().split(":");
+      lineCount++;
+      if (infoContent[0].equals("#String Delimiter")) {
+        if (infoContent[1].isEmpty()) {
+          return String.format("Fehlende Stringbegrenzung in der %d. Zeile", lineCount);
+        }
+        stringDelimiter = infoContent[1];
+        infoContent = reader.readLine().split(":");
+        lineCount++;
+      }
       if (!infoContent[0].equals("#Entity") || infoContent[1].isEmpty()) {
-        return "Fehlende Entity in der 2. Zeile";
+        return String.format("Fehlende Entity in der %d. Zeile", lineCount);
       }
       entityName = infoContent[1];
       if (entityName.equals("Transaction")) {
@@ -110,16 +120,15 @@ public class GenericCSVImport {
         throw new ClassNotFoundException();
       }
       clazz = Class.forName(clazzCandidate.get());
-      line = reader.readLine();
-      infoContent = line.split(":");
+      infoContent = reader.readLine().split(":");
+      lineCount++;
       if (!infoContent[0].equals("#Identity Columns") || !StringUtils.isNumeric(infoContent[1])) {
-        return "Fehlende Anzahl Identitätsspalten in der 3. Zeile";
+        return String.format("Fehlende Anzahl Identitätsspalten in der %d. Zeile", lineCount);
       }
       int identityColumns = Integer.parseInt(infoContent[1]);
-      line = reader.readLine();
-      infoContent = line.split(":");
+      infoContent = reader.readLine().split(":");
       if (!infoContent[0].equals("#Data") || infoContent[1].isEmpty()) {
-        return "Fehlende Feldnamen in der 4. Zeile";
+        return String.format("Fehlende Feldnamen in der %d. Zeile", lineCount);
       }
       String[] targetFields = infoContent[1].split(separator);
       for (int i = 0; i < identityColumns; i++) {
@@ -139,7 +148,7 @@ public class GenericCSVImport {
     } catch (NoSuchFieldException e) {
       return "Ungültiger Feldname \"" + fieldName + "\"";
     } catch (NoSuchMethodException f) {
-      return "Ungeeigneter Feldname \"" + fieldName + "\"";
+      return "Ungeeignetes Feld \"" + fieldName + "\"";
     } catch (ClassNotFoundException e) {
       return "Ungültige Entity \"" + entityName + "\" in der 2. Zeile";
     } catch (CsvException e) {
@@ -246,7 +255,14 @@ public class GenericCSVImport {
       boolean success = true;
       int index = identificationGetters.size();
       for (ComplexSetter setter : setters) {
-        success = setter.invoke(targetObject, row[index]);
+        String arg = row[index];
+        if (!stringDelimiter.isEmpty()) {
+          int delimiterSize = stringDelimiter.length();
+          if (arg.startsWith(stringDelimiter)) {
+            arg = arg.substring(delimiterSize, arg.length() - 2 * delimiterSize);
+          }
+        }
+        success = setter.invoke(targetObject, arg);
         if (!success) {
           break;
         }
