@@ -9,6 +9,7 @@ import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table
 @EqualsAndHashCode(doNotUseGetters = true)
-public class Job {
+public class Job implements ActuallyCloneable {
   @Id
   @GeneratedValue
   @Getter(onMethod_ = {@Key(PermissionKey.JOB_ID_READ)})
@@ -71,5 +72,14 @@ public class Job {
   @Override
   public String toString() {
     return Tools.optional(this::getName).orElse("Job[" + id + "]");
+  }
+
+  @Override
+  public Job clone() {
+    try {
+      return (Job) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
+    }
   }
 }

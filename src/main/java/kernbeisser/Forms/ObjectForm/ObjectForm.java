@@ -3,7 +3,10 @@ package kernbeisser.Forms.ObjectForm;
 import com.google.common.collect.Iterables;
 import java.util.*;
 import java.util.function.Predicate;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.swing.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Exceptions.AccessNotPredictableException;
@@ -18,13 +21,15 @@ import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessListenerManager;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectForm<P> {
+public class ObjectForm<P extends ActuallyCloneable> {
   private final Collection<ObjectValidator<P>> objectValidators = new ArrayList<>();
 
   private final ObjectFormComponent<P>[] components;
@@ -81,10 +86,14 @@ public class ObjectForm<P> {
 
   public P getData(Mode m) throws CannotParseException {
     checkValidSource();
-    P originalCopy = Tools.clone(original);
-    copyDataInto(originalCopy);
-    validateObject(originalCopy, m);
-    return originalCopy;
+    try {
+      P originalCopy = (P) original.clone();
+      copyDataInto(originalCopy);
+      validateObject(originalCopy, m);
+      return originalCopy;
+    } catch (CloneNotSupportedException cloneNotSupportedException) {
+      throw Tools.showUnexpectedErrorWarning(cloneNotSupportedException);
+    }
   }
 
   private <V> V readProperty(BoundedReadProperty<P, V> component, P parent) {
@@ -145,8 +154,16 @@ public class ObjectForm<P> {
   public boolean persistAsNewEntity() {
     checkValidSource();
     try {
+      EntityManager em = DBConnection.getEntityManager();
+      Session session = em.unwrap(Session.class);
+      EntityTransaction et = session.getTransaction();
+      et.begin();
       P data = getData(Mode.ADD);
-      Tools.add(data);
+      session.evict(data);
+      session.save(data);
+      et.commit();
+      session.close();
+      em.close();
       JOptionPane.showMessageDialog(null, objectDistinction + " wurde erfolgreich angelegt");
       return true;
     } catch (CannotParseException e) {

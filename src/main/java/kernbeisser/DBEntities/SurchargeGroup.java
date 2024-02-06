@@ -11,6 +11,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.envers.Audited;
@@ -19,7 +20,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
 @Audited
-public class SurchargeGroup implements Serializable, Cloneable {
+public class SurchargeGroup implements Serializable, ActuallyCloneable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -157,5 +158,14 @@ public class SurchargeGroup implements Serializable, Cloneable {
     return em.createQuery("select a from Article a where a.surchargeGroup.id = :sg", Article.class)
         .setParameter("sg", getId())
         .getResultList();
+  }
+
+  @Override
+  public SurchargeGroup clone() throws CloneNotSupportedException {
+    try {
+      return (SurchargeGroup) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
+    }
   }
 }

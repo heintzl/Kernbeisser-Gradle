@@ -7,6 +7,7 @@ import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -34,7 +35,7 @@ import org.hibernate.envers.Audited;
 @AllArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
 @Audited
-public final class Article {
+public final class Article implements ActuallyCloneable {
 
   @Id
   @GeneratedValue(generator = "increment")
@@ -210,5 +211,14 @@ public final class Article {
   @Override
   public String toString() {
     return Tools.optional(this::getName).orElse("ArtikelBase[" + super.toString() + "]");
+  }
+
+  @Override
+  public Article clone() {
+    try {
+      return (Article) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
+    }
   }
 }

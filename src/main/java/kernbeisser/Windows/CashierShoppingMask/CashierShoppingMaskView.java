@@ -12,7 +12,6 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.NoSelectionException;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +79,6 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   }
 
   @Override
-  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.SHOPPING_CART;
   }

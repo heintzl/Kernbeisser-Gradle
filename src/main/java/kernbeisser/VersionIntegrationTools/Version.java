@@ -1,30 +1,30 @@
 package kernbeisser.VersionIntegrationTools;
 
+import java.util.function.Supplier;
 import kernbeisser.DBEntities.SystemSetting;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
-import kernbeisser.Useful.Tools;
 import kernbeisser.VersionIntegrationTools.UpdatingTools.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public enum Version {
-  BASE_VERSION(BaseVersion.class),
-  UNUSED_PERMISSION_KEY_REMOVING(PermissionKeyChange.class),
-  REFACTOR_DB_VERSIONING(RemoveDeprectatedSettings.class),
-  TRIAL_MEMBERSHIP(BeginnerPermissionKeyChange.class),
-  SAVE_TRANSACTIONREPORT_NO(AddTransactionReportNo.class),
-  TEST_USERS(FillTestUserFlag.class),
-  NEW_ARTICLE_PROPERTIES(AddArticleSupplyPermissions.class),
-  CATALOG_IMPORT(AddCatalogImportPermission.class),
-  SALE_SESSION_CLOSE_POPUP(AddSaleSessionClosePermission.class),
-  PREORDER_FROM_CATALOG(MigrateOpenPreOrders.class);
+  BASE_VERSION(BaseVersion::new),
+  UNUSED_PERMISSION_KEY_REMOVING(PermissionKeyChange::new),
+  REFACTOR_DB_VERSIONING(RemoveDeprectatedSettings::new),
+  TRIAL_MEMBERSHIP(BeginnerPermissionKeyChange::new),
+  SAVE_TRANSACTIONREPORT_NO(AddTransactionReportNo::new),
+  TEST_USERS(FillTestUserFlag::new),
+  NEW_ARTICLE_PROPERTIES(AddArticleSupplyPermissions::new),
+  CATALOG_IMPORT(AddCatalogImportPermission::new),
+  SALE_SESSION_CLOSE_POPUP(AddSaleSessionClosePermission::new),
+  PREORDER_FROM_CATALOG(MigrateOpenPreOrders::new);
 
   public static final Logger logger = LogManager.getLogger(Version.class);
-  private final Class<? extends VersionUpdatingTool> updatingToolClass;
+  private final Supplier<VersionUpdatingTool> versionUpdatingToolSupplier;
 
-  Version(Class<? extends VersionUpdatingTool> updatingToolClass) {
-    this.updatingToolClass = updatingToolClass;
+  Version(Supplier<VersionUpdatingTool> versionUpdatingToolSupplier) {
+    this.versionUpdatingToolSupplier = versionUpdatingToolSupplier;
   }
 
   public static Version newestVersion() {
@@ -33,16 +33,12 @@ public enum Version {
   }
 
   private void runUpdate() {
-    VersionUpdatingTool tool = createTool();
     try {
-      Access.runWithAccessManager(AccessManager.NO_ACCESS_CHECKING, tool::runIntegration);
+      Access.runWithAccessManager(
+          AccessManager.NO_ACCESS_CHECKING, versionUpdatingToolSupplier.get()::runIntegration);
     } catch (NullPointerException e) {
       throw new VersionUpdatingException("Nullptr. Exception while updating version", e);
     }
-  }
-
-  private VersionUpdatingTool createTool() {
-    return Tools.createWithoutConstructor(updatingToolClass);
   }
 
   public static void updateFrom(Version version) {

@@ -10,7 +10,6 @@ import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -104,7 +103,6 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
   }
 
   @Override
-  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.SIGN_IN;
   }

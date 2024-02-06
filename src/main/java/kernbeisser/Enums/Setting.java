@@ -91,7 +91,9 @@ public enum Setting {
   INVENTORY_SCHEDULED_DATE("2022-12-30"),
 
   @Deprecated
-  SUPPLY_DAY_DIFFERENCE_THRESHOLD("1");
+  SUPPLY_DAY_DIFFERENCE_THRESHOLD("1"),
+
+  OUTDATED_SETTING("Veraltete Einstellung");
 
   // defines the type like in java style
   // Value: Type:
@@ -121,14 +123,14 @@ public enum Setting {
               Setting result = super.get(key);
               if (result == null) {
                 Main.logger.info("found outdated Setting name: " + key);
-                return Tools.createWithoutConstructor(Setting.class);
+                return Setting.OUTDATED_SETTING;
               }
               return result;
             }
           };
       field.set(Setting.class, delegatingMap);
     } catch (NoSuchFieldException | IllegalAccessException e) {
-      Tools.showUnexpectedErrorWarning(e);
+      throw Tools.showUnexpectedErrorWarning(e);
     }
   }
 

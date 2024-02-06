@@ -9,6 +9,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
@@ -22,7 +23,7 @@ import org.hibernate.envers.Audited;
 @Table
 @EqualsAndHashCode(doNotUseGetters = true)
 @Audited
-public class Supplier implements Serializable {
+public class Supplier implements Serializable, ActuallyCloneable {
 
   @Id
   @Column(updatable = false, insertable = false, nullable = false)
@@ -194,5 +195,14 @@ public class Supplier implements Serializable {
         .setParameter("n", "%" + s + "%")
         .setMaxResults(max)
         .getResultList();
+  }
+
+  @Override
+  public Shelf clone() throws CloneNotSupportedException {
+    try {
+      return (Shelf) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
+    }
   }
 }

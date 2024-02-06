@@ -15,7 +15,6 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -149,7 +148,6 @@ public class CountingView implements IView<CountingController> {
   }
 
   @Override
-  @StaticAccessPoint
   public String getTitle() {
     return "Zähl Ergebnisse eingeben";
   }

@@ -7,16 +7,15 @@ import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
-import kernbeisser.Security.StaticMethodTransformer.StaticInterface;
 import kernbeisser.Windows.ViewContainer;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IView<
-        C extends Controller<? extends IView<? extends C>, ? extends IModel<? extends C>>>
-    extends StaticInterface {
+    C extends Controller<? extends IView<? extends C>, ? extends IModel<? extends C>>> {
+
+  public static IconCode DEFAULT_ICON_CODE = FontAwesome.WINDOW_MAXIMIZE;
 
   void initialize(C controller);
 
@@ -48,9 +47,8 @@ public interface IView<
     return SwingUtilities.getWindowAncestor(getContent());
   }
 
-  @StaticAccessPoint
   default IconCode getTabIcon() {
-    return FontAwesome.WINDOW_MAXIMIZE;
+    return DEFAULT_ICON_CODE;
   }
 
   default ViewContainer traceViewContainer() {
@@ -75,12 +73,10 @@ public interface IView<
         == JOptionPane.YES_OPTION;
   }
 
-  @StaticAccessPoint
   default String getTitle() {
     return "";
   }
 
-  @StaticAccessPoint
   default boolean isStackable() {
     return false;
   }

@@ -19,7 +19,6 @@ import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Forms.ObjectForm.Components.DataAnchor;
 import kernbeisser.Forms.ObjectForm.Components.DataListener;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.DocumentChangeListener;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.MVC.IView;
@@ -111,7 +110,6 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
   }
 
   @Override
-  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.PERCENT;
   }

@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +85,6 @@ public class ChangePasswordView implements IView<ChangePasswordController> {
   }
 
   @Override
-  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.KEY;
   }

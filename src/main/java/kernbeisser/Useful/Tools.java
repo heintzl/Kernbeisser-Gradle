@@ -16,10 +16,6 @@ import java.util.List;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -27,25 +23,20 @@ import jiconfont.swing.IconFontSwing;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
-import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.SecuredOptional;
 import kernbeisser.Security.Utils.*;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.var;
 import org.hibernate.envers.AuditReaderFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import sun.misc.Unsafe;
 
 public class Tools {
   public static <A extends Annotation> Collection<Field> getWithAnnotation(
@@ -188,10 +179,6 @@ public class Tools {
         });
   }
 
-  public static void resetId(Object o) {
-    Tools.setId(o, Tools.getId(Tools.createWithoutConstructor(o.getClass())));
-  }
-
   public static <T, V> Map<V, Collection<T>> group(Iterator<T> collection, Getter<T, V> getter) {
     HashMap<V, Collection<T>> collectionHashMap = new HashMap<>();
     collection.forEachRemaining(
@@ -220,11 +207,6 @@ public class Tools {
     HashSet<V> out = new HashSet<>(collection.size());
     collection.forEach(e -> out.add(tvGetter.get(e)));
     return out;
-  }
-
-  public static void add(Object o) {
-    resetId(o);
-    persist(o);
   }
 
   public static void runInSession(Consumer<EntityManager> dbAction) {
@@ -379,7 +361,7 @@ public class Tools {
     JOptionPane.showMessageDialog(null, messagePanel, "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
   }
 
-  public static void showUnexpectedErrorWarning(Throwable error) throws RuntimeException {
+  public static RuntimeException showUnexpectedErrorWarning(Throwable error) {
     Main.logger.error(error.getMessage(), error);
     showErrorWarning(
         error,
@@ -478,164 +460,8 @@ public class Tools {
     }
   }
 
-  private static final Unsafe unsafe = createUnsafe();
-
-  private static Unsafe createUnsafe() {
-    Field f;
-    try {
-      f = Unsafe.class.getDeclaredField("theUnsafe");
-      f.setAccessible(true);
-      return (Unsafe) f.get(null);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
-
-  // I don't know if we should use Java Unsafe like the name already says ...
-  public static <T> T clone(T object) {
-    Class<?> clazz = object.getClass();
-    T instance = null;
-    try {
-      instance = (T) unsafe.allocateInstance(clazz);
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    }
-    assert instance != null;
-    copyInto(object, instance);
-    T finalInstance = instance;
-    Access.getCustomAccessManager(object).ifPresent(e -> Access.putException(finalInstance, e));
-    return instance;
-  }
-
-  public static <T> T createWithoutConstructor(Class<T> clazz) {
-    if (clazz == null) throw new NullPointerException("cannot create instance from null");
-    try {
-      return (T) unsafe.allocateInstance(clazz);
-    } catch (InstantiationException e) {
-      throw new UnsupportedOperationException("cannot create instance without constructor :(");
-    }
-  }
-
-  public static void invokeWithDefault(AccessConsumer<Object> consumer) {
-    Object[] primitiveObjects =
-        new Object[] {
-          null, 0, (long) 0, (double) 0, (float) 0, (char) 0, (byte) 0, (short) 0, false,
-        };
-    for (Object primitiveObject : primitiveObjects) {
-      try {
-        consumer.accept(primitiveObject);
-        return;
-      } catch (NullPointerException | ClassCastException ignored) {
-      }
-    }
-  }
-
   public static StackTraceElement getCallerStackTraceElement(int above) {
     return Thread.currentThread().getStackTrace()[2 + above];
-  }
-
-  public static <T> void tryIt(AccessConsumer<T> consumer, T t) {
-    try {
-      consumer.accept(t);
-    } catch (PermissionKeyRequiredException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public static <T> T invokeConstructor(Class<T> out) {
-    try {
-      Constructor<T> constructor = out.getDeclaredConstructor();
-      constructor.setAccessible(true);
-      return constructor.newInstance();
-    } catch (NoSuchMethodException
-        | InstantiationException
-        | IllegalAccessException
-        | InvocationTargetException e) {
-      return Tools.createWithoutConstructor(out);
-    }
-  }
-
-  public static Collection<Field> getAllUniqueFields(Class<?> clazz) {
-    Collection<Field> uniqueFields = new HashSet<>();
-    for (Field field : clazz.getDeclaredFields()) {
-      if (isUnique(field)) {
-        field.setAccessible(true);
-        uniqueFields.add(field);
-      }
-    }
-    return uniqueFields;
-  }
-
-  public static <T> void persistIfNotUnique(Class<T> clazz, Collection<T> collection) {
-    Field[] uniqueFieldsArray = getAllUniqueFields(clazz).toArray(new Field[0]);
-    Object[][] uniqueValues = getAllValues(clazz, uniqueFieldsArray);
-    HashSet<?>[] hashSets = new HashSet<?>[uniqueFieldsArray.length];
-    for (int i = 0; i < hashSets.length; i++) {
-      hashSets[i] = new HashSet<>(Arrays.asList(uniqueValues[i]));
-    }
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    collection.forEach(
-        (value) -> {
-          boolean passed = true;
-          for (int i = 0; i < uniqueFieldsArray.length; i++) {
-            try {
-              if (hashSets[i].contains(uniqueFieldsArray[i].get(value))) {
-                Main.logger.info(
-                    "Ignored "
-                        + clazz
-                        + " because unique field "
-                        + uniqueFieldsArray[i]
-                        + " contained the value "
-                        + uniqueFieldsArray[i].get(value)
-                        + " which is already taken");
-                passed = false;
-                break;
-              }
-            } catch (IllegalAccessException e) {
-              e.printStackTrace();
-            }
-          }
-          if (passed) {
-            em.persist(value);
-          }
-        });
-  }
-
-  public static boolean isUnique(Field f) {
-    if (f.isAnnotationPresent(Id.class)) return true;
-    for (Annotation annotation : f.getAnnotations()) {
-      try {
-        Method uniqueCheck = annotation.annotationType().getDeclaredMethod("unique");
-        uniqueCheck.setAccessible(true);
-        return (boolean) uniqueCheck.invoke(annotation);
-      } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
-      }
-    }
-    return false;
-  }
-
-  public static <P> Object[][] getAllValues(Class<P> parent, Field... fields) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    CriteriaBuilder cb = em.getCriteriaBuilder();
-    CriteriaQuery<Object> query = cb.createQuery(Object.class);
-    Root<P> root = query.from(parent);
-    query.multiselect(Tools.transform(fields, Selection.class, field -> root.get(field.getName())));
-    List<Object> queryReturn = em.createQuery(query).getResultList();
-    Object[][] out = new Object[fields.length][queryReturn.size()];
-    int index = 0;
-    for (Object objects : queryReturn) {
-      for (int field = 0; field < fields.length; field++) {
-        out[field][index] = ((Object[]) objects)[field];
-      }
-    }
-    return out;
   }
 
   public static Field getIdField(Class<?> clazz) {
@@ -651,16 +477,6 @@ public class Tools {
     return null;
   }
 
-  public static <I, O> O[] transformToArray(
-      Collection<I> input, Class<O> outClass, Function<I, O> transformer) {
-    O[] out = (O[]) Array.newInstance(outClass, input.size());
-    int c = 0;
-    for (I i : input) {
-      out[c++] = transformer.apply(i);
-    }
-    return out;
-  }
-
   public static Object getId(Object o) {
     try {
       return getIdField(o.getClass()).get(o);
@@ -672,33 +488,6 @@ public class Tools {
 
   public static Date toDate(YearMonth yearMonth) {
     return java.util.Date.from(yearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-  }
-
-  public static <T> T findById(Iterable<T> collection, Object id) {
-    Iterator<T> iterator = collection.iterator();
-    if (!iterator.hasNext()) return null;
-    Field field = getIdField(collection.iterator().next().getClass());
-    while (iterator.hasNext()) {
-      try {
-        T t = iterator.next();
-        if (field.get(t).equals(id)) return t;
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      }
-    }
-    return null;
-  }
-
-  public static Field findInAllSuperClasses(Class<?> clazz, String name)
-      throws NoSuchFieldException {
-    while (!clazz.equals(Object.class)) {
-      try {
-        return clazz.getDeclaredField(name);
-      } catch (NoSuchFieldException ignored) {
-      }
-      clazz = clazz.getSuperclass();
-    }
-    throw new NoSuchFieldException("cannot find Field " + name);
   }
 
   public static Collection<Field> getAllFields(Class<?> clazz) {
@@ -724,15 +513,6 @@ public class Tools {
       }
     }
     return values;
-  }
-
-  @SneakyThrows
-  public static Object callPrivateFunction(
-      Class<?> clazz, Object obj, String name, Object... args) {
-    Method method =
-        clazz.getDeclaredMethod(name, Tools.transform(args, Class.class, Object::getClass));
-    method.setAccessible(true);
-    return method.invoke(obj, args);
   }
 
   public static <T> void forEach(Enumeration<T> enumeration, Consumer<T> consumer) {
@@ -779,46 +559,6 @@ public class Tools {
     if (LogInModel.getLoggedIn() == null
         || UserSetting.CREATE_BEEP_SOUND.getBooleanValue(LogInModel.getLoggedIn()))
       Toolkit.getDefaultToolkit().beep();
-  }
-
-  // reverses a ref map
-  // apple -> fruit
-  // carrot -> fruit
-  // Output:
-  // fruit -> (apple,carrot)
-  public static <K, V> Map<K, Collection<V>> reverseReference(Map<V, K> map) {
-    HashMap<K, Collection<V>> out = new HashMap<>();
-    map.forEach(
-        (k, v) -> {
-          if (v == null) return;
-          Collection<V> collection = out.computeIfAbsent(v, k1 -> new ArrayList<>());
-          collection.add(k);
-        });
-    return out;
-  }
-
-  public static <K, V> Map<K, V> createMap(Iterator<K> v, Function<K, V> valueGenerator) {
-    HashMap<K, V> map = new HashMap<>();
-    v.forEachRemaining(
-        e -> {
-          V value = valueGenerator.apply(e);
-          if (value != null) map.put(e, value);
-        });
-    return map;
-  }
-
-  public static <K, V> Map<K, V> createMapByValue(Iterator<V> v, Function<V, K> valueGenerator) {
-    HashMap<K, V> map = new HashMap<>();
-    v.forEachRemaining(
-        e -> {
-          K key = valueGenerator.apply(e);
-          if (key != null) map.put(key, e);
-        });
-    return map;
-  }
-
-  public static void openFile(String filePath) {
-    openFile(new File(filePath));
   }
 
   public static String userDefaultPath() {
@@ -901,7 +641,6 @@ public class Tools {
 
   public static int calculate(String x, String y) {
     int[][] dp = new int[x.length() + 1][y.length() + 1];
-
     for (int i = 0; i <= x.length(); i++) {
       for (int j = 0; j <= y.length(); j++) {
         if (i == 0) {
@@ -946,18 +685,6 @@ public class Tools {
     return Math.round(100. * value) / 100.;
   }
 
-  public static void setKeyPermissions() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    em.createQuery("select u from User u", User.class)
-        .getResultStream()
-        .filter(u -> u.getKernbeisserKey() >= 0)
-        .peek(u -> u.getPermissions().add(PermissionConstants.KEY_PERMISSION.getPermission()))
-        .forEach(em::persist);
-    em.flush();
-  }
-
   public static String accessString(AccessSupplier<String> supplier) {
     return optional(supplier).orElse("[Keine Leseberechtigung]");
   }
@@ -996,14 +723,6 @@ public class Tools {
 
   public static <T> T or(AccessSupplier<T> supplier, T v) {
     return optional(supplier).orElse(v);
-  }
-
-  public static int indexOfFirstNumber(String s) {
-    char[] chars = s.toCharArray();
-    for (int i = 0; i < chars.length; i++) {
-      if (Character.isDigit(chars[i])) return i;
-    }
-    return -1;
   }
 
   public static boolean isPartOfNumb(char c) {

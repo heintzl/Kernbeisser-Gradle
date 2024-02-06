@@ -8,6 +8,8 @@ import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
+import kernbeisser.Useful.ActuallyCloneable;
+import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,7 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table
 @EqualsAndHashCode(doNotUseGetters = true)
-public class Shelf {
+public class Shelf implements ActuallyCloneable {
   @GeneratedValue
   @Id
   @Getter(onMethod_ = {@Key(PermissionKey.SHELF_ID_READ)})
@@ -94,5 +96,14 @@ public class Shelf {
     return this.getAllArticles(em).stream()
         .map(e -> ArticleStock.ofArticle(em, e, this).orElse(ArticleStock.newFromArticle(e, this)))
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public Shelf clone() throws CloneNotSupportedException {
+    try {
+      return (Shelf) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
+    }
   }
 }

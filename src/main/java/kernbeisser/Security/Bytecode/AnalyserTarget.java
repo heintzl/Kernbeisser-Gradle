@@ -1,4 +1,4 @@
-package kernbeisser.Unsafe;
+package kernbeisser.Security.Bytecode;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;

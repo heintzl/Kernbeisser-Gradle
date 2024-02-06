@@ -25,7 +25,6 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
-import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
@@ -129,7 +128,7 @@ public class CatalogMergeSession {
           Article newVersion =
               parseArticle(
                   revisionSearch
-                      .map(Tools::clone)
+                      .map(Article::clone)
                       .orElseGet(
                           () -> createNewBase(kkSupplier, coveredIntake, kkDefaultSurchargeGroup)),
                   deposit,

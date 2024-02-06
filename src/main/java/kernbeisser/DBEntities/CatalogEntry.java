@@ -10,6 +10,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Tasks.Catalog.BoolValues;
+import kernbeisser.Useful.ActuallyCloneable;
+import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 @Entity
 @Setter(AccessLevel.NONE)
 @Getter(AccessLevel.PUBLIC)
-public class CatalogEntry {
+public class CatalogEntry implements ActuallyCloneable {
   private String artikelNr;
 
   // CatalogChange.identifier
@@ -259,5 +261,14 @@ public class CatalogEntry {
 
   public String getInfo() {
     return String.join("\n", bezeichnung2, bezeichnung3);
+  }
+
+  @Override
+  public CatalogEntry clone() {
+    try {
+      return (CatalogEntry) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
+    }
   }
 }

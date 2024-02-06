@@ -3,12 +3,14 @@ package kernbeisser.Forms.ObjectView;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Data;
 import lombok.Setter;
 
 @Data
-public class ObjectViewModel<T> implements IModel<ObjectViewController<T>> {
+public class ObjectViewModel<T extends ActuallyCloneable>
+    implements IModel<ObjectViewController<T>> {
   private final FormController<?, ?, T> form;
 
   private final boolean copyValuesToAdd;

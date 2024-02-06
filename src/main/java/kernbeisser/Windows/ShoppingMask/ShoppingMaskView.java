@@ -24,7 +24,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.*;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
@@ -951,7 +950,6 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   }
 
   @Override
-  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.SHOPPING_CART;
   }

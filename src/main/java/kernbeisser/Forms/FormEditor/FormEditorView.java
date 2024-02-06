@@ -7,11 +7,12 @@ import javax.swing.JPanel;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
-public class FormEditorView<V> implements IView<FormEditorController<V>> {
+public class FormEditorView<V extends ActuallyCloneable> implements IView<FormEditorController<V>> {
 
   private JButton saveButton;
   private JPanel contentPage;

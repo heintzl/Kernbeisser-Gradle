@@ -21,7 +21,6 @@ import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.MVC.IView;
@@ -209,7 +208,6 @@ public class InventoryView implements IView<InventoryController> {
     return "Inventur";
   }
 
-  @StaticAccessPoint
   @Override
   public IconCode getTabIcon() {
     return FontAwesome.CALCULATOR;

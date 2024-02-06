@@ -22,10 +22,13 @@ import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.ViewContainer;
 import lombok.Getter;
+import org.objenesis.ObjenesisStd;
 
 public abstract class Controller<
     V extends IView<? extends Controller<? extends V, ? extends M>>,
     M extends IModel<? extends Controller<? extends V, ? extends M>>> {
+
+  private static final ObjenesisStd VIEW_FACTORY_PROVIDER = new ObjenesisStd();
 
   @Getter(lazy = true)
   private final Collection<Controller<?, ?>> subControllers = findSubControllers();
@@ -152,7 +155,7 @@ public abstract class Controller<
 
   private void instantiateView() {
     Class<V> viewClass = getViewClass((Class<? extends Controller<V, M>>) getClass());
-    view = Tools.createWithoutConstructor(viewClass);
+    view = (V) VIEW_FACTORY_PROVIDER.getInstantiatorOf(viewClass).newInstance();
     linkViewControllerFields(view, this);
     callSetupUiMethod(view);
     callInitializeMethod(view, this);

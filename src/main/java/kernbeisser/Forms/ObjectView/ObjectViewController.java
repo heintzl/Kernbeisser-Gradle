@@ -13,6 +13,7 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.FormEditor.FormEditorController;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Searchable;
@@ -22,7 +23,8 @@ import lombok.Setter;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectViewController<T> extends Controller<ObjectViewView<T>, ObjectViewModel<T>> {
+public class ObjectViewController<T extends ActuallyCloneable>
+    extends Controller<ObjectViewView<T>, ObjectViewModel<T>> {
 
   @Linked @Getter private SearchBoxController<T> searchBoxController;
 

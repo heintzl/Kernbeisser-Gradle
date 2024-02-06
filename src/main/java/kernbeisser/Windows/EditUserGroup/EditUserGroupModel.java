@@ -8,7 +8,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Exeptions.MissingFullMemberException;
-import kernbeisser.Security.Proxy;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -21,7 +20,7 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
   private User caller;
 
   public EditUserGroupModel(User user, User caller) {
-    this.user = Proxy.removeProxy(user);
+    this.user = user;
     this.caller = caller;
   }
 
@@ -30,7 +29,7 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
   }
 
   public void refreshData() {
-    user = Proxy.removeProxy(User.getById(user.getId()));
+    user = User.getById(user.getId());
   }
 
   boolean changeUserGroup(int user, int destination) throws MissingFullMemberException {

@@ -5,9 +5,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Windows.MVC.Controller;
 
-public class FormEditorController<V> extends Controller<FormEditorView<V>, FormEditorModel<V>> {
+public class FormEditorController<V extends ActuallyCloneable>
+    extends Controller<FormEditorView<V>, FormEditorModel<V>> {
 
   public FormEditorController(FormController<?, ?, V> form, Runnable submit)
       throws PermissionKeyRequiredException {
@@ -28,7 +30,7 @@ public class FormEditorController<V> extends Controller<FormEditorView<V>, FormE
     getModel().getSubmit().run();
   }
 
-  public static <T> FormEditorController<T> create(
+  public static <T extends ActuallyCloneable> FormEditorController<T> create(
       T source, FormController<?, ?, T> controller, Mode mode) {
     controller.getObjectContainer().setSource(source);
     controller.setMode(mode);

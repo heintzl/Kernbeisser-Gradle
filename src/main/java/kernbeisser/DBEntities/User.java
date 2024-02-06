@@ -20,6 +20,7 @@ import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.*;
@@ -35,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
     })
 @NoArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
-public class User implements Serializable, UserRelated {
+public class User implements Serializable, UserRelated, ActuallyCloneable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(updatable = false, insertable = false, nullable = false)
@@ -597,5 +598,14 @@ public class User implements Serializable, UserRelated {
 
   public boolean verifyPassword(char[] password) {
     return BCrypt.verifyer().verify(password, this.password.toCharArray()).verified;
+  }
+
+  @Override
+  public User clone() {
+    try {
+      return (User) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
+    }
   }
 }

@@ -5,7 +5,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,6 @@ public class ComponentView implements IView<ComponentController> {
   }
 
   @Override
-  @StaticAccessPoint
   public IconCode getTabIcon() {
     return icon != null ? icon : FontAwesome.WINDOW_MAXIMIZE;
   }

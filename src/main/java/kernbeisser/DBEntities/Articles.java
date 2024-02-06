@@ -37,20 +37,6 @@ public class Articles {
 
   private Articles() {}
 
-  public static Article getEmptyArticle() {
-    Article empty = new Article();
-    Access.runWithAccessManager(
-        AccessManager.NO_ACCESS_CHECKING,
-        () -> {
-          empty.setName("Kein Artikel gefunden");
-          empty.setSurchargeGroup(new SurchargeGroup());
-          empty.setAmount(0);
-          empty.setNetPrice(0);
-          empty.setMetricUnits(MetricUnits.NONE);
-        });
-    return empty;
-  }
-
   public static Collection<Article> defaultSearch(String search, int maxResults) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -414,8 +400,7 @@ public class Articles {
             em.createQuery(
                 "select a from Article a where a.suppliersItemNumber = :s and offer = true",
                 Article.class));
-    Article newOfferArticle =
-        offerArticle.orElseGet(() -> withValidKBNumber(Tools.clone(base), em));
+    Article newOfferArticle = offerArticle.orElseGet(() -> withValidKBNumber(base.clone(), em));
     newOfferArticle.setNetPrice(specialNetPrice);
     newOfferArticle.setOffer(true);
     Offer offer = new Offer();

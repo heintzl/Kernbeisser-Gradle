@@ -7,12 +7,12 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
-import kernbeisser.Security.StaticMethodTransformer.StaticAccessPoint;
+import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
+public class ObjectViewView<T extends ActuallyCloneable> implements IView<ObjectViewController<T>> {
 
   private JButton add;
   private JButton edit;
@@ -75,7 +75,6 @@ public class ObjectViewView<T> implements IView<ObjectViewController<T>> {
   }
 
   @Override
-  @StaticAccessPoint
   public IconCode getTabIcon() {
     return FontAwesome.PENCIL;
   }

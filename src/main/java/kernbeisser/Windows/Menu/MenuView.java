@@ -132,9 +132,8 @@ public class MenuView implements IView<MenuController> {
     infoPanel = new InfoPanelController().getView();
     openCashierShoppingMask =
         new ControllerButton(
-            CashierShoppingMaskController::new,
-            CashierShoppingMaskController.class,
-            "Willst Du mit dem Ladendienst beginnen?");
+                CashierShoppingMaskController::new, CashierShoppingMaskController.class)
+            .withConfirmMessage("Willst Du mit dem Ladendienst beginnen?");
     editPriceList =
         new ControllerButton(
             ManagePriceListsController::new, ManagePriceListsController.class, Controller::openTab);
@@ -152,8 +151,7 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             () -> new UserInfoController(LogInModel.getLoggedIn()),
             UserInfoController.class,
-            c -> c.openIn(new SubWindow(traceViewContainer())).getLoaded(),
-            false);
+            c -> c.openIn(new SubWindow(traceViewContainer())).getLoaded());
     editUserSettings =
         new ControllerButton(
             () -> new EditUserSettingController(LogInModel.getLoggedIn()),
@@ -164,8 +162,7 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             controller::getPayInTransactionController,
             TransactionController.class,
-            Controller::openTab,
-            false);
+            Controller::openTab);
     changePermissions =
         new ControllerButton(
             PermissionController::new, PermissionController.class, Controller::openTab);
@@ -177,22 +174,16 @@ public class MenuView implements IView<MenuController> {
             Controller::openTab);
     changeDBConnection =
         new ControllerButton(
-            controller::getDBLoginController, DBLogInController.class, Controller::openTab, false);
+            controller::getDBLoginController, DBLogInController.class, Controller::openTab);
     editJobs = new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab);
     editApplicationSettings =
         new ControllerButton(SettingController::new, SettingController.class, Controller::openTab);
     order =
         new ControllerButton(
-            controller::getPreorderController,
-            PreOrderController.class,
-            Controller::openTab,
-            false);
+            controller::getPreorderController, PreOrderController.class, Controller::openTab);
     openSelfPreorder =
         new ControllerButton(
-            controller::getOwnPreorderController,
-            PreOrderController.class,
-            Controller::openTab,
-            false);
+            controller::getOwnPreorderController, PreOrderController.class, Controller::openTab);
     if (openSelfPreorder.isEnabled()) openSelfPreorder.setEnabled(inheritsFullMembership);
     // NOT IMPLEMENTED
     placeHolderControllerButton2 = ControllerButton.empty();
@@ -233,10 +224,7 @@ public class MenuView implements IView<MenuController> {
     }
     addBeginner =
         new ControllerButton(
-            controller::generateAddBeginnerForm,
-            FormEditorController.class,
-            Controller::openTab,
-            false);
+            controller::generateAddBeginnerForm, FormEditorController.class, Controller::openTab);
     editSuppliers =
         new ControllerButton(EditSuppliers::new, EditSuppliers.class, Controller::openTab);
 
@@ -267,8 +255,7 @@ public class MenuView implements IView<MenuController> {
         new ControllerButton(
             controller::getInternalTransactionController,
             TransactionController.class,
-            Controller::openTab,
-            false);
+            Controller::openTab);
     permissionAssignment =
         new ControllerButton(
             PermissionAssignmentController::new, PermissionAssignmentController.class);
