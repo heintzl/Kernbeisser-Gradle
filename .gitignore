@@ -1,7 +1,5 @@
 src/main/resources/DBConfiguration/
 
-config.json
-
 # Created by https://www.gitignore.io/api/java,linux,gradle,windows,intellij
 # Edit at https://www.gitignore.io/?templates=java,linux,gradle,windows,intellij
 
