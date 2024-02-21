@@ -21,7 +21,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
-import kernbeisser.StartUp.DataImport.DataImportController;
 import kernbeisser.StartUp.SplashScreenHandler;
 import kernbeisser.Useful.UiTools;
 import kernbeisser.VersionIntegrationTools.Version;
@@ -58,11 +57,7 @@ public class Main {
     buildEnvironment();
     splashScreenHandler.setSplashComment("Prüfe Datenbankversion");
     checkVersion();
-    if (!Setting.DB_INITIALIZED.getBooleanValue()) {
-      SwingUtilities.invokeLater(() -> new DataImportController().openTab());
-    } else {
-      openLogIn();
-    }
+    openLogIn();
   }
 
   public static String getPath() {
@@ -135,52 +130,5 @@ public class Main {
     ((Frame) TabbedPaneModel.getMainPanel().getContainer())
         .setTitle(Setting.STORE_NAME.getStringValue() + " (Login)");
     new SimpleLogInController().openTab();
-  }
-
-  private static void createTestJobs(int count) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    for (int i = 0; i < count; i++) {
-      Job j = new Job();
-      j.setDescription("Test Description: " + i);
-      j.setName("Test Job: " + i);
-      em.persist(j);
-    }
-    em.flush();
-    et.commit();
-  }
-
-  public static void generateKeySet(Class<?> clazz) {
-    for (Field field : clazz.getDeclaredFields()) {
-      if (!Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
-        String base =
-            toEnumName(clazz.getSimpleName()).replaceFirst("_", "")
-                + "_"
-                + toEnumName(field.getName());
-        System.out.println(base + "_READ(" + clazz.getSimpleName() + ".class),");
-        System.out.println(base + "_WRITE(" + clazz.getSimpleName() + ".class),");
-      }
-    }
-  }
-
-  public static String toEnumName(String s) {
-    char[] charArray = s.toCharArray();
-    Collection<String> parts = new ArrayList<>();
-    int before = 0;
-    for (int i = 0; i < charArray.length; i++) {
-      char c = charArray[i];
-      if (Character.isUpperCase(c)) {
-        parts.add(s.substring(before, i));
-        before = i;
-      }
-    }
-    parts.add(s.substring(before, charArray.length));
-    StringBuilder sb = new StringBuilder();
-    parts.forEach(e -> sb.append(e.toUpperCase()).append("_"));
-    if (sb.length() > 0) {
-      sb.deleteCharAt(sb.length() - 1);
-    }
-    return sb.toString();
   }
 }
